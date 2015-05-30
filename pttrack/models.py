@@ -43,9 +43,9 @@ class Patient(models.Model):
     MALE = "M"
     FEMALE = "F"
     OTHER = "O"
-    GENDER_OPTS = ((MALE, "Male",
-                    FEMALE, "Female",
-                    OTHER, "Other"))
+    GENDER_OPTS = ((MALE, "Male"),
+                   (FEMALE, "Female"),
+                   (OTHER, "Other"))
     gender = models.CharField(max_length=1,
                               choices=GENDER_OPTS)
 
@@ -80,7 +80,7 @@ class ClinicDate(models.Model):
     clinic_type = models.CharField(max_length=5,
                                    choices=CLINIC_TYPES,
                                    default=SAT)
-    date = models.DateField(default=date.today())
+    date = models.DateField()
     gcal_id = models.CharField(max_length=50)
 
     def is_specialty(self):
@@ -118,5 +118,5 @@ class Workup(Note):
 class Followup(Note):
     note = models.TextField()
 
-    written_date = models.DateField(default=date.today())
+    written_date = models.DateField()
     next_action = models.DateField(blank=True)
