@@ -37,6 +37,3 @@ def intake(request):
         form = myforms.PatientForm()
 
     return render(request, 'pttrack/intake.html', {'form': form})
-
-def newpatient(request):
-    return HttpResponse("You added a patient")
