@@ -32,7 +32,7 @@ class Patient(models.Model):
     zip_code = models.CharField(max_length=5,
                                 validators=[validate_zip])
 
-    dob = models.DateField()
+    date_of_birth = models.DateField()
     language = models.ForeignKey(Language)
 
     #TODO: load ethnicity options from a file?
