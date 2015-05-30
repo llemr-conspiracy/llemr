@@ -1,5 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+
+from . import models as mymodels
 
 # Create your views here.from django.http import HttpResponse
 
@@ -27,10 +30,11 @@ def intake(request):
         form = myforms.PatientForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            # process the data in form.cleaned_data as required
-            # ...
+            p = mymodels.Patient(**form.cleaned_data)
+            p.save()
+
             # redirect to a new URL:
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect(reverse(patient, args=(p.id,)))
 
     # if a GET (or any other method) we'll create a blank form
     else:
