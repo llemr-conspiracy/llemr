@@ -18,6 +18,9 @@ def validate_zip(value):
 class Language(models.Model):
     language_name = models.CharField(max_length=50, primary_key=True)
 
+    def __unicode__(self):
+        return self.language_name
+
 
 class Patient(models.Model):
     first_name = models.CharField(max_length=100)
