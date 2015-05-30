@@ -67,19 +67,21 @@ class Provider(models.Model):
 
 
 class ClinicDate(models.Model):
-    SAT = "SATUR"
+    BASIC = "BASIC"
     PSYCH = "PSYCH"
     ORTHO = "ORTHO"
     DERM = "DERMA"
 
-    CLINIC_TYPES = ((SAT, 'Saturday Basic'),
+    CLINIC_TYPES = ((BASIC, '(Saturday) Basic Care Clinic'),
                     (PSYCH, 'Depression & Anxiety Specialty'),
                     (ORTHO, 'Muscle and Joint Pain Specialty'),
                     (DERM, 'Dermatology Specialty'))
 
     clinic_type = models.CharField(max_length=5,
                                    choices=CLINIC_TYPES,
-                                   default=SAT)
+                                   default=BASIC)
+
+    #TODO: don't override "date" class with this variable
     date = models.DateField()
     gcal_id = models.CharField(max_length=50)
 
