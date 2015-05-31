@@ -1,7 +1,11 @@
+{% extends "pttrack/base.html" %}
+
+{% block header %}
+<h1>All Patients</h1>
+{% endblock %}
+
 {% block content %}
-    <h2>Patients</h2>
-    <ul>
-    <table border="1" style="width:100%">
+    <table class="table">
         {% for patient in object_list %}
             <tr>
             <td><a href="{{ patient.pk }}/">{{ patient.name }}</a></td>
@@ -15,5 +19,4 @@
             </tr>
         {% endfor %}
     </table>
-    </ul>
 {% endblock %}
