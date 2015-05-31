@@ -8,8 +8,8 @@ import django.utils.timezone
 def validate_zip(value):
     '''verify that the given value is in the ZIP code format'''
     if len(str(value)) != 5:
-        raise ValidationError('%s is not a valid ZIP, because it has %d digits.' %
-                              value, len(value))
+        raise ValidationError('{0} is not a valid ZIP, because it has {1} digits.'.format(
+                              str(value), len(str(value))))
 
     if not str(value).isdigit():
         raise ValidationError("%s is not a valid ZIP, because it contains non-digit characters." %
