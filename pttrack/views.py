@@ -10,8 +10,7 @@ from . import models as mymodels
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the BIG TABLE.")
-
+    model= mymodels.Patient
 
 def clindate(request, clindate):
     (year, month, day) = clindate.split("-")

@@ -1,0 +1,23 @@
+
+
+{% block content %}
+    <h2>Patients</h2>
+    <ul>
+    <table border="1" style="width:100%">
+    <tr>
+        {% for patient in object_list %}
+            <td>{{ patient.first_name }}</td>
+            <td>{{ patient.last_name }}</td>
+            <td>{{ patient.city }}</td>
+            <td>{{ patient.state }}</td>
+            <td>{{ patient.zip_code }}</td>
+            <td>{{ patient.gender }}</td>
+            <td>{{ patient.age }}</td>
+            <td>{{ patient.ethnicity }}</td>
+            <td>{{ patient.comp_status }}</td>
+
+        {% endfor %}
+    </tr>
+    </table>
+    </ul>
+{% endblock %}
