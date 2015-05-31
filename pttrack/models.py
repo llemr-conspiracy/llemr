@@ -91,7 +91,26 @@ class Patient(Person):
 
 
 class Provider(Person):
-    pass
+
+    ATTENDING = "ATTEND"
+    CLINICAL = "CLIN"
+    PRECLINICAL = "PRECLIN"
+    TYPE = ((ATTENDING, "Attending Physician"),
+            (CLINICAL, "Clinical Medical Student"),
+            (PRECLINICAL, "Preclinical Medical Student"))
+    provider_type = models.CharField(max_length=6,
+                                     choices=TYPE)
+
+    email = models.EmailField()
+
+    def is_preclinical(self):
+        return self.provider_type == self.PRECLINICAL
+
+    def is_clinical(self):
+        return self.provider_type == self.CLINICAL
+
+    def is_attending(self):
+        return self.provider_type == self.ATTENDING
 
 
 class ClinicDate(models.Model):
