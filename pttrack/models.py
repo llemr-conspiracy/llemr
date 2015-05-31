@@ -64,6 +64,10 @@ class Patient(models.Model):
     comp_status = models.CharField(max_length=4,
                                    choices=COMP_OPTS)
 
+    def age(self):
+        import datetime
+        return (datetime.date.today()-self.date_of_birth).days/365
+
 
 class Provider(models.Model):
     pass

@@ -1,8 +1,9 @@
-<h1>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}</h1>
-<p class="lead">{{ patient.age() }} y/o {{ patient.ethnicity }} {{ patient.gender }}</p>
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <div>
+	<h1>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}</h1>
+	<p class="lead">{{ patient.age }} y/o {{ patient.ethnicity }} {{ patient.gender }}</p>
+
 	<h3>Status: {{ patient.status }}<h3>
 </div>
 
@@ -16,3 +17,4 @@
 </div>
 
 <p>Language: {{patient.language}}</p>
+<p>DOB: {{patient.date_of_birth}}
