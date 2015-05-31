@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
+from django.views import generic
+
 from . import models as mymodels
 
 # Create your views here.from django.http import HttpResponse
@@ -17,9 +19,9 @@ def clindate(request, clindate):
     return HttpResponse("Clinic date %s" % year+" "+month+" "+day)
 
 
-def patient(request, pt_uuid):
-    return HttpResponse("You're looking at patient %s" % pt_uuid)
-
+class DetailView(generic.DetailView):
+    model = mymodels.Patient
+    template_name = 'pttrack/patient.html'
 
 def intake(request):
     from . import forms as myforms
@@ -34,7 +36,7 @@ def intake(request):
             p.save()
 
             # redirect to a new URL:
-            return HttpResponseRedirect(reverse(patient, args=(p.id,)))
+            return HttpResponseRedirect(reverse("patient", args=(p.id,)))
 
     # if a GET (or any other method) we'll create a blank form
     else:

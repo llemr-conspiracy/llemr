@@ -1,0 +1,18 @@
+<h1>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}</h1>
+<p class="lead">{{ patient.age() }} y/o {{ patient.ethnicity }} {{ patient.gender }}</p>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<div>
+	<h3>Status: {{ patient.status }}<h3>
+</div>
+
+<div class="container">
+	<p class="lead">Contact</p>
+	<p><address>
+	{{ patient.address }}<br>
+	{{ patient.city }}, {{ patient.state }} {{ patient.zip_code }}
+	</address></p>
+	<p>P: {{ patient.phone }}</p>
+</div>
+
+<p>Language: {{patient.language}}</p>
