@@ -23,16 +23,17 @@
 	<h3>Notes for {{patient.first_name}} {{patient.last_name}}</h3>
 	{% for note in patient.followup_set.all %}
 	<div class="container">
-		<p> {{ note.note }} </p>
+		<p> {{ note.note }} - Date written: {{ note.written_date }}</p>
 	</div>
 	{% endfor %}
 </div>
 
 <div class="container">
 	<h3>Add a new note</h3>
-	<input type="radio" value="workup">Workup</input>
-	<input type="radio" value="followup">Followup</input>
-
+	<form action="">
+	<input type="radio" name="type" value="workup">Workup</input>
+	<input type="radio" name="type" value="followup">Followup</input>
+	</form>
 	<form action="workup/" method="post">
 	    {% csrf_token %}
 	    {{ workup_form }}
