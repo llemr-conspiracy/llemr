@@ -1,25 +1,40 @@
+{% extends "pttrack/base.html" %}
+
+{% block title %}
+Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
+{% endblock %}
+
+{% block header %}
+<h1>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}</h1>
+<p class="lead">{{ patient.age }} y/o {{ patient.ethnicity }} {{ patient.gender }}</p>
+
+<h3>Status: {{ patient.comp_status }}<h3>
+{% endblock %}
+
+{% block content %}
+
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<div>
-	<h1>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}</h1>
-	<p class="lead">{{ patient.age }} y/o {{ patient.ethnicity }} {{ patient.gender }}</p>
-
-	<h3>Status: {{ patient.status }}<h3>
+<div class="container">
+	<div class="row">
+		<h3>Info</h3>
+		<div class="container col-md-4">
+			<p>Language: {{patient.language}}</p>
+			<p>DOB: {{patient.date_of_birth}}</p>
+		</div>
+		<div class="container col-md-4">
+			<p><address>
+			{{ patient.address }}<br>
+			{{ patient.city }}, {{ patient.state }} {{ patient.zip_code }}
+			</address></p>
+		</div>
+		<div class="container col-md-4">
+			<p>P: {{ patient.phone }}</p>
+		</div>
+	</div>
 </div>
 
 <div class="container">
-	<p class="lead">Contact</p>
-	<p><address>
-	{{ patient.address }}<br>
-	{{ patient.city }}, {{ patient.state }} {{ patient.zip_code }}
-	</address></p>
-	<p>P: {{ patient.phone }}</p>
-</div>
-
-<p>Language: {{patient.language}}</p>
-<p>DOB: {{patient.date_of_birth}}</p>
-
-</div class="container">
 	<h3>Notes for {{patient.first_name}} {{patient.last_name}}</h3>
 	{% for note in patient.followup_set.all %}
 	<div class="container">
@@ -29,19 +44,32 @@
 </div>
 
 <div class="container">
+<<<<<<< HEAD
 	<h3>Add a new note</h3>
 	<form action="">
 	<input type="radio" name="type" value="workup">Workup</input>
 	<input type="radio" name="type" value="followup">Followup</input>
 	</form>
 	<form action="workup/" method="post">
+=======
+
+	<h3>New Note</h3>
+    <div class="btn-group">
+        <label class="btn btn-primary" ng-model="workup" btn-radio="true">Workup</label>
+        <label class="btn btn-primary" ng-model="workup" btn-radio="false">Followup</label>
+    </div>
+
+	<form action="workup/" method="post" ng-show="workup">
+>>>>>>> f6602e97ee99a0bfbf16381c66acfff85f8bf058
 	    {% csrf_token %}
 	    {{ workup_form }}
 	    <input type="submit" value="Submit" />
 	</form>
-	<form action="followup/" method="post">
+	<form action="followup/" method="post" ng-hide="workup">
 	    {% csrf_token %}
 	    {{ followup_form }}
 	    <input type="submit" value="Submit" />
 	</form>
 </div>
+
+{% endblock %}
