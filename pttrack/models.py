@@ -23,11 +23,42 @@ class Language(models.Model):
         return self.language_name
 
 
-class Patient(models.Model):
+class Person(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    middle_name = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=100, blank=True)
 
+    phone = models.CharField(max_length=50)
+
+    MALE = "M"
+    FEMALE = "F"
+    OTHER = "O"
+    GENDER_OPTS = ((MALE, "Male"),
+                   (FEMALE, "Female"),
+                   (OTHER, "Other"))
+    gender = models.CharField(max_length=1,
+                              choices=GENDER_OPTS)
+
+    def name(self, reverse=True, middle_short=False):
+        if self.middle_name:
+            if middle_short:
+                middle = self.middle_name[0]+"."
+            else:
+                middle = self.middle_name
+        else:
+            middle = ""
+
+        if reverse:
+            return " ".join([self.last_name+",",
+                             self.first_name,
+                             middle])
+        else:
+            return " ".join([self.first_name,
+                             middle,
+                             self.last_name])
+
+
+class Patient(Person):
     address = models.CharField(max_length=200)
     city = models.CharField(max_length=50,
                             default="St. Louis")
@@ -41,17 +72,6 @@ class Patient(models.Model):
 
     #TODO: load ethnicity options from a file?
     ethnicity = models.CharField(max_length=50)
-
-    phone = models.CharField(max_length=50)
-
-    MALE = "M"
-    FEMALE = "F"
-    OTHER = "O"
-    GENDER_OPTS = ((MALE, "Male"),
-                   (FEMALE, "Female"),
-                   (OTHER, "Other"))
-    gender = models.CharField(max_length=1,
-                              choices=GENDER_OPTS)
 
     lost = "LTFO"
     completed = "COMP"
@@ -70,7 +90,7 @@ class Patient(models.Model):
         return (datetime.date.today()-self.date_of_birth).days/365
 
 
-class Provider(models.Model):
+class Provider(Person):
     pass
 
 

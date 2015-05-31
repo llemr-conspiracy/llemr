@@ -24,9 +24,9 @@ def followup(request, pt_id):
     form = myforms.FollowupForm(request.POST)
 
     if form.is_valid():
-        fu = mymodels.Followup(**form.cleaned_data)
+        fu = mymodels.Followup(patient=pt, **form.cleaned_data)
         fu.written_date = datetime.datetime.now()
-        fu.patient = pt
+        fu.author = None
         fu.save()
         pt.save()
 
