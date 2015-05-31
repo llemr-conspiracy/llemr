@@ -1,25 +1,34 @@
+{% extends "pttrack/base.html" %}
+
+{% block title %}Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}{% endblock %}
+
+{% block content %}
+
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-<div>
+<div class="jumbotron ">
+	<div class="container">
 	<h1>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}</h1>
 	<p class="lead">{{ patient.age }} y/o {{ patient.ethnicity }} {{ patient.gender }}</p>
 
-	<h3>Status: {{ patient.status }}<h3>
+	<h3>Status: {{ patient.comp_status }}<h3>
+	</div>
 </div>
 
 <div class="container">
-	<p class="lead">Contact</p>
-	<p><address>
+	<h3>Info</h3>
+	<p>
+	<address>
 	{{ patient.address }}<br>
 	{{ patient.city }}, {{ patient.state }} {{ patient.zip_code }}
 	</address></p>
 	<p>P: {{ patient.phone }}</p>
+
+	<p>Language: {{patient.language}}</p>
+	<p>DOB: {{patient.date_of_birth}}</p>
 </div>
 
-<p>Language: {{patient.language}}</p>
-<p>DOB: {{patient.date_of_birth}}</p>
-
-</div class="container">
+<div class="container">
 	<h3>Notes for {{patient.first_name}} {{patient.last_name}}</h3>
 	{% for note in patient.note_set.all %}
 	<div class="container">
@@ -29,18 +38,23 @@
 </div>
 
 <div class="container">
-	<h3>Add a new note</h3>
-	<input type="radio" value="workup">Workup</input>
-	<input type="radio" value="followup">Followup</input>
 
-	<form action="workup/" method="post">
+	<h3>New Note</h3>
+    <div class="btn-group">
+        <label class="btn btn-primary" ng-model="workup" btn-radio="true">Workup</label>
+        <label class="btn btn-primary" ng-model="workup" btn-radio="false">Followup</label>
+    </div>
+
+	<form action="workup/" method="post" ng-show="workup">
 	    {% csrf_token %}
 	    {{ workup_form }}
 	    <input type="submit" value="Submit" />
 	</form>
-	<form action="followup/" method="post">
+	<form action="followup/" method="post" ng-hide="workup">
 	    {% csrf_token %}
 	    {{ followup_form }}
 	    <input type="submit" value="Submit" />
 	</form>
 </div>
+
+{% endblock %}
