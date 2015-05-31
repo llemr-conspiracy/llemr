@@ -33,12 +33,12 @@
 	<input type="radio" value="workup">Workup</input>
 	<input type="radio" value="followup">Followup</input>
 
-	<form action="" method="post">
+	<form action="workup/" method="post">
 	    {% csrf_token %}
 	    {{ workup_form }}
 	    <input type="submit" value="Submit" />
 	</form>
-	<form action="" method="post">
+	<form action="followup/" method="post">
 	    {% csrf_token %}
 	    {{ followup_form }}
 	    <input type="submit" value="Submit" />

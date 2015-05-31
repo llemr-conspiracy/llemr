@@ -97,7 +97,7 @@ class ClinicDate(models.Model):
 
 
 class Note(models.Model):
-    author = models.ForeignKey(Provider)
+    author = models.ForeignKey(Provider, blank=True)
     patient = models.ForeignKey(Patient)
 
 

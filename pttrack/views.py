@@ -5,6 +5,8 @@ from django.core.urlresolvers import reverse
 from . import models as mymodels
 from . import forms as myforms
 
+import datetime
+
 # Create your views here.from django.http import HttpResponse
 
 
@@ -18,20 +20,30 @@ def clindate(request, clindate):
     return HttpResponse("Clinic date %s" % year+" "+month+" "+day)
 
 
+def followup(request, pt_id):
+    pt = get_object_or_404(mymodels.Patient, pk=pt_id)
+    form = myforms.FollowupForm(request.POST)
+
+    if form.is_valid():
+        fu = mymodels.Followup(**form.cleaned_data)
+        fu.written_date = datetime.datetime.now()
+        fu.patient = pt
+        fu.save()
+        pt.save()
+
+        return HttpResponseRedirect(reverse("patient", args=(pt.id,)))
+
+
 def patient(request, pt_id):
+    pt = get_object_or_404(mymodels.Patient, pk=pt_id)
 
-    if request.method == 'POST':
-        pass
-    else:
-        pt = get_object_or_404(mymodels.Patient, pk=pt_id)
+    workup_form = myforms.WorkupForm()
+    followup_form = myforms.FollowupForm()
 
-        workup_form = myforms.WorkupForm()
-        followup_form = myforms.FollowupForm()
-
-        return render(request, 'pttrack/patient.html', {'patient': pt,
-                                                        'workup_form': workup_form,
-                                                        'followup_form': followup_form
-                                                        })
+    return render(request, 'pttrack/patient.html', {'patient': pt,
+                                                    'workup_form': workup_form,
+                                                    'followup_form': followup_form
+                                                    })
 
 
 def intake(request):
