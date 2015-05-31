@@ -44,7 +44,6 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 </div>
 
 <div class="container">
-<<<<<<< HEAD
 	<h3>Add a new note</h3>
 	<form action="">
 	<input type="radio" name="type" value="workup">Workup</input>
@@ -60,7 +59,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
     </div>
 
 	<form action="workup/" method="post" ng-show="workup">
->>>>>>> f6602e97ee99a0bfbf16381c66acfff85f8bf058
+
 	    {% csrf_token %}
 	    {{ workup_form }}
 	    <input type="submit" value="Submit" />
