@@ -10,9 +10,6 @@ import datetime
 # Create your views here.from django.http import HttpResponse
 
 
-def index(request):
-    model= mymodels.Patient
-
 def clindate(request, clindate):
     (year, month, day) = clindate.split("-")
 
