@@ -1,7 +1,7 @@
 from django.db import models
-from datetime import date
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
+import django.utils.timezone
 # Create your models here.
 
 
@@ -94,11 +94,11 @@ class ClinicDate(models.Model):
     gcal_id = models.CharField(max_length=50)
 
     def is_specialty(self):
-        return not self.clinic_type is self.SAT
+        return not self.clinic_type is self.BASIC
 
 
 class Note(models.Model):
-    author = models.ForeignKey(Provider)
+    author = models.ForeignKey(Provider, blank=True)
     patient = models.ForeignKey(Patient)
 
 
@@ -128,5 +128,5 @@ class Workup(Note):
 class Followup(Note):
     note = models.TextField()
 
-    written_date = models.DateField()
+    written_date = models.DateTimeField(default=django.utils.timezone.now)
     next_action = models.DateField(blank=True)

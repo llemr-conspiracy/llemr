@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
-from django.views import generic
-
 from . import models as mymodels
+from . import forms as myforms
+
+import datetime
 
 # Create your views here.from django.http import HttpResponse
 
@@ -18,13 +19,33 @@ def clindate(request, clindate):
     return HttpResponse("Clinic date %s" % year+" "+month+" "+day)
 
 
-class DetailView(generic.DetailView):
-    model = mymodels.Patient
-    template_name = 'pttrack/patient.html'
+def followup(request, pt_id):
+    pt = get_object_or_404(mymodels.Patient, pk=pt_id)
+    form = myforms.FollowupForm(request.POST)
+
+    if form.is_valid():
+        fu = mymodels.Followup(**form.cleaned_data)
+        fu.written_date = datetime.datetime.now()
+        fu.patient = pt
+        fu.save()
+        pt.save()
+
+        return HttpResponseRedirect(reverse("patient", args=(pt.id,)))
+
+
+def patient(request, pt_id):
+    pt = get_object_or_404(mymodels.Patient, pk=pt_id)
+
+    workup_form = myforms.WorkupForm()
+    followup_form = myforms.FollowupForm()
+
+    return render(request, 'pttrack/patient.html', {'patient': pt,
+                                                    'workup_form': workup_form,
+                                                    'followup_form': followup_form
+                                                    })
+
 
 def intake(request):
-    from . import forms as myforms
-
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
