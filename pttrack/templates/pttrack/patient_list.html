@@ -1,11 +1,10 @@
-
-
 {% block content %}
     <h2>Patients</h2>
     <ul>
     <table border="1" style="width:100%">
         {% for patient in object_list %}
             <tr>
+            <td><a href="{{ patient.pk }}/">{{ patient.pk }}</a></td>
             <td>{{ patient.first_name }}</td>
             <td>{{ patient.last_name }}</td>
             <td>{{ patient.city }}</td>
