@@ -36,9 +36,9 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 
 <div class="container">
 	<h3>Notes for {{patient.first_name}} {{patient.last_name}}</h3>
-	{% for note in patient.note_set.all %}
+	{% for note in patient.followup_set.all %}
 	<div class="container">
-		<p> note </p>
+		<p> {{ note.note }} </p>
 	</div>
 	{% endfor %}
 </div>
