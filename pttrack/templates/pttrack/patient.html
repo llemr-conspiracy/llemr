@@ -43,24 +43,31 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	{% endfor %}
 </div>
 
+<script>
+ angular.module('radio', [])
+   .controller('RadioCtrl', ['$scope', function($scope) {
+     $scope.val = '1';
+   }]);
+</script>
+
 <div class="container">
 
-	<h3>New Note</h3>
-    <div class="btn-group">
-        <label class="btn btn-primary" ng-model="workup" btn-radio="true">Workup</label>
-        <label class="btn btn-primary" ng-model="workup" btn-radio="false">Followup</label>
-    </div>
-
-	<form action="workup/" method="post" ng-show="workup">
-	    {% csrf_token %}
-	    {{ workup_form }}
-	    <input type="submit" value="Submit" />
-	</form>
-	<form action="followup/" method="post" ng-hide="workup">
-	    {% csrf_token %}
-	    {{ followup_form }}
-	    <input type="submit" value="Submit" />
-	</form>
+	<div class="col-md-6">
+		<h3>New Workup</h3>
+		<form action="workup/" method="post" ng-show="workup">
+		    {% csrf_token %}
+		    {{ workup_form }}
+		    <input type="submit" value="Submit" />
+		</form>
+	</div>
+	<div class="col-md-6">
+		<h3>New Followup</h3>
+		<form action="followup/" method="post" ng-hide="workup">
+		    {% csrf_token %}
+		    {{ followup_form }}
+		    <input type="submit" value="Submit" />
+		</form>
+	</div>
 </div>
 
 {% endblock %}
