@@ -17,4 +17,30 @@
 </div>
 
 <p>Language: {{patient.language}}</p>
-<p>DOB: {{patient.date_of_birth}}
+<p>DOB: {{patient.date_of_birth}}</p>
+
+</div class="container">
+	<h3>Notes for {{patient.first_name}} {{patient.last_name}}</h3>
+	{% for note in patient.note_set.all %}
+	<div class="container">
+		<p> note </p>
+	</div>
+	{% endfor %}
+</div>
+
+<div class="container">
+	<h3>Add a new note</h3>
+	<input type="radio" value="workup">Workup</input>
+	<input type="radio" value="followup">Followup</input>
+
+	<form action="" method="post">
+	    {% csrf_token %}
+	    {{ workup_form }}
+	    <input type="submit" value="Submit" />
+	</form>
+	<form action="" method="post">
+	    {% csrf_token %}
+	    {{ followup_form }}
+	    <input type="submit" value="Submit" />
+	</form>
+</div>
