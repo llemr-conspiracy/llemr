@@ -24,6 +24,10 @@ class Language(models.Model):
 
 
 class Person(models.Model):
+
+    class Meta:
+        abstract = True
+
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True)
