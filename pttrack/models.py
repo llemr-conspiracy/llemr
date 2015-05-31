@@ -141,6 +141,9 @@ class ClinicDate(models.Model):
 
 
 class Note(models.Model):
+    class Meta:
+        abstract = True
+
     author = models.ForeignKey(Provider, blank=True)
     patient = models.ForeignKey(Patient)
 
