@@ -1,5 +1,8 @@
 {% extends "pttrack/base.html" %}
 
+{# unclear if this should be done in base.html or here... #}
+{% load bootstrap3 %}
+
 {% block title %}
 Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
 {% endblock %}
@@ -8,7 +11,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 <h1>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}</h1>
 <p class="lead">{{ patient.age }} y/o {{ patient.ethnicity }} {{ patient.gender }}</p>
 
-<h3>Status: {{ patient.comp_status }}<h3>
+<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
 {% endblock %}
 
 {% block content %}
@@ -38,37 +41,39 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	<h3>Notes for {{patient.first_name}} {{patient.last_name}}</h3>
 	{% for note in patient.followup_set.all %}
 	<div class="container">
-		<p> {{ note.note }} - Date written: {{ note.written_date }}</p>
+		<p> {{ note.note }} </p>
+		<p class="text-muted"> by {{ note.author.name }} at {{ note.written_date }}</p>
 	</div>
 	{% endfor %}
 </div>
 
-<div class="container">
-	<h3>Add a new note</h3>
-	<form action="">
-	<input type="radio" name="type" value="workup">Workup</input>
-	<input type="radio" name="type" value="followup">Followup</input>
-	</form>
-	<form action="workup/" method="post">
-=======
+<div class="container" ng-controller="NoteFormCtrl">
+	<div class="row">
+		<div class="col-md-8">
+			<h3>Add a New Note</h3>
+		</div>
+		<div class="col-md-4">
+			<div class="btn-group">
+		        <label class="btn btn-primary" ng-model="noteType" btn-radio="'Workup'">Workup</label>
+		        <label class="btn btn-primary" ng-model="noteType" btn-radio="'Followup'">Followup</label>
+			</div>
+		</div>
+	</div>
 
-	<h3>New Note</h3>
-    <div class="btn-group">
-        <label class="btn btn-primary" ng-model="workup" btn-radio="true">Workup</label>
-        <label class="btn btn-primary" ng-model="workup" btn-radio="false">Followup</label>
-    </div>
-
-	<form action="workup/" method="post" ng-show="workup">
-
-	    {% csrf_token %}
-	    {{ workup_form }}
-	    <input type="submit" value="Submit" />
-	</form>
-	<form action="followup/" method="post" ng-hide="workup">
-	    {% csrf_token %}
-	    {{ followup_form }}
-	    <input type="submit" value="Submit" />
-	</form>
+	<div class="form-group">
+		<form action="workup/" method="post" ng-show="workup">
+		    {% csrf_token %}
+		    {% bootstrap_form workup_form %}
+		    <input type="submit" class="btn btn-primary" value="Submit" />
+		</form>
+	</div>
+	<div class="form-group">
+		<form action="followup/" method="post" ng-hide="workup">
+		    {% csrf_token %}
+		    {% bootstrap_form followup_form %}
+		    <input type="submit" class="btn btn-primary" value="Submit" />
+		</form>
+	</div>
 </div>
 
 {% endblock %}

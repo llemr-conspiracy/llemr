@@ -10,6 +10,10 @@ import datetime
 # Create your views here.from django.http import HttpResponse
 
 
+def index(request):
+    model = mymodels.Patient
+
+
 def clindate(request, clindate):
     (year, month, day) = clindate.split("-")
 
@@ -23,6 +27,8 @@ def followup(request, pt_id):
     if form.is_valid():
         fu = mymodels.Followup(patient=pt, **form.cleaned_data)
         fu.written_date = datetime.datetime.now()
+
+        #TODO: use authentication to determine provider
         fu.author = mymodels.Provider.objects.get(id=1)
         fu.save()
         pt.save()

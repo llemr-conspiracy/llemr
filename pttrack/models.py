@@ -40,8 +40,14 @@ class Person(models.Model):
     GENDER_OPTS = ((MALE, "Male"),
                    (FEMALE, "Female"),
                    (OTHER, "Other"))
-    gender = models.CharField(max_length=1,
-                              choices=GENDER_OPTS)
+    gender_code = models.CharField(max_length=1,
+                                   choices=GENDER_OPTS)
+
+    def gender(self, short=False):
+        if short:
+            return self.gender_code
+        else:
+            return dict(self.GENDER_OPTS)[self.gender_code]
 
     def name(self, reverse=True, middle_short=False):
         if self.middle_name:
@@ -89,9 +95,16 @@ class Patient(Person):
     comp_status = models.CharField(max_length=4,
                                    choices=COMP_OPTS)
 
+    def status(self):
+        type_dict = dict(self.COMP_OPTS)
+        return type_dict[self.comp_status]
+
     def age(self):
         import datetime
         return (datetime.date.today()-self.date_of_birth).days/365
+
+    def __unicode__(self):
+        return self.name()
 
 
 class Provider(Person):
@@ -116,6 +129,10 @@ class Provider(Person):
     def is_attending(self):
         return self.provider_type == self.ATTENDING
 
+    def __unicode__(self):
+        type_dict = dict(self.TYPE)
+        return self.name()+" ("+type_dict[self.provider_type]+")"
+
 
 class ClinicDate(models.Model):
     BASIC = "BASIC"
@@ -138,6 +155,10 @@ class ClinicDate(models.Model):
 
     def is_specialty(self):
         return not self.clinic_type is self.BASIC
+
+    def __unicode__(self):
+        type_dict = dict(self.CLINIC_TYPES)
+        return type_dict[self.clinic_type]+" ("+str(self.date)+")"
 
 
 class Note(models.Model):
@@ -176,3 +197,6 @@ class Followup(Note):
 
     written_date = models.DateTimeField(default=django.utils.timezone.now)
     next_action = models.DateField(blank=True)
+
+    def __unicode__(self):
+        return "Followup: "+self.patient.name()+" on "+str(self.written_date)
