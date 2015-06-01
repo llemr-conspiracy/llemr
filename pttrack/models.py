@@ -23,6 +23,13 @@ class Language(models.Model):
         return self.language_name
 
 
+class ActionInstruction(models.Model):
+    instruction = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return self.instruction
+
+
 class Person(models.Model):
 
     class Meta:
@@ -43,11 +50,8 @@ class Person(models.Model):
     gender_code = models.CharField(max_length=1,
                                    choices=GENDER_OPTS)
 
-    def gender(self, short=False):
-        if short:
-            return self.gender_code
-        else:
-            return dict(self.GENDER_OPTS)[self.gender_code]
+    def gender(self):
+        return dict(self.GENDER_OPTS)[self.gender_code]
 
     def name(self, reverse=True, middle_short=False):
         if self.middle_name:
@@ -102,6 +106,12 @@ class Patient(Person):
     def age(self):
         import datetime
         return (datetime.date.today()-self.date_of_birth).days/365
+
+    def notes(self):
+        l = []
+        l.extend(self.followup_set)
+        l.extend(self.workup_set)
+        return l.sort(key=lambda(k): k.date)
 
     def __unicode__(self):
         return self.name()
@@ -169,6 +179,17 @@ class Note(models.Model):
     patient = models.ForeignKey(Patient)
 
 
+class ActionItem(Note):
+    written_date = models.DateTimeField(default=django.utils.timezone.now)
+    next_action = models.DateField()
+    comments = models.CharField(max_length=300)
+    instruction = models.ForeignKey(ActionInstruction)
+    done = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return "AA: "+self.instruction+" on "+str(self.next_action)
+
+
 class Workup(Note):
     clinic_day = models.ForeignKey(ClinicDate)
 
@@ -191,12 +212,22 @@ class Workup(Note):
 
     plan = models.TextField()
 
+    def __unicode__(self):
+        return "Workup: "+self.patient.name()+" on "+str(self.clinic_day.date)
+
+    def date(self):
+        import datetime
+        return datetime.date(self.clinic_day.date)
+
 
 class Followup(Note):
     note = models.TextField()
 
     written_date = models.DateTimeField(default=django.utils.timezone.now)
-    next_action = models.DateField(blank=True)
 
     def __unicode__(self):
         return "Followup: "+self.patient.name()+" on "+str(self.written_date)
+
+    def date(self):
+        import datetime
+        return datetime.date(self.written_date)

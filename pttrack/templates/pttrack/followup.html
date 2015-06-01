@@ -1,0 +1,25 @@
+{% extends "pttrack/base.html" %}
+
+{% block title %}
+Followup {{ patient.name }}
+{% endblock %}
+
+{% block header %}
+<h1>New Followup for {{ patient.name }}</h1>
+<p class="lead">Add a new followup note.</p>
+{% endblock %}
+
+{% block content %}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<div class="container">
+	<form action="" method="post">
+	    {% csrf_token %}
+	    {{ form }}
+	    {{ action_item }}
+	    <input type="submit" value="Submit" />
+	</form>
+</div>
+
+{% endblock %}

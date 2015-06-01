@@ -1,13 +1,35 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
+import django.utils.timezone
 
 from . import models as mymodels
 from . import forms as myforms
 
 import datetime
 
-# Create your views here.from django.http import HttpResponse
+
+def get_current_provider():
+    return mymodels.Provider.objects.get(id=1)
+
+
+def get_cal():
+    import requests
+
+    public_key = 'AIzaSyDllIaMvMrMYrTxHRTzR9R9Ze23-Cf8iRU'
+    calendar_id = "7eie7k06g255baksfshfhp0m28%40group.calendar.google.com"
+
+    payload = {"key": public_key,
+               "singleEvents": True,
+               # "timeMin": datetime.datetime.now(),
+               "orderBy": "startTime"}
+
+    r = requests.get("".join(["https://www.googleapis.com/calendar/v3/calendars/",
+                              calendar_id,
+                              '/events']),
+                     params=payload)
+
+    return r.json()
 
 
 def index(request):
@@ -20,32 +42,63 @@ def clindate(request, clindate):
     return HttpResponse("Clinic date %s" % year+" "+month+" "+day)
 
 
-def followup(request, pt_id):
+def workup(request, pt_id):
     pt = get_object_or_404(mymodels.Patient, pk=pt_id)
-    form = myforms.FollowupForm(request.POST)
+    form = myforms.WorkupForm(request.POST)
 
     if form.is_valid():
-        fu = mymodels.Followup(patient=pt, **form.cleaned_data)
-        fu.written_date = datetime.datetime.now()
+        clindates = mymodels.ClinicDate.objects.filter(
+            date=django.utils.timezone.now)
+        if len(clindates) == 0:
+            cal = get_cal()
 
-        #TODO: use authentication to determine provider
-        fu.author = mymodels.Provider.objects.get(id=1)
-        fu.save()
+            return HttpResponse(str(cal))
+
+        elif len(clindates) > 1:
+            return HttpResponse("I'm sorry, we're not used to having >1" +
+                                "clinics on one day. There's a big problem!")
+        else:
+            clindate = clindates[0]
+
+        wu = mymodels.Workup(patient=pt, **form.cleaned_data)
+        wu.author = get_current_provider()
+        wu.clinic_day = clindate
+
+        wu.save()
         pt.save()
 
         return HttpResponseRedirect(reverse("patient", args=(pt.id,)))
+
+def followup(request, pt_id):
+
+    if(request.method == 'POST'):
+        pt = get_object_or_404(mymodels.Patient, pk=pt_id)
+        form = myforms.FollowupForm(request.POST)
+
+        if form.is_valid():
+            fu = mymodels.Followup(patient=pt, **form.cleaned_data)
+            fu.written_date = django.utils.timezone.now
+
+            #TODO: use authentication to determine provider
+            fu.author = get_current_provider()
+            fu.save()
+            pt.save()
+
+            return HttpResponseRedirect(reverse("patient", args=(pt.id,)))
+
+    else:
+        pt = get_object_or_404(mymodels.Patient, pk=pt_id)
+        form = myforms.FollowupForm()
+        action_item = myforms.ActionItemForm()
+
+        return render(request, 'pttrack/followup.html', {'patient': pt,
+                                                         'form': form})
 
 
 def patient(request, pt_id):
     pt = get_object_or_404(mymodels.Patient, pk=pt_id)
 
-    workup_form = myforms.WorkupForm()
-    followup_form = myforms.FollowupForm()
-
-    return render(request, 'pttrack/patient.html', {'patient': pt,
-                                                    'workup_form': workup_form,
-                                                    'followup_form': followup_form
-                                                    })
+    return render(request, 'pttrack/patient.html', {'patient': pt})
 
 
 def intake(request):
