@@ -40,8 +40,14 @@ class Person(models.Model):
     GENDER_OPTS = ((MALE, "Male"),
                    (FEMALE, "Female"),
                    (OTHER, "Other"))
-    gender = models.CharField(max_length=1,
-                              choices=GENDER_OPTS)
+    gender_code = models.CharField(max_length=1,
+                                   choices=GENDER_OPTS)
+
+    def gender(self, short=False):
+        if short:
+            return self.gender_code
+        else:
+            return dict(self.GENDER_OPTS)[self.gender_code]
 
     def name(self, reverse=True, middle_short=False):
         if self.middle_name:
