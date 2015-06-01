@@ -11,7 +11,8 @@ import datetime
 
 
 def index(request):
-    model= mymodels.Patient
+    model = mymodels.Patient
+
 
 def clindate(request, clindate):
     (year, month, day) = clindate.split("-")

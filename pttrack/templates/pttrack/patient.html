@@ -1,5 +1,8 @@
 {% extends "pttrack/base.html" %}
 
+{# unclear if this should be done in base.html or here... #}
+{% load bootstrap3 %}
+
 {% block title %}
 Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
 {% endblock %}
@@ -39,33 +42,36 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	{% for note in patient.followup_set.all %}
 	<div class="container">
 		<p> {{ note.note }} </p>
+		<p class="text-muted"> by {{ note.author.name }} at {{ note.written_date }}</p>
 	</div>
 	{% endfor %}
 </div>
 
-<script>
- angular.module('radio', [])
-   .controller('RadioCtrl', ['$scope', function($scope) {
-     $scope.val = '1';
-   }]);
-</script>
+<div class="container" ng-controller="NoteFormCtrl">
+	<div class="row">
+		<div class="col-md-8">
+			<h3>Add a New Note</h3>
+		</div>
+		<div class="col-md-4">
+			<div class="btn-group">
+		        <label class="btn btn-primary" ng-model="noteType" btn-radio="'Workup'">Workup</label>
+		        <label class="btn btn-primary" ng-model="noteType" btn-radio="'Followup'">Followup</label>
+			</div>
+		</div>
+	</div>
 
-<div class="container">
-
-	<div class="col-md-6">
-		<h3>New Workup</h3>
+	<div class="form-group">
 		<form action="workup/" method="post" ng-show="workup">
 		    {% csrf_token %}
-		    {{ workup_form }}
-		    <input type="submit" value="Submit" />
+		    {% bootstrap_form workup_form %}
+		    <input type="submit" class="btn btn-primary" value="Submit" />
 		</form>
 	</div>
-	<div class="col-md-6">
-		<h3>New Followup</h3>
+	<div class="form-group">
 		<form action="followup/" method="post" ng-hide="workup">
 		    {% csrf_token %}
-		    {{ followup_form }}
-		    <input type="submit" value="Submit" />
+		    {% bootstrap_form followup_form %}
+		    <input type="submit" class="btn btn-primary" value="Submit" />
 		</form>
 	</div>
 </div>
