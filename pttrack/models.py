@@ -89,6 +89,10 @@ class Patient(Person):
     comp_status = models.CharField(max_length=4,
                                    choices=COMP_OPTS)
 
+    def status(self):
+        type_dict = dict(self.COMP_OPTS)
+        return type_dict[self.comp_status]
+
     def age(self):
         import datetime
         return (datetime.date.today()-self.date_of_birth).days/365

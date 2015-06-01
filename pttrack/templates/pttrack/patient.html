@@ -11,7 +11,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 <h1>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}</h1>
 <p class="lead">{{ patient.age }} y/o {{ patient.ethnicity }} {{ patient.gender }}</p>
 
-<h3>Status: {{ patient.comp_status }}<h3>
+<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
 {% endblock %}
 
 {% block content %}
