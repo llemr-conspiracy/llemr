@@ -93,6 +93,9 @@ class Patient(Person):
         import datetime
         return (datetime.date.today()-self.date_of_birth).days/365
 
+    def __unicode__(self):
+        return self.name()
+
 
 class Provider(Person):
 
@@ -116,6 +119,10 @@ class Provider(Person):
     def is_attending(self):
         return self.provider_type == self.ATTENDING
 
+    def __unicode__(self):
+        type_dict = dict(self.TYPE)
+        return self.name()+" ("+type_dict[self.provider_type]+")"
+
 
 class ClinicDate(models.Model):
     BASIC = "BASIC"
@@ -138,6 +145,10 @@ class ClinicDate(models.Model):
 
     def is_specialty(self):
         return not self.clinic_type is self.BASIC
+
+    def __unicode__(self):
+        type_dict = dict(self.CLINIC_TYPES)
+        return type_dict[self.clinic_type]+" ("+str(self.date)+")"
 
 
 class Note(models.Model):
@@ -176,3 +187,6 @@ class Followup(Note):
 
     written_date = models.DateTimeField(default=django.utils.timezone.now)
     next_action = models.DateField(blank=True)
+
+    def __unicode__(self):
+        return "Followup: "+self.patient.name()+" on "+str(self.written_date)
