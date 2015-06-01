@@ -8,18 +8,19 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 {% endblock %}
 
 {% block header %}
-<div class="container-float col-md-8">
+<div class="container-float col-md-7">
 	<h1>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}</h1>
 	<p class="lead">{{ patient.age }} y/o {{ patient.ethnicity }} {{ patient.gender | lower }}</p>
 	<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
 </div>
-<div class="container-float col-md-4">
-	<h3> Actions </h3>
+<div class="container-float col-md-5">
+	<h3 class='text-center'> Actions </h3>
 	<div class="btn-group">
 	    <!-- TODO: make links -->
 	    <a class="btn btn-primary" href="followup/" role="button">Followup</a>
 	    <a class="btn btn-success" href="workup/" role="button">Workup</a>
 	    <a class="btn btn-info" href="actionitem/" role="button">Action Item</a>
+	    <a class="btn btn-warning" href="document/" role="button">Upload Document</a>
 	</div>
 </div>
 {% endblock %}

@@ -23,11 +23,25 @@ class Language(models.Model):
         return self.language_name
 
 
+class Ethnicity(models.Model):
+    ethnicity_name = models.CharField(max_length=50)
+
+
 class ActionInstruction(models.Model):
     instruction = models.CharField(max_length=50)
 
     def __unicode__(self):
         return self.instruction
+
+
+class ProviderType(models.Model):
+    long_name = models.CharField(max_length=100)
+    short_name = models.CharField(max_length=10)
+
+
+class Gender(models.Model):
+    long_name = models.CharField(max_length=30)
+    short_name = models.CharField(max_length=1)
 
 
 class Person(models.Model):
@@ -41,17 +55,7 @@ class Person(models.Model):
 
     phone = models.CharField(max_length=50)
 
-    MALE = "M"
-    FEMALE = "F"
-    OTHER = "O"
-    GENDER_OPTS = ((MALE, "Male"),
-                   (FEMALE, "Female"),
-                   (OTHER, "Other"))
-    gender_code = models.CharField(max_length=1,
-                                   choices=GENDER_OPTS)
-
-    def gender(self):
-        return dict(self.GENDER_OPTS)[self.gender_code]
+    gender_type = models.ForeignKey(Gender)
 
     def name(self, reverse=True, middle_short=False):
         if self.middle_name:
@@ -84,24 +88,7 @@ class Patient(Person):
     date_of_birth = models.DateField()
     language = models.ForeignKey(Language)
 
-    #TODO: load ethnicity options from a file?
-    ethnicity = models.CharField(max_length=50)
-
-    lost = "LTFO"
-    completed = "COMP"
-    binned = "BIN"
-    PCP_followup = "PCP"
-    COMP_OPTS = ((lost, "Filed - Lost to follow up"),
-                 (completed, "Filed - encounter completed"),
-                 (binned, "In WashU Bin"),
-                 (PCP_followup, "PCP Referral Follow-up"))
-
-    comp_status = models.CharField(max_length=4,
-                                   choices=COMP_OPTS)
-
-    def status(self):
-        type_dict = dict(self.COMP_OPTS)
-        return type_dict[self.comp_status]
+    ethnicity = models.ForeignKey(Ethnicity)
 
     def age(self):
         import datetime
@@ -119,64 +106,37 @@ class Patient(Person):
 
 class Provider(Person):
 
-    ATTENDING = "ATTEND"
-    CLINICAL = "CLIN"
-    PRECLINICAL = "PRECLIN"
-    TYPE = ((ATTENDING, "Attending Physician"),
-            (CLINICAL, "Clinical Medical Student"),
-            (PRECLINICAL, "Preclinical Medical Student"))
-    provider_type = models.CharField(max_length=6,
-                                     choices=TYPE)
-
     email = models.EmailField()
 
-    def is_preclinical(self):
-        return self.provider_type == self.PRECLINICAL
 
-    def is_clinical(self):
-        return self.provider_type == self.CLINICAL
-
-    def is_attending(self):
-        return self.provider_type == self.ATTENDING
-
-    def __unicode__(self):
-        type_dict = dict(self.TYPE)
-        return self.name()+" ("+type_dict[self.provider_type]+")"
+class ClinicType(models.Model):
+    name = models.CharField(max_length=50)
 
 
 class ClinicDate(models.Model):
-    BASIC = "BASIC"
-    PSYCH = "PSYCH"
-    ORTHO = "ORTHO"
-    DERM = "DERMA"
+    clinic_type = models.ForeignKey(ClinicType)
 
-    CLINIC_TYPES = ((BASIC, '(Saturday) Basic Care Clinic'),
-                    (PSYCH, 'Depression & Anxiety Specialty'),
-                    (ORTHO, 'Muscle and Joint Pain Specialty'),
-                    (DERM, 'Dermatology Specialty'))
-
-    clinic_type = models.CharField(max_length=5,
-                                   choices=CLINIC_TYPES,
-                                   default=BASIC)
-
-    #TODO: don't override "date" class with this variable
-    date = models.DateField()
+    clinic_date = models.DateField()
     gcal_id = models.CharField(max_length=50)
 
-    def is_specialty(self):
-        return not self.clinic_type is self.BASIC
-
     def __unicode__(self):
-        type_dict = dict(self.CLINIC_TYPES)
-        return type_dict[self.clinic_type]+" ("+str(self.date)+")"
+        return str(self.clinic_type)+" ("+str(self.clinic_date)+")"
 
 
 class Note(models.Model):
     class Meta:
         abstract = True
 
-    author = models.ForeignKey(Provider, blank=True)
+    author = models.ForeignKey(Provider)
+    author_type = models.ForeignKey(ProviderType)
     patient = models.ForeignKey(Patient)
+
+
+# class Documents(Note):
+#     image
+#     comments
+#     title
+#     upload type (i.e. lab, prescription)
 
 
 class ActionItem(Note):
@@ -193,27 +153,21 @@ class ActionItem(Note):
 class Workup(Note):
     clinic_day = models.ForeignKey(ClinicDate)
 
+    #TODO: careteam
+
     CC = models.CharField(max_length=300)
     #TODO: CC categories (ICD10?)
 
-    HPI = models.TextField()
-    PMH = models.TextField()
-    PSH = models.TextField()
-    SocHx = models.TextField()
-    FamHx = models.TextField()
-    allergies = models.TextField()
-    meds = models.TextField()
+    HandP = models.TextField()
+    AandP = models.TextField()
 
-    diagnosis = models.CharField(max_length=100)
     #TODO: diagnosis categories (ICD10?)
-
-    #TODO: process as separate model
-    labs = models.TextField()
+    diagnosis = models.CharField(max_length=100)
 
     plan = models.TextField()
 
-    def __unicode__(self):
-        return "Workup: "+self.patient.name()+" on "+str(self.clinic_day.date)
+    # def __unicode__(self):
+    #     return "Workup: "+self.patient.name()+" on "+str(self.clinic_day.date)
 
     def date(self):
         import datetime
