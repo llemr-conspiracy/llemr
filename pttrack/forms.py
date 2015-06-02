@@ -20,3 +20,15 @@ class FollowupForm(ModelForm):
     class Meta:
         model = models.Followup
         exclude = ['patient', 'written_date', 'author']
+
+
+class ActionItemForm(ModelForm):
+    class Meta:
+        model = models.ActionItem
+        exclude = []
+
+
+class ClinicDateForm(ModelForm):
+    class Meta:
+        model = models.ClinicDate
+        exclude = ['clinic_date', 'gcal_id']

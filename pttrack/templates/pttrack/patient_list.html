@@ -5,6 +5,12 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="container">
+    <p> Filter by: </p>
+</div>
+
+<div class="container">
     <table class="table">
         {% for patient in object_list %}
             <tr>
@@ -20,4 +26,5 @@
             </tr>
         {% endfor %}
     </table>
+</div>
 {% endblock %}

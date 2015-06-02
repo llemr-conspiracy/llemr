@@ -13,12 +13,45 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
+            name='ActionInstruction',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('instruction', models.CharField(max_length=50)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ActionItem',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('written_date', models.DateTimeField(default=django.utils.timezone.now)),
+                ('next_action', models.DateField()),
+                ('comments', models.CharField(max_length=300)),
+                ('done', models.BooleanField(default=False)),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
             name='ClinicDate',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('clinic_type', models.CharField(default=b'BASIC', max_length=5, choices=[(b'BASIC', b'(Saturday) Basic Care Clinic'), (b'PSYCH', b'Depression & Anxiety Specialty'), (b'ORTHO', b'Muscle and Joint Pain Specialty'), (b'DERMA', b'Dermatology Specialty')])),
-                ('date', models.DateField()),
+                ('clinic_date', models.DateField()),
                 ('gcal_id', models.CharField(max_length=50)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ClinicType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=50)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Ethnicity',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
@@ -27,16 +60,23 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('note', models.TextField()),
                 ('written_date', models.DateTimeField(default=django.utils.timezone.now)),
-                ('next_action', models.DateField(blank=True)),
             ],
             options={
                 'abstract': False,
             },
         ),
         migrations.CreateModel(
+            name='Gender',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('long_name', models.CharField(max_length=30)),
+                ('short_name', models.CharField(max_length=1)),
+            ],
+        ),
+        migrations.CreateModel(
             name='Language',
             fields=[
-                ('language_name', models.CharField(max_length=50, serialize=False, primary_key=True)),
+                ('name', models.CharField(max_length=50, serialize=False, primary_key=True)),
             ],
         ),
         migrations.CreateModel(
@@ -47,14 +87,13 @@ class Migration(migrations.Migration):
                 ('last_name', models.CharField(max_length=100)),
                 ('middle_name', models.CharField(max_length=100, blank=True)),
                 ('phone', models.CharField(max_length=50)),
-                ('gender', models.CharField(max_length=1, choices=[(b'M', b'Male'), (b'F', b'Female'), (b'O', b'Other')])),
                 ('address', models.CharField(max_length=200)),
                 ('city', models.CharField(default=b'St. Louis', max_length=50)),
                 ('state', models.CharField(default=b'MO', max_length=2)),
                 ('zip_code', models.CharField(max_length=5, validators=[pttrack.models.validate_zip])),
                 ('date_of_birth', models.DateField()),
-                ('ethnicity', models.CharField(max_length=50)),
-                ('comp_status', models.CharField(max_length=4, choices=[(b'LTFO', b'Filed - Lost to follow up'), (b'COMP', b'Filed - encounter completed'), (b'BIN', b'In WashU Bin'), (b'PCP', b'PCP Referral Follow-up')])),
+                ('ethnicity', models.ForeignKey(to='pttrack.Ethnicity')),
+                ('gender', models.ForeignKey(to='pttrack.Gender')),
                 ('language', models.ForeignKey(to='pttrack.Language')),
             ],
             options={
@@ -69,30 +108,32 @@ class Migration(migrations.Migration):
                 ('last_name', models.CharField(max_length=100)),
                 ('middle_name', models.CharField(max_length=100, blank=True)),
                 ('phone', models.CharField(max_length=50)),
-                ('gender', models.CharField(max_length=1, choices=[(b'M', b'Male'), (b'F', b'Female'), (b'O', b'Other')])),
-                ('provider_type', models.CharField(max_length=6, choices=[(b'ATTEND', b'Attending Physician'), (b'CLIN', b'Clinical Medical Student'), (b'PRECLIN', b'Preclinical Medical Student')])),
                 ('email', models.EmailField(max_length=254)),
+                ('gender', models.ForeignKey(to='pttrack.Gender')),
             ],
             options={
                 'abstract': False,
             },
         ),
         migrations.CreateModel(
+            name='ProviderType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('long_name', models.CharField(max_length=100)),
+                ('short_name', models.CharField(max_length=10)),
+            ],
+        ),
+        migrations.CreateModel(
             name='Workup',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('CC', models.CharField(max_length=300)),
-                ('HPI', models.TextField()),
-                ('PMH', models.TextField()),
-                ('PSH', models.TextField()),
-                ('SocHx', models.TextField()),
-                ('FamHx', models.TextField()),
-                ('allergies', models.TextField()),
-                ('meds', models.TextField()),
+                ('HandP', models.TextField()),
+                ('AandP', models.TextField()),
                 ('diagnosis', models.CharField(max_length=100)),
-                ('labs', models.TextField()),
                 ('plan', models.TextField()),
-                ('author', models.ForeignKey(to='pttrack.Provider', blank=True)),
+                ('author', models.ForeignKey(to='pttrack.Provider')),
+                ('author_type', models.ForeignKey(to='pttrack.ProviderType')),
                 ('clinic_day', models.ForeignKey(to='pttrack.ClinicDate')),
                 ('patient', models.ForeignKey(to='pttrack.Patient')),
             ],
@@ -103,10 +144,40 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='followup',
             name='author',
-            field=models.ForeignKey(to='pttrack.Provider', blank=True),
+            field=models.ForeignKey(to='pttrack.Provider'),
         ),
         migrations.AddField(
             model_name='followup',
+            name='author_type',
+            field=models.ForeignKey(to='pttrack.ProviderType'),
+        ),
+        migrations.AddField(
+            model_name='followup',
+            name='patient',
+            field=models.ForeignKey(to='pttrack.Patient'),
+        ),
+        migrations.AddField(
+            model_name='clinicdate',
+            name='clinic_type',
+            field=models.ForeignKey(to='pttrack.ClinicType'),
+        ),
+        migrations.AddField(
+            model_name='actionitem',
+            name='author',
+            field=models.ForeignKey(to='pttrack.Provider'),
+        ),
+        migrations.AddField(
+            model_name='actionitem',
+            name='author_type',
+            field=models.ForeignKey(to='pttrack.ProviderType'),
+        ),
+        migrations.AddField(
+            model_name='actionitem',
+            name='instruction',
+            field=models.ForeignKey(to='pttrack.ActionInstruction'),
+        ),
+        migrations.AddField(
+            model_name='actionitem',
             name='patient',
             field=models.ForeignKey(to='pttrack.Patient'),
         ),

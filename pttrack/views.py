@@ -16,10 +16,9 @@ def get_current_provider():
 def get_cal():
     import requests
 
-    public_key = 'AIzaSyDllIaMvMrMYrTxHRTzR9R9Ze23-Cf8iRU'
     calendar_id = "7eie7k06g255baksfshfhp0m28%40group.calendar.google.com"
 
-    payload = {"key": public_key,
+    payload = {"key": GOOGLE_SECRET,
                "singleEvents": True,
                # "timeMin": datetime.datetime.now(),
                "orderBy": "startTime"}
@@ -43,35 +42,43 @@ def clindate(request, clindate):
 
 
 def workup(request, pt_id):
+
     pt = get_object_or_404(mymodels.Patient, pk=pt_id)
-    form = myforms.WorkupForm(request.POST)
+    clindates = mymodels.ClinicDate.objects.filter(
+        clinic_date=django.utils.timezone.now)
 
-    if form.is_valid():
+    if request.method == 'POST':
+        clindate = clindates[0]
+        form = myforms.WorkupForm(request.POST)
+
+        if form.is_valid():
+            wu = mymodels.Workup(patient=pt, **form.cleaned_data)
+            wu.author = get_current_provider()
+            wu.clinic_day = clindate
+
+            wu.save()
+            pt.save()
+
+            return HttpResponseRedirect(reverse("patient", args=(pt.id,)))
+
+    else:
         clindates = mymodels.ClinicDate.objects.filter(
-            date=django.utils.timezone.now)
-        if len(clindates) == 0:
-            cal = get_cal()
+            clinic_date=django.utils.timezone.now)
 
-            return HttpResponse(str(cal))
+        if len(clindates) == 1:
+            return render(request, 'pttrack/workup.html', {"patient": pt,
+                                                           "form": myforms.WorkupForm()})
+        elif len(clindates) == 0:
+            return render(request, 'pttrack/clindate.html', {"patient": pt,
+                                                             "form": myforms.ClinicDateForm()})
 
-        elif len(clindates) > 1:
-            return HttpResponse("I'm sorry, we're not used to having >1" +
-                                "clinics on one day. There's a big problem!")
         else:
-            clindate = clindates[0]
+            pass
 
-        wu = mymodels.Workup(patient=pt, **form.cleaned_data)
-        wu.author = get_current_provider()
-        wu.clinic_day = clindate
-
-        wu.save()
-        pt.save()
-
-        return HttpResponseRedirect(reverse("patient", args=(pt.id,)))
 
 def followup(request, pt_id):
 
-    if(request.method == 'POST'):
+    if request.method == 'POST':
         pt = get_object_or_404(mymodels.Patient, pk=pt_id)
         form = myforms.FollowupForm(request.POST)
 
@@ -89,7 +96,7 @@ def followup(request, pt_id):
     else:
         pt = get_object_or_404(mymodels.Patient, pk=pt_id)
         form = myforms.FollowupForm()
-        action_item = myforms.ActionItemForm()
+        # action_item = myforms.ActionItemForm()
 
         return render(request, 'pttrack/followup.html', {'patient': pt,
                                                          'form': form})

@@ -17,14 +17,17 @@ def validate_zip(value):
 
 
 class Language(models.Model):
-    language_name = models.CharField(max_length=50, primary_key=True)
+    name = models.CharField(max_length=50, primary_key=True)
 
     def __unicode__(self):
-        return self.language_name
+        return self.name
 
 
 class Ethnicity(models.Model):
-    ethnicity_name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return self.name
 
 
 class ActionInstruction(models.Model):
@@ -38,10 +41,16 @@ class ProviderType(models.Model):
     long_name = models.CharField(max_length=100)
     short_name = models.CharField(max_length=10)
 
+    def __unicode__(self):
+        return self.short_name
+
 
 class Gender(models.Model):
     long_name = models.CharField(max_length=30)
     short_name = models.CharField(max_length=1)
+
+    def __unicode__(self):
+        return self.long_name
 
 
 class Person(models.Model):
@@ -55,12 +64,12 @@ class Person(models.Model):
 
     phone = models.CharField(max_length=50)
 
-    gender_type = models.ForeignKey(Gender)
+    gender = models.ForeignKey(Gender)
 
-    def name(self, reverse=True, middle_short=False):
+    def name(self, reverse=True, middle_short=True):
         if self.middle_name:
             if middle_short:
-                middle = self.middle_name[0]+"."
+                middle = "".join([mname[0]+"." for mname in self.middle_name.split()])
             else:
                 middle = self.middle_name
         else:
@@ -93,12 +102,6 @@ class Patient(Person):
     def age(self):
         import datetime
         return (datetime.date.today()-self.date_of_birth).days/365
-
-    def notes(self):
-        l = []
-        l.extend(self.followup_set)
-        l.extend(self.workup_set)
-        return l.sort(key=lambda(k): k.date)
 
     def __unicode__(self):
         return self.name()
