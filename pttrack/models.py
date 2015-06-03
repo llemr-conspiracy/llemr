@@ -106,6 +106,41 @@ class Patient(Person):
     def __unicode__(self):
         return self.name()
 
+    def active_action_items(self):
+        '''return a list of ActionItems that are 1) not done and
+        2) due today or before. The list is sorted by next_action'''
+
+        ai_list = [ai for ai in self.actionitem_set.all() if
+                   not ai.done() and ai.next_action <= django.utils.timezone.now().date()]
+        ai_list.sort(key=lambda(ai): ai.next_action)
+        return ai_list
+
+    def done_action_items(self):
+        '''return the set of action items that are done, sorted
+        by completion date'''
+
+        ai_list = [ai for ai in self.actionitem_set.all() if ai.done()]
+        ai_list.sort(key=lambda(ai): ai.completion_date)
+
+        return ai_list
+
+    def inactive_action_items(self):
+        '''return a list of action items that aren't done, but aren't
+        due yet either, sorted by due date.'''
+
+        ai_list = [ai for ai in self.actionitem_set.all()
+                   if not ai.done() and ai.next_action > django.utils.timezone.now().date()]
+        ai_list.sort(key=lambda(ai): ai.next_action)
+
+        return ai_list
+
+    def notes(self):
+        note_list = list(self.workup_set.all())
+        note_list.extend(self.followup_set.all())
+        note_list.sort(key=lambda(k): k.written_date)
+
+        return note_list
+
 
 class Provider(Person):
 
@@ -153,10 +188,31 @@ class ActionItem(Note):
     next_action = models.DateField()
     comments = models.CharField(max_length=300)
     instruction = models.ForeignKey(ActionInstruction)
-    done = models.BooleanField(default=False)
+    completion_date = models.DateTimeField(blank=True, null=True)
+    completion_author = models.ForeignKey(Provider, blank=True, null=True,
+                                          related_name="action_items_completed")
+
+    def mark_done(self, provider):
+        self.completion_date = django.utils.timezone.now()
+        self.completion_author = provider
+
+    def clear_done(self):
+        self.completion_author = None
+        self.completion_date = None
+
+    def done(self):
+        '''Returns true if this ActionItem has been marked as done'''
+        return not self.completion_date is None
+
+    def attribution(self):
+        if self.done():
+            return " ".join(["Marked done by", str(self.completion_author), "on",
+                             str(self.completion_date)])
+        else:
+            return " ".join(["Added by", str(self.author), "on", str(self.written_date)])
 
     def __unicode__(self):
-        return "AA: "+self.instruction+" on "+str(self.next_action)
+        return "AI: "+str(self.instruction)+" on "+str(self.next_action)
 
 
 class Workup(Note):
@@ -175,17 +231,14 @@ class Workup(Note):
 
     plan = models.TextField()
 
-    # def __unicode__(self):
-    #     return "Workup: "+self.patient.name()+" on "+str(self.clinic_day.date)
-
     def short_text(self):
         return self.CC
 
-    def date(self):
+    def written_date(self):
         return self.clinic_day.clinic_date
 
-    def note(self):
-        return
+    def attribution(self):
+        return " ".join([self.author, "on", str(self.written_date)])
 
     def __unicode__(self):
         return "Workup for "+self.patient.name()+" on "+str(self.clinic_day.clinic_date)
@@ -193,13 +246,15 @@ class Workup(Note):
 
 class Followup(Note):
     note = models.TextField()
-    written_date = models.DateTimeField(default=django.utils.timezone.now)
+    written_datetime = models.DateTimeField(default=django.utils.timezone.now)
 
     def short_text(self):
         return self.note
 
+    def attribution(self):
+        return " ".join([self.author, "on", str(self.written_date)])
+
+    def written_date(self):
+        return self.written_datetime.date()
     def __unicode__(self):
         return "Followup for "+self.patient.name()+" on "+str(self.written_date.date())
-
-    def date(self):
-        return self.written_date.date

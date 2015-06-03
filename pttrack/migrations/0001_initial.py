@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('written_date', models.DateTimeField(default=django.utils.timezone.now)),
                 ('next_action', models.DateField()),
                 ('comments', models.CharField(max_length=300)),
-                ('done', models.BooleanField(default=False)),
+                ('completion_date', models.DateTimeField(null=True, blank=True)),
             ],
             options={
                 'abstract': False,
@@ -59,7 +59,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('note', models.TextField()),
-                ('written_date', models.DateTimeField(default=django.utils.timezone.now)),
+                ('written_datetime', models.DateTimeField(default=django.utils.timezone.now)),
             ],
             options={
                 'abstract': False,
@@ -170,6 +170,11 @@ class Migration(migrations.Migration):
             model_name='actionitem',
             name='author_type',
             field=models.ForeignKey(to='pttrack.ProviderType'),
+        ),
+        migrations.AddField(
+            model_name='actionitem',
+            name='completion_author',
+            field=models.ForeignKey(related_name='action_items_completed', blank=True, to='pttrack.Provider', null=True),
         ),
         migrations.AddField(
             model_name='actionitem',

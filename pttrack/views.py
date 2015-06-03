@@ -124,21 +124,48 @@ def followup(request, pt_id):
 
 
 def new_action_item(request, pt_id):
-    pt = get_object_or_404(mymodels.Patient, pk=pt_id)
-    form = myforms.ActionItemForm()
 
-    return render(request, 'pttrack/form_submission.html',
-                  {'patient': pt, 'form': form, 'note_type': 'Action Item'})
+    if(request.POST):
+        pt = get_object_or_404(mymodels.Patient, pk=pt_id)
+        form = myforms.ActionItemForm(request.POST)
+        if form.is_valid():
+            ['done', 'author', 'written_date', 'patient']
+            ai = mymodels.ActionItem(completion_date=None, author=get_current_provider(),
+                                     written_date=django.utils.timezone.now(),
+                                     patient=pt, **form.cleaned_data)
+            ai.save()
+            pt.save()
+
+            return HttpResponseRedirect(reverse("patient", args=(pt.id,)))
+    else:
+        pt = get_object_or_404(mymodels.Patient, pk=pt_id)
+        form = myforms.ActionItemForm()
+
+        return render(request, 'pttrack/form_submission.html',
+                      {'patient': pt, 'form': form, 'note_type': 'Action Item'})
+
+
+def done_action_item(request, ai_id):
+    ai = get_object_or_404(mymodels.ActionItem, pk=ai_id)
+    ai.mark_done(get_current_provider())
+    ai.save()
+    return HttpResponseRedirect(reverse("patient", args=(ai.patient.id,)))
+
+
+def reset_action_item(request, ai_id):
+    ai = get_object_or_404(mymodels.ActionItem, pk=ai_id)
+    ai.clear_done()
+    ai.save()
+    return HttpResponseRedirect(reverse("patient", args=(ai.patient.id,)))
 
 
 def patient(request, pt_id):
     pt = get_object_or_404(mymodels.Patient, pk=pt_id)
 
-    notes = list(pt.workup_set.all())
-    notes.extend(pt.followup_set.all())
+    # notes = list(pt.workup_set.all())
+    # notes.extend(pt.followup_set.all())
 
-    return render(request, 'pttrack/patient.html', {'patient': pt,
-                                                    'notes': notes})
+    return render(request, 'pttrack/patient.html', {'patient': pt})
 
 
 def intake(request):
@@ -154,8 +181,7 @@ def intake(request):
             # redirect to a new URL:
             return HttpResponseRedirect(reverse("patient", args=(p.id,)))
         else:
-            pass  #error reporting goes here
-
+            pass  # error reporting goes here
 
     # if a GET (or any other method) we'll create a blank form
     else:

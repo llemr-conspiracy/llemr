@@ -1,4 +1,5 @@
-from django import forms
+# from django import forms
+from bootstrap3_datetime.widgets import DateTimePicker
 from django.forms import ModelForm
 
 from . import models
@@ -19,13 +20,15 @@ class WorkupForm(ModelForm):
 class FollowupForm(ModelForm):
     class Meta:
         model = models.Followup
-        exclude = ['patient', 'written_date', 'author']
+        exclude = ['patient', 'written_datetime', 'author']
 
 
 class ActionItemForm(ModelForm):
     class Meta:
         model = models.ActionItem
-        exclude = ['done', 'author', 'written_date', 'patient']
+        exclude = ['completion_date', 'author', 'written_date', 'patient', 'completion_author']
+        widgets = {'next_action': DateTimePicker(options={"format": "YYYY-MM-DD",
+                                                          "pickTime": False})}
 
 
 class ClinicDateForm(ModelForm):

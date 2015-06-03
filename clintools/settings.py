@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'pttrack',
     'bootstrap3',
+    'bootstrap3_datetime',
     'djangular',
 )
 

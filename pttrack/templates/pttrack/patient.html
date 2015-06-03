@@ -11,7 +11,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 <div class="container-float col-md-7">
 	<h1>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}</h1>
 	<p class="lead">{{ patient.age }} y/o {{ patient.ethnicity }} {{ patient.gender | lower }}</p>
-	<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
+	<p class="lead"><strong>Status:</strong></p>
 </div>
 <div class="container-float col-md-5">
 	<h3 class='text-center'> Actions </h3>
@@ -50,22 +50,61 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 
 <div class="container">
 	<div class="col-md-6">
-		<h3>Notes</h3>
-		{% for note in notes %}
-			{% if note.CC %}<a href="/pttrack/workup/{{ note.pk }}"><h5>{{ note }}</h5></a>
-			{% else %}<h5>{{ note }}</h5>{% endif %}
-			<p> {{ note.short_text }} </p>
+		<h3>Notes ({{ patient.notes | length }})</h3>
+		<table class="table">
+		{% for note in patient.notes %}
+			<tr>
+			{% if note.CC %}
+				<p><a href="/pttrack/workup/{{ note.pk }}"><strong>Workup:</strong></a>  {{ note.short_text }}</p>
+			{% else %}
+				<p><strong>Followup:</strong> {{ note.short_text }}</p>
+			{% endif %}
+				<p class="text-muted  text-right"> {{ note.attribution }}</p>
+			</td></tr>
 		{% empty %}
 				<p class="text-muted"> No notes for {{ patient.name }} yet</p>
 		{% endfor %}
+		</table>
 	</div>
 	<div class="col-md-6">
-		<h3>Action Items</h3>
-		{% for action_item in patient.action_item_set.all %}
-			<p>{{ action_item }}</p>
-		{% empty %}
-			<p class="text-muted"> No notes for {{ patient.name }} yet</p>
-		{% endfor %}
+		<h3>Active Action Items ({{ patient.active_action_items | length }})</h3>
+		<table class="table">
+			{% for action_item in patient.active_action_items %}
+			<tr><td><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a></td>
+				<td>
+				<p><strong>{{ action_item.instruction }}:</strong> {{ action_item.comments }}</p>
+				<p class="text-muted text-right">{{ action_item.attribution }}</p>
+			</td></tr>
+			{% empty %}
+				<p class="text-muted"> No active notes for {{ patient.name }}</p>
+			{% endfor %}
+		</table>
+
+		<h3>Pending Action Items ({{ patient.inactive_action_items | length }})</h3>
+		<table class="table">
+			{% for action_item in patient.inactive_action_items %}
+			<tr><td><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a></td>
+				<td>
+					<p><strong>{{ action_item.instruction }}</strong>, due {{action_item.next_action}}: {{ action_item.comments }}</p>
+					<p class="text-muted  text-right"> Written by {{ action_item.author }} on {{ action_item.written_date }}</p>
+				</td></tr>
+			{% empty %}
+				<p class="text-muted"> No active notes for {{ patient.name }}</p>
+			{% endfor %}
+		</table>
+
+		<h3>Completed Action Items ({{ patient.done_action_items | length }})</h3>
+		<table class="table">
+			{% for action_item in patient.done_action_items %}
+			<tr><td><a href="{% url 'reset-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "check" %}</a></td>
+				<td>
+					<p><strong>{{ action_item.instruction }}:</strong> {{ action_item.comments }}</p>
+					<p class="text-muted  text-right">{{ action_item.attribution }}</p>
+				</td></tr>
+			{% empty %}
+				<p class="text-muted"> No finished notes for {{ patient.name }}</p>
+			{% endfor %}
+		</table>
 	</div>
 </div>
 {% endblock %}
