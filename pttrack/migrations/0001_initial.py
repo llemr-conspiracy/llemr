@@ -131,7 +131,6 @@ class Migration(migrations.Migration):
                 ('HandP', models.TextField()),
                 ('AandP', models.TextField()),
                 ('diagnosis', models.CharField(max_length=100)),
-                ('plan', models.TextField()),
                 ('author', models.ForeignKey(to='pttrack.Provider')),
                 ('author_type', models.ForeignKey(to='pttrack.ProviderType')),
                 ('clinic_day', models.ForeignKey(to='pttrack.ClinicDate')),

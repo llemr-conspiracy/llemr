@@ -229,8 +229,6 @@ class Workup(Note):
     #TODO: diagnosis categories (ICD10?)
     diagnosis = models.CharField(max_length=100)
 
-    plan = models.TextField()
-
     def short_text(self):
         return self.CC
 
@@ -256,5 +254,6 @@ class Followup(Note):
 
     def written_date(self):
         return self.written_datetime.date()
+
     def __unicode__(self):
         return "Followup for "+self.patient.name()+" on "+str(self.written_date.date())
