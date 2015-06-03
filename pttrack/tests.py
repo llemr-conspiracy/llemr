@@ -10,3 +10,7 @@ class CustomFuncTesting(TestCase):
             validate_zip(123456)
         with self.assertRaises(ValidationError):
             validate_zip('ABCDE')
+            
+    def test_forms(self):
+        response = self.client.post('pttrack/intake.html', {'something':'something'})
+        self.assertFormError(response, 'PatientForm', 'something', 'This field is required.')
