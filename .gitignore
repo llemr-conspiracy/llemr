@@ -1,5 +1,7 @@
 # Django secret key
 secret_key.txt
+# Secret google API key
+google_secret.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

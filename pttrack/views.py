@@ -19,6 +19,7 @@ def get_cal():
     import requests
 
     with open('google_secret.txt') as f:
+        #TODO ip-restrict access to this key for halstead only
         GOOGLE_SECRET = f.read().strip()
 
     calendar_id = "7eie7k06g255baksfshfhp0m28%40group.calendar.google.com"
