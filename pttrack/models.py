@@ -111,9 +111,15 @@ class Provider(Person):
 
     email = models.EmailField()
 
+    def __unicode__(self):
+        return self.name()
+
 
 class ClinicType(models.Model):
     name = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return self.name
 
 
 class ClinicDate(models.Model):
@@ -172,19 +178,28 @@ class Workup(Note):
     # def __unicode__(self):
     #     return "Workup: "+self.patient.name()+" on "+str(self.clinic_day.date)
 
+    def short_text(self):
+        return self.CC
+
     def date(self):
-        import datetime
-        return datetime.date(self.clinic_day.date)
+        return self.clinic_day.clinic_date
+
+    def note(self):
+        return
+
+    def __unicode__(self):
+        return "Workup for "+self.patient.name()+" on "+str(self.clinic_day.clinic_date)
 
 
 class Followup(Note):
     note = models.TextField()
-
     written_date = models.DateTimeField(default=django.utils.timezone.now)
 
+    def short_text(self):
+        return self.note
+
     def __unicode__(self):
-        return "Followup: "+self.patient.name()+" on "+str(self.written_date)
+        return "Followup for "+self.patient.name()+" on "+str(self.written_date.date())
 
     def date(self):
-        import datetime
-        return datetime.date(self.written_date)
+        return self.written_date.date

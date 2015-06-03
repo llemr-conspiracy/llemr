@@ -3,12 +3,12 @@
 {% load bootstrap3 %}
 
 {% block title %}
-Followup {{ patient.name }}
+{{ note_type }} {{ patient.name }}
 {% endblock %}
 
 {% block header %}
-<h1>New Followup </h1>
-<p class="lead">Add a new followup note for <em>{{ patient.name }}</em></p>
+<h1>New {{ note_type }} </h1>
+<p class="lead">Add a new {{ note_type | lower }} for <em>{{ patient.name }}</em></p>
 {% endblock %}
 
 {% block content %}

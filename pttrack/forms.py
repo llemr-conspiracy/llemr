@@ -25,7 +25,7 @@ class FollowupForm(ModelForm):
 class ActionItemForm(ModelForm):
     class Meta:
         model = models.ActionItem
-        exclude = []
+        exclude = ['done', 'author', 'written_date', 'patient']
 
 
 class ClinicDateForm(ModelForm):

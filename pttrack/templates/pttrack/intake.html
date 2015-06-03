@@ -1,5 +1,7 @@
 {% extends "pttrack/base.html" %}
 
+{% load bootstrap3 %}
+
 {% block title %}
 Patient Intake
 {% endblock %}
@@ -14,10 +16,10 @@ Patient Intake
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <div class="container">
-	<form action="" method="post">
+	<form action="" method="post" class="form">
 	    {% csrf_token %}
-	    {{ form }}
-	    <input type="submit" value="Submit" />
+		{% bootstrap_form form %}
+	    <button type="submit" class="btn btn-success">Submit</button>
 	</form>
 </div>
 

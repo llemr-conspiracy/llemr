@@ -1,0 +1,40 @@
+{% extends "pttrack/base.html" %}
+
+{% load bootstrap3 %}
+
+{% block title %}
+Workup: {{ workup.patient.name }}
+{% endblock %}
+
+{% block header %}
+<h1>Workup on {{ workup.patient.name }}</h1>
+<p class="lead"> {{ workup.clinic_day.clinic_date }}</p>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <strong>Chief Complaint:</strong> {{ workup.CC }}
+        </div>
+        <div class="col-md-6">
+            <strong>Author:</strong> {{ workup.author.name }} ({{ workup.author_type }})
+        </div>
+        <div class="col-md-6">
+            <strong>Diagnosis:</strong> {{ workup.diagnosis }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <strong>H and P:</strong><p>{{ workup.HandP }}</p>
+        </div>
+        <div class="col-md-6">
+            <strong>A and P</strong><p>{{ workup.AandP }}</p>
+        </div>
+        <div class="col-md-6">
+            <strong>Plan</strong><p>{{ workup.plan }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

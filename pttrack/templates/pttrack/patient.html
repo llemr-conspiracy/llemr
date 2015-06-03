@@ -19,7 +19,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	    <!-- TODO: make links -->
 	    <a class="btn btn-primary" href="followup/" role="button">Followup</a>
 	    <a class="btn btn-success" href="workup/" role="button">Workup</a>
-	    <a class="btn btn-info" href="actionitem/" role="button">Action Item</a>
+	    <a class="btn btn-info" href="action-item/" role="button">Action Item</a>
 	    <a class="btn btn-warning" href="document/" role="button">Upload Document</a>
 	</div>
 </div>
@@ -50,31 +50,22 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 
 <div class="container">
 	<div class="col-md-6">
-		<h3>Notes for {{patient.name }}</h3>
-		{% for note in patient.workup_set.all %}
-		<div class="container">
-			<p class="lead">Workup:</p>
-			<p> {{ note.note }} </p>
-			<p class="text-muted"> by {{ note.author.name }} at {{ note.written_date }}</p>
-		</div>
+		<h3>Notes</h3>
+		{% for note in notes %}
+			{% if note.CC %}<a href="/pttrack/workup/{{ note.pk }}"><h5>{{ note }}</h5></a>
+			{% else %}<h5>{{ note }}</h5>{% endif %}
+			<p> {{ note.short_text }} </p>
 		{% empty %}
-		<div class="container">
-			<p class="text-muted"> No notes for {{ patient.name }} yet</p>
-		</div>
-		{% endfor %}
-		{% for note in patient.followup_set.all %}
-		<div class="container">
-			<p class="lead">Followup:</p>
-			<p> {{ note.note }} </p>
-			<p class="text-muted"> by {{ note.author.name }} at {{ note.written_date }}</p>
-		</div>
-		{% empty %}
-		<div class="container">
-			<p class="text-muted"> No notes for {{ patient.name }} yet</p>
-		</div>
+				<p class="text-muted"> No notes for {{ patient.name }} yet</p>
 		{% endfor %}
 	</div>
 	<div class="col-md-6">
+		<h3>Action Items</h3>
+		{% for action_item in patient.action_item_set.all %}
+			<p>{{ action_item }}</p>
+		{% empty %}
+			<p class="text-muted"> No notes for {{ patient.name }} yet</p>
+		{% endfor %}
 	</div>
 </div>
 {% endblock %}
