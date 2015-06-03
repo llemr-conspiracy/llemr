@@ -11,7 +11,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 <div class="container-float col-md-7">
 	<h1>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}</h1>
 	<p class="lead">{{ patient.age }} y/o {{ patient.ethnicity }} {{ patient.gender | lower }}</p>
-	<p class="lead"><strong>Status:</strong></p>
+	<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
 </div>
 <div class="container-float col-md-5">
 	<h3 class='text-center'> Actions </h3>
@@ -49,6 +49,16 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 </div>
 
 <div class="container">
+	<div class="row">
+		<h3>Demographics</h3>
+		<div class="alert alert-danger" role="alert">
+			<p><strong>Whoa!</strong> You haven't entered any demographic information yet.</p>
+		</div>
+	</div>
+</div>
+
+
+<div class="container">
 	<div class="col-md-6">
 		<h3>Notes ({{ patient.notes | length }})</h3>
 		<table class="table">
@@ -76,7 +86,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 				<p class="text-muted text-right">{{ action_item.attribution }}</p>
 			</td></tr>
 			{% empty %}
-				<p class="text-muted"> No active notes for {{ patient.name }}</p>
+				<p class="text-muted"> No due action items for {{ patient.name }}</p>
 			{% endfor %}
 		</table>
 
@@ -89,7 +99,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 					<p class="text-muted  text-right"> Written by {{ action_item.author }} on {{ action_item.written_date }}</p>
 				</td></tr>
 			{% empty %}
-				<p class="text-muted"> No active notes for {{ patient.name }}</p>
+				<p class="text-muted"> No pending action items for {{ patient.name }}</p>
 			{% endfor %}
 		</table>
 
@@ -102,7 +112,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 					<p class="text-muted  text-right">{{ action_item.attribution }}</p>
 				</td></tr>
 			{% empty %}
-				<p class="text-muted"> No finished notes for {{ patient.name }}</p>
+				<p class="text-muted"> No finished action items for {{ patient.name }}</p>
 			{% endfor %}
 		</table>
 	</div>

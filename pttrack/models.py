@@ -134,6 +134,22 @@ class Patient(Person):
 
         return ai_list
 
+    def status(self):
+        n_active = len(self.active_action_items())
+        n_pending = len(self.inactive_action_items())
+        n_done = len(self.done_action_items())
+
+        if n_active > 0:
+            return str(n_active)+" action items past due"
+        elif n_pending > 0:
+            next_item = min(self.inactive_action_items(),
+                            key=lambda(k): k.next_action)
+            return "next action required on "+str(next_item)
+        elif n_done > 0:
+            return "all actions complete"
+        else:
+            return "no pending actions"
+
     def notes(self):
         note_list = list(self.workup_set.all())
         note_list.extend(self.followup_set.all())
@@ -250,10 +266,10 @@ class Followup(Note):
         return self.note
 
     def attribution(self):
-        return " ".join([self.author, "on", str(self.written_date)])
+        return " ".join([self.author.name(), "on", str(self.written_date())])
 
     def written_date(self):
         return self.written_datetime.date()
 
     def __unicode__(self):
-        return "Followup for "+self.patient.name()+" on "+str(self.written_date.date())
+        return "Followup for "+self.patient.name()+" on "+str(self.written_date())
