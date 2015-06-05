@@ -144,7 +144,8 @@ class Patient(Person):
         elif n_pending > 0:
             next_item = min(self.inactive_action_items(),
                             key=lambda(k): k.next_action)
-            return "next action required on "+str(next_item)
+            tdelta =  next_item.next_action - django.utils.timezone.now().date()
+            return "next action in "+str(tdelta.days)+" days"
         elif n_done > 0:
             return "all actions complete"
         else:
@@ -223,9 +224,9 @@ class ActionItem(Note):
     def attribution(self):
         if self.done():
             return " ".join(["Marked done by", str(self.completion_author), "on",
-                             str(self.completion_date)])
+                             str(self.completion_date.date())])
         else:
-            return " ".join(["Added by", str(self.author), "on", str(self.written_date)])
+            return " ".join(["Added by", str(self.author), "on", str(self.written_date.date())])
 
     def __unicode__(self):
         return "AI: "+str(self.instruction)+" on "+str(self.next_action)
@@ -252,10 +253,10 @@ class Workup(Note):
         return self.clinic_day.clinic_date
 
     def attribution(self):
-        return " ".join([self.author, "on", str(self.written_date)])
+        return " ".join([str(self.author), "on", str(self.written_date())])
 
     def __unicode__(self):
-        return "Workup for "+self.patient.name()+" on "+str(self.clinic_day.clinic_date)
+        return "Workup for "+self.patient.name()+" on "+str(self.clinic_day.clinic_date.date())
 
 
 class Followup(Note):

@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect, HttpResponseServerError, HttpResponse
 from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse
+from django.core.exceptions import ImproperlyConfigured
 import django.utils.timezone
 
 from . import models as mymodels
@@ -11,7 +12,14 @@ import datetime
 
 
 def get_current_provider():
+    # this obviously needs to be different
     return get_object_or_404(mymodels.Provider, pk=1)
+
+
+def get_clindates():
+    clindates = mymodels.ClinicDate.objects.filter(
+        clinic_date=django.utils.timezone.now().date())
+    return clindates
 
 
 def get_cal():
@@ -43,107 +51,127 @@ def get_cal():
     return next_date
 
 
-def clindate(request, pt_id):
-    if request.method == 'POST':
+class ClinicDateCreate(FormView):
+    '''A view for creating a new ClinicDate. On submission, it redirects to
+    the new-workup view.'''
+    template_name = 'pttrack/clindate.html'
+    form_class = myforms.ClinicDateForm
 
-        form = myforms.ClinicDateForm(request.POST)
+    def form_valid(self, form):
+        today = datetime.datetime.date(django.utils.timezone.now())
+        clindate = mymodels.ClinicDate(clinic_date=today,
+                                       **form.cleaned_data)
+        clindate.save()
 
-        if form.is_valid():
-            today = datetime.datetime.date(django.utils.timezone.now())
-            clindate = mymodels.ClinicDate(clinic_date=today,
-                                           **form.cleaned_data)
-            clindate.save()
-        else:
-            pass  # error reporting goes here
+        # determine from our URL which patient we wanted to work up before we
+        # got redirected to create a clinic date
+        pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
 
-    return redirect(reverse('new-workup', args=(pt_id,)))
+        return HttpResponseRedirect(reverse("new-workup", args=(pt.id,)))
 
 
-def new_workup(request, pt_id):
+class NoteFormView(FormView):
+    note_type = None
 
-    pt = get_object_or_404(mymodels.Patient, pk=pt_id)
-    clindates = mymodels.ClinicDate.objects.filter(
-        clinic_date=django.utils.timezone.now)
+    def get_context_data(self, **kwargs):
+        '''Inject self.note_type as the note type.'''
 
-    if request.method == 'POST':
-        clindate = clindates[0]
-        form = myforms.WorkupForm(request.POST)
+        if self.note_type is None:
+            raise ImproperlyConfigured("NoteCreate view must have 'note_type' variable set.")
 
-        if form.is_valid():
-            wu = mymodels.Workup(patient=pt, **form.cleaned_data)
-            wu.author = get_current_provider()
-            wu.clinic_day = clindate
+        context = super(FormView, self).get_context_data(**kwargs)
+        context['note_type'] = self.note_type
 
-            wu.save()
-            pt.save()
+        if 'pt_id' in self.kwargs:
+            context['patient'] = mymodels.Patient.objects.get(pk=self.kwargs['pt_id'])
 
-            return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
-        else:
-            pass  # error reporting goes here
+        return context
 
-    else:
-        clindates = mymodels.ClinicDate.objects.filter(
-            clinic_date=django.utils.timezone.now)
 
-        if len(clindates) == 1:
-            return render(request, 'pttrack/form_submission.html',
-                          {"patient": pt, "form": myforms.WorkupForm(), "note_type": "Workup"})
-        elif len(clindates) == 0:
-            return render(request, 'pttrack/clindate.html', {"patient": pt,
-                                                             "form": myforms.ClinicDateForm()})
-        else:
-            HttpResponseServerError(
+class WorkupCreate(NoteFormView):
+    '''A view for creating a new workup. Checks to see if today is a
+    clinic date first, and prompts its creation if none exist.'''
+    template_name = 'pttrack/form_submission.html'
+    form_class = myforms.WorkupForm
+    note_type = 'Workup'
+
+    def get(self, *args, **kwargs):
+        """Check that we have an instantiated ClinicDate today,
+        then dispatch to get() of the superclass view."""
+
+        clindates = get_clindates()
+        pt = get_object_or_404(mymodels.Patient, pk=kwargs['pt_id'])
+
+        if len(clindates) == 0:
+            # dispatch to ClinicDateCreate because the ClinicDate doesn't exist
+            return HttpResponseRedirect(reverse("new-clindate", args=(pt.id,)))
+        elif len(clindates) == 1:
+            # dispatch to our own view, since we know there's a ClinicDate for today
+            kwargs['pt_id'] = pt.id
+            print kwargs
+            return super(WorkupCreate,
+                         self).get(self, *args, **kwargs)
+        else:  # we have >1 clindate today.
+            return HttpResponseServerError(
                 "<h3>We don't know how to handle >1 clinic day on a particular day!</h3>")
 
+    def form_valid(self, form):
+        pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
+        wu = mymodels.Workup(patient=pt, **form.cleaned_data)
+        wu.author = get_current_provider()
+        wu.clinic_day = get_clindates()[0]
 
-def followup(request, pt_id):
+        wu.save()
+        pt.save()
 
-    if request.method == 'POST':
-        pt = get_object_or_404(mymodels.Patient, pk=pt_id)
-        form = myforms.FollowupForm(request.POST)
-
-        if form.is_valid():
-            fu = mymodels.Followup(patient=pt, **form.cleaned_data)
-            fu.written_date = django.utils.timezone.now()
-
-            #TODO: use authentication to determine provider
-            fu.author = get_current_provider()
-            fu.save()
-            pt.save()
-
-            return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
-        else:
-            pass  # error reporting goes here
-
-    else:
-        pt = get_object_or_404(mymodels.Patient, pk=pt_id)
-        form = myforms.FollowupForm()
-        # action_item = myforms.ActionItemForm()
-
-        return render(request, 'pttrack/form_submission.html',
-                      {'patient': pt, 'form': form, 'note_type': 'Followup'})
+        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
 
-def new_action_item(request, pt_id):
+class FollowupCreate(NoteFormView):
+    '''A view for creating a new Followup'''
+    template_name = 'pttrack/form_submission.html'
+    form_class = myforms.FollowupForm
+    note_type = "Followup"
 
-    if(request.POST):
-        pt = get_object_or_404(mymodels.Patient, pk=pt_id)
-        form = myforms.ActionItemForm(request.POST)
-        if form.is_valid():
-            ['done', 'author', 'written_date', 'patient']
-            ai = mymodels.ActionItem(completion_date=None, author=get_current_provider(),
-                                     written_date=django.utils.timezone.now(),
-                                     patient=pt, **form.cleaned_data)
-            ai.save()
-            pt.save()
+    def form_valid(self, form):
+        pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
+        fu = mymodels.Followup(patient=pt,
+                               author=get_current_provider(),
+                               **form.cleaned_data)
 
-            return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
-    else:
-        pt = get_object_or_404(mymodels.Patient, pk=pt_id)
-        form = myforms.ActionItemForm()
+        fu.save()
+        pt.save()
 
-        return render(request, 'pttrack/form_submission.html',
-                      {'patient': pt, 'form': form, 'note_type': 'Action Item'})
+        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+
+
+class ActionItemCreate(NoteFormView):
+    '''A view for creating ActionItems using the ActionItemForm.'''
+    template_name = 'pttrack/form_submission.html'
+    form_class = myforms.ActionItemForm
+    note_type = 'Action Item'
+
+    def form_valid(self, form):
+        '''Set the patient, provider, and written timestamp for the item.'''
+        pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
+        ai = mymodels.ActionItem(completion_date=None, author=get_current_provider(),
+                                 written_date=django.utils.timezone.now(),
+                                 patient=pt, **form.cleaned_data)
+        ai.save()
+        pt.save()
+
+        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+
+
+class PatientCreate(FormView):
+    '''A view for creating a new patient using PatientForm.'''
+    template_name = 'pttrack/intake.html'
+    form_class = myforms.PatientForm
+
+    def form_valid(self, form):
+        p = mymodels.Patient(**form.cleaned_data)
+        p.save()
+        return HttpResponseRedirect(reverse("patient-detail", args=(p.id,)))
 
 
 def done_action_item(request, ai_id):
@@ -158,14 +186,3 @@ def reset_action_item(request, ai_id):
     ai.clear_done()
     ai.save()
     return HttpResponseRedirect(reverse("patient-detail", args=(ai.patient.id,)))
-
-
-class PatientCreate(FormView):
-    '''A view for creating a new patient using PatientForm.'''
-    template_name = 'pttrack/intake.html'
-    form_class = myforms.PatientForm
-
-    def form_valid(self, form):
-        p = mymodels.Patient(**form.cleaned_data)
-        p.save()
-        return HttpResponseRedirect(reverse("patient-detail", args=(p.id,)))
