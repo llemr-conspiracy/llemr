@@ -18,7 +18,6 @@ You'll also need to install [djangular](http://django-angular.readthedocs.org/en
 pip install django-angular
 pip install django-bootstrap3
 pip install django-bootstrap3-datetimepicker
-pip install django-oauth-toolkit
 ```
 
 then, run
