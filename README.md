@@ -12,26 +12,35 @@ git clone https://github.com/SaturdayNeghborhoodHealthClinic/clintools.git
 
 Then, make a file called `secret_key.txt` in the root directory of the project with a [django secret key](http://www.miniwebtool.com/django-secret-key-generator/). Since you're not using it in production, it doesn't really matter that you use it safely.
 
-You'll also need to install [djangular](http://django-angular.readthedocs.org/en/latest/installation.html) and [django-bootstrap3](http://django-bootstrap3.readthedocs.org/en/latest/)
+We store our project's dependencies in `requirements_file.txt`, so you should use [pip](https://pip.pypa.io/en/stable/) to install everything. We recommend running `clintools` in a virtual environment.
+If you're going to run our project in a virtual env do th following:
 
 ```
-pip install django-angular
-pip install django-bootstrap3
-pip install django-bootstrap3-datetimepicker
+pip install virtualenv
+virtualenv .
+source bin/activate
+```
+
+Then install our dependencies with
+
+```
+pip install -r requirement_file.txt
 ```
 
 then, run
 
 ```
+
+```
+
+Once you've done that, build the test database
+
+```
 python manage.py collectstatic
+sh init_db.sh
 ```
 
-Once you've done that, build the database
-
-```
-python manage.py makemigrations pttrack
-python manage.py migrate
-```
+(Alternatively, you can build a clean database by running ``./manage.py makemigrations && ./manage.py migrate``.)
 
 Then, you can run the project with
 
