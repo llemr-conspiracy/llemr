@@ -14,6 +14,7 @@ urlpatterns = [
         name='new-action-item'),
     url(r'^workup/(?P<pk>[0-9]+)$', DetailView.as_view(model=mymodels.Workup), name='workup'),
     url(r'^action-item/(?P<ai_id>[0-9]+)/done$', views.done_action_item, name='done-action-item'),
-    url(r'^action-item/(?P<ai_id>[0-9]+)/reset$', views.reset_action_item, name='reset-action-item'),
+    url(r'^action-item/(?P<ai_id>[0-9]+)/reset$', views.reset_action_item,
+        name='reset-action-item'),
     url(r'^$', DetailView.as_view(model=mymodels.Workup,)),
 ]

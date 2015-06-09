@@ -108,11 +108,11 @@ class Patient(Person):
 
     def active_action_items(self):
         '''return a list of ActionItems that are 1) not done and
-        2) due today or before. The list is sorted by next_action'''
+        2) due today or before. The list is sorted by due_date'''
 
         ai_list = [ai for ai in self.actionitem_set.all() if
-                   not ai.done() and ai.next_action <= django.utils.timezone.now().date()]
-        ai_list.sort(key=lambda(ai): ai.next_action)
+                   not ai.done() and ai.due_date <= django.utils.timezone.now().date()]
+        ai_list.sort(key=lambda(ai): ai.due_date)
         return ai_list
 
     def done_action_items(self):
@@ -129,8 +129,8 @@ class Patient(Person):
         due yet either, sorted by due date.'''
 
         ai_list = [ai for ai in self.actionitem_set.all()
-                   if not ai.done() and ai.next_action > django.utils.timezone.now().date()]
-        ai_list.sort(key=lambda(ai): ai.next_action)
+                   if not ai.done() and ai.due_date > django.utils.timezone.now().date()]
+        ai_list.sort(key=lambda(ai): ai.due_date)
 
         return ai_list
 
@@ -143,8 +143,8 @@ class Patient(Person):
             return str(n_active)+" action items past due"
         elif n_pending > 0:
             next_item = min(self.inactive_action_items(),
-                            key=lambda(k): k.next_action)
-            tdelta =  next_item.next_action - django.utils.timezone.now().date()
+                            key=lambda(k): k.due_date)
+            tdelta =  next_item.due_date - django.utils.timezone.now().date()
             return "next action in "+str(tdelta.days)+" days"
         elif n_done > 0:
             return "all actions complete"
@@ -202,7 +202,7 @@ class Note(models.Model):
 
 class ActionItem(Note):
     written_date = models.DateTimeField(default=django.utils.timezone.now)
-    next_action = models.DateField()
+    due_date = models.DateField()
     comments = models.CharField(max_length=300)
     instruction = models.ForeignKey(ActionInstruction)
     completion_date = models.DateTimeField(blank=True, null=True)
@@ -229,7 +229,7 @@ class ActionItem(Note):
             return " ".join(["Added by", str(self.author), "on", str(self.written_date.date())])
 
     def __unicode__(self):
-        return "AI: "+str(self.instruction)+" on "+str(self.next_action)
+        return "AI: "+str(self.instruction)+" on "+str(self.due_date)
 
 
 class Workup(Note):
@@ -256,7 +256,7 @@ class Workup(Note):
         return " ".join([str(self.author), "on", str(self.written_date())])
 
     def __unicode__(self):
-        return "Workup for "+self.patient.name()+" on "+str(self.clinic_day.clinic_date.date())
+        return self.patient.name()+" on "+str(self.clinic_day.clinic_date)
 
 
 class Followup(Note):

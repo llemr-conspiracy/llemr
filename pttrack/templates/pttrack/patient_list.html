@@ -9,7 +9,8 @@
 {% block content %}
 
 <div class="container">
-    <p> Filter by: </p>
+    <p> Filter by: <strong>[ item type ]</strong> due in the next <strong>[ n days ]</strong> <button type="submit" class="btn btn-success">Filter</button></p>
+    <p> Sort by: <strong>[ field ]</strong> in <strong>[ ascending/descending ]</strong> order <button type="submit" class="btn btn-success">Sort</button></p>
 </div>
 
 <div class="container">
@@ -24,7 +25,6 @@
             <td>{{ patient.age }}</td>
             <td>{{ patient.ethnicity }}</td>
             <td>{{ patient.comp_status }}</td>
-            <td><em>MOST RECENT CLINIC</em></td>
             </tr>
         {% endfor %}
     </table>

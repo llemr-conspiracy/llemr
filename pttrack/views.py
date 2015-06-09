@@ -178,7 +178,8 @@ def done_action_item(request, ai_id):
     ai = get_object_or_404(mymodels.ActionItem, pk=ai_id)
     ai.mark_done(get_current_provider())
     ai.save()
-    return HttpResponseRedirect(reverse("patient-detail", args=(ai.patient.id,)))
+
+    return HttpResponseRedirect(reverse("new-followup", args=(ai.patient.id,)))
 
 
 def reset_action_item(request, ai_id):

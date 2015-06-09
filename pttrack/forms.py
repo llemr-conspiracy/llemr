@@ -27,8 +27,8 @@ class ActionItemForm(ModelForm):
     class Meta:
         model = models.ActionItem
         exclude = ['completion_date', 'author', 'written_date', 'patient', 'completion_author']
-        widgets = {'next_action': DateTimePicker(options={"format": "YYYY-MM-DD",
-                                                          "pickTime": False})}
+        widgets = {'due_date': DateTimePicker(options={"format": "YYYY-MM-DD",
+                                                       "pickTime": False})}
 
 
 class ClinicDateForm(ModelForm):

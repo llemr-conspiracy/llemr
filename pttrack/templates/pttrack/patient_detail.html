@@ -95,7 +95,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 			{% for action_item in patient.inactive_action_items %}
 			<tr><td><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a></td>
 				<td>
-					<p><strong>{{ action_item.instruction }}</strong>, due {{action_item.next_action}}: {{ action_item.comments }}</p>
+					<p><strong>{{ action_item.instruction }}</strong>, due {{action_item.due_date}}: {{ action_item.comments }}</p>
 					<p class="text-muted  text-right"> Written by {{ action_item.author }} on {{ action_item.written_date }}</p>
 				</td></tr>
 			{% empty %}

@@ -45,5 +45,6 @@ for clintype in ["Basic Care Clinic", "Depression & Anxiety Clinic", "Dermatolog
     t = models.ClinicType(name=clintype)
     t.save()
 
-i = models.ActionInstruction(instruction="Vaccine Followup")
-i.save()
+for ai_type in ["Vaccine followup", "Follow up on labs", "PCP follow up"]:
+    i = models.ActionInstruction(instruction=ai_type)
+    i.save()
