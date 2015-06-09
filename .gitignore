@@ -1,12 +1,7 @@
-# Django secret key
-secret_key.txt
-# Secret google API key
-google_secret.txt
-# Google OAuth secret
-google_oauth_secret.txt
-# GitHub secrets
-github_secrets.txt
-
+# Ignore virtualenv
+bin/
+include/
+pip-selfcheck.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
