@@ -1,5 +1,5 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponseRedirect, HttpResponseServerError, HttpResponse
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured

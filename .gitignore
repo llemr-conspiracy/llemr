@@ -1,6 +1,7 @@
 # Ignore virtualenv
 bin/
 include/
+local/
 pip-selfcheck.json
 
 # Byte-compiled / optimized / DLL files

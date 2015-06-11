@@ -20,7 +20,8 @@ Followup {{ patient.name }}
 	    {% csrf_token %}
 		{% bootstrap_form form %}
 		{% buttons %}
-	    <button type="submit" class="btn btn-success">Submit</button>
+	    <button type="submit" class="btn btn-success" value="patient">Submit</button>
+	    <button type="submit" class="btn btn-info" value="actionitem">Submit and New Action Item</button>
 		{% endbuttons %}
 	</form>
 </div>

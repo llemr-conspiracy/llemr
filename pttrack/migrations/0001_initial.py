@@ -127,7 +127,7 @@ class Migration(migrations.Migration):
             name='Workup',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('CC', models.CharField(max_length=300)),
+                ('chief_complaint', models.CharField(max_length=300)),
                 ('HandP', models.TextField()),
                 ('AandP', models.TextField()),
                 ('diagnosis', models.CharField(max_length=100)),

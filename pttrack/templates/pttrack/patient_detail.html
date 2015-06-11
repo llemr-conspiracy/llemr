@@ -64,7 +64,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		<table class="table">
 		{% for note in patient.notes %}
 			<tr>
-			{% if note.CC %}
+			{% if note.chief_complaint %}
 				<p><a href="/pttrack/workup/{{ note.pk }}"><strong>Workup:</strong></a>  {{ note.short_text }}</p>
 			{% else %}
 				<p><strong>Followup:</strong> {{ note.short_text }}</p>

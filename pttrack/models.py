@@ -1,19 +1,19 @@
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.forms import ModelForm
 import django.utils.timezone
-# Create your models here.
+
+# pylint: disable=I0011,missing-docstring,E1305
 
 
 def validate_zip(value):
     '''verify that the given value is in the ZIP code format'''
     if len(str(value)) != 5:
-        raise ValidationError('{0} is not a valid ZIP, because it has {1} digits.'.format(
-                              str(value), len(str(value))))
+        raise ValidationError('{0} is not a valid ZIP, because it has {1}' +
+                              ' digits.'.format(str(value), len(str(value))))
 
     if not str(value).isdigit():
-        raise ValidationError("%s is not a valid ZIP, because it contains non-digit characters." %
-                              value)
+        raise ValidationError("%s is not a valid ZIP, because it contains " +
+                              "non-digit characters." % value)
 
 
 class Language(models.Model):
@@ -55,7 +55,7 @@ class Gender(models.Model):
 
 class Person(models.Model):
 
-    class Meta:
+    class Meta:  # pylint: disable=W0232,R0903,C1001
         abstract = True
 
     first_name = models.CharField(max_length=100)
@@ -69,7 +69,8 @@ class Person(models.Model):
     def name(self, reverse=True, middle_short=True):
         if self.middle_name:
             if middle_short:
-                middle = "".join([mname[0]+"." for mname in self.middle_name.split()])
+                middle = "".join([mname[0]+"." for mname
+                                  in self.middle_name.split()])
             else:
                 middle = self.middle_name
         else:
@@ -111,7 +112,8 @@ class Patient(Person):
         2) due today or before. The list is sorted by due_date'''
 
         ai_list = [ai for ai in self.actionitem_set.all() if
-                   not ai.done() and ai.due_date <= django.utils.timezone.now().date()]
+                   not ai.done()
+                   and ai.due_date <= django.utils.timezone.now().date()]
         ai_list.sort(key=lambda(ai): ai.due_date)
         return ai_list
 
@@ -129,7 +131,8 @@ class Patient(Person):
         due yet either, sorted by due date.'''
 
         ai_list = [ai for ai in self.actionitem_set.all()
-                   if not ai.done() and ai.due_date > django.utils.timezone.now().date()]
+                   if not ai.done()
+                   and ai.due_date > django.utils.timezone.now().date()]
         ai_list.sort(key=lambda(ai): ai.due_date)
 
         return ai_list
@@ -144,7 +147,7 @@ class Patient(Person):
         elif n_pending > 0:
             next_item = min(self.inactive_action_items(),
                             key=lambda(k): k.due_date)
-            tdelta =  next_item.due_date - django.utils.timezone.now().date()
+            tdelta = next_item.due_date - django.utils.timezone.now().date()
             return "next action in "+str(tdelta.days)+" days"
         elif n_done > 0:
             return "all actions complete"
@@ -185,7 +188,7 @@ class ClinicDate(models.Model):
 
 
 class Note(models.Model):
-    class Meta:
+    class Meta:  # pylint: disable=W0232,R0903,C1001
         abstract = True
 
     author = models.ForeignKey(Provider)
@@ -206,8 +209,11 @@ class ActionItem(Note):
     comments = models.CharField(max_length=300)
     instruction = models.ForeignKey(ActionInstruction)
     completion_date = models.DateTimeField(blank=True, null=True)
-    completion_author = models.ForeignKey(Provider, blank=True, null=True,
-                                          related_name="action_items_completed")
+    completion_author = models.ForeignKey(Provider,
+                                          blank=True,
+                                          null=True,
+                                          related_name="action_items_completed"
+                                         )
 
     def mark_done(self, provider):
         self.completion_date = django.utils.timezone.now()
@@ -219,14 +225,15 @@ class ActionItem(Note):
 
     def done(self):
         '''Returns true if this ActionItem has been marked as done'''
-        return not self.completion_date is None
+        return self.completion_date is not None
 
     def attribution(self):
         if self.done():
-            return " ".join(["Marked done by", str(self.completion_author), "on",
-                             str(self.completion_date.date())])
+            return " ".join(["Marked done by", str(self.completion_author),
+                             "on", str(self.completion_date.date())])
         else:
-            return " ".join(["Added by", str(self.author), "on", str(self.written_date.date())])
+            return " ".join(["Added by", str(self.author), "on",
+                             str(self.written_date.date())])
 
     def __unicode__(self):
         return "AI: "+str(self.instruction)+" on "+str(self.due_date)
@@ -235,19 +242,15 @@ class ActionItem(Note):
 class Workup(Note):
     clinic_day = models.ForeignKey(ClinicDate)
 
-    #TODO: careteam
-
-    CC = models.CharField(max_length=300)
-    #TODO: CC categories (ICD10?)
+    chief_complaint = models.CharField(max_length=300)
 
     HandP = models.TextField()
     AandP = models.TextField()
 
-    #TODO: diagnosis categories (ICD10?)
     diagnosis = models.CharField(max_length=100)
 
     def short_text(self):
-        return self.CC
+        return self.chief_complaint
 
     def written_date(self):
         return self.clinic_day.clinic_date
@@ -273,4 +276,5 @@ class Followup(Note):
         return self.written_datetime.date()
 
     def __unicode__(self):
-        return "Followup for "+self.patient.name()+" on "+str(self.written_date())
+        return " ".join(["Followup for ", self.patient.name(), " on ",
+                         str(self.written_date())])
