@@ -16,10 +16,9 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 <div class="container-float col-md-5">
 	<h3 class='text-center'> Actions </h3>
 	<div class="btn-group">
-	    <!-- TODO: make links -->
-	    <a class="btn btn-primary" href="followup/" role="button">Followup</a>
-	    <a class="btn btn-success" href="workup/" role="button">Workup</a>
-	    <a class="btn btn-info" href="action-item/" role="button">Action Item</a>
+	    <a class="btn btn-primary" href="{% url 'followup-choice' pt_id=patient.pk %}" role="button">Followup</a>
+	    <a class="btn btn-success" href="{% url 'new-workup' pt_id=patient.pk %}" role="button">Workup</a>
+	    <a class="btn btn-info" href="{% url 'new-action-item' pt_id=patient.pk %}" role="button">Action Item</a>
 	    <a class="btn btn-warning" href="document/" role="button">Upload Document</a>
 	</div>
 </div>
@@ -65,9 +64,9 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		{% for note in patient.notes %}
 			<tr>
 			{% if note.chief_complaint %}
-				<p><a href="/pttrack/workup/{{ note.pk }}"><strong>Workup:</strong></a>  {{ note.short_text }}</p>
+				<p><a href="{% url 'workup' pk=note.pk %}/pttrack/workup/{{ note.pk }}"><strong>Workup:</strong></a>  {{ note.short_text }}</p>
 			{% else %}
-				<p><strong>Followup:</strong> {{ note.short_text }}</p>
+				<p><strong>{{ note.type }} Followup:</strong> {{ note.short_text }}</p>
 			{% endif %}
 				<p class="text-muted  text-right"> {{ note.attribution }}</p>
 			</td></tr>

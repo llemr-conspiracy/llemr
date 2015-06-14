@@ -1,3 +1,4 @@
+'''The datamodels for the SNHC clintools patient tracking system'''
 from django.db import models
 from django.core.exceptions import ValidationError
 import django.utils.timezone
@@ -24,14 +25,14 @@ class Language(models.Model):
 
 
 class Ethnicity(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, primary_key=True)
 
     def __unicode__(self):
         return self.name
 
 
 class ActionInstruction(models.Model):
-    instruction = models.CharField(max_length=50)
+    instruction = models.CharField(max_length=50, primary_key=True)
 
     def __unicode__(self):
         return self.instruction
@@ -156,7 +157,7 @@ class Patient(Person):
 
     def notes(self):
         note_list = list(self.workup_set.all())
-        note_list.extend(self.followup_set.all())
+        # note_list.extend(self.followup_set.all())
         note_list.sort(key=lambda(k): k.written_date)
 
         return note_list
@@ -260,21 +261,3 @@ class Workup(Note):
 
     def __unicode__(self):
         return self.patient.name()+" on "+str(self.clinic_day.clinic_date)
-
-
-class Followup(Note):
-    note = models.TextField()
-    written_datetime = models.DateTimeField(default=django.utils.timezone.now)
-
-    def short_text(self):
-        return self.note
-
-    def attribution(self):
-        return " ".join([self.author.name(), "on", str(self.written_date())])
-
-    def written_date(self):
-        return self.written_datetime.date()
-
-    def __unicode__(self):
-        return " ".join(["Followup for ", self.patient.name(), " on ",
-                         str(self.written_date())])

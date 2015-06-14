@@ -15,8 +15,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ActionInstruction',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('instruction', models.CharField(max_length=50)),
+                ('instruction', models.CharField(max_length=50, serialize=False, primary_key=True)),
             ],
         ),
         migrations.CreateModel(
@@ -48,22 +47,22 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Ethnicity',
+            name='ContactMethod',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=50)),
+                ('name', models.CharField(max_length=50, serialize=False, primary_key=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Followup',
+            name='ContactResult',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('note', models.TextField()),
-                ('written_datetime', models.DateTimeField(default=django.utils.timezone.now)),
+                ('name', models.CharField(max_length=100, serialize=False, primary_key=True)),
             ],
-            options={
-                'abstract': False,
-            },
+        ),
+        migrations.CreateModel(
+            name='Ethnicity',
+            fields=[
+                ('name', models.CharField(max_length=50, serialize=False, primary_key=True)),
+            ],
         ),
         migrations.CreateModel(
             name='Gender',
@@ -74,9 +73,33 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='LabFollowup',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('written_datetime', models.DateTimeField(default=django.utils.timezone.now)),
+                ('comments', models.TextField()),
+                ('communication_success', models.BooleanField(help_text=b'Were you able to communicate the results?')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
             name='Language',
             fields=[
                 ('name', models.CharField(max_length=50, serialize=False, primary_key=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='NoAptReason',
+            fields=[
+                ('name', models.CharField(max_length=100, serialize=False, primary_key=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='NoShowReason',
+            fields=[
+                ('name', models.CharField(max_length=100, serialize=False, primary_key=True)),
             ],
         ),
         migrations.CreateModel(
@@ -99,6 +122,14 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
+        ),
+        migrations.CreateModel(
+            name='PCPLocation',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=300)),
+                ('address', models.TextField()),
+            ],
         ),
         migrations.CreateModel(
             name='Provider',
@@ -124,6 +155,51 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='ReferralFollowup',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('written_datetime', models.DateTimeField(default=django.utils.timezone.now)),
+                ('comments', models.TextField()),
+                ('has_appointment', models.BooleanField(help_text=b'Does the patient have an appointment?')),
+                ('pt_showed', models.CharField(help_text=b'Did the patient show up to the appointment?', max_length=7, choices=[(b'Yes', b'Yes'), (b'No', b'No'), (b'Not yet', b'Not yet')])),
+                ('apt_location', models.ForeignKey(blank=True, to='pttrack.PCPLocation', help_text=b'Where is the appointment?', null=True)),
+                ('author', models.ForeignKey(to='pttrack.Provider')),
+                ('author_type', models.ForeignKey(to='pttrack.ProviderType')),
+                ('contact_method', models.ForeignKey(to='pttrack.ContactMethod')),
+                ('contact_resolution', models.ForeignKey(to='pttrack.ContactResult')),
+                ('noapt_reason', models.ForeignKey(blank=True, to='pttrack.NoAptReason', help_text=b"If the patient didn't make an appointment, why not?", null=True)),
+                ('noshow_reason', models.ForeignKey(blank=True, to='pttrack.NoShowReason', help_text=b"If the patient didn't go to appointment, why not?", null=True)),
+                ('patient', models.ForeignKey(to='pttrack.Patient')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
+            name='ReferralType',
+            fields=[
+                ('name', models.CharField(max_length=100, serialize=False, primary_key=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='VaccineFollowup',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('written_datetime', models.DateTimeField(default=django.utils.timezone.now)),
+                ('comments', models.TextField()),
+                ('subsq_dose', models.BooleanField(help_text=b'Are they coming back for another dose?')),
+                ('dose_date', models.DateField(help_text=b'When is the next dose?', null=True, blank=True)),
+                ('author', models.ForeignKey(to='pttrack.Provider')),
+                ('author_type', models.ForeignKey(to='pttrack.ProviderType')),
+                ('contact_method', models.ForeignKey(to='pttrack.ContactMethod')),
+                ('contact_resolution', models.ForeignKey(to='pttrack.ContactResult')),
+                ('patient', models.ForeignKey(to='pttrack.Patient')),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
             name='Workup',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -141,17 +217,32 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.AddField(
-            model_name='followup',
+            model_name='referralfollowup',
+            name='referral_type',
+            field=models.ForeignKey(help_text=b'What kind of provider was the patient referred to?', to='pttrack.ReferralType'),
+        ),
+        migrations.AddField(
+            model_name='labfollowup',
             name='author',
             field=models.ForeignKey(to='pttrack.Provider'),
         ),
         migrations.AddField(
-            model_name='followup',
+            model_name='labfollowup',
             name='author_type',
             field=models.ForeignKey(to='pttrack.ProviderType'),
         ),
         migrations.AddField(
-            model_name='followup',
+            model_name='labfollowup',
+            name='contact_method',
+            field=models.ForeignKey(to='pttrack.ContactMethod'),
+        ),
+        migrations.AddField(
+            model_name='labfollowup',
+            name='contact_resolution',
+            field=models.ForeignKey(to='pttrack.ContactResult'),
+        ),
+        migrations.AddField(
+            model_name='labfollowup',
             name='patient',
             field=models.ForeignKey(to='pttrack.Patient'),
         ),

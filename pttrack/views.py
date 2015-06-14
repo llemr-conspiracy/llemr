@@ -1,5 +1,5 @@
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponseServerError
+from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponseRedirect, HttpResponseServerError, HttpResponseNotFound
 from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
@@ -17,8 +17,7 @@ def get_current_provider():
 
 
 def get_clindates():
-    clindates = mymodels.ClinicDate.objects.filter(
-        clinic_date=django.utils.timezone.now().date())
+    clindates = mymodels.ClinicDate.objects.filter(clinic_date=django.utils.timezone.now().date())
     return clindates
 
 
@@ -28,9 +27,10 @@ def get_cal():
     import requests
 
     with open('google_secret.txt') as f:
-        #TODO ip-restrict access to this key for halstead only
+        # TODO ip-restrict access to this key for halstead only
         GOOGLE_SECRET = f.read().strip()
 
+    cal_url = "https://www.googleapis.com/calendar/v3/calendars/"
     calendar_id = "7eie7k06g255baksfshfhp0m28%40group.calendar.google.com"
 
     payload = {"key": GOOGLE_SECRET,
@@ -38,7 +38,7 @@ def get_cal():
                "timeMin": datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
                "orderBy": "startTime"}
 
-    r = requests.get("".join(["https://www.googleapis.com/calendar/v3/calendars/",
+    r = requests.get("".join([cal_url,
                               calendar_id,
                               '/events']),
                      params=payload)
@@ -77,7 +77,8 @@ class NoteFormView(FormView):
         '''Inject self.note_type as the note type.'''
 
         if self.note_type is None:
-            raise ImproperlyConfigured("NoteCreate view must have 'note_type' variable set.")
+            raise ImproperlyConfigured("NoteCreate view must have" +
+                                       "'note_type' variable set.")
 
         context = super(FormView, self).get_context_data(**kwargs)
         context['note_type'] = self.note_type
@@ -86,6 +87,12 @@ class NoteFormView(FormView):
             context['patient'] = mymodels.Patient.objects.get(pk=self.kwargs['pt_id'])
 
         return context
+
+
+def workup_choice(request, pt_id):
+    '''Prompt the user to choose a follow up type.'''
+    pt = get_object_or_404(mymodels.Patient, pk=pt_id)
+    return render(request, 'pttrack/workup-choice.html', {'patient': pt})
 
 
 class WorkupCreate(NoteFormView):
@@ -130,8 +137,16 @@ class WorkupCreate(NoteFormView):
 class FollowupCreate(NoteFormView):
     '''A view for creating a new Followup'''
     template_name = 'pttrack/form_submission.html'
-    form_class = myforms.FollowupForm
     note_type = "Followup"
+
+    def get_form_class(self, **kwargs):
+
+        ftype = self.kwargs['ftype']
+
+        futypes = {'referral': myforms.ReferralFollowup,
+                   'labs': myforms.LabFollowup}
+
+        return futypes[ftype]
 
     def form_valid(self, form):
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
@@ -154,7 +169,8 @@ class ActionItemCreate(NoteFormView):
     def form_valid(self, form):
         '''Set the patient, provider, and written timestamp for the item.'''
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
-        ai = mymodels.ActionItem(completion_date=None, author=get_current_provider(),
+        ai = mymodels.ActionItem(completion_date=None,
+                                 author=get_current_provider(),
                                  written_date=django.utils.timezone.now(),
                                  patient=pt, **form.cleaned_data)
         ai.save()
@@ -186,4 +202,5 @@ def reset_action_item(request, ai_id):
     ai = get_object_or_404(mymodels.ActionItem, pk=ai_id)
     ai.clear_done()
     ai.save()
-    return HttpResponseRedirect(reverse("patient-detail", args=(ai.patient.id,)))
+    return HttpResponseRedirect(reverse("patient-detail",
+                                        args=(ai.patient.id,)))

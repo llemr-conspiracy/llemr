@@ -48,3 +48,12 @@ for clintype in ["Basic Care Clinic", "Depression & Anxiety Clinic", "Dermatolog
 for ai_type in ["Vaccine followup", "Follow up on labs", "PCP follow up"]:
     i = models.ActionInstruction(instruction=ai_type)
     i.save()
+
+for contact_method in ["Phone", "Email", "SMS"]:
+    cmeth = models.ContactMethod(name=contact_method)
+    cmeth.save()
+
+for contact_result in ["No answer, left voicemail", "No answer, did not leave voicemail", "Reached patient"]:
+    result = models.ContactResult(name=contact_result)
+    result.save()
+
