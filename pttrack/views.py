@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponseServerError, HttpResponseNotFound
+from django.http import HttpResponseRedirect, HttpResponseServerError, \
+    HttpResponseNotFound
 from django.views.generic.edit import FormView
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
@@ -17,7 +18,8 @@ def get_current_provider():
 
 
 def get_clindates():
-    clindates = mymodels.ClinicDate.objects.filter(clinic_date=django.utils.timezone.now().date())
+    clindates = mymodels.ClinicDate.objects.filter(
+        clinic_date=django.utils.timezone.now().date())
     return clindates
 
 
@@ -35,7 +37,8 @@ def get_cal():
 
     payload = {"key": GOOGLE_SECRET,
                "singleEvents": True,
-               "timeMin": datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
+               "timeMin": datetime.datetime.now().strftime(
+                    '%Y-%m-%dT%H:%M:%S.%fZ'),
                "orderBy": "startTime"}
 
     r = requests.get("".join([cal_url,
@@ -43,7 +46,10 @@ def get_cal():
                               '/events']),
                      params=payload)
 
-    next_date_str = r.json()["items"][0]["start"]["dateTime"].split("T")[0].split("-")
+    # draw the first starting time out of the JSON-formatted gcal api output
+    javascript_datetime = r.json()["items"][0]["start"]["dateTime"]
+    next_date = javascript_datetime.split("T")[0].split("-")
+
     next_date = datetime.datetime.date(year=next_date_str[0],
                                        month=next_date_str[1],
                                        day=next_date_str[2])
@@ -84,7 +90,8 @@ class NoteFormView(FormView):
         context['note_type'] = self.note_type
 
         if 'pt_id' in self.kwargs:
-            context['patient'] = mymodels.Patient.objects.get(pk=self.kwargs['pt_id'])
+            context['patient'] = mymodels.Patient.objects. \
+                get(pk=self.kwargs['pt_id'])
 
         return context
 
@@ -113,14 +120,16 @@ class WorkupCreate(NoteFormView):
             # dispatch to ClinicDateCreate because the ClinicDate doesn't exist
             return HttpResponseRedirect(reverse("new-clindate", args=(pt.id,)))
         elif len(clindates) == 1:
-            # dispatch to our own view, since we know there's a ClinicDate for today
+            # dispatch to our own view, since we know there's a ClinicDate
+            # for today
             kwargs['pt_id'] = pt.id
             print kwargs
             return super(WorkupCreate,
                          self).get(self, *args, **kwargs)
         else:  # we have >1 clindate today.
-            return HttpResponseServerError(
-                "<h3>We don't know how to handle >1 clinic day on a particular day!</h3>")
+            return HttpResponseServerError("<h3>We don't know how to handle " +
+                                           ">1 clinic day on a particular " +
+                                           "day!</h3>")
 
     def form_valid(self, form):
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])

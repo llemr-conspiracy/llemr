@@ -26,6 +26,7 @@ class NoShowReason(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class NoAptReason(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
     clinics a patient can be referred to (e.g. PCP, ortho, etc.)'''
