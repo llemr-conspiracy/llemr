@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponseServerError, \
     HttpResponseNotFound
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, UpdateView
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 import django.utils.timezone
@@ -142,6 +142,12 @@ class WorkupCreate(NoteFormView):
         pt.save()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+
+
+class ReferralFollowupUpdate(UpdateView):
+    model = fu_models.ReferralFollowup
+    form_class = myforms.ReferralFollowup
+    template_name_suffix = "-update"
 
 
 class FollowupCreate(NoteFormView):

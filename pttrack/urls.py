@@ -34,7 +34,7 @@ urlpatterns = [  # pylint: disable=invalid-name
     url(r'^$', DetailView.as_view(model=mymodels.Workup,)),
 
     url(r'^followup/(?P<pk>[0-9])/$',
-        DetailView.as_view(model=fu_models.ReferralFollowup),
+        views.ReferralFollowupUpdate.as_view(),
         {"model": "Referral"},
         name="followup"),
     url(r'^followup/(?P<pk>[0-9])/$',
