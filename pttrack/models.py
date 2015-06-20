@@ -157,7 +157,14 @@ class Patient(Person):
 
     def notes(self):
         note_list = list(self.workup_set.all())
-        # note_list.extend(self.followup_set.all())
+
+        # this is kind of a hack--optimally there'd be some way to get access
+        # to all notes that inherit from Followup in one fell swoop but this
+        # is fine for now.
+        note_list.extend(self.referralfollowup_set.all())
+        note_list.extend(self.labfollowup_set.all())
+        note_list.extend(self.vaccinefollowup_set.all())
+
         note_list.sort(key=lambda(k): k.written_date)
 
         return note_list

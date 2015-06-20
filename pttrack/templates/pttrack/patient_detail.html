@@ -64,9 +64,9 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		{% for note in patient.notes %}
 			<tr>
 			{% if note.chief_complaint %}
-				<p><a href="{% url 'workup' pk=note.pk %}/pttrack/workup/{{ note.pk }}"><strong>Workup:</strong></a>  {{ note.short_text }}</p>
+				<p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a>  {{ note.short_text }}</p>
 			{% else %}
-				<p><strong>{{ note.type }} Followup:</strong> {{ note.short_text }}</p>
+				<p><a href="{% url 'followup' pk=note.pk model=note.type %}">{{ note.type }} Followup:</a> {{ note.short_text }}</p>
 			{% endif %}
 				<p class="text-muted  text-right"> {{ note.attribution }}</p>
 			</td></tr>

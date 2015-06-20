@@ -1,4 +1,5 @@
 from pttrack import models
+from pttrack import followup_models
 from datetime import date
 
 l = models.Language(name="English")
@@ -28,7 +29,7 @@ p = models.Patient(first_name="Frankie",
                    date_of_birth=date(year=1989,
                                       month=8,
                                       day=9),
-                   phone="501-233-1234",                   
+                   phone="501-233-1234",
                    language=l,
                    ethnicity=e,
                    gender=models.Gender.objects.all()[0])
@@ -40,8 +41,9 @@ for lname in ["Attending Physician",
               "Coordinator"]:
     p = models.ProviderType(long_name=lname, short_name=lname.split()[0])
     p.save()
-    
-for clintype in ["Basic Care Clinic", "Depression & Anxiety Clinic", "Dermatology", "Muscle and Joint Pain"]:
+
+for clintype in ["Basic Care Clinic", "Depression & Anxiety Clinic",
+                 "Dermatology", "Muscle and Joint Pain"]:
     t = models.ClinicType(name=clintype)
     t.save()
 
@@ -50,10 +52,24 @@ for ai_type in ["Vaccine followup", "Follow up on labs", "PCP follow up"]:
     i.save()
 
 for contact_method in ["Phone", "Email", "SMS"]:
-    cmeth = models.ContactMethod(name=contact_method)
+    cmeth = followup_models.ContactMethod(name=contact_method)
     cmeth.save()
 
-for contact_result in ["No answer, left voicemail", "No answer, did not leave voicemail", "Reached patient"]:
-    result = models.ContactResult(name=contact_result)
-    result.save()
+for cont_res in ["No answer, left voicemail", "Reached patient"]:
+    print cont_res
+    rslt = followup_models.ContactResult(name=cont_res)
+    rslt.save()
 
+f = followup_models.PCPLocation(name="SNHC")
+f.save()
+
+s = followup_models.NoAptReason(name="Problem resolved")
+s.save()
+
+s = followup_models.NoShowReason(name="Something came up.")
+s.save()
+
+s = followup_models.ReferralType(name="PCP")
+s.save()
+
+print "done!"

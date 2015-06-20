@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from django.views.generic import ListView, DetailView
 from . import models as mymodels
+from . import followup_models as fu_models
 from . import views
 
 # pylint: disable=I0011
@@ -31,4 +32,13 @@ urlpatterns = [  # pylint: disable=invalid-name
     url(r'^action-item/(?P<ai_id>[0-9]+)/reset$', views.reset_action_item,
         name='reset-action-item'),
     url(r'^$', DetailView.as_view(model=mymodels.Workup,)),
+
+    url(r'^followup/(?P<pk>[0-9])/$',
+        DetailView.as_view(model=fu_models.ReferralFollowup),
+        {"model": "Referral"},
+        name="followup"),
+    url(r'^followup/(?P<pk>[0-9])/$',
+        DetailView.as_view(model=fu_models.LabFollowup),
+        {"model": "Lab"},
+        name="followup"),
 ]

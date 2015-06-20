@@ -7,6 +7,7 @@ from django.core.exceptions import ImproperlyConfigured
 import django.utils.timezone
 
 from . import models as mymodels
+from . import followup_models as fu_models
 from . import forms as myforms
 
 import datetime
@@ -157,11 +158,19 @@ class FollowupCreate(NoteFormView):
 
         return futypes[ftype]
 
+    def get_followup_model(self):
+        '''Get the subtype of Followup model used by the FollowupForm used by
+        this FollowupCreate view.'''
+        # I have no idea if this is the right way to do this. It seems a bit
+        # dirty.
+        return self.get_form_class().Meta.model
+
     def form_valid(self, form):
+
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
-        fu = mymodels.Followup(patient=pt,
-                               author=get_current_provider(),
-                               **form.cleaned_data)
+        fu = self.get_followup_model()(patient=pt,
+                                       author=get_current_provider(),
+                                       **form.cleaned_data)
 
         fu.save()
         pt.save()

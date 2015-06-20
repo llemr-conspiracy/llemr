@@ -79,7 +79,7 @@ class Followup(mymodels.Note):
     contact_method = models.ForeignKey(ContactMethod)
     contact_resolution = models.ForeignKey(ContactResult)
 
-    comments = models.TextField()
+    comments = models.TextField(blank=True, null=True)
 
     def attribution(self):
         return " ".join([self.author.name(), "on", str(self.written_date())])
@@ -107,7 +107,7 @@ class VaccineFollowup(Followup):
         return "Vaccine"
 
     def short_text(self):
-        return ""
+        return "[next dose?]"
 
 
 class LabFollowup(Followup):
@@ -164,4 +164,18 @@ class ReferralFollowup(Followup):
         return "Referral"
 
     def short_text(self):
-        return ""
+        out = []
+        if self.has_appointment:
+            out.append("Patient made an appointment,")
+            if self.pt_showed == self.PTSHOW_OPTS[0][0]:
+                out.append("and the patient attended")
+            elif self.pt_showed == self.PTSHOW_OPTS[2][0]:
+                out.append("and the patient will be attending")
+            else:
+                out.append("but the patient didn't go because")
+                out.append(self.noshow_reason)
+        else:
+            out.append("No appointment made because")
+            out.append(noapt_reason)
+
+        return " ".join(out)+"."
