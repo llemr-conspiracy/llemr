@@ -7,8 +7,8 @@ Followup {{ patient.name }}
 {% endblock %}
 
 {% block header %}
-<h1>New Followup </h1>
-<p class="lead">Add a new followup note for <em>{{ patient.name }}</em></p>
+<h1>New {{ form.object.type }} Followup </h1>
+<p class="lead">Add a new {{form.object.type}} followup note for <em>{{ patient.name }}</em></p>
 {% endblock %}
 
 {% block content %}
@@ -18,11 +18,11 @@ Followup {{ patient.name }}
 <div class="container">
 	<form action="" method="post">
 	    {% csrf_token %}
-		{% bootstrap_form form %}
-		{% buttons %}
-	    <button type="submit" class="btn btn-success" value="patient">Submit</button>
-	    <button type="submit" class="btn btn-info" value="actionitem">Submit and New Action Item</button>
-		{% endbuttons %}
+  		{% bootstrap_form form %}
+  		{% buttons %}
+  	    <button type="submit" class="btn btn-success" value="patient">Submit</button>
+  	    <button type="submit" class="btn btn-info" value="actionitem">Submit and New Action Item</button>
+  		{% endbuttons %}
 	</form>
 </div>
 

@@ -73,11 +73,22 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='GeneralFollowup',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('written_datetime', models.DateTimeField(default=django.utils.timezone.now)),
+                ('comments', models.TextField(null=True, blank=True)),
+            ],
+            options={
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
             name='LabFollowup',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('written_datetime', models.DateTimeField(default=django.utils.timezone.now)),
-                ('comments', models.TextField()),
+                ('comments', models.TextField(null=True, blank=True)),
                 ('communication_success', models.BooleanField(help_text=b'Were you able to communicate the results?')),
             ],
             options={
@@ -159,7 +170,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('written_datetime', models.DateTimeField(default=django.utils.timezone.now)),
-                ('comments', models.TextField()),
+                ('comments', models.TextField(null=True, blank=True)),
                 ('has_appointment', models.BooleanField(help_text=b'Does the patient have an appointment?')),
                 ('pt_showed', models.CharField(help_text=b'Did the patient show up to the appointment?', max_length=7, choices=[(b'Yes', b'Yes'), (b'No', b'No'), (b'Not yet', b'Not yet')])),
                 ('apt_location', models.ForeignKey(blank=True, to='pttrack.PCPLocation', help_text=b'Where is the appointment?', null=True)),
@@ -186,7 +197,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('written_datetime', models.DateTimeField(default=django.utils.timezone.now)),
-                ('comments', models.TextField()),
+                ('comments', models.TextField(null=True, blank=True)),
                 ('subsq_dose', models.BooleanField(help_text=b'Are they coming back for another dose?')),
                 ('dose_date', models.DateField(help_text=b'When is the next dose?', null=True, blank=True)),
                 ('author', models.ForeignKey(to='pttrack.Provider')),
@@ -243,6 +254,31 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='labfollowup',
+            name='patient',
+            field=models.ForeignKey(to='pttrack.Patient'),
+        ),
+        migrations.AddField(
+            model_name='generalfollowup',
+            name='author',
+            field=models.ForeignKey(to='pttrack.Provider'),
+        ),
+        migrations.AddField(
+            model_name='generalfollowup',
+            name='author_type',
+            field=models.ForeignKey(to='pttrack.ProviderType'),
+        ),
+        migrations.AddField(
+            model_name='generalfollowup',
+            name='contact_method',
+            field=models.ForeignKey(to='pttrack.ContactMethod'),
+        ),
+        migrations.AddField(
+            model_name='generalfollowup',
+            name='contact_resolution',
+            field=models.ForeignKey(to='pttrack.ContactResult'),
+        ),
+        migrations.AddField(
+            model_name='generalfollowup',
             name='patient',
             field=models.ForeignKey(to='pttrack.Patient'),
         ),

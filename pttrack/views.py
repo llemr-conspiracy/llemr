@@ -144,10 +144,32 @@ class WorkupCreate(NoteFormView):
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
 
-class ReferralFollowupUpdate(UpdateView):
+class FollowupUpdate(UpdateView):
+    template_name = "pttrack/followup-update.html"
+
+    def get_success_url(self):
+        pt = self.object.patient
+        return reverse("patient-detail", args=(pt.id, ))
+
+
+class ReferralFollowupUpdate(FollowupUpdate):
     model = fu_models.ReferralFollowup
     form_class = myforms.ReferralFollowup
-    template_name_suffix = "-update"
+
+
+class LabFollowupUpdate(FollowupUpdate):
+    model = fu_models.LabFollowup
+    form_class = myforms.LabFollowup
+
+
+class VaccineFollowupUpdate(FollowupUpdate):
+    model = fu_models.VaccineFollowup
+    form_class = myforms.VaccineFollowup
+
+
+class GeneralFollowupUpdate(FollowupUpdate):
+    model = fu_models.Followup
+    form_class = myforms.GeneralFollowup
 
 
 class FollowupCreate(NoteFormView):
@@ -160,7 +182,9 @@ class FollowupCreate(NoteFormView):
         ftype = self.kwargs['ftype']
 
         futypes = {'referral': myforms.ReferralFollowup,
-                   'labs': myforms.LabFollowup}
+                   'labs': myforms.LabFollowup,
+                   'vaccine': myforms.VaccineFollowup,
+                   'general': myforms.GeneralFollowup}
 
         return futypes[ftype]
 
@@ -169,6 +193,7 @@ class FollowupCreate(NoteFormView):
         this FollowupCreate view.'''
         # I have no idea if this is the right way to do this. It seems a bit
         # dirty.
+        print self.get_form_class().Meta.model
         return self.get_form_class().Meta.model
 
     def form_valid(self, form):
@@ -180,6 +205,8 @@ class FollowupCreate(NoteFormView):
 
         fu.save()
         pt.save()
+
+        print "built a", fu.__class__
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 

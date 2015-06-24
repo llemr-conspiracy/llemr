@@ -8,6 +8,13 @@ from . import followup_models
 # pylint: disable=I0011,E1305
 
 
+class GeneralFollowup(ModelForm):
+    '''The form instantiation of a general followup note.'''
+    class Meta:
+        model = followup_models.Followup
+        exclude = ['patient', 'written_datetime', 'author']
+
+
 class ReferralFollowup(ModelForm):
     '''The form instantiation of a followup for PCP referral.'''
     class Meta:

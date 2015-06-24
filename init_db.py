@@ -66,7 +66,7 @@ f.save()
 s = followup_models.NoAptReason(name="Problem resolved")
 s.save()
 
-s = followup_models.NoShowReason(name="Something came up.")
+s = followup_models.NoShowReason(name="Something came up")
 s.save()
 
 s = followup_models.ReferralType(name="PCP")

@@ -3,12 +3,12 @@
 {% load bootstrap3 %}
 
 {% block title %}
-Referral Followup [ patient.name ]
+{{ object.type }} Followup {{ object.patient.name }}
 {% endblock %}
 
 {% block header %}
-<h1>Referral Followup </h1>
-<p class="lead">View or edit Referral Followup for <em>[ patient.name ]</em></p>
+<h1>{{ object.type }} Followup</h1>
+<p class="lead">View or edit {{ object.type }} Followup for <em>{{ object.patient.name }}</em></p>
 {% endblock %}
 
 {% block content %}

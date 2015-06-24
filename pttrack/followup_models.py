@@ -69,9 +69,9 @@ class PCPLocation(models.Model):
 
 class Followup(mymodels.Note):
     '''The base followup class used in all different types of patient followup
-    notes.'''
+    notes. Can also be instantiated as a 'general follouwp' type.'''
 
-    class Meta:  # pylint: disable=W0232,R0903,C1001,C0111
+    class Meta:
         abstract = True
 
     written_datetime = models.DateTimeField(default=django.utils.timezone.now)
@@ -81,15 +81,44 @@ class Followup(mymodels.Note):
 
     comments = models.TextField(blank=True, null=True)
 
+    def type(self):
+        '''Returns a short string value used as a key to determine which type
+        of followup note this is. Human readable.'''
+
+        # in a brutally ugly turn of events, there doesn't appear to be a good
+        # way to overridde this method in subclasses. Behold the hacky result:
+        for child in ["labfollowup", "generalfollowup", "vaccinefollowup"]:
+            # you may ask "where did those strings come from?" or "how do you
+            # know that it's all lower case?"... MYSTERIES FOR THE AGES.
+            if hasattr(self, child):
+                return getattr(self, child).type()
+
+        return "General"
+
+    def short_text(self):
+        '''Return a short text description of this followup and what happened.
+        Used on the patient chart view as the text in the list of followups.'''
+
+        return self.comments
+
     def attribution(self):
+        '''Returns a string that is used as the attribution (i.e. "John at
+        4pm") for this note.'''
         return " ".join([self.author.name(), "on", str(self.written_date())])
 
     def written_date(self):
+        '''Returns a python date object for when this followup was written.'''
         return self.written_datetime.date()
 
     def __unicode__(self):
         return " ".join(["Followup for ", self.patient.name(), " on ",
                          str(self.written_date())])
+
+
+class GeneralFollowup(Followup):
+    '''Datamodel for a general followup. Exists only so that base followup can
+    be abstract.'''
+    pass
 
 
 class VaccineFollowup(Followup):
@@ -107,7 +136,15 @@ class VaccineFollowup(Followup):
         return "Vaccine"
 
     def short_text(self):
-        return "[next dose?]"
+        out = []
+        if self.subsq_dose:
+            out.append("Patient should return on")
+            out.append(str(self.dose_date))
+            out.append("for the next dose.")
+        else:
+            out.append("Patient does not return for another dose.")
+
+        return " ".join(out)
 
 
 class LabFollowup(Followup):
@@ -117,7 +154,7 @@ class LabFollowup(Followup):
     communication_success = models.BooleanField(help_text=CS_HELP)
 
     def type(self):
-        return "Labs"
+        return "Lab"
 
     def short_text(self):
         return ("successfully reached" if self.communication_success else
@@ -143,7 +180,9 @@ class ReferralFollowup(Followup):
     PTSHOW_HELP = "Did the patient show up to the appointment?"
     pt_showed = models.CharField(help_text=PTSHOW_HELP,
                                  max_length=7,
-                                 choices=PTSHOW_OPTS)
+                                 choices=PTSHOW_OPTS,
+                                 blank=True,
+                                 null=True)
 
     REFTYPE_HELP = "What kind of provider was the patient referred to?"
     referral_type = models.ForeignKey(ReferralType, help_text=REFTYPE_HELP)
@@ -173,9 +212,9 @@ class ReferralFollowup(Followup):
                 out.append("and the patient will be attending")
             else:
                 out.append("but the patient didn't go because")
-                out.append(self.noshow_reason)
+                out.append(str(self.noshow_reason).lower())
         else:
             out.append("No appointment made because")
-            out.append(noapt_reason)
+            out.append(str(self.noapt_reason).lower())
 
         return " ".join(out)+"."
