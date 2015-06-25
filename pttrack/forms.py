@@ -12,14 +12,14 @@ class GeneralFollowup(ModelForm):
     '''The form instantiation of a general followup note.'''
     class Meta:
         model = followup_models.Followup
-        exclude = ['patient', 'written_datetime', 'author']
+        exclude = ['patient', 'written_datetime', 'author', 'author_type']
 
 
 class ReferralFollowup(ModelForm):
     '''The form instantiation of a followup for PCP referral.'''
     class Meta:
         model = followup_models.ReferralFollowup
-        exclude = ['patient', 'written_datetime', 'author']
+        exclude = ['patient', 'written_datetime', 'author', 'author_type']
 
     def clean(self):
         '''ReferralFollowup has some pretty complicated behavior regarding
@@ -56,7 +56,7 @@ class VaccineFollowup(ModelForm):
     '''A form to process the handling of a vaccine followup.'''
     class Meta:
         model = followup_models.VaccineFollowup
-        exclude = ['patient', 'written_datetime', 'author']
+        exclude = ['patient', 'written_datetime', 'author', 'author_type']
 
     def clean(self):
         '''VaccineFollowups require a next dose date iff there there is a next
@@ -75,7 +75,7 @@ class LabFollowup(ModelForm):
     '''The form instantiation of a followup to communicate lab results.'''
     class Meta:
         model = followup_models.LabFollowup
-        exclude = ['patient', 'written_datetime', 'author']
+        exclude = ['patient', 'written_datetime', 'author', 'author_type']
 
 
 class PatientForm(ModelForm):
@@ -87,7 +87,7 @@ class PatientForm(ModelForm):
 class WorkupForm(ModelForm):
     class Meta:
         model = models.Workup
-        exclude = ['patient', 'clinic_day', 'author']
+        exclude = ['patient', 'clinic_day', 'author', 'signer', 'author_type']
 
     def clean(self):
         '''Use form's clean hook to verify that fields in Workup are
@@ -113,7 +113,7 @@ class ActionItemForm(ModelForm):
     class Meta:
         model = models.ActionItem
         exclude = ['completion_date', 'author', 'written_date', 'patient',
-                   'completion_author']
+                   'completion_author', 'author_type']
         widgets = {'due_date': DateTimePicker(options={"format": "YYYY-MM-DD",
                                                        "pickTime": False})}
 

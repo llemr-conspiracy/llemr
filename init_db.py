@@ -19,6 +19,7 @@ p = models.Provider(first_name="Tommy",
                     phone="425-243-9115",
                     gender=models.Gender.objects.all()[0],
                     email="tljones@wustl.edu",
+                    can_attend=True,
                     )
 p.save()
 

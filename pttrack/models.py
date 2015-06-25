@@ -34,6 +34,10 @@ def validate_bp(value):
             "valid pressure--they must be small, positive integers.")
 
 
+def validate_attending(value):
+    return value.can_attend
+
+
 class ReferralType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
     clinics a patient can be referred to (e.g. PCP, ortho, etc.)'''
@@ -87,7 +91,7 @@ class ActionInstruction(models.Model):
 
 class ProviderType(models.Model):
     long_name = models.CharField(max_length=100)
-    short_name = models.CharField(max_length=10)
+    short_name = models.CharField(max_length=10, primary_key=True)
 
     def __unicode__(self):
         return self.short_name
@@ -226,6 +230,7 @@ class Patient(Person):
 class Provider(Person):
 
     email = models.EmailField()
+    can_attend = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.name()
@@ -255,6 +260,9 @@ class Note(models.Model):
     author = models.ForeignKey(Provider)
     author_type = models.ForeignKey(ProviderType)
     patient = models.ForeignKey(Patient)
+
+    written_datetime = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
 
 
 # class Documents(Note):
@@ -348,6 +356,22 @@ class Workup(Note):
     will_return = models.BooleanField(default=False)
 
     A_and_P = models.TextField()
+
+    signer = models.ForeignKey(Provider,
+                               blank=True, null=True,
+                               related_name="signed_workups",
+                               validators=[validate_attending])
+    signed_date = models.DateTimeField()
+
+    def sign(self, provider):
+        if signer.can_attend:
+            self.signed_date = django.utils.timezone.now()
+            self.signer = provider
+        else:
+            raise ValueError("You must be an attending to sign workups.")
+
+    def signed(self):
+        return self.signer is not None
 
     def short_text(self):
         return self.chief_complaint

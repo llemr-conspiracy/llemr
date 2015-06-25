@@ -1,0 +1,12 @@
+{% extends "pttrack/base-form.html" %}
+
+{% load bootstrap3 %}
+
+{% block title %}
+Edit Workup ({{ object.patient.name }})
+{% endblock %}
+
+{% block header %}
+<h1>Edit Workup</h1>
+<p class="lead">View or edit Workup for <em>{{ object.patient.name }}</em></p>
+{% endblock %}

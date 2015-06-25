@@ -22,6 +22,8 @@ class Migration(migrations.Migration):
             name='ActionItem',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('written_datetime', models.DateTimeField(auto_now_add=True)),
+                ('last_modified', models.DateTimeField(auto_now=True)),
                 ('written_date', models.DateTimeField(default=django.utils.timezone.now)),
                 ('due_date', models.DateField()),
                 ('comments', models.CharField(max_length=300)),
@@ -82,7 +84,8 @@ class Migration(migrations.Migration):
             name='GeneralFollowup',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('written_datetime', models.DateTimeField(default=django.utils.timezone.now)),
+                ('written_datetime', models.DateTimeField(auto_now_add=True)),
+                ('last_modified', models.DateTimeField(auto_now=True)),
                 ('comments', models.TextField(null=True, blank=True)),
             ],
             options={
@@ -93,7 +96,8 @@ class Migration(migrations.Migration):
             name='LabFollowup',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('written_datetime', models.DateTimeField(default=django.utils.timezone.now)),
+                ('written_datetime', models.DateTimeField(auto_now_add=True)),
+                ('last_modified', models.DateTimeField(auto_now=True)),
                 ('comments', models.TextField(null=True, blank=True)),
                 ('communication_success', models.BooleanField(help_text=b'Were you able to communicate the results?')),
             ],
@@ -157,6 +161,7 @@ class Migration(migrations.Migration):
                 ('middle_name', models.CharField(max_length=100, blank=True)),
                 ('phone', models.CharField(max_length=50)),
                 ('email', models.EmailField(max_length=254)),
+                ('can_attend', models.BooleanField(default=False)),
                 ('gender', models.ForeignKey(to='pttrack.Gender')),
             ],
             options={
@@ -175,7 +180,8 @@ class Migration(migrations.Migration):
             name='ReferralFollowup',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('written_datetime', models.DateTimeField(default=django.utils.timezone.now)),
+                ('written_datetime', models.DateTimeField(auto_now_add=True)),
+                ('last_modified', models.DateTimeField(auto_now=True)),
                 ('comments', models.TextField(null=True, blank=True)),
                 ('has_appointment', models.BooleanField(help_text=b'Does the patient have an appointment?')),
                 ('pt_showed', models.CharField(blank=True, max_length=7, null=True, help_text=b'Did the patient show up to the appointment?', choices=[(b'Yes', b'Yes'), (b'No', b'No'), (b'Not yet', b'Not yet')])),
@@ -202,7 +208,8 @@ class Migration(migrations.Migration):
             name='VaccineFollowup',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('written_datetime', models.DateTimeField(default=django.utils.timezone.now)),
+                ('written_datetime', models.DateTimeField(auto_now_add=True)),
+                ('last_modified', models.DateTimeField(auto_now=True)),
                 ('comments', models.TextField(null=True, blank=True)),
                 ('subsq_dose', models.BooleanField(help_text=b'Are they coming back for another dose?')),
                 ('dose_date', models.DateField(help_text=b'When is the next dose?', null=True, blank=True)),
@@ -220,6 +227,8 @@ class Migration(migrations.Migration):
             name='Workup',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('written_datetime', models.DateTimeField(auto_now_add=True)),
+                ('last_modified', models.DateTimeField(auto_now=True)),
                 ('chief_complaint', models.CharField(max_length=1000, verbose_name=b'CC')),
                 ('diagnosis', models.CharField(max_length=1000, verbose_name=b'Dx')),
                 ('HPI', models.TextField(verbose_name=b'HPI')),
@@ -242,6 +251,7 @@ class Migration(migrations.Migration):
                 ('patient_pays', models.PositiveSmallIntegerField(null=True, blank=True)),
                 ('will_return', models.BooleanField(default=False)),
                 ('A_and_P', models.TextField()),
+                ('signed_date', models.DateTimeField()),
                 ('author', models.ForeignKey(to='pttrack.Provider')),
                 ('author_type', models.ForeignKey(to='pttrack.ProviderType')),
                 ('clinic_day', models.ForeignKey(to='pttrack.ClinicDate')),
@@ -249,6 +259,7 @@ class Migration(migrations.Migration):
                 ('patient', models.ForeignKey(to='pttrack.Patient')),
                 ('referral_location', models.ForeignKey(blank=True, to='pttrack.PCPLocation', null=True)),
                 ('referral_type', models.ForeignKey(blank=True, to='pttrack.ReferralType', null=True)),
+                ('signer', models.ForeignKey(related_name='signed_workups', validators=[pttrack.models.validate_attending], to='pttrack.Provider', blank=True, null=True)),
             ],
             options={
                 'abstract': False,

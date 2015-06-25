@@ -24,6 +24,11 @@ def get_clindates():
     return clindates
 
 
+def get_current_provider_type():
+    # TODO determine from session data
+    return get_object_or_404(mymodels.ProviderType, pk="Attending")
+
+
 def get_cal():
     '''Get the gcal_id of the google calendar clinic date today.
     CURRENTLY BROKEN next_date must be produced correctly.'''
@@ -136,6 +141,7 @@ class WorkupCreate(NoteFormView):
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
         wu = mymodels.Workup(patient=pt, **form.cleaned_data)
         wu.author = get_current_provider()
+        wu.author_type = get_current_provider_type()
         wu.clinic_day = get_clindates()[0]
 
         wu.save()
@@ -207,6 +213,7 @@ class FollowupCreate(NoteFormView):
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
         fu = self.get_followup_model()(patient=pt,
                                        author=get_current_provider(),
+                                       author_type=get_current_provider_type(),
                                        **form.cleaned_data)
 
         fu.save()
@@ -228,7 +235,7 @@ class ActionItemCreate(NoteFormView):
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
         ai = mymodels.ActionItem(completion_date=None,
                                  author=get_current_provider(),
-                                 written_date=django.utils.timezone.now(),
+                                 author_type=get_current_provider_type(),
                                  patient=pt, **form.cleaned_data)
         ai.save()
         pt.save()
@@ -245,6 +252,21 @@ class PatientCreate(FormView):
         p = mymodels.Patient(**form.cleaned_data)
         p.save()
         return HttpResponseRedirect(reverse("patient-detail", args=(p.id,)))
+
+
+def sign_workup(request, pk):
+    provider = get_current_provider()
+    wu = get_object_or_404(mymodels.Workup, pk=pk)
+
+    if provider.can_attend:
+        wu.signer = get_current_provider()
+        wu.signe
+        wu.save()
+    else:
+        # TODO add error message
+        pass
+
+    return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
 
 
 def done_action_item(request, ai_id):

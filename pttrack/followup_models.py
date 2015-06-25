@@ -54,8 +54,6 @@ class Followup(mymodels.Note):
     class Meta:
         abstract = True
 
-    written_datetime = models.DateTimeField(default=django.utils.timezone.now)
-
     contact_method = models.ForeignKey(ContactMethod)
     contact_resolution = models.ForeignKey(ContactResult)
 
