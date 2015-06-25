@@ -17,7 +17,7 @@ Workup: {{ workup.patient.name }}
     <div class="row text-center">
         <h4>Actions</h4>
         <div class="btn-group">
-            <a class="btn btn-primary" href="" role="button">Update</a>
+            <a class="btn btn-primary" href="{% url 'workup-update' pk=workup.patient.pk %}" role="button">Update</a>
             <a class="btn btn-success" href="" role="button">Sign</a>
             <a class="btn btn-info" href="{% url 'new-action-item' pt_id=workup.patient.pk %}" role="button">Add Action Item</a>
         </div>

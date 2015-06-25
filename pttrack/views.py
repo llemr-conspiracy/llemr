@@ -144,6 +144,12 @@ class WorkupCreate(NoteFormView):
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
 
+class WorkupUpdate(UpdateView):
+    template_name = 'pttrack/workup-update.html'
+    model = mymodels.Workup
+    form_class = myforms.WorkupForm
+
+
 class FollowupUpdate(UpdateView):
     template_name = "pttrack/followup-update.html"
 
