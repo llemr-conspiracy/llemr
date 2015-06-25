@@ -66,7 +66,9 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 			{% if note.chief_complaint %}
 				<p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a>  {{ note.short_text }}</p>
 			{% else %}
+				{# here, the url takes an arugment to route it to the correct  #}
 				<p><a href="{% url 'followup' pk=note.pk model=note.type %}">{{ note.type }} Followup:</a> {{ note.short_text }}</p>
+				}
 			{% endif %}
 				<p class="text-muted  text-right"> {{ note.attribution }}</p>
 			</td></tr>

@@ -60,7 +60,11 @@ for cont_res in ["No answer, left voicemail", "Reached patient"]:
     rslt = followup_models.ContactResult(name=cont_res)
     rslt.save()
 
-f = followup_models.PCPLocation(name="SNHC")
+for dx_type in ["Cardiovascular", "N/A"]:
+    d = models.DiagnosisType(name=dx_type)
+    d.save()
+    
+f = models.PCPLocation(name="SNHC")
 f.save()
 
 s = followup_models.NoAptReason(name="Problem resolved")
@@ -69,7 +73,7 @@ s.save()
 s = followup_models.NoShowReason(name="Something came up")
 s.save()
 
-s = followup_models.ReferralType(name="PCP")
+s = models.ReferralType(name="PCP")
 s.save()
 
 print "done!"

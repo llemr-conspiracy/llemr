@@ -17,6 +17,53 @@ def validate_zip(value):
                               "non-digit characters." % value)
 
 
+def validate_bp(value):
+    '''validate that a value is a valid blood pressure'''
+    try:
+        (top, bottom) = value.split('/')
+    except ValueError:
+        raise ValidationError(
+            str(value) + " is not a validly formatted blood pressure since " +
+            "it cannot be split into two values using '/'.")
+
+    try:
+        (top, bottom) = (int(top), int(bottom))
+    except ValueError:
+        raise ValidationError(
+            "Either '" + str(top) + "' or '" + str(bottom) + "' is not a " +
+            "valid pressure--they must be small, positive integers.")
+
+
+class ReferralType(models.Model):
+    '''Simple text-contiaining class for storing the different kinds of
+    clinics a patient can be referred to (e.g. PCP, ortho, etc.)'''
+
+    name = models.CharField(max_length=100, primary_key=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class DiagnosisType(models.Model):
+    '''Simple text-contiaining class for storing the different kinds of
+    diagnosis a pateint can recieve.'''
+
+    name = models.CharField(max_length=100, primary_key=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class PCPLocation(models.Model):
+    '''Data model for a PCP Location'''
+
+    name = models.CharField(max_length=300)
+    address = models.TextField()
+
+    def __unicode__(self):
+        return self.name
+
+
 class Language(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
@@ -254,14 +301,53 @@ class ActionItem(Note):
 
 
 class Workup(Note):
+    '''Datamodel of a workup. Has fields specific to each part of an exam,
+    along with SNHC-specific info about where the patient has been referred for
+    continuity care.'''
+
     clinic_day = models.ForeignKey(ClinicDate)
 
-    chief_complaint = models.CharField(max_length=300)
+    chief_complaint = models.CharField(max_length=1000,
+                                       verbose_name="CC")
+    diagnosis = models.CharField(max_length=1000,
+                                 verbose_name="Dx")
+    diagnosis_category = models.ForeignKey(DiagnosisType)
 
-    HandP = models.TextField()
-    AandP = models.TextField()
+    HPI = models.TextField(verbose_name="HPI")
+    PMH_PSH = models.TextField(verbose_name="PMH/PSH")
+    meds = models.TextField()
+    allergies = models.TextField()
+    fam_hx = models.TextField()
+    soc_hx = models.TextField()
+    ros = models.TextField()
 
-    diagnosis = models.CharField(max_length=100)
+    hr = models.PositiveSmallIntegerField(blank=True, null=True)
+    bp = models.CharField(blank=True, null=True,
+                          max_length=7,
+                          validators=[validate_bp])
+
+    rr = models.PositiveSmallIntegerField(blank=True, null=True)
+    t = models.DecimalField(max_digits=3,
+                            decimal_places=1,
+                            blank=True, null=True)
+
+    pe = models.TextField()
+
+    labs_ordered_quest = models.TextField(blank=True, null=True)
+    labs_ordered_internal = models.TextField(blank=True, null=True)
+
+    rx = models.TextField(blank=True, null=True)
+
+    got_voucher = models.BooleanField(default=False)
+    voucher_amount = models.PositiveSmallIntegerField(blank=True, null=True)
+    patient_pays = models.PositiveSmallIntegerField(blank=True, null=True)
+
+    referral_type = models.ForeignKey(ReferralType, blank=True, null=True)
+    referral_location = models.ForeignKey(PCPLocation, blank=True, null=True)
+
+    will_return = models.BooleanField(default=False)
+
+    A_and_P = models.TextField()
 
     def short_text(self):
         return self.chief_complaint

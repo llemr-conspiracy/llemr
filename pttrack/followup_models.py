@@ -7,16 +7,6 @@ import django.utils.timezone
 # pylint: disable=I0011,E1305
 
 
-class ReferralType(models.Model):
-    '''Simple text-contiaining class for storing the different kinds of
-    clinics a patient can be referred to (e.g. PCP, ortho, etc.)'''
-
-    name = models.CharField(max_length=100, primary_key=True)
-
-    def __unicode__(self):
-        return self.name
-
-
 class NoShowReason(models.Model):
     '''Simple text-contiaining class for storing the different reasons a
     patient might not have gone to a scheduled appointment.'''
@@ -52,16 +42,6 @@ class ContactResult(models.Model):
     attempt with a patient (e.g. no answer w/ voicemail).'''
 
     name = models.CharField(max_length=100, primary_key=True)
-
-    def __unicode__(self):
-        return self.name
-
-
-class PCPLocation(models.Model):
-    '''Data model for a PCP Location'''
-
-    name = models.CharField(max_length=300)
-    address = models.TextField()
 
     def __unicode__(self):
         return self.name
@@ -168,7 +148,7 @@ class ReferralFollowup(Followup):
     has_appointment = models.BooleanField(help_text=bREF_HELP)
 
     APP_HELP = "Where is the appointment?"
-    apt_location = models.ForeignKey(PCPLocation,
+    apt_location = models.ForeignKey(mymodels.PCPLocation,
                                      blank=True,
                                      null=True,
                                      help_text=APP_HELP)
@@ -185,7 +165,8 @@ class ReferralFollowup(Followup):
                                  null=True)
 
     REFTYPE_HELP = "What kind of provider was the patient referred to?"
-    referral_type = models.ForeignKey(ReferralType, help_text=REFTYPE_HELP)
+    referral_type = models.ForeignKey(mymodels.ReferralType,
+                                      help_text=REFTYPE_HELP)
 
     NOAPT_HELP = "If the patient didn't make an appointment, why not?"
     noapt_reason = models.ForeignKey(NoAptReason,
