@@ -1,4 +1,4 @@
-{% extends "pttrack/base.html" %}
+{% extends "pttrack/base-form.html" %}
 
 {% load bootstrap3 %}
 
@@ -9,18 +9,4 @@ Followup {{ patient.name }}
 {% block header %}
 <h1>New Workup </h1>
 <p class="lead">Add a new workup note for <em>{{ patient.name }}</em></p>
-{% endblock %}
-
-{% block content %}
-
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-
-<div class="container">
-	<form action="" method="post">
-	    {% csrf_token %}
-		  {% bootstrap_form form %}
-	    <button type="submit" class="btn btn-success">Submit</button>
-	</form>
-</div>
-
 {% endblock %}
