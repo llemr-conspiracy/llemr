@@ -7,7 +7,12 @@ from . import views
 # pylint: disable=I0011
 
 urlpatterns = [  # pylint: disable=invalid-name
-    url(r'^$', ListView.as_view(model=mymodels.Patient,)),
+    url(r'^$',
+        views.action_required_patients,
+        name="home"),
+    url(r'^all/$',
+        ListView.as_view(model=mymodels.Patient),
+        name="all-patients"),
     url(r'^intake/$', views.PatientCreate.as_view(), name="intake"),
     url(r'^clindate/(?P<pt_id>[0-9]+)/$',
         views.ClinicDateCreate.as_view(),

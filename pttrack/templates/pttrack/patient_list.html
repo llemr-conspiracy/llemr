@@ -17,14 +17,11 @@
     <table class="table">
         {% for patient in object_list %}
             <tr>
-            <td><a href="{{ patient.pk }}/">{{ patient.name }}</a></td>
-            <td>{{ patient.city }}</td>
-            <td>{{ patient.state }}</td>
-            <td>{{ patient.zip_code }}</td>
-            <td>{{ patient.gender }}</td>
+            <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
             <td>{{ patient.age }}</td>
+            <td>{{ patient.gender }}</td>
             <td>{{ patient.ethnicity }}</td>
-            <td>{{ patient.comp_status }}</td>
+            <td>{{ patient.status }}</td>
             </tr>
         {% endfor %}
     </table>

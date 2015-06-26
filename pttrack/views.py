@@ -254,6 +254,19 @@ class PatientCreate(FormView):
         return HttpResponseRedirect(reverse("patient-detail", args=(p.id,)))
 
 
+def action_required_patients(request):
+    ai_list = mymodels.ActionItem.objects.filter(
+        due_date__lte=django.utils.timezone.now().today())
+
+    # TODO remove duplicates from list
+    pt_list = [ai.patient for ai in ai_list]
+    pt_list.sort()
+
+    return render(request,
+                  'pttrack/patient_list.html',
+                  {'object_list': pt_list})
+
+
 def sign_workup(request, pk):
     provider = get_current_provider()
     wu = get_object_or_404(mymodels.Workup, pk=pk)
