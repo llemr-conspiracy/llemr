@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import django.utils.timezone
 import pttrack.models
 
 
@@ -24,7 +23,6 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('written_datetime', models.DateTimeField(auto_now_add=True)),
                 ('last_modified', models.DateTimeField(auto_now=True)),
-                ('written_date', models.DateTimeField(default=django.utils.timezone.now)),
                 ('due_date', models.DateField()),
                 ('comments', models.CharField(max_length=300)),
                 ('completion_date', models.DateTimeField(null=True, blank=True)),
@@ -171,9 +169,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ProviderType',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('long_name', models.CharField(max_length=100)),
-                ('short_name', models.CharField(max_length=10)),
+                ('short_name', models.CharField(max_length=10, serialize=False, primary_key=True)),
             ],
         ),
         migrations.CreateModel(

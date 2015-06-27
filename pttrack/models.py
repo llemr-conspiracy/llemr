@@ -273,7 +273,6 @@ class Note(models.Model):
 
 
 class ActionItem(Note):
-    written_date = models.DateTimeField(default=django.utils.timezone.now)
     due_date = models.DateField()
     comments = models.CharField(max_length=300)
     instruction = models.ForeignKey(ActionInstruction)
@@ -302,7 +301,7 @@ class ActionItem(Note):
                              "on", str(self.completion_date.date())])
         else:
             return " ".join(["Added by", str(self.author), "on",
-                             str(self.written_date.date())])
+                             str(self.written_datetime.date())])
 
     def __unicode__(self):
         return "AI: "+str(self.instruction)+" on "+str(self.due_date)

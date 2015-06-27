@@ -180,7 +180,7 @@ class VaccineFollowupUpdate(FollowupUpdate):
 
 
 class GeneralFollowupUpdate(FollowupUpdate):
-    model = fu_models.Followup
+    model = fu_models.GeneralFollowup
     form_class = myforms.GeneralFollowup
 
 
@@ -216,10 +216,12 @@ class FollowupCreate(NoteFormView):
                                        author_type=get_current_provider_type(),
                                        **form.cleaned_data)
 
+        print self.get_followup_model()
+        print get_current_provider_type()
+        print form.cleaned_data
+
         fu.save()
         pt.save()
-
-        print "built a", fu.__class__
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
@@ -287,7 +289,8 @@ def done_action_item(request, ai_id):
     ai.mark_done(get_current_provider())
     ai.save()
 
-    return HttpResponseRedirect(reverse("new-followup", args=(ai.patient.id,)))
+    return HttpResponseRedirect(reverse("followup-choice",
+                                        args=(ai.patient.pk,)))
 
 
 def reset_action_item(request, ai_id):
