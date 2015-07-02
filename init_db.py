@@ -65,7 +65,7 @@ for dx_type in ["Cardiovascular", "N/A"]:
     d = models.DiagnosisType(name=dx_type)
     d.save()
     
-f = models.PCPLocation(name="SNHC")
+f = models.ReferralLocation(name="SNHC")
 f.save()
 
 s = followup_models.NoAptReason(name="Problem resolved")

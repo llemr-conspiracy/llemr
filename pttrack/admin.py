@@ -7,7 +7,7 @@ from . import followup_models
 for model in [models.Language, models.Patient, models.Provider,
               models.ClinicDate, models.Workup, models.ClinicType,
               models.ActionInstruction, models.ActionItem, models.Ethnicity,
-              models.ReferralType, models.PCPLocation]:
+              models.ReferralType, models.ReferralLocation]:
     admin.site.register(model)
 
 for model in [followup_models.ReferralFollowup, followup_models.NoShowReason,

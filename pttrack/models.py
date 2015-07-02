@@ -58,8 +58,8 @@ class DiagnosisType(models.Model):
         return self.name
 
 
-class PCPLocation(models.Model):
-    '''Data model for a PCP Location'''
+class ReferralLocation(models.Model):
+    '''Data model for a referral Location'''
 
     name = models.CharField(max_length=300)
     address = models.TextField()
@@ -350,7 +350,7 @@ class Workup(Note):
     patient_pays = models.PositiveSmallIntegerField(blank=True, null=True)
 
     referral_type = models.ForeignKey(ReferralType, blank=True, null=True)
-    referral_location = models.ForeignKey(PCPLocation, blank=True, null=True)
+    referral_location = models.ForeignKey(ReferralLocation, blank=True, null=True)
 
     will_return = models.BooleanField(default=False,
                                       help_text="Will the pt. return to SNHC?")

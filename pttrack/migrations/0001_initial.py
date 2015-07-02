@@ -143,7 +143,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='PCPLocation',
+            name='ReferralLocation',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=300)),
@@ -182,7 +182,7 @@ class Migration(migrations.Migration):
                 ('comments', models.TextField(null=True, blank=True)),
                 ('has_appointment', models.BooleanField(help_text=b'Does the patient have an appointment?')),
                 ('pt_showed', models.CharField(blank=True, max_length=7, null=True, help_text=b'Did the patient show up to the appointment?', choices=[(b'Yes', b'Yes'), (b'No', b'No'), (b'Not yet', b'Not yet')])),
-                ('apt_location', models.ForeignKey(blank=True, to='pttrack.PCPLocation', help_text=b'Where is the appointment?', null=True)),
+                ('apt_location', models.ForeignKey(blank=True, to='pttrack.ReferralLocation', help_text=b'Where is the appointment?', null=True)),
                 ('author', models.ForeignKey(to='pttrack.Provider')),
                 ('author_type', models.ForeignKey(to='pttrack.ProviderType')),
                 ('contact_method', models.ForeignKey(to='pttrack.ContactMethod')),
@@ -254,7 +254,7 @@ class Migration(migrations.Migration):
                 ('clinic_day', models.ForeignKey(to='pttrack.ClinicDate')),
                 ('diagnosis_category', models.ForeignKey(to='pttrack.DiagnosisType')),
                 ('patient', models.ForeignKey(to='pttrack.Patient')),
-                ('referral_location', models.ForeignKey(blank=True, to='pttrack.PCPLocation', null=True)),
+                ('referral_location', models.ForeignKey(blank=True, to='pttrack.ReferralLocation', null=True)),
                 ('referral_type', models.ForeignKey(blank=True, to='pttrack.ReferralType', null=True)),
                 ('signer', models.ForeignKey(related_name='signed_workups', validators=[pttrack.models.validate_attending], to='pttrack.Provider', blank=True, null=True)),
             ],

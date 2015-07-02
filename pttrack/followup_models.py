@@ -150,7 +150,7 @@ class ReferralFollowup(Followup):
     has_appointment = models.BooleanField(help_text=bREF_HELP)
 
     APP_HELP = "Where is the appointment?"
-    apt_location = models.ForeignKey(mymodels.PCPLocation,
+    apt_location = models.ForeignKey(mymodels.ReferralLocation,
                                      blank=True,
                                      null=True,
                                      help_text=APP_HELP)
