@@ -147,13 +147,17 @@ class WorkupCreate(NoteFormView):
         wu.save()
         pt.save()
 
-        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+        return HttpResponseRedirect(reverse("new-action-item", args=(pt.id,)))
 
 
 class WorkupUpdate(UpdateView):
     template_name = 'pttrack/workup-update.html'
     model = mymodels.Workup
     form_class = myforms.WorkupForm
+
+    def get_success_url(self):
+        wu = self.object
+        return reverse("workup", args=(wu.id, ))
 
 
 class FollowupUpdate(UpdateView):
@@ -273,13 +277,9 @@ def sign_workup(request, pk):
     provider = get_current_provider()
     wu = get_object_or_404(mymodels.Workup, pk=pk)
 
-    if provider.can_attend:
-        wu.signer = get_current_provider()
-        wu.signe
-        wu.save()
-    else:
-        # TODO add error message
-        pass
+    wu.sign(get_current_provider())
+
+    wu.save()
 
     return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
 

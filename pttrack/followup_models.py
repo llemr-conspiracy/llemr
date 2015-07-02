@@ -142,6 +142,10 @@ class LabFollowup(Followup):
 class ReferralFollowup(Followup):
     '''Datamodel for a PCP referral followup.'''
 
+    REFTYPE_HELP = "What kind of provider was the patient referred to?"
+    referral_type = models.ForeignKey(mymodels.ReferralType,
+                                      help_text=REFTYPE_HELP)
+
     bREF_HELP = "Does the patient have an appointment?"
     has_appointment = models.BooleanField(help_text=bREF_HELP)
 
@@ -161,10 +165,6 @@ class ReferralFollowup(Followup):
                                  choices=PTSHOW_OPTS,
                                  blank=True,
                                  null=True)
-
-    REFTYPE_HELP = "What kind of provider was the patient referred to?"
-    referral_type = models.ForeignKey(mymodels.ReferralType,
-                                      help_text=REFTYPE_HELP)
 
     NOAPT_HELP = "If the patient didn't make an appointment, why not?"
     noapt_reason = models.ForeignKey(NoAptReason,

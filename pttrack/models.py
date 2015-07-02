@@ -273,9 +273,9 @@ class Note(models.Model):
 
 
 class ActionItem(Note):
+    instruction = models.ForeignKey(ActionInstruction)
     due_date = models.DateField()
     comments = models.CharField(max_length=300)
-    instruction = models.ForeignKey(ActionInstruction)
     completion_date = models.DateTimeField(blank=True, null=True)
     completion_author = models.ForeignKey(Provider,
                                           blank=True,
@@ -352,7 +352,8 @@ class Workup(Note):
     referral_type = models.ForeignKey(ReferralType, blank=True, null=True)
     referral_location = models.ForeignKey(PCPLocation, blank=True, null=True)
 
-    will_return = models.BooleanField(default=False)
+    will_return = models.BooleanField(default=False,
+                                      help_text="Will the pt. return to SNHC?")
 
     A_and_P = models.TextField()
 
@@ -360,16 +361,17 @@ class Workup(Note):
                                blank=True, null=True,
                                related_name="signed_workups",
                                validators=[validate_attending])
-    signed_date = models.DateTimeField()
+    signed_date = models.DateTimeField(blank=True, null=True)
 
-    def sign(self, provider):
+    def sign(self, signer):
         if signer.can_attend:
             self.signed_date = django.utils.timezone.now()
-            self.signer = provider
+            self.signer = signer
         else:
             raise ValueError("You must be an attending to sign workups.")
 
     def signed(self):
+        print self.signer
         return self.signer is not None
 
     def short_text(self):

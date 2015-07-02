@@ -87,7 +87,8 @@ class PatientForm(ModelForm):
 class WorkupForm(ModelForm):
     class Meta:
         model = models.Workup
-        exclude = ['patient', 'clinic_day', 'author', 'signer', 'author_type']
+        exclude = ['patient', 'clinic_day', 'author', 'signer', 'author_type',
+                   'signed_date']
 
     def clean(self):
         '''Use form's clean hook to verify that fields in Workup are
