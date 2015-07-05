@@ -102,10 +102,10 @@ class NoteFormView(FormView):
         return context
 
 
-def workup_choice(request, pt_id):
+def followup_choice(request, pt_id):
     '''Prompt the user to choose a follow up type.'''
     pt = get_object_or_404(mymodels.Patient, pk=pt_id)
-    return render(request, 'pttrack/workup-choice.html', {'patient': pt})
+    return render(request, 'pttrack/followup-choice.html', {'patient': pt})
 
 
 class WorkupCreate(NoteFormView):
@@ -129,7 +129,6 @@ class WorkupCreate(NoteFormView):
             # dispatch to our own view, since we know there's a ClinicDate
             # for today
             kwargs['pt_id'] = pt.id
-            print kwargs
             return super(WorkupCreate,
                          self).get(self, *args, **kwargs)
         else:  # we have >1 clindate today.
@@ -209,7 +208,6 @@ class FollowupCreate(NoteFormView):
         this FollowupCreate view.'''
         # I have no idea if this is the right way to do this. It seems a bit
         # dirty.
-        print self.get_form_class().Meta.model
         return self.get_form_class().Meta.model
 
     def form_valid(self, form):
@@ -219,10 +217,6 @@ class FollowupCreate(NoteFormView):
                                        author=get_current_provider(),
                                        author_type=get_current_provider_type(),
                                        **form.cleaned_data)
-
-        print self.get_followup_model()
-        print get_current_provider_type()
-        print form.cleaned_data
 
         fu.save()
         pt.save()

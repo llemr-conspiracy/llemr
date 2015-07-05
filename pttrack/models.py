@@ -13,8 +13,9 @@ def validate_zip(value):
                               ' digits.'.format(str(value), len(str(value))))
 
     if not str(value).isdigit():
-        raise ValidationError("%s is not a valid ZIP, because it contains " +
-                              "non-digit characters." % value)
+        raise ValidationError(
+            "%s is not a valid ZIP, because it contains non-digit characters."
+            % value)
 
 
 def validate_bp(value):
@@ -108,7 +109,7 @@ class ProviderType(models.Model):
 
 
 class Gender(models.Model):
-    long_name = models.CharField(max_length=30)
+    long_name = models.CharField(max_length=30, primary_key=True)
     short_name = models.CharField(max_length=1)
 
     def __unicode__(self):

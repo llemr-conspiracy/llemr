@@ -49,7 +49,7 @@ urlpatterns = [  # pylint: disable=invalid-name
         views.FollowupCreate.as_view(),
         name='new-followup'),
     url(r'^(?P<pt_id>[0-9]+)/followup/$',
-        views.workup_choice,
+        views.followup_choice,
         name='followup-choice'),
     url(r'^followup/referral/(?P<pk>[0-9])/$',
         views.ReferralFollowupUpdate.as_view(),
