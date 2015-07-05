@@ -168,10 +168,10 @@ class Patient(Person):
 
     ethnicity = models.ForeignKey(Ethnicity)
 
-    alternate_phone1 = models.CharField(max_length=40, blank=True, null=True)
-    alternate_phone2 = models.CharField(max_length=40, blank=True, null=True)
-    alternate_phone3 = models.CharField(max_length=40, blank=True, null=True)
-    alternate_phone4 = models.CharField(max_length=40, blank=True, null=True)
+    alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True)
+    alternate_phone_2 = models.CharField(max_length=40, blank=True, null=True)
+    alternate_phone_3 = models.CharField(max_length=40, blank=True, null=True)
+    alternate_phone_4 = models.CharField(max_length=40, blank=True, null=True)
 
     preferred_contact_method = models.ForeignKey(ContactMethod, blank=True,
                                                  null=True)
