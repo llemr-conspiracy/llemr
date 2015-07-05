@@ -64,7 +64,7 @@ for cont_res in ["No answer, left voicemail", "Reached patient"]:
 for dx_type in ["Cardiovascular", "N/A"]:
     d = models.DiagnosisType(name=dx_type)
     d.save()
-    
+
 f = models.ReferralLocation(name="SNHC")
 f.save()
 

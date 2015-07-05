@@ -302,11 +302,10 @@ class ActionItem(Note):
     due_date = models.DateField()
     comments = models.CharField(max_length=300)
     completion_date = models.DateTimeField(blank=True, null=True)
-    completion_author = models.ForeignKey(Provider,
-                                          blank=True,
-                                          null=True,
-                                          related_name="action_items_completed"
-                                         )
+    completion_author = models.ForeignKey(
+        Provider,
+        blank=True, null=True,
+        related_name="action_items_completed")
 
     def mark_done(self, provider):
         self.completion_date = django.utils.timezone.now()
@@ -347,7 +346,7 @@ class Workup(Note):
 
     HPI = models.TextField(verbose_name="HPI")
     PMH_PSH = models.TextField(verbose_name="PMH/PSH")
-    meds = models.TextField()
+    meds = models.TextField(verbose_name="Medications")
     allergies = models.TextField()
     fam_hx = models.TextField()
     soc_hx = models.TextField()
@@ -363,7 +362,7 @@ class Workup(Note):
                             decimal_places=1,
                             blank=True, null=True)
 
-    pe = models.TextField()
+    pe = models.TextField(verbose_name="Physical Examination")
 
     labs_ordered_quest = models.TextField(blank=True, null=True)
     labs_ordered_internal = models.TextField(blank=True, null=True)
@@ -396,7 +395,6 @@ class Workup(Note):
             raise ValueError("You must be an attending to sign workups.")
 
     def signed(self):
-        print self.signer
         return self.signer is not None
 
     def short_text(self):
