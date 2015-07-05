@@ -193,3 +193,68 @@ class ViewsExistTest(TestCase):
             self.assertEquals(response.status_code, 200)
 
         url = reverse("followup", kwargs={"pk": pt.id, "model": "Lab"})
+
+    def test_followup_view_urls(self):
+        from . import followup_models
+
+        pt = models.Patient.objects.all()[0]
+
+        method = models.ContactMethod.objects.create(name="Carrier Pidgeon")
+        res = followup_models.ContactResult(name="Fisticuffs")
+
+        gf = followup_models.GeneralFollowup.objects.create(
+            contact_method=method,
+            contact_resolution=res,
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt)
+
+        url = reverse('followup', kwargs={"pk": gf.id, "model": 'General'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        lf = followup_models.LabFollowup.objects.create(
+            contact_method=method,
+            contact_resolution=res,
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt,
+            communication_success=True)
+
+        url = reverse('followup', kwargs={"pk": lf.id, "model": 'Lab'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        vf = followup_models.VaccineFollowup.objects.create(
+            contact_method=method,
+            contact_resolution=res,
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt,
+            subsq_dose=False)
+
+        url = reverse('followup', kwargs={"pk": vf.id, "model": 'Vaccine'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        reftype = models.ReferralType.objects.create(name="Chiropracter")
+        aptloc = models.ReferralLocation.objects.create(
+            name="Franklin's Back Adjustment",
+            address="1435 Sillypants Drive")
+        reason = followup_models.NoAptReason.objects.create(
+            name="better things to do")
+
+        rf = followup_models.ReferralFollowup.objects.create(
+            contact_method=method,
+            contact_resolution=res,
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt,
+            referral_type=reftype,
+            has_appointment=False,
+            apt_location=aptloc,
+            noapt_reason=reason)
+
+        url = reverse('followup', kwargs={"pk": vf.id, "model": 'Vaccine'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
