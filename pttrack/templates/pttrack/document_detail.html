@@ -1,0 +1,16 @@
+{% extends "pttrack/base.html" %}
+
+{% load bootstrap3 %}
+
+{% block title %}
+Document: {{ document.patient.name }}
+{% endblock %}
+
+{% block header %}
+    <h1>{{ document.document_type }}</h1>
+    <p class="lead">For <a href="{% url 'patient-detail' pk=document.patient.id %}">{{ document.patient.name }}</a></p>
+{% endblock %}
+
+{% block content %}
+  <h2>{{ document.title}} </h2>
+{% endblock %}

@@ -10,6 +10,7 @@ enum34==1.0.4
 idna==2.0
 ipaddress==1.0.7
 Paste==2.0.2
+Pillow==2.9.0
 pyasn1==0.1.7
 pycparser==2.13
 pycrypto==2.6.1

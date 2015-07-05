@@ -77,4 +77,6 @@ s.save()
 s = models.ReferralType(name="PCP")
 s.save()
 
+models.DocumentType.objects.create(name="Silly picture")
+
 print "done!"

@@ -8,7 +8,7 @@
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <div class="container">
-  <form action="" method="post">
+  <form action="" method="post" {% if note_type == "Document" %} enctype="multipart/form-data" {% endif %} >
       {% csrf_token %}
     {% bootstrap_form form %}
     {% buttons %}

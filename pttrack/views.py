@@ -255,6 +255,34 @@ class PatientCreate(FormView):
         return HttpResponseRedirect(reverse("patient-detail", args=(p.id,)))
 
 
+class DocumentUpdate(UpdateView):
+    template_name = 'pttrack/form_submission.html'
+    model = mymodels.Document
+    form_class = myforms.DocumentForm
+
+    def get_success_url(self):
+        doc = self.object
+        return reverse("patient-detail", args=(doc.patient.id, ))
+
+
+class DocumentCreate(NoteFormView):
+    '''A view for uploading a document'''
+    template_name = 'pttrack/form_submission.html'
+    form_class = myforms.DocumentForm
+    note_type = 'Document'
+
+    def form_valid(self, form):
+        pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
+        doc = mymodels.Document(
+            patient=pt,
+            author=get_current_provider(),
+            author_type=get_current_provider_type(),
+            **form.cleaned_data)
+        doc.save()
+
+        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+
+
 def action_required_patients(request):
     ai_list = mymodels.ActionItem.objects.filter(
         due_date__lte=django.utils.timezone.now().today())

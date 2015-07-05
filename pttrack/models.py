@@ -247,7 +247,9 @@ class Patient(Person):
 
         note_list.extend(self.followup_set())
 
-        note_list.sort(key=lambda(k): k.written_date)
+        note_list.extend(self.document_set.all())
+
+        note_list.sort(key=lambda(k): k.written_datetime)
 
         return note_list
 
@@ -290,11 +292,21 @@ class Note(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
 
-# class Documents(Note):
-#     image
-#     comments
-#     title
-#     upload type (i.e. lab, prescription)
+class DocumentType(models.Model):
+    name = models.CharField(max_length=50, primary_key=True)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Document(Note):
+    title = models.CharField(max_length=200)
+    image = models.ImageField()
+    comments = models.TextField()
+    document_type = models.ForeignKey(DocumentType)
+
+    def short_text(self):
+        return self.title
 
 
 class ActionItem(Note):
@@ -374,7 +386,8 @@ class Workup(Note):
     patient_pays = models.PositiveSmallIntegerField(blank=True, null=True)
 
     referral_type = models.ForeignKey(ReferralType, blank=True, null=True)
-    referral_location = models.ForeignKey(ReferralLocation, blank=True, null=True)
+    referral_location = models.ForeignKey(ReferralLocation,
+                                          blank=True, null=True)
 
     will_return = models.BooleanField(default=False,
                                       help_text="Will the pt. return to SNHC?")

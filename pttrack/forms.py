@@ -123,3 +123,9 @@ class ClinicDateForm(ModelForm):
     class Meta:
         model = models.ClinicDate
         exclude = ['clinic_date', 'gcal_id']
+
+
+class DocumentForm(ModelForm):
+    class Meta:
+        model = models.Document
+        exclude = ['patient', 'author', 'author_type']
