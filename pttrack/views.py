@@ -256,6 +256,7 @@ class PatientCreate(FormView):
 
     def form_valid(self, form):
         p = mymodels.Patient(**form.cleaned_data)
+
         p.save()
         return HttpResponseRedirect(reverse("patient-detail", args=(p.id,)))
 

@@ -27,16 +27,6 @@ class NoAptReason(models.Model):
         return self.name
 
 
-class ContactMethod(models.Model):
-    '''Simple text-contiaining class for storing the method of contacting a
-    patient for followup followed up with (i.e. phone, email, etc.)'''
-
-    name = models.CharField(max_length=50, primary_key=True)
-
-    def __unicode__(self):
-        return self.name
-
-
 class ContactResult(models.Model):
     '''Abstract base model for representing the resolution to a followup
     attempt with a patient (e.g. no answer w/ voicemail).'''
@@ -54,7 +44,7 @@ class Followup(mymodels.Note):
     class Meta:
         abstract = True
 
-    contact_method = models.ForeignKey(ContactMethod)
+    contact_method = models.ForeignKey(mymodels.ContactMethod)
     contact_resolution = models.ForeignKey(ContactResult)
 
     comments = models.TextField(blank=True, null=True)

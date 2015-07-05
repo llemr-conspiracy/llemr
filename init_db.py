@@ -53,7 +53,7 @@ for ai_type in ["Vaccine followup", "Follow up on labs", "PCP follow up"]:
     i.save()
 
 for contact_method in ["Phone", "Email", "SMS"]:
-    cmeth = followup_models.ContactMethod(name=contact_method)
+    cmeth = models.ContactMethod(name=contact_method)
     cmeth.save()
 
 for cont_res in ["No answer, left voicemail", "Reached patient"]:

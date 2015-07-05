@@ -38,6 +38,16 @@ def validate_attending(value):
     return value.can_attend
 
 
+class ContactMethod(models.Model):
+    '''Simple text-contiaining class for storing the method of contacting a
+    patient for followup followed up with (i.e. phone, email, etc.)'''
+
+    name = models.CharField(max_length=50, primary_key=True)
+
+    def __unicode__(self):
+        return self.name
+
+
 class ReferralType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
     clinics a patient can be referred to (e.g. PCP, ortho, etc.)'''
@@ -114,7 +124,7 @@ class Person(models.Model):
     last_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True)
 
-    phone = models.CharField(max_length=50)
+    phone = models.CharField(max_length=40)
 
     gender = models.ForeignKey(Gender)
 
@@ -147,10 +157,24 @@ class Patient(Person):
     zip_code = models.CharField(max_length=5,
                                 validators=[validate_zip])
 
+    pcp_preferred_zip = models.CharField(max_length=5,
+                                         validators=[validate_zip],
+                                         blank=True,
+                                         null=True)
+
     date_of_birth = models.DateField()
+
     language = models.ForeignKey(Language)
 
     ethnicity = models.ForeignKey(Ethnicity)
+
+    alternate_phone1 = models.CharField(max_length=40, blank=True, null=True)
+    alternate_phone2 = models.CharField(max_length=40, blank=True, null=True)
+    alternate_phone3 = models.CharField(max_length=40, blank=True, null=True)
+    alternate_phone4 = models.CharField(max_length=40, blank=True, null=True)
+
+    preferred_contact_method = models.ForeignKey(ContactMethod, blank=True,
+                                                 null=True)
 
     def age(self):
         import datetime
