@@ -15,12 +15,6 @@ class CustomFuncTesting(TestCase):
         with self.assertRaises(ValidationError):
             models.validate_zip('ABCDE')
 
-    # def test_forms(self):
-    #     response = self.client.post('pttrack/intake.html',
-    #                                 {'something': 'something'})
-    #     self.assertFormError(response, 'PatientForm', 'something',
-    #                          'This field is required.')
-
 
 class ViewsExistTest(TestCase):
     def setUp(self):
