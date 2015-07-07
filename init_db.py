@@ -63,7 +63,7 @@ for cont_res in ["Communicated health information to patient", "Communicated hea
     rslt = followup_models.ContactResult(name=cont_res)
     rslt.save()
 
-for dx_type in ["Cardiovascular", "N/A"]:
+for dx_type in ["Cardiovascular", "Dermatological", "Diabetes", "Gastrointestinal", "Infectious Disease (e.g. flu or HIV)", "Mental Health", "Musculoskeletal", "Neurological", "OB/GYN", "Physical Exam", "Respiratory", "Rx Refill", "Urogenital", "Vaccination", "Weight Concerns", "Other"]:
     d = models.DiagnosisType(name=dx_type)
     d.save()
 
