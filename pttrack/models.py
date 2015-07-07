@@ -343,7 +343,7 @@ class Workup(Note):
                                        verbose_name="CC")
     diagnosis = models.CharField(max_length=1000,
                                  verbose_name="Dx")
-    diagnosis_category = models.ForeignKey(DiagnosisType)
+    diagnosis_category = models.ManyToManyField(DiagnosisType)
 
     HPI = models.TextField(verbose_name="HPI")
     PMH_PSH = models.TextField(verbose_name="PMH/PSH")
