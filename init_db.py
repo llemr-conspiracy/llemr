@@ -6,8 +6,9 @@ for lang_name in ["Arabic", "Armenian", "Bengali", "Chinese", "Croatian", "Czech
     l = models.Language(name=lang_name)
     l.save()
 
-e = models.Ethnicity(name="White")
-e.save()
+for ethnic_name in ["American Indian or Alaska Native", "Asian", "Black or African American", "Hispanic or Latino", "Native Hawaiian or Other Pacific Islander", "White"] 
+    e = models.Ethnicity(name=ethnic_name)
+    e.save()
 
 for lname in ["Male", "Female", "Other"]:
     g = models.Gender(long_name=lname, short_name=lname[0])
