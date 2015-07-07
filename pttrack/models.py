@@ -165,10 +165,10 @@ class Patient(Person):
 
     date_of_birth = models.DateField()
 
-    language = models.ForeignKey(Language)
+    language = models.ManyToManyField(Language)
     patient_comfortable_with_english = models.BooleanField(default=True)
 
-    ethnicity = models.ForeignKey(Ethnicity)
+    ethnicity = models.ManyToManyField(Ethnicity)
 
     alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True)
     alternate_phone_2 = models.CharField(max_length=40, blank=True, null=True)
@@ -374,8 +374,8 @@ class Workup(Note):
     voucher_amount = models.PositiveSmallIntegerField(blank=True, null=True)
     patient_pays = models.PositiveSmallIntegerField(blank=True, null=True)
 
-    referral_type = models.ForeignKey(ReferralType, blank=True, null=True)
-    referral_location = models.ForeignKey(ReferralLocation, blank=True, null=True)
+    referral_type = models.ManyToManyField(ReferralType, blank=True)
+    referral_location = models.ManyToManyField(ReferralLocation, blank=True)
 
     will_return = models.BooleanField(default=False,
                                       help_text="Will the pt. return to SNHC?")
