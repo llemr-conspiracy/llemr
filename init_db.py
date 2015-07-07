@@ -2,8 +2,9 @@ from pttrack import models
 from pttrack import followup_models
 from datetime import date
 
-l = models.Language(name="English")
-l.save()
+for lang_name in ["Arabic", "Armenian", "Bengali", "Chinese", "Croatian", "Czech", "Danish", "Dutch", "English", "Finnish", "French", "French Creole", "German", "Greek", "Hebrew", "Hindi/Urdu", "Hungarian", "Italian", "Japanese", "Korean", "Lithuanian", "Persian", "Polish", "Portuguese", "Romanian", "Russian", "Samoan", "Serbocroatian", "Slovak", "Spanish", "Swedish", "Tagalog", "Thai/Laotian", "Turkish", "Ukrainian", "Vietnamese", "Yiddish"]:
+    l = models.Language(name=lang_name)
+    l.save()
 
 e = models.Ethnicity(name="White")
 e.save()
