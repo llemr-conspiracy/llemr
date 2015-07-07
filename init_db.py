@@ -57,7 +57,7 @@ for contact_method in ["Phone", "Email", "SMS", "Facebook", "Snail Mail"]:
     cmeth = models.ContactMethod(name=contact_method)
     cmeth.save()
 
-for cont_res in ["No answer, left voicemail", "Reached patient"]:
+for cont_res in ["Communicated health information to patient", "Communicated health information to someone who translated for patient", "Spoke to individual who knows patient", "No answer, reached voicemail and left voicemail", "No answer, reached voicemail and didn't leave voicemail", "No answer, no voicemail option", "Phone number disconnected", "Email bounced back", "Busy signal", "Wrong number"]:
     print cont_res
     rslt = followup_models.ContactResult(name=cont_res)
     rslt.save()
