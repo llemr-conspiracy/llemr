@@ -8,7 +8,7 @@ l.save()
 e = models.Ethnicity(name="White")
 e.save()
 
-for lname in ["Male", "Female"]:
+for lname in ["Male", "Female", "Other"]:
     g = models.Gender(long_name=lname, short_name=lname[0])
     g.save()
 
@@ -44,15 +44,15 @@ for lname in ["Attending Physician",
     p.save()
 
 for clintype in ["Basic Care Clinic", "Depression & Anxiety Clinic",
-                 "Dermatology", "Muscle and Joint Pain"]:
+                 "Dermatology Clinic", "Muscle and Joint Pain Clinic"]:
     t = models.ClinicType(name=clintype)
     t.save()
 
-for ai_type in ["Vaccine followup", "Follow up on labs", "PCP follow up"]:
+for ai_type in ["Vaccine Reminder", "Lab Follow-Up", "PCP Follow-Up", "Other"]:
     i = models.ActionInstruction(instruction=ai_type)
     i.save()
 
-for contact_method in ["Phone", "Email", "SMS"]:
+for contact_method in ["Phone", "Email", "SMS", "Facebook", "Snail Mail"]:
     cmeth = models.ContactMethod(name=contact_method)
     cmeth.save()
 
