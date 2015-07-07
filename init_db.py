@@ -75,8 +75,9 @@ for noapt_reason in ["Has not contacted provider", "Lost provider contact inform
     s = followup_models.NoAptReason(name=noapt_reason)
     s.save()
 
-s = followup_models.NoShowReason(name="Something came up")
-s.save()
+for noshow_reason in ["Couldn't make appointment anymore," "Didn't have transportation to appointment", "Worried about cost of appointment", "Felt better and decided didn't need appointment", "Forgot about appointment"]
+    s = followup_models.NoShowReason(name=noshow_reason)
+    s.save()
 
 for refer_type in ["PCP: chronic condition management", "PCP: gateway to specialty care", "PCP: preventative care (following well check up)", "PCP: other acute conditions", "Specialty care", "Other"]
     s = models.ReferralType(name=refer_type)
