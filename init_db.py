@@ -71,8 +71,9 @@ for referral_location in ["Back to SNHC", "SNHC Depression and Anxiety Specialty
     f = models.ReferralLocation(name=referral_location)
     f.save()
 
-s = followup_models.NoAptReason(name="Problem resolved")
-s.save()
+for noapt_reason in ["Has not contacted provider", "Lost provider contact information", "Cannot reach provider", "Appointment wait time is too long", "No transportation to get to appointment", "Appointment times do not work with patient's schedule", "Cannot afford appointment", "Other"]
+    s = followup_models.NoAptReason(name=noapt_reason)
+    s.save()
 
 s = followup_models.NoShowReason(name="Something came up")
 s.save()
