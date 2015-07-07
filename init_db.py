@@ -67,8 +67,9 @@ for dx_type in ["Cardiovascular", "Dermatological", "Diabetes", "Gastrointestina
     d = models.DiagnosisType(name=dx_type)
     d.save()
 
-f = models.ReferralLocation(name="SNHC")
-f.save()
+for referral_location in ["Back to SNHC", "SNHC Depression and Anxiety Specialty Night", "SNHC Dermatology Specialty Night", "SNHC OB/GYN Specialty Night", "Barnes Jewish Center for Outpatient Health (COH)", "BJC Behavioral Health (for Psych)", "St. Louis Dental Education and Oral Health Clinic", "Betty Jean Kerr Peoples Health Centers: Central", "Betty Jean Kerr Peoples Health Centers: North", "Betty Jean Kerr Peoples Health Centers: West", "Crider Health Center: Union", "Crider Health Center: Warrenton", "Crider Health Center: Wentzville", "Family Care Health Centers: Carondelet", "Family Care Health Centers: Forest Park Southeast", "Affinia Healthcare (formerly Grace Hill)", "Myrtle Hilliard Davis: Comprehensive", "Myrtle Hilliard Davis: Florence Hill", "Myrtle Hilliard Davis: Homer G. Phillips", "St. Louis County Department of Health: John C. Murphy Health Center", "St. Louis County Department of Health: North Central Community Health Center", "St. Louis County Department of Health: South County Health Center", "Other"]
+    f = models.ReferralLocation(name=referral_location)
+    f.save()
 
 s = followup_models.NoAptReason(name="Problem resolved")
 s.save()
