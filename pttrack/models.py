@@ -166,6 +166,7 @@ class Patient(Person):
     date_of_birth = models.DateField()
 
     language = models.ForeignKey(Language)
+    patient_comfortable_with_english = models.BooleanField(default=True)
 
     ethnicity = models.ForeignKey(Ethnicity)
 
