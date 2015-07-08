@@ -111,9 +111,11 @@ for referral_location in [
     f = models.ReferralLocation(name=referral_location)
     f.save()
 
-for noapt_reason in ["Has not contacted provider",
+for noapt_reason in ["Not interested in further medical care at this time",
+                     "Too busy/forgot to contact provider",
                      "Lost provider contact information",
                      "Cannot reach provider",
+                     "Contacted provider but did not successfully schedule appointment",
                      "Appointment wait time is too long",
                      "No transportation to get to appointment",
                      "Appointment times do not work with patient's schedule",
@@ -122,10 +124,12 @@ for noapt_reason in ["Has not contacted provider",
     s.save()
 
 for noshow_reason in [
-  "Couldn't make appointment anymore",
+  "Schedule changed in conflict with appointment",
   "Didn't have transportation to appointment",
   "Worried about cost of appointment",
+  "Too sick to go to appointment",
   "Felt better and decided didn't need appointment",
+  "Someone counseled patient against appointment", 
   "Forgot about appointment"]:
     s = followup_models.NoShowReason(name=noshow_reason)
     s.save()
