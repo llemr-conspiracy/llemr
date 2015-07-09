@@ -42,10 +42,10 @@ p = models.Patient(first_name="Frankie",
                                       month=8,
                                       day=9),
                    phone="501-233-1234",
-                   language=l,
-                   ethnicity=e,
                    gender=models.Gender.objects.all()[0])
 p.save()
+p.language.add(l)
+p.ethnicity.add(e)
 
 for lname in ["Attending Physician",
               "Preclinical Medical Student",
@@ -129,7 +129,7 @@ for noshow_reason in [
   "Worried about cost of appointment",
   "Too sick to go to appointment",
   "Felt better and decided didn't need appointment",
-  "Someone counseled patient against appointment", 
+  "Someone counseled patient against appointment",
   "Forgot about appointment"]:
     s = followup_models.NoShowReason(name=noshow_reason)
     s.save()
