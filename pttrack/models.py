@@ -300,7 +300,7 @@ class Note(models.Model):
 
 class ActionItem(Note):
     instruction = models.ForeignKey(ActionInstruction)
-    due_date = models.DateField()
+    due_date = models.DateField(help_text="MM/DD/YYYY or YYYY-MM-DD")
     comments = models.CharField(max_length=300)
     completion_date = models.DateTimeField(blank=True, null=True)
     completion_author = models.ForeignKey(

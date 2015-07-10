@@ -141,3 +141,5 @@ for refer_type in ["PCP: chronic condition management",
                    "PCP: other acute conditions", "Specialty care", "Other"]:
     s = models.ReferralType(name=refer_type)
     s.save()
+
+print "done!"
