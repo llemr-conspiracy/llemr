@@ -70,15 +70,16 @@ class ClinicDateCreate(FormView):
     form_class = myforms.ClinicDateForm
 
     def form_valid(self, form):
+        clindate = form.save(commit=False)
+
         today = datetime.datetime.date(django.utils.timezone.now())
-        clindate = mymodels.ClinicDate(clinic_date=today,
-                                       **form.cleaned_data)
+        clindate.clinic_date = today
         clindate.save()
 
         # determine from our URL which patient we wanted to work up before we
         # got redirected to create a clinic date
-        pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
 
+        pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
         return HttpResponseRedirect(reverse("new-workup", args=(pt.id,)))
 
 
@@ -138,13 +139,14 @@ class WorkupCreate(NoteFormView):
 
     def form_valid(self, form):
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
-        wu = mymodels.Workup(patient=pt, **form.cleaned_data)
+
+        wu = form.save(commit=False)
+        wu.patient = pt
         wu.author = get_current_provider()
         wu.author_type = get_current_provider_type()
         wu.clinic_day = get_clindates()[0]
 
         wu.save()
-        pt.save()
 
         return HttpResponseRedirect(reverse("new-action-item", args=(pt.id,)))
 
@@ -213,13 +215,12 @@ class FollowupCreate(NoteFormView):
     def form_valid(self, form):
 
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
-        fu = self.get_followup_model()(patient=pt,
-                                       author=get_current_provider(),
-                                       author_type=get_current_provider_type(),
-                                       **form.cleaned_data)
+        fu = form.save(commit=False)
+        fu.patient = pt
+        fu.author = get_current_provider()
+        fu.author_type = get_current_provider_type()
 
         fu.save()
-        pt.save()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
@@ -233,12 +234,14 @@ class ActionItemCreate(NoteFormView):
     def form_valid(self, form):
         '''Set the patient, provider, and written timestamp for the item.'''
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
-        ai = mymodels.ActionItem(completion_date=None,
-                                 author=get_current_provider(),
-                                 author_type=get_current_provider_type(),
-                                 patient=pt, **form.cleaned_data)
+        ai = form.save(commit=False)
+
+        ai.completion_date = None
+        ai.author = get_current_provider()
+        ai.author_type = get_current_provider_type()
+        ai.patient = pt
+
         ai.save()
-        pt.save()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
@@ -249,9 +252,7 @@ class PatientCreate(FormView):
     form_class = myforms.PatientForm
 
     def form_valid(self, form):
-        p = mymodels.Patient(**form.cleaned_data)
-
-        p.save()
+        form.save()
         return HttpResponseRedirect(reverse("patient-detail", args=(p.id,)))
 
 
