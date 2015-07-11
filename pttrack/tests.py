@@ -23,14 +23,16 @@ class ViewsExistTest(TestCase):
         l = models.Language.objects.create(name="English")
         e = models.Ethnicity.objects.create(name="White")
 
-        models.Patient.objects.create(
+        p = models.Patient.objects.create(
             first_name="Frankie", middle_name="Lane", last_name="McNath",
             address="6310 Scott Ave", city="St. Louis", state="MO",
             date_of_birth=datetime.date(year=1989, month=8, day=9),
             phone="501-233-1234",
-            language=l,
-            ethnicity=e,
             gender=g)
+
+        p.language.add(l)
+        p.ethnicities.add(e)
+        p.save()
 
         models.ClinicType.objects.create(name="Basic Care Clinic")
 
@@ -99,10 +101,11 @@ class ViewsExistTest(TestCase):
             diagnosis="MI",
             HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
             ros="", pe="", A_and_P="",
-            diagnosis_category=models.DiagnosisType.objects.all()[0],
             author=models.Provider.objects.all()[0],
             author_type=models.ProviderType.objects.all()[0],
             patient=models.Patient.objects.all()[0])
+
+        wu.diagnosis_categories.add(models.DiagnosisType.objects.all()[0])
 
         for wu_url in wu_urls:
             response = self.client.get(reverse(wu_url, args=(wu.id,)))
@@ -118,10 +121,12 @@ class ViewsExistTest(TestCase):
             diagnosis="MI",
             HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
             ros="", pe="", A_and_P="",
-            diagnosis_category=models.DiagnosisType.objects.all()[0],
             author=models.Provider.objects.all()[0],
             author_type=models.ProviderType.objects.all()[0],
             patient=models.Patient.objects.all()[0])
+
+        wu.diagnosis_categories.add(models.DiagnosisType.objects.all()[0])
+        wu.save()
 
         # Fresh workups should be unsigned
         self.assertFalse(wu.signed())

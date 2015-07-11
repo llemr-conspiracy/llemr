@@ -45,7 +45,7 @@ p = models.Patient(first_name="Frankie",
                    gender=models.Gender.objects.all()[0])
 p.save()
 p.language.add(l)
-p.ethnicity.add(e)
+p.ethnicities.add(e)
 
 for lname in ["Attending Physician",
               "Preclinical Medical Student",

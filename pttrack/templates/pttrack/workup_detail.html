@@ -46,7 +46,7 @@ Workup: {{ workup.patient.name }}
             <strong>Diagnosis:</strong> {{ workup.diagnosis }}
         </div>
         <div class="col-md-4">
-            <strong>Dx Category:</strong> {{ workup.diagnosis_category }}
+            <strong>Dx Category:</strong> {{ workup.diagnosis_categories | join:", " }}
         </div>
     </div>
     <div class="row">

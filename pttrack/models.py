@@ -168,7 +168,7 @@ class Patient(Person):
     language = models.ManyToManyField(Language)
     patient_comfortable_with_english = models.BooleanField(default=True)
 
-    ethnicity = models.ManyToManyField(Ethnicity)
+    ethnicities = models.ManyToManyField(Ethnicity)
 
     alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True)
     alternate_phone_2 = models.CharField(max_length=40, blank=True, null=True)
@@ -343,7 +343,7 @@ class Workup(Note):
                                        verbose_name="CC")
     diagnosis = models.CharField(max_length=1000,
                                  verbose_name="Dx")
-    diagnosis_category = models.ManyToManyField(DiagnosisType)
+    diagnosis_categories = models.ManyToManyField(DiagnosisType)
 
     HPI = models.TextField(verbose_name="HPI")
     PMH_PSH = models.TextField(verbose_name="PMH/PSH")
