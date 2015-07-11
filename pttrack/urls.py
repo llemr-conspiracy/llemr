@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from django.views.generic import ListView, DetailView
+from django.contrib.auth.decorators import login_required
 from . import models as mymodels
 from . import followup_models as fu_models
 from . import views
@@ -20,6 +21,11 @@ urlpatterns = [  # pylint: disable=invalid-name
     url(r'^(?P<pk>[0-9]+)/$',
         DetailView.as_view(model=mymodels.Patient),
         name='patient-detail'),
+
+    # PROVIDERS
+    url(r'^new-provider/$',
+        views.ProviderCreate.as_view(),
+        name='new-provider'),
 
     # WORKUPS
     url(r'^(?P<pt_id>[0-9]+)/workup/$',

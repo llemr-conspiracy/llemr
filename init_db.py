@@ -2,6 +2,13 @@ from pttrack import models
 from pttrack import followup_models
 from datetime import date
 
+from django.contrib.auth.models import User
+
+user = User.objects.create_user('tljones', 'tommyljones@gmail.com',
+                                'password')
+user.first_name = "Tommy"
+user.save()
+
 for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",
                   "Croatian", "Czech", "Danish", "Dutch", "Finnish", "French",
                   "French Creole", "German", "Greek", "Hebrew", "Hindi/Urdu",
@@ -29,8 +36,8 @@ p = models.Provider(first_name="Tommy",
                     last_name="Jones",
                     phone="425-243-9115",
                     gender=models.Gender.objects.all()[0],
-                    email="tljones@wustl.edu",
                     can_attend=True,
+                    # associated_user=user)
                     )
 p.save()
 

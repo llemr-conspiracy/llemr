@@ -1,7 +1,10 @@
 '''The datamodels for the SNHC clintools patient tracking system'''
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
+from django.conf import settings
 import django.utils.timezone
+
 
 # pylint: disable=I0011,missing-docstring,E1305
 
@@ -126,6 +129,7 @@ class Person(models.Model):
     middle_name = models.CharField(max_length=100, blank=True)
 
     phone = models.CharField(max_length=40)
+    languages = models.ManyToManyField(Language)
 
     gender = models.ForeignKey(Gender)
 
@@ -165,7 +169,6 @@ class Patient(Person):
 
     date_of_birth = models.DateField()
 
-    language = models.ManyToManyField(Language)
     patient_comfortable_with_english = models.BooleanField(default=True)
 
     ethnicities = models.ManyToManyField(Ethnicity)
@@ -255,8 +258,12 @@ class Patient(Person):
 
 class Provider(Person):
 
-    email = models.EmailField()
     can_attend = models.BooleanField(default=False)
+
+    # Due to a circular dependency issue I really don't understand, this
+    # needs to be done this way, I think
+    associated_user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                           blank=True, null=True)
 
     def __unicode__(self):
         return self.name()

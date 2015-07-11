@@ -37,6 +37,13 @@
 	            <li><a href="{% url 'all-patients' %}">All Patients</a></li>
 	            <li><a href="//snhc.wustl.edu/wiki">Wiki</a></li>
 	          </ul>
+						{% if user.is_authenticated %}
+						<ul class="nav navbar-nav pull-right">
+                <li><a href="{% url 'logout' %}">Logout 
+                  {{ request.user }}
+                </a></li>
+            </ul>
+            {% endif %}
 	        </div><!--/.nav-collapse -->
 	      </div>
 	    </nav>

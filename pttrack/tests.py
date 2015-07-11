@@ -3,6 +3,7 @@ from . import models
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.test import Client
+from django.contrib.auth.models import User
 
 import datetime
 
@@ -48,10 +49,16 @@ class ViewsExistTest(TestCase):
             models.ProviderType.objects.create(long_name=lname,
                                                short_name=lname.split()[0])
 
+        user = User.objects.create_user('tljones', 'tommyljones@gmail.com',
+                                        'password')
+        user.save()
+
         models.Provider.objects.create(
             first_name="Tommy", middle_name="Lee", last_name="Jones",
             phone="425-243-9115", gender=g, email="tljones@wustl.edu",
-            can_attend=True)
+            can_attend=True, associated_user=user)
+
+        self.client.login(username=user.username, password='password')
 
     def test_basic_urls(self):
         basic_urls = ["home",
@@ -75,6 +82,10 @@ class ViewsExistTest(TestCase):
             self.assertEqual(response.status_code, 200)
 
         response = self.client.get(reverse(pt_url, args=(pt.id,)))
+        self.assertEqual(response.status_code, 200)
+
+    def test_provider_urls(self):
+        response = self.client.get(reverse('new-provider'))
         self.assertEqual(response.status_code, 200)
 
     def test_clindate_create_redirect(self):

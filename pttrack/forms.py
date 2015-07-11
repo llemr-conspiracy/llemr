@@ -119,6 +119,12 @@ class ActionItemForm(ModelForm):
                                                        "pickTime": False})}
 
 
+class ProviderForm(ModelForm):
+    class Meta:
+        model = models.Provider
+        exclude = ['associated_user']
+
+
 class ClinicDateForm(ModelForm):
     class Meta:
         model = models.ClinicDate

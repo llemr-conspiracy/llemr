@@ -2,8 +2,9 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponseServerError, \
     HttpResponseNotFound
 from django.views.generic.edit import FormView, UpdateView
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.core.exceptions import ImproperlyConfigured
+from django.contrib.auth.decorators import login_required, user_passes_test
 import django.utils.timezone
 
 from . import models as mymodels
@@ -27,6 +28,10 @@ def get_clindates():
 def get_current_provider_type():
     # TODO determine from session data
     return get_object_or_404(mymodels.ProviderType, pk="Attending")
+
+
+def provider_exists(user):
+    return hasattr(user, 'provider')
 
 
 def get_cal():
@@ -61,6 +66,30 @@ def get_cal():
                                        day=next_date_str[2])
 
     return next_date
+
+
+class ProviderCreate(FormView):
+    '''A view for creating a new ClinicDate. On submission, it redirects to
+    the new-workup view.'''
+    template_name = 'pttrack/new-provider.html'
+    form_class = myforms.ProviderForm
+
+    def get_initial(self):
+        return {'first_name': self.request.user.first_name,
+                'last_name': self.request.user.last_name,
+                'middle_name': self.request.user.last_name}
+
+    def form_valid(self, form):
+        provider = form.save(commit=False)
+        provider.associated_user = self.request.user
+        provider.save()
+
+        return HttpResponseRedirect(self.request.GET['next'])
+
+    def get_context_data(self, **kwargs):
+        context = super(ProviderCreate, self).get_context_data(**kwargs)
+        context['next'] = self.request.REQUEST.get('next')
+        return context
 
 
 class ClinicDateCreate(FormView):
@@ -256,6 +285,8 @@ class PatientCreate(FormView):
         return HttpResponseRedirect(reverse("patient-detail", args=(p.id,)))
 
 
+@login_required
+@user_passes_test(provider_exists, login_url=reverse_lazy('new-provider'))
 def action_required_patients(request):
     ai_list = mymodels.ActionItem.objects.filter(
         due_date__lte=django.utils.timezone.now().today())
