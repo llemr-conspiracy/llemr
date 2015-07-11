@@ -1,8 +1,7 @@
 # Ignore virtualenv
-bin/
-include/
-local/
-pip-selfcheck.json
+venv/
+
+# don't control the database.
 db.sqlite3
 
 # Byte-compiled / optimized / DLL files
