@@ -17,20 +17,14 @@ If you're going to run our project in a virtual env do th following:
 
 ```
 pip install virtualenv
-virtualenv .
-source bin/activate
+virtualenv venv
+source venv/bin/activate
 ```
 
 Then install our dependencies with
 
 ```
 pip install -r requirement_file.txt
-```
-
-then, run
-
-```
-
 ```
 
 Once you've done that, build the test database
