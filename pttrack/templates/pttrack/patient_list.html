@@ -20,7 +20,7 @@
             <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
             <td>{{ patient.age }}</td>
             <td>{{ patient.gender }}</td>
-            <td>{{ patient.ethnicities.iterator() | join:", " }}</td>
+            <td>{{ patient.ethnicities.iterator | join:", " }}</td>
             <td>{{ patient.status }}</td>
             </tr>
         {% endfor %}
