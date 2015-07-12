@@ -4,9 +4,16 @@ from datetime import date
 
 from django.contrib.auth.models import User
 
-user = User.objects.create_user('tljones', 'tommyljones@gmail.com',
+user = User.objects.create_user('jrporter', 'justinrporter@wusm.wustl.edu',
                                 'password')
-user.first_name = "Tommy"
+user.first_name = "Justin"
+user.last_name = "Porter"
+user.save()
+
+user = User.objects.create_user('rjain', 'jainr@wusm.wustl.edu',
+                                'password')
+user.first_name = "Radhika"
+user.last_name = "Jain"
 user.save()
 
 for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",
