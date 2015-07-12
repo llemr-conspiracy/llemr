@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.test import Client
 from django.contrib.auth.models import User
-
+from django.utils.timezone import now
 import datetime
 
 
@@ -31,7 +31,7 @@ class ViewsExistTest(TestCase):
             phone="501-233-1234",
             gender=g)
 
-        p.language.add(l)
+        p.languages.add(l)
         p.ethnicities.add(e)
         p.save()
 
@@ -39,7 +39,7 @@ class ViewsExistTest(TestCase):
 
         models.ClinicDate.objects.create(
             clinic_type=models.ClinicType.objects.all()[0],
-            clinic_date=datetime.datetime.today(),
+            clinic_date=now().date(),
             gcal_id="tmp")
 
         models.DiagnosisType.objects.create(name="Cardiovascular")
@@ -55,7 +55,7 @@ class ViewsExistTest(TestCase):
 
         models.Provider.objects.create(
             first_name="Tommy", middle_name="Lee", last_name="Jones",
-            phone="425-243-9115", gender=g, email="tljones@wustl.edu",
+            phone="425-243-9115", gender=g,
             can_attend=True, associated_user=user)
 
         self.client.login(username=user.username, password='password')
@@ -79,7 +79,13 @@ class ViewsExistTest(TestCase):
 
         for pt_url in pt_urls:
             response = self.client.get(reverse(pt_url, args=(pt.id,)))
-            self.assertEqual(response.status_code, 200)
+            try:
+                self.assertEqual(response.status_code, 200)
+            except AssertionError as e:
+                print pt_url
+                print response
+                print models.ClinicDate.objects.all()
+                raise e
 
         response = self.client.get(reverse(pt_url, args=(pt.id,)))
         self.assertEqual(response.status_code, 200)

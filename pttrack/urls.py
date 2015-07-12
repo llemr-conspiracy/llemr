@@ -1,20 +1,25 @@
 from django.conf.urls import url
 from django.views.generic import ListView, DetailView
+
 from django.contrib.auth.decorators import login_required
+
+from .decorators import provider_required
 from . import models as mymodels
 from . import followup_models as fu_models
 from . import views
 
 # pylint: disable=I0011
 
-urlpatterns = [  # pylint: disable=invalid-name
+unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^$',
         views.action_required_patients,
         name="home"),
     url(r'^all/$',
         ListView.as_view(model=mymodels.Patient),
         name="all-patients"),
-    url(r'^intake/$', views.PatientCreate.as_view(), name="intake"),
+    url(r'^intake/$',
+        views.PatientCreate.as_view(),
+        name="intake"),
     url(r'^clindate/(?P<pt_id>[0-9]+)/$',
         views.ClinicDateCreate.as_view(),
         name="new-clindate"),
@@ -45,9 +50,11 @@ urlpatterns = [  # pylint: disable=invalid-name
     url(r'^(?P<pt_id>[0-9]+)/action-item/$',
         views.ActionItemCreate.as_view(),
         name='new-action-item'),
-    url(r'^action-item/(?P<ai_id>[0-9]+)/done$', views.done_action_item,
+    url(r'^action-item/(?P<ai_id>[0-9]+)/done$',
+        views.done_action_item,
         name='done-action-item'),
-    url(r'^action-item/(?P<ai_id>[0-9]+)/reset$', views.reset_action_item,
+    url(r'^action-item/(?P<ai_id>[0-9]+)/reset$',
+        views.reset_action_item,
         name='reset-action-item'),
 
     #  FOLLOWUPS
@@ -74,3 +81,13 @@ urlpatterns = [  # pylint: disable=invalid-name
         {"model": "General"},
         name="followup"),
 ]
+
+urlpatterns = []
+for u in unwrapped_urlconf:
+    if u.name in ['new-provider']:
+        # do not wrap in full regalia
+        u._callback = login_required(u._callback)
+    else:
+        u._callback = provider_required(u._callback)
+
+    urlpatterns.append(u)

@@ -51,7 +51,7 @@ p = models.Patient(first_name="Frankie",
                    phone="501-233-1234",
                    gender=models.Gender.objects.all()[0])
 p.save()
-p.language.add(l)
+p.languages.add(l)
 p.ethnicities.add(e)
 
 for lname in ["Attending Physician",

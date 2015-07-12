@@ -30,10 +30,6 @@ def get_current_provider_type():
     return get_object_or_404(mymodels.ProviderType, pk="Attending")
 
 
-def provider_exists(user):
-    return hasattr(user, 'provider')
-
-
 def get_cal():
     '''Get the gcal_id of the google calendar clinic date today.
     CURRENTLY BROKEN next_date must be produced correctly.'''
@@ -69,8 +65,7 @@ def get_cal():
 
 
 class ProviderCreate(FormView):
-    '''A view for creating a new ClinicDate. On submission, it redirects to
-    the new-workup view.'''
+    '''A view for creating a new Provider to match an existing User.'''
     template_name = 'pttrack/new-provider.html'
     form_class = myforms.ProviderForm
 
@@ -285,8 +280,6 @@ class PatientCreate(FormView):
         return HttpResponseRedirect(reverse("patient-detail", args=(p.id,)))
 
 
-@login_required
-@user_passes_test(provider_exists, login_url=reverse_lazy('new-provider'))
 def action_required_patients(request):
     ai_list = mymodels.ActionItem.objects.filter(
         due_date__lte=django.utils.timezone.now().today())
