@@ -79,6 +79,27 @@ class ViewsExistTest(TestCase):
             response = self.client.get(reverse(basic_url))
             self.assertEqual(response.status_code, 200)
 
+    def test_initial_config(self):
+        session = self.client.session
+        del session['clintype_pk']
+        session.save()
+
+        response = self.client.get(reverse('all-patients'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('choose-clintype'), response.url)
+
+        models.Provider.objects.all().delete()
+
+        response = self.client.get(reverse('all-patients'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('new-provider'), response.url)
+
+        self.client.logout()
+
+        response = self.client.get(reverse('all-patients'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('login'), response.url)
+
     def test_pt_urls(self):
         pt_urls = ['patient-detail',
                    "new-clindate",
