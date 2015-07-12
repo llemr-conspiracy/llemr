@@ -54,12 +54,14 @@ p.save()
 p.languages.add(l)
 p.ethnicities.add(e)
 
-for lname in ["Attending Physician",
-              "Preclinical Medical Student",
-              "Clinical Medical Student",
-              "Coordinator"]:
-    p = models.ProviderType(long_name=lname, short_name=lname.split()[0])
+for (lname, can_sign) in [("Attending Physician", True),
+                          ("Preclinical Medical Student", False),
+                          ("Clinical Medical Student", False),
+                          ("Coordinator", False)]:
+    p = models.ProviderType(long_name=lname, short_name=lname.split()[0],
+                            signs_charts=can_sign)
     p.save()
+
 
 for clintype in ["Basic Care Clinic", "Depression & Anxiety Clinic",
                  "Dermatology Clinic", "Muscle and Joint Pain Clinic"]:

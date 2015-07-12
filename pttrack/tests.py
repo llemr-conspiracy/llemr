@@ -44,10 +44,14 @@ class ViewsExistTest(TestCase):
 
         models.DiagnosisType.objects.create(name="Cardiovascular")
 
-        for lname in ["Attending Physician", "Preclinical Medical Student",
-                      "Clinical Medical Student", "Coordinator"]:
-            models.ProviderType.objects.create(long_name=lname,
-                                               short_name=lname.split()[0])
+        for (lname, can_sign) in [("Attending Physician", True),
+                                  ("Preclinical Medical Student", False),
+                                  ("Clinical Medical Student", False),
+                                  ("Coordinator", False)]:
+            p = models.ProviderType(long_name=lname,
+                                    short_name=lname.split()[0],
+                                    signs_charts=can_sign)
+            p.save()
 
         user = User.objects.create_user('tljones', 'tommyljones@gmail.com',
                                         'password')
@@ -55,10 +59,16 @@ class ViewsExistTest(TestCase):
 
         models.Provider.objects.create(
             first_name="Tommy", middle_name="Lee", last_name="Jones",
-            phone="425-243-9115", gender=g,
-            can_attend=True, associated_user=user)
+            phone="425-243-9115", gender=g, associated_user=user)
+
+        for ptype in models.ProviderType.objects.all():
+            user.provider.clinical_roles.add(ptype)
 
         self.client.login(username=user.username, password='password')
+
+        session = self.client.session
+        session['clintype_pk'] = user.provider.clinical_roles.all()[0].pk
+        session.save()
 
     def test_basic_urls(self):
         basic_urls = ["home",
@@ -84,7 +94,6 @@ class ViewsExistTest(TestCase):
             except AssertionError as e:
                 print pt_url
                 print response
-                print models.ClinicDate.objects.all()
                 raise e
 
         response = self.client.get(reverse(pt_url, args=(pt.id,)))

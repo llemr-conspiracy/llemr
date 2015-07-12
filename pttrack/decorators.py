@@ -9,12 +9,12 @@ from django.http import HttpResponseRedirect
 
 
 def provider_exists(user):
-    print "Chekcing provider", hasattr(user, 'provider')
+    # print "Chekcing provider", hasattr(user, 'provider')
     return hasattr(user, 'provider')
 
 
 def clintype_set(session):
-    print "Checking clintype", 'clintype_pk' in session
+    # print "Checking clintype", 'clintype_pk' in session
     return 'clintype_pk' in session
 
 
@@ -46,9 +46,6 @@ def session_passes_test(test_func, fail_url,
                 path = request.get_full_path()
 
             from django.contrib.auth.views import redirect_to_login
-            print "next", path
-            print "redirecting based on failed session", resolved_url
-            print "redirect_field_name", redirect_field_name
             return redirect_to_login(
                 path, resolved_url, redirect_field_name)
 

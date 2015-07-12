@@ -81,10 +81,6 @@ class ProviderCreate(FormView):
 
         form.save_m2m()
 
-        print provider
-        print provider.clinical_roles
-        print form
-
         return HttpResponseRedirect(self.request.GET['next'])
 
     def get_context_data(self, **kwargs):
@@ -325,8 +321,10 @@ def action_required_patients(request):
 def sign_workup(request, pk):
     provider = get_current_provider()
     wu = get_object_or_404(mymodels.Workup, pk=pk)
+    active_provider_type = get_object_or_404(mymodels.ProviderType,
+                                             pk=request.session['clintype_pk'])
 
-    wu.sign(get_current_provider())
+    wu.sign(request.user, active_provider_type)
 
     wu.save()
 

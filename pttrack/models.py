@@ -106,6 +106,7 @@ class ActionInstruction(models.Model):
 class ProviderType(models.Model):
     long_name = models.CharField(max_length=100)
     short_name = models.CharField(max_length=10, primary_key=True)
+    signs_charts = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.short_name
@@ -258,8 +259,6 @@ class Patient(Person):
 
 class Provider(Person):
 
-    can_attend = models.BooleanField(default=False)
-
     clinical_roles = models.ManyToManyField(ProviderType)
 
     associated_user = models.OneToOneField(settings.AUTH_USER_MODEL,
@@ -395,10 +394,12 @@ class Workup(Note):
                                validators=[validate_attending])
     signed_date = models.DateTimeField(blank=True, null=True)
 
-    def sign(self, signer):
-        if signer.can_attend:
+    def sign(self, user, active_role):
+        if active_role.signs_charts:
+            assert active_role in user.provider.clinical_roles.all()
+
             self.signed_date = django.utils.timezone.now()
-            self.signer = signer
+            self.signer = user.provider
         else:
             raise ValueError("You must be an attending to sign workups.")
 
