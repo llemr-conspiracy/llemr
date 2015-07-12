@@ -31,15 +31,15 @@ for lname in ["Male", "Female", "Other"]:
     g.save()
 
 
-p = models.Provider(first_name="Tommy",
-                    middle_name="Lee",
-                    last_name="Jones",
-                    phone="425-243-9115",
-                    gender=models.Gender.objects.all()[0],
-                    can_attend=True,
-                    # associated_user=user)
-                    )
-p.save()
+# p = models.Provider(first_name="Tommy",
+#                     middle_name="Lee",
+#                     last_name="Jones",
+#                     phone="425-243-9115",
+#                     gender=models.Gender.objects.all()[0],
+#                     can_attend=True,
+#                     # associated_user=user)
+#                     )
+# p.save()
 
 p = models.Patient(first_name="Frankie",
                    middle_name="Lane",

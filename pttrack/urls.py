@@ -32,6 +32,9 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^new-provider/$',
         views.ProviderCreate.as_view(),
         name='new-provider'),
+    url(r'^choose-role/$',
+        views.choose_clintype,
+        name='choose-clintype'),
 
     # WORKUPS
     url(r'^(?P<pt_id>[0-9]+)/workup/$',
@@ -90,7 +93,7 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
 
 urlpatterns = []
 for u in unwrapped_urlconf:
-    if u.name in ['new-provider']:
+    if u.name in ['new-provider', 'choose-clintype']:
         # do not wrap in full regalia
         u._callback = login_required(u._callback)
     elif u.name in ['about']:

@@ -79,6 +79,12 @@ class ProviderCreate(FormView):
         provider.associated_user = self.request.user
         provider.save()
 
+        form.save_m2m()
+
+        print provider
+        print provider.clinical_roles
+        print form
+
         return HttpResponseRedirect(self.request.GET['next'])
 
     def get_context_data(self, **kwargs):
@@ -278,6 +284,29 @@ class PatientCreate(FormView):
     def form_valid(self, form):
         form.save()
         return HttpResponseRedirect(reverse("patient-detail", args=(p.id,)))
+
+
+def choose_clintype(request):
+    RADIO_CHOICE_KEY = 'radio-roles'
+
+    if request.POST:
+        request.session['clintype_pk'] = request.POST[RADIO_CHOICE_KEY]
+        return HttpResponseRedirect(request.GET['next'])
+
+    if request.GET:
+        role_options = request.user.provider.clinical_roles.all()
+
+        if len(role_options) == 1:
+            request.session['clintype_pk'] = role_options[0].pk
+            return HttpResponseRedirect(request.GET['next'])
+        elif len(role_options) == 0:
+            return HttpResponseServerError(
+                "Fatal: your Provider register is corrupted, and lacks " +
+                "ProviderTypes. Report this error!")
+        else:
+            return render(request, 'pttrack/role-choice.html',
+                          {'roles': role_options,
+                           'choice_key': RADIO_CHOICE_KEY})
 
 
 def action_required_patients(request):

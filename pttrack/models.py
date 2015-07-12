@@ -260,8 +260,8 @@ class Provider(Person):
 
     can_attend = models.BooleanField(default=False)
 
-    # Due to a circular dependency issue I really don't understand, this
-    # needs to be done this way, I think
+    clinical_roles = models.ManyToManyField(ProviderType)
+
     associated_user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                            blank=True, null=True)
 

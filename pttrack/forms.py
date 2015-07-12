@@ -1,6 +1,7 @@
 '''Forms for the SNHC clintools app.'''
 from bootstrap3_datetime.widgets import DateTimePicker
-from django.forms import ModelForm, ValidationError
+from django.forms import ModelForm, ValidationError, Form
+from django.forms import ModelChoiceField
 
 from . import models
 from . import followup_models
