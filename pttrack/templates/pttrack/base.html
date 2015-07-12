@@ -29,13 +29,14 @@
 	            <span class="icon-bar"></span>
 	            <span class="icon-bar"></span>
 	          </button>
-	          <a class="navbar-brand" href="{% url 'home' %}">SNHC</a>
+	          <a class="navbar-brand" href="{% url 'home' %}">Osler</a>
 	        </div>
 	        <div class="navbar-collapse" ng-class="{collapse: isCollapsed}">
 	          <ul class="nav navbar-nav">
 	            <li><a href="{% url 'intake' %}">Intake</a></li>
 	            <li><a href="{% url 'all-patients' %}">All Patients</a></li>
 	            <li><a href="//snhc.wustl.edu/wiki">Wiki</a></li>
+	            <li><a href="{% url 'about' %}">About</a></li>
 	          </ul>
 						{% if user.is_authenticated %}
 						<ul class="nav navbar-nav pull-right">

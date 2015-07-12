@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from django.views.generic import ListView, DetailView
+from django.views.generic.base import TemplateView
 
 from django.contrib.auth.decorators import login_required
 
@@ -80,6 +81,11 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
         views.GeneralFollowupUpdate.as_view(),
         {"model": "General"},
         name="followup"),
+
+    # MISC
+    url(r'^about/',
+        TemplateView.as_view(template_name='pttrack/about.html'),
+        name='about'),
 ]
 
 urlpatterns = []
@@ -87,6 +93,9 @@ for u in unwrapped_urlconf:
     if u.name in ['new-provider']:
         # do not wrap in full regalia
         u._callback = login_required(u._callback)
+    elif u.name in ['about']:
+        # do not wrap at all, fully public
+        pass
     else:
         u._callback = provider_required(u._callback)
 
