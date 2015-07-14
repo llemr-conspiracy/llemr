@@ -27,9 +27,18 @@ for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",
     l = models.Language(name=lang_name)
     l.save()
 
-for ethnic_name in ["American Indian or Alaska Native", "Asian",
-                    "Black or African American", "Hispanic or Latino",
-                    "Native Hawaiian or Other Pacific Islander", "White"]:
+for ethnic_name in ["Afghanistani", "African American", "Albanian", "Algerian", 
+                    "Andorran", "Angolan", "Argentinian", "Armenian", "Australian", 
+                    "Bolivian", "Bosnian", "Brazilian", "Canadian", "Caucasian",
+                    "Chilean", "Chinese", "Colombian", "Croatian", "Czechoslovakian",
+                    "Egyptian", "French", "German", "Greek", "Haitian", "Hispanic", 
+                    "Honduran", "Indian", "Indonesian", "Iranian", "Iraqi", "Irish", 
+                    "Israeli", "Italian," "Jamaican", "Japanese", "Jordanian", "Kenyan",
+                    "Korean", "Laotian", "Latvian", "Lebanese", "Libyan", "Malaysian",
+                    "Mexican", "Namibian", "Norwegian", "Pakistani", "Romanian", 
+                    "Russian", "Rwandan", "Samoan", "Serbian," "Somalian", 
+                    "South African", "Spanish", "Syrian", "Taiwanese", "Turkish",
+                    "Vietnamese", "Yemenese", "Zimbabwean"]:
     e = models.Ethnicity(name=ethnic_name)
     e.save()
 
@@ -95,11 +104,11 @@ for cont_res in [
     rslt = followup_models.ContactResult(name=cont_res)
     rslt.save()
 
-for dx_type in ["Cardiovascular", "Dermatological", "Diabetes",
-                "Gastrointestinal", "Infectious Disease (e.g. flu or HIV)",
-                "Mental Health", "Musculoskeletal", "Neurological", "OB/GYN",
-                "Physical Exam", "Respiratory", "Rx Refill", "Urogenital",
-                "Vaccination", "Weight Concerns", "Other"]:
+for dx_type in ["Cardiovascular", "Dermatological", "Endocrine", 
+                "Eyes and ENT", "GI", "Infectious Disease (e.g. flu or HIV)", 
+                "Mental Health", "Musculoskeletal", "Neurological", 
+                "OB/GYN", "Physical Exam", "Respiratory", "Rx Refill", 
+                "Urogenital", "Vaccination/PPD", "Other"]:
     d = models.DiagnosisType(name=dx_type)
     d.save()
 
