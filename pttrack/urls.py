@@ -21,12 +21,13 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^intake/$',
         views.PatientCreate.as_view(),
         name="intake"),
-    url(r'^clindate/(?P<pt_id>[0-9]+)/$',
-        views.ClinicDateCreate.as_view(),
-        name="new-clindate"),
     url(r'^(?P<pk>[0-9]+)/$',
         DetailView.as_view(model=mymodels.Patient),
         name='patient-detail'),
+    url(r'^patient/update/(?P<pk>[0-9]+)$',
+        views.PatientUpdate.as_view(),
+        name='patient-update'),
+
 
     # PROVIDERS
     url(r'^new-provider/$',
@@ -89,6 +90,9 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^about/',
         TemplateView.as_view(template_name='pttrack/about.html'),
         name='about'),
+    url(r'^clindate/(?P<pt_id>[0-9]+)/$',
+        views.ClinicDateCreate.as_view(),
+        name="new-clindate"),
 ]
 
 urlpatterns = []

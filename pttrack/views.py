@@ -174,6 +174,8 @@ class WorkupCreate(NoteFormView):
 
         wu.save()
 
+        form.save_m2m()
+
         return HttpResponseRedirect(reverse("new-action-item", args=(pt.id,)))
 
 
@@ -248,6 +250,8 @@ class FollowupCreate(NoteFormView):
 
         fu.save()
 
+        form.save_m2m()
+
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
 
@@ -270,6 +274,16 @@ class ActionItemCreate(NoteFormView):
         ai.save()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+
+
+class PatientUpdate(UpdateView):
+    template_name = 'pttrack/patient-update.html'
+    model = mymodels.Patient
+    form_class = myforms.PatientForm
+
+    def get_success_url(self):
+        wu = self.object
+        return reverse("workup", args=(wu.id, ))
 
 
 class PatientCreate(FormView):
