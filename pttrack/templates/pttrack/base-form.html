@@ -9,11 +9,12 @@
 
 <div class="container">
   <form action="" method="post" {% if note_type == "Document" %} enctype="multipart/form-data" {% endif %} >
-      {% csrf_token %}
+    {% csrf_token %}
     {% bootstrap_form form %}
     {% buttons %}
       <button type="submit" class="btn btn-success">Submit</button>
     {% endbuttons %}
+    <input type="hidden" name="next" value="{{ next }}" />
   </form>
 </div>
 

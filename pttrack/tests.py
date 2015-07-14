@@ -3,7 +3,8 @@ from . import models
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.test import Client
-
+from django.contrib.auth.models import User
+from django.utils.timezone import now
 import datetime
 
 
@@ -23,33 +24,51 @@ class ViewsExistTest(TestCase):
         l = models.Language.objects.create(name="English")
         e = models.Ethnicity.objects.create(name="White")
 
-        models.Patient.objects.create(
+        p = models.Patient.objects.create(
             first_name="Frankie", middle_name="Lane", last_name="McNath",
             address="6310 Scott Ave", city="St. Louis", state="MO",
             date_of_birth=datetime.date(year=1989, month=8, day=9),
             phone="501-233-1234",
-            language=l,
-            ethnicity=e,
             gender=g)
+
+        p.languages.add(l)
+        p.ethnicities.add(e)
+        p.save()
 
         models.ClinicType.objects.create(name="Basic Care Clinic")
 
         models.ClinicDate.objects.create(
             clinic_type=models.ClinicType.objects.all()[0],
-            clinic_date=datetime.datetime.today(),
+            clinic_date=now().date(),
             gcal_id="tmp")
 
         models.DiagnosisType.objects.create(name="Cardiovascular")
 
-        for lname in ["Attending Physician", "Preclinical Medical Student",
-                      "Clinical Medical Student", "Coordinator"]:
-            models.ProviderType.objects.create(long_name=lname,
-                                               short_name=lname.split()[0])
+        for (lname, can_sign) in [("Attending Physician", True),
+                                  ("Preclinical Medical Student", False),
+                                  ("Clinical Medical Student", False),
+                                  ("Coordinator", False)]:
+            p = models.ProviderType(long_name=lname,
+                                    short_name=lname.split()[0],
+                                    signs_charts=can_sign)
+            p.save()
+
+        user = User.objects.create_user('tljones', 'tommyljones@gmail.com',
+                                        'password')
+        user.save()
 
         models.Provider.objects.create(
             first_name="Tommy", middle_name="Lee", last_name="Jones",
-            phone="425-243-9115", gender=g, email="tljones@wustl.edu",
-            can_attend=True)
+            phone="425-243-9115", gender=g, associated_user=user)
+
+        for ptype in models.ProviderType.objects.all():
+            user.provider.clinical_roles.add(ptype)
+
+        self.client.login(username=user.username, password='password')
+
+        session = self.client.session
+        session['clintype_pk'] = user.provider.clinical_roles.all()[0].pk
+        session.save()
 
     def test_basic_urls(self):
         basic_urls = ["home",
@@ -60,19 +79,50 @@ class ViewsExistTest(TestCase):
             response = self.client.get(reverse(basic_url))
             self.assertEqual(response.status_code, 200)
 
+    def test_initial_config(self):
+        session = self.client.session
+        del session['clintype_pk']
+        session.save()
+
+        response = self.client.get(reverse('all-patients'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('choose-clintype'), response.url)
+
+        models.Provider.objects.all().delete()
+
+        response = self.client.get(reverse('all-patients'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('new-provider'), response.url)
+
+        self.client.logout()
+
+        response = self.client.get(reverse('all-patients'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('login'), response.url)
+
     def test_pt_urls(self):
         pt_urls = ['patient-detail',
                    "new-clindate",
                    'new-action-item',
                    'followup-choice',
-                   'new-workup']
+                   'new-workup',
+                   'patient-update']
         pt = models.Patient.objects.all()[0]
 
         for pt_url in pt_urls:
             response = self.client.get(reverse(pt_url, args=(pt.id,)))
-            self.assertEqual(response.status_code, 200)
+            try:
+                self.assertEqual(response.status_code, 200)
+            except AssertionError as e:
+                print pt_url
+                print response
+                raise e
 
         response = self.client.get(reverse(pt_url, args=(pt.id,)))
+        self.assertEqual(response.status_code, 200)
+
+    def test_provider_urls(self):
+        response = self.client.get(reverse('new-provider'))
         self.assertEqual(response.status_code, 200)
 
     def test_clindate_create_redirect(self):
@@ -99,10 +149,11 @@ class ViewsExistTest(TestCase):
             diagnosis="MI",
             HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
             ros="", pe="", A_and_P="",
-            diagnosis_category=models.DiagnosisType.objects.all()[0],
             author=models.Provider.objects.all()[0],
             author_type=models.ProviderType.objects.all()[0],
             patient=models.Patient.objects.all()[0])
+
+        wu.diagnosis_categories.add(models.DiagnosisType.objects.all()[0])
 
         for wu_url in wu_urls:
             response = self.client.get(reverse(wu_url, args=(wu.id,)))
@@ -118,10 +169,12 @@ class ViewsExistTest(TestCase):
             diagnosis="MI",
             HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
             ros="", pe="", A_and_P="",
-            diagnosis_category=models.DiagnosisType.objects.all()[0],
             author=models.Provider.objects.all()[0],
             author_type=models.ProviderType.objects.all()[0],
             patient=models.Patient.objects.all()[0])
+
+        wu.diagnosis_categories.add(models.DiagnosisType.objects.all()[0])
+        wu.save()
 
         # Fresh workups should be unsigned
         self.assertFalse(wu.signed())

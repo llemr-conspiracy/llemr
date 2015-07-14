@@ -1,7 +1,10 @@
 '''The datamodels for the SNHC clintools patient tracking system'''
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
+from django.conf import settings
 import django.utils.timezone
+
 
 # pylint: disable=I0011,missing-docstring,E1305
 
@@ -103,6 +106,7 @@ class ActionInstruction(models.Model):
 class ProviderType(models.Model):
     long_name = models.CharField(max_length=100)
     short_name = models.CharField(max_length=10, primary_key=True)
+    signs_charts = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.short_name
@@ -126,6 +130,7 @@ class Person(models.Model):
     middle_name = models.CharField(max_length=100, blank=True)
 
     phone = models.CharField(max_length=40)
+    languages = models.ManyToManyField(Language)
 
     gender = models.ForeignKey(Gender)
 
@@ -165,9 +170,9 @@ class Patient(Person):
 
     date_of_birth = models.DateField()
 
-    language = models.ForeignKey(Language)
+    patient_comfortable_with_english = models.BooleanField(default=True)
 
-    ethnicity = models.ForeignKey(Ethnicity)
+    ethnicities = models.ManyToManyField(Ethnicity)
 
     alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True)
     alternate_phone_2 = models.CharField(max_length=40, blank=True, null=True)
@@ -256,8 +261,10 @@ class Patient(Person):
 
 class Provider(Person):
 
-    email = models.EmailField()
-    can_attend = models.BooleanField(default=False)
+    clinical_roles = models.ManyToManyField(ProviderType)
+
+    associated_user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                           blank=True, null=True)
 
     def __unicode__(self):
         return self.name()
@@ -311,7 +318,7 @@ class Document(Note):
 
 class ActionItem(Note):
     instruction = models.ForeignKey(ActionInstruction)
-    due_date = models.DateField()
+    due_date = models.DateField(help_text="MM/DD/YYYY or YYYY-MM-DD")
     comments = models.CharField(max_length=300)
     completion_date = models.DateTimeField(blank=True, null=True)
     completion_author = models.ForeignKey(
@@ -354,7 +361,7 @@ class Workup(Note):
                                        verbose_name="CC")
     diagnosis = models.CharField(max_length=1000,
                                  verbose_name="Dx")
-    diagnosis_category = models.ForeignKey(DiagnosisType)
+    diagnosis_categories = models.ManyToManyField(DiagnosisType)
 
     HPI = models.TextField(verbose_name="HPI")
     PMH_PSH = models.TextField(verbose_name="PMH/PSH")
@@ -385,9 +392,8 @@ class Workup(Note):
     voucher_amount = models.PositiveSmallIntegerField(blank=True, null=True)
     patient_pays = models.PositiveSmallIntegerField(blank=True, null=True)
 
-    referral_type = models.ForeignKey(ReferralType, blank=True, null=True)
-    referral_location = models.ForeignKey(ReferralLocation,
-                                          blank=True, null=True)
+    referral_type = models.ManyToManyField(ReferralType, blank=True)
+    referral_location = models.ManyToManyField(ReferralLocation, blank=True)
 
     will_return = models.BooleanField(default=False,
                                       help_text="Will the pt. return to SNHC?")
@@ -400,10 +406,12 @@ class Workup(Note):
                                validators=[validate_attending])
     signed_date = models.DateTimeField(blank=True, null=True)
 
-    def sign(self, signer):
-        if signer.can_attend:
+    def sign(self, user, active_role):
+        if active_role.signs_charts:
+            assert active_role in user.provider.clinical_roles.all()
+
             self.signed_date = django.utils.timezone.now()
-            self.signer = signer
+            self.signer = user.provider
         else:
             raise ValueError("You must be an attending to sign workups.")
 
