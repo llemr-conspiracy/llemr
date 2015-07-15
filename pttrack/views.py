@@ -329,7 +329,8 @@ def action_required_patients(request):
 
     return render(request,
                   'pttrack/patient_list.html',
-                  {'object_list': pt_list})
+                  {'object_list': pt_list,
+                   'title': "Patients with Actions Required"})
 
 
 def sign_workup(request, pk):
