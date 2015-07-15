@@ -85,7 +85,7 @@ class ProviderCreate(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(ProviderCreate, self).get_context_data(**kwargs)
-        context['next'] = self.request.REQUEST.get('next')
+        context['next'] = self.request.GET.get('next')
         return context
 
 
