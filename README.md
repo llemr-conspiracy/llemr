@@ -1,4 +1,4 @@
-# SNHC clintools
+# Osler
 
 This is our clintools project, which is a collection for all our patient tracking and HPI-related web tools. It's a django project.
 
@@ -24,7 +24,7 @@ source venv/bin/activate
 Then install our dependencies with
 
 ```
-pip install -r requirement_file.txt
+pip install -r requirements.txt
 ```
 
 Once you've done that, build the test database
