@@ -27,18 +27,20 @@ for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",
     l = models.Language(name=lang_name)
     l.save()
 
-for ethnic_name in ["Afghanistani", "African American", "Albanian", "Algerian", 
-                    "Andorran", "Angolan", "Argentinian", "Armenian", "Australian", 
-                    "Bolivian", "Bosnian", "Brazilian", "Canadian", "Caucasian",
-                    "Chilean", "Chinese", "Colombian", "Croatian", "Czechoslovakian",
-                    "Egyptian", "French", "German", "Greek", "Haitian", "Hispanic", 
-                    "Honduran", "Indian", "Indonesian", "Iranian", "Iraqi", "Irish", 
-                    "Israeli", "Italian," "Jamaican", "Japanese", "Jordanian", "Kenyan",
-                    "Korean", "Laotian", "Latvian", "Lebanese", "Libyan", "Malaysian",
-                    "Mexican", "Namibian", "Norwegian", "Pakistani", "Romanian", 
-                    "Russian", "Rwandan", "Samoan", "Serbian," "Somalian", 
-                    "South African", "Spanish", "Syrian", "Taiwanese", "Turkish",
-                    "Vietnamese", "Yemenese", "Zimbabwean"]:
+for ethnic_name in ["Afghanistani", "African American", "Albanian", "Algerian",
+                    "Andorran", "Angolan", "Argentinian", "Armenian",
+                    "Australian", "Bolivian", "Bosnian", "Brazilian",
+                    "Canadian", "Caucasian", "Chilean", "Chinese", "Colombian",
+                    "Croatian", "Czechoslovakian", "Egyptian", "French",
+                    "German", "Greek", "Haitian", "Hispanic", "Honduran",
+                    "Indian", "Indonesian", "Iranian", "Iraqi", "Irish",
+                    "Israeli", "Italian," "Jamaican", "Japanese", "Jordanian",
+                    "Kenyan", "Korean", "Laotian", "Latvian", "Lebanese",
+                    "Libyan", "Malaysian", "Mexican", "Namibian", "Norwegian",
+                    "Pakistani", "Romanian", "Russian", "Rwandan", "Samoan",
+                    "Serbian," "Somalian", "South African", "Spanish"
+                    "Syrian", "Taiwanese", "Turkish", "Vietnamese", "Yemenese",
+                    "Zimbabwean"]:
     e = models.Ethnicity(name=ethnic_name)
     e.save()
 
