@@ -10,7 +10,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 sys.path.append(os.path.join(BASE_DIR, 'clintools'))
 
+#os.environ['DJANGO_SETTINGS_MODULE'] = 'clintools.debug_settings'
 os.environ['DJANGO_SETTINGS_MODULE'] = 'clintools.deploy_settings'
+
 os.environ['PYTHONHASHSEED'] = 'random'
 
 try:
