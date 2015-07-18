@@ -14,12 +14,16 @@ CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = 'DENY'
 
-# TODO: change for deployment?
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
+with open(os.path.join(BASE_DIR, 'secrets/database_password.txt')) as f:
+    DB_PASSWORD = f.read().strip()
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': 'osler',
+        'USER': 'django',
+        'PASSWORD': DB_PASSWORD,
+        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'PORT': '3306',
     }
 }
