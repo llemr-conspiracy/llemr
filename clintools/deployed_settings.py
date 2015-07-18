@@ -1,4 +1,4 @@
-from settings import *
+from base_settings import *
 
 DEBUG = TEMPLATE_DEBUG = False
 ALLOWED_HOSTS = ['pttrack.snhc.wustl.edu']
