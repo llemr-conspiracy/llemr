@@ -8,7 +8,11 @@ with open(os.path.join(BASE_DIR, 'secrets/secret_key.txt')) as f:
 
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
-SECURE_SSL_REDIRECT = True
+
+# it would be nice to enable this, but we go w/o SSL from the WashU load
+# balancer, meaning infinite redirects if we enable this :(
+# SECURE_SSL_REDIRECT = True
+
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
