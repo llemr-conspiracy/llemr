@@ -105,7 +105,7 @@ class ActionInstruction(models.Model):
 
 class ProviderType(models.Model):
     long_name = models.CharField(max_length=100)
-    short_name = models.CharField(max_length=10, primary_key=True)
+    short_name = models.CharField(max_length=30, primary_key=True)
     signs_charts = models.BooleanField(default=False)
 
     def __unicode__(self):
