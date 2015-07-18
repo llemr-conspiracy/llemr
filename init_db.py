@@ -4,7 +4,7 @@ from datetime import date
 
 from django.contrib.auth.models import User
 
-user = User.objects.create_user('jrporter', 'justinrporter@wusm.wustl.edu',
+user = User.objects.create_user('jrporter', 'justinrporter@wustl.edu',
                                 'password')
 user.first_name = "Justin"
 user.last_name = "Porter"
