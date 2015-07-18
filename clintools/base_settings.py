@@ -13,10 +13,6 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# SECURITY WARNING: keep the secret key used in production secret!
-with open(os.path.join(BASE_DIR, 'secrets/secret_key.txt')) as f:
-    SECRET_KEY = f.read().strip()
-
 # Application definition
 
 INSTALLED_APPS = (
@@ -62,17 +58,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'clintools.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
