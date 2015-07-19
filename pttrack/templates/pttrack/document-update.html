@@ -3,10 +3,20 @@
 {% load bootstrap3 %}
 
 {% block title %}
-{{ object.document_type }}: {{ object.patient.name }}
+{{ object.document_type | title }}: {{ object.patient.name }}
 {% endblock %}
 
 {% block header %}
-<h1>{{ object.document_type }}</h1>
-<p class="lead">View or edit {{ object.document_type }} for <em>{{ object.patient.name }}</em></p>
+  <div class="row">
+    <div class="col-md-1">
+      <h3><br><a href="{% url 'document-detail' pk=document.id %}">{% bootstrap_icon "chevron-left" %}</a></h3>
+    </div>
+    <div class="col-md-5">
+      <h2>{{ object.document_type | title }}</h2>
+      <p class="lead">View or edit {{ object.document_type }} for
+        <em><a href="{ url 'patient-detail' pk={{ object.patient.id }}">
+        {{ object.patient.name }}</a></em>
+      </p>
+    </div>
+  </div>
 {% endblock %}

@@ -7,13 +7,29 @@ Document: {{ document.patient.name }}
 {% endblock %}
 
 {% block header %}
-    <h1>{{ document.document_type }}</h1>
-    <p class="lead">For <a href="{% url 'patient-detail' pk=document.patient.id %}">{{ document.patient.name }}</a></p>
+  <div class="row">
+    <div class="col-md-1" style="">
+      <h3><br><a href="{% url 'patient-detail' pk=document.patient.id %}">{% bootstrap_icon "chevron-left" %}</a></h3>
+    </div>
+    <div class="col-md-4">
+      <h2>{{ document.document_type | title }}</h2>
+      <p class="lead">For <a href="{% url 'patient-detail' pk=document.patient.id %}">{{ document.patient.name }}</a></p>
+    </div>
+    <div class="col-md-1 pull-right">
+    <h1><a href="{% url 'document-update' pk=document.id %}"><small>{% bootstrap_icon "pencil" %}</small></a></h1>
+    </div>
+  </div>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-  <h2>{{ document.title}}</h2>
-  <img class="img-responsive img-rounded" src="{{ document.image.url }}" alt="alt_text">
+  <div class="row">
+    <h3>{{ document.title}}</h3>
+    <small class="text-muted">uploaded by {{ document.author }} on {{ document.written_datetime }}</small>
+    {% if document.last_modified != document.written_datetime %}
+    <small class="text-muted">last modified {{document.last_modified}}</small>
+    {% endif %}</p>
+    <img class="img-thumbnail img-responsive" src="{{ document.image.url }}" alt="alt_text" style="max-height: 20%">
+  </div>
 </div>  
 {% endblock %}

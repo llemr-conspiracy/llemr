@@ -303,7 +303,7 @@ class DocumentUpdate(UpdateView):
 
     def get_success_url(self):
         doc = self.object
-        return reverse("patient-detail", args=(doc.patient.id, ))
+        return reverse("document-detail", args=(doc.id, ))
 
 
 class DocumentCreate(NoteFormView):

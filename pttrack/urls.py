@@ -66,10 +66,10 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^(?P<pt_id>[0-9]+)/document/$',
         views.DocumentCreate.as_view(),
         name="new-document"),
-    url(r'^/document/(?P<pk>[0-9]+)$',
+    url(r'^document/(?P<pk>[0-9]+)$',
         DetailView.as_view(model=mymodels.Document),
         name="document-detail"),
-    url(r'^/document/update/(?P<pk>[0-9]+)$',
+    url(r'^document/update/(?P<pk>[0-9]+)$',
         views.DocumentUpdate.as_view(),
         name="document-update"),
 
