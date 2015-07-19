@@ -37,7 +37,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	<div class="row">
 		<h3>Info</h3>
 		<div class="container col-md-4">
-			<p>Language: {{patient.language}}</p>
+			<p>Language: {{ patient.languages.iterator | join:", " }}</p>
 			<p>DOB: {{patient.date_of_birth}}</p>
 		</div>
 		<div class="container col-md-4">
