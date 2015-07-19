@@ -2,20 +2,6 @@ from pttrack import models
 from pttrack import followup_models
 from datetime import date
 
-from django.contrib.auth.models import User
-
-user = User.objects.create_user('jrporter', 'justinrporter@wusm.wustl.edu',
-                                'password')
-user.first_name = "Justin"
-user.last_name = "Porter"
-user.save()
-
-user = User.objects.create_user('rjain', 'jainr@wusm.wustl.edu',
-                                'password')
-user.first_name = "Radhika"
-user.last_name = "Jain"
-user.save()
-
 for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",
                   "Croatian", "Czech", "Danish", "Dutch", "Finnish", "French",
                   "French Creole", "German", "Greek", "Hebrew", "Hindi/Urdu",
@@ -27,48 +13,26 @@ for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",
     l = models.Language(name=lang_name)
     l.save()
 
-for ethnic_name in ["Afghanistani", "African American", "Albanian", "Algerian", 
-                    "Andorran", "Angolan", "Argentinian", "Armenian", "Australian", 
-                    "Bolivian", "Bosnian", "Brazilian", "Canadian", "Caucasian",
-                    "Chilean", "Chinese", "Colombian", "Croatian", "Czechoslovakian",
-                    "Egyptian", "French", "German", "Greek", "Haitian", "Hispanic", 
-                    "Honduran", "Indian", "Indonesian", "Iranian", "Iraqi", "Irish", 
-                    "Israeli", "Italian," "Jamaican", "Japanese", "Jordanian", "Kenyan",
-                    "Korean", "Laotian", "Latvian", "Lebanese", "Libyan", "Malaysian",
-                    "Mexican", "Namibian", "Norwegian", "Pakistani", "Romanian", 
-                    "Russian", "Rwandan", "Samoan", "Serbian," "Somalian", 
-                    "South African", "Spanish", "Syrian", "Taiwanese", "Turkish",
-                    "Vietnamese", "Yemenese", "Zimbabwean"]:
+for ethnic_name in ["Afghanistani", "African American", "Albanian", "Algerian",
+                    "Andorran", "Angolan", "Argentinian", "Armenian",
+                    "Australian", "Bolivian", "Bosnian", "Brazilian",
+                    "Canadian", "Caucasian", "Chilean", "Chinese", "Colombian",
+                    "Croatian", "Czechoslovakian", "Egyptian", "French",
+                    "German", "Greek", "Haitian", "Hispanic", "Honduran",
+                    "Indian", "Indonesian", "Iranian", "Iraqi", "Irish",
+                    "Israeli", "Italian," "Jamaican", "Japanese", "Jordanian",
+                    "Kenyan", "Korean", "Laotian", "Latvian", "Lebanese",
+                    "Libyan", "Malaysian", "Mexican", "Namibian", "Norwegian",
+                    "Pakistani", "Romanian", "Russian", "Rwandan", "Samoan",
+                    "Serbian," "Somalian", "South African", "Spanish"
+                    "Syrian", "Taiwanese", "Turkish", "Vietnamese", "Yemenese",
+                    "Zimbabwean"]:
     e = models.Ethnicity(name=ethnic_name)
     e.save()
 
 for lname in ["Male", "Female", "Other"]:
     g = models.Gender(long_name=lname, short_name=lname[0])
     g.save()
-
-
-# p = models.Provider(first_name="Tommy",
-#                     middle_name="Lee",
-#                     last_name="Jones",
-#                     phone="425-243-9115",
-#                     gender=models.Gender.objects.all()[0],
-#                     can_attend=True,
-#                     # associated_user=user)
-#                     )
-# p.save()
-
-p = models.Patient(first_name="Frankie",
-                   middle_name="Lane",
-                   last_name="McNath",
-                   address="6310 Scott Ave.",
-                   date_of_birth=date(year=1989,
-                                      month=8,
-                                      day=9),
-                   phone="501-233-1234",
-                   gender=models.Gender.objects.all()[0])
-p.save()
-p.languages.add(l)
-p.ethnicities.add(e)
 
 for (lname, can_sign) in [("Attending Physician", True),
                           ("Preclinical Medical Student", False),

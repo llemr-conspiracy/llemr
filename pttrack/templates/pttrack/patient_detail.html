@@ -8,8 +8,11 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 {% endblock %}
 
 {% block header %}
-<div class="container-float col-md-7">
-	<h2 class="inline">{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }} <a href="{% url 'patient-update' pk=patient.id %}"><small>{% bootstrap_icon "pencil" %}</small></a></h2>
+<div class="container-float col-md-1">
+	<h2><br><a href="{% url 'all-patients' %}">{% bootstrap_icon "chevron-left" %}</a></h2>
+</div>
+<div class="container-float col-md-6">
+	<h2>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }} <a href="{% url 'patient-update' pk=patient.id %}"><small>{% bootstrap_icon "pencil" %}</small></a></h2>
 	<p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
 	<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
 </div>

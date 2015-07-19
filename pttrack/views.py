@@ -70,9 +70,9 @@ class ProviderCreate(FormView):
     form_class = myforms.ProviderForm
 
     def get_initial(self):
+
         return {'first_name': self.request.user.first_name,
-                'last_name': self.request.user.last_name,
-                'middle_name': self.request.user.last_name}
+                'last_name': self.request.user.last_name}
 
     def form_valid(self, form):
         provider = form.save(commit=False)
@@ -85,7 +85,7 @@ class ProviderCreate(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(ProviderCreate, self).get_context_data(**kwargs)
-        context['next'] = self.request.REQUEST.get('next')
+        context['next'] = self.request.GET.get('next')
         return context
 
 
@@ -357,7 +357,8 @@ def action_required_patients(request):
 
     return render(request,
                   'pttrack/patient_list.html',
-                  {'object_list': pt_list})
+                  {'object_list': pt_list,
+                   'title': "Patients with Actions Required"})
 
 
 def sign_workup(request, pk):

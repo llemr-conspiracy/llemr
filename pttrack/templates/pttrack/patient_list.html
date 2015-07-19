@@ -3,7 +3,7 @@
 {% load bootstrap3 %}
 
 {% block header %}
-<h1>All Patients</h1>
+<h2>{{ title | default:"All Patients" }}</h2>
 {% endblock %}
 
 {% block content %}
