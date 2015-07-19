@@ -52,8 +52,11 @@
         </ul>
 				{% if user.is_authenticated %}
 				<ul class="nav navbar-nav pull-right">
+            {% if user.is_superuser or user.is_staff %}
+            <li><a href="{% url 'admin:index' %}">Admin</a></li>
+            {% endif %}
             <li><a href="{% url 'logout' %}">Logout 
-              {{ request.user.provider.name }} acting as {{ request.session.clintype_pk | default:"[no role]" }}
+              {{ request.user.provider.name }} ({{ request.session.clintype_pk | default:"[no role]" }})
             </a></li>
         </ul>
         {% endif %}

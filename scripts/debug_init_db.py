@@ -13,8 +13,8 @@ from datetime import date
 
 # pylint: disable=invalid-name
 
-user = User.objects.create_user('jrporter', 'justinrporter@wustl.edu',
-                                'password')
+user = User.objects.create_superuser('jrporter', 'justinrporter@wustl.edu',
+                                     'password')
 user.first_name = "Justin"
 user.last_name = "Porter"
 user.save()

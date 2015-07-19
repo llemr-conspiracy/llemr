@@ -2,8 +2,12 @@
 
 {% load bootstrap3 %}
 
+{% block title %}
+Osler: {{ title | default:"All Patients"}}
+{% endblock %}
+
 {% block header %}
-<h2>{{ title | default:"All Patients" }}</h2>
+<h1>{{ title | default:"All Patients" }}</h1>
 {% endblock %}
 
 {% block content %}
