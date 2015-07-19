@@ -11,7 +11,7 @@ First, clone our repository
 git clone https://github.com/SaturdayNeghborhoodHealthClinic/clintools.git
 ```
 
-First, get pip [pip](https://pip.pypa.io/en/stable/).
+First, get [pip](https://pip.pypa.io/en/stable/).
 
 We also recommend running Osler in a virtual environment.
 If you're going to run our project in a virtual env do th following:
