@@ -282,8 +282,8 @@ class PatientUpdate(UpdateView):
     form_class = myforms.PatientForm
 
     def get_success_url(self):
-        wu = self.object
-        return reverse("workup", args=(wu.id, ))
+        pt = self.object
+        return reverse("patient", args=(pt.id, ))
 
 
 class PatientCreate(FormView):
