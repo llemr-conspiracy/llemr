@@ -1,3 +1,11 @@
+'''
+This script builds in the fundamental data required to use the webapp. If there
+are no clinic types, for example, it becomes impossible to enter a workup,
+because workups depend on clinic type ForeignKeys. This can be run to seed a
+new database in production, or just as part of the reset_db.sh script used to
+rebuild the database when debugging.
+'''
+
 from pttrack import models
 from pttrack import followup_models
 from datetime import date
