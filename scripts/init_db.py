@@ -139,4 +139,6 @@ for refer_type in ["PCP: chronic condition management",
     s = models.ReferralType(name=refer_type)
     s.save()
 
+models.DocumentType.objects.create(name="Silly picture")
+
 print "done!"
