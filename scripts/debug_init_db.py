@@ -1,6 +1,17 @@
-import init_db
+'''
+This script builds the additonal entries in the database that are not built
+into a deployment database. Fake patients, possibly fake providers, etc.
+
+scripts/init_db.py contains data that is real and should be used in a
+deployment environment. This script relies on model entries created by that
+script.
+'''
 
 from django.contrib.auth.models import User
+from pttrack import models
+from datetime import date
+
+# pylint: disable=invalid-name
 
 user = User.objects.create_user('jrporter', 'justinrporter@wustl.edu',
                                 'password')
@@ -35,7 +46,7 @@ p = models.Patient(first_name="Frankie",
                    phone="501-233-1234",
                    gender=models.Gender.objects.all()[0])
 p.save()
-p.languages.add(l)
-p.ethnicities.add(e)
+p.languages.add(models.Laguage.objects.all()[0])
+p.ethnicities.add(models.Ethnicity.objects.all()[0])
 
 print "Done!"
