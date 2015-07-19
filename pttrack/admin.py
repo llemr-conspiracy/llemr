@@ -8,7 +8,7 @@ for model in [models.Language, models.Patient, models.Provider,
               models.ClinicDate, models.Workup, models.ClinicType,
               models.ActionInstruction, models.ActionItem, models.Ethnicity,
               models.ReferralType, models.ReferralLocation,
-              models.ContactMethod, ]:
+              models.ContactMethod, models.Document, models.DocumentType]:
     admin.site.register(model)
 
 for model in [followup_models.ReferralFollowup, followup_models.NoShowReason,
