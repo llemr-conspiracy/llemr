@@ -297,7 +297,7 @@ class PatientCreate(FormView):
 
 
 class DocumentUpdate(UpdateView):
-    template_name = 'pttrack/form_submission.html'
+    template_name = 'pttrack/document-update.html'
     model = mymodels.Document
     form_class = myforms.DocumentForm
 

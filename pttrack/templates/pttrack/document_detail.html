@@ -12,5 +12,8 @@ Document: {{ document.patient.name }}
 {% endblock %}
 
 {% block content %}
-  <h2>{{ document.title}} </h2>
+<div class="container">
+  <h2>{{ document.title}}</h2>
+  <img class="img-responsive img-rounded" src="{{ document.image.url }}" alt="alt_text">
+</div>  
 {% endblock %}
