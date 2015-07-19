@@ -352,8 +352,7 @@ def action_required_patients(request):
     ai_list = mymodels.ActionItem.objects.filter(
         due_date__lte=django.utils.timezone.now().today())
 
-    # TODO remove duplicates from list
-    pt_list = [ai.patient for ai in ai_list]
+    pt_list = list(set([ai.patient for ai in ai_list]))
     pt_list.sort()
 
     return render(request,
@@ -363,7 +362,6 @@ def action_required_patients(request):
 
 
 def sign_workup(request, pk):
-    provider = get_current_provider()
     wu = get_object_or_404(mymodels.Workup, pk=pk)
     active_provider_type = get_object_or_404(mymodels.ProviderType,
                                              pk=request.session['clintype_pk'])
