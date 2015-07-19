@@ -122,9 +122,6 @@ class ViewsExistTest(TestCase):
                 print response
                 raise e
 
-        response = self.client.get(reverse(pt_url, args=(pt.id,)))
-        self.assertEqual(response.status_code, 200)
-
     def test_provider_urls(self):
         response = self.client.get(reverse('new-provider'))
         self.assertEqual(response.status_code, 200)
@@ -198,9 +195,6 @@ class ViewsExistTest(TestCase):
         self.assertFalse(wu.signed())
 
     def test_action_item_urls(self):
-        ai_urls = ['done-action-item',
-                   'reset-action-item']
-
         pt = models.Patient.objects.all()[0]
 
         ai_inst = models.ActionInstruction.objects.create(
