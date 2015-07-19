@@ -5,8 +5,12 @@ from django.core.urlresolvers import reverse
 from django.test import Client
 from django.contrib.auth.models import User
 from django.utils.timezone import now
+from django.core.files import File
 import datetime
 
+
+# pylint: disable=invalid-name
+# Whatever, whatever. I name them what I want.
 
 class CustomFuncTesting(TestCase):
     def test_validate_zip(self):
@@ -302,6 +306,44 @@ class ViewsExistTest(TestCase):
             apt_location=aptloc,
             noapt_reason=reason)
 
-        url = reverse('followup', kwargs={"pk": vf.id, "model": 'Vaccine'})
+        url = reverse('followup', kwargs={"pk": rf.id, "model": 'Vaccine'})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+    def test_document_urls(self):
+        '''
+        Test the views showing documents, as well as the integrity of path
+        saving in document creation (probably superfluous).
+        '''
+        import os
+
+        url = reverse('new-document', args=(1,))
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        dtype = models.DocumentType.objects.create(name="Silly Picture")
+        doc = models.Document.objects.create(
+            title="who done it?",
+            comments="Pictured: silliness",
+            document_type=dtype,
+            image=File(open("media/test.jpg")),
+            patient=models.Patient.objects.get(id=1),
+            author=models.Provider.objects.get(id=1),
+            author_type=models.ProviderType.objects.all()[0])
+
+        p = models.Document.objects.get(id=1).image.path
+        self.failUnless(open(p), 'file not found')
+        self.assertEqual(doc.image.path, p)
+        self.assertTrue(os.path.isfile(p))
+
+        url = reverse('document-detail', args=(1,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        url = reverse('document-detail', args=(1,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        os.remove(p)
+        self.assertFalse(os.path.isfile(p))
