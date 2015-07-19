@@ -292,8 +292,9 @@ class PatientCreate(FormView):
     form_class = myforms.PatientForm
 
     def form_valid(self, form):
-        form.save()
-        return HttpResponseRedirect(reverse("patient-detail", args=(p.id,)))
+        pt = form.save()
+        return HttpResponseRedirect(reverse("patient-detail",
+                                            args=(pt.id,)))
 
 
 class DocumentUpdate(UpdateView):
