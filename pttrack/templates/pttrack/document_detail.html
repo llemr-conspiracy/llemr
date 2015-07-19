@@ -30,6 +30,7 @@ Document: {{ document.patient.name }}
     <small class="text-muted">last modified {{document.last_modified}}</small>
     {% endif %}</p>
     <img class="img-thumbnail img-responsive" src="{{ document.image.url }}" alt="alt_text" style="max-height: 20%">
+    <p>{{ document.comments }}</p>
   </div>
 </div>  
 {% endblock %}
