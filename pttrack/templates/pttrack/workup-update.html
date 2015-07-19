@@ -8,5 +8,5 @@ Edit Workup ({{ object.patient.name }})
 
 {% block header %}
 <h1>Edit Workup</h1>
-<p class="lead">View or edit Workup for <em>{{ object.patient.name }}</em></p>
+<p class="lead">View or edit Workup for <em><a href="{% url 'patient-detail' pk=object.patient.id %}">{{ object.patient.name }}</a></em></p>
 {% endblock %}

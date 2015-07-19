@@ -8,5 +8,5 @@
 
 {% block header %}
 <h1>New {{ note_type }} </h1>
-<p class="lead">Add a new {{ note_type | lower }} for <em>{{ patient.name }}</em></p>
+<p class="lead">Add a new {{ note_type | lower }} for <em><a href="{% url 'patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
 {% endblock %}
