@@ -1,5 +1,6 @@
 from django.test import TestCase
 from . import models
+from . import forms
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.test import Client
@@ -341,3 +342,11 @@ class ViewsExistTest(TestCase):
 
         os.remove(p)
         self.assertFalse(os.path.isfile(p))
+
+
+class ReferralFollowupTest(TestCase):
+    fixtures = ['basic_fixture']
+
+    def test_create_followup(self):
+        #TODO tests here.
+        pass
