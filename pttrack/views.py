@@ -14,20 +14,19 @@ from . import forms as myforms
 import datetime
 
 
-def get_current_provider():
-    # this obviously needs to be different
-    return get_object_or_404(mymodels.Provider, pk=1)
-
-
 def get_clindates():
     clindates = mymodels.ClinicDate.objects.filter(
         clinic_date=django.utils.timezone.now().date())
     return clindates
 
 
-def get_current_provider_type():
-    # TODO determine from session data
-    return get_object_or_404(mymodels.ProviderType, pk="Attending")
+def get_current_provider_type(request):
+    '''
+    Given the request, produce the ProviderType of the logged in user. This is
+    done using session data.
+    '''
+    return get_object_or_404(mymodels.ProviderType,
+                             pk=request.session['clintype_pk'])
 
 
 def get_cal():
@@ -44,8 +43,8 @@ def get_cal():
 
     payload = {"key": GOOGLE_SECRET,
                "singleEvents": True,
-               "timeMin": datetime.datetime.now().strftime(
-                    '%Y-%m-%dT%H:%M:%S.%fZ'),
+               "timeMin":
+               datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
                "orderBy": "startTime"}
 
     r = requests.get("".join([cal_url,
@@ -62,6 +61,44 @@ def get_cal():
                                        day=next_date_str[2])
 
     return next_date
+
+
+class NoteFormView(FormView):
+    note_type = None
+
+    def get_context_data(self, **kwargs):
+        '''Inject self.note_type as the note type.'''
+
+        if self.note_type is None:
+            raise ImproperlyConfigured("NoteCreate view must have" +
+                                       "'note_type' variable set.")
+
+        context = super(FormView, self).get_context_data(**kwargs)
+        context['note_type'] = self.note_type
+
+        if 'pt_id' in self.kwargs:
+            context['patient'] = mymodels.Patient.objects. \
+                get(pk=self.kwargs['pt_id'])
+
+        return context
+
+
+class NoteUpdate(UpdateView):
+    note_type = None
+
+    def get_context_data(self, **kwargs):
+        '''Inject self.note_type as the note type.'''
+
+        if self.note_type is None:
+            raise ImproperlyConfigured("NoteCreate view must have" +
+                                       "'note_type' variable set.")
+
+        context = super(UpdateView, self).get_context_data(**kwargs)
+        context['note_type'] = self.note_type
+
+        return context
+
+    # TODO: add shared form_valid code here from all subclasses.
 
 
 class ProviderCreate(FormView):
@@ -109,26 +146,6 @@ class ClinicDateCreate(FormView):
         return HttpResponseRedirect(reverse("new-workup", args=(pt.id,)))
 
 
-class NoteFormView(FormView):
-    note_type = None
-
-    def get_context_data(self, **kwargs):
-        '''Inject self.note_type as the note type.'''
-
-        if self.note_type is None:
-            raise ImproperlyConfigured("NoteCreate view must have" +
-                                       "'note_type' variable set.")
-
-        context = super(FormView, self).get_context_data(**kwargs)
-        context['note_type'] = self.note_type
-
-        if 'pt_id' in self.kwargs:
-            context['patient'] = mymodels.Patient.objects. \
-                get(pk=self.kwargs['pt_id'])
-
-        return context
-
-
 def followup_choice(request, pt_id):
     '''Prompt the user to choose a follow up type.'''
     pt = get_object_or_404(mymodels.Patient, pk=pt_id)
@@ -168,8 +185,8 @@ class WorkupCreate(NoteFormView):
 
         wu = form.save(commit=False)
         wu.patient = pt
-        wu.author = get_current_provider()
-        wu.author_type = get_current_provider_type()
+        wu.author = self.request.user.provider
+        wu.author_type = get_current_provider_type(self.request)
         wu.clinic_day = get_clindates()[0]
 
         wu.save()
@@ -179,18 +196,19 @@ class WorkupCreate(NoteFormView):
         return HttpResponseRedirect(reverse("new-action-item", args=(pt.id,)))
 
 
-class WorkupUpdate(UpdateView):
-    template_name = 'pttrack/workup-update.html'
+class WorkupUpdate(NoteUpdate):
+    template_name = "pttrack/form-update.html"
     model = mymodels.Workup
     form_class = myforms.WorkupForm
+    note_type = "Workup"
 
     def get_success_url(self):
         wu = self.object
         return reverse("workup", args=(wu.id, ))
 
 
-class FollowupUpdate(UpdateView):
-    template_name = "pttrack/followup-update.html"
+class FollowupUpdate(NoteUpdate):
+    template_name = "pttrack/form-update.html"
 
     def get_success_url(self):
         pt = self.object.patient
@@ -200,21 +218,25 @@ class FollowupUpdate(UpdateView):
 class ReferralFollowupUpdate(FollowupUpdate):
     model = fu_models.ReferralFollowup
     form_class = myforms.ReferralFollowup
+    note_type = "Referral Followup"
 
 
 class LabFollowupUpdate(FollowupUpdate):
     model = fu_models.LabFollowup
     form_class = myforms.LabFollowup
+    note_type = "Lab Followup"
 
 
 class VaccineFollowupUpdate(FollowupUpdate):
     model = fu_models.VaccineFollowup
     form_class = myforms.VaccineFollowup
+    note_type = "Vaccine Followup"
 
 
 class GeneralFollowupUpdate(FollowupUpdate):
     model = fu_models.GeneralFollowup
     form_class = myforms.GeneralFollowup
+    note_type = "General Followup"
 
 
 class FollowupCreate(NoteFormView):
@@ -245,8 +267,8 @@ class FollowupCreate(NoteFormView):
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
         fu = form.save(commit=False)
         fu.patient = pt
-        fu.author = get_current_provider()
-        fu.author_type = get_current_provider_type()
+        fu.author = self.request.user.provider
+        fu.author_type = get_current_provider_type(self.request)
 
         fu.save()
 
@@ -267,8 +289,8 @@ class ActionItemCreate(NoteFormView):
         ai = form.save(commit=False)
 
         ai.completion_date = None
-        ai.author = get_current_provider()
-        ai.author_type = get_current_provider_type()
+        ai.author = self.request.user
+        ai.author_type = get_current_provider_type(self.request)
         ai.patient = pt
 
         ai.save()
@@ -297,10 +319,11 @@ class PatientCreate(FormView):
                                             args=(pt.id,)))
 
 
-class DocumentUpdate(UpdateView):
-    template_name = 'pttrack/document-update.html'
+class DocumentUpdate(NoteUpdate):
+    template_name = "pttrack/form-update.html"
     model = mymodels.Document
     form_class = myforms.DocumentForm
+    note_type = "Document"
 
     def get_success_url(self):
         doc = self.object
@@ -314,12 +337,13 @@ class DocumentCreate(NoteFormView):
     note_type = 'Document'
 
     def form_valid(self, form):
+        doc = form.save(commit=False)
+
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
-        doc = mymodels.Document(
-            patient=pt,
-            author=get_current_provider(),
-            author_type=get_current_provider_type(),
-            **form.cleaned_data)
+        doc.patient = pt
+        doc.author = self.request.user.provider
+        doc.author_type = get_current_provider_type(self.request),
+
         doc.save()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
@@ -375,7 +399,7 @@ def sign_workup(request, pk):
 
 def done_action_item(request, ai_id):
     ai = get_object_or_404(mymodels.ActionItem, pk=ai_id)
-    ai.mark_done(get_current_provider())
+    ai.mark_done(request.user.provider)
     ai.save()
 
     return HttpResponseRedirect(reverse("followup-choice",
