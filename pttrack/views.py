@@ -289,7 +289,7 @@ class ActionItemCreate(NoteFormView):
         ai = form.save(commit=False)
 
         ai.completion_date = None
-        ai.author = self.request.user
+        ai.author = self.request.user.provider
         ai.author_type = get_current_provider_type(self.request)
         ai.patient = pt
 

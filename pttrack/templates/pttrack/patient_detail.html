@@ -90,7 +90,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 			<tr><td><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a></td>
 				<td>
 				<p><strong>{{ action_item.instruction }}:</strong> {{ action_item.comments }}</p>
-				<p class="text-muted text-right">{{ action_item.attribution }}</p>
+				<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
 			</td></tr>
 			{% empty %}
 				<p class="text-muted"> No due action items for {{ patient.name }}</p>
@@ -103,7 +103,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 			<tr><td><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a></td>
 				<td>
 					<p><strong>{{ action_item.instruction }}</strong>, due {{action_item.due_date}}: {{ action_item.comments }}</p>
-					<p class="text-muted  text-right"> Written by {{ action_item.author }} on {{ action_item.written_date }}</p>
+					<p class="text-muted  text-right"> Written by {{ action_item.author }} on {{ action_item.written_datetime }}</p>
 				</td></tr>
 			{% empty %}
 				<p class="text-muted"> No pending action items for {{ patient.name }}</p>
@@ -116,7 +116,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 			<tr><td><a href="{% url 'reset-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "check" %}</a></td>
 				<td>
 					<p><strong>{{ action_item.instruction }}:</strong> {{ action_item.comments }}</p>
-					<p class="text-muted  text-right">{{ action_item.attribution }}</p>
+					<p class="text-muted  text-right">Marked done by {{ action_item.completion_author }} on {{ action_item.completion_date }}</p>
 				</td></tr>
 			{% empty %}
 				<p class="text-muted"> No finished action items for {{ patient.name }}</p>
