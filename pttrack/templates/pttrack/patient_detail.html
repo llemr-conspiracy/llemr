@@ -68,15 +68,15 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		<table class="table">
 		{% for note in patient.notes %}
 			<tr>
-			{% if note.chief_complaint %}
-				<p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a>  {{ note.short_text }}</p>
-			{% elif note.document_type %}
-				<p><a href="{% url 'document-detail' pk=note.pk %}"><strong>Document:</strong></a>  {{ note.short_text }}</p>
-			{% else %}
-				{# here, the url takes an arugment to route it to the correct  #}
-				<p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
-			{% endif %}
-				<p class="text-muted  text-right"> {{ note.attribution }}</p>
+				{% if note.chief_complaint %}
+					<p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
+				{% elif note.document_type %}
+					<p><a href="{% url 'document-detail' pk=note.pk %}"><strong>Document:</strong></a> {{ note.short_text }}</p>
+				{% else %}
+					{# here, the url takes an arugment to route it to the correct  #}
+					<p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
+				{% endif %}
+				<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
 			</td></tr>
 		{% empty %}
 				<p class="text-muted"> No notes for {{ patient.name }} yet</p>

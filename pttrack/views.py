@@ -342,7 +342,7 @@ class DocumentCreate(NoteFormView):
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
         doc.patient = pt
         doc.author = self.request.user.provider
-        doc.author_type = get_current_provider_type(self.request),
+        doc.author_type = get_current_provider_type(self.request)
 
         doc.save()
 
