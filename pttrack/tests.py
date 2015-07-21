@@ -58,22 +58,9 @@ class CustomFuncTesting(TestCase):
 
 
 class ViewsExistTest(TestCase):
+    fixtures = ['basic_fixture']
+
     def setUp(self):
-
-        g = models.Gender.objects.create(long_name="Male", short_name="M")
-        l = models.Language.objects.create(name="English")
-        e = models.Ethnicity.objects.create(name="White")
-
-        p = models.Patient.objects.create(
-            first_name="Frankie", middle_name="Lane", last_name="McNath",
-            address="6310 Scott Ave", city="St. Louis", state="MO",
-            date_of_birth=datetime.date(year=1989, month=8, day=9),
-            phone="501-233-1234",
-            gender=g)
-
-        p.languages.add(l)
-        p.ethnicities.add(e)
-        p.save()
 
         models.ClinicType.objects.create(name="Basic Care Clinic")
 
@@ -82,33 +69,7 @@ class ViewsExistTest(TestCase):
             clinic_date=now().date(),
             gcal_id="tmp")
 
-        models.DiagnosisType.objects.create(name="Cardiovascular")
-
-        for (lname, can_sign) in [("Attending Physician", True),
-                                  ("Preclinical Medical Student", False),
-                                  ("Clinical Medical Student", False),
-                                  ("Coordinator", False)]:
-            p = models.ProviderType(long_name=lname,
-                                    short_name=lname.split()[0],
-                                    signs_charts=can_sign)
-            p.save()
-
-        user = User.objects.create_user('tljones', 'tommyljones@gmail.com',
-                                        'password')
-        user.save()
-
-        models.Provider.objects.create(
-            first_name="Tommy", middle_name="Lee", last_name="Jones",
-            phone="425-243-9115", gender=g, associated_user=user)
-
-        for ptype in models.ProviderType.objects.all():
-            user.provider.clinical_roles.add(ptype)
-
-        self.client.login(username=user.username, password='password')
-
-        session = self.client.session
-        session['clintype_pk'] = user.provider.clinical_roles.all()[0].pk
-        session.save()
+        build_provider_and_log_in(self.client)
 
     def test_basic_urls(self):
         basic_urls = ["home",
