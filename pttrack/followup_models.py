@@ -92,10 +92,10 @@ class GeneralFollowup(Followup):
 class VaccineFollowup(Followup):
     '''Datamodel for a followup of a vaccine administration'''
 
-    SUBSQ_DOSE_HELP = "Are they coming back for another dose?"
-    subsq_dose = models.BooleanField(help_text=SUBSQ_DOSE_HELP)
+    SUBSQ_DOSE_HELP = "Has the patient committed to coming back for another dose?"
+    subsq_dose = models.BooleanField(verbose_name=SUBSQ_DOSE_HELP)
 
-    DOSE_DATE_HELP = "When is the next dose?"
+    DOSE_DATE_HELP = "When does the patient want to get their next dose (if applicable)?"
     dose_date = models.DateField(blank=True,
                                  null=True,
                                  help_text=DOSE_DATE_HELP)
