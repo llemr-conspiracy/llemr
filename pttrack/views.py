@@ -90,7 +90,7 @@ class NoteUpdate(UpdateView):
         '''Inject self.note_type as the note type.'''
 
         if self.note_type is None:
-            raise ImproperlyConfigured("NoteCreate view must have" +
+            raise ImproperlyConfigured("NoteUpdate view must have" +
                                        "'note_type' variable set.")
 
         context = super(UpdateView, self).get_context_data(**kwargs)

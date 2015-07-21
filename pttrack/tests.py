@@ -13,6 +13,41 @@ import datetime
 # pylint: disable=invalid-name
 # Whatever, whatever. I name them what I want.
 
+
+def note_check(test, note, client, pt_pk):
+    test.assertEquals(note.author.pk,
+                      int(client.session['_auth_user_id']))
+
+    test.assertEquals(client.session['clintype_pk'],
+                      note.author_type.pk)
+
+    test.assertEquals(note.patient.pk, pt_pk)
+
+    test.assertLessEqual((now() - note.written_datetime).total_seconds(),
+                         10)
+    test.assertLessEqual((now() - note.last_modified).total_seconds(), 10)
+
+
+def build_provider_and_log_in(client):
+    user = User.objects.create_user('tljones', 'tommyljones@gmail.com',
+                                    'password')
+    user.save()
+
+    g = models.Gender.objects.all()[0]
+    models.Provider.objects.create(
+        first_name="Tommy", middle_name="Lee", last_name="Jones",
+        phone="425-243-9115", gender=g, associated_user=user)
+
+    for ptype in models.ProviderType.objects.all():
+        user.provider.clinical_roles.add(ptype)
+
+    client.login(username=user.username, password='password')
+
+    session = client.session
+    session['clintype_pk'] = user.provider.clinical_roles.all()[0].pk
+    session.save()
+
+
 class CustomFuncTesting(TestCase):
     def test_validate_zip(self):
         self.assertEqual(models.validate_zip(12345), None)
@@ -195,38 +230,6 @@ class ViewsExistTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertFalse(wu.signed())
 
-    def test_action_item_urls(self):
-        pt = models.Patient.objects.all()[0]
-
-        ai_inst = models.ActionInstruction.objects.create(
-            instruction="Follow up on labs")
-        ai = models.ActionItem.objects.create(
-            instruction=ai_inst,
-            due_date=datetime.datetime.today(),
-            comments="",
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=pt)
-
-        # new action items should not be done
-        self.assertFalse(ai.done())
-
-        # submit a request to mark the new ai as done. should redirect to pt
-        ai_url = 'done-action-item'
-        response = self.client.get(reverse(ai_url, args=(ai.id,)))
-        self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('patient-detail', args=(pt.id,)),
-                      response.url)
-        self.assertTrue(models.ActionItem.objects.all()[0].done())
-
-        # submit a request to reset the ai. should redirect to pt
-        ai_url = 'reset-action-item'
-        response = self.client.get(reverse(ai_url, args=(ai.id,)))
-        self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('patient-detail', args=(pt.id,)),
-                      response.url)
-        self.assertFalse(models.ActionItem.objects.all()[0].done())
-
     def test_followup_create_urls(self):
 
         pt = models.Patient.objects.all()[0]
@@ -301,7 +304,7 @@ class ViewsExistTest(TestCase):
             apt_location=aptloc,
             noapt_reason=reason)
 
-        url = reverse('followup', kwargs={"pk": rf.id, "model": 'Vaccine'})
+        url = reverse('followup', kwargs={"pk": rf.id, "model": 'Referral'})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -343,10 +346,80 @@ class ViewsExistTest(TestCase):
         os.remove(p)
         self.assertFalse(os.path.isfile(p))
 
-
-class ReferralFollowupTest(TestCase):
+class ActionItemTest(TestCase):
     fixtures = ['basic_fixture']
 
-    def test_create_followup(self):
-        #TODO tests here.
-        pass
+    def setUp(self):
+        build_provider_and_log_in(self.client)
+
+    def test_action_item_urls(self):
+        pt = models.Patient.objects.all()[0]
+
+        ai_inst = models.ActionInstruction.objects.create(
+            instruction="Follow up on labs")
+        ai = models.ActionItem.objects.create(
+            instruction=ai_inst,
+            due_date=datetime.datetime.today(),
+            comments="",
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt)
+
+        # new action items should not be done
+        self.assertFalse(ai.done())
+
+        # submit a request to mark the new ai as done. should redirect to pt
+        ai_url = 'done-action-item'
+        response = self.client.get(reverse(ai_url, args=(ai.id,)))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('patient-detail', args=(pt.id,)),
+                      response.url)
+        self.assertTrue(models.ActionItem.objects.all()[0].done())
+        self.assertEquals(models.ActionItem.objects.all()[0].author.pk,
+                          int(self.client.session['_auth_user_id']))
+        self.assertNotEqual(
+            models.ActionItem.objects.all()[0].written_datetime,
+            models.ActionItem.objects.all()[0].last_modified)
+
+        # submit a request to reset the ai. should redirect to pt
+        ai_url = 'reset-action-item'
+        prev_mod_datetime = models.ActionItem.objects.all()[0].last_modified
+        response = self.client.get(reverse(ai_url, args=(ai.id,)))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('patient-detail', args=(pt.id,)),
+                      response.url)
+        self.assertFalse(models.ActionItem.objects.all()[0].done())
+
+        self.assertNotEqual(
+            models.ActionItem.objects.all()[0].written_datetime,
+            models.ActionItem.objects.all()[0].last_modified)
+        self.assertNotEqual(prev_mod_datetime,
+                            models.ActionItem.objects.all()[0].last_modified)
+
+    def test_create_action_item(self):
+
+        self.assertEquals(len(models.ActionItem.objects.all()), 0)
+
+        submitted_ai = {
+            "instruction": models.ActionInstruction.objects.all()[0].pk,
+            "due_date": "2015-12-01",
+            "comments": "models.CharField(max_length=300)"
+            }
+
+        url = reverse('new-action-item', kwargs={'pt_id': 1})
+        response = self.client.post(url, submitted_ai)
+
+        self.assertEquals(response.status_code, 302)
+        self.assertIn(reverse('patient-detail', args=(1,)), response.url)
+
+        self.assertEquals(len(models.ActionItem.objects.all()), 1)
+        new_ai = models.ActionItem.objects.all()[0]
+
+        submitted_ai['due_date'] = datetime.date(
+            *([int(i) for i in submitted_ai['due_date'].split('-')]))
+
+        for param in submitted_ai:
+            self.assertEquals(str(submitted_ai[param]),
+                              str(getattr(new_ai, param)))
+
+        note_check(self, new_ai, self.client, 1)
