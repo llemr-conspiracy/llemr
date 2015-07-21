@@ -13,5 +13,6 @@ for model in [models.Language, models.Patient, models.Provider,
 
 for model in [followup_models.ReferralFollowup, followup_models.NoShowReason,
               followup_models.NoAptReason, followup_models.ContactResult,
-              followup_models.LabFollowup]:
+              followup_models.LabFollowup, followup_models.VaccineFollowup,
+              followup_models.GeneralFollowup]:
     admin.site.register(model)
