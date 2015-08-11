@@ -1,5 +1,6 @@
 from django.test import TestCase
 from . import models
+from . import followup_models
 from . import forms
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -204,8 +205,51 @@ class ViewsExistTest(TestCase):
 
         url = reverse("followup", kwargs={"pk": pt.id, "model": "Lab"})
 
+    def test_document_urls(self):
+        '''
+        Test the views showing documents, as well as the integrity of path
+        saving in document creation (probably superfluous).
+        '''
+        import os
+
+        url = reverse('new-document', args=(1,))
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        dtype = models.DocumentType.objects.create(name="Silly Picture")
+        doc = models.Document.objects.create(
+            title="who done it?",
+            comments="Pictured: silliness",
+            document_type=dtype,
+            image=File(open("media/test.jpg")),
+            patient=models.Patient.objects.get(id=1),
+            author=models.Provider.objects.get(id=1),
+            author_type=models.ProviderType.objects.all()[0])
+
+        p = models.Document.objects.get(id=1).image.path
+        self.failUnless(open(p), 'file not found')
+        self.assertEqual(doc.image.path, p)
+        self.assertTrue(os.path.isfile(p))
+
+        url = reverse('document-detail', args=(1,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        url = reverse('document-detail', args=(1,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        os.remove(p)
+        self.assertFalse(os.path.isfile(p))
+
+class FollowupTest(TestCase):
+    fixtures = ['basic_fixture']
+
+    def setUp(self):
+        build_provider_and_log_in(self.client)
+
     def test_followup_view_urls(self):
-        from . import followup_models
 
         pt = models.Patient.objects.all()[0]
 
@@ -268,44 +312,6 @@ class ViewsExistTest(TestCase):
         url = reverse('followup', kwargs={"pk": rf.id, "model": 'Referral'})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-
-    def test_document_urls(self):
-        '''
-        Test the views showing documents, as well as the integrity of path
-        saving in document creation (probably superfluous).
-        '''
-        import os
-
-        url = reverse('new-document', args=(1,))
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        dtype = models.DocumentType.objects.create(name="Silly Picture")
-        doc = models.Document.objects.create(
-            title="who done it?",
-            comments="Pictured: silliness",
-            document_type=dtype,
-            image=File(open("media/test.jpg")),
-            patient=models.Patient.objects.get(id=1),
-            author=models.Provider.objects.get(id=1),
-            author_type=models.ProviderType.objects.all()[0])
-
-        p = models.Document.objects.get(id=1).image.path
-        self.failUnless(open(p), 'file not found')
-        self.assertEqual(doc.image.path, p)
-        self.assertTrue(os.path.isfile(p))
-
-        url = reverse('document-detail', args=(1,))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        url = reverse('document-detail', args=(1,))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        os.remove(p)
-        self.assertFalse(os.path.isfile(p))
 
 class ActionItemTest(TestCase):
     fixtures = ['basic_fixture']
