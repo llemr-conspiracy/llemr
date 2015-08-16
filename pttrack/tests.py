@@ -382,6 +382,53 @@ class FollowupTest(TestCase):
             print response.context
             raise
 
+class IntakeTest(TestCase):
+    fixtures = ['basic_fixture']
+
+    def setUp(self):
+        build_provider_and_log_in(self.client)
+
+    def test_can_intake_pt(self):
+
+        n_pt = len(models.Patient.objects.all())
+
+        submitted_pt = {
+            'first_name': "Juggie",
+            'last_name': "Brodeltein",
+            'middle_name': "Bayer",
+            'phone': '+49 178 236 5288',
+            'languages': [models.Language.objects.all()[0]],
+            'gender': models.Gender.objects.all()[0].pk,
+            'address': 'Schulstrasse 9',
+            'city': 'Munich',
+            'state': 'BA',
+            'zip_code': '63108',
+            'pcp_preferred_zip': '63018',
+            'date_of_birth': datetime.date(1990, 01, 01),
+            'patient_comfortable_with_english': False,
+            'ethnicities': [models.Ethnicity.objects.all()[0]],
+            'preferred_contact_method':
+                models.ContactMethod.objects.all()[0].pk,
+        }
+
+        url = reverse('intake')
+
+        response = self.client.post(url, submitted_pt)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEquals(len(models.Patient.objects.all()), n_pt + 1)
+
+        new_pt = models.Patient.objects.all()[n_pt]
+        
+        for param in submitted_pt:
+            try:
+                self.assertEquals(str(submitted_pt[param]),
+                                  str(getattr(new_pt, param)))
+            except AssertionError:
+                self.assertEquals(str(submitted_pt[param]),
+                                  str(getattr(new_pt, param).all()))
+
+
 
 class ActionItemTest(TestCase):
     fixtures = ['basic_fixture']
