@@ -174,9 +174,18 @@ class Patient(Person):
 
     ethnicities = models.ManyToManyField(Ethnicity)
 
-    alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True)
+    '''Alternative phone numbers have up to 4 fields and each one is associated with the person that owns phone'''
+
+    alternate_phone_1_owner = models.CharField(max_length=40, blank=True, null=True)
+    alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True) 
+   
+    alternate_phone_2_owner = models.CharField(max_length=40, blank=True, null=True)  
     alternate_phone_2 = models.CharField(max_length=40, blank=True, null=True)
+   
+    alternate_phone_3_owner = models.CharField(max_length=40, blank=True, null=True)  
     alternate_phone_3 = models.CharField(max_length=40, blank=True, null=True)
+   
+    alternate_phone_4_owner = models.CharField(max_length=40, blank=True, null=True)  
     alternate_phone_4 = models.CharField(max_length=40, blank=True, null=True)
 
     preferred_contact_method = models.ForeignKey(ContactMethod, blank=True,
