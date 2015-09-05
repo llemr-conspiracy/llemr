@@ -37,6 +37,13 @@ def validate_bp(value):
             "Either '" + str(top) + "' or '" + str(bottom) + "' is not a " +
             "valid pressure--they must be small, positive integers.")
 
+def validate_birth_date(value):
+    import datetime
+    today = django.utils.timezone.now().date()
+
+    if today - value < datetime.timedelta(0):
+        raise ValidationError("Birth dates cannot be in the future.")
+
 
 def validate_attending(value):
     return value.can_attend
@@ -168,7 +175,7 @@ class Patient(Person):
                                          blank=True,
                                          null=True)
 
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(validators=[validate_birth_date])
 
     patient_comfortable_with_english = models.BooleanField(default=True)
 

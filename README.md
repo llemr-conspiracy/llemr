@@ -42,3 +42,6 @@ changes require migrations. Then, you can run the project in debug mode with
 ```bash
 python manage.py runserver --settings clintools.debug_settings
 ```
+
+Once you have it running, you should be able to log into the debug database-backed
+app with the user 'jrporter' with password 'password'.

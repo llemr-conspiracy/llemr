@@ -1,5 +1,6 @@
 from django.test import TestCase
 from . import models
+from . import followup_models
 from . import forms
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -191,84 +192,6 @@ class ViewsExistTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertFalse(wu.signed())
 
-    def test_followup_create_urls(self):
-
-        pt = models.Patient.objects.all()[0]
-
-        for fu_type in ["labs", "referral", "general", "vaccine"]:
-            url = reverse("new-followup",
-                          kwargs={"pt_id": pt.id, 'ftype': fu_type.lower()})
-
-            response = self.client.get(url)
-            self.assertEquals(response.status_code, 200)
-
-        url = reverse("followup", kwargs={"pk": pt.id, "model": "Lab"})
-
-    def test_followup_view_urls(self):
-        from . import followup_models
-
-        pt = models.Patient.objects.all()[0]
-
-        method = models.ContactMethod.objects.create(name="Carrier Pidgeon")
-        res = followup_models.ContactResult(name="Fisticuffs")
-
-        gf = followup_models.GeneralFollowup.objects.create(
-            contact_method=method,
-            contact_resolution=res,
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=pt)
-
-        url = reverse('followup', kwargs={"pk": gf.id, "model": 'General'})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        lf = followup_models.LabFollowup.objects.create(
-            contact_method=method,
-            contact_resolution=res,
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=pt,
-            communication_success=True)
-
-        url = reverse('followup', kwargs={"pk": lf.id, "model": 'Lab'})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        vf = followup_models.VaccineFollowup.objects.create(
-            contact_method=method,
-            contact_resolution=res,
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=pt,
-            subsq_dose=False)
-
-        url = reverse('followup', kwargs={"pk": vf.id, "model": 'Vaccine'})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        reftype = models.ReferralType.objects.create(name="Chiropracter")
-        aptloc = models.ReferralLocation.objects.create(
-            name="Franklin's Back Adjustment",
-            address="1435 Sillypants Drive")
-        reason = followup_models.NoAptReason.objects.create(
-            name="better things to do")
-
-        rf = followup_models.ReferralFollowup.objects.create(
-            contact_method=method,
-            contact_resolution=res,
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=pt,
-            referral_type=reftype,
-            has_appointment=False,
-            apt_location=aptloc,
-            noapt_reason=reason)
-
-        url = reverse('followup', kwargs={"pk": rf.id, "model": 'Referral'})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
     def test_document_urls(self):
         '''
         Test the views showing documents, as well as the integrity of path
@@ -306,6 +229,206 @@ class ViewsExistTest(TestCase):
 
         os.remove(p)
         self.assertFalse(os.path.isfile(p))
+
+class FollowupTest(TestCase):
+    fixtures = ['basic_fixture']
+
+    def setUp(self):
+        build_provider_and_log_in(self.client)
+
+    def test_followup_view_urls(self):
+
+        pt = models.Patient.objects.all()[0]
+
+        method = models.ContactMethod.objects.create(name="Carrier Pidgeon")
+        res = followup_models.ContactResult(name="Fisticuffs")
+
+        gf = followup_models.GeneralFollowup.objects.create(
+            contact_method=method,
+            contact_resolution=res,
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt)
+
+        url = reverse('followup', kwargs={"pk": pt.id, "model": 'General'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        lf = followup_models.LabFollowup.objects.create(
+            contact_method=method,
+            contact_resolution=res,
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt,
+            communication_success=True)
+
+        url = reverse('followup', kwargs={"pk": pt.id, "model": 'Lab'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        vf = followup_models.VaccineFollowup.objects.create(
+            contact_method=method,
+            contact_resolution=res,
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt,
+            subsq_dose=False)
+
+        url = reverse('followup', kwargs={"pk": pt.id, "model": 'Vaccine'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        reftype = models.ReferralType.objects.create(name="Chiropracter")
+        aptloc = models.ReferralLocation.objects.create(
+            name="Franklin's Back Adjustment",
+            address="1435 Sillypants Drive")
+        reason = followup_models.NoAptReason.objects.create(
+            name="better things to do")
+
+        rf = followup_models.ReferralFollowup.objects.create(
+            contact_method=method,
+            contact_resolution=res,
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt,
+            referral_type=reftype,
+            has_appointment=False,
+            apt_location=aptloc,
+            noapt_reason=reason)
+
+        url = reverse('followup', kwargs={"pk": pt.id, "model": 'Referral'})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_followup_create_urls(self):
+
+        pt = models.Patient.objects.all()[0]
+
+        for fu_type in ["labs", "referral", "general", "vaccine"]:
+            url = reverse("new-followup",
+                          kwargs={"pt_id": pt.id, 'ftype': fu_type.lower()})
+
+            response = self.client.get(url)
+            self.assertEquals(response.status_code, 200)
+
+        url = reverse("followup", kwargs={"pk": pt.id, "model": "Lab"})
+
+    def test_create_followups(self):
+
+        submitted_gen_fu = {
+            "contact_method":
+                models.ContactMethod.objects.all()[0].pk,
+            "contact_resolution":
+                followup_models.ContactResult.objects.all()[0].pk,
+            "comments": ""
+            }
+
+        self.verify_fu(followup_models.GeneralFollowup, 'general',
+                       submitted_gen_fu)
+
+        submitted_vacc_fu = dict(submitted_gen_fu)
+        submitted_vacc_fu['subsq_dose'] = True
+        submitted_vacc_fu['dose_date'] = str(datetime.date.today())
+
+        self.verify_fu(followup_models.VaccineFollowup, 'vaccine',
+                       submitted_vacc_fu)
+
+        submitted_lab_fu = dict(submitted_gen_fu)
+        submitted_lab_fu["communication_success"] = True
+
+        self.verify_fu(followup_models.LabFollowup, 'labs',
+                       submitted_lab_fu)
+
+        submitted_ref_fu = dict(submitted_gen_fu)
+        submitted_ref_fu.update(
+            {"referral_type" : models.ReferralType.objects.all()[0].pk,
+             "has_appointment": True,
+             'apt_location': models.ReferralLocation.objects.all()[0].pk,
+             'pt_showed': "Yes",
+             'noapt_reason': "",
+             'noshow_reason': "",
+             })
+
+        self.verify_fu(followup_models.ReferralFollowup, 'referral',
+                       submitted_ref_fu)
+
+    def verify_fu(self, fu_type, ftype, submitted_fu):
+
+        try:
+            pt = models.Patient.objects.all()[0]
+
+            self.assertEquals(len(fu_type.objects.all()), 0)
+
+            url = reverse('new-followup', kwargs={"pt_id": pt.id,
+                                                  "ftype": ftype})
+            response = self.client.post(url, submitted_fu)
+
+            self.assertEqual(response.status_code, 302)
+            self.assertEquals(len(fu_type.objects.all()), 1)
+
+            new_fu = fu_type.objects.all()[0]
+
+            for param in submitted_fu:
+                if submitted_fu[param]:
+                    try:
+                        self.assertEquals(str(submitted_fu[param]),
+                                          str(getattr(new_fu, param)))
+                    except AssertionError:
+                        self.assertEquals(submitted_fu[param],
+                                          getattr(new_fu, param).id)
+
+        except AssertionError:
+            print fu_type, ftype, submitted_fu
+            print response.context
+            raise
+
+class IntakeTest(TestCase):
+    fixtures = ['basic_fixture']
+
+    def setUp(self):
+        build_provider_and_log_in(self.client)
+
+    def test_can_intake_pt(self):
+
+        n_pt = len(models.Patient.objects.all())
+
+        submitted_pt = {
+            'first_name': "Juggie",
+            'last_name': "Brodeltein",
+            'middle_name': "Bayer",
+            'phone': '+49 178 236 5288',
+            'languages': [models.Language.objects.all()[0]],
+            'gender': models.Gender.objects.all()[0].pk,
+            'address': 'Schulstrasse 9',
+            'city': 'Munich',
+            'state': 'BA',
+            'zip_code': '63108',
+            'pcp_preferred_zip': '63018',
+            'date_of_birth': datetime.date(1990, 01, 01),
+            'patient_comfortable_with_english': False,
+            'ethnicities': [models.Ethnicity.objects.all()[0]],
+            'preferred_contact_method':
+                models.ContactMethod.objects.all()[0].pk,
+        }
+
+        url = reverse('intake')
+
+        response = self.client.post(url, submitted_pt)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEquals(len(models.Patient.objects.all()), n_pt + 1)
+
+        new_pt = models.Patient.objects.all()[n_pt]
+        
+        for param in submitted_pt:
+            try:
+                self.assertEquals(str(submitted_pt[param]),
+                                  str(getattr(new_pt, param)))
+            except AssertionError:
+                self.assertEquals(str(submitted_pt[param]),
+                                  str(getattr(new_pt, param).all()))
+
+
 
 class ActionItemTest(TestCase):
     fixtures = ['basic_fixture']
@@ -363,8 +486,8 @@ class ActionItemTest(TestCase):
 
         submitted_ai = {
             "instruction": models.ActionInstruction.objects.all()[0].pk,
-            "due_date": "2015-12-01",
-            "comments": "models.CharField(max_length=300)"
+            "due_date": str(datetime.date.today() + datetime.timedelta(10)),
+            "comments": "models.CharField(max_length=300)" # arbitrary string
             }
 
         url = reverse('new-action-item', kwargs={'pt_id': 1})
