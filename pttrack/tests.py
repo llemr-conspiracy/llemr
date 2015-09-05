@@ -436,6 +436,91 @@ class ActionItemTest(TestCase):
     def setUp(self):
         build_provider_and_log_in(self.client)
 
+
+    def test_home_has_correct_patients(self):
+        pt1 = models.Patient.objects.get(pk=1)
+
+        # we need > 1 pt, because one will have an active AI and one won't
+        pt2 = models.Patient.objects.create(
+            first_name="Juggie",
+            last_name="Brodeltein",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=models.Gender.objects.all()[1],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=models.ContactMethod.objects.all()[0],
+        )
+
+        pt3 = models.Patient.objects.create(
+            first_name="asdf",
+            last_name="lkjh",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=models.Gender.objects.all()[0],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=models.ContactMethod.objects.all()[0],
+        )
+
+        # make pt1 have and AI due tomorrow
+        pt1_ai = models.ActionItem.objects.create(
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            instruction=models.ActionInstruction.objects.all()[0],
+            due_date=datetime.datetime.today()+datetime.timedelta(days=1),
+            comments="",
+            patient=pt1)
+
+        # make pt2 have an AI due yesterday
+        pt2_ai = models.ActionItem.objects.create(
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            instruction=models.ActionInstruction.objects.all()[0],
+            due_date=datetime.datetime.today()-datetime.timedelta(days=1),
+            comments="",
+            patient=pt2)
+
+        # make pt3 have an AI that's done
+        pt3_ai = models.ActionItem.objects.create(
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            instruction=models.ActionInstruction.objects.all()[0],
+            due_date=datetime.datetime.today()-datetime.timedelta(days=15),
+            comments="",
+            patient=pt3)
+
+        url = reverse("home")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        #pt2, pt3 should be present since pt 1 is not past due
+        self.assertEqual(len(response.context['object_list']), 2)
+        self.assertIn(pt2, response.context['object_list'])
+        self.assertIn(pt3, response.context['object_list'])
+
+        pt3_ai.mark_done(models.Provider.objects.all()[0])
+        pt3_ai.save()
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # now only pt2 should be present, since only pt3's AI is now done
+        self.assertEqual(len(response.context['object_list']), 1)
+        self.assertIn(pt2, response.context['object_list'])
+
+
     def test_action_item_urls(self):
         pt = models.Patient.objects.all()[0]
 

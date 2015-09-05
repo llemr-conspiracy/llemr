@@ -376,7 +376,9 @@ def action_required_patients(request):
     ai_list = mymodels.ActionItem.objects.filter(
         due_date__lte=django.utils.timezone.now().today())
 
-    pt_list = list(set([ai.patient for ai in ai_list]))
+    # if the AI is marked as done, it doesn't contribute to the pt being on
+    # the list.
+    pt_list = list(set([ai.patient for ai in ai_list if not ai.done()]))
     pt_list.sort()
 
     return render(request,
