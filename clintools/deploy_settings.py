@@ -30,7 +30,8 @@ DATABASES = {
         'NAME': 'osler',
         'USER': 'django',
         'PASSWORD': DB_PASSWORD,
-        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+#        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }
