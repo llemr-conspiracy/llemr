@@ -6,7 +6,6 @@ import django.utils.timezone
 
 # pylint: disable=I0011,E1305
 
-
 class NoShowReason(models.Model):
     '''Simple text-contiaining class for storing the different reasons a
     patient might not have gone to a scheduled appointment.'''
