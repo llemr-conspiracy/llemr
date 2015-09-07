@@ -372,19 +372,63 @@ def choose_clintype(request):
                            'choice_key': RADIO_CHOICE_KEY})
 
 
-def action_required_patients(request):
-    ai_list = mymodels.ActionItem.objects.filter(
-        due_date__lte=django.utils.timezone.now().today())
+def home_page(request):
+    active_provider_type = get_object_or_404(mymodels.ProviderType,
+                                             pk=request.session['clintype_pk'])
+    if active_provider_type.signs_charts:
+        workup_list = mymodels.Workup.objects.all()
+        pt_list = list(set([wu.patient for wu in workup_list if wu.signer is None]))
 
-    # if the AI is marked as done, it doesn't contribute to the pt being on
-    # the list.
-    pt_list = list(set([ai.patient for ai in ai_list if not ai.done()]))
-    pt_list.sort()
+        def byName_key(patient):
+                return patient.last_name
+
+        pt_list.sort(key = byName_key)
+        pagetitle = "Unsigned Workups"
+
+    elif active_provider_type.short_name == "Coordinator":
+        ai_list = mymodels.ActionItem.objects.filter(
+            due_date__lte=django.utils.timezone.now().today())
+
+        # if the AI is marked as done, it doesn't contribute to the pt being on
+        # the list.
+        pt_list = list(set([ai.patient for ai in ai_list if not ai.done()]))
+        pagetitle = "Action Required"
+
+    else:
+        patient_list = mymodels.Patient.objects.all().order_by('last_name')
+        pt_list = []
+        for patient in patient_list:
+            if (patient.notes() == []):
+                pt_list.append(patient)
+
+        pagetitle = "New Patients w/o Notes"
+
+        if pt_list == []:
+            for patient in patient_list:
+                note_list = patient.notes()
+                include_patient = True
+                for note in note_list:
+                    if note.written_datetime.date() == datetime.date.today():
+                        include_patient = False
+                if include_patient:
+                    pt_list.append(patient)
+
+            pagetitle = "Patients w/o Notes Today"
+
 
     return render(request,
                   'pttrack/patient_list.html',
                   {'object_list': pt_list,
-                   'title': "Action Required"})
+                   'title': pagetitle})
+
+
+def all_patients(request):
+    pt_list = list(mymodels.Patient.objects.all().order_by('last_name'))
+
+    return render(request,
+                  'pttrack/patient_list.html',
+                  {'object_list': pt_list,
+                   'title': "All Patients"})
 
 
 def sign_workup(request, pk):

@@ -29,7 +29,12 @@ def note_check(test, note, client, pt_pk):
     test.assertLessEqual((now() - note.last_modified).total_seconds(), 10)
 
 
-def build_provider_and_log_in(client):
+def build_provider_and_log_in(client, roles=[]):
+    ''' Creates a provider and logs them in. Role defines their provider_type, default is all '''
+
+    if roles == []:
+        roles = ["Coordinator", "Attending", "Clinical", "Preclinical"]
+
     user = User.objects.create_user('tljones', 'tommyljones@gmail.com',
                                     'password')
     user.save()
@@ -39,15 +44,16 @@ def build_provider_and_log_in(client):
         first_name="Tommy", middle_name="Lee", last_name="Jones",
         phone="425-243-9115", gender=g, associated_user=user)
 
-    for ptype in models.ProviderType.objects.all():
-        user.provider.clinical_roles.add(ptype)
+    for role in roles:
+        for ptype in models.ProviderType.objects.all():
+            if ptype.short_name == role:
+                user.provider.clinical_roles.add(ptype)
 
     client.login(username=user.username, password='password')
 
     session = client.session
     session['clintype_pk'] = user.provider.clinical_roles.all()[0].pk
     session.save()
-
 
 class CustomFuncTesting(TestCase):
     def test_validate_zip(self):
@@ -434,7 +440,7 @@ class ActionItemTest(TestCase):
     fixtures = ['basic_fixture']
 
     def setUp(self):
-        build_provider_and_log_in(self.client)
+        build_provider_and_log_in(self.client, ["Coordinator"])
 
 
     def test_home_has_correct_patients(self):
@@ -633,3 +639,90 @@ class PatientIntakeFormTest(TestCase):
         self.assertEqual(form['first_name'].errors, [])
         self.assertNotEqual(form['alternate_phone_1_owner'].errors, [])
 
+class AttendingTests(TestCase):
+    fixtures = ['basic_fixture']
+
+    def setUp(self):
+        build_provider_and_log_in(self.client, ["Attending"])
+
+    def test_home_has_correct_patients_attending(self):
+        pt1 = models.Patient.objects.get(pk=1)
+
+        models.ClinicDate.objects.create(clinic_type=models.ClinicType.objects.all()[0],
+                                         clinic_date=datetime.datetime.now(),
+                                         gcal_id="435345")
+        # we need > 1 pt, because one will have an active AI and one won't
+        pt2 = models.Patient.objects.create(
+            first_name="Juggie",
+            last_name="Brodeltein",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=models.Gender.objects.all()[1],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=models.ContactMethod.objects.all()[0],
+        )
+
+        pt3 = models.Patient.objects.create(
+            first_name="asdf",
+            last_name="lkjh",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=models.Gender.objects.all()[0],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=models.ContactMethod.objects.all()[0],
+        )
+
+        wu1 = models.Workup.objects.create(
+            clinic_day=models.ClinicDate.objects.all()[0],
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt1)
+
+        wu2 = models.Workup.objects.create(
+            clinic_day=models.ClinicDate.objects.all()[0],
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt2,
+            signer=models.Provider.objects.all().filter(
+                clinical_roles=models.ProviderType.objects.all().filter(short_name="Attending")[0])[0])
+
+
+        wu3 = models.Workup.objects.create(
+            clinic_day=models.ClinicDate.objects.all()[0],
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt3)
+
+        url = reverse("home")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # pt1, pt3 should be present since they are not signed
+        self.assertEqual(len(response.context['object_list']), 2)
+        self.assertIn(pt1, response.context['object_list'])
+        self.assertIn(pt3, response.context['object_list'])
