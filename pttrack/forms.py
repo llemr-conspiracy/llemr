@@ -98,13 +98,13 @@ class PatientForm(ModelForm):
             if cleaned_data.get(alternate_phone_list[j]) and \
                not cleaned_data.get(alternate_phone_list[i]):
 
-                self.add_error(alternate_phone_list[i], "An Alternate Phone is required" +
+                self.add_error(alternate_phone_list[j], "An Alternate Phone is required" +
                            " if a Alternate Phone Owner is specified")
 
             if cleaned_data.get(alternate_phone_list[i]) and \
                not cleaned_data.get(alternate_phone_list[j]):
 
-                self.add_error(alternate_phone_list[j], "An Alternate Phone Owner is required" +
+                self.add_error(alternate_phone_list[i], "An Alternate Phone Owner is required" +
                            " if a Alternate Phone is specified")
 
 

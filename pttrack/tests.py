@@ -460,3 +460,44 @@ class ActionItemTest(TestCase):
                               str(getattr(new_ai, param)))
 
         note_check(self, new_ai, self.client, 1)
+
+
+class PatientIntakeFormTest(TestCase):
+    fixtures = ['basic_fixture']
+
+    def setUp(self):
+        build_provider_and_log_in(self.client)
+
+    def test_alternative_phone(self):
+
+        lang_test = [models.Language.objects.all()[0], models.Language.objects.all()[1]]
+        gender_test = models.Gender.objects.create(long_name="Goule",
+                                     short_name="G")
+        eth_test = [models.Ethnicity.objects.all()[0], models.Ethnicity.objects.all()[1]]
+        contactmethod_test = models.ContactMethod.objects.create(name="phone2")
+
+        '''Note if there is a change in patient forms, this portion needs
+        to be changed so it has valid data'''
+        form_data = {
+            'first_name': "John",
+            'last_name': "James",
+            'middle_name': "Jacob",
+            'phone': "8888888888",
+            'languages': lang_test,
+            'gender': gender_test,
+            'address': "North Pole",
+            'city': "St.Louis",
+            'state': "MO",
+            'zip_code': "77777",
+            'pcp_preferred_zip': "77777",
+            'date_of_birth': datetime.date.today(),
+            'patient_comfortable_with_english': True,
+            'ethnicities': eth_test,
+            'alternate_phone_1_owner': "Jamal",
+            # 'alternate_phone_1': "8888888888",
+            'preferred_contact_method': contactmethod_test,
+        }
+        form = forms.PatientForm(data=form_data)
+        self.assertEqual(form['first_name'].errors, [])
+        self.assertNotEqual(form['alternate_phone_1_owner'].errors, [])
+
