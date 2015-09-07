@@ -29,11 +29,11 @@ def note_check(test, note, client, pt_pk):
     test.assertLessEqual((now() - note.last_modified).total_seconds(), 10)
 
 
-def build_provider_and_log_in(client, role=None):
+def build_provider_and_log_in(client, roles=[]):
     ''' Creates a provider and logs them in. Role defines their provider_type, default is all '''
 
-    if role == None:
-        role = "All"
+    if roles == []:
+        roles = ["Coordinator", "Attending", "Clinical", "Preclinical"]
 
     user = User.objects.create_user('tljones', 'tommyljones@gmail.com',
                                     'password')
@@ -44,10 +44,7 @@ def build_provider_and_log_in(client, role=None):
         first_name="Tommy", middle_name="Lee", last_name="Jones",
         phone="425-243-9115", gender=g, associated_user=user)
 
-    if role == "All":
-        for ptype in models.ProviderType.objects.all():
-            user.provider.clinical_roles.add(ptype)
-    else:
+    for role in roles:
         for ptype in models.ProviderType.objects.all():
             if ptype.short_name == role:
                 user.provider.clinical_roles.add(ptype)
@@ -443,7 +440,7 @@ class ActionItemTest(TestCase):
     fixtures = ['basic_fixture']
 
     def setUp(self):
-        build_provider_and_log_in(self.client, "Coordinator")
+        build_provider_and_log_in(self.client, ["Coordinator"])
 
 
     def test_home_has_correct_patients(self):
@@ -646,7 +643,7 @@ class AttendingTests(TestCase):
     fixtures = ['basic_fixture']
 
     def setUp(self):
-        build_provider_and_log_in(self.client, "Attending")
+        build_provider_and_log_in(self.client, ["Attending"])
 
     def test_home_has_correct_patients_attending(self):
         pt1 = models.Patient.objects.get(pk=1)

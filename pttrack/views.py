@@ -396,8 +396,25 @@ def home_page(request):
 
     else:
         patient_list = mymodels.Patient.objects.all().order_by('last_name')
-        pt_list = list(patient_list)
-        pagetitle = "Patient List (Click Intake for New Patient)"
+        pt_list = []
+        for patient in patient_list:
+            if (patient.notes() == []):
+                pt_list.append(patient)
+
+        pagetitle = "New Patients w/o Notes"
+
+        if pt_list == []:
+            for patient in patient_list:
+                note_list = patient.notes()
+                include_patient = True
+                for note in note_list:
+                    if note.written_datetime.date() == datetime.date.today():
+                        include_patient = False
+                if include_patient:
+                    pt_list.append(patient)
+
+            pagetitle = "Patients w/o Notes Today"
+
 
     return render(request,
                   'pttrack/patient_list.html',
