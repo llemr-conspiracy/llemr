@@ -13,10 +13,10 @@ from . import views
 
 unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^$',
-        views.action_required_patients,
+        views.home_page,
         name="home"),
     url(r'^all/$',
-        ListView.as_view(model=mymodels.Patient),
+        views.all_patients,
         name="all-patients"),
     url(r'^intake/$',
         views.PatientCreate.as_view(),
