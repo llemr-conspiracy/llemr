@@ -182,12 +182,15 @@ class WorkupCreate(NoteFormView):
 
     def form_valid(self, form):
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
-
+        active_provider_type = get_object_or_404(mymodels.ProviderType,
+                                             pk=self.request.session['clintype_pk'])
         wu = form.save(commit=False)
         wu.patient = pt
         wu.author = self.request.user.provider
         wu.author_type = get_current_provider_type(self.request)
         wu.clinic_day = get_clindates()[0]
+        if wu.author_type.signs_charts:
+            wu.sign(self.request.user, active_provider_type)
 
         wu.save()
 
