@@ -277,10 +277,12 @@ class Patient(Person):
 
 class Provider(Person):
 
-    clinical_roles = models.ManyToManyField(ProviderType)
-
     associated_user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                            blank=True, null=True)
+    provider_email = models.EmailField(verbose_name="Email")
+
+    clinical_roles = models.ManyToManyField(ProviderType)
+
 
     def __unicode__(self):
         return self.name()

@@ -114,8 +114,12 @@ class ProviderCreate(FormView):
     def form_valid(self, form):
         provider = form.save(commit=False)
         provider.associated_user = self.request.user
+        user = provider.associated_user
+        user.email = provider.provider_email
+        user.first_name = provider.first_name
+        user.last_name = provider.last_name
+        user.save()
         provider.save()
-
         form.save_m2m()
 
         return HttpResponseRedirect(self.request.GET['next'])
