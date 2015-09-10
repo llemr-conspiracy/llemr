@@ -209,6 +209,22 @@ class WorkupUpdate(NoteUpdate):
     form_class = myforms.WorkupForm
     note_type = "Workup"
 
+    def form_valid(self, form):
+        wu = form.save(commit=False)
+        current_user_type = get_current_provider_type(self.request)
+        if wu.signer is None:
+            wu.save()
+            return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
+        else:
+            if current_user_type.signs_charts:
+                wu.save()
+                return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
+            else:
+                return HttpResponseRedirect(reverse("workup-error", args=(wu.id,)))
+
+
+
+
 
 class FollowupUpdate(NoteUpdate):
     template_name = "pttrack/form-update.html"
@@ -425,9 +441,15 @@ def home_page(request):
                    'title': pagetitle})
 
 
+def error_workup(request, pk):
+
+    wu = get_object_or_404(mymodels.Workup, pk=pk)
+    return render(request,
+                  'pttrack/workup_error.html',
+                  {'workup': wu})
+
 def all_patients(request):
     pt_list = list(mymodels.Patient.objects.all().order_by('last_name'))
-
     return render(request,
                   'pttrack/patient_list.html',
                   {'object_list': pt_list,
