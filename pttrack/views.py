@@ -205,10 +205,6 @@ class WorkupUpdate(NoteUpdate):
     form_class = myforms.WorkupForm
     note_type = "Workup"
 
-    def get_success_url(self):
-        wu = self.object
-        return reverse("workup", args=(wu.id, ))
-
 
 class FollowupUpdate(NoteUpdate):
     template_name = "pttrack/form-update.html"
