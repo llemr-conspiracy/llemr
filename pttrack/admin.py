@@ -1,5 +1,6 @@
 
 from django.contrib import admin
+from simple_history.admin import SimpleHistoryAdmin
 from . import models
 from . import followup_models
 
@@ -9,10 +10,16 @@ for model in [models.Language, models.Patient, models.Provider,
               models.ActionInstruction, models.ActionItem, models.Ethnicity,
               models.ReferralType, models.ReferralLocation,
               models.ContactMethod, models.Document, models.DocumentType]:
-    admin.site.register(model)
+    if hasattr(model, "history"):
+        admin.site.register(model, SimpleHistoryAdmin)
+    else:
+        admin.site.register(model)
 
 for model in [followup_models.ReferralFollowup, followup_models.NoShowReason,
               followup_models.NoAptReason, followup_models.ContactResult,
               followup_models.LabFollowup, followup_models.VaccineFollowup,
               followup_models.GeneralFollowup]:
-    admin.site.register(model)
+    if hasattr(model, "history"):
+        admin.site.register(model, SimpleHistoryAdmin)
+    else:
+        admin.site.register(model)

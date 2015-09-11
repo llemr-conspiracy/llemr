@@ -1,25 +1,9 @@
-cffi==1.1.2
-cryptography==0.9.3
 Django==1.8.3
 django-angular==0.7.15
 django-bootstrap3==6.1.0
 django-bootstrap3-datetimepicker==2.2.3
--e git+https://github.com/Brown-University-Library/django-shibboleth-remoteuser.git@ee4abe32681d1f4caa17e6ee897f32985f1e6c33#egg=django_shibboleth_remoteuser-dev
-enum34==1.0.4
-idna==2.0
-ipaddress==1.0.14
-ipython==3.2.1
-MySQL-python==1.2.5
-ndg-httpsclient==0.4.0
-pbr==1.3.0
-pyasn1==0.1.8
-pycparser==2.14
-pyOpenSSL==0.15.1
+django-shibboleth-remoteuser==0.5
+django-simple-history==1.6.3
 Pillow==2.9.0
 requests==2.7.0
-six==1.9.0
-stevedore==1.6.0
-virtualenv==13.1.0
-virtualenv-clone==0.2.6
-virtualenvwrapper==4.6.0
 wheel==0.24.0
