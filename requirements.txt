@@ -2,7 +2,6 @@ Django==1.8.3
 django-angular==0.7.15
 django-bootstrap3==6.1.0
 django-bootstrap3-datetimepicker==2.2.3
-django-shibboleth-remoteuser==0.5
 django-simple-history==1.6.3
 Pillow==2.9.0
 requests==2.7.0
