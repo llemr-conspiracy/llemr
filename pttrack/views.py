@@ -293,7 +293,12 @@ class FollowupCreate(NoteFormView):
 
         form.save_m2m()
 
-        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+        if fu.contact_resolution.attempt_again:
+            return HttpResponseRedirect(reverse('new-action-item',
+                                                args=(pt.id,)))
+        else:
+            return HttpResponseRedirect(reverse("patient-detail",
+                                                args=(pt.id,)))
 
 
 class ActionItemCreate(NoteFormView):

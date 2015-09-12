@@ -4,6 +4,8 @@ from django.db import models
 from pttrack import models as mymodels
 import django.utils.timezone
 
+from simple_history.models import HistoricalRecords
+
 # pylint: disable=I0011,E1305
 
 class NoShowReason(models.Model):
@@ -31,6 +33,9 @@ class ContactResult(models.Model):
     attempt with a patient (e.g. no answer w/ voicemail).'''
 
     name = models.CharField(max_length=100, primary_key=True)
+    attempt_again = models.BooleanField(
+        default=False,
+        help_text="True if outcome means the pt should be contacted again.")
 
     def __unicode__(self):
         return self.name
@@ -83,9 +88,10 @@ class Followup(mymodels.Note):
 
 
 class GeneralFollowup(Followup):
-    '''Datamodel for a general followup. Exists only so that base followup can
-    be abstract.'''
-    pass
+    '''Datamodel for a general followup. Exists only so Folloup can be
+    abstract (and hence history is included in this object).'''
+
+    history = HistoricalRecords()
 
 
 class VaccineFollowup(Followup):
@@ -98,6 +104,8 @@ class VaccineFollowup(Followup):
     dose_date = models.DateField(blank=True,
                                  null=True,
                                  help_text=DOSE_DATE_HELP)
+
+    history = HistoricalRecords()
 
     def type(self):
         return "Vaccine"
@@ -119,6 +127,8 @@ class LabFollowup(Followup):
 
     CS_HELP = "Were you able to communicate the results?"
     communication_success = models.BooleanField(help_text=CS_HELP)
+
+    history = HistoricalRecords()
 
     def type(self):
         return "Lab"
@@ -166,6 +176,8 @@ class ReferralFollowup(Followup):
                                       help_text=NOSHOW_HELP,
                                       blank=True,
                                       null=True)
+
+    history = HistoricalRecords()
 
     def type(self):
         return "Referral"
