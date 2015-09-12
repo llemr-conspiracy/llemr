@@ -408,6 +408,7 @@ class IntakeTest(TestCase):
             'address': 'Schulstrasse 9',
             'city': 'Munich',
             'state': 'BA',
+            'country': 'Germany',
             'zip_code': '63108',
             'pcp_preferred_zip': '63018',
             'date_of_birth': datetime.date(1990, 01, 01),
