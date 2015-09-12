@@ -171,6 +171,8 @@ class Patient(Person):
                              default="MO")
     zip_code = models.CharField(max_length=5,
                                 validators=[validate_zip])
+    country = models.CharField(max_length=100,
+                               default="USA")
 
     pcp_preferred_zip = models.CharField(max_length=5,
                                          validators=[validate_zip],
