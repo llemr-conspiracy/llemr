@@ -33,6 +33,9 @@ class ContactResult(models.Model):
     attempt with a patient (e.g. no answer w/ voicemail).'''
 
     name = models.CharField(max_length=100, primary_key=True)
+    attempt_again = models.BooleanField(
+        default=False,
+        help_text="True if outcome means the pt should be contacted again.")
 
     def __unicode__(self):
         return self.name
