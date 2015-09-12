@@ -321,72 +321,87 @@ class FollowupTest(TestCase):
 
     def test_create_followups(self):
 
-        submitted_gen_fu = {
-            "contact_method":
-                models.ContactMethod.objects.all()[0].pk,
-            "contact_resolution":
-                followup_models.ContactResult.objects.all()[0].pk,
-            "comments": ""
-            }
+        attempt_again_cr = followup_models.ContactResult.objects.create(
+            name="didn't reach the pt",
+            attempt_again=True)
+        no_attempt_again_cr = followup_models.ContactResult.objects.create(
+            name="totally reached the pt",
+            attempt_again=False)
 
-        self.verify_fu(followup_models.GeneralFollowup, 'general',
-                       submitted_gen_fu)
+        # Try creating a followup that requires re-contacts and one that does
+        # not. Verification for correctness of the redirect is in verify_fu
+        for contact_result in [attempt_again_cr, no_attempt_again_cr]:
+            submitted_gen_fu = {
+                "contact_method":
+                    models.ContactMethod.objects.all()[0].pk,
+                "contact_resolution": contact_result,
+                "comments": ""
+                }
 
-        submitted_vacc_fu = dict(submitted_gen_fu)
-        submitted_vacc_fu['subsq_dose'] = True
-        submitted_vacc_fu['dose_date'] = str(datetime.date.today())
+            self.verify_fu(followup_models.GeneralFollowup, 'general',
+                           submitted_gen_fu)
 
-        self.verify_fu(followup_models.VaccineFollowup, 'vaccine',
-                       submitted_vacc_fu)
+            submitted_vacc_fu = dict(submitted_gen_fu)
+            submitted_vacc_fu['subsq_dose'] = True
+            submitted_vacc_fu['dose_date'] = str(datetime.date.today())
 
-        submitted_lab_fu = dict(submitted_gen_fu)
-        submitted_lab_fu["communication_success"] = True
+            self.verify_fu(followup_models.VaccineFollowup, 'vaccine',
+                           submitted_vacc_fu)
 
-        self.verify_fu(followup_models.LabFollowup, 'labs',
-                       submitted_lab_fu)
+            submitted_lab_fu = dict(submitted_gen_fu)
+            submitted_lab_fu["communication_success"] = True
 
-        submitted_ref_fu = dict(submitted_gen_fu)
-        submitted_ref_fu.update(
-            {"referral_type" : models.ReferralType.objects.all()[0].pk,
-             "has_appointment": True,
-             'apt_location': models.ReferralLocation.objects.all()[0].pk,
-             'pt_showed': "Yes",
-             'noapt_reason': "",
-             'noshow_reason': "",
-             })
+            self.verify_fu(followup_models.LabFollowup, 'labs',
+                           submitted_lab_fu)
 
-        self.verify_fu(followup_models.ReferralFollowup, 'referral',
-                       submitted_ref_fu)
+            submitted_ref_fu = dict(submitted_gen_fu)
+            submitted_ref_fu.update(
+                {"referral_type" : models.ReferralType.objects.all()[0].pk,
+                 "has_appointment": True,
+                 'apt_location': models.ReferralLocation.objects.all()[0].pk,
+                 'pt_showed': "Yes",
+                 'noapt_reason': "",
+                 'noshow_reason': "",
+                })
+
+            self.verify_fu(followup_models.ReferralFollowup, 'referral',
+                           submitted_ref_fu)
 
     def verify_fu(self, fu_type, ftype, submitted_fu):
 
-        try:
-            pt = models.Patient.objects.all()[0]
+        pt = models.Patient.objects.all()[0]
 
-            self.assertEquals(len(fu_type.objects.all()), 0)
+        n_followup = len(fu_type.objects.all())
 
-            url = reverse('new-followup', kwargs={"pt_id": pt.id,
-                                                  "ftype": ftype})
-            response = self.client.post(url, submitted_fu)
+        url = reverse('new-followup', kwargs={"pt_id": pt.id,
+                                              "ftype": ftype})
+        response = self.client.post(url, submitted_fu)
 
-            self.assertEqual(response.status_code, 302)
-            self.assertEquals(len(fu_type.objects.all()), 1)
+        self.assertEqual(response.status_code, 302)
 
-            new_fu = fu_type.objects.all()[0]
+        if submitted_fu["contact_resolution"].attempt_again:
+            self.assertRedirects(response,
+                                 reverse("new-action-item", args=(pt.id,)))
+        else:
+            self.assertRedirects(response,
+                                 reverse('patient-detail', args=(pt.id,)))
 
-            for param in submitted_fu:
-                if submitted_fu[param]:
-                    try:
-                        self.assertEquals(str(submitted_fu[param]),
-                                          str(getattr(new_fu, param)))
-                    except AssertionError:
-                        self.assertEquals(submitted_fu[param],
-                                          getattr(new_fu, param).id)
+        self.assertEquals(len(fu_type.objects.all()), n_followup + 1)
 
-        except AssertionError:
-            print fu_type, ftype, submitted_fu
-            print response.context
-            raise
+        # this should get the most recently created followup, which should be
+        # the one we just posted to create
+        new_fu = sorted(fu_type.objects.all(), key=lambda(fu): fu.written_datetime)[-1]
+
+        # make sure that all of the parameters in the submitted fu make it
+        # into the object.
+        for param in submitted_fu:
+            if submitted_fu[param]:
+                try:
+                    self.assertEquals(str(submitted_fu[param]),
+                                      str(getattr(new_fu, param)))
+                except AssertionError:
+                    self.assertEquals(submitted_fu[param],
+                                      getattr(new_fu, param).pk)
 
 class IntakeTest(TestCase):
     fixtures = ['basic_fixture']
