@@ -374,7 +374,8 @@ class ActionItem(Note):
                              str(self.written_datetime.date())])
 
     def __unicode__(self):
-        return "AI: "+str(self.instruction)+" on "+str(self.due_date)
+        return " ".join(["AI for", str(self.patient)+":",
+                         str(self.instruction), "on", str(self.due_date)])
 
 
 class Workup(Note):
