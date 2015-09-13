@@ -38,7 +38,7 @@ Workup: {{ workup.patient.name }}
             <strong>Author:</strong> {{ workup.author.name }} ({{ workup.author_type }})
         </div>
         <div class="col-md-4">
-            <strong>Patient will Return:</strong> {{ workup.will_return }}
+            <strong>Patient will Return:</strong> {{ workup.will_return | yesno }}
         </div>
     </div>
     <div class="row">
@@ -52,25 +52,26 @@ Workup: {{ workup.patient.name }}
     <div class="row">
         <h4>H and P</h4>
         <div class="col-md-12">
-            <strong>HPI:</strong> {{workup.HPI}}
+            <strong>HPI:</strong> {{workup.HPI| linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>PMH/PSH:</strong> {{workup.PMH_PSH}}
+            <strong>PMH/PSH:</strong> {{workup.PMH_PSH | linebreaksbr }}
+}}
         </div>
         <div class="col-md-12">
-            <strong>Medications:</strong> {{workup.meds}}
+            <strong>Medications:</strong> {{workup.meds | linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>Allergies:</strong> {{workup.allergies}}
+            <strong>Allergies:</strong> {{workup.allergies | linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>FamHx:</strong> {{workup.fam_hx}}
+            <strong>FamHx:</strong> {{workup.fam_hx | linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>SocHx:</strong> {{workup.soc_hx}}
+            <strong>SocHx:</strong> {{workup.soc_hx | linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>ROS:</strong> {{workup.ros}}
+            <strong>ROS:</strong> {{workup.ros | linebreaksbr }}
         </div>
     </div>
 
@@ -95,39 +96,41 @@ Workup: {{ workup.patient.name }}
 
     <div class="row">
         <div class="col-md-12">
-            <strong>Physical Exam:</strong> {{workup.pe}}
+            <strong>Physical Exam:</strong> {{workup.pe | linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>Labs (Quest):</strong> {{workup.labs_ordered_quest}}
+            <strong>Labs (Quest):</strong> {{workup.labs_ordered_quest | linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>Labs (In House):</strong> {{workup.labs_ordered_internal}}
+            <strong>Labs (In House):</strong> {{workup.labs_ordered_internal | linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>Rx:</strong> {{workup.rx}}
+            <strong>Rx:</strong> {{workup.rx | linebreaksbr }}
         </div>
     </div>
     <div class="row">
         <h4>Discharge</h4>
         <div class="col-md-4">
-            <strong>Patient got Voucher:</strong> {{workup.got_voucher}}
+            <strong>Patient got Voucher:</strong> {{workup.got_voucher | yesno }}
         </div>
+        {% if workup.got_voucher %}
         <div class="col-md-4">
             <strong>Voucher Amount:</strong> {{workup.voucher_amount}}
         </div>
         <div class="col-md-4">
-            <strong>Pt Pays:</strong> {{workup.patient_pays}}
+            <strong>Pt Pays:</strong> {{workup.patient_pays | default_if_none:"n/a" }}
+        </div>
+        {% endif %}
+        <div class="col-md-4">
+            <strong>Referral Type:</strong> {{workup.referral_type | default:"not specified" }}
         </div>
         <div class="col-md-4">
-            <strong>Referral Type:</strong> {{workup.referral_type}}
-        </div>
-        <div class="col-md-4">
-            <strong>Referral Type:</strong> {{workup.referral_location}}
+            <strong>Referral Type:</strong> {{workup.referral_location | default:"not specified" }}
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
-            <strong>A and P:</strong> {{workup.A_and_P}}
+            <strong>A and P:</strong> {{workup.A_and_P | linebreaksbr }}
         </div>
     </div>
 </div>
