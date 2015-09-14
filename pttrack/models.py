@@ -297,6 +297,14 @@ class Patient(Person):
 
         return followups
 
+    def latest_workup(self):
+        if len(self.workup_set.all()) == 0:
+            return None
+        else:
+            return sorted(
+                self.workup_set.all(),
+                key=lambda(x): x.clinic_day.clinic_date)[-1]
+
     def notes(self):
         '''Returns a list of all the notes (workups and followups) associated
         with this patient ordered by date written.'''
