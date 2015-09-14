@@ -8,8 +8,9 @@ from django.test import Client
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django.core.files import File
-import datetime
 
+import datetime
+import os
 
 # pylint: disable=invalid-name
 # Whatever, whatever. I name them what I want.
@@ -198,12 +199,20 @@ class ViewsExistTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertFalse(wu.signed())
 
+
+class DocumentTest(TestCase):
+    fixtures = ['basic_fixture']
+    test_img = "media/test.jpg"
+
+    def setUp(self):
+        build_provider_and_log_in(self.client)
+        self.assertTrue(os.path.isfile("media/test.jpg"))
+
     def test_document_urls(self):
         '''
         Test the views showing documents, as well as the integrity of path
         saving in document creation (probably superfluous).
         '''
-        import os
 
         url = reverse('new-document', args=(1,))
 
@@ -215,7 +224,7 @@ class ViewsExistTest(TestCase):
             title="who done it?",
             comments="Pictured: silliness",
             document_type=dtype,
-            image=File(open("media/test.jpg")),
+            image=File(open(self.test_img)),
             patient=models.Patient.objects.get(id=1),
             author=models.Provider.objects.get(id=1),
             author_type=models.ProviderType.objects.all()[0])
@@ -235,6 +244,46 @@ class ViewsExistTest(TestCase):
 
         os.remove(p)
         self.assertFalse(os.path.isfile(p))
+
+    def test_create_document(self):
+        '''
+        Test the creation of documents. We also want to verify that filenames
+        are randomly generated in the appropriate manner, and deal well with
+        collisions.
+        '''
+
+        dtype = models.DocumentType.objects.create(name="Silly Picture")
+        pt_id = 1
+        n_doc = len(models.Document.objects.all())
+
+        submitted_doc = {
+            "title": "who done it?",
+            "comments": "Pictured: silliness",
+            "document_type": dtype,
+            "image": File(open(self.test_img)),
+            "patient": models.Patient.objects.all()[0]
+        }
+
+        response = self.client.post(reverse("new-document", args=(pt_id,)),
+                                    submitted_doc)
+
+        self.assertRedirects(response, reverse('patient-detail',
+                                               args=(pt_id,)))
+
+        self.assertEquals(len(models.Document.objects.all()), n_doc+1)
+        new_doc = sorted(models.Document.objects.all(),
+                         key=lambda(doc): doc.written_datetime)[-1]
+
+        for param in ['title', 'comments', 'document_type', 'patient']:
+            self.assertEquals(getattr(new_doc, param),
+                              submitted_doc[param],
+                              msg="new document "+param+" didn't match!")
+
+        # the password needs to be randomized, so we should not be using the
+        # original file name here.
+        self.assertNotIn(str(new_doc.image.url),
+                         os.path.basename(self.test_img))
+
 
 class FollowupTest(TestCase):
     fixtures = ['basic_fixture']

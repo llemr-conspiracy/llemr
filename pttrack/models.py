@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 from django.conf import settings
 import django.utils.timezone
 
+from functools import partial
+import os
+
 from simple_history.models import HistoricalRecords
 
 
@@ -49,6 +52,32 @@ def validate_birth_date(value):
 
 def validate_attending(value):
     return value.can_attend
+
+
+def make_filepath(field_name, instance, filename):
+    '''
+        Produces a unique file path for the upload_to of a FileField. This is
+        important because any URL is 1) transmitted unencrypted and 2) 
+        automatically referred to any libraries we include (i.e. Bootstrap,
+        AngularJS).
+
+        The produced path is of the form:
+        "[model name]/[field name]/[random name].[filename extension]".
+
+        Copypasta from https://djangosnippets.org/snippets/2819/
+    '''
+
+    carry_on = True
+    while carry_on:
+        new_filename = "%s.%s" % (User.objects.make_random_password(48),
+                                  filename.split('.')[-1])
+        path = '/'.join([instance.__class__.__name__.lower(),
+                         field_name, new_filename])
+
+        # if the file already exists, try again to generate a new filename
+        carry_on = os.path.isfile(os.path.join(settings.MEDIA_ROOT, path))
+
+    return path
 
 
 class ContactMethod(models.Model):
@@ -333,7 +362,9 @@ class DocumentType(models.Model):
 
 class Document(Note):
     title = models.CharField(max_length=200)
-    image = models.ImageField()
+    image = models.ImageField(
+        help_text="Please deidentify all file names before upload!",
+        upload_to=partial(make_filepath, 'image'))
     comments = models.TextField()
     document_type = models.ForeignKey(DocumentType)
 
