@@ -321,10 +321,11 @@ class Patient(Person):
 
 class Provider(Person):
 
-    clinical_roles = models.ManyToManyField(ProviderType)
-
     associated_user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                            blank=True, null=True)
+
+    clinical_roles = models.ManyToManyField(ProviderType)
+
 
     history = HistoricalRecords()
 

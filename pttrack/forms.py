@@ -1,7 +1,7 @@
 '''Forms for the SNHC clintools app.'''
 from bootstrap3_datetime.widgets import DateTimePicker
 from django.forms import ModelForm, ValidationError, Form
-from django.forms import ModelChoiceField
+from django.forms import ModelChoiceField, EmailField
 
 from . import models
 from . import followup_models
@@ -110,6 +110,7 @@ class PatientForm(ModelForm):
 
 
 class WorkupForm(ModelForm):
+
     class Meta:
         model = models.Workup
         exclude = ['patient', 'clinic_day', 'author', 'signer', 'author_type',
@@ -145,6 +146,9 @@ class ActionItemForm(ModelForm):
 
 
 class ProviderForm(ModelForm):
+
+    provider_email = EmailField(label="Email")
+
     class Meta:
         model = models.Provider
         exclude = ['associated_user']

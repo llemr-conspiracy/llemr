@@ -50,6 +50,9 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^workup/sign/(?P<pk>[0-9]+)$',
         views.sign_workup,
         name='workup-sign'),
+    url(r'^workup/error/(?P<pk>[0-9]+)$',
+        views.error_workup,
+        name="workup-error"),
 
     # ACTION ITEMS
     url(r'^(?P<pt_id>[0-9]+)/action-item/$',

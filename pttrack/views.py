@@ -114,8 +114,10 @@ class ProviderCreate(FormView):
     def form_valid(self, form):
         provider = form.save(commit=False)
         provider.associated_user = self.request.user
+        user = provider.associated_user
+        user.email = form.cleaned_data['provider_email']
+        user.save()
         provider.save()
-
         form.save_m2m()
 
         return HttpResponseRedirect(self.request.GET['next'])
@@ -182,12 +184,15 @@ class WorkupCreate(NoteFormView):
 
     def form_valid(self, form):
         pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
-
+        active_provider_type = get_object_or_404(mymodels.ProviderType,
+                                             pk=self.request.session['clintype_pk'])
         wu = form.save(commit=False)
         wu.patient = pt
         wu.author = self.request.user.provider
         wu.author_type = get_current_provider_type(self.request)
         wu.clinic_day = get_clindates()[0]
+        if wu.author_type.signs_charts:
+            wu.sign(self.request.user, active_provider_type)
 
         wu.save()
 
@@ -202,9 +207,21 @@ class WorkupUpdate(NoteUpdate):
     form_class = myforms.WorkupForm
     note_type = "Workup"
 
-    def get_success_url(self):
-        wu = self.object
-        return reverse("workup", args=(wu.id, ))
+    def form_valid(self, form):
+        wu = form.save(commit=False)
+        current_user_type = get_current_provider_type(self.request)
+        if wu.signer is None:
+            wu.save()
+            return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
+        else:
+            if current_user_type.signs_charts:
+                wu.save()
+                return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
+            else:
+                return HttpResponseRedirect(reverse("workup-error", args=(wu.id,)))
+
+
+
 
 
 class FollowupUpdate(NoteUpdate):
@@ -427,9 +444,15 @@ def home_page(request):
                    'title': pagetitle})
 
 
+def error_workup(request, pk):
+
+    wu = get_object_or_404(mymodels.Workup, pk=pk)
+    return render(request,
+                  'pttrack/workup_error.html',
+                  {'workup': wu})
+
 def all_patients(request):
     pt_list = list(mymodels.Patient.objects.all().order_by('last_name'))
-
     return render(request,
                   'pttrack/patient_list.html',
                   {'object_list': pt_list,

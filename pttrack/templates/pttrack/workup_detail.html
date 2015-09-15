@@ -10,7 +10,7 @@ Workup: {{ workup.patient.name }}
     <h1>Workup on {{ workup.patient.name }}</h1>
     <p class="lead">Seen on {{ workup.clinic_day.clinic_date }}</p>
     {% if workup.signed %}
-    <p class="lead">Signed by {{workup.signer}}</p>
+    <p class="lead">Signed by {{workup.signer}} </p>
     {% else %}
     <p class="lead">Workup unsigned.</p>
     {% endif%}
@@ -22,7 +22,9 @@ Workup: {{ workup.patient.name }}
     <div class="row text-center">
         <h4>Actions</h4>
         <div class="btn-group">
+            {% if workup.signed and request.session.clintype_pk == "Attending" or not workup.signed %}
             <a class="btn btn-primary" href="{% url 'workup-update' pk=workup.pk %}" role="button">Update</a>
+            {% endif %}
             {% if not workup.signed %}
             <a class="btn btn-success" href="{% url 'workup-sign' pk=workup.pk %}" role="button">Sign</a>
             {% endif %}
