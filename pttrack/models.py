@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.conf import settings
 import django.utils.timezone
 
+from simple_history.models import HistoricalRecords
+
 
 # pylint: disable=I0011,missing-docstring,E1305
 
@@ -169,6 +171,8 @@ class Patient(Person):
                              default="MO")
     zip_code = models.CharField(max_length=5,
                                 validators=[validate_zip])
+    country = models.CharField(max_length=100,
+                               default="USA")
 
     pcp_preferred_zip = models.CharField(max_length=5,
                                          validators=[validate_zip],
@@ -181,7 +185,8 @@ class Patient(Person):
 
     ethnicities = models.ManyToManyField(Ethnicity)
 
-    '''Alternative phone numbers have up to 4 fields and each one is associated with the person that owns phone'''
+    # Alternative phone numbers have up to 4 fields and each one is associated
+    # with the person that owns phone
 
     alternate_phone_1_owner = models.CharField(max_length=40, blank=True, null=True)
     alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True) 
@@ -197,6 +202,8 @@ class Patient(Person):
 
     preferred_contact_method = models.ForeignKey(ContactMethod, blank=True,
                                                  null=True)
+
+    history = HistoricalRecords()
 
     def age(self):
         import datetime
@@ -283,6 +290,8 @@ class Provider(Person):
     clinical_roles = models.ManyToManyField(ProviderType)
 
 
+    history = HistoricalRecords()
+
     def __unicode__(self):
         return self.name()
 
@@ -329,6 +338,8 @@ class Document(Note):
     comments = models.TextField()
     document_type = models.ForeignKey(DocumentType)
 
+    history = HistoricalRecords()
+
     def short_text(self):
         return self.title
 
@@ -342,6 +353,8 @@ class ActionItem(Note):
         Provider,
         blank=True, null=True,
         related_name="action_items_completed")
+
+    history = HistoricalRecords()
 
     def mark_done(self, provider):
         self.completion_date = django.utils.timezone.now()
@@ -364,7 +377,8 @@ class ActionItem(Note):
                              str(self.written_datetime.date())])
 
     def __unicode__(self):
-        return "AI: "+str(self.instruction)+" on "+str(self.due_date)
+        return " ".join(["AI for", str(self.patient)+":",
+                         str(self.instruction), "on", str(self.due_date)])
 
 
 class Workup(Note):
@@ -422,6 +436,8 @@ class Workup(Note):
                                related_name="signed_workups",
                                validators=[validate_attending])
     signed_date = models.DateTimeField(blank=True, null=True)
+
+    history = HistoricalRecords()
 
     def sign(self, user, active_role):
         if active_role.signs_charts:

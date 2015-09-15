@@ -26,6 +26,7 @@ INSTALLED_APPS = (
     'bootstrap3',
     'bootstrap3_datetime',
     'djangular',
+    'simple_history',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -37,6 +38,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
 )
 
 ROOT_URLCONF = 'clintools.urls'
