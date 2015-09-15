@@ -149,21 +149,23 @@ class ViewsExistTest(TestCase):
         wu_urls = ['workup',
                    'workup-update']
 
-        wu = models.Workup.objects.create(
-            clinic_day=models.ClinicDate.objects.all()[0],
-            chief_complaint="SOB",
-            diagnosis="MI",
-            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
-            ros="", pe="", A_and_P="",
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=models.Patient.objects.all()[0])
+        # test the creation of many workups, just in case.
+        for i in range(101):
+            wu = models.Workup.objects.create(
+                clinic_day=models.ClinicDate.objects.all()[0],
+                chief_complaint="SOB",
+                diagnosis="MI",
+                HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+                ros="", pe="", A_and_P="",
+                author=models.Provider.objects.all()[0],
+                author_type=models.ProviderType.objects.all()[0],
+                patient=models.Patient.objects.all()[0])
 
-        wu.diagnosis_categories.add(models.DiagnosisType.objects.all()[0])
+            wu.diagnosis_categories.add(models.DiagnosisType.objects.all()[0])
 
-        for wu_url in wu_urls:
-            response = self.client.get(reverse(wu_url, args=(wu.id,)))
-            self.assertEqual(response.status_code, 200)
+            for wu_url in wu_urls:
+                response = self.client.get(reverse(wu_url, args=(wu.id,)))
+                self.assertEqual(response.status_code, 200)
 
     def test_workup_signing(self):
 
@@ -218,32 +220,34 @@ class DocumentTest(TestCase):
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-
         dtype = models.DocumentType.objects.create(name="Silly Picture")
-        doc = models.Document.objects.create(
-            title="who done it?",
-            comments="Pictured: silliness",
-            document_type=dtype,
-            image=File(open(self.test_img)),
-            patient=models.Patient.objects.get(id=1),
-            author=models.Provider.objects.get(id=1),
-            author_type=models.ProviderType.objects.all()[0])
 
-        p = models.Document.objects.get(id=1).image.path
-        self.failUnless(open(p), 'file not found')
-        self.assertEqual(doc.image.path, p)
-        self.assertTrue(os.path.isfile(p))
+        # test the creation of many documents, just in case.
+        for i in range(101):
+            doc = models.Document.objects.create(
+                title="who done it? "+str(i),
+                comments="Pictured: silliness",
+                document_type=dtype,
+                image=File(open(self.test_img)),
+                patient=models.Patient.objects.get(id=1),
+                author=models.Provider.objects.get(id=1),
+                author_type=models.ProviderType.objects.all()[0])
 
-        url = reverse('document-detail', args=(1,))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+            p = models.Document.objects.get(id=doc.pk).image.path
+            self.failUnless(open(p), 'file not found')
+            self.assertEqual(doc.image.path, p)
+            self.assertTrue(os.path.isfile(p))
 
-        url = reverse('document-detail', args=(1,))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+            url = reverse('document-detail', args=(doc.pk,))
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
 
-        os.remove(p)
-        self.assertFalse(os.path.isfile(p))
+            url = reverse('document-detail', args=(doc.pk,))
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+
+            os.remove(p)
+            self.assertFalse(os.path.isfile(p))
 
     def test_create_document(self):
         '''
@@ -297,42 +301,6 @@ class FollowupTest(TestCase):
 
         method = models.ContactMethod.objects.create(name="Carrier Pidgeon")
         res = followup_models.ContactResult(name="Fisticuffs")
-
-        gf = followup_models.GeneralFollowup.objects.create(
-            contact_method=method,
-            contact_resolution=res,
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=pt)
-
-        url = reverse('followup', kwargs={"pk": pt.id, "model": 'General'})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        lf = followup_models.LabFollowup.objects.create(
-            contact_method=method,
-            contact_resolution=res,
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=pt,
-            communication_success=True)
-
-        url = reverse('followup', kwargs={"pk": pt.id, "model": 'Lab'})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        vf = followup_models.VaccineFollowup.objects.create(
-            contact_method=method,
-            contact_resolution=res,
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=pt,
-            subsq_dose=False)
-
-        url = reverse('followup', kwargs={"pk": pt.id, "model": 'Vaccine'})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
         reftype = models.ReferralType.objects.create(name="Chiropracter")
         aptloc = models.ReferralLocation.objects.create(
             name="Franklin's Back Adjustment",
@@ -340,20 +308,61 @@ class FollowupTest(TestCase):
         reason = followup_models.NoAptReason.objects.create(
             name="better things to do")
 
-        rf = followup_models.ReferralFollowup.objects.create(
-            contact_method=method,
-            contact_resolution=res,
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=pt,
-            referral_type=reftype,
-            has_appointment=False,
-            apt_location=aptloc,
-            noapt_reason=reason)
+        for i in range(101):
+            # General Followup
+            gf = followup_models.GeneralFollowup.objects.create(
+                contact_method=method,
+                contact_resolution=res,
+                author=models.Provider.objects.all()[0],
+                author_type=models.ProviderType.objects.all()[0],
+                patient=pt)
 
-        url = reverse('followup', kwargs={"pk": pt.id, "model": 'Referral'})
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+            url = reverse('followup', kwargs={"pk": gf.id, "model": 'General'})
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+
+            # Lab Followup
+            lf = followup_models.LabFollowup.objects.create(
+                contact_method=method,
+                contact_resolution=res,
+                author=models.Provider.objects.all()[0],
+                author_type=models.ProviderType.objects.all()[0],
+                patient=pt,
+                communication_success=True)
+
+            url = reverse('followup', kwargs={"pk": lf.id, "model": 'Lab'})
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+
+            # Vaccine Followup
+            vf = followup_models.VaccineFollowup.objects.create(
+                contact_method=method,
+                contact_resolution=res,
+                author=models.Provider.objects.all()[0],
+                author_type=models.ProviderType.objects.all()[0],
+                patient=pt,
+                subsq_dose=False)
+
+            url = reverse('followup', kwargs={"pk": vf.id, "model": 'Vaccine'})
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+
+            # Referral Followup
+            rf = followup_models.ReferralFollowup.objects.create(
+                contact_method=method,
+                contact_resolution=res,
+                author=models.Provider.objects.all()[0],
+                author_type=models.ProviderType.objects.all()[0],
+                patient=pt,
+                referral_type=reftype,
+                has_appointment=False,
+                apt_location=aptloc,
+                noapt_reason=reason)
+
+            url = reverse('followup',
+                          kwargs={"pk": rf.id, "model": 'Referral'})
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
 
     def test_followup_create_urls(self):
 
