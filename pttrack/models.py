@@ -279,7 +279,6 @@ class Provider(Person):
 
     associated_user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                            blank=True, null=True)
-    provider_email = models.EmailField(verbose_name="Email")
 
     clinical_roles = models.ManyToManyField(ProviderType)
 

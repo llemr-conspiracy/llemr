@@ -115,9 +115,7 @@ class ProviderCreate(FormView):
         provider = form.save(commit=False)
         provider.associated_user = self.request.user
         user = provider.associated_user
-        user.email = provider.provider_email
-        user.first_name = provider.first_name
-        user.last_name = provider.last_name
+        user.email = form.cleaned_data['provider_email']
         user.save()
         provider.save()
         form.save_m2m()
