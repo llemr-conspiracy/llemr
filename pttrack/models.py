@@ -5,9 +5,6 @@ from django.contrib.auth.models import User
 from django.conf import settings
 import django.utils.timezone
 
-from functools import partial
-import os
-
 from simple_history.models import HistoricalRecords
 
 
@@ -54,6 +51,7 @@ def validate_attending(value):
     return value.can_attend
 
 
+<<<<<<< HEAD
 def make_filepath(instance, filename):
     '''
         Produces a unique file path for the upload_to of a FileField. This is
@@ -82,6 +80,8 @@ def make_filepath(instance, filename):
     return path
 
 
+=======
+>>>>>>> 04f99fe4c1add191168925a14e9b2303df43c81c
 class ContactMethod(models.Model):
     '''Simple text-contiaining class for storing the method of contacting a
     patient for followup followed up with (i.e. phone, email, etc.)'''
@@ -299,6 +299,14 @@ class Patient(Person):
 
         return followups
 
+    def latest_workup(self):
+        if len(self.workup_set.all()) == 0:
+            return None
+        else:
+            return sorted(
+                self.workup_set.all(),
+                key=lambda(x): x.clinic_day.clinic_date)[-1]
+
     def notes(self):
         '''Returns a list of all the notes (workups and followups) associated
         with this patient ordered by date written.'''
@@ -315,10 +323,11 @@ class Patient(Person):
 
 class Provider(Person):
 
-    clinical_roles = models.ManyToManyField(ProviderType)
-
     associated_user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                            blank=True, null=True)
+
+    clinical_roles = models.ManyToManyField(ProviderType)
+
 
     history = HistoricalRecords()
 
