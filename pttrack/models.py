@@ -54,7 +54,7 @@ def validate_attending(value):
     return value.can_attend
 
 
-def make_filepath(field_name, instance, filename):
+def make_filepath(instance, filename):
     '''
         Produces a unique file path for the upload_to of a FileField. This is
         important because any URL is 1) transmitted unencrypted and 2) 
@@ -67,6 +67,8 @@ def make_filepath(field_name, instance, filename):
         Copypasta from https://djangosnippets.org/snippets/2819/
     '''
 
+
+    field_name = 'image'
     carry_on = True
     while carry_on:
         new_filename = "%s.%s" % (User.objects.make_random_password(48),
@@ -364,7 +366,7 @@ class Document(Note):
     title = models.CharField(max_length=200)
     image = models.ImageField(
         help_text="Please deidentify all file names before upload!",
-        upload_to=partial(make_filepath, 'image'))
+        upload_to=make_filepath)
     comments = models.TextField()
     document_type = models.ForeignKey(DocumentType)
 
