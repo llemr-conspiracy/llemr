@@ -225,9 +225,16 @@ class ViewsExistTest(TestCase):
             author_type=models.ProviderType.objects.all()[0])
 
         p = models.Document.objects.get(id=1).image.path
+        random_name = p.split("/")[-1]
+        random_name = random_name.split(".")[0]
         self.failUnless(open(p), 'file not found')
         self.assertEqual(doc.image.path, p)
         self.assertTrue(os.path.isfile(p))
+
+        # Checking to make sure the path is 48 characters (the length of the random password
+
+        self.assertEqual(len(random_name), 48)
+
 
         url = reverse('document-detail', args=(1,))
         response = self.client.get(url)
@@ -245,9 +252,15 @@ class ViewsExistTest(TestCase):
                 author_type=models.ProviderType.objects.all()[0])
 
             p = models.Document.objects.get(id=doc.pk).image.path
+            random_name = p.split("/")[-1]
+            random_name = random_name.split(".")[0]
             self.failUnless(open(p), 'file not found')
             self.assertEqual(doc.image.path, p)
             self.assertTrue(os.path.isfile(p))
+
+            # Checking to make sure the path is 48 characters (the length of the random password
+
+            self.assertEqual(len(random_name), 48)
 
             url = reverse('document-detail', args=(doc.pk,))
             response = self.client.get(url)
