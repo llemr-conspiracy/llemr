@@ -4,7 +4,6 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.conf import settings
 import django.utils.timezone
-import os
 
 from simple_history.models import HistoricalRecords
 
@@ -371,13 +370,9 @@ class DocumentType(models.Model):
 
 class Document(Note):
     title = models.CharField(max_length=200)
-<<<<<<< HEAD
-    image = models.ImageField()
-=======
     image = models.ImageField(
         help_text="Please deidentify all file names before upload!",
         upload_to=make_filepath)
->>>>>>> got rid of the use of functools and partial since it was causing errors
     comments = models.TextField()
     document_type = models.ForeignKey(DocumentType)
 
