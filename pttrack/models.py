@@ -51,7 +51,6 @@ def validate_attending(value):
     return value.can_attend
 
 
-<<<<<<< HEAD
 def make_filepath(instance, filename):
     '''
         Produces a unique file path for the upload_to of a FileField. This is
@@ -80,8 +79,6 @@ def make_filepath(instance, filename):
     return path
 
 
-=======
->>>>>>> 04f99fe4c1add191168925a14e9b2303df43c81c
 class ContactMethod(models.Model):
     '''Simple text-contiaining class for storing the method of contacting a
     patient for followup followed up with (i.e. phone, email, etc.)'''
