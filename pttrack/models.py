@@ -371,7 +371,7 @@ class DocumentType(models.Model):
 
 class Document(Note):
     title = models.CharField(max_length=200)
-    image = models.ImageField(
+    image = models.FileField(
         help_text="Please deidentify all file names before upload!",
         upload_to=make_filepath)
     comments = models.TextField()
