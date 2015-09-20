@@ -371,9 +371,10 @@ class DocumentType(models.Model):
 
 class Document(Note):
     title = models.CharField(max_length=200)
-    image = models.ImageField(
-        help_text="Please deidentify all file names before upload!",
-        upload_to=make_filepath)
+    image = models.FileField(
+        help_text="Please deidentify all file names before upload! Delete all files after upload!",
+        upload_to=make_filepath,
+        verbose_name="PDF File or Image Upload")
     comments = models.TextField()
     document_type = models.ForeignKey(DocumentType)
 
