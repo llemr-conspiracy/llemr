@@ -29,9 +29,6 @@ Document: {{ document.patient.name }}
     {% if document.last_modified != document.written_datetime %}
     <br><small class="text-muted">last modified {{document.last_modified}}</small>
     {% endif %}
-  <div class="row">
-    <h3><br>&nbsp;&nbsp;<a href="{{ document.image.url }}">Link to File</a></h3>
-  </div>
   <div class="row ">
     <embed src="{{ document.image.url }}" width="750" height="750"></embed>
   </div>
