@@ -33,11 +33,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="models.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-191.66667">
-              <caret line="374" column="98" selection-start-line="374" selection-start-column="98" selection-end-line="374" selection-end-column="98" />
+            <state vertical-scroll-proportion="0.33274958">
+              <caret line="374" column="67" selection-start-line="374" selection-start-column="67" selection-end-line="374" selection-end-column="67" />
               <folding>
                 <element signature="e#68#96#0" expanded="true" />
               </folding>
@@ -65,10 +65,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="document_detail.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="document_detail.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/pttrack/document_detail.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.61608773">
+            <state vertical-scroll-proportion="-15.166667">
               <caret line="35" column="65" selection-start-line="35" selection-start-column="65" selection-end-line="35" selection-end-column="65" />
               <folding />
             </state>
@@ -90,8 +90,8 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/models.py" />
         <option value="$PROJECT_DIR$/templates/pttrack/document_detail.html" />
+        <option value="$PROJECT_DIR$/models.py" />
       </list>
     </option>
   </component>
@@ -220,21 +220,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models.py">
+    <entry file="file://$PROJECT_DIR$/templates/pttrack/document_detail.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-191.66667">
-          <caret line="374" column="98" selection-start-line="374" selection-start-column="98" selection-end-line="374" selection-end-column="98" />
-          <folding>
-            <element signature="e#68#96#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="-15.166667">
+          <caret line="35" column="65" selection-start-line="35" selection-start-column="65" selection-end-line="35" selection-end-column="65" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/pttrack/document_detail.html">
+    <entry file="file://$PROJECT_DIR$/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.61608773">
-          <caret line="35" column="65" selection-start-line="35" selection-start-column="65" selection-end-line="35" selection-end-column="65" />
-          <folding />
+        <state vertical-scroll-proportion="0.33274958">
+          <caret line="374" column="67" selection-start-line="374" selection-start-column="67" selection-end-line="374" selection-end-column="67" />
+          <folding>
+            <element signature="e#68#96#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
