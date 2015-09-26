@@ -327,8 +327,6 @@ class Patient(Person):
                         getattr(self, 'alternate_phone_'+str(i)+'_owner'))
                         for i in range(1, 5)])
 
-        print phones
-
         return phones
 
 
