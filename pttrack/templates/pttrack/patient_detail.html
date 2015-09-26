@@ -47,20 +47,28 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 			</address></p>
 		</div>
 		<div class="container col-md-4">
-			<p>P: {{ patient.phone }}</p>
+			<!-- <p>P: {{ patient.phone }} -->
+			<table class="table table-condensed">
+				<tr><th>Contact</th><th>Phone Number</th></tr>
+			{% for phone, owner in patient.all_phones %}
+				{% if phone or owner %}
+				<tr><td>{{ owner | default:"Primary" }}</td><td>{{ phone }}</td></tr>
+				{% endif %}
+			{% endfor %}
+			</table>
+			<!-- </p> -->
 		</div>
 	</div>
 </div>
 
-<div class="container">
+<!-- <div class="container">
 	<div class="row">
 		<h3>Demographics</h3>
 		<div class="alert alert-danger" role="alert">
 			<p><strong>Whoa!</strong> You haven't entered any demographic information yet.</p>
 		</div>
 	</div>
-</div>
-
+</div> -->
 
 <div class="container">
 	<div class="col-md-6">

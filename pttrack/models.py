@@ -318,6 +318,19 @@ class Patient(Person):
 
         return note_list
 
+    def all_phones(self):
+        '''Returns a list of tuples of the form (phone, owner) of all the
+        phones associated with this patient.'''
+
+        phones = [(self.phone, '')]
+        phones.extend([(getattr(self, 'alternate_phone_'+str(i)),
+                        getattr(self, 'alternate_phone_'+str(i)+'_owner'))
+                        for i in range(1, 5)])
+
+        print phones
+
+        return phones
+
 
 class Provider(Person):
 
