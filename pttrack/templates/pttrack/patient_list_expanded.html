@@ -1,0 +1,57 @@
+{% extends "pttrack/base.html" %}
+
+{% load bootstrap3 %}
+
+{% block title %}
+Osler: {{ title | default:"All Patients"}}
+{% endblock %}
+
+{% block header %}
+<h1>{{ title | default:"All Patients" }}</h1>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <p> Filter by: <strong>[ item type ]</strong> due in the next <strong>[ n days ]</strong> <button type="submit" class="btn btn-success">Filter</button></p>
+    <p> Sort by: <strong>[ field ]</strong> in <strong>[ ascending/descending ]</strong> order <button type="submit" class="btn btn-success">Sort</button></p>
+</div>
+
+<div class="container">
+    <h3>{{ title2 }}</h1>
+    <table class="table">
+        <tr><th>Name</th><th>Age / Gender</th><th>Latest Activity</th><th>Next AI Due</th></td>
+        {% for patient in object_list_1 %}
+            <tr>
+            <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
+            <td>{{ patient.age }} / {{ patient.gender }}</td>
+            {% if patient.latest_workup %}
+            <td><a href="{% url 'workup' pk=patient.latest_workup.pk %}">Seen {{ patient.latest_workup.clinic_day.clinic_date }}</a>: {{ patient.latest_workup.chief_complaint }}</td>
+            {% else %}
+            <td><a href="{% url 'patient-update' pk=patient.pk %}">Intake</a>: {{ patient.history.last.history_date }}</td>
+            {% endif %}
+            <td>{{ patient.status }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="container">
+    <h3>{{ title3 }}</h1>
+    <table class="table">
+        <tr><th>Name</th><th>Age / Gender</th><th>Latest Activity</th><th>Next AI Due</th></td>
+        {% for patient in object_list_2 %}
+            <tr>
+            <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
+            <td>{{ patient.age }} / {{ patient.gender }}</td>
+            {% if patient.latest_workup %}
+            <td><a href="{% url 'workup' pk=patient.latest_workup.pk %}">Seen {{ patient.latest_workup.clinic_day.clinic_date }}</a>: {{ patient.latest_workup.chief_complaint }}</td>
+            {% else %}
+            <td><a href="{% url 'patient-update' pk=patient.pk %}">Intake</a>: {{ patient.history.last.history_date }}</td>
+            {% endif %}
+            <td>{{ patient.status }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

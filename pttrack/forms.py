@@ -84,7 +84,7 @@ class LabFollowup(ModelForm):
 class PatientForm(ModelForm):
     class Meta:
         model = models.Patient
-        exclude = []
+        exclude = ['needs_workup']
 
     def clean(self):
 

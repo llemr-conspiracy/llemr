@@ -27,6 +27,9 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^patient/update/(?P<pk>[0-9]+)$',
         views.PatientUpdate.as_view(),
         name='patient-update'),
+    url(r'^patient/activate/(?P<pk>[0-9]+)$',
+        views.patient_activate,
+        name='patient-activate'),
 
 
     # PROVIDERS
@@ -75,6 +78,7 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^document/update/(?P<pk>[0-9]+)$',
         views.DocumentUpdate.as_view(),
         name="document-update"),
+
 
     #  FOLLOWUPS
     url(r'^(?P<pt_id>[0-9]+)/followup/(?P<ftype>[\w]+)/$',
