@@ -71,8 +71,9 @@ def make_filepath(instance, filename):
     while carry_on:
         new_filename = "%s.%s" % (User.objects.make_random_password(48),
                                   filename.split('.')[-1])
-        path = '/'.join([instance.__class__.__name__.lower(),
-                         field_name, new_filename])
+        #path = '/'.join([instance.__class__.__name__.lower(),field_name, new_filename])
+
+        path = new_filename
 
         # if the file already exists, try again to generate a new filename
         carry_on = os.path.isfile(os.path.join(settings.MEDIA_ROOT, path))
@@ -232,6 +233,10 @@ class Patient(Person):
     preferred_contact_method = models.ForeignKey(ContactMethod, blank=True,
                                                  null=True)
 
+    # If the patient is in clinic and needs a workup, that is specified by needs_workup. Default value is false for all the previous patients
+
+    needs_workup = models.BooleanField(default=False)
+
     history = HistoricalRecords()
 
     def age(self):
@@ -328,6 +333,10 @@ class Patient(Person):
                         for i in range(1, 5)])
 
         return phones
+
+    def change_active_status(self):
+        ''' Will Activate or Inactivate the Patient'''
+        self.needs_workup = not self.needs_workup
 
 
 class Provider(Person):

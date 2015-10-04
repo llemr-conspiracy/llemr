@@ -337,6 +337,11 @@ class PatientCreate(FormView):
 
     def form_valid(self, form):
         pt = form.save()
+
+        # Action of creating the patient should indicate the patient is active (needs a workup)
+        pt.needs_workup = True
+
+        pt.save()
         return HttpResponseRedirect(reverse("patient-detail",
                                             args=(pt.id,)))
 
@@ -399,46 +404,80 @@ def home_page(request):
                                              pk=request.session['clintype_pk'])
     if active_provider_type.signs_charts:
         workup_list = mymodels.Workup.objects.all()
-        pt_list = list(set([wu.patient for wu in workup_list if wu.signer is None]))
+        pt_list_1 = list(set([wu.patient for wu in workup_list if wu.signer is None]))
+        patient_list = mymodels.Patient.objects.all().order_by('last_name')
+        pt_list_2 = []
 
+        for patient in patient_list:
+            if (patient.needs_workup):
+                pt_list_2.append(patient)
+        
         def byName_key(patient):
                 return patient.last_name
 
-        pt_list.sort(key = byName_key)
-        pagetitle = "Unsigned Workups"
+        pt_list_1.sort(key = byName_key)
+        pt_list_2.sort(key = byName_key)
+        pagetitle = "Attending Tasks"
+        pagetitle2 = "Unsigned Workups"
+        pagetitle3 = "Active Patients without Workups Today"
+
+        return render(request,
+                  'pttrack/patient_list_expanded.html',
+                  {'object_list_1': pt_list_1,
+                   'object_list_2': pt_list_2,
+                   'title': pagetitle,
+                   'title2': pagetitle2,
+                   'title3': pagetitle3,
+                   })
 
     elif active_provider_type.short_name == "Coordinator":
         ai_list = mymodels.ActionItem.objects.filter(
             due_date__lte=django.utils.timezone.now().today())
 
+        patient_list = mymodels.Patient.objects.all().order_by('last_name')
+        pt_list_1 = []
+
+        def byName_key(patient):
+                return patient.last_name
+
+        pt_list_1.sort(key = byName_key)
+
+        for patient in patient_list:
+            if (patient.needs_workup):
+                pt_list_1.append(patient)
+
         # if the AI is marked as done, it doesn't contribute to the pt being on
         # the list.
-        pt_list = list(set([ai.patient for ai in ai_list if not ai.done()]))
-        pagetitle = "Action Required"
+        pt_list_2 = list(set([ai.patient for ai in ai_list if not ai.done()]))
+        pagetitle = "Coordinator Tasks"
+        pagetitle2 = "Active Patients"
+        pagetitle3 = "Actions Required"
+
+        return render(request,
+                  'pttrack/patient_list_expanded.html',
+                  {'object_list_1': pt_list_1,
+                   'object_list_2': pt_list_2,
+                   'title': pagetitle,
+                   'title2': pagetitle2,
+                   'title3': pagetitle3,
+                   })
 
     else:
         patient_list = mymodels.Patient.objects.all().order_by('last_name')
         pt_list = []
+
+        def byName_key(patient):
+                return patient.last_name
+
+        pt_list.sort(key = byName_key)
+
         for patient in patient_list:
-            if (patient.notes() == []):
+            if (patient.needs_workup):
                 pt_list.append(patient)
 
-        pagetitle = "New Patients w/o Notes"
+        pagetitle = "Active Patients"
 
-        if pt_list == []:
-            for patient in patient_list:
-                note_list = patient.notes()
-                include_patient = True
-                for note in note_list:
-                    if note.written_datetime.date() == datetime.date.today():
-                        include_patient = False
-                if include_patient:
-                    pt_list.append(patient)
-
-            pagetitle = "Patients w/o Notes Today"
-
-
-    return render(request,
+        return render(request,
                   'pttrack/patient_list.html',
                   {'object_list': pt_list,
                    'title': pagetitle})
@@ -464,12 +503,25 @@ def sign_workup(request, pk):
     active_provider_type = get_object_or_404(mymodels.ProviderType,
                                              pk=request.session['clintype_pk'])
 
+    pt = wu.patient
     wu.sign(request.user, active_provider_type)
+    if pt.needs_workup:
+        pt.change_active_status()
+        pt.save()
+
 
     wu.save()
 
     return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
 
+def patient_activate(request, pk):
+    pt = get_object_or_404(mymodels.Patient, pk=pk)
+
+    pt.change_active_status()
+
+    pt.save()
+
+    return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
 def done_action_item(request, ai_id):
     ai = get_object_or_404(mymodels.ActionItem, pk=ai_id)
