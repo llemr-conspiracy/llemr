@@ -323,15 +323,6 @@ class Patient(Person):
 
         return note_list
 
-    def workup_notes(self):
-        '''Returns a list of all the notes (workups and followups) associated
-        with this patient ordered by date written.'''
-        wu_note_list = list(self.workup_set.all())
-
-        wu_note_list.sort(key=lambda(k): k.written_datetime)
-
-        return wu_note_list
-
     def all_phones(self):
         '''Returns a list of tuples of the form (phone, owner) of all the
         phones associated with this patient.'''
@@ -345,10 +336,7 @@ class Patient(Person):
 
     def change_active_status(self):
         ''' Will Activate or Inactivate the Patient'''
-        if self.needs_workup:
-            self.needs_workup = False
-        else:
-            self.needs_workup = True
+        self.needs_workup = not self.needs_workup
 
 
 class Provider(Person):
