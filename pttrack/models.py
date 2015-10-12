@@ -12,6 +12,33 @@ from simple_history.models import HistoricalRecords
 # pylint: disable=I0011,missing-docstring,E1305
 
 
+def validate_ssn(value):
+    '''Validate an SSN. Check length, and that it's only numbers except for hyphens at positions 3 and 6.'''
+
+    init_value = value
+
+    HYPHEN_1 = value.find('-')
+    HYPHEN_2 = value.rfind('-')
+
+    if HYPHEN_1 == 3:
+        value = value[0:HYPHEN_1] + value[HYPHEN_1+1:]
+    if HYPHEN_2 == 6:
+        # have adapt for the possibility (or not) that hyphen 1 is there
+        value = value[0:value.rfind('-')] + value[value.rfind('-')+1:]
+
+    if '-' in value:
+        raise ValidationError("Did you misplace a hyphen in '{0}'?".format(
+            init_value))
+    if not value.isdigit():
+        raise ValidationError(" ".join(
+            ['{0} is not a valid SSN. Your SSN shoud consist only of digits ',
+             'with the form xxx-xx-xxxx (hyphens optional).']).format(init_value))
+    if len(value) > 9:
+        raise ValidationError(" ".join([
+            '{0} is not a valid SSN, since it is longer than 9 characters.'
+            ]).format(init_value))
+
+
 def validate_zip(value):
     '''verify that the given value is in the ZIP code format'''
     if len(str(value)) != 5:
@@ -169,7 +196,7 @@ class Person(models.Model):
     middle_name = models.CharField(max_length=100, blank=True)
 
     phone = models.CharField(max_length=40)
-    languages = models.ManyToManyField(Language)
+    languages = models.ManyToManyField(Language, help_text="Specify here languages that are spoken at a level sufficient to be used for medical communication.")
 
     gender = models.ForeignKey(Gender)
 
@@ -214,6 +241,11 @@ class Patient(Person):
     patient_comfortable_with_english = models.BooleanField(default=True)
 
     ethnicities = models.ManyToManyField(Ethnicity)
+
+    ssn = models.CharField(max_length=9,
+                           validators=[validate_ssn],
+                           blank=True,
+                           null=True)
 
     # Alternative phone numbers have up to 4 fields and each one is associated
     # with the person that owns phone
@@ -330,7 +362,7 @@ class Patient(Person):
         phones = [(self.phone, '')]
         phones.extend([(getattr(self, 'alternate_phone_'+str(i)),
                         getattr(self, 'alternate_phone_'+str(i)+'_owner'))
-                        for i in range(1, 5)])
+                       for i in range(1, 5)])
 
         return phones
 
