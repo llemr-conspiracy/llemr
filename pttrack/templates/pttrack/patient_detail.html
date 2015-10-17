@@ -24,13 +24,15 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
         {% endif %}
 	</div>
 </div>
-<div class="col-md-5 pull-right">
-	<h3 class='text-center'> Actions </h3>
+<div class="col-md-4 text-center pull-right">
+	<h3> Actions </h3>
 	<div class="btn-group">
+			{# if request.session.clintype_pk == "Coordinator" #}
 	    <a class="btn btn-primary" href="{% url 'followup-choice' pt_id=patient.pk %}" role="button">Followup</a>
+	    {# endif #}
 	    <a class="btn btn-success" href="{% url 'new-workup' pt_id=patient.pk %}" role="button">Workup</a>
 	    <a class="btn btn-info" href="{% url 'new-action-item' pt_id=patient.pk %}" role="button">Action Item</a>
-	    <a class="btn btn-warning" href="{% url 'new-document' pt_id=patient.pk %}" role="button">Upload Document</a>
+	    <a class="btn btn-warning" href="{% url 'new-document' pt_id=patient.pk %}" role="button">Upload</a>
 	</div>
 </div>
 {% endblock %}
