@@ -3,6 +3,8 @@
 This is our clintools project, which is a collection for all our
 patient tracking. It's a django project.
 
+![Build Status](https://travis-ci.org/SaturdayNeighborhoodHealthClinic/osler.svg?branch=master)
+
 ## Running locally
 
 First, clone our repository
