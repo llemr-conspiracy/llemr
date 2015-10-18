@@ -14,6 +14,8 @@ import datetime
 # pylint: disable=invalid-name
 # Whatever, whatever. I name them what I want.
 
+BASIC_FIXTURE = 'basic_fixture'
+
 
 def note_check(test, note, client, pt_pk):
     test.assertEquals(note.author.pk,
@@ -63,9 +65,26 @@ class CustomFuncTesting(TestCase):
         with self.assertRaises(ValidationError):
             models.validate_zip('ABCDE')
 
+    def test_validate_ssn(self):
+        self.assertEqual(models.validate_ssn("123-45-6789"), None)
+        self.assertEqual(models.validate_ssn("123456789"), None)
+
+        with self.assertRaises(ValidationError):
+            models.validate_ssn("000-aa-0000")
+        with self.assertRaises(ValidationError):
+            models.validate_ssn("000-00-00000")
+        with self.assertRaises(ValidationError):
+            models.validate_ssn("000-000-000")
+        with self.assertRaises(ValidationError):
+            models.validate_ssn("1234567890")
+        with self.assertRaises(ValidationError):
+            models.validate_ssn('-123456789')
+        with self.assertRaises(ValidationError):
+            models.validate_ssn('-12345678')
+
 
 class ViewsExistTest(TestCase):
-    fixtures = ['basic_fixture']
+    fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
 
@@ -92,21 +111,18 @@ class ViewsExistTest(TestCase):
         del session['clintype_pk']
         session.save()
 
+        # verify: no clinic date -> create clinic date
         response = self.client.get(reverse('all-patients'))
-        self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('choose-clintype'), response.url)
+        self.assertRedirects(response,
+                             reverse('choose-clintype')+"?next="+reverse('all-patients'))
 
-        models.Provider.objects.all().delete()
+        # verify: no provider -> provider creation
+        # (now done in ProviderCreateTest)
 
-        response = self.client.get(reverse('all-patients'))
-        self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('new-provider'), response.url)
-
+        # verify: not logged in -> log in
         self.client.logout()
-
         response = self.client.get(reverse('all-patients'))
-        self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('login'), response.url)
+        self.assertRedirects(response, reverse('login')+'?next='+reverse('all-patients'))
 
     def test_pt_urls(self):
         pt_urls = ['patient-detail',
@@ -273,11 +289,60 @@ class ViewsExistTest(TestCase):
             os.remove(p)
             self.assertFalse(os.path.isfile(p))
 
-class FollowupTest(TestCase):
-    fixtures = ['basic_fixture']
+
+class ProviderCreateTest(TestCase):
+    fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
         build_provider_and_log_in(self.client)
+
+    def test_provider_creation(self):
+        '''Verify that, in the absence of a provider, a provider is created,
+        and that it is created correctly.'''
+
+        final_url = reverse('all-patients')
+
+        # verify: no provider -> create provider
+        models.Provider.objects.all().delete()
+        response = self.client.get(final_url)
+        self.assertRedirects(response, reverse('new-provider')+'?next='+final_url)
+
+        n_provider = len(models.Provider.objects.all())
+
+        # The data submitted by a User when creating the Provider.
+        form_data = {
+            'first_name': "John",
+            'last_name': "James",
+            'phone': "8888888888",
+            'languages': models.Language.objects.all()[0].pk,
+            'gender': models.Gender.objects.all()[0].pk,
+            'provider_email': "jj@wustl.edu",
+            'clinical_roles': models.ProviderType.objects.all()[0].pk,
+        }
+
+        response = self.client.post(response.url, form_data)
+        # redirects anywhere; don't care where (would be the 'next' parameter)
+        self.assertEqual(response.status_code, 302)
+        self.assertEquals(len(models.Provider.objects.all()), n_provider + 1)
+
+        new_provider = list(models.Provider.objects.all())[-1]
+
+        # verify the writethrough
+        for name in ['first_name', 'last_name']:
+            self.assertEquals(getattr(new_provider, name),
+                              getattr(new_provider.associated_user, name))
+
+        # now verify we're redirected
+        response = self.client.get(final_url)
+        self.assertEquals(response.status_code, 200)
+
+
+class FollowupTest(TestCase):
+    fixtures = [BASIC_FIXTURE]
+
+    def setUp(self):
+        build_provider_and_log_in(self.client)
+
 
     def test_followup_view_urls(self):
 
@@ -445,17 +510,14 @@ class FollowupTest(TestCase):
                     self.assertEquals(submitted_fu[param],
                                       getattr(new_fu, param).pk)
 
+
 class IntakeTest(TestCase):
-    fixtures = ['basic_fixture']
+    fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
         build_provider_and_log_in(self.client)
 
-    def test_can_intake_pt(self):
-
-        n_pt = len(models.Patient.objects.all())
-
-        submitted_pt = {
+        self.valid_pt_dict = {
             'first_name': "Juggie",
             'last_name': "Brodeltein",
             'middle_name': "Bayer",
@@ -475,6 +537,23 @@ class IntakeTest(TestCase):
                 models.ContactMethod.objects.all()[0].pk,
         }
 
+    def test_ssn_rewrite(self):
+        '''SSNs given without hypens should be automatically hypenated.'''
+
+        submitted_pt = self.valid_pt_dict
+        submitted_pt['ssn'] = "123456789"
+
+        response = self.client.post(reverse('intake'), submitted_pt)
+
+        new_pt = list(models.Patient.objects.all())[-1]
+        self.assertEquals(new_pt.ssn, "123-45-6789")
+
+    def test_can_intake_pt(self):
+
+        n_pt = len(models.Patient.objects.all())
+
+        submitted_pt = self.valid_pt_dict
+
         url = reverse('intake')
 
         response = self.client.post(url, submitted_pt)
@@ -492,10 +571,33 @@ class IntakeTest(TestCase):
                 self.assertEquals(str(submitted_pt[param]),
                                   str(getattr(new_pt, param).all()))
 
+        # new patients should be marked as active by default
+        self.assertTrue(new_pt.needs_workup)
+
+    def test_missing_alt_phone(self):
+        '''Missing the alternative phone w/o alt phone owner should fail.'''
+        form_data = self.valid_pt_dict
+        form_data['alternate_phone_1_owner'] = "Jamal"
+        # omit 'alternate_phone', should get an error
+
+        form = forms.PatientForm(data=form_data)
+        self.assertEqual(form['first_name'].errors, [])
+        self.assertNotEqual(form['alternate_phone_1_owner'].errors, [])
+
+    def test_missing_alt_phone_owner(self):
+        '''Missing the alt phone owner w/o alt phone should fail.'''
+        form_data = self.valid_pt_dict
+        # form_data['alternate_phone_1_owner'] = "Jamal"
+        form_data['alternate_phone_1'] = "4258612322"
+        # omit 'alternate_phone', should get an error
+
+        form = forms.PatientForm(data=form_data)
+        self.assertEqual(form['first_name'].errors, [])
+        self.assertNotEqual(form['alternate_phone_1'].errors, [])
 
 
 class ActionItemTest(TestCase):
-    fixtures = ['basic_fixture']
+    fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
         build_provider_and_log_in(self.client, ["Coordinator"])
@@ -658,47 +760,8 @@ class ActionItemTest(TestCase):
         note_check(self, new_ai, self.client, 1)
 
 
-class PatientIntakeFormTest(TestCase):
-    fixtures = ['basic_fixture']
-
-    def setUp(self):
-        build_provider_and_log_in(self.client)
-
-    def test_alternative_phone(self):
-
-        lang_test = [models.Language.objects.all()[0], models.Language.objects.all()[1]]
-        gender_test = models.Gender.objects.create(long_name="Goule",
-                                     short_name="G")
-        eth_test = [models.Ethnicity.objects.all()[0], models.Ethnicity.objects.all()[1]]
-        contactmethod_test = models.ContactMethod.objects.create(name="phone2")
-
-        '''Note if there is a change in patient forms, this portion needs
-        to be changed so it has valid data'''
-        form_data = {
-            'first_name': "John",
-            'last_name': "James",
-            'middle_name': "Jacob",
-            'phone': "8888888888",
-            'languages': lang_test,
-            'gender': gender_test,
-            'address': "North Pole",
-            'city': "St.Louis",
-            'state': "MO",
-            'zip_code': "77777",
-            'pcp_preferred_zip': "77777",
-            'date_of_birth': datetime.date.today(),
-            'patient_comfortable_with_english': True,
-            'ethnicities': eth_test,
-            'alternate_phone_1_owner': "Jamal",
-            # 'alternate_phone_1': "8888888888",
-            'preferred_contact_method': contactmethod_test,
-        }
-        form = forms.PatientForm(data=form_data)
-        self.assertEqual(form['first_name'].errors, [])
-        self.assertNotEqual(form['alternate_phone_1_owner'].errors, [])
-
 class AttendingTests(TestCase):
-    fixtures = ['basic_fixture']
+    fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
         build_provider_and_log_in(self.client, ["Attending"])

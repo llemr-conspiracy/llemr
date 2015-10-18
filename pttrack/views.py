@@ -114,8 +114,14 @@ class ProviderCreate(FormView):
     def form_valid(self, form):
         provider = form.save(commit=False)
         provider.associated_user = self.request.user
+
+        # populate the User object with the email and name data from the
+        # Provider form
         user = provider.associated_user
         user.email = form.cleaned_data['provider_email']
+        user.first_name = provider.first_name
+        user.last_name = provider.last_name
+        
         user.save()
         provider.save()
         form.save_m2m()
@@ -218,7 +224,8 @@ class WorkupUpdate(NoteUpdate):
                 wu.save()
                 return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
             else:
-                return HttpResponseRedirect(reverse("workup-error", args=(wu.id,)))
+                return HttpResponseRedirect(reverse("workup-error",
+                                                    args=(wu.id,)))
 
 
 
@@ -340,6 +347,9 @@ class PatientCreate(FormView):
 
         # Action of creating the patient should indicate the patient is active (needs a workup)
         pt.needs_workup = True
+
+        if not '-' in pt.ssn:
+            pt.ssn = pt.ssn[0:3] + '-' + pt.ssn[3:5] + '-' + pt.ssn[5:]
 
         pt.save()
         return HttpResponseRedirect(reverse("patient-detail",
