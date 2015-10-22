@@ -16,11 +16,20 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		<h2>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }} <a href="{% url 'patient-update' pk=patient.id %}"><small>{% bootstrap_icon "pencil" %}</small></a></h2>
 		<p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
 		<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
+		{% if request.session.clintype_pk == "Coordinator" %}
 		{% if patient.needs_workup %}
-        <p class="lead"> Patient is Active <a href="{% url 'patient-activate' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></p>
+        <p class="lead"> Patient is Active <a href="{% url 'patient-activate-detail' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></p>
         {% endif %}
         {% if not patient.needs_workup %}
-        <p class="lead"> Patient is Inactive <a href="{% url 'patient-activate' pk=patient.id %}">{% bootstrap_icon "play-circle" %}</a></p>
+        <p class="lead"> Patient is Inactive <a href="{% url 'patient-activate-detail' pk=patient.id %}">{% bootstrap_icon "play-circle" %}</a></p>
+        {% endif %}
+        {% else %}
+        {% if patient.needs_workup %}
+        <p class="lead"> Patient is Active </p>
+        {% endif %}
+        {% if not patient.needs_workup %}
+        <p class="lead"> Patient is Inactive </p>
+        {% endif %}
         {% endif %}
 	</div>
 </div>
@@ -81,23 +90,26 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 <div class="container">
 	<div class="col-md-6">
 		<h3>Notes ({{ patient.notes | length }})</h3>
-		<table class="table">
-		{% for note in patient.notes %}
-			<tr>
-				{% if note.chief_complaint %}
-					<p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
-				{% elif note.document_type %}
-					<p><a href="{% url 'document-detail' pk=note.pk %}"><strong>{{ note.document_type | title }}:</strong></a> {{ note.short_text }}</p>
-				{% else %}
-					{# here, the url takes an arugment to route it to the correct  #}
-					<p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
-				{% endif %}
-				<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-			</td></tr>
-		{% empty %}
-				<p class="text-muted"> No notes for {{ patient.name }} yet</p>
-		{% endfor %}
-		</table>
+		<h4><a data-toggle="collapse" href = "#notes-list"> Notes</a></h4>
+		<div id = "notes-list" class = "collapse in">
+			<table class="table">
+			{% for note in patient.notes %}
+				<tr>
+					{% if note.chief_complaint %}
+						<p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
+					{% elif note.document_type %}
+						<p><a href="{% url 'document-detail' pk=note.pk %}"><strong>{{ note.document_type | title }}:</strong></a> {{ note.short_text }}</p>
+					{% else %}
+						{# here, the url takes an arugment to route it to the correct  #}
+						<p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
+					{% endif %}
+					<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+				</td></tr>
+			{% empty %}
+					<p class="text-muted"> No notes for {{ patient.name }} yet</p>
+			{% endfor %}
+			</table>
+		</div>
 	</div>
 	<div class="col-md-6">
 		<h3>Active Action Items ({{ patient.active_action_items | length }})</h3>

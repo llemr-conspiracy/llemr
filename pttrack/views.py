@@ -218,10 +218,12 @@ class WorkupUpdate(NoteUpdate):
         current_user_type = get_current_provider_type(self.request)
         if wu.signer is None:
             wu.save()
+            form.save_m2m()
             return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
         else:
             if current_user_type.signs_charts:
                 wu.save()
+                form.save_m2m()
                 return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
             else:
                 return HttpResponseRedirect(reverse("workup-error",
@@ -515,16 +517,13 @@ def sign_workup(request, pk):
 
     pt = wu.patient
     wu.sign(request.user, active_provider_type)
-    if pt.needs_workup:
-        pt.change_active_status()
-        pt.save()
 
 
     wu.save()
 
     return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
 
-def patient_activate(request, pk):
+def patient_activate_detail(request, pk):
     pt = get_object_or_404(mymodels.Patient, pk=pk)
 
     pt.change_active_status()
@@ -532,6 +531,15 @@ def patient_activate(request, pk):
     pt.save()
 
     return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+
+def patient_activate_home(request, pk):
+    pt = get_object_or_404(mymodels.Patient, pk=pk)
+
+    pt.change_active_status()
+
+    pt.save()
+
+    return HttpResponseRedirect(reverse("home"))
 
 def done_action_item(request, ai_id):
     ai = get_object_or_404(mymodels.ActionItem, pk=ai_id)
