@@ -466,6 +466,13 @@ def home_page(request):
 
         # The third list consists of patients that have action items due
         pt_list_3 = list(set([ai.patient for ai in ai_list_2 if not ai.done()]))
+
+        def byAI_key(patient):
+                return patient.inactive_action_items()[0].due_date
+
+        pt_list_3.sort(key = byAI_key)
+
+
         title = "Coordinator Tasks"
         pt_list_list = [pt_list_1, pt_list_2, pt_list_3]
         sectiontitle_list = ["Active Patients", "Active Action Items", "Pending Action Items"]
