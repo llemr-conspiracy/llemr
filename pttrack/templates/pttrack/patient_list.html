@@ -16,37 +16,39 @@ Osler: {{ title | default:"All Patients"}}
     <p> Filter by: <strong>[ item type ]</strong> due in the next <strong>[ n days ]</strong> <button type="submit" class="btn btn-success">Filter</button></p>
     <p> Sort by: <strong>[ field ]</strong> in <strong>[ ascending/descending ]</strong> order <button type="submit" class="btn btn-success">Sort</button></p>
 </div> -->
-
-<div class="container">
-    <table class="table">
-        <tr><th>Name</th><th>Age / Gender</th><th>Latest Activity</th><th>Next AI Due</th><th>Status</th></td>
-        {% for patient in object_list %}
-            <tr>
-            <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
-            <td>{{ patient.age }} / {{ patient.gender }}</td>
-            {% if patient.latest_workup %}
-            <td><a href="{% url 'workup' pk=patient.latest_workup.pk %}">Seen {{ patient.latest_workup.clinic_day.clinic_date }}</a>: {{ patient.latest_workup.chief_complaint }}</td>
-            {% else %}
-            <td><a href="{% url 'patient-update' pk=patient.pk %}">Intake</a>: {{ patient.history.last.history_date }}</td>
-            {% endif %}
-            <td>{{ patient.status }}</td>
-            {% if request.session.clintype_pk == "Coordinator" %}
-            {% if patient.needs_workup %}
-            <td> Active <a href="{% url 'patient-activate-home' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></td>
-            {% endif %}
-            {% if not patient.needs_workup %}
-            <td> Inactive <a href="{% url 'patient-activate-home' pk=patient.id %}">{% bootstrap_icon "play-circle" %}</a></td>
-            {% endif %}
-            {% else %}
-            {% if patient.needs_workup %}
-            <td> Active </td>
-            {% endif %}
-            {% if not patient.needs_workup %}
-            <td> Inactive </td>
-            {% endif %}
-            {% endif %}
-            </tr>
-        {% endfor %}
-    </table>
-</div>
+{% for combination in zipped_list %}
+    <div class="container">
+        <h3>{{ combination.0 }}</h3>
+        <table class="table">
+            <tr><th>Name</th><th>Age / Gender</th><th>Latest Activity</th><th>Next AI Due</th><th>Status</th></td>
+            {% for patient in combination.1 %}
+                <tr>
+                <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
+                <td>{{ patient.age }} / {{ patient.gender }}</td>
+                {% if patient.latest_workup %}
+                <td><a href="{% url 'workup' pk=patient.latest_workup.pk %}">Seen {{ patient.latest_workup.clinic_day.clinic_date }}</a>: {{ patient.latest_workup.chief_complaint }}</td>
+                {% else %}
+                <td><a href="{% url 'patient-update' pk=patient.pk %}">Intake</a>: {{ patient.history.last.history_date }}</td>
+                {% endif %}
+                <td>{{ patient.status }}</td>
+                {% if request.session.clintype_pk == "Coordinator" %}
+                {% if patient.needs_workup %}
+                <td> Active <a href="{% url 'patient-activate-home' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></td>
+                {% endif %}
+                {% if not patient.needs_workup %}
+                <td> Inactive <a href="{% url 'patient-activate-home' pk=patient.id %}">{% bootstrap_icon "play-circle" %}</a></td>
+                {% endif %}
+                {% else %}
+                {% if patient.needs_workup %}
+                <td> Active </td>
+                {% endif %}
+                {% if not patient.needs_workup %}
+                <td> Inactive </td>
+                {% endif %}
+                {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endfor %}
 {% endblock %}

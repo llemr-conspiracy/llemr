@@ -429,22 +429,24 @@ def home_page(request):
 
         pt_list_1.sort(key = byName_key)
         pt_list_2.sort(key = byName_key)
-        pagetitle = "Attending Tasks"
-        pagetitle2 = "Unsigned Workups"
-        pagetitle3 = "Active Patients without Workups Today"
+        title = "Attending Tasks"
+        pt_list_list = [pt_list_1, pt_list_2]
+        sectiontitle_list = ["Patients with Unsigned Workups", "Active Patients"]
+        zipped_list = zip(sectiontitle_list,pt_list_list)
+
 
         return render(request,
-                  'pttrack/patient_list_expanded.html',
-                  {'object_list_1': pt_list_1,
-                   'object_list_2': pt_list_2,
-                   'title': pagetitle,
-                   'title2': pagetitle2,
-                   'title3': pagetitle3,
-                   })
+                  'pttrack/patient_list.html',
+                  {'zipped_list': zipped_list,
+                    'title': title})
 
     elif active_provider_type.short_name == "Coordinator":
         ai_list = mymodels.ActionItem.objects.filter(
             due_date__lte=django.utils.timezone.now().today())
+
+        ai_list_2 = mymodels.ActionItem.objects.filter(
+            due_date__gt=django.utils.timezone.now().today()).order_by('due_date')
+
 
         patient_list = mymodels.Patient.objects.all().order_by('last_name')
         pt_list_1 = []
@@ -461,18 +463,19 @@ def home_page(request):
         # if the AI is marked as done, it doesn't contribute to the pt being on
         # the list.
         pt_list_2 = list(set([ai.patient for ai in ai_list if not ai.done()]))
-        pagetitle = "Coordinator Tasks"
-        pagetitle2 = "Active Patients"
-        pagetitle3 = "Actions Required"
+
+        # The third list consists of patients that have action items due
+        pt_list_3 = list(set([ai.patient for ai in ai_list_2 if not ai.done()]))
+        title = "Coordinator Tasks"
+        pt_list_list = [pt_list_1, pt_list_2, pt_list_3]
+        sectiontitle_list = ["Active Patients", "Active Action Items", "Pending Action Items"]
+        zipped_list = zip(sectiontitle_list,pt_list_list)
+
 
         return render(request,
-                  'pttrack/patient_list_expanded.html',
-                  {'object_list_1': pt_list_1,
-                   'object_list_2': pt_list_2,
-                   'title': pagetitle,
-                   'title2': pagetitle2,
-                   'title3': pagetitle3,
-                   })
+                  'pttrack/patient_list.html',
+                  {'zipped_list': zipped_list,
+                    'title': title})
 
     else:
         patient_list = mymodels.Patient.objects.all().order_by('last_name')
@@ -487,12 +490,16 @@ def home_page(request):
             if (patient.needs_workup):
                 pt_list.append(patient)
 
-        pagetitle = "Active Patients"
+        title = "Active Patients"
+        pt_list_list = [pt_list]
+        sectiontitle_list = ["Active Patients"]
+        zipped_list = zip(sectiontitle_list,pt_list_list)
+
 
         return render(request,
                   'pttrack/patient_list.html',
-                  {'object_list': pt_list,
-                   'title': pagetitle})
+                  {'zipped_list': zipped_list,
+                    'title': title})
 
 
 def error_workup(request, pk):
@@ -504,10 +511,13 @@ def error_workup(request, pk):
 
 def all_patients(request):
     pt_list = list(mymodels.Patient.objects.all().order_by('last_name'))
+    pt_list_list = [pt_list]
+    sectiontitle_list = ["Alphabetized by Last Name"]
+    zipped_list = zip(sectiontitle_list,pt_list_list)
     return render(request,
                   'pttrack/patient_list.html',
-                  {'object_list': pt_list,
-                   'title': "All Patients"})
+                  {'zipped_list': zipped_list,
+                    'title': "All Patients"})
 
 
 def sign_workup(request, pk):
