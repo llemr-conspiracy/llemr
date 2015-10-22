@@ -33,15 +33,15 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
         {% endif %}
 	</div>
 </div>
-<div class="col-md-4 text-center pull-right">
+<div class="col-md-4 text-center pull-right" style="border: 2px  black">
 	<h3> Actions </h3>
-	<div class="btn-group">
-			{# if request.session.clintype_pk == "Coordinator" #}
-	    <a class="btn btn-primary" href="{% url 'followup-choice' pt_id=patient.pk %}" role="button">Followup</a>
+	<div class="btn-group-verticle">
+	    <a class="btn btn-success pull-left btn-block" href="{% url 'new-workup' pt_id=patient.pk %}" role="button">Create New Workup</a>
+	    <a class="btn btn-info pull-left btn-block" href="{% url 'new-action-item' pt_id=patient.pk %}" role="button">Create New Action Item</a>
+	    <a class="btn btn-warning pull-left btn-block" href="{% url 'new-document' pt_id=patient.pk %}" role="button">Upload Document or Prescription</a>
+	    {# if request.session.clintype_pk == "Coordinator" #}
+	    <a class="btn btn-primary pull-left btn-block" href="{% url 'followup-choice' pt_id=patient.pk %}" role="button">Create New Followup</a>
 	    {# endif #}
-	    <a class="btn btn-success" href="{% url 'new-workup' pt_id=patient.pk %}" role="button">Workup</a>
-	    <a class="btn btn-info" href="{% url 'new-action-item' pt_id=patient.pk %}" role="button">Action Item</a>
-	    <a class="btn btn-warning" href="{% url 'new-document' pt_id=patient.pk %}" role="button">Upload</a>
 	</div>
 </div>
 {% endblock %}
@@ -51,29 +51,32 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <div class="container">
-	<div class="row">
-		<h3>Info</h3>
-		<div class="container col-md-4">
-			<p>Language: {{ patient.languages.iterator | join:", " }}</p>
-			<p>DOB: {{patient.date_of_birth}}</p>
-		</div>
-		<div class="container col-md-4">
-			<p><address>
-			{{ patient.address }}<br>
-			{{ patient.city }}, {{ patient.state }} {{ patient.zip_code }}
-			</address></p>
-		</div>
-		<div class="container col-md-4">
-			<!-- <p>P: {{ patient.phone }} -->
-			<table class="table table-condensed">
-				<tr><th>Contact</th><th>Phone Number</th></tr>
-			{% for phone, owner in patient.all_phones %}
-				{% if phone or owner %}
-				<tr><td>{{ owner | default:"Primary" }}</td><td>{{ phone }}</td></tr>
-				{% endif %}
-			{% endfor %}
-			</table>
-			<!-- </p> -->
+	<div>
+		<div>
+			<h3>&nbsp;&nbsp;Demographic Information</h3>
+			<div class="container col-md-4">
+				<p><strong>&nbsp;&nbsp;Language:</strong> {{ patient.languages.iterator | join:", " }}</p>
+				<p><strong>&nbsp;&nbsp;DOB:</strong> {{patient.date_of_birth}}</p>
+			</div>
+			<div class="container col-md-4">
+				<p>
+				<strong>Address:</strong><br>
+				{{ patient.address }}<br>
+				{{ patient.city }}, {{ patient.state }} {{ patient.zip_code }}
+				</p>
+			</div>
+			<div class="container col-md-4">
+				<!-- <p>P: {{ patient.phone }} -->
+				<table class="table table-condensed">
+					<tr><th>Contact</th><th>Phone Number</th></tr>
+				{% for phone, owner in patient.all_phones %}
+					{% if phone or owner %}
+					<tr><td>{{ owner | default:"Primary" }}</td><td>{{ phone }}</td></tr>
+					{% endif %}
+				{% endfor %}
+				</table>
+				<!-- </p> -->
+			</div>
 		</div>
 	</div>
 </div>
