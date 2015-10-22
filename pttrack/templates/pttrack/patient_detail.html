@@ -89,26 +89,54 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 
 <div class="container">
 	<div class="col-md-6">
-		<h3>Notes ({{ patient.notes | length }})</h3>
-		<h4><a data-toggle="collapse" href = "#notes-list"> Notes</a></h4>
-		<div id = "notes-list" class = "collapse in">
-			<table class="table">
-			{% for note in patient.notes %}
-				<tr>
-					{% if note.chief_complaint %}
-						<p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
-					{% elif note.document_type %}
-						<p><a href="{% url 'document-detail' pk=note.pk %}"><strong>{{ note.document_type | title }}:</strong></a> {{ note.short_text }}</p>
-					{% else %}
-						{# here, the url takes an arugment to route it to the correct  #}
-						<p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
-					{% endif %}
-					<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-				</td></tr>
-			{% empty %}
-					<p class="text-muted"> No notes for {{ patient.name }} yet</p>
-			{% endfor %}
-			</table>
+		<h3>Submitted Notes ({{ patient.notes | length }} Total)</h3>
+		<div class="panel-group">
+  			<div class="panel panel-default">
+    			<div class="panel-heading">
+      				<h4 class="panel-title">
+        			<a data-toggle="collapse" href="#collapse1">Workups ({{ patient.workup_set.all | length }})</a>
+      				</h4>
+    			</div>
+    			<div id="collapse1" class="panel-collapse collapse">
+      				{% for note in patient.workup_set.all %}	
+  						<div class="panel-body">
+							<p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
+							<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+  						</div>
+      				{% endfor %}	
+    			</div>
+  			</div>
+  			<div class="panel panel-default">
+    			<div class="panel-heading">
+      				<h4 class="panel-title">
+        			<a data-toggle="collapse" href="#collapse2">Uploaded Prescriptions and Documents ({{ patient.document_set.all | length }})</a>
+      				</h4>
+    			</div>
+    			<div id="collapse2" class="panel-collapse collapse">
+      				{% for note in patient.document_set.all %}	
+  						<div class="panel-body">
+							<p><a href="{% url 'document-detail' pk=note.pk %}"><strong>{{ note.document_type | title }}:</strong></a> {{ note.short_text }}</p>
+							<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+  						</div>
+      				{% endfor %}	
+    			</div>
+  			</div>
+  			<div class="panel panel-default">
+    			<div class="panel-heading">
+      				<h4 class="panel-title">
+        			<a data-toggle="collapse" href="#collapse3">Followups ({{ patient.followup_set.all | length }})</a>
+      				</h4>
+    			</div>
+    			<div id="collapse3" class="panel-collapse collapse">
+      				{% for note in patient.followup_set.all %}	
+  							<div class="panel-body">
+								{# here, the url takes an arugment to route it to the correct  #}
+								<p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
+								<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+  							</div>
+      				{% endfor %}	
+    			</div>
+  			</div>
 		</div>
 	</div>
 	<div class="col-md-6">
