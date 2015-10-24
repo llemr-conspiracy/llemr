@@ -27,9 +27,12 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^patient/update/(?P<pk>[0-9]+)$',
         views.PatientUpdate.as_view(),
         name='patient-update'),
-    url(r'^patient/activate/(?P<pk>[0-9]+)$',
-        views.patient_activate,
-        name='patient-activate'),
+    url(r'^patient/activate_detail/(?P<pk>[0-9]+)$',
+        views.patient_activate_detail,
+        name='patient-activate-detail'),
+    url(r'^patient/activate_home/(?P<pk>[0-9]+)$',
+        views.patient_activate_home,
+        name='patient-activate-home'),
 
 
     # PROVIDERS

@@ -16,23 +16,32 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		<h2>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }} <a href="{% url 'patient-update' pk=patient.id %}"><small>{% bootstrap_icon "pencil" %}</small></a></h2>
 		<p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
 		<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
+		{% if request.session.clintype_pk == "Coordinator" %}
 		{% if patient.needs_workup %}
-        <p class="lead"> Patient is Active <a href="{% url 'patient-activate' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></p>
+        <p class="lead"> Patient is Active <a href="{% url 'patient-activate-detail' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></p>
         {% endif %}
         {% if not patient.needs_workup %}
-        <p class="lead"> Patient is Inactive <a href="{% url 'patient-activate' pk=patient.id %}">{% bootstrap_icon "play-circle" %}</a></p>
+        <p class="lead"> Patient is Inactive <a href="{% url 'patient-activate-detail' pk=patient.id %}">{% bootstrap_icon "play-circle" %}</a></p>
+        {% endif %}
+        {% else %}
+        {% if patient.needs_workup %}
+        <p class="lead"> Patient is Active </p>
+        {% endif %}
+        {% if not patient.needs_workup %}
+        <p class="lead"> Patient is Inactive </p>
+        {% endif %}
         {% endif %}
 	</div>
 </div>
-<div class="col-md-4 text-center pull-right">
+<div class="col-md-4 text-center pull-right" style="border: 2px  black">
 	<h3> Actions </h3>
-	<div class="btn-group">
-			{# if request.session.clintype_pk == "Coordinator" #}
-	    <a class="btn btn-primary" href="{% url 'followup-choice' pt_id=patient.pk %}" role="button">Followup</a>
+	<div class="btn-group-verticle">
+	    <a class="btn btn-success pull-left btn-block" href="{% url 'new-workup' pt_id=patient.pk %}" role="button">Create New Workup</a>
+	    <a class="btn btn-info pull-left btn-block" href="{% url 'new-action-item' pt_id=patient.pk %}" role="button">Create New Action Item</a>
+	    <a class="btn btn-warning pull-left btn-block" href="{% url 'new-document' pt_id=patient.pk %}" role="button">Upload Document or Prescription</a>
+	    {# if request.session.clintype_pk == "Coordinator" #}
+	    <a class="btn btn-primary pull-left btn-block" href="{% url 'followup-choice' pt_id=patient.pk %}" role="button">Create New Followup</a>
 	    {# endif #}
-	    <a class="btn btn-success" href="{% url 'new-workup' pt_id=patient.pk %}" role="button">Workup</a>
-	    <a class="btn btn-info" href="{% url 'new-action-item' pt_id=patient.pk %}" role="button">Action Item</a>
-	    <a class="btn btn-warning" href="{% url 'new-document' pt_id=patient.pk %}" role="button">Upload</a>
 	</div>
 </div>
 {% endblock %}
@@ -42,29 +51,32 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <div class="container">
-	<div class="row">
-		<h3>Info</h3>
-		<div class="container col-md-4">
-			<p>Language: {{ patient.languages.iterator | join:", " }}</p>
-			<p>DOB: {{patient.date_of_birth}}</p>
-		</div>
-		<div class="container col-md-4">
-			<p><address>
-			{{ patient.address }}<br>
-			{{ patient.city }}, {{ patient.state }} {{ patient.zip_code }}
-			</address></p>
-		</div>
-		<div class="container col-md-4">
-			<!-- <p>P: {{ patient.phone }} -->
-			<table class="table table-condensed">
-				<tr><th>Contact</th><th>Phone Number</th></tr>
-			{% for phone, owner in patient.all_phones %}
-				{% if phone or owner %}
-				<tr><td>{{ owner | default:"Primary" }}</td><td>{{ phone }}</td></tr>
-				{% endif %}
-			{% endfor %}
-			</table>
-			<!-- </p> -->
+	<div>
+		<div>
+			<h3>&nbsp;&nbsp;Demographic Information</h3>
+			<div class="container col-md-4">
+				<p><strong>&nbsp;&nbsp;Language:</strong> {{ patient.languages.iterator | join:", " }}</p>
+				<p><strong>&nbsp;&nbsp;DOB:</strong> {{patient.date_of_birth}}</p>
+			</div>
+			<div class="container col-md-4">
+				<p>
+				<strong>Address:</strong><br>
+				{{ patient.address }}<br>
+				{{ patient.city }}, {{ patient.state }} {{ patient.zip_code }}
+				</p>
+			</div>
+			<div class="container col-md-4">
+				<!-- <p>P: {{ patient.phone }} -->
+				<table class="table table-condensed">
+					<tr><th>Contact</th><th>Phone Number</th></tr>
+				{% for phone, owner in patient.all_phones %}
+					{% if phone or owner %}
+					<tr><td>{{ owner | default:"Primary" }}</td><td>{{ phone }}</td></tr>
+					{% endif %}
+				{% endfor %}
+				</table>
+				<!-- </p> -->
+			</div>
 		</div>
 	</div>
 </div>
@@ -80,24 +92,55 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 
 <div class="container">
 	<div class="col-md-6">
-		<h3>Notes ({{ patient.notes | length }})</h3>
-		<table class="table">
-		{% for note in patient.notes %}
-			<tr>
-				{% if note.chief_complaint %}
-					<p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
-				{% elif note.document_type %}
-					<p><a href="{% url 'document-detail' pk=note.pk %}"><strong>{{ note.document_type | title }}:</strong></a> {{ note.short_text }}</p>
-				{% else %}
-					{# here, the url takes an arugment to route it to the correct  #}
-					<p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
-				{% endif %}
-				<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-			</td></tr>
-		{% empty %}
-				<p class="text-muted"> No notes for {{ patient.name }} yet</p>
-		{% endfor %}
-		</table>
+		<h3>Submitted Notes ({{ patient.notes | length }} Total)</h3>
+		<div class="panel-group">
+  			<div class="panel panel-default">
+    			<div class="panel-heading">
+      				<h4 class="panel-title">
+        			<a data-toggle="collapse" href="#collapse1">Workups ({{ patient.workup_set.all | length }})</a>
+      				</h4>
+    			</div>
+    			<div id="collapse1" class="panel-collapse collapse">
+      				{% for note in patient.workup_set.all %}	
+  						<div class="panel-body">
+							<p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
+							<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+  						</div>
+      				{% endfor %}	
+    			</div>
+  			</div>
+  			<div class="panel panel-default">
+    			<div class="panel-heading">
+      				<h4 class="panel-title">
+        			<a data-toggle="collapse" href="#collapse2">Uploaded Prescriptions and Documents ({{ patient.document_set.all | length }})</a>
+      				</h4>
+    			</div>
+    			<div id="collapse2" class="panel-collapse collapse">
+      				{% for note in patient.document_set.all %}	
+  						<div class="panel-body">
+							<p><a href="{% url 'document-detail' pk=note.pk %}"><strong>{{ note.document_type | title }}:</strong></a> {{ note.short_text }}</p>
+							<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+  						</div>
+      				{% endfor %}	
+    			</div>
+  			</div>
+  			<div class="panel panel-default">
+    			<div class="panel-heading">
+      				<h4 class="panel-title">
+        			<a data-toggle="collapse" href="#collapse3">Followups ({{ patient.followup_set.all | length }})</a>
+      				</h4>
+    			</div>
+    			<div id="collapse3" class="panel-collapse collapse">
+      				{% for note in patient.followup_set.all %}	
+  							<div class="panel-body">
+								{# here, the url takes an arugment to route it to the correct  #}
+								<p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
+								<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+  							</div>
+      				{% endfor %}	
+    			</div>
+  			</div>
+		</div>
 	</div>
 	<div class="col-md-6">
 		<h3>Active Action Items ({{ patient.active_action_items | length }})</h3>

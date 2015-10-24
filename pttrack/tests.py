@@ -672,9 +672,9 @@ class ActionItemTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         #pt2, pt3 should be present since pt 1 is not past due
-        self.assertEqual(len(response.context['object_list_2']), 2)
-        self.assertIn(pt2, response.context['object_list_2'])
-        self.assertIn(pt3, response.context['object_list_2'])
+        self.assertEqual(len(response.context['zipped_list'][1][1]), 2)
+        self.assertIn(pt2, response.context['zipped_list'][1][1])
+        self.assertIn(pt3, response.context['zipped_list'][1][1])
 
         pt3_ai.mark_done(models.Provider.objects.all()[0])
         pt3_ai.save()
@@ -683,8 +683,8 @@ class ActionItemTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # now only pt2 should be present, since only pt3's AI is now done
-        self.assertEqual(len(response.context['object_list_2']), 1)
-        self.assertIn(pt2, response.context['object_list_2'])
+        self.assertEqual(len(response.context['zipped_list'][1][1]), 1)
+        self.assertIn(pt2, response.context['zipped_list'][1][1])
 
 
     def test_action_item_urls(self):
@@ -862,6 +862,6 @@ class AttendingTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # pt1, pt3 should be present since they are not signed
-        self.assertEqual(len(response.context['object_list_1']), 2)
-        self.assertIn(pt1, response.context['object_list_1'])
-        self.assertIn(pt3, response.context['object_list_1'])
+        self.assertEqual(len(response.context['zipped_list'][0][1]), 2)
+        self.assertIn(pt1, response.context['zipped_list'][0][1])
+        self.assertIn(pt3, response.context['zipped_list'][0][1])

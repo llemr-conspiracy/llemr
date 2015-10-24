@@ -123,10 +123,16 @@ Workup: {{ workup.patient.name }}
         </div>
         {% endif %}
         <div class="col-md-4">
-            <strong>Referral Type:</strong> {{workup.referral_type | default:"not specified" }}
+            <strong>Referral Type:</strong> 
+            {% for type in workup.referral_type.all %}
+             {{ type.name }}
+            {% endfor %}
         </div>
         <div class="col-md-4">
-            <strong>Referral Type:</strong> {{workup.referral_location | default:"not specified" }}
+            <strong>Referral Location:</strong>
+            {% for location in workup.referral_location.all %}
+             {{ location.name }}
+            {% endfor %}
         </div>
     </div>
     <div class="row">
