@@ -1,21 +1,17 @@
 from django.test import TestCase
-from . import models
+from .  import models
 from . import followup_models
 from . import forms
-from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
-from django.test import Client
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django.core.files import File
 import datetime
 
-
 # pylint: disable=invalid-name
 # Whatever, whatever. I name them what I want.
 
 BASIC_FIXTURE = 'basic_fixture'
-
 
 def note_check(test, note, client, pt_pk):
     test.assertEquals(note.author.pk,
@@ -56,31 +52,6 @@ def build_provider_and_log_in(client, roles=[]):
     session = client.session
     session['clintype_pk'] = user.provider.clinical_roles.all()[0].pk
     session.save()
-
-class CustomFuncTesting(TestCase):
-    def test_validate_zip(self):
-        self.assertEqual(models.validate_zip(12345), None)
-        with self.assertRaises(ValidationError):
-            models.validate_zip(123456)
-        with self.assertRaises(ValidationError):
-            models.validate_zip('ABCDE')
-
-    def test_validate_ssn(self):
-        self.assertEqual(models.validate_ssn("123-45-6789"), None)
-        self.assertEqual(models.validate_ssn("123456789"), None)
-
-        with self.assertRaises(ValidationError):
-            models.validate_ssn("000-aa-0000")
-        with self.assertRaises(ValidationError):
-            models.validate_ssn("000-00-00000")
-        with self.assertRaises(ValidationError):
-            models.validate_ssn("000-000-000")
-        with self.assertRaises(ValidationError):
-            models.validate_ssn("1234567890")
-        with self.assertRaises(ValidationError):
-            models.validate_ssn('-123456789')
-        with self.assertRaises(ValidationError):
-            models.validate_ssn('-12345678')
 
 
 class ViewsExistTest(TestCase):
