@@ -53,6 +53,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	<div class="container col-md-4">
 		<p><strong>&nbsp;&nbsp;Language:</strong> {{ patient.languages.iterator | join:", " }}</p>
 		<p><strong>&nbsp;&nbsp;DOB:</strong> {{patient.date_of_birth}}</p>
+		<p><strong>&nbsp;&nbsp;SSN:</strong> {{patient.ssn | default:"Not Provided"}}</p>
 	</div>
 	<div class="container col-md-4">
 		<p>
@@ -62,7 +63,6 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		</p>
 	</div>
 	<div class="container col-md-4">
-		<!-- <p>P: {{ patient.phone }} -->
 		<table class="table table-condensed">
 			<tr><th>Contact</th><th>Phone Number</th></tr>
 		{% for phone, owner in patient.all_phones %}
