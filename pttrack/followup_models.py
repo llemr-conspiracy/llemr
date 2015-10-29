@@ -147,8 +147,7 @@ class ReferralFollowup(Followup):
     REFTYPE_HELP = "What kind of provider was the patient referred to?"
     referral_type = models.ForeignKey(mymodels.ReferralType,
                                       help_text=REFTYPE_HELP, 
-                                      blank=True, 
-                                      null=True)
+                                      default="Other")
 
     bREF_HELP = "Does the patient have an appointment?"
     has_appointment = models.BooleanField(help_text=bREF_HELP)

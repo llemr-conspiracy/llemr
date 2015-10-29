@@ -21,14 +21,17 @@ class ReferralFollowup(ModelForm):
 
     boolean_choices = ((True, 'Yes'),(False, 'No'))
     PATIENT_REACHED_HELP = "If 'No'is selected, the remaining fields will not be required"
-    patient_reached = BooleanField(widget=RadioSelect(choices=boolean_choices), required = False, help_text=PATIENT_REACHED_HELP)
+    patient_reached = BooleanField(widget=RadioSelect(choices=boolean_choices), 
+                                                        required = False,
+                                                        help_text=PATIENT_REACHED_HELP, 
+                                                        label="Were you able to contact the patient?")
 
     class Meta:
         model = followup_models.ReferralFollowup
         fields = ['contact_method',
             'contact_resolution',
-            'referral_type',
             'patient_reached',
+            'referral_type',
             'comments',
             'has_appointment',
             'apt_location',
