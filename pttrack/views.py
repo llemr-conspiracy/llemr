@@ -425,7 +425,7 @@ def home_page(request):
                 pt_list_2.append(patient)
         
         def byName_key(patient):
-                return patient.last_name
+            return patient.last_name
 
         pt_list_1.sort(key = byName_key)
         pt_list_2.sort(key = byName_key)
@@ -452,7 +452,7 @@ def home_page(request):
         pt_list_1 = []
 
         def byName_key(patient):
-                return patient.last_name
+            return patient.last_name
 
         pt_list_1.sort(key = byName_key)
 
@@ -468,7 +468,7 @@ def home_page(request):
         pt_list_3 = list(set([ai.patient for ai in ai_list_2 if not ai.done()]))
 
         def byAI_key(patient):
-                return patient.inactive_action_items()[0].due_date
+            return patient.inactive_action_items()[0].due_date
 
         pt_list_3.sort(key = byAI_key)
 
@@ -489,7 +489,7 @@ def home_page(request):
         pt_list = []
 
         def byName_key(patient):
-                return patient.last_name
+            return patient.last_name
 
         pt_list.sort(key = byName_key)
 
