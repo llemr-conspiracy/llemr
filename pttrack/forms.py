@@ -1,7 +1,7 @@
 '''Forms for the SNHC clintools app.'''
 from bootstrap3_datetime.widgets import DateTimePicker
 from django.forms import ModelForm, ValidationError, Form
-from django.forms import ModelChoiceField, EmailField
+from django.forms import ModelChoiceField, EmailField, RadioSelect, BooleanField
 
 from . import models
 from . import followup_models
@@ -18,38 +18,53 @@ class GeneralFollowup(ModelForm):
 
 class ReferralFollowup(ModelForm):
     '''The form instantiation of a followup for PCP referral.'''
+
+    boolean_choices = ((True, 'Yes'),(False, 'No'))
+    PATIENT_REACHED_HELP = "If 'No'is selected, the remaining fields will not be required"
+    patient_reached = BooleanField(widget=RadioSelect(choices=boolean_choices), required = False, help_text=PATIENT_REACHED_HELP)
+
     class Meta:
         model = followup_models.ReferralFollowup
-        exclude = ['patient', 'author', 'author_type']
+        fields = ['contact_method',
+            'contact_resolution',
+            'referral_type',
+            'patient_reached',
+            'comments',
+            'has_appointment',
+            'apt_location',
+            'pt_showed',
+            'noapt_reason',
+            'noshow_reason',
+            'pt_showed']
 
     def clean(self):
         '''ReferralFollowup has some pretty complicated behavior regarding
         which combinations of blank and filled fields are acceptable. We
         implement checks for this here.'''
         cleaned_data = super(ModelForm, self).clean()
-
         has_appointment = cleaned_data.get("has_appointment")
+        patient_reached = cleaned_data.get("patient_reached")
+        if patient_reached:
+            if has_appointment:
+                # If the patient has an appointment, we require a location and
+                # information as to whether or not they showed up.
 
-        if has_appointment:
-            # If the patient has an appointment, we require a location and
-            # information as to whether or not they showed up.
+                if not cleaned_data.get("apt_location"):
+                    self.add_error("apt_location", "Appointment location is" +
+                                   "required when the patient has an appointment.")
 
-            if not cleaned_data.get("apt_location"):
-                self.add_error("apt_location", "Appointment location is" +
-                               "required when the patient has an appointment.")
+                if not cleaned_data.get("pt_showed"):
+                    self.add_error("pt_showed", "Please specify whether the" +
+                                   "patient has gone to their appointment.")
 
-            if not cleaned_data.get("pt_showed"):
-                self.add_error("pt_showed", "Please specify whether the" +
-                               "patient has gone to their appointment.")
+                pt_went = cleaned_data.get("pt_showed")
+                if pt_went == "No" and not cleaned_data.get("noshow_reason"):
+                    self.add_error("noshow_reason", "Why didn't the patient go" +
+                                   "to the appointment?")
 
-            pt_went = cleaned_data.get("pt_showed")
-            if pt_went == "No" and not cleaned_data.get("noshow_reason"):
-                self.add_error("noshow_reason", "Why didn't the patient go" +
-                               "to the appointment?")
-
-        else:  # not has_appointment
-            if not cleaned_data.get("noapt_reason"):
-                self.add_error("noapt_reason", "Why didn't the patient make" +
+            else:  # not has_appointment
+                if not cleaned_data.get("noapt_reason"):
+                    self.add_error("noapt_reason", "Why didn't the patient make" +
                                "an appointment?")
 
 
