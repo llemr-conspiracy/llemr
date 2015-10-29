@@ -425,7 +425,7 @@ def home_page(request):
                 pt_list_2.append(patient)
         
         def byName_key(patient):
-                return patient.last_name
+            return patient.last_name
 
         pt_list_1.sort(key = byName_key)
         pt_list_2.sort(key = byName_key)
@@ -451,7 +451,7 @@ def home_page(request):
         pt_list_1 = []
 
         def byName_key(patient):
-                return patient.last_name
+            return patient.last_name
 
         pt_list_1.sort(key = byName_key)
 
@@ -491,7 +491,7 @@ def home_page(request):
         pt_list = []
 
         def byName_key(patient):
-                return patient.last_name
+            return patient.last_name
 
         pt_list.sort(key = byName_key)
 
