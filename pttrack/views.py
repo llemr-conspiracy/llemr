@@ -510,6 +510,16 @@ def home_page(request):
                   {'zipped_list': zipped_list,
                     'title': title})
 
+def phone_directory(request):
+    patient_list = mymodels.Patient.objects.all().order_by('last_name')
+
+    title = "Patient Phone Number Directory"
+    return render(request,
+                  'pttrack/phone_directory.html',
+                  {'object_list': patient_list,
+                    'title': title})
+
+
 
 def error_workup(request, pk):
 
