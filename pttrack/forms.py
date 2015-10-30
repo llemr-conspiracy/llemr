@@ -19,26 +19,9 @@ class GeneralFollowup(ModelForm):
 class ReferralFollowup(ModelForm):
     '''The form instantiation of a followup for PCP referral.'''
 
-    boolean_choices = ((True, 'Yes'),(False, 'No'))
-    PATIENT_REACHED_HELP = "If 'No'is selected, the remaining fields will not be required"
-    patient_reached = BooleanField(widget=RadioSelect(choices=boolean_choices), 
-                                                        required = False,
-                                                        help_text=PATIENT_REACHED_HELP, 
-                                                        label="Were you able to contact the patient?")
-
     class Meta:
         model = followup_models.ReferralFollowup
-        fields = ['contact_method',
-            'contact_resolution',
-            'patient_reached',
-            'referral_type',
-            'comments',
-            'has_appointment',
-            'apt_location',
-            'pt_showed',
-            'noapt_reason',
-            'noshow_reason',
-            'pt_showed']
+        exclude = ['patient', 'author', 'author_type']
 
     def clean(self):
         '''ReferralFollowup has some pretty complicated behavior regarding
@@ -46,7 +29,8 @@ class ReferralFollowup(ModelForm):
         implement checks for this here.'''
         cleaned_data = super(ModelForm, self).clean()
         has_appointment = cleaned_data.get("has_appointment")
-        patient_reached = cleaned_data.get("patient_reached")
+        contact_resolution = cleaned_data.get("contact_resolution")
+        patient_reached = contact_resolution.patient_reached
         if patient_reached:
             if has_appointment:
                 # If the patient has an appointment, we require a location and

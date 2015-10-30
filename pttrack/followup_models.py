@@ -36,6 +36,9 @@ class ContactResult(models.Model):
     attempt_again = models.BooleanField(
         default=False,
         help_text="True if outcome means the pt should be contacted again.")
+    patient_reached = models.BooleanField(
+        default=True,
+        help_text="True if the outcome means they did not reach the patient")
 
     def __unicode__(self):
         return self.name
@@ -147,7 +150,8 @@ class ReferralFollowup(Followup):
     REFTYPE_HELP = "What kind of provider was the patient referred to?"
     referral_type = models.ForeignKey(mymodels.ReferralType,
                                       help_text=REFTYPE_HELP, 
-                                      default="Other")
+                                      blank=True,
+                                      null=True)
 
     bREF_HELP = "Does the patient have an appointment?"
     has_appointment = models.BooleanField(help_text=bREF_HELP)

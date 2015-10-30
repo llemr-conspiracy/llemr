@@ -445,6 +445,57 @@ class FollowupTest(TestCase):
             self.verify_fu(followup_models.ReferralFollowup, 'referral',
                            submitted_ref_fu)
 
+    def test_follwup_error(self):
+        pt = models.Patient.objects.all()[0]
+
+        method = models.ContactMethod.objects.create(name="Carrier Pidgeon")
+        res1 = followup_models.ContactResult.objects.create(name="DiggleJiggle", patient_reached = True)
+        res2 = followup_models.ContactResult.objects.create(name="Jigglewiggle", patient_reached = False)
+        reftype = models.ReferralType.objects.create(name="Chiropracter")
+        aptloc = models.ReferralLocation.objects.create(
+            name="Franklin's Back Adjustment",
+            address="1435 Sillypants Drive")
+        reason = followup_models.NoAptReason.objects.create(
+            name="better things to do")
+
+        rf1 = {
+            'contact_method': method,
+            'contact_resolution': res1,
+            'author': models.Provider.objects.all()[0],
+            'author_type': models.ProviderType.objects.all()[0],
+            'patient': pt,
+            'referral_type': reftype,
+            'has_appointment': False,
+            'apt_location': aptloc,
+            'noapt_reason': reason}
+
+        rf2 = {
+            'contact_method': method,
+            'contact_resolution': res1,
+            'author': models.Provider.objects.all()[0],
+            'author_type': models.ProviderType.objects.all()[0],
+            'patient': pt,
+            'referral_type': reftype,
+            'has_appointment': False}
+
+        rf3 = {
+            'contact_method': method,
+            'contact_resolution': res2,
+            'author': models.Provider.objects.all()[0],
+            'author_type': models.ProviderType.objects.all()[0],
+            'patient': pt,
+            'referral_type': reftype,
+            'has_appointment': False}
+
+        form1 = forms.ReferralFollowup(data=rf1)
+        form2 = forms.ReferralFollowup(data=rf2)
+        form3 = forms.ReferralFollowup(data=rf3)
+
+        self.assertEqual(form1['noapt_reason'].errors, [])
+        self.assertNotEqual(form2['noapt_reason'].errors, [])
+        self.assertEqual(form3['noapt_reason'].errors, [])
+
+
     def verify_fu(self, fu_type, ftype, submitted_fu):
 
         pt = models.Patient.objects.all()[0]
