@@ -49,6 +49,9 @@
           <li><a href="{% url 'all-patients' %}">All Patients</a></li>
           <li><a href="//snhc.wustl.edu/wiki">Wiki</a></li>
           <li><a href="{% url 'about' %}">About</a></li>
+          {% if user.is_superuser or user.is_staff %}
+          <li><a href="{% url 'phone-directory' %}">Phone Directory</a></li>
+          {% endif %}
         </ul>
 				{% if user.is_authenticated %}
 				<ul class="nav navbar-nav pull-right">

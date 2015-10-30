@@ -90,6 +90,11 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	  						<div class="panel-body">
 								<p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
 								<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+								{% if request.session.clintype_pk == "Coordinator" %}
+								<p class="text-right">
+								<a href="{% url 'admin:pttrack_workup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+								</p>
+								{% endif %}
 	  						</div>
 	      				{% endfor %}	
 	    			</div>
@@ -107,6 +112,11 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	  						<div class="panel-body">
 								<p><a href="{% url 'document-detail' pk=note.pk %}"><strong>{{ note.document_type | title }}:</strong></a> {{ note.short_text }}</p>
 								<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+								{% if request.session.clintype_pk == "Coordinator" %}
+								<p class="text-right">
+								<a href="{% url 'admin:pttrack_document_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+								</p>
+								{% endif %}
 	  						</div>
 	      				{% endfor %}	
 	    			</div>
@@ -126,6 +136,18 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 								{# here, the url takes an arugment to route it to the correct  #}
 								<p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
 								<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+								{% if request.session.clintype_pk == "Coordinator" %}
+								<p class="text-right">
+									{% if note.CS_HELP %}
+									<a href="{% url 'admin:pttrack_labfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+									{% elif note.SUBSQ_DOSE_HELP %}
+									<a href="{% url 'admin:pttrack_vaccinefollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+									{% elif note.REFTYPE_HELP %}
+									<a href="{% url 'admin:pttrack_referralfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+									{% else %}
+									<a href="{% url 'admin:pttrack_generalfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+									{% endif %}
+								{% endif %}
   							</div>
       				{% endfor %}	
     			</div>
@@ -141,6 +163,9 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 				<td>
 				<p><strong>{{ action_item.instruction }}:</strong> {{ action_item.comments }}</p>
 				<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
+				{% if request.session.clintype_pk == "Coordinator" %}
+					<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
+				{% endif %}
 			</td></tr>
 			{% empty %}
 				<p class="text-muted"> No due action items for {{ patient.name }}</p>
@@ -154,6 +179,9 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 				<td>
 					<p><strong>{{ action_item.instruction }}</strong>, due {{action_item.due_date}}: {{ action_item.comments }}</p>
 					<p class="text-muted  text-right"> Written by {{ action_item.author }} on {{ action_item.written_datetime }}</p>
+					{% if request.session.clintype_pk == "Coordinator" %}
+						<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
+					{% endif %}
 				</td></tr>
 			{% empty %}
 				<p class="text-muted"> No pending action items for {{ patient.name }}</p>
@@ -167,6 +195,9 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 				<td>
 					<p><strong>{{ action_item.instruction }}:</strong> {{ action_item.comments }}</p>
 					<p class="text-muted  text-right">Marked done by {{ action_item.completion_author }} on {{ action_item.completion_date }}</p>
+					{% if request.session.clintype_pk == "Coordinator" %}
+						<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
+					{% endif %}
 				</td></tr>
 			{% empty %}
 				<p class="text-muted"> No finished action items for {{ patient.name }}</p>

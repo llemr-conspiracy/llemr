@@ -36,6 +36,9 @@ class ContactResult(models.Model):
     attempt_again = models.BooleanField(
         default=False,
         help_text="True if outcome means the pt should be contacted again.")
+    patient_reached = models.BooleanField(
+        default=True,
+        help_text="True if the outcome means they did not reach the patient")
 
     def __unicode__(self):
         return self.name
@@ -97,6 +100,7 @@ class GeneralFollowup(Followup):
 class VaccineFollowup(Followup):
     '''Datamodel for a followup of a vaccine administration'''
 
+    # Template relies on following variable to render Admin Edit. If you change the variable here, you must edit patient_detail.html
     SUBSQ_DOSE_HELP = "Has the patient committed to coming back for another dose?"
     subsq_dose = models.BooleanField(verbose_name=SUBSQ_DOSE_HELP)
 
@@ -125,6 +129,7 @@ class VaccineFollowup(Followup):
 class LabFollowup(Followup):
     '''Datamodel for a follow up for lab results.'''
 
+    # Template relies on following variable to render Admin Edit. If you change the variable here, you must edit patient_detail.html
     CS_HELP = "Were you able to communicate the results?"
     communication_success = models.BooleanField(help_text=CS_HELP)
 
@@ -141,9 +146,12 @@ class LabFollowup(Followup):
 class ReferralFollowup(Followup):
     '''Datamodel for a PCP referral followup.'''
 
+    # Template relies on following variable to render Admin Edit. If you change the variable here, you must edit patient_detail.html
     REFTYPE_HELP = "What kind of provider was the patient referred to?"
     referral_type = models.ForeignKey(mymodels.ReferralType,
-                                      help_text=REFTYPE_HELP)
+                                      help_text=REFTYPE_HELP, 
+                                      blank=True,
+                                      null=True)
 
     bREF_HELP = "Does the patient have an appointment?"
     has_appointment = models.BooleanField(help_text=bREF_HELP)
