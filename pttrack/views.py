@@ -441,10 +441,10 @@ def home_page(request):
 
     elif active_provider_type.short_name == "Coordinator":
         ai_list = mymodels.ActionItem.objects.filter(
-            due_date__lte=django.utils.timezone.now().today())
+            due_date__lte=datetime.date.today())
 
         ai_list_2 = mymodels.ActionItem.objects.filter(
-            due_date__gt=django.utils.timezone.now().today()).order_by('due_date')
+            due_date__gt=datetime.date.today()).order_by('due_date')
 
 
         patient_list = mymodels.Patient.objects.all().order_by('last_name')
