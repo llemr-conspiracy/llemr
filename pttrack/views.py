@@ -472,7 +472,7 @@ def home_page(request):
                 if len(patient.inactive_action_items()) > 0:
                     return patient.inactive_action_items()[0].due_date
                 else:
-                    return datetime.datetime.now()
+                    return datetime.date.today()
             pt_list_3.sort(key = byAI_key)
 
         title = "Coordinator Tasks"
