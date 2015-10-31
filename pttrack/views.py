@@ -469,7 +469,7 @@ def home_page(request):
         if len(pt_list_3) > 0:
             
             def byAI_key(patient):
-                return patient.inactive_action_items()[0].due_date
+                return patient.inactive_action_items()[-1].due_date
 
             pt_list_3.sort(key = byAI_key)
 
