@@ -441,10 +441,10 @@ def home_page(request):
 
     elif active_provider_type.short_name == "Coordinator":
         ai_list = mymodels.ActionItem.objects.filter(
-            due_date__lte=datetime.date.today())
+            due_date__lte=django.utils.timezone.now().date())
 
         ai_list_2 = mymodels.ActionItem.objects.filter(
-            due_date__gt=datetime.date.today()).order_by('due_date')
+            due_date__gt=django.utils.timezone.now().date()).order_by('due_date')
 
 
         patient_list = mymodels.Patient.objects.all().order_by('last_name')
@@ -469,10 +469,8 @@ def home_page(request):
         if len(pt_list_3) > 0:
             
             def byAI_key(patient):
-                if len(patient.inactive_action_items()) > 0:
-                    return patient.inactive_action_items()[0].due_date
-                else:
-                    return datetime.date.today()
+                return patient.inactive_action_items()[-1].due_date
+
             pt_list_3.sort(key = byAI_key)
 
         title = "Coordinator Tasks"

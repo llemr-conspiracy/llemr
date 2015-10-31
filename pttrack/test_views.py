@@ -666,7 +666,7 @@ class ActionItemTest(TestCase):
             author=models.Provider.objects.all()[0],
             author_type=models.ProviderType.objects.all()[0],
             instruction=models.ActionInstruction.objects.all()[0],
-            due_date=datetime.datetime.today()+datetime.timedelta(days=1),
+            due_date=now().date()+datetime.timedelta(days=1),
             comments="",
             patient=pt1)
 
@@ -675,7 +675,7 @@ class ActionItemTest(TestCase):
             author=models.Provider.objects.all()[0],
             author_type=models.ProviderType.objects.all()[0],
             instruction=models.ActionInstruction.objects.all()[0],
-            due_date=datetime.datetime.today()-datetime.timedelta(days=1),
+            due_date=now().date()-datetime.timedelta(days=1),
             comments="",
             patient=pt2)
 
@@ -684,7 +684,7 @@ class ActionItemTest(TestCase):
             author=models.Provider.objects.all()[0],
             author_type=models.ProviderType.objects.all()[0],
             instruction=models.ActionInstruction.objects.all()[0],
-            due_date=datetime.datetime.today()-datetime.timedelta(days=15),
+            due_date=now().date()-datetime.timedelta(days=15),
             comments="",
             patient=pt3)
 
