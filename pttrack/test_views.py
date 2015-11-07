@@ -1,7 +1,6 @@
 from django.test import TestCase
 from .  import models
 from . import followup_models
-from . import forms
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.utils.timezone import now
@@ -550,27 +549,6 @@ class IntakeTest(TestCase):
 
         # new patients should be marked as active by default
         self.assertTrue(new_pt.needs_workup)
-
-    def test_missing_alt_phone(self):
-        '''Missing the alternative phone w/o alt phone owner should fail.'''
-        form_data = self.valid_pt_dict
-        form_data['alternate_phone_1_owner'] = "Jamal"
-        # omit 'alternate_phone', should get an error
-
-        form = forms.PatientForm(data=form_data)
-        self.assertEqual(form['first_name'].errors, [])
-        self.assertNotEqual(form['alternate_phone_1_owner'].errors, [])
-
-    def test_missing_alt_phone_owner(self):
-        '''Missing the alt phone owner w/o alt phone should fail.'''
-        form_data = self.valid_pt_dict
-        # form_data['alternate_phone_1_owner'] = "Jamal"
-        form_data['alternate_phone_1'] = "4258612322"
-        # omit 'alternate_phone', should get an error
-
-        form = forms.PatientForm(data=form_data)
-        self.assertEqual(form['first_name'].errors, [])
-        self.assertNotEqual(form['alternate_phone_1'].errors, [])
 
 
 class ActionItemTest(TestCase):
