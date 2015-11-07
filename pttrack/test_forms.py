@@ -61,8 +61,16 @@ class TestReferralFollowupForms(TestCase):
             'contact_resolution': contact_resolution,
             'patient': self.pt,
             'referral_type': self.reftype,
-            'has_appointment': has_appointment,
             }
+
+        # Has appointment could (at least in principle) be True, False, or
+        # unspecified.
+        if has_appointment:
+            form_data['has_appointment'] = True
+        elif has_appointment is None:
+            pass
+        else:
+            form_data['has_appointment'] = False
 
         if apt_location:
             form_data['apt_location'] = models.ReferralLocation.objects.all()[0]
@@ -109,7 +117,7 @@ class TestReferralFollowupForms(TestCase):
 
         form = self.build_form(
             contact_successful=False,
-            has_appointment=False,
+            has_appointment=None,
             apt_location=False,
             noapt_reason=False)
 
