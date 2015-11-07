@@ -41,14 +41,16 @@ class TestReferralFollowupForms(TestCase):
         self.unsuccessful_res = followup_models.ContactResult.objects.create(
             name="Disaster", patient_reached=False)
         self.reftype = models.ReferralType.objects.create(name="Chiropracter")
-        models.ReferralLocation.objects.create(
+        self.referral_location = models.ReferralLocation.objects.create(
             name="Franklin's Back Adjustment",
             address="1435 Sillypants Drive")
-        followup_models.NoAptReason.objects.create(
+        self.noapt_reason = followup_models.NoAptReason.objects.create(
             name="better things to do")
+        self.noshow_reason = followup_models.NoShowReason.objects.create(
+            name="Hella busy.")
 
 
-    def build_form(self, contact_successful, has_appointment, apt_location, noapt_reason):
+    def build_form(self, contact_successful, has_appointment, apt_location, noapt_reason, noshow_reason, pt_showed=None):
         '''
         Construct a ReferralFollowup form to suit the needs of the testing
         subroutines based upon what is provided and not provided.
@@ -73,12 +75,63 @@ class TestReferralFollowupForms(TestCase):
             form_data['has_appointment'] = False
 
         if apt_location:
-            form_data['apt_location'] = models.ReferralLocation.objects.all()[0]
+            form_data['apt_location'] = self.referral_location.id
 
         if noapt_reason:
-            form_data['noapt_reason'] = followup_models.NoAptReason.objects.all()[0]
+            form_data['noapt_reason'] = self.noapt_reason
+
+        if pt_showed is None:
+            pass
+        elif pt_showed:
+            form_data['pt_showed'] = 'Yes'
+        else:
+            form_data['pt_showed'] = 'No'
+
+        if noshow_reason:
+            form_data['noshow_reason'] = self.noshow_reason
+
 
         return forms.ReferralFollowup(data=form_data)
+
+    def test_hasapt_pt_noshow(self):
+        '''
+        Test correct submission variations for a ReferralFollowup that has an
+        appointment.
+        '''
+
+        # correct: pt didn't show, noshow reason is supplied
+        form = self.build_form(
+            contact_successful=True,
+            has_appointment=True,
+            apt_location=True,
+            noapt_reason=False,
+            noshow_reason=True,
+            pt_showed=False)
+
+        self.assertEqual(len(form.errors), 0)
+
+        # incorrect: pt didn't show and noshow reason is missing
+        form = self.build_form(
+            contact_successful=True,
+            has_appointment=True,
+            apt_location=True,
+            noapt_reason=False,
+            noshow_reason=False,
+            pt_showed=False)
+
+        self.assertGreater(len(form['noshow_reason'].errors), 0)
+
+        # incorrect: pt showed and noshow reason is present
+        form = self.build_form(
+            contact_successful=True,
+            has_appointment=True,
+            apt_location=True,
+            noapt_reason=False,
+            noshow_reason=True,
+            pt_showed=True)
+
+        self.assertGreater(len(form['noshow_reason'].errors), 0)
+
 
     def test_correct_successful_noapt(self):
         '''
@@ -91,9 +144,10 @@ class TestReferralFollowupForms(TestCase):
             contact_successful=True,
             has_appointment=False,
             apt_location=True,
-            noapt_reason=True)
+            noapt_reason=True,
+            noshow_reason=False)
 
-        self.assertEqual(len(form['noapt_reason'].errors), 0)
+        self.assertEqual(len(form.errors), 0)
 
     def test_incorrect_successful_noapt(self):
         '''
@@ -105,7 +159,8 @@ class TestReferralFollowupForms(TestCase):
             contact_successful=True,
             has_appointment=False,
             noapt_reason=False,
-            apt_location=False)
+            apt_location=False,
+            noshow_reason=False)
 
         self.assertGreater(len(form['noapt_reason'].errors), 0)
 
@@ -119,6 +174,7 @@ class TestReferralFollowupForms(TestCase):
             contact_successful=False,
             has_appointment=None,
             apt_location=False,
-            noapt_reason=False)
+            noapt_reason=False,
+            noshow_reason=False)
 
-        self.assertEqual(len(form['noapt_reason'].errors), 0)
+        self.assertEqual(len(form.errors), 0)

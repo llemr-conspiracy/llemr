@@ -49,10 +49,18 @@ class ReferralFollowup(ModelForm):
                         " gone to their appointment.")
 
                 pt_went = cleaned_data.get("pt_showed")
-                if pt_went == "No" and not cleaned_data.get("noshow_reason"):
-                    self.add_error(
-                        "noshow_reason", "Why didn't the patient go" +
-                        "to the appointment?")
+                if pt_went == "No":
+                    if not cleaned_data.get("noshow_reason"):
+                        self.add_error(
+                            "noshow_reason", "Why didn't the patient go" +
+                            "to the appointment?")
+
+                if pt_went == "Yes":
+                    if cleaned_data.get('noshow_reason'):
+                        self.add_error(
+                            "noshow_reason",
+                            "If the patient showed, a noshow reason should " +
+                            "not be given.")
 
             else:  # not has_appointment
                 if not cleaned_data.get("noapt_reason"):
