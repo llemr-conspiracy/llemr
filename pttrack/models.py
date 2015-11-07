@@ -1,83 +1,14 @@
 '''The datamodels for the SNHC clintools patient tracking system'''
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.conf import settings
 import django.utils.timezone
 import os
 
 from simple_history.models import HistoricalRecords
-
+from . import validators
 
 # pylint: disable=I0011,missing-docstring,E1305
-
-
-def validate_ssn(value):
-    '''Validate an SSN. Check length, and that it's only numbers except for hyphens at positions 3 and 6.'''
-
-    init_value = value
-
-    HYPHEN_1 = value.find('-')
-    HYPHEN_2 = value.rfind('-')
-
-    if HYPHEN_1 == 3:
-        value = value[0:HYPHEN_1] + value[HYPHEN_1+1:]
-    if HYPHEN_2 == 6:
-        # have adapt for the possibility (or not) that hyphen 1 is there
-        value = value[0:value.rfind('-')] + value[value.rfind('-')+1:]
-
-    if '-' in value:
-        raise ValidationError("Did you misplace a hyphen in '{0}'?".format(
-            init_value))
-    if not value.isdigit():
-        raise ValidationError(" ".join(
-            ['{0} is not a valid SSN. Your SSN shoud consist only of digits ',
-             'with the form xxx-xx-xxxx (hyphens optional).']).format(init_value))
-    if len(value) > 9:
-        raise ValidationError(" ".join([
-            '{0} is not a valid SSN, since it is longer than 9 characters.'
-            ]).format(init_value))
-
-
-def validate_zip(value):
-    '''verify that the given value is in the ZIP code format'''
-    if len(str(value)) != 5:
-        raise ValidationError('{0} is not a valid ZIP, because it has {1}' +
-                              ' digits.'.format(str(value), len(str(value))))
-
-    if not str(value).isdigit():
-        raise ValidationError(
-            "%s is not a valid ZIP, because it contains non-digit characters."
-            % value)
-
-
-def validate_bp(value):
-    '''validate that a value is a valid blood pressure'''
-    try:
-        (top, bottom) = value.split('/')
-    except ValueError:
-        raise ValidationError(
-            str(value) + " is not a validly formatted blood pressure since " +
-            "it cannot be split into two values using '/'.")
-
-    try:
-        (top, bottom) = (int(top), int(bottom))
-    except ValueError:
-        raise ValidationError(
-            "Either '" + str(top) + "' or '" + str(bottom) + "' is not a " +
-            "valid pressure--they must be small, positive integers.")
-
-def validate_birth_date(value):
-    import datetime
-    today = django.utils.timezone.now().date()
-
-    if today - value < datetime.timedelta(0):
-        raise ValidationError("Birth dates cannot be in the future.")
-
-
-def validate_attending(value):
-    return value.can_attend
-
 
 def make_filepath(instance, filename):
     '''
@@ -227,23 +158,24 @@ class Patient(Person):
     state = models.CharField(max_length=2,
                              default="MO")
     zip_code = models.CharField(max_length=5,
-                                validators=[validate_zip])
+                                validators=[validators.validate_zip])
     country = models.CharField(max_length=100,
                                default="USA")
 
     pcp_preferred_zip = models.CharField(max_length=5,
-                                         validators=[validate_zip],
+                                         validators=[validators.validate_zip],
                                          blank=True,
                                          null=True)
 
-    date_of_birth = models.DateField(validators=[validate_birth_date])
+    date_of_birth = models.DateField(
+        validators=[validators.validate_birth_date])
 
     patient_comfortable_with_english = models.BooleanField(default=True)
 
     ethnicities = models.ManyToManyField(Ethnicity)
 
     ssn = models.CharField(max_length=9,
-                           validators=[validate_ssn],
+                           validators=[validators.validate_ssn],
                            blank=True,
                            null=True)
 
@@ -497,7 +429,7 @@ class Workup(Note):
     hr = models.PositiveSmallIntegerField(blank=True, null=True)
     bp = models.CharField(blank=True, null=True,
                           max_length=7,
-                          validators=[validate_bp])
+                          validators=[validators.validate_bp])
 
     rr = models.PositiveSmallIntegerField(blank=True, null=True)
     t = models.DecimalField(max_digits=3,
@@ -526,7 +458,7 @@ class Workup(Note):
     signer = models.ForeignKey(Provider,
                                blank=True, null=True,
                                related_name="signed_workups",
-                               validators=[validate_attending])
+                               validators=[validators.validate_attending])
     signed_date = models.DateTimeField(blank=True, null=True)
 
     history = HistoricalRecords()
