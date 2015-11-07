@@ -14,6 +14,11 @@ import datetime
 BASIC_FIXTURE = 'basic_fixture'
 
 def note_check(test, note, client, pt_pk):
+    '''
+    Helper method that verifies that a note is correctly written to the
+    database. This should probably be broken out into its own unit test that
+    directly interfaces with the form object.
+    '''
     test.assertEquals(note.author.pk,
                       int(client.session['_auth_user_id']))
 
@@ -27,10 +32,11 @@ def note_check(test, note, client, pt_pk):
     test.assertLessEqual((now() - note.last_modified).total_seconds(), 10)
 
 
-def build_provider_and_log_in(client, roles=[]):
-    ''' Creates a provider and logs them in. Role defines their provider_type, default is all '''
+def build_provider_and_log_in(client, roles=None):
+    ''' Creates a provider and logs them in. Role defines their provider_type,
+    default is all '''
 
-    if roles == []:
+    if roles is None:
         roles = ["Coordinator", "Attending", "Clinical", "Preclinical"]
 
     user = User.objects.create_user('tljones', 'tommyljones@gmail.com',
@@ -444,57 +450,6 @@ class FollowupTest(TestCase):
 
             self.verify_fu(followup_models.ReferralFollowup, 'referral',
                            submitted_ref_fu)
-
-    def test_follwup_error(self):
-        pt = models.Patient.objects.all()[0]
-
-        method = models.ContactMethod.objects.create(name="Carrier Pidgeon")
-        res1 = followup_models.ContactResult.objects.create(name="DiggleJiggle", patient_reached = True)
-        res2 = followup_models.ContactResult.objects.create(name="Jigglewiggle", patient_reached = False)
-        reftype = models.ReferralType.objects.create(name="Chiropracter")
-        aptloc = models.ReferralLocation.objects.create(
-            name="Franklin's Back Adjustment",
-            address="1435 Sillypants Drive")
-        reason = followup_models.NoAptReason.objects.create(
-            name="better things to do")
-
-        rf1 = {
-            'contact_method': method,
-            'contact_resolution': res1,
-            'author': models.Provider.objects.all()[0],
-            'author_type': models.ProviderType.objects.all()[0],
-            'patient': pt,
-            'referral_type': reftype,
-            'has_appointment': False,
-            'apt_location': aptloc,
-            'noapt_reason': reason}
-
-        rf2 = {
-            'contact_method': method,
-            'contact_resolution': res1,
-            'author': models.Provider.objects.all()[0],
-            'author_type': models.ProviderType.objects.all()[0],
-            'patient': pt,
-            'referral_type': reftype,
-            'has_appointment': False}
-
-        rf3 = {
-            'contact_method': method,
-            'contact_resolution': res2,
-            'author': models.Provider.objects.all()[0],
-            'author_type': models.ProviderType.objects.all()[0],
-            'patient': pt,
-            'referral_type': reftype,
-            'has_appointment': False}
-
-        form1 = forms.ReferralFollowup(data=rf1)
-        form2 = forms.ReferralFollowup(data=rf2)
-        form3 = forms.ReferralFollowup(data=rf3)
-
-        self.assertEqual(form1['noapt_reason'].errors, [])
-        self.assertNotEqual(form2['noapt_reason'].errors, [])
-        self.assertEqual(form3['noapt_reason'].errors, [])
-
 
     def verify_fu(self, fu_type, ftype, submitted_fu):
 
