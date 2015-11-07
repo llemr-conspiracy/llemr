@@ -28,31 +28,45 @@ class ReferralFollowup(ModelForm):
         which combinations of blank and filled fields are acceptable. We
         implement checks for this here.'''
         cleaned_data = super(ModelForm, self).clean()
+
         has_appointment = cleaned_data.get("has_appointment")
         contact_resolution = cleaned_data.get("contact_resolution")
         patient_reached = contact_resolution.patient_reached
+
         if patient_reached:
             if has_appointment:
                 # If the patient has an appointment, we require a location and
                 # information as to whether or not they showed up.
 
                 if not cleaned_data.get("apt_location"):
-                    self.add_error("apt_location", "Appointment location is" +
-                                   "required when the patient has an appointment.")
+                    self.add_error(
+                        "apt_location", "Appointment location is required " + 
+                        "when the patient has an appointment.")
 
                 if not cleaned_data.get("pt_showed"):
-                    self.add_error("pt_showed", "Please specify whether the" +
-                                   "patient has gone to their appointment.")
+                    self.add_error(
+                        "pt_showed", "Please specify whether the patient has" +
+                        " gone to their appointment.")
 
                 pt_went = cleaned_data.get("pt_showed")
-                if pt_went == "No" and not cleaned_data.get("noshow_reason"):
-                    self.add_error("noshow_reason", "Why didn't the patient go" +
-                                   "to the appointment?")
+                if pt_went == "No":
+                    if not cleaned_data.get("noshow_reason"):
+                        self.add_error(
+                            "noshow_reason", "Why didn't the patient go" +
+                            "to the appointment?")
+
+                if pt_went == "Yes":
+                    if cleaned_data.get('noshow_reason'):
+                        self.add_error(
+                            "noshow_reason",
+                            "If the patient showed, a noshow reason should " +
+                            "not be given.")
 
             else:  # not has_appointment
                 if not cleaned_data.get("noapt_reason"):
-                    self.add_error("noapt_reason", "Why didn't the patient make" +
-                               "an appointment?")
+                    self.add_error(
+                        "noapt_reason", "Why didn't the patient make" +
+                        "an appointment?")
 
 
 class VaccineFollowup(ModelForm):
