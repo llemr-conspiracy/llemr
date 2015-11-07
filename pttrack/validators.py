@@ -59,11 +59,21 @@ def validate_bp(value):
             "Either '" + str(top) + "' or '" + str(bottom) + "' is not a " +
             "valid pressure--they must be small, positive integers.")
 
+    if top < bottom:
+        raise ValidationError(
+            "The systolic blood pressure (" + str(top) +
+            ") has to be higher than the diastolic blood pressure (" +
+            str(bottom) + ").")
+
+
 def validate_birth_date(value):
     today = now().date()
 
     if today - value < datetime.timedelta(0):
         raise ValidationError("Birth dates cannot be in the future.")
+
+    if today - value > datetime.timedelta(365 * 150):
+        raise ValidationError("Birth dates cannot be more than 150 years in the past.")
 
 
 def validate_attending(value):
