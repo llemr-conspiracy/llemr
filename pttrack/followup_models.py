@@ -2,7 +2,6 @@
 SNHC clintools patient tracking system'''
 from django.db import models
 from pttrack import models as mymodels
-import django.utils.timezone
 
 from simple_history.models import HistoricalRecords
 
