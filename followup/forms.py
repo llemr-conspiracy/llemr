@@ -1,6 +1,7 @@
 from django.forms import ModelForm
 
 from bootstrap3_datetime.widgets import DateTimePicker
+from pttrack.models import Patient
 
 from . import models
 
@@ -94,7 +95,7 @@ class LabFollowup(ModelForm):
 
 class PatientForm(ModelForm):
     class Meta:
-        model = models.Patient
+        model = Patient
         exclude = ['needs_workup']
 
     def clean(self):

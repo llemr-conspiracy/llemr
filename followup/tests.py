@@ -5,9 +5,9 @@ import datetime
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
-from pttrack import forms
 from pttrack.models import Language, Gender, Ethnicity, ContactMethod, Patient, Provider, ProviderType
 
+from . import forms
 from . import models
 
 # pylint: disable=invalid-name

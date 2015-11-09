@@ -1,12 +1,19 @@
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 
 from pttrack.models import Patient
 from pttrack.views import NoteUpdate, NoteFormView, get_current_provider_type
-import pttrack.forms as myforms
 
-from . import models as models
+from . import forms
+from . import models
+
+
+def followup_choice(request, pt_id):
+    '''Prompt the user to choose a follow up type.'''
+    pt = get_object_or_404(Patient, pk=pt_id)
+    return render(request, 'pttrack/followup-choice.html', {'patient': pt})
+
 
 class FollowupUpdate(NoteUpdate):
     template_name = "pttrack/form-update.html"
@@ -18,25 +25,25 @@ class FollowupUpdate(NoteUpdate):
 
 class ReferralFollowupUpdate(FollowupUpdate):
     model = models.ReferralFollowup
-    form_class = myforms.ReferralFollowup
+    form_class = forms.ReferralFollowup
     note_type = "Referral Followup"
 
 
 class LabFollowupUpdate(FollowupUpdate):
     model = models.LabFollowup
-    form_class = myforms.LabFollowup
+    form_class = forms.LabFollowup
     note_type = "Lab Followup"
 
 
 class VaccineFollowupUpdate(FollowupUpdate):
     model = models.VaccineFollowup
-    form_class = myforms.VaccineFollowup
+    form_class = forms.VaccineFollowup
     note_type = "Vaccine Followup"
 
 
 class GeneralFollowupUpdate(FollowupUpdate):
     model = models.GeneralFollowup
-    form_class = myforms.GeneralFollowup
+    form_class = forms.GeneralFollowup
     note_type = "General Followup"
 
 
@@ -49,10 +56,10 @@ class FollowupCreate(NoteFormView):
 
         ftype = self.kwargs['ftype']
 
-        futypes = {'referral': myforms.ReferralFollowup,
-                   'labs': myforms.LabFollowup,
-                   'vaccine': myforms.VaccineFollowup,
-                   'general': myforms.GeneralFollowup}
+        futypes = {'referral': forms.ReferralFollowup,
+                   'labs': forms.LabFollowup,
+                   'vaccine': forms.VaccineFollowup,
+                   'general': forms.GeneralFollowup}
 
         return futypes[ftype]
 

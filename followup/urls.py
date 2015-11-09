@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from pttrack.urls import url_wrap
 
+from . import views
 
 unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^(?P<pt_id>[0-9]+)/followup/(?P<ftype>[\w]+)/$',

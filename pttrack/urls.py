@@ -106,7 +106,7 @@ def url_wrap(urls):
         else:
             u._callback = provider_required(u._callback)
 
-        urlpatterns.append(u)
+        wrapped_urls.append(u)
     return wrapped_urls
 
 urlpatterns = url_wrap(unwrapped_urlconf)

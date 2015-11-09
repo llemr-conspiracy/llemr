@@ -483,11 +483,12 @@ class ActionItemTest(TestCase):
         # new action items should not be done
         self.assertFalse(ai.done())
 
-        # submit a request to mark the new ai as done. should redirect to pt
+        # submit a request to mark the new ai as done. should redirect to 
+        # choose a followup type.
         ai_url = 'done-action-item'
         response = self.client.get(reverse(ai_url, args=(ai.id,)))
         self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('patient-detail', args=(pt.id,)),
+        self.assertIn(reverse("followup-choice", args=(ai.patient.pk,)),
                       response.url)
         self.assertTrue(models.ActionItem.objects.all()[0].done())
         self.assertEquals(models.ActionItem.objects.all()[0].author.pk,
