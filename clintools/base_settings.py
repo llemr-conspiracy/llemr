@@ -23,6 +23,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'pttrack',
+    'followup',
     'bootstrap3',
     'bootstrap3_datetime',
     'djangular',

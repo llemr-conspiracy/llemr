@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 
 from .decorators import provider_required
 from . import models as mymodels
-from . import followup_models as fu_models
 from . import views
 
 # pylint: disable=I0011
@@ -86,30 +85,6 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
         name="document-update"),
 
 
-    #  FOLLOWUPS
-    url(r'^(?P<pt_id>[0-9]+)/followup/(?P<ftype>[\w]+)/$',
-        views.FollowupCreate.as_view(),
-        name='new-followup'),
-    url(r'^(?P<pt_id>[0-9]+)/followup/$',
-        views.followup_choice,
-        name='followup-choice'),
-    url(r'^followup/referral/(?P<pk>[0-9]+)/$',
-        views.ReferralFollowupUpdate.as_view(),
-        {"model": "Referral"},
-        name="followup"),  # parameter 'model' to identify from others w/ name
-    url(r'^followup/lab/(?P<pk>[0-9]+)/$',
-        views.LabFollowupUpdate.as_view(),
-        {"model": "Lab"},
-        name="followup"),
-    url(r'^followup/vaccine/(?P<pk>[0-9]+)/$',
-        views.VaccineFollowupUpdate.as_view(),
-        {"model": "Vaccine"},
-        name="followup"),
-    url(r'^followup/general/(?P<pk>[0-9]+)/$',
-        views.GeneralFollowupUpdate.as_view(),
-        {"model": "General"},
-        name="followup"),
-
     # MISC
     url(r'^about/',
         TemplateView.as_view(template_name='pttrack/about.html'),
@@ -119,15 +94,20 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
         name="new-clindate"),
 ]
 
-urlpatterns = []
-for u in unwrapped_urlconf:
-    if u.name in ['new-provider', 'choose-clintype']:
-        # do not wrap in full regalia
-        u._callback = login_required(u._callback)
-    elif u.name in ['about']:
-        # do not wrap at all, fully public
-        pass
-    else:
-        u._callback = provider_required(u._callback)
+def url_wrap(urls):
+    wrapped_urls = []
+    for u in urls:
+        if u.name in ['new-provider', 'choose-clintype']:
+            # do not wrap in full regalia
+            u._callback = login_required(u._callback)
+        elif u.name in ['about']:
+            # do not wrap at all, fully public
+            pass
+        else:
+            u._callback = provider_required(u._callback)
 
-    urlpatterns.append(u)
+        urlpatterns.append(u)
+    return wrapped_urls
+
+urlpatterns = url_wrap(unwrapped_urlconf)
+

@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 import django.utils.timezone
 
 from . import models as mymodels
-from . import followup_models as fu_models
+from followup import models as fu_models
 from . import forms as myforms
 
 import datetime
@@ -229,85 +229,6 @@ class WorkupUpdate(NoteUpdate):
                 return HttpResponseRedirect(reverse("workup-error",
                                                     args=(wu.id,)))
 
-
-
-
-
-class FollowupUpdate(NoteUpdate):
-    template_name = "pttrack/form-update.html"
-
-    def get_success_url(self):
-        pt = self.object.patient
-        return reverse("patient-detail", args=(pt.id, ))
-
-
-class ReferralFollowupUpdate(FollowupUpdate):
-    model = fu_models.ReferralFollowup
-    form_class = myforms.ReferralFollowup
-    note_type = "Referral Followup"
-
-
-class LabFollowupUpdate(FollowupUpdate):
-    model = fu_models.LabFollowup
-    form_class = myforms.LabFollowup
-    note_type = "Lab Followup"
-
-
-class VaccineFollowupUpdate(FollowupUpdate):
-    model = fu_models.VaccineFollowup
-    form_class = myforms.VaccineFollowup
-    note_type = "Vaccine Followup"
-
-
-class GeneralFollowupUpdate(FollowupUpdate):
-    model = fu_models.GeneralFollowup
-    form_class = myforms.GeneralFollowup
-    note_type = "General Followup"
-
-
-class FollowupCreate(NoteFormView):
-    '''A view for creating a new Followup'''
-    template_name = 'pttrack/form_submission.html'
-    note_type = "Followup"
-
-    def get_form_class(self, **kwargs):
-
-        ftype = self.kwargs['ftype']
-
-        futypes = {'referral': myforms.ReferralFollowup,
-                   'labs': myforms.LabFollowup,
-                   'vaccine': myforms.VaccineFollowup,
-                   'general': myforms.GeneralFollowup}
-
-        return futypes[ftype]
-
-    def get_followup_model(self):
-        '''Get the subtype of Followup model used by the FollowupForm used by
-        this FollowupCreate view.'''
-        # I have no idea if this is the right way to do this. It seems a bit
-        # dirty.
-        return self.get_form_class().Meta.model
-
-    def form_valid(self, form):
-
-        pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
-        fu = form.save(commit=False)
-        fu.patient = pt
-        fu.author = self.request.user.provider
-        fu.author_type = get_current_provider_type(self.request)
-
-        fu.save()
-
-        form.save_m2m()
-
-        if fu.contact_resolution.attempt_again:
-            return HttpResponseRedirect(reverse('new-action-item',
-                                                args=(pt.id,)))
-        else:
-            return HttpResponseRedirect(reverse("patient-detail",
-                                                args=(pt.id,)))
-
-
 class ActionItemCreate(NoteFormView):
     '''A view for creating ActionItems using the ActionItemForm.'''
     template_name = 'pttrack/form_submission.html'
@@ -434,6 +355,7 @@ def home_page(request):
         sectiontitle_list = ["Patients with Unsigned Workups", "Active Patients"]
         zipped_list = zip(sectiontitle_list,pt_list_list)
 
+
         return render(request,
                   'pttrack/patient_list.html',
                   {'zipped_list': zipped_list,
@@ -441,10 +363,10 @@ def home_page(request):
 
     elif active_provider_type.short_name == "Coordinator":
         ai_list = mymodels.ActionItem.objects.filter(
-            due_date__lte=django.utils.timezone.now().date())
+            due_date__lte=django.utils.timezone.now().today())
 
         ai_list_2 = mymodels.ActionItem.objects.filter(
-            due_date__gt=django.utils.timezone.now().date()).order_by('due_date')
+            due_date__gt=django.utils.timezone.now().today()).order_by('due_date')
 
 
         patient_list = mymodels.Patient.objects.all().order_by('last_name')
@@ -466,12 +388,11 @@ def home_page(request):
         # The third list consists of patients that have action items due
         pt_list_3 = list(set([ai.patient for ai in ai_list_2 if not ai.done()]))
 
-        if len(pt_list_3) > 0:
-            
-            def byAI_key(patient):
-                return patient.inactive_action_items()[-1].due_date
+        def byAI_key(patient):
+            return patient.inactive_action_items()[0].due_date
 
-            pt_list_3.sort(key = byAI_key)
+        pt_list_3.sort(key = byAI_key)
+
 
         title = "Coordinator Tasks"
         pt_list_list = [pt_list_1, pt_list_2, pt_list_3]
@@ -507,16 +428,6 @@ def home_page(request):
                   'pttrack/patient_list.html',
                   {'zipped_list': zipped_list,
                     'title': title})
-
-def phone_directory(request):
-    patient_list = mymodels.Patient.objects.all().order_by('last_name')
-
-    title = "Patient Phone Number Directory"
-    return render(request,
-                  'pttrack/phone_directory.html',
-                  {'object_list': patient_list,
-                    'title': title})
-
 
 
 def error_workup(request, pk):

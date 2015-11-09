@@ -1,7 +1,7 @@
 '''The datamodels for all various types required for followup tracking in  the
 SNHC clintools patient tracking system'''
 from django.db import models
-from pttrack import models as mymodels
+from pttrack.models import Note, ContactMethod, ReferralType, ReferralLocation
 
 from simple_history.models import HistoricalRecords
 
@@ -43,14 +43,14 @@ class ContactResult(models.Model):
         return self.name
 
 
-class Followup(mymodels.Note):
+class Followup(Note):
     '''The base followup class used in all different types of patient followup
     notes. Can also be instantiated as a 'general follouwp' type.'''
 
     class Meta:
         abstract = True
 
-    contact_method = models.ForeignKey(mymodels.ContactMethod)
+    contact_method = models.ForeignKey(ContactMethod)
     contact_resolution = models.ForeignKey(ContactResult)
 
     comments = models.TextField(blank=True, null=True)
@@ -99,7 +99,8 @@ class GeneralFollowup(Followup):
 class VaccineFollowup(Followup):
     '''Datamodel for a followup of a vaccine administration'''
 
-    # Template relies on following variable to render Admin Edit. If you change the variable here, you must edit patient_detail.html
+    # Template relies on following variable to render Admin Edit. If you 
+    # change the variable here, you must edit patient_detail.html
     SUBSQ_DOSE_HELP = "Has the patient committed to coming back for another dose?"
     subsq_dose = models.BooleanField(verbose_name=SUBSQ_DOSE_HELP)
 
@@ -147,7 +148,7 @@ class ReferralFollowup(Followup):
 
     # Template relies on following variable to render Admin Edit. If you change the variable here, you must edit patient_detail.html
     REFTYPE_HELP = "What kind of provider was the patient referred to?"
-    referral_type = models.ForeignKey(mymodels.ReferralType,
+    referral_type = models.ForeignKey(ReferralType,
                                       help_text=REFTYPE_HELP, 
                                       blank=True,
                                       null=True)
@@ -156,7 +157,7 @@ class ReferralFollowup(Followup):
     has_appointment = models.BooleanField(help_text=bREF_HELP)
 
     APP_HELP = "Where is the appointment?"
-    apt_location = models.ForeignKey(mymodels.ReferralLocation,
+    apt_location = models.ForeignKey(ReferralLocation,
                                      blank=True,
                                      null=True,
                                      help_text=APP_HELP)
