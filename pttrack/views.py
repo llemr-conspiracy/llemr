@@ -415,95 +415,40 @@ def home_page(request):
     active_provider_type = get_object_or_404(mymodels.ProviderType,
                                              pk=request.session['clintype_pk'])
     if active_provider_type.signs_charts:
-        workup_list = mymodels.Workup.objects.all()
-        pt_list_1 = list(set([wu.patient for wu in workup_list if wu.signer is None]))
-        patient_list = mymodels.Patient.objects.all().order_by('last_name')
-        pt_list_2 = []
-
-        for patient in patient_list:
-            if (patient.needs_workup):
-                pt_list_2.append(patient)
         
-        def byName_key(patient):
-            return patient.last_name
+        wu_list_unsigned = mymodels.Workup.objects.filter(signer__isnull=True).select_related('patient')
+        pt_list_unsigned = list(set([wu.patient for wu in wu_list_unsigned]))
+        pt_list_unsigned.sort(key = lambda pt: pt.last_name)
 
-        pt_list_1.sort(key = byName_key)
-        pt_list_2.sort(key = byName_key)
+        pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
+        
         title = "Attending Tasks"
-        pt_list_list = [pt_list_1, pt_list_2]
-        sectiontitle_list = ["Patients with Unsigned Workups", "Active Patients"]
-        zipped_list = zip(sectiontitle_list,pt_list_list)
-
-        return render(request,
-                  'pttrack/patient_list.html',
-                  {'zipped_list': zipped_list,
-                    'title': title})
+        zipped_list = zip(["Patients with Unsigned Workups", "Active Patients"],
+                            [pt_list_unsigned, pt_list_active])
 
     elif active_provider_type.short_name == "Coordinator":
-        ai_list = mymodels.ActionItem.objects.filter(
-            due_date__lte=django.utils.timezone.now().date())
+        
+        pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
 
-        ai_list_2 = mymodels.ActionItem.objects.filter(
-            due_date__gt=django.utils.timezone.now().date()).order_by('due_date')
+        ai_list_active = mymodels.ActionItem.objects.filter(due_date__lte=django.utils.timezone.now().date())
+        pt_list_ai_active = list(set([ai.patient for ai in ai_list_active if not ai.done()]))
 
-
-        patient_list = mymodels.Patient.objects.all().order_by('last_name')
-        pt_list_1 = []
-
-        def byName_key(patient):
-            return patient.last_name
-
-        pt_list_1.sort(key = byName_key)
-
-        for patient in patient_list:
-            if (patient.needs_workup):
-                pt_list_1.append(patient)
-
-        # if the AI is marked as done, it doesn't contribute to the pt being on
-        # the list.
-        pt_list_2 = list(set([ai.patient for ai in ai_list if not ai.done()]))
-
-        # The third list consists of patients that have action items due
-        pt_list_3 = list(set([ai.patient for ai in ai_list_2 if not ai.done()]))
-
-        if len(pt_list_3) > 0:
-            
-            def byAI_key(patient):
-                return patient.inactive_action_items()[-1].due_date
-
-            pt_list_3.sort(key = byAI_key)
+        ai_list_inactive = mymodels.ActionItem.objects.filter(due_date__gt=django.utils.timezone.now().date()).order_by('due_date')
+        pt_list_ai_inactive = list(set([ai.patient for ai in ai_list_inactive if not ai.done()]))
+        pt_list_ai_inactive.sort(key = lambda pt: pt.inactive_action_items()[-1].due_date)
 
         title = "Coordinator Tasks"
-        pt_list_list = [pt_list_1, pt_list_2, pt_list_3]
-        sectiontitle_list = ["Active Patients", "Active Action Items", "Pending Action Items"]
-        zipped_list = zip(sectiontitle_list,pt_list_list)
-
-
-        return render(request,
-                  'pttrack/patient_list.html',
-                  {'zipped_list': zipped_list,
-                    'title': title})
+        zipped_list = zip(["Active Patients", "Active Action Items", "Pending Action Items"], 
+                            [pt_list_active, pt_list_ai_active, pt_list_ai_inactive])
 
     else:
-        patient_list = mymodels.Patient.objects.all().order_by('last_name')
-        pt_list = []
-
-        def byName_key(patient):
-            return patient.last_name
-
-        pt_list.sort(key = byName_key)
-
-        for patient in patient_list:
-            if (patient.needs_workup):
-                pt_list.append(patient)
+        pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
 
         title = "Active Patients"
-        pt_list_list = [pt_list]
-        sectiontitle_list = ["Active Patients"]
-        zipped_list = zip(sectiontitle_list,pt_list_list)
+        zipped_list = zip(["Active Patients"],
+                        [pt_list_active])
 
-
-        return render(request,
+    return render(request,
                   'pttrack/patient_list.html',
                   {'zipped_list': zipped_list,
                     'title': title})
