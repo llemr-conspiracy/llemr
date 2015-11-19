@@ -10,8 +10,6 @@ class Migration(migrations.Migration):
         ('pttrack', '0001_initial'),
     ]
 
-    remove_operations = []
-
     database_operations = [
         migrations.AlterModelTable('GeneralFollowup',
                                    'followup_generalfollowup'),
@@ -55,7 +53,4 @@ class Migration(migrations.Migration):
         migrations.SeparateDatabaseAndState(
             database_operations=database_operations,
             state_operations=state_operations)
-    ]
-
-    operations = [
     ]
