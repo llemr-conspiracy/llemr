@@ -686,6 +686,11 @@ class ActionItemTest(TestCase):
         self.assertNotEqual(prev_mod_datetime,
                             models.ActionItem.objects.all()[0].last_modified)
 
+        # make sure updating the action items url works
+        ai_url = 'update-action-item'
+        response = self.client.get(reverse(ai_url, args=(ai.pk,)))
+        self.assertEqual(response.status_code, 200)
+
     def test_create_action_item(self):
 
         self.assertEquals(len(models.ActionItem.objects.all()), 0)

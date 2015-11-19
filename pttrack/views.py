@@ -328,6 +328,15 @@ class ActionItemCreate(NoteFormView):
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
+class ActionItemUpdate(NoteUpdate):
+    template_name = "pttrack/form-update.html"
+    model = mymodels.ActionItem
+    form_class = myforms.ActionItemForm
+    note_type = "Action Item"
+
+    def get_success_url(self):
+        pt = self.object.patient
+        return reverse("patient-detail", args=(pt.id, ))
 
 class PatientUpdate(UpdateView):
     template_name = 'pttrack/patient-update.html'
@@ -367,6 +376,7 @@ class DocumentUpdate(NoteUpdate):
     def get_success_url(self):
         doc = self.object
         return reverse("document-detail", args=(doc.id, ))
+
 
 
 class DocumentCreate(NoteFormView):

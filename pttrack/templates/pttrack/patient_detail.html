@@ -161,7 +161,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 			{% for action_item in patient.active_action_items %}
 			<tr><td><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a></td>
 				<td>
-				<p><strong>{{ action_item.instruction }}:</strong> {{ action_item.comments }}</p>
+				<p><strong><a href="{% url 'update-action-item' pk=action_item.pk%}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
 				<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
 				{% if request.session.clintype_pk == "Coordinator" %}
 					<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
@@ -177,7 +177,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 			{% for action_item in patient.inactive_action_items %}
 			<tr><td><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a></td>
 				<td>
-					<p><strong>{{ action_item.instruction }}</strong>, due {{action_item.due_date}}: {{ action_item.comments }}</p>
+					<p><strong><a href="{% url 'update-action-item' pk=action_item.pk %}">{{ action_item.instruction }}:</a></strong>, due {{action_item.due_date}}: {{ action_item.comments }}</p>
 					<p class="text-muted  text-right"> Written by {{ action_item.author }} on {{ action_item.written_datetime }}</p>
 					{% if request.session.clintype_pk == "Coordinator" %}
 						<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
@@ -193,7 +193,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 			{% for action_item in patient.done_action_items %}
 			<tr><td><a href="{% url 'reset-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "check" %}</a></td>
 				<td>
-					<p><strong>{{ action_item.instruction }}:</strong> {{ action_item.comments }}</p>
+					<p><strong><a href="{% url 'update-action-item' pk=action_item.pk%}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
 					<p class="text-muted  text-right">Marked done by {{ action_item.completion_author }} on {{ action_item.completion_date }}</p>
 					{% if request.session.clintype_pk == "Coordinator" %}
 						<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
