@@ -403,6 +403,9 @@ def choose_clintype(request):
 
     if request.POST:
         request.session['clintype_pk'] = request.POST[RADIO_CHOICE_KEY]
+        active_provider_type = get_current_provider_type(request)
+        request.session['signs_charts'] = active_provider_type.signs_charts
+        request.session['is_staff'] = active_provider_type.is_staff
         return HttpResponseRedirect(request.GET['next'])
 
     if request.GET:
@@ -410,6 +413,9 @@ def choose_clintype(request):
 
         if len(role_options) == 1:
             request.session['clintype_pk'] = role_options[0].pk
+            active_provider_type = get_current_provider_type(request)
+            request.session['signs_charts'] = active_provider_type.signs_charts
+            request.session['is_staff'] = active_provider_type.is_staff
             return HttpResponseRedirect(request.GET['next'])
         elif len(role_options) == 0:
             return HttpResponseServerError(
@@ -422,8 +428,7 @@ def choose_clintype(request):
 
 
 def home_page(request):
-    active_provider_type = get_object_or_404(mymodels.ProviderType,
-                                             pk=request.session['clintype_pk'])
+    active_provider_type = get_current_provider_type(request)
     if active_provider_type.signs_charts:
         
         wu_list_unsigned = mymodels.Workup.objects.filter(signer__isnull=True).select_related('patient')
@@ -436,7 +441,7 @@ def home_page(request):
         zipped_list = zip(["Patients with Unsigned Workups", "Active Patients"],
                             [pt_list_unsigned, pt_list_active])
 
-    elif active_provider_type.short_name == "Coordinator":
+    elif active_provider_type.is_staff:
         
         pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
 
