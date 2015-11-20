@@ -239,5 +239,45 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.SeparateDatabaseAndState(state_operations=state_operations)
+        migrations.SeparateDatabaseAndState(state_operations=state_operations),
+
+        # I am actually at a loss for why these are required. The "None" means
+        # to use the default (since it alters the 'db_table' property of the
+        # Meta subclass), but I'm not clear on why that should be nessecary.
+        migrations.AlterModelTable(
+            name='contactresult',
+            table=None,
+        ),
+        migrations.AlterModelTable(
+            name='generalfollowup',
+            table=None,
+        ),
+        migrations.AlterModelTable(
+            name='historicalgeneralfollowup',
+            table=None,
+        ),
+        migrations.AlterModelTable(
+            name='historicallabfollowup',
+            table=None,
+        ),
+        migrations.AlterModelTable(
+            name='historicalreferralfollowup',
+            table=None,
+        ),
+        migrations.AlterModelTable(
+            name='historicalvaccinefollowup',
+            table=None,
+        ),
+        migrations.AlterModelTable(
+            name='labfollowup',
+            table=None,
+        ),
+        migrations.AlterModelTable(
+            name='referralfollowup',
+            table=None,
+        ),
+        migrations.AlterModelTable(
+            name='vaccinefollowup',
+            table=None,
+        ),
     ]
