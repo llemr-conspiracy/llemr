@@ -15,12 +15,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='historicalpatient',
             name='ssn',
-            field=models.CharField(blank=True, max_length=9, null=True, validators=[pttrack.models.validate_ssn]),
+            field=models.CharField(blank=True, max_length=9, null=True, validators=[pttrack.validators.validate_ssn]),
         ),
         migrations.AddField(
             model_name='patient',
             name='ssn',
-            field=models.CharField(blank=True, max_length=9, null=True, validators=[pttrack.models.validate_ssn]),
+            field=models.CharField(blank=True, max_length=9, null=True, validators=[pttrack.validators.validate_ssn]),
         ),
         migrations.AlterField(
             model_name='patient',
