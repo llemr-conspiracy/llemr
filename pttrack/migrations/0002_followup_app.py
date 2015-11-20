@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
         migrations.AlterModelTable('NoAptReason',
                                    'followup_noaptreason'),
         migrations.AlterModelTable('NoShowReason',
-                                   'followup_NowShowReason')
+                                   'followup_noshowreason')
     ]
 
     state_operations = [
