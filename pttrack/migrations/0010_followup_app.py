@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('pttrack', '0009_initial'),
+        ('pttrack', '0009_auto'),
     ]
 
     database_operations = [
