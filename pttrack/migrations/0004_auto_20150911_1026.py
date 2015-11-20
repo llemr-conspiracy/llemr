@@ -118,7 +118,7 @@ class Migration(migrations.Migration):
                 ('address', models.CharField(max_length=200)),
                 ('city', models.CharField(default=b'St. Louis', max_length=50)),
                 ('state', models.CharField(default=b'MO', max_length=2)),
-                ('zip_code', models.CharField(max_length=5, validators=[validators.validators.validate_zip])),
+                ('zip_code', models.CharField(max_length=5, validators=[pttrack.validators.validate_zip])),
                 ('pcp_preferred_zip', models.CharField(blank=True, max_length=5, null=True, validators=[pttrack.validators.validate_zip])),
                 ('date_of_birth', models.DateField(validators=[pttrack.validators.validate_birth_date])),
                 ('patient_comfortable_with_english', models.BooleanField(default=True)),
