@@ -184,6 +184,31 @@ class TestReferralFollowupForms(TestCase):
 
         self.assertEqual(len(form.errors), 0)
 
+    def test_incorrect_unsuccessful_noapt(self):
+        '''
+        Test that an unsuccessful contact with noapt and nowshow reasons will
+        fail.
+        '''
+
+        form = self.build_form(
+            contact_successful=False,
+            has_appointment=None,
+            apt_location=False,
+            noapt_reason=True,
+            noshow_reason=False)
+
+        self.assertGreater(len(form['noapt_reason'].errors), 0)
+
+        form = self.build_form(
+            contact_successful=False,
+            has_appointment=None,
+            apt_location=False,
+            noapt_reason=False,
+            noshow_reason=True)
+
+        self.assertGreater(len(form['noshow_reason'].errors), 0)
+
+
 class FollowupTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 

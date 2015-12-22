@@ -62,6 +62,15 @@ class ReferralFollowup(ModelForm):
                     self.add_error(
                         "noapt_reason", "Why didn't the patient make" +
                         "an appointment?")
+        else:
+            detail_params = ["noshow_reason", "noapt_reason", "pt_showed"]
+
+            for param in detail_params:
+                if cleaned_data.get(param):
+                    self.add_error(
+                        param,
+                        "You can't give a " + param.replace("_", " ") +
+                        " value if contact was unsuccessful")
 
 
 class VaccineFollowup(ModelForm):
