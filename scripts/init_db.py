@@ -6,8 +6,8 @@ new database in production, or just as part of the reset_db.sh script used to
 rebuild the database when debugging.
 '''
 
-from pttrack import models
-from pttrack import followup_models
+from pttrack import models as core
+from followup import models as followup
 from datetime import date
 
 for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",
@@ -18,7 +18,7 @@ for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",
                   "Samoan", "Serbocroatian", "Slovak", "Spanish", "Swedish",
                   "Tagalog", "Thai/Laotian", "Turkish", "Ukrainian",
                   "Vietnamese", "Yiddish"]:
-    l = models.Language(name=lang_name)
+    l = core.Language(name=lang_name)
     l.save()
 
 for ethnic_name in ["Afghanistani", "African American", "Albanian", "Algerian",
@@ -35,33 +35,46 @@ for ethnic_name in ["Afghanistani", "African American", "Albanian", "Algerian",
                     "Serbian," "Somalian", "South African", "Spanish"
                     "Syrian", "Taiwanese", "Turkish", "Vietnamese", "Yemenese",
                     "Zimbabwean"]:
-    e = models.Ethnicity(name=ethnic_name)
+    e = core.Ethnicity(name=ethnic_name)
     e.save()
 
 for lname in ["Male", "Female", "Other"]:
-    g = models.Gender(long_name=lname, short_name=lname[0])
+    g = core.Gender(long_name=lname, short_name=lname[0])
     g.save()
+
+core.Patient.objects.create(
+    first_name="Juggie",
+    last_name="Brodeltein",
+    middle_name="Bayer",
+    phone='+49 178 236 5288',
+    gender=g,
+    address='Schulstrasse 9',
+    city='Munich',
+    state='BA',
+    zip_code='63108',
+    pcp_preferred_zip='63018',
+    date_of_birth=date(1990, 01, 01))
 
 for (lname, can_sign) in [("Attending Physician", True),
                           ("Preclinical Medical Student", False),
                           ("Clinical Medical Student", False),
                           ("Coordinator", False)]:
-    p = models.ProviderType(long_name=lname, short_name=lname.split()[0],
-                            signs_charts=can_sign)
+    p = core.ProviderType(long_name=lname, short_name=lname.split()[0],
+                          signs_charts=can_sign)
     p.save()
 
 
 for clintype in ["Basic Care Clinic", "Depression & Anxiety Clinic",
                  "Dermatology Clinic", "Muscle and Joint Pain Clinic"]:
-    t = models.ClinicType(name=clintype)
+    t = core.ClinicType(name=clintype)
     t.save()
 
 for ai_type in ["Vaccine Reminder", "Lab Follow-Up", "PCP Follow-Up", "Other"]:
-    i = models.ActionInstruction(instruction=ai_type)
+    i = core.ActionInstruction(instruction=ai_type)
     i.save()
 
 for contact_method in ["Phone", "Email", "SMS", "Facebook", "Snail Mail"]:
-    cmeth = models.ContactMethod(name=contact_method)
+    cmeth = core.ContactMethod(name=contact_method)
     cmeth.save()
 
 for cont_res in [
@@ -73,7 +86,7 @@ for cont_res in [
   "No answer, no voicemail option", "Phone number disconnected",
   "Email bounced back", "Busy signal", "Wrong number"]:
     print cont_res
-    rslt = followup_models.ContactResult(name=cont_res)
+    rslt = followup.ContactResult(name=cont_res)
     rslt.save()
 
 for dx_type in ["Cardiovascular", "Dermatological", "Endocrine", 
@@ -81,7 +94,7 @@ for dx_type in ["Cardiovascular", "Dermatological", "Endocrine",
                 "Mental Health", "Musculoskeletal", "Neurological", 
                 "OB/GYN", "Physical Exam", "Respiratory", "Rx Refill", 
                 "Urogenital", "Vaccination/PPD", "Other"]:
-    d = models.DiagnosisType(name=dx_type)
+    d = core.DiagnosisType(name=dx_type)
     d.save()
 
 for referral_location in [
@@ -105,7 +118,7 @@ for referral_location in [
   "North Central Community Health Center",
   "St. Louis County Department of Health: South County Health Center",
   "Other"]:
-    f = models.ReferralLocation(name=referral_location)
+    f = core.ReferralLocation(name=referral_location)
     f.save()
 
 for noapt_reason in [
@@ -118,7 +131,7 @@ for noapt_reason in [
   "No transportation to get to appointment",
   "Appointment times do not work with patient's schedule",
   "Cannot afford appointment", "Other"]:
-    s = followup_models.NoAptReason(name=noapt_reason)
+    s = followup.NoAptReason(name=noapt_reason)
     s.save()
 
 for noshow_reason in [
@@ -129,16 +142,16 @@ for noshow_reason in [
   "Felt better and decided didn't need appointment",
   "Someone counseled patient against appointment",
   "Forgot about appointment"]:
-    s = followup_models.NoShowReason(name=noshow_reason)
+    s = followup.NoShowReason(name=noshow_reason)
     s.save()
 
 for refer_type in ["PCP: chronic condition management",
                    "PCP: gateway to specialty care",
                    "PCP: preventative care (following well check up)",
                    "PCP: other acute conditions", "Specialty care", "Other"]:
-    s = models.ReferralType(name=refer_type)
+    s = core.ReferralType(name=refer_type)
     s.save()
 
-models.DocumentType.objects.create(name="Silly picture")
+core.DocumentType.objects.create(name="Silly picture")
 
 print "done!"
