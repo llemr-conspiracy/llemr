@@ -64,17 +64,18 @@ for contact_method in ["Phone", "Email", "SMS", "Facebook", "Snail Mail"]:
     cmeth = core.ContactMethod(name=contact_method)
     cmeth.save()
 
-for cont_res in [
-  "Communicated health information to patient",
-  "Communicated health information to someone who translated for patient",
-  "Spoke to individual who knows patient",
-  "No answer, reached voicemail and left voicemail",
-  "No answer, reached voicemail and didn't leave voicemail",
-  "No answer, no voicemail option", "Phone number disconnected",
-  "Email bounced back", "Busy signal", "Wrong number"]:
-    print cont_res
-    rslt = followup.ContactResult(name=cont_res)
-    rslt.save()
+followup.ContactResult.objects.create(
+    name="Communicated health information to patient",
+    attempt_again=False,
+    patient_reached=True)
+followup.ContactResult.objects.create(
+    name="No answer, reached voicemail and didn't leave voicemail",
+    attempt_again=True,
+    patient_reached=False)
+followup.ContactResult.objects.create(
+    name="Phone number disconnected",
+    attempt_again=False,
+    patient_reached=False)
 
 for dx_type in ["Cardiovascular", "Dermatological", "Endocrine", 
                 "Eyes and ENT", "GI", "Infectious Disease (e.g. flu or HIV)", 
