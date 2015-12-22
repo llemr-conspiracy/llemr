@@ -1,7 +1,7 @@
 from base_settings import *
 
 DEBUG = TEMPLATE_DEBUG = False
-ALLOWED_HOSTS = ['pttrack.snhc.wustl.edu']
+ALLOWED_HOSTS = ['osler.wustl.edu']
 
 with open(os.path.join(BASE_DIR, 'secrets/secret_key.txt')) as f:
     SECRET_KEY = f.read().strip()
