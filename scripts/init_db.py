@@ -42,19 +42,6 @@ for lname in ["Male", "Female", "Other"]:
     g = core.Gender(long_name=lname, short_name=lname[0])
     g.save()
 
-core.Patient.objects.create(
-    first_name="Juggie",
-    last_name="Brodeltein",
-    middle_name="Bayer",
-    phone='+49 178 236 5288',
-    gender=g,
-    address='Schulstrasse 9',
-    city='Munich',
-    state='BA',
-    zip_code='63108',
-    pcp_preferred_zip='63018',
-    date_of_birth=date(1990, 01, 01))
-
 for (lname, can_sign) in [("Attending Physician", True),
                           ("Preclinical Medical Student", False),
                           ("Clinical Medical Student", False),
@@ -107,7 +94,8 @@ for referral_location in [
   "Betty Jean Kerr Peoples Health Centers: North",
   "Betty Jean Kerr Peoples Health Centers: West",
   "Crider Health Center: Union", "Crider Health Center: Warrenton",
-  "Crider Health Center: Wentzville", "Family Care Health Centers: Carondelet",
+  "Crider Health Center: Wentzville",
+  "Family Care Health Centers: Carondelet",
   "Family Care Health Centers: Forest Park Southeast",
   "Affinia Healthcare (formerly Grace Hill)",
   "Myrtle Hilliard Davis: Comprehensive",
