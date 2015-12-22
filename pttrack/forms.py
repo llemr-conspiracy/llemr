@@ -1,6 +1,6 @@
 '''Forms for the SNHC clintools app.'''
 from bootstrap3_datetime.widgets import DateTimePicker
-from django.forms import ModelForm, ValidationError, Form, EmailField
+from django.forms import ModelForm, EmailField
 
 from . import models
 
@@ -15,27 +15,22 @@ class PatientForm(ModelForm):
 
         cleaned_data = super(ModelForm, self).clean()
 
-        alternate_phone_list = [
-            "alternate_phone_1", "alternate_phone_1_owner",
-            "alternate_phone_2", "alternate_phone_2_owner",
-            "alternate_phone_3", "alternate_phone_3_owner",
-            "alternate_phone_4", "alternate_phone_4_owner"]
+        N_ALTS = 5
 
-        for i in [0, 2, 4, 6]:
-            j = i+1
-            if cleaned_data.get(alternate_phone_list[j]) and \
-               not cleaned_data.get(alternate_phone_list[i]):
+        alt_phones = ["alternate_phone_" + str(i) for i in range(1, N_ALTS)]
+        alt_owners = [phone + "_owner" for phone in alt_phones]
 
+        for (alt_phone, alt_owner) in zip(alt_phones, alt_owners):
+
+            if cleaned_data.get(alt_owner) and not cleaned_data.get(alt_phone):
                 self.add_error(
-                    alternate_phone_list[j],
+                    alt_phone,
                     "An Alternate Phone is required" +
                     " if a Alternate Phone Owner is specified")
 
-            if cleaned_data.get(alternate_phone_list[i]) and \
-               not cleaned_data.get(alternate_phone_list[j]):
-
+            if cleaned_data.get(alt_phone) and not cleaned_data.get(alt_owner):
                 self.add_error(
-                    alternate_phone_list[i],
+                    alt_owner,
                     "An Alternate Phone Owner is required" +
                     " if a Alternate Phone is specified")
 

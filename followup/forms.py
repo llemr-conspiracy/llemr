@@ -1,7 +1,6 @@
 from django.forms import ModelForm
 
 from bootstrap3_datetime.widgets import DateTimePicker
-from pttrack.models import Patient
 
 from . import models
 
@@ -91,38 +90,3 @@ class LabFollowup(ModelForm):
     class Meta:
         model = models.LabFollowup
         exclude = ['patient', 'author', 'author_type']
-
-
-class PatientForm(ModelForm):
-    class Meta:
-        model = Patient
-        exclude = ['needs_workup']
-
-    def clean(self):
-
-        cleaned_data = super(ModelForm, self).clean()
-
-        alternate_phone_list = [
-            "alternate_phone_1", "alternate_phone_1_owner",
-            "alternate_phone_2", "alternate_phone_2_owner",
-            "alternate_phone_3", "alternate_phone_3_owner",
-            "alternate_phone_4", "alternate_phone_4_owner"]
-
-        for i in [0, 2, 4, 6]:
-            j = i+1
-            if cleaned_data.get(alternate_phone_list[j]) and \
-               not cleaned_data.get(alternate_phone_list[i]):
-
-                self.add_error(
-                    alternate_phone_list[j],
-                    "An Alternate Phone is required" +
-                    " if a Alternate Phone Owner is specified")
-
-            if cleaned_data.get(alternate_phone_list[i]) and \
-               not cleaned_data.get(alternate_phone_list[j]):
-
-                self.add_error(
-                    alternate_phone_list[i],
-                    "An Alternate Phone Owner is required" +
-                    " if a Alternate Phone is specified")
-
