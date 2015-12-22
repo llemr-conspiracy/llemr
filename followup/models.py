@@ -37,7 +37,7 @@ class ContactResult(models.Model):
         help_text="True if outcome means the pt should be contacted again.")
     patient_reached = models.BooleanField(
         default=True,
-        help_text="True if the outcome means they did not reach the patient")
+        help_text="True if outcome means they reached the patient")
 
     def __unicode__(self):
         return self.name
