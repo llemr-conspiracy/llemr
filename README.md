@@ -1,10 +1,12 @@
+![Build Status](https://travis-ci.org/SaturdayNeighborhoodHealthClinic/osler.svg?branch=master)
+![codecov.io](https://codecov.io/github/SaturdayNeighborhoodHealthClinic/osler/coverage.svg?branch=master)
+
+![forthebadge](http://forthebadge.com/images/badges/powered-by-electricity.svg)
+
 # Osler
 
 This is our clintools project, which is a collection for all our
 patient tracking. It's a django project.
-
-![Build Status](https://travis-ci.org/SaturdayNeighborhoodHealthClinic/osler.svg?branch=master)
-[![codecov.io](https://codecov.io/github/SaturdayNeighborhoodHealthClinic/osler/coverage.svg?branch=master)](https://codecov.io/github/SaturdayNeighborhoodHealthClinic/osler?branch=master)
 
 ## Running locally
 
