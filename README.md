@@ -1,7 +1,8 @@
-![Build Status](https://travis-ci.org/SaturdayNeighborhoodHealthClinic/osler.svg?branch=master)
-![codecov.io](https://codecov.io/github/SaturdayNeighborhoodHealthClinic/osler/coverage.svg?branch=master)
+[![Build Status](https://travis-ci.org/SaturdayNeighborhoodHealthClinic/osler.svg?branch=master)](https://travis-ci.org/SaturdayNeighborhoodHealthClinic/osler)
+[![codecov.io](https://codecov.io/github/SaturdayNeighborhoodHealthClinic/osler/coverage.svg?branch=master)](https://codecov.io/github/SaturdayNeighborhoodHealthClinic)
 
-![forthebadge](http://forthebadge.com/images/badges/powered-by-electricity.svg)
+[![forthebadge](http://forthebadge.com/images/badges/powered-by-electricity.svg)](https://forthebadge.com)
+[![forthebadge](http://forthebadge.com/images/badges/does-not-contain-treenuts.svg)](https://forthebadge.com)
 
 # Osler
 
