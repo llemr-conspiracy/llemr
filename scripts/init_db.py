@@ -21,20 +21,9 @@ for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",
     l = core.Language(name=lang_name)
     l.save()
 
-for ethnic_name in ["Afghanistani", "African American", "Albanian", "Algerian",
-                    "Andorran", "Angolan", "Argentinian", "Armenian",
-                    "Australian", "Bolivian", "Bosnian", "Brazilian",
-                    "Canadian", "Caucasian", "Chilean", "Chinese", "Colombian",
-                    "Croatian", "Czechoslovakian", "Egyptian", "French",
-                    "German", "Greek", "Haitian", "Hispanic", "Honduran",
-                    "Indian", "Indonesian", "Iranian", "Iraqi", "Irish",
-                    "Israeli", "Italian," "Jamaican", "Japanese", "Jordanian",
-                    "Kenyan", "Korean", "Laotian", "Latvian", "Lebanese",
-                    "Libyan", "Malaysian", "Mexican", "Namibian", "Norwegian",
-                    "Pakistani", "Romanian", "Russian", "Rwandan", "Samoan",
-                    "Serbian," "Somalian", "South African", "Spanish"
-                    "Syrian", "Taiwanese", "Turkish", "Vietnamese", "Yemenese",
-                    "Zimbabwean"]:
+for ethnic_name in ["White", "Native Hawaiian or Other Pacific Islander",
+                    "Hispanic or Latino", "Black or African American",
+                    "Asian", "American Indian or Alaska Native", "Other"]:
     e = core.Ethnicity(name=ethnic_name)
     e.save()
 
@@ -60,7 +49,7 @@ for ai_type in ["Vaccine Reminder", "Lab Follow-Up", "PCP Follow-Up", "Other"]:
     i = core.ActionInstruction(instruction=ai_type)
     i.save()
 
-for contact_method in ["Phone", "Email", "SMS", "Facebook", "Snail Mail"]:
+for contact_method in ["Phone", "Email", "Snail Mail"]:
     cmeth = core.ContactMethod(name=contact_method)
     cmeth.save()
 
@@ -91,20 +80,6 @@ for referral_location in [
   "Barnes Jewish Center for Outpatient Health (COH)",
   "BJC Behavioral Health (for Psych)",
   "St. Louis Dental Education and Oral Health Clinic",
-  "Betty Jean Kerr Peoples Health Centers: Central",
-  "Betty Jean Kerr Peoples Health Centers: North",
-  "Betty Jean Kerr Peoples Health Centers: West",
-  "Crider Health Center: Union", "Crider Health Center: Warrenton",
-  "Crider Health Center: Wentzville",
-  "Family Care Health Centers: Carondelet",
-  "Family Care Health Centers: Forest Park Southeast",
-  "Affinia Healthcare (formerly Grace Hill)",
-  "Myrtle Hilliard Davis: Comprehensive",
-  "Myrtle Hilliard Davis: Florence Hill",
-  "Myrtle Hilliard Davis: Homer G. Phillips",
-  "St. Louis County Department of Health: John C. Murphy Health Center",
-  "St. Louis County Department of Health: " +
-  "North Central Community Health Center",
   "St. Louis County Department of Health: South County Health Center",
   "Other"]:
     f = core.ReferralLocation(name=referral_location)
