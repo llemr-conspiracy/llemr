@@ -25,13 +25,15 @@ virtualenv venv
 source venv/bin/activate
 ```
 
-Then use pip install our dependencies with 
+Then use pip install our dependencies with:
 
 ```bash
 pip install -r requirements.txt
 ```
 
 (Python dependencies are stored in `requirements.txt`)
+
+One of our dependencies is Pillow, which requires [some other libraries.](https://pillow.readthedocs.org/en/3.0.x/installation.html)
 
 Once you've done that, *from the `clintools/` build the test database with
 
