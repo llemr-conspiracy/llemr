@@ -50,3 +50,9 @@ python manage.py runserver --settings clintools.debug_settings
 
 Once you have it running, you should be able to log into the debug database-backed
 app with the user 'jrporter' with password 'password'.
+
+## Deployment
+
+There a lot of good resources that teach you how to deploy a django app, and there
+are many ways to do it correctly. There's nothing too special about Osler in this regard!
+However, we strongly recommmend [nginx, gunicorn, and postgres](http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/).
