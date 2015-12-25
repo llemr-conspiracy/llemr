@@ -3,19 +3,34 @@
 	[
 		{
 			"name": "Django Test",
-			"shell_cmd": "source venv/bin/activate && python manage.py test"
+			"shell_cmd": "source venv/bin/activate && python manage.py test",
+			"working_dir": "${project_path}"
 		},
 		{
 			"name": "Django Runserver",
-			"shell_cmd": "source venv/bin/activate && python manage.py runserver"
+			"shell_cmd": "source venv/bin/activate && python manage.py runserver",
+			"working_dir": "${project_path}"
+		},
+		{
+			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+			"name": "Anaconda Python Builder",
+			"selector": "source.python",
+			"shell_cmd": "python -u \"$file\""
 		}
 	],
 	"folders":
 	[
 		{
-			"path": "./",
-      "folder_exclude_patterns": ["secrets"],
-			"file_exclude_patterns": ["__init__.py"]
+			"path": "clintools"
+		},
+		{
+			"path": "pttrack"
+		},
+		{
+			"path": "followup"
+		},
+		{
+			"path": "scripts"
 		}
 	]
 }
