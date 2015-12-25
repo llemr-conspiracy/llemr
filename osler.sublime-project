@@ -1,0 +1,21 @@
+{
+	"build_systems":
+	[
+		{
+			"name": "Django Test",
+			"shell_cmd": "source venv/bin/activate && python manage.py test"
+		},
+		{
+			"name": "Django Runserver",
+			"shell_cmd": "source venv/bin/activate && python manage.py runserver"
+		}
+	],
+	"folders":
+	[
+		{
+			"path": "./",
+      "folder_exclude_patterns": ["secrets"],
+			"file_exclude_patterns": ["__init__.py"]
+		}
+	]
+}
