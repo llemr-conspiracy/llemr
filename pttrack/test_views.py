@@ -306,6 +306,8 @@ class ProviderCreateTest(TestCase):
         for name in ['first_name', 'last_name']:
             self.assertEquals(getattr(new_provider, name),
                               getattr(new_provider.associated_user, name))
+        self.assertEquals(form_data['provider_email'],
+                          new_provider.associated_user.email)
 
         # now verify we're redirected
         response = self.client.get(final_url)
