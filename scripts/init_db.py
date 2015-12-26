@@ -6,8 +6,8 @@ new database in production, or just as part of the reset_db.sh script used to
 rebuild the database when debugging.
 '''
 
-from pttrack import models
-from pttrack import followup_models
+from pttrack import models as core
+from followup import models as followup
 from datetime import date
 
 for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",
@@ -18,28 +18,17 @@ for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",
                   "Samoan", "Serbocroatian", "Slovak", "Spanish", "Swedish",
                   "Tagalog", "Thai/Laotian", "Turkish", "Ukrainian",
                   "Vietnamese", "Yiddish"]:
-    l = models.Language(name=lang_name)
+    l = core.Language(name=lang_name)
     l.save()
 
-for ethnic_name in ["Afghanistani", "African American", "Albanian", "Algerian",
-                    "Andorran", "Angolan", "Argentinian", "Armenian",
-                    "Australian", "Bolivian", "Bosnian", "Brazilian",
-                    "Canadian", "Caucasian", "Chilean", "Chinese", "Colombian",
-                    "Croatian", "Czechoslovakian", "Egyptian", "French",
-                    "German", "Greek", "Haitian", "Hispanic", "Honduran",
-                    "Indian", "Indonesian", "Iranian", "Iraqi", "Irish",
-                    "Israeli", "Italian," "Jamaican", "Japanese", "Jordanian",
-                    "Kenyan", "Korean", "Laotian", "Latvian", "Lebanese",
-                    "Libyan", "Malaysian", "Mexican", "Namibian", "Norwegian",
-                    "Pakistani", "Romanian", "Russian", "Rwandan", "Samoan",
-                    "Serbian," "Somalian", "South African", "Spanish"
-                    "Syrian", "Taiwanese", "Turkish", "Vietnamese", "Yemenese",
-                    "Zimbabwean"]:
-    e = models.Ethnicity(name=ethnic_name)
+for ethnic_name in ["White", "Native Hawaiian or Other Pacific Islander",
+                    "Hispanic or Latino", "Black or African American",
+                    "Asian", "American Indian or Alaska Native", "Other"]:
+    e = core.Ethnicity(name=ethnic_name)
     e.save()
 
 for lname in ["Male", "Female", "Other"]:
-    g = models.Gender(long_name=lname, short_name=lname[0])
+    g = core.Gender(long_name=lname, short_name=lname[0])
     g.save()
 
 for (lname, can_sign, part_staff) in [("Attending Physician", True, False),
@@ -53,35 +42,36 @@ for (lname, can_sign, part_staff) in [("Attending Physician", True, False),
 
 for clintype in ["Basic Care Clinic", "Depression & Anxiety Clinic",
                  "Dermatology Clinic", "Muscle and Joint Pain Clinic"]:
-    t = models.ClinicType(name=clintype)
+    t = core.ClinicType(name=clintype)
     t.save()
 
 for ai_type in ["Vaccine Reminder", "Lab Follow-Up", "PCP Follow-Up", "Other"]:
-    i = models.ActionInstruction(instruction=ai_type)
+    i = core.ActionInstruction(instruction=ai_type)
     i.save()
 
-for contact_method in ["Phone", "Email", "SMS", "Facebook", "Snail Mail"]:
-    cmeth = models.ContactMethod(name=contact_method)
+for contact_method in ["Phone", "Email", "Snail Mail"]:
+    cmeth = core.ContactMethod(name=contact_method)
     cmeth.save()
 
-for cont_res in [
-  "Communicated health information to patient",
-  "Communicated health information to someone who translated for patient",
-  "Spoke to individual who knows patient",
-  "No answer, reached voicemail and left voicemail",
-  "No answer, reached voicemail and didn't leave voicemail",
-  "No answer, no voicemail option", "Phone number disconnected",
-  "Email bounced back", "Busy signal", "Wrong number"]:
-    print cont_res
-    rslt = followup_models.ContactResult(name=cont_res)
-    rslt.save()
+followup.ContactResult.objects.create(
+    name="Communicated health information to patient",
+    attempt_again=False,
+    patient_reached=True)
+followup.ContactResult.objects.create(
+    name="No answer, reached voicemail and didn't leave voicemail",
+    attempt_again=True,
+    patient_reached=False)
+followup.ContactResult.objects.create(
+    name="Phone number disconnected",
+    attempt_again=False,
+    patient_reached=False)
 
 for dx_type in ["Cardiovascular", "Dermatological", "Endocrine", 
                 "Eyes and ENT", "GI", "Infectious Disease (e.g. flu or HIV)", 
                 "Mental Health", "Musculoskeletal", "Neurological", 
                 "OB/GYN", "Physical Exam", "Respiratory", "Rx Refill", 
                 "Urogenital", "Vaccination/PPD", "Other"]:
-    d = models.DiagnosisType(name=dx_type)
+    d = core.DiagnosisType(name=dx_type)
     d.save()
 
 for referral_location in [
@@ -90,22 +80,9 @@ for referral_location in [
   "Barnes Jewish Center for Outpatient Health (COH)",
   "BJC Behavioral Health (for Psych)",
   "St. Louis Dental Education and Oral Health Clinic",
-  "Betty Jean Kerr Peoples Health Centers: Central",
-  "Betty Jean Kerr Peoples Health Centers: North",
-  "Betty Jean Kerr Peoples Health Centers: West",
-  "Crider Health Center: Union", "Crider Health Center: Warrenton",
-  "Crider Health Center: Wentzville", "Family Care Health Centers: Carondelet",
-  "Family Care Health Centers: Forest Park Southeast",
-  "Affinia Healthcare (formerly Grace Hill)",
-  "Myrtle Hilliard Davis: Comprehensive",
-  "Myrtle Hilliard Davis: Florence Hill",
-  "Myrtle Hilliard Davis: Homer G. Phillips",
-  "St. Louis County Department of Health: John C. Murphy Health Center",
-  "St. Louis County Department of Health: " +
-  "North Central Community Health Center",
   "St. Louis County Department of Health: South County Health Center",
   "Other"]:
-    f = models.ReferralLocation(name=referral_location)
+    f = core.ReferralLocation(name=referral_location)
     f.save()
 
 for noapt_reason in [
@@ -118,7 +95,7 @@ for noapt_reason in [
   "No transportation to get to appointment",
   "Appointment times do not work with patient's schedule",
   "Cannot afford appointment", "Other"]:
-    s = followup_models.NoAptReason(name=noapt_reason)
+    s = followup.NoAptReason(name=noapt_reason)
     s.save()
 
 for noshow_reason in [
@@ -129,16 +106,16 @@ for noshow_reason in [
   "Felt better and decided didn't need appointment",
   "Someone counseled patient against appointment",
   "Forgot about appointment"]:
-    s = followup_models.NoShowReason(name=noshow_reason)
+    s = followup.NoShowReason(name=noshow_reason)
     s.save()
 
 for refer_type in ["PCP: chronic condition management",
                    "PCP: gateway to specialty care",
                    "PCP: preventative care (following well check up)",
                    "PCP: other acute conditions", "Specialty care", "Other"]:
-    s = models.ReferralType(name=refer_type)
+    s = core.ReferralType(name=refer_type)
     s.save()
 
-models.DocumentType.objects.create(name="Silly picture")
+core.DocumentType.objects.create(name="Silly picture")
 
 print "done!"

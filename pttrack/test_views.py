@@ -1,6 +1,5 @@
 from django.test import TestCase
 from .  import models
-from . import followup_models
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.utils.timezone import now
@@ -311,184 +310,12 @@ class ProviderCreateTest(TestCase):
         for name in ['first_name', 'last_name']:
             self.assertEquals(getattr(new_provider, name),
                               getattr(new_provider.associated_user, name))
+        self.assertEquals(form_data['provider_email'],
+                          new_provider.associated_user.email)
 
         # now verify we're redirected
         response = self.client.get(final_url)
         self.assertEquals(response.status_code, 200)
-
-
-class FollowupTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
-
-    def setUp(self):
-        build_provider_and_log_in(self.client)
-
-
-    def test_followup_view_urls(self):
-
-        pt = models.Patient.objects.all()[0]
-
-        method = models.ContactMethod.objects.create(name="Carrier Pidgeon")
-        res = followup_models.ContactResult(name="Fisticuffs")
-        reftype = models.ReferralType.objects.create(name="Chiropracter")
-        aptloc = models.ReferralLocation.objects.create(
-            name="Franklin's Back Adjustment",
-            address="1435 Sillypants Drive")
-        reason = followup_models.NoAptReason.objects.create(
-            name="better things to do")
-
-        for i in range(101):
-            # General Followup
-            gf = followup_models.GeneralFollowup.objects.create(
-                contact_method=method,
-                contact_resolution=res,
-                author=models.Provider.objects.all()[0],
-                author_type=models.ProviderType.objects.all()[0],
-                patient=pt)
-
-            url = reverse('followup', kwargs={"pk": gf.id, "model": 'General'})
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
-
-            # Lab Followup
-            lf = followup_models.LabFollowup.objects.create(
-                contact_method=method,
-                contact_resolution=res,
-                author=models.Provider.objects.all()[0],
-                author_type=models.ProviderType.objects.all()[0],
-                patient=pt,
-                communication_success=True)
-
-            url = reverse('followup', kwargs={"pk": lf.id, "model": 'Lab'})
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
-
-            # Vaccine Followup
-            vf = followup_models.VaccineFollowup.objects.create(
-                contact_method=method,
-                contact_resolution=res,
-                author=models.Provider.objects.all()[0],
-                author_type=models.ProviderType.objects.all()[0],
-                patient=pt,
-                subsq_dose=False)
-
-            url = reverse('followup', kwargs={"pk": vf.id, "model": 'Vaccine'})
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
-
-            # Referral Followup
-            rf = followup_models.ReferralFollowup.objects.create(
-                contact_method=method,
-                contact_resolution=res,
-                author=models.Provider.objects.all()[0],
-                author_type=models.ProviderType.objects.all()[0],
-                patient=pt,
-                referral_type=reftype,
-                has_appointment=False,
-                apt_location=aptloc,
-                noapt_reason=reason)
-
-            url = reverse('followup',
-                          kwargs={"pk": rf.id, "model": 'Referral'})
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
-
-    def test_followup_create_urls(self):
-
-        pt = models.Patient.objects.all()[0]
-
-        for fu_type in ["labs", "referral", "general", "vaccine"]:
-            url = reverse("new-followup",
-                          kwargs={"pt_id": pt.id, 'ftype': fu_type.lower()})
-
-            response = self.client.get(url)
-            self.assertEquals(response.status_code, 200)
-
-        url = reverse("followup", kwargs={"pk": pt.id, "model": "Lab"})
-
-    def test_create_followups(self):
-
-        attempt_again_cr = followup_models.ContactResult.objects.create(
-            name="didn't reach the pt",
-            attempt_again=True)
-        no_attempt_again_cr = followup_models.ContactResult.objects.create(
-            name="totally reached the pt",
-            attempt_again=False)
-
-        # Try creating a followup that requires re-contacts and one that does
-        # not. Verification for correctness of the redirect is in verify_fu
-        for contact_result in [attempt_again_cr, no_attempt_again_cr]:
-            submitted_gen_fu = {
-                "contact_method":
-                    models.ContactMethod.objects.all()[0].pk,
-                "contact_resolution": contact_result,
-                "comments": ""
-                }
-
-            self.verify_fu(followup_models.GeneralFollowup, 'general',
-                           submitted_gen_fu)
-
-            submitted_vacc_fu = dict(submitted_gen_fu)
-            submitted_vacc_fu['subsq_dose'] = True
-            submitted_vacc_fu['dose_date'] = str(datetime.date.today())
-
-            self.verify_fu(followup_models.VaccineFollowup, 'vaccine',
-                           submitted_vacc_fu)
-
-            submitted_lab_fu = dict(submitted_gen_fu)
-            submitted_lab_fu["communication_success"] = True
-
-            self.verify_fu(followup_models.LabFollowup, 'labs',
-                           submitted_lab_fu)
-
-            submitted_ref_fu = dict(submitted_gen_fu)
-            submitted_ref_fu.update(
-                {"referral_type" : models.ReferralType.objects.all()[0].pk,
-                 "has_appointment": True,
-                 'apt_location': models.ReferralLocation.objects.all()[0].pk,
-                 'pt_showed': "Yes",
-                 'noapt_reason': "",
-                 'noshow_reason': "",
-                })
-
-            self.verify_fu(followup_models.ReferralFollowup, 'referral',
-                           submitted_ref_fu)
-
-    def verify_fu(self, fu_type, ftype, submitted_fu):
-
-        pt = models.Patient.objects.all()[0]
-
-        n_followup = len(fu_type.objects.all())
-
-        url = reverse('new-followup', kwargs={"pt_id": pt.id,
-                                              "ftype": ftype})
-        response = self.client.post(url, submitted_fu)
-
-        self.assertEqual(response.status_code, 302)
-
-        if submitted_fu["contact_resolution"].attempt_again:
-            self.assertRedirects(response,
-                                 reverse("new-action-item", args=(pt.id,)))
-        else:
-            self.assertRedirects(response,
-                                 reverse('patient-detail', args=(pt.id,)))
-
-        self.assertEquals(len(fu_type.objects.all()), n_followup + 1)
-
-        # this should get the most recently created followup, which should be
-        # the one we just posted to create
-        new_fu = sorted(fu_type.objects.all(), key=lambda(fu): fu.written_datetime)[-1]
-
-        # make sure that all of the parameters in the submitted fu make it
-        # into the object.
-        for param in submitted_fu:
-            if submitted_fu[param]:
-                try:
-                    self.assertEquals(str(submitted_fu[param]),
-                                      str(getattr(new_fu, param)))
-                except AssertionError:
-                    self.assertEquals(submitted_fu[param],
-                                      getattr(new_fu, param).pk)
 
 
 class IntakeTest(TestCase):
@@ -664,11 +491,12 @@ class ActionItemTest(TestCase):
         # new action items should not be done
         self.assertFalse(ai.done())
 
-        # submit a request to mark the new ai as done. should redirect to pt
+        # submit a request to mark the new ai as done. should redirect to 
+        # choose a followup type.
         ai_url = 'done-action-item'
         response = self.client.get(reverse(ai_url, args=(ai.id,)))
         self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('patient-detail', args=(pt.id,)),
+        self.assertIn(reverse("followup-choice", args=(ai.patient.pk,)),
                       response.url)
         self.assertTrue(models.ActionItem.objects.all()[0].done())
         self.assertEquals(models.ActionItem.objects.all()[0].author.pk,
