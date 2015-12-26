@@ -109,7 +109,9 @@ class ViewsExistTest(TestCase):
                    'new-action-item',
                    'followup-choice',
                    'new-workup',
-                   'patient-update']
+                   'patient-update',
+                   'patient-activate-detail',
+                   'patient-activate-home']
         pt = models.Patient.objects.all()[0]
 
         for pt_url in pt_urls:
