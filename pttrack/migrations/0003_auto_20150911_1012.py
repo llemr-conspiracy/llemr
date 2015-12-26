@@ -11,14 +11,4 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='vaccinefollowup',
-            name='dose_date',
-            field=models.DateField(help_text=b'When does the patient want to get their next dose (if applicable)?', null=True, blank=True),
-        ),
-        migrations.AlterField(
-            model_name='vaccinefollowup',
-            name='subsq_dose',
-            field=models.BooleanField(verbose_name=b'Has the patient committed to coming back for another dose?'),
-        ),
     ]
