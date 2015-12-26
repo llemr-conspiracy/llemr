@@ -24,6 +24,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'pttrack',
     'followup',
+    'workup',
     'bootstrap3',
     'bootstrap3_datetime',
     'djangular',

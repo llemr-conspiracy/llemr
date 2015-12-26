@@ -44,27 +44,6 @@ class TestModelFieldValidators(TestCase):
         with self.assertRaises(ValidationError):
             validators.validate_ssn('-12345678')
 
-    def test_validate_bp(self):
-        '''
-        Test our validator for blood pressures. There should be a '/' between
-        systolic and diastolic, it should be able to handle 2 and 3 digit
-        pressures, and systolic should always be higher than diastolic.
-        '''
-        self.assertEqual(validators.validate_bp("110/90"), None)
-        self.assertEqual(validators.validate_bp("90/50"), None)
-        self.assertEqual(validators.validate_bp("170/100"), None)
-
-        with self.assertRaises(ValidationError):
-            validators.validate_bp("90")
-        with self.assertRaises(ValidationError):
-            validators.validate_bp("/90")
-        with self.assertRaises(ValidationError):
-            validators.validate_bp("100/")
-        with self.assertRaises(ValidationError):
-            validators.validate_bp("90/200")
-        with self.assertRaises(ValidationError):
-            validators.validate_bp("-120/80")
-
     def test_validate_birth_date(self):
         '''
         Test our validator for birth dates. Birth dates should be in the past

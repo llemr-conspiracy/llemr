@@ -1,23 +1,14 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponseServerError, \
-    HttpResponseNotFound
+from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.views.generic.edit import FormView, UpdateView
-from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
-from django.contrib.auth.decorators import login_required, user_passes_test
 import django.utils.timezone
 
 from . import models as mymodels
-from followup import models as fu_models
 from . import forms as myforms
 
 import datetime
-
-
-def get_clindates():
-    clindates = mymodels.ClinicDate.objects.filter(
-        clinic_date=django.utils.timezone.now().date())
-    return clindates
 
 
 def get_current_provider_type(request):
@@ -134,100 +125,12 @@ class ProviderCreate(FormView):
         return context
 
 
-class ClinicDateCreate(FormView):
-    '''A view for creating a new ClinicDate. On submission, it redirects to
-    the new-workup view.'''
-    template_name = 'pttrack/clindate.html'
-    form_class = myforms.ClinicDateForm
-
-    def form_valid(self, form):
-        clindate = form.save(commit=False)
-
-        today = datetime.datetime.date(django.utils.timezone.now())
-        clindate.clinic_date = today
-        clindate.save()
-
-        # determine from our URL which patient we wanted to work up before we
-        # got redirected to create a clinic date
-
-        pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
-        return HttpResponseRedirect(reverse("new-workup", args=(pt.id,)))
-
-
+# TODO: move to followups app
 def followup_choice(request, pt_id):
     '''Prompt the user to choose a follow up type.'''
     pt = get_object_or_404(mymodels.Patient, pk=pt_id)
     return render(request, 'pttrack/followup-choice.html', {'patient': pt})
 
-
-class WorkupCreate(NoteFormView):
-    '''A view for creating a new workup. Checks to see if today is a
-    clinic date first, and prompts its creation if none exist.'''
-    template_name = 'pttrack/form_submission.html'
-    form_class = myforms.WorkupForm
-    note_type = 'Workup'
-
-    def get(self, *args, **kwargs):
-        """Check that we have an instantiated ClinicDate today,
-        then dispatch to get() of the superclass view."""
-
-        clindates = get_clindates()
-        pt = get_object_or_404(mymodels.Patient, pk=kwargs['pt_id'])
-
-        if len(clindates) == 0:
-            # dispatch to ClinicDateCreate because the ClinicDate doesn't exist
-            return HttpResponseRedirect(reverse("new-clindate", args=(pt.id,)))
-        elif len(clindates) == 1:
-            # dispatch to our own view, since we know there's a ClinicDate
-            # for today
-            kwargs['pt_id'] = pt.id
-            return super(WorkupCreate,
-                         self).get(self, *args, **kwargs)
-        else:  # we have >1 clindate today.
-            return HttpResponseServerError("<h3>We don't know how to handle " +
-                                           ">1 clinic day on a particular " +
-                                           "day!</h3>")
-
-    def form_valid(self, form):
-        pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
-        active_provider_type = get_object_or_404(mymodels.ProviderType,
-                                             pk=self.request.session['clintype_pk'])
-        wu = form.save(commit=False)
-        wu.patient = pt
-        wu.author = self.request.user.provider
-        wu.author_type = get_current_provider_type(self.request)
-        wu.clinic_day = get_clindates()[0]
-        if wu.author_type.signs_charts:
-            wu.sign(self.request.user, active_provider_type)
-
-        wu.save()
-
-        form.save_m2m()
-
-        return HttpResponseRedirect(reverse("new-action-item", args=(pt.id,)))
-
-
-class WorkupUpdate(NoteUpdate):
-    template_name = "pttrack/form-update.html"
-    model = mymodels.Workup
-    form_class = myforms.WorkupForm
-    note_type = "Workup"
-
-    def form_valid(self, form):
-        wu = form.save(commit=False)
-        current_user_type = get_current_provider_type(self.request)
-        if wu.signer is None:
-            wu.save()
-            form.save_m2m()
-            return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
-        else:
-            if current_user_type.signs_charts:
-                wu.save()
-                form.save_m2m()
-                return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
-            else:
-                return HttpResponseRedirect(reverse("workup-error",
-                                                    args=(wu.id,)))
 
 class ActionItemCreate(NoteFormView):
     '''A view for creating ActionItems using the ActionItemForm.'''
@@ -333,10 +236,13 @@ def choose_clintype(request):
 
 
 def home_page(request):
+    #TODO wow so this is messed up. This should be a circular dependency...
+    from workup.models import Workup
+
     active_provider_type = get_object_or_404(mymodels.ProviderType,
                                              pk=request.session['clintype_pk'])
     if active_provider_type.signs_charts:
-        workup_list = mymodels.Workup.objects.all()
+        workup_list = Workup.objects.all()
         pt_list_1 = list(set([wu.patient for wu in workup_list if wu.signer is None]))
         patient_list = mymodels.Patient.objects.all().order_by('last_name')
         pt_list_2 = []
@@ -438,14 +344,7 @@ def phone_directory(request):
                   'pttrack/phone_directory.html',
                   {'object_list': patient_list,
                     'title': title})
-    
 
-def error_workup(request, pk):
-
-    wu = get_object_or_404(mymodels.Workup, pk=pk)
-    return render(request,
-                  'pttrack/workup_error.html',
-                  {'workup': wu})
 
 def all_patients(request):
     pt_list = list(mymodels.Patient.objects.all().order_by('last_name'))
@@ -457,19 +356,6 @@ def all_patients(request):
                   {'zipped_list': zipped_list,
                     'title': "All Patients"})
 
-
-def sign_workup(request, pk):
-    wu = get_object_or_404(mymodels.Workup, pk=pk)
-    active_provider_type = get_object_or_404(mymodels.ProviderType,
-                                             pk=request.session['clintype_pk'])
-
-    pt = wu.patient
-    wu.sign(request.user, active_provider_type)
-
-
-    wu.save()
-
-    return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
 
 def patient_activate_detail(request, pk):
     pt = get_object_or_404(mymodels.Patient, pk=pk)

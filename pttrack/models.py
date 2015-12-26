@@ -59,16 +59,6 @@ class ReferralType(models.Model):
         return self.name
 
 
-class DiagnosisType(models.Model):
-    '''Simple text-contiaining class for storing the different kinds of
-    diagnosis a pateint can recieve.'''
-
-    name = models.CharField(max_length=100, primary_key=True)
-
-    def __unicode__(self):
-        return self.name
-
-
 class ReferralLocation(models.Model):
     '''Data model for a referral Location'''
 
@@ -317,23 +307,6 @@ class Provider(Person):
         return self.name()
 
 
-class ClinicType(models.Model):
-    name = models.CharField(max_length=50)
-
-    def __unicode__(self):
-        return self.name
-
-
-class ClinicDate(models.Model):
-    clinic_type = models.ForeignKey(ClinicType)
-
-    clinic_date = models.DateField()
-    gcal_id = models.CharField(max_length=50)
-
-    def __unicode__(self):
-        return str(self.clinic_type)+" ("+str(self.clinic_date)+")"
-
-
 class Note(models.Model):
     class Meta:  # pylint: disable=W0232,R0903,C1001
         abstract = True
@@ -403,86 +376,3 @@ class ActionItem(Note):
     def __unicode__(self):
         return " ".join(["AI for", str(self.patient)+":",
                          str(self.instruction), "on", str(self.due_date)])
-
-
-class Workup(Note):
-    '''Datamodel of a workup. Has fields specific to each part of an exam,
-    along with SNHC-specific info about where the patient has been referred for
-    continuity care.'''
-
-    clinic_day = models.ForeignKey(ClinicDate)
-
-    chief_complaint = models.CharField(max_length=1000,
-                                       verbose_name="CC")
-    diagnosis = models.CharField(max_length=1000,
-                                 verbose_name="Dx")
-    diagnosis_categories = models.ManyToManyField(DiagnosisType)
-
-    HPI = models.TextField(verbose_name="HPI")
-    PMH_PSH = models.TextField(verbose_name="PMH/PSH")
-    meds = models.TextField(verbose_name="Medications")
-    allergies = models.TextField()
-    fam_hx = models.TextField()
-    soc_hx = models.TextField()
-    ros = models.TextField()
-
-    hr = models.PositiveSmallIntegerField(blank=True, null=True)
-    bp = models.CharField(blank=True, null=True,
-                          max_length=7,
-                          validators=[validators.validate_bp])
-
-    rr = models.PositiveSmallIntegerField(blank=True, null=True)
-    t = models.DecimalField(max_digits=3,
-                            decimal_places=1,
-                            blank=True, null=True)
-
-    pe = models.TextField(verbose_name="Physical Examination")
-
-    labs_ordered_quest = models.TextField(blank=True, null=True)
-    labs_ordered_internal = models.TextField(blank=True, null=True)
-
-    rx = models.TextField(blank=True, null=True)
-
-    got_voucher = models.BooleanField(default=False)
-    voucher_amount = models.PositiveSmallIntegerField(blank=True, null=True)
-    patient_pays = models.PositiveSmallIntegerField(blank=True, null=True)
-
-    referral_type = models.ManyToManyField(ReferralType, blank=True)
-    referral_location = models.ManyToManyField(ReferralLocation, blank=True)
-
-    will_return = models.BooleanField(default=False,
-                                      help_text="Will the pt. return to SNHC?")
-
-    A_and_P = models.TextField()
-
-    signer = models.ForeignKey(Provider,
-                               blank=True, null=True,
-                               related_name="signed_workups",
-                               validators=[validators.validate_attending])
-    signed_date = models.DateTimeField(blank=True, null=True)
-
-    history = HistoricalRecords()
-
-    def sign(self, user, active_role):
-        if active_role.signs_charts:
-            assert active_role in user.provider.clinical_roles.all()
-
-            self.signed_date = django.utils.timezone.now()
-            self.signer = user.provider
-        else:
-            raise ValueError("You must be an attending to sign workups.")
-
-    def signed(self):
-        return self.signer is not None
-
-    def short_text(self):
-        return self.chief_complaint
-
-    def written_date(self):
-        return self.clinic_day.clinic_date
-
-    def attribution(self):
-        return " ".join([str(self.author), "on", str(self.written_date())])
-
-    def __unicode__(self):
-        return self.patient.name()+" on "+str(self.clinic_day.clinic_date)

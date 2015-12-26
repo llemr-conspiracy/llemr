@@ -3,6 +3,7 @@ from pttrack.urls import url_wrap
 
 from . import views
 
+#TODO: remove "followup" from the beginning of all these urls.
 unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^(?P<pt_id>[0-9]+)/followup/(?P<ftype>[\w]+)/$',
         views.FollowupCreate.as_view(),

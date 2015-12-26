@@ -21,16 +21,40 @@
 	"folders":
 	[
 		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
 			"path": "clintools"
 		},
 		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
 			"path": "pttrack"
 		},
 		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
 			"path": "followup"
 		},
 		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
 			"path": "scripts"
+		},
+		{
+			"path": "workup",
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+
 		}
 	]
 }

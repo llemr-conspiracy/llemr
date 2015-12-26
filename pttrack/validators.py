@@ -43,30 +43,11 @@ def validate_zip(value):
             % value)
 
 
-def validate_bp(value):
-    '''validate that a value is a valid blood pressure'''
-    try:
-        (top, bottom) = value.split('/')
-    except ValueError:
-        raise ValidationError(
-            str(value) + " is not a validly formatted blood pressure since " +
-            "it cannot be split into two values using '/'.")
-
-    try:
-        (top, bottom) = (int(top), int(bottom))
-    except ValueError:
-        raise ValidationError(
-            "Either '" + str(top) + "' or '" + str(bottom) + "' is not a " +
-            "valid pressure--they must be small, positive integers.")
-
-    if top < bottom:
-        raise ValidationError(
-            "The systolic blood pressure (" + str(top) +
-            ") has to be higher than the diastolic blood pressure (" +
-            str(bottom) + ").")
-
-
 def validate_birth_date(value):
+    '''
+    Validate birtdays, requiring that they be 1) in the past and 2) less than
+    150 years ago.
+    '''
     today = now().date()
 
     if today - value < datetime.timedelta(0):
@@ -77,5 +58,8 @@ def validate_birth_date(value):
 
 
 def validate_attending(value):
+    '''
+    Verify that a provider has attending priviledges
+    '''
     return value.can_attend
 
