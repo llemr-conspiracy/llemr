@@ -8,8 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        # ('pttrack', '0010_followup_app'),
-        ('pttrack', '0001_initial'),
+        ('pttrack', '0010_followup_app'),
     ]
 
     database_operations = [
