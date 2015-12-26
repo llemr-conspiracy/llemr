@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('pttrack', '0002_followup_app'),
+        ('pttrack', '0002_workup_app'),
     ]
 
     state_operations = [
