@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('pttrack', '0010_followup_app'),
+        ('pttrack', '0001_0010_initial'),
     ]
 
     database_operations = [
@@ -23,7 +23,6 @@ class Migration(migrations.Migration):
         migrations.AlterModelTable('Workup',
                                    'workup_workup'),
     ]
-
 
     state_operations = [
         migrations.DeleteModel(
