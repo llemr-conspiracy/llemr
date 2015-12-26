@@ -109,15 +109,26 @@ class ViewsExistTest(TestCase):
                    'new-action-item',
                    'followup-choice',
                    'new-workup',
-                   'patient-update',
-                   'patient-activate-detail',
-                   'patient-activate-home']
+                   'patient-update']
+
+        pt_urls_redirect = ['patient-activate-detail',
+                            'patient-activate-home']
+
         pt = models.Patient.objects.all()[0]
 
         for pt_url in pt_urls:
             response = self.client.get(reverse(pt_url, args=(pt.id,)))
             try:
                 self.assertEqual(response.status_code, 200)
+            except AssertionError as e:
+                print pt_url
+                print response
+                raise e
+
+        for pt_url in pt_urls_redirect:
+            response = self.client.get(reverse(pt_url, args=(pt.id,)))
+            try:
+                self.assertEqual(response.status_code, 302)
             except AssertionError as e:
                 print pt_url
                 print response
