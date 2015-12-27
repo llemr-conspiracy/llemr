@@ -4,7 +4,6 @@ from pttrack.urls import url_wrap
 from . import views
 
 unwrapped_urlconf = [  # pylint: disable=invalid-name
-    #TODO: reverse pt_id and ftype in these urls
     url(r'^(?P<pt_id>[0-9]+)/(?P<ftype>[\w]+)/$',
         views.FollowupCreate.as_view(),
         name='new-followup'),
