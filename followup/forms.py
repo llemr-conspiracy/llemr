@@ -2,6 +2,9 @@ from django.forms import ModelForm
 
 from bootstrap3_datetime.widgets import DateTimePicker
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+
 from . import models
 
 class GeneralFollowup(ModelForm):
@@ -18,11 +21,18 @@ class ReferralFollowup(ModelForm):
         model = models.ReferralFollowup
         exclude = ['patient', 'author', 'author_type']
 
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('submit', 'Submit'))
+        super(ReferralFollowup, self).__init__(*args, **kwargs)
+
     def clean(self):
         '''ReferralFollowup has some pretty complicated behavior regarding
         which combinations of blank and filled fields are acceptable. We
         implement checks for this here.'''
-        cleaned_data = super(ModelForm, self).clean()
+        cleaned_data = super(ReferralFollowup, self).clean()
 
         has_appointment = cleaned_data.get("has_appointment")
         contact_resolution = cleaned_data.get("contact_resolution")
@@ -85,7 +95,7 @@ class VaccineFollowup(ModelForm):
         '''VaccineFollowups require a next dose date iff there there is a next
         dose.'''
 
-        cleaned_data = super(ModelForm, self).clean()
+        cleaned_data = super(VaccineFollowup, self).clean()
 
         if cleaned_data.get('subsq_dose') and \
            not cleaned_data.get('dose_date'):
