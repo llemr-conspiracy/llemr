@@ -259,7 +259,7 @@ class Patient(Person):
         return followups
 
     def latest_workup(self):
-        wu_set = self.workup_set()
+        wu_set = self.workup_set
         if wu_set.count() == 0:
             return None
         else:
