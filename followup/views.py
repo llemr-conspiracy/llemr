@@ -94,8 +94,4 @@ class ReferralFollowupCreate(FollowupCreate):
     form_class = forms.ReferralFollowup
 
     def get_form_class(self, **kwargs):
-        return super(NoteFormView, self).get_form_class(**kwargs)
-
-    def get_followup_model(self):
-        return form_class.Meta.model
-
+        return self.form_class
