@@ -90,5 +90,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # for crispy_forms
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-CRISPY_FAIL_SILENTLY = not DEBUG
 
