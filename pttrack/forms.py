@@ -1,4 +1,4 @@
-'''Forms for the SNHC clintools app.'''
+'''Forms for the Oser core components.'''
 from bootstrap3_datetime.widgets import DateTimePicker
 from django.forms import ModelForm, EmailField
 
