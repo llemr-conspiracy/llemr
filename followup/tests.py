@@ -286,15 +286,21 @@ class FollowupTest(TestCase):
             self.assertEqual(response.status_code, 200)
 
     def test_followup_create_urls(self):
-
+        '''
+        Verify that all the followup creation URLs are accessible.
+        '''
         pt = Patient.objects.all()[0]
 
-        for fu_type in ["labs", "referral", "general", "vaccine"]:
+        for fu_type in ["labs", "general", "vaccine"]:
             url = reverse("new-followup",
                           kwargs={"pt_id": pt.id, 'ftype': fu_type.lower()})
 
             response = self.client.get(url)
             self.assertEquals(response.status_code, 200)
+
+        response = self.client.get(reverse("new-referral-followup",
+                                           args=(pt.id,)))
+        self.assertEquals(response.status_code, 200)
 
         url = reverse("followup", kwargs={"pk": pt.id, "model": "Lab"})
 

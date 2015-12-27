@@ -4,6 +4,9 @@ from pttrack.urls import url_wrap
 from . import views
 
 unwrapped_urlconf = [  # pylint: disable=invalid-name
+    url(r'^(?P<pt_id>[0-9]+)/referral/$',
+        views.ReferralFollowupCreate.as_view(),
+        name='new-referral-followup'),
     url(r'^(?P<pt_id>[0-9]+)/(?P<ftype>[\w]+)/$',
         views.FollowupCreate.as_view(),
         name='new-followup'),
