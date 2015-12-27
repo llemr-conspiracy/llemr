@@ -125,13 +125,6 @@ class ProviderCreate(FormView):
         return context
 
 
-# TODO: move to followups app
-def followup_choice(request, pt_id):
-    '''Prompt the user to choose a follow up type.'''
-    pt = get_object_or_404(mymodels.Patient, pk=pt_id)
-    return render(request, 'pttrack/followup-choice.html', {'patient': pt})
-
-
 class ActionItemCreate(NoteFormView):
     '''A view for creating ActionItems using the ActionItemForm.'''
     template_name = 'pttrack/form_submission.html'
