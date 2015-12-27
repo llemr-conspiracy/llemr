@@ -22,6 +22,21 @@ class Migration(migrations.Migration):
                                    'workup_historicalworkup'),
         migrations.AlterModelTable('Workup',
                                    'workup_workup'),
+        migrations.AlterModelTable('Workup.referral_location',
+                                   'workup_workup_referral_location'),
+
+        migrations.AlterField(
+            model_name="Workup",
+            name='referral_type',
+            through='workup_workup_referral_type'),
+        migrations.AlterField(
+            model_name="Workup",
+            name='referral_location',
+            through='workup_workup_referral_location'),
+        migrations.AlterField(
+            model_name="Workup",
+            name='diagnosis_categories',
+            through='workup_workup_diagnosis_categories'),
     ]
 
     state_operations = [
