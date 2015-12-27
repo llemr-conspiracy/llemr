@@ -98,9 +98,12 @@ class ProviderCreate(FormView):
     form_class = myforms.ProviderForm
 
     def get_initial(self):
+        initial = super(FormView, self).get_initial()
 
-        return {'first_name': self.request.user.first_name,
-                'last_name': self.request.user.last_name}
+        initial['first_name'] = self.request.user.first_name
+        initial['last_name'] = self.request.user.last_name
+
+        return initial
 
     def form_valid(self, form):
         provider = form.save(commit=False)
