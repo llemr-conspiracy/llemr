@@ -1,4 +1,9 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, CheckboxSelectMultiple
+
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit, Layout, Fieldset, Div, Field
+from crispy_forms.bootstrap import TabHolder, Tab, InlineCheckboxes, \
+    AppendedText, PrependedText
 
 from . import models
 
@@ -8,13 +13,76 @@ class WorkupForm(ModelForm):
         model = models.Workup
         exclude = ['patient', 'clinic_day', 'author', 'signer', 'author_type',
                    'signed_date']
+        widgets = {'referral_location': CheckboxSelectMultiple,
+                   'referral_type': CheckboxSelectMultiple}
+
+    def __init__(self, *args, **kwargs):
+        super(WorkupForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+        self.helper.layout = Layout(
+            TabHolder(
+                Tab('Basics',
+                    'chief_complaint',
+                    'diagnosis',
+                    InlineCheckboxes('diagnosis_categories')),
+                Tab('H & P',
+                    'HPI',
+                    'PMH_PSH',
+                    'fam_hx',
+                    'soc_hx',
+                    'meds',
+                    'allergies',
+                    'ros'),
+                Tab('Physical Exam',
+                    Div(
+                        #Div(HTML("<strong>Vital Signs</strong>"),
+                        #    css_class='col-lg-1'),
+                        Div(AppendedText('hr', 'bpm'), css_class='col-lg-3'),
+                        Div(AppendedText('bp', 'mmHg'), css_class='col-lg-3'),
+                        Div(AppendedText('rr', '/min'), css_class='col-lg-3'),
+                        Div(AppendedText('t', 'C'), css_class='col-lg-3'),
+                        title="Vital Signs",
+                        css_class="col-lg-12"),
+                    'pe'),
+                Tab('Assessment & Plan',
+                    'A_and_P',
+                    'rx',
+                    Fieldset(
+                        'Labs',
+                        # Div(HTML("<strong>Labs</strong>"),
+                        #    css_class='col-lg-1'),
+                        Div('labs_ordered_internal', css_class='col-lg-6', form_class=''),
+                        Div('labs_ordered_quest', css_class='col-lg-6'))),
+                Tab('Referral/Discharge',
+                    Fieldset('Medication Vouchers',
+                             'got_voucher',
+                             PrependedText('voucher_amount', '$'),
+                             PrependedText('patient_pays', '$')),
+                    Fieldset('Referral',
+                             'will_return',
+                             Field(
+                                 'referral_location',
+                                 style="background: #FAFAFA; padding: 10px;"),
+                             Field(
+                                 'referral_type',
+                                 style="background: #FAFAFA; padding: 10px;")),
+                   )
+            )
+        )
+
+        self.helper.add_input(Submit('submit', 'Submit'))
 
     def clean(self):
         '''Use form's clean hook to verify that fields in Workup are
         consistent with one another (e.g. if pt recieved a voucher, amount is
         given).'''
 
-        cleaned_data = super(ModelForm, self).clean()
+        cleaned_data = super(WorkupForm, self).clean()
 
         if cleaned_data.get('got_voucher') and \
            not cleaned_data.get('voucher_amount'):
