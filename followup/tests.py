@@ -213,8 +213,8 @@ class FollowupTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        from pttrack.test_views import build_provider_and_log_in
-        build_provider_and_log_in(self.client)
+        from pttrack.test_views import log_in_provider, build_provider
+        log_in_provider(self.client, build_provider())
 
     def test_followup_view_urls(self):
 

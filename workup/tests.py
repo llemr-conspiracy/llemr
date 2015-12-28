@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 from django.core.urlresolvers import reverse
 
-from pttrack.test_views import build_provider_and_log_in
+from pttrack.test_views import build_provider, log_in_provider
 from pttrack.models import Patient, ProviderType, Provider
 
 from . import validators
@@ -51,7 +51,7 @@ class ViewsExistTest(TestCase):
             clinic_date=now().date(),
             gcal_id="tmp")
 
-        build_provider_and_log_in(self.client)
+        log_in_provider(self.client, build_provider())
 
     def test_clindate_create_redirect(self):
         '''Verify that if no clindate exists, we're properly redirected to a
@@ -65,7 +65,7 @@ class ViewsExistTest(TestCase):
         pt_url = 'new-workup'
         response = self.client.get(reverse(pt_url, args=(pt.id,)))
         self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('new-clindate', args=(pt.id,)), response.url)
+        self.assertRedirects(response, reverse('new-clindate', args=(pt.id,)))
 
     def test_new_workup_view(self):
 
@@ -116,22 +116,21 @@ class ViewsExistTest(TestCase):
 
         # if the wu is unsigned, all can access update.
         for role in ["Preclinical", "Clinical", "Coordinator", "Attending"]:
-            build_provider_and_log_in(self.client, [role])
+            log_in_provider(self.client, build_provider([role]))
             response = self.client.get(reverse('workup-update', args=(wu.id,)))
             self.assertEqual(response.status_code, 200)
 
-        provider = build_provider_and_log_in(self.client, ["Attending"])
-        wu.sign(provider.associated_user)
+        wu.sign(build_provider(["Attending"]).associated_user)
         wu.save()
 
         #nonattesting cannot access
         for role in ["Preclinical", "Clinical", "Coordinator"]:
-            build_provider_and_log_in(self.client, [role])
+            log_in_provider(self.client, build_provider([role]))
             response = self.client.get(reverse('workup-update', args=(wu.id,)))
             self.assertRedirects(response, reverse('workup', args=(wu.id,)))
 
         #attesting can
-        build_provider_and_log_in(self.client, ["Attending"])
+        log_in_provider(self.client, build_provider(["Attending"]))
         response = self.client.get(reverse('workup-update', args=(wu.id,)))
         self.assertEqual(response.status_code, 200)
 
@@ -160,14 +159,14 @@ class ViewsExistTest(TestCase):
 
         # Providers with can_attend == False should not be able to sign
         for nonattesting_role in ["Preclinical", "Clinical", "Coordinator"]:
-            build_provider_and_log_in(self.client, [nonattesting_role])
+            log_in_provider(self.client, build_provider([nonattesting_role]))
 
             response = self.client.get(reverse(wu_url, args=(wu.id,)))
             self.assertRedirects(response, reverse('workup', args=(wu.id,)))
             self.assertFalse(models.Workup.objects.get(pk=wu.id).signed())
 
         # Providers able to attend should be able to sign.
-        build_provider_and_log_in(self.client, ["Attending"])
+        log_in_provider(self.client, build_provider(["Attending"]))
 
         response = self.client.get(reverse(wu_url, args=(wu.id,)))
         self.assertRedirects(response, reverse('workup', args=(wu.id,)),)

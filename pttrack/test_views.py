@@ -1,10 +1,12 @@
+import datetime
+
 from django.test import TestCase
-from .  import models
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django.core.files import File
-import datetime
+
+from .  import models
 
 # pylint: disable=invalid-name
 # Whatever, whatever. I name them what I want.
@@ -30,9 +32,7 @@ def note_check(test, note, client, pt_pk):
     test.assertLessEqual((now() - note.last_modified).total_seconds(), 10)
 
 
-def build_provider_and_log_in(client, roles=None):
-    ''' Creates a provider and logs them in. Role defines their provider_type,
-    default is all '''
+def build_provider(roles=None):
 
     if roles is None:
         roles = ["Coordinator", "Attending", "Clinical", "Preclinical"]
@@ -56,6 +56,14 @@ def build_provider_and_log_in(client, roles=None):
                 str([p.short_name for p in models.ProviderType.objects.all()]))
         user.provider.clinical_roles.add(ptype)
 
+    return user.provider
+
+def log_in_provider(client, provider):
+    ''' Creates a provider and logs them in. Role defines their provider_type,
+    default is all '''
+
+    user = provider.associated_user
+
     client.login(username=user.username, password='password')
 
     session = client.session
@@ -69,7 +77,7 @@ class ViewsExistTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        build_provider_and_log_in(self.client)
+        log_in_provider(self.client, build_provider())
 
     def test_basic_urls(self):
         basic_urls = ["home",
@@ -197,7 +205,7 @@ class ProviderCreateTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        build_provider_and_log_in(self.client)
+        log_in_provider(self.client, build_provider())
 
     def test_provider_creation(self):
         '''Verify that, in the absence of a provider, a provider is created,
@@ -246,7 +254,7 @@ class IntakeTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        build_provider_and_log_in(self.client)
+        log_in_provider(self.client, build_provider())
 
         self.valid_pt_dict = {
             'first_name': "Juggie",
@@ -310,8 +318,7 @@ class ActionItemTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        build_provider_and_log_in(self.client, ["Coordinator"])
-
+        log_in_provider(self.client, build_provider(["Coordinator"]))
 
     def test_home_has_correct_patients(self):
         pt1 = models.Patient.objects.get(pk=1)
@@ -475,7 +482,7 @@ class AttendingTests(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        build_provider_and_log_in(self.client, ["Attending"])
+        log_in_provider(self.client, build_provider(["Attending"]))
 
     def test_home_has_correct_patients_attending(self):
 
