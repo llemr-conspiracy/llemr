@@ -6,6 +6,10 @@ from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django.core.files import File
 
+# For live tests.
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium.webdriver.firefox.webdriver import WebDriver
+
 from .  import models
 
 # pylint: disable=invalid-name
@@ -32,14 +36,17 @@ def note_check(test, note, client, pt_pk):
     test.assertLessEqual((now() - note.last_modified).total_seconds(), 10)
 
 
-def build_provider(roles=None):
+def build_provider(roles=None, username=None, password='password'):
 
     if roles is None:
         roles = ["Coordinator", "Attending", "Clinical", "Preclinical"]
 
+    if username is None:
+        username = 'user'+str(User.objects.all().count())
+
     user = User.objects.create_user(
-        'tljones'+str(User.objects.all().count()),
-        'tommyljones@gmail.com', 'password')
+        username,
+        'tommyljones@gmail.com', password)
     user.save()
 
     g = models.Gender.objects.all()[0]
@@ -72,6 +79,75 @@ def log_in_provider(client, provider):
 
     return user.provider
 
+def live_submit_login(selenium, username, password):
+    username_input = selenium.find_element_by_name("username")
+    username_input.send_keys(username)
+    password_input = selenium.find_element_by_name("password")
+    password_input.send_keys(password)
+    selenium.find_element_by_xpath('//button[@type="submit"]').click()
+
+class LiveTesting(StaticLiveServerTestCase):
+    fixtures = [BASIC_FIXTURE]
+
+    @classmethod
+    def setUpClass(cls):
+        super(LiveTesting, cls).setUpClass()
+        cls.selenium = WebDriver()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super(LiveTesting, cls).tearDownClass()
+
+    def test_login(self):
+        '''
+        Test the login sequence for one clinical role and mulitiple clinical
+        roles.
+        '''
+
+        build_provider(username='jrporter', password='password')
+
+        # any valid URL should redirect to login at this point.
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(self.selenium, 'jrporter', 'password')
+
+        # now we should have to choose a clinical role
+        self.assertEquals(self.selenium.current_url,
+                          '%s%s%s' % (self.live_server_url,
+                                      reverse('choose-clintype'),
+                                      '?next='+reverse('home')))
+
+        self.selenium.find_element_by_xpath(
+            '//input[@value="Coordinator"]').click()
+        self.selenium.find_element_by_xpath(
+            '//button[@type="submit"]').click()
+
+        self.assertEquals(self.selenium.current_url,
+                          '%s%s' % (self.live_server_url,
+                                    reverse('home')))
+
+        self.selenium.get('%s%s' % (self.live_server_url,
+                                    reverse('logout')))
+
+        # make a provider with only one role.
+        build_provider(username='timmy', password='password',
+                       roles=["Attending"])
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(self.selenium, 'timmy', 'password')
+
+        # now we should be redirected directly to home.
+        self.assertEquals(self.selenium.current_url,
+                          '%s%s' % (self.live_server_url,
+                                    reverse('home')))
+
+        # def test_patient_detail(self):
+        #     build_provider(username='timmy', password='password',
+        #                    roles=["Attending"])
+        #     self.selenium.get('%s%s' % (self.live_server_url,
+        #                                 reverse('patient_detail', args=(1,))))
+
+            #TODO finish writing this test.
 
 class ViewsExistTest(TestCase):
     fixtures = [BASIC_FIXTURE]
