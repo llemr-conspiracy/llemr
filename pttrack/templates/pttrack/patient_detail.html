@@ -92,7 +92,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 								<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
 								{% if request.session.clintype_pk == "Coordinator" %}
 								<p class="text-right">
-								<a href="{% url 'admin:pttrack_workup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+								<a href="{% url 'admin:workup_workup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
 								</p>
 								{% endif %}
 	  						</div>
@@ -139,13 +139,13 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 								{% if request.session.clintype_pk == "Coordinator" %}
 								<p class="text-right">
 									{% if note.CS_HELP %}
-									<a href="{% url 'admin:pttrack_labfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+									<a href="{% url 'admin:followup_labfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
 									{% elif note.SUBSQ_DOSE_HELP %}
-									<a href="{% url 'admin:pttrack_vaccinefollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+									<a href="{% url 'admin:followup_vaccinefollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
 									{% elif note.REFTYPE_HELP %}
-									<a href="{% url 'admin:pttrack_referralfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+									<a href="{% url 'admin:followup_referralfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
 									{% else %}
-									<a href="{% url 'admin:pttrack_generalfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+									<a href="{% url 'admin:followup_generalfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
 									{% endif %}
 								{% endif %}
   							</div>
