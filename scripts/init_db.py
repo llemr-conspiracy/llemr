@@ -8,7 +8,7 @@ rebuild the database when debugging.
 
 from pttrack import models as core
 from followup import models as followup
-from datetime import date
+from workup import models as workup
 
 for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",
                   "Croatian", "Czech", "Danish", "Dutch", "Finnish", "French",
@@ -42,7 +42,7 @@ for (lname, can_sign, part_staff) in [("Attending Physician", True, False),
 
 for clintype in ["Basic Care Clinic", "Depression & Anxiety Clinic",
                  "Dermatology Clinic", "Muscle and Joint Pain Clinic"]:
-    t = core.ClinicType(name=clintype)
+    t = workup.ClinicType(name=clintype)
     t.save()
 
 for ai_type in ["Vaccine Reminder", "Lab Follow-Up", "PCP Follow-Up", "Other"]:
@@ -71,7 +71,7 @@ for dx_type in ["Cardiovascular", "Dermatological", "Endocrine",
                 "Mental Health", "Musculoskeletal", "Neurological", 
                 "OB/GYN", "Physical Exam", "Respiratory", "Rx Refill", 
                 "Urogenital", "Vaccination/PPD", "Other"]:
-    d = core.DiagnosisType(name=dx_type)
+    d = workup.DiagnosisType(name=dx_type)
     d.save()
 
 for referral_location in [

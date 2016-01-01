@@ -24,6 +24,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'pttrack',
     'followup',
+    'workup',
     'bootstrap3',
     'bootstrap3_datetime',
     'djangular',
@@ -42,7 +43,7 @@ MIDDLEWARE_CLASSES = (
     'simple_history.middleware.HistoryRequestMiddleware',
 )
 
-ROOT_URLCONF = 'clintools.urls'
+ROOT_URLCONF = 'osler.urls'
 
 TEMPLATES = [
     {
@@ -61,7 +62,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'clintools.wsgi.application'
+WSGI_APPLICATION = 'osler.wsgi.application'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/

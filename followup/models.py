@@ -1,5 +1,4 @@
-'''The datamodels for all various types required for followup tracking in  the
-SNHC clintools patient tracking system'''
+'''The datamodels for various types required for followup tracking in Osler.'''
 from django.db import models
 from pttrack.models import Note, ContactMethod, ReferralType, ReferralLocation
 

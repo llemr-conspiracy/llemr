@@ -37,8 +37,9 @@ def build_provider_and_log_in(client, roles=None):
     if roles is None:
         roles = ["Coordinator", "Attending", "Clinical", "Preclinical"]
 
-    user = User.objects.create_user('tljones', 'tommyljones@gmail.com',
-                                    'password')
+    user = User.objects.create_user(
+        'tljones'+str(User.objects.all().count()),
+        'tommyljones@gmail.com', 'password')
     user.save()
 
     g = models.Gender.objects.all()[0]
@@ -51,9 +52,13 @@ def build_provider_and_log_in(client, roles=None):
     coordinator_provider.save()
 
     for role in roles:
-        for ptype in models.ProviderType.objects.all():
-            if ptype.short_name == role:
-                user.provider.clinical_roles.add(ptype)
+        try:
+            ptype = models.ProviderType.objects.filter(short_name=role)[0]
+        except IndexError:
+            raise KeyError(
+                "'"+role+"' isn't in the list of ProviderTypes: "+
+                str([p.short_name for p in models.ProviderType.objects.all()]))
+        user.provider.clinical_roles.add(ptype)
 
     client.login(username=user.username, password='password')
 
@@ -61,19 +66,13 @@ def build_provider_and_log_in(client, roles=None):
     session['clintype_pk'] = user.provider.clinical_roles.all()[0].pk
     session.save()
 
+    return user.provider
+
 
 class ViewsExistTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-
-        models.ClinicType.objects.create(name="Basic Care Clinic")
-
-        models.ClinicDate.objects.create(
-            clinic_type=models.ClinicType.objects.all()[0],
-            clinic_date=now().date(),
-            gcal_id="tmp")
-
         build_provider_and_log_in(self.client)
 
     def test_basic_urls(self):
@@ -108,7 +107,6 @@ class ViewsExistTest(TestCase):
                    "new-clindate",
                    'new-action-item',
                    'followup-choice',
-                   'new-workup',
                    'patient-update']
 
         pt_urls_redirect = ['patient-activate-detail',
@@ -137,76 +135,6 @@ class ViewsExistTest(TestCase):
     def test_provider_urls(self):
         response = self.client.get(reverse('new-provider'))
         self.assertEqual(response.status_code, 200)
-
-    def test_clindate_create_redirect(self):
-        '''Verify that if no clindate exists, we're properly redirected to a
-        clindate create page.'''
-
-        # First delete clindate that's created in setUp.
-        models.ClinicDate.objects.all().delete()
-
-        pt = models.Patient.objects.all()[0]
-
-        pt_url = 'new-workup'
-        response = self.client.get(reverse(pt_url, args=(pt.id,)))
-        self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('new-clindate', args=(pt.id,)), response.url)
-
-    def test_workup_urls(self):
-        wu_urls = ['workup',
-                   'workup-update']
-
-        # test the creation of many workups, just in case.
-        for i in range(101):
-            wu = models.Workup.objects.create(
-                clinic_day=models.ClinicDate.objects.all()[0],
-                chief_complaint="SOB",
-                diagnosis="MI",
-                HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
-                ros="", pe="", A_and_P="",
-                author=models.Provider.objects.all()[0],
-                author_type=models.ProviderType.objects.all()[0],
-                patient=models.Patient.objects.all()[0])
-
-            wu.diagnosis_categories.add(models.DiagnosisType.objects.all()[0])
-
-            for wu_url in wu_urls:
-                response = self.client.get(reverse(wu_url, args=(wu.id,)))
-                self.assertEqual(response.status_code, 200)
-
-    def test_workup_signing(self):
-
-        wu_url = "workup-sign"
-
-        wu = models.Workup.objects.create(
-            clinic_day=models.ClinicDate.objects.all()[0],
-            chief_complaint="SOB",
-            diagnosis="MI",
-            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
-            ros="", pe="", A_and_P="",
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=models.Patient.objects.all()[0])
-
-        wu.diagnosis_categories.add(models.DiagnosisType.objects.all()[0])
-        wu.save()
-
-        # Fresh workups should be unsigned
-        self.assertFalse(wu.signed())
-
-        # Providers with can_attend == False should not be able to sign
-        models.Provider.objects.all()[0].can_attend = False
-
-        response = self.client.get(reverse(wu_url, args=(wu.id,)))
-        self.assertEqual(response.status_code, 302)
-        self.assertFalse(wu.signed())
-
-        # Providers able to attend should be able to sign.
-        models.Provider.objects.all()[0].can_attend = True
-
-        response = self.client.get(reverse(wu_url, args=(wu.id,)))
-        self.assertEqual(response.status_code, 302)
-        self.assertFalse(wu.signed())
 
     def test_document_urls(self):
         '''
@@ -575,9 +503,14 @@ class AttendingTests(TestCase):
 
     def test_home_has_correct_patients_attending(self):
 
-        models.ClinicDate.objects.create(clinic_type=models.ClinicType.objects.all()[0],
-                                         clinic_date=datetime.datetime.now(),
-                                         gcal_id="435345")
+        # TODO: clearly, this dependency implies this shouldn't be here.
+        # probably, the solution is a "home" app.
+        from workup.models import ClinicDate, ClinicType, Workup
+
+        ClinicDate.objects.create(
+            clinic_type=ClinicType.objects.all()[0],
+            clinic_date=datetime.datetime.now(),
+            gcal_id="435345")
         # we need > 1 pt, because one will have an active AI and one won't
         pt1 = models.Patient.objects.create(
             first_name="Juggie",
@@ -630,8 +563,8 @@ class AttendingTests(TestCase):
             preferred_contact_method=models.ContactMethod.objects.all()[0],
         )
 
-        wu1 = models.Workup.objects.create(
-            clinic_day=models.ClinicDate.objects.all()[0],
+        wu1 = Workup.objects.create(
+            clinic_day=ClinicDate.objects.all()[0],
             chief_complaint="SOB",
             diagnosis="MI",
             HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
@@ -640,8 +573,8 @@ class AttendingTests(TestCase):
             author_type=models.ProviderType.objects.all()[0],
             patient=pt1)
 
-        wu2 = models.Workup.objects.create(
-            clinic_day=models.ClinicDate.objects.all()[0],
+        wu2 = Workup.objects.create(
+            clinic_day=ClinicDate.objects.all()[0],
             chief_complaint="SOB",
             diagnosis="MI",
             HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
@@ -650,11 +583,11 @@ class AttendingTests(TestCase):
             author_type=models.ProviderType.objects.all()[0],
             patient=pt2,
             signer=models.Provider.objects.all().filter(
-                clinical_roles=models.ProviderType.objects.all().filter(short_name="Attending")[0])[0])
+                clinical_roles=models.ProviderType.objects.all().filter(
+                    short_name="Attending")[0])[0])
 
-
-        wu3 = models.Workup.objects.create(
-            clinic_day=models.ClinicDate.objects.all()[0],
+        wu3 = Workup.objects.create(
+            clinic_day=ClinicDate.objects.all()[0],
             chief_complaint="SOB",
             diagnosis="MI",
             HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",

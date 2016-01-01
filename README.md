@@ -6,7 +6,7 @@
 
 # Osler
 
-This is our clintools project, which is a collection for all our
+This is our osler project, which is a collection for all our
 patient tracking. It's a django project.
 
 You can check out a running demo at [oslerproject.org](http://oslerproject.org). The stack
@@ -18,7 +18,7 @@ droplet.
 First, clone our repository
 
 ```bash
-git clone https://github.com/SaturdayNeghborhoodHealthClinic/clintools.git
+git clone https://github.com/SaturdayNeghborhoodHealthClinic/osler.git
 ```
 
 First, get [pip](https://pip.pypa.io/en/stable/).
@@ -42,7 +42,7 @@ pip install -r requirements.txt
 
 One of our dependencies is Pillow, which requires [some other libraries.](https://pillow.readthedocs.org/en/3.0.x/installation.html)
 
-Once you've done that, *from the `clintools/` build the test database with
+Once you've done that, *from the `osler/` build the test database with
 
 ```bash
 sh scripts/reset_db.sh
@@ -52,7 +52,7 @@ This script is also used to rebuild the test database after making database
 changes require migrations. Then, you can run the project in debug mode with
 
 ```bash
-python manage.py runserver --settings clintools.debug_settings
+python manage.py runserver --settings osler.debug_settings
 ```
 
 Once you have it running, you should be able to log into the debug database-backed

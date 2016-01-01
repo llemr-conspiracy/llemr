@@ -1,8 +1,8 @@
-'''The datamodels for the SNHC clintools patient tracking system'''
+'''The datamodels for the Osler core'''
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
-import django.utils.timezone
+from django.utils.timezone import now
 import os
 
 from simple_history.models import HistoricalRecords
@@ -52,16 +52,6 @@ class ContactMethod(models.Model):
 class ReferralType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
     clinics a patient can be referred to (e.g. PCP, ortho, etc.)'''
-
-    name = models.CharField(max_length=100, primary_key=True)
-
-    def __unicode__(self):
-        return self.name
-
-
-class DiagnosisType(models.Model):
-    '''Simple text-contiaining class for storing the different kinds of
-    diagnosis a pateint can recieve.'''
 
     name = models.CharField(max_length=100, primary_key=True)
 
@@ -183,6 +173,9 @@ class Patient(Person):
     # Alternative phone numbers have up to 4 fields and each one is associated
     # with the person that owns phone
 
+    # TODO: we should really come up with a better way of representing these
+    # data
+
     alternate_phone_1_owner = models.CharField(max_length=40, blank=True, null=True)
     alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True) 
    
@@ -198,15 +191,15 @@ class Patient(Person):
     preferred_contact_method = models.ForeignKey(ContactMethod, blank=True,
                                                  null=True)
 
-    # If the patient is in clinic and needs a workup, that is specified by needs_workup. Default value is false for all the previous patients
+    # If the patient is in clinic and needs a workup, that is specified by
+    # needs_workup. Default value is false for all the previous patients
 
     needs_workup = models.BooleanField(default=False)
 
     history = HistoricalRecords()
 
     def age(self):
-        import datetime
-        return (datetime.date.today()-self.date_of_birth).days/365
+        return (now().date()-self.date_of_birth).days/365
 
     def __unicode__(self):
         return self.name()
@@ -215,31 +208,30 @@ class Patient(Person):
         '''return a list of ActionItems that are 1) not done and
         2) due today or before. The list is sorted by due_date'''
 
-        ai_list = [ai for ai in self.actionitem_set.all() if
-                   not ai.done()
-                   and ai.due_date <= django.utils.timezone.now().date()]
-        ai_list.sort(key=lambda(ai): ai.due_date)
-        return ai_list
+        return sorted(
+            ActionItem.objects.filter(patient=self.pk)\
+                .filter(completion_author=None)\
+                .filter(due_date__lte=now().date()),
+            key=lambda(ai): ai.due_date)
 
     def done_action_items(self):
         '''return the set of action items that are done, sorted
         by completion date'''
 
-        ai_list = [ai for ai in self.actionitem_set.all() if ai.done()]
-        ai_list.sort(key=lambda(ai): ai.completion_date)
-
-        return ai_list
+        return sorted(
+            ActionItem.objects.filter(patient=self.pk)\
+                .exclude(completion_author=None),
+            key=lambda(ai): ai.completion_date)
 
     def inactive_action_items(self):
         '''return a list of action items that aren't done, but aren't
         due yet either, sorted by due date.'''
 
-        ai_list = [ai for ai in self.actionitem_set.all()
-                   if not ai.done()
-                   and ai.due_date > django.utils.timezone.now().date()]
-        ai_list.sort(key=lambda(ai): ai.due_date)
-
-        return ai_list
+        return sorted(
+            ActionItem.objects.filter(patient=self.pk)\
+                .filter(completion_author=None)\
+                .filter(due_date__gt=now().date()),
+            key=lambda(ai): ai.due_date)
 
     def status(self):
         n_active = len(self.active_action_items())
@@ -251,7 +243,7 @@ class Patient(Person):
         elif n_pending > 0:
             next_item = min(self.inactive_action_items(),
                             key=lambda(k): k.due_date)
-            tdelta = next_item.due_date - django.utils.timezone.now().date()
+            tdelta = next_item.due_date - now().date()
             return "next action in "+str(tdelta.days)+" days"
         elif n_done > 0:
             return "all actions complete"
@@ -268,25 +260,22 @@ class Patient(Person):
         return followups
 
     def latest_workup(self):
-        if len(self.workup_set.all()) == 0:
+        wu_set = self.workup_set
+        if wu_set.count() == 0:
             return None
         else:
-            return sorted(
-                self.workup_set.all(),
-                key=lambda(x): x.clinic_day.clinic_date)[-1]
+            return wu_set.latest(field_name="clinic_day__clinic_date")
 
     def notes(self):
         '''Returns a list of all the notes (workups and followups) associated
         with this patient ordered by date written.'''
-        note_list = list(self.workup_set.all())
+        note_list = []
 
+        note_list.extend(self.workup_set.all())
         note_list.extend(self.followup_set())
-
         note_list.extend(self.document_set.all())
 
-        note_list.sort(key=lambda(k): k.written_datetime)
-
-        return note_list
+        return sorted(note_list, key=lambda(k): k.written_datetime)
 
     def all_phones(self):
         '''Returns a list of tuples of the form (phone, owner) of all the
@@ -316,23 +305,6 @@ class Provider(Person):
 
     def __unicode__(self):
         return self.name()
-
-
-class ClinicType(models.Model):
-    name = models.CharField(max_length=50)
-
-    def __unicode__(self):
-        return self.name
-
-
-class ClinicDate(models.Model):
-    clinic_type = models.ForeignKey(ClinicType)
-
-    clinic_date = models.DateField()
-    gcal_id = models.CharField(max_length=50)
-
-    def __unicode__(self):
-        return str(self.clinic_type)+" ("+str(self.clinic_date)+")"
 
 
 class Note(models.Model):
@@ -382,7 +354,7 @@ class ActionItem(Note):
     history = HistoricalRecords()
 
     def mark_done(self, provider):
-        self.completion_date = django.utils.timezone.now()
+        self.completion_date = now()
         self.completion_author = provider
 
     def clear_done(self):
@@ -404,86 +376,3 @@ class ActionItem(Note):
     def __unicode__(self):
         return " ".join(["AI for", str(self.patient)+":",
                          str(self.instruction), "on", str(self.due_date)])
-
-
-class Workup(Note):
-    '''Datamodel of a workup. Has fields specific to each part of an exam,
-    along with SNHC-specific info about where the patient has been referred for
-    continuity care.'''
-
-    clinic_day = models.ForeignKey(ClinicDate)
-
-    chief_complaint = models.CharField(max_length=1000,
-                                       verbose_name="CC")
-    diagnosis = models.CharField(max_length=1000,
-                                 verbose_name="Dx")
-    diagnosis_categories = models.ManyToManyField(DiagnosisType)
-
-    HPI = models.TextField(verbose_name="HPI")
-    PMH_PSH = models.TextField(verbose_name="PMH/PSH")
-    meds = models.TextField(verbose_name="Medications")
-    allergies = models.TextField()
-    fam_hx = models.TextField()
-    soc_hx = models.TextField()
-    ros = models.TextField()
-
-    hr = models.PositiveSmallIntegerField(blank=True, null=True)
-    bp = models.CharField(blank=True, null=True,
-                          max_length=7,
-                          validators=[validators.validate_bp])
-
-    rr = models.PositiveSmallIntegerField(blank=True, null=True)
-    t = models.DecimalField(max_digits=3,
-                            decimal_places=1,
-                            blank=True, null=True)
-
-    pe = models.TextField(verbose_name="Physical Examination")
-
-    labs_ordered_quest = models.TextField(blank=True, null=True)
-    labs_ordered_internal = models.TextField(blank=True, null=True)
-
-    rx = models.TextField(blank=True, null=True)
-
-    got_voucher = models.BooleanField(default=False)
-    voucher_amount = models.PositiveSmallIntegerField(blank=True, null=True)
-    patient_pays = models.PositiveSmallIntegerField(blank=True, null=True)
-
-    referral_type = models.ManyToManyField(ReferralType, blank=True)
-    referral_location = models.ManyToManyField(ReferralLocation, blank=True)
-
-    will_return = models.BooleanField(default=False,
-                                      help_text="Will the pt. return to SNHC?")
-
-    A_and_P = models.TextField()
-
-    signer = models.ForeignKey(Provider,
-                               blank=True, null=True,
-                               related_name="signed_workups",
-                               validators=[validators.validate_attending])
-    signed_date = models.DateTimeField(blank=True, null=True)
-
-    history = HistoricalRecords()
-
-    def sign(self, user, active_role):
-        if active_role.signs_charts:
-            assert active_role in user.provider.clinical_roles.all()
-
-            self.signed_date = django.utils.timezone.now()
-            self.signer = user.provider
-        else:
-            raise ValueError("You must be an attending to sign workups.")
-
-    def signed(self):
-        return self.signer is not None
-
-    def short_text(self):
-        return self.chief_complaint
-
-    def written_date(self):
-        return self.clinic_day.clinic_date
-
-    def attribution(self):
-        return " ".join([str(self.author), "on", str(self.written_date())])
-
-    def __unicode__(self):
-        return self.patient.name()+" on "+str(self.clinic_day.clinic_date)
