@@ -10,7 +10,7 @@ from . import views
 
 # pylint: disable=I0011
 
-unwrapped_urlconf = [  # pylint: disable=invalid-name
+unwrapped_urlpatterns = [  # pylint: disable=invalid-name
     url(r'^$',
         views.home_page,
         name="home"),
@@ -67,7 +67,6 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
         views.DocumentUpdate.as_view(),
         name="document-update"),
 
-
     # MISC
     url(r'^about/',
         TemplateView.as_view(template_name='pttrack/about.html'),
@@ -75,6 +74,10 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
 ]
 
 def url_wrap(urls):
+    '''
+    Wrap URLs in login_required and provider_required decorators as
+    appropriate.
+    '''
     wrapped_urls = []
     for u in urls:
         if u.name in ['new-provider', 'choose-clintype']:
@@ -89,5 +92,5 @@ def url_wrap(urls):
         wrapped_urls.append(u)
     return wrapped_urls
 
-urlpatterns = url_wrap(unwrapped_urlconf)
+urlpatterns = url_wrap(unwrapped_urlpatterns)
 

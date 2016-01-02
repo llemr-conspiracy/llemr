@@ -141,13 +141,45 @@ class LiveTesting(StaticLiveServerTestCase):
                           '%s%s' % (self.live_server_url,
                                     reverse('home')))
 
-        # def test_patient_detail(self):
-        #     build_provider(username='timmy', password='password',
-        #                    roles=["Attending"])
-        #     self.selenium.get('%s%s' % (self.live_server_url,
-        #                                 reverse('patient_detail', args=(1,))))
+    def test_pttrack_view_rendering(self):
+        '''
+        Test that pttrack urls render correctly, as determined by the
+        existance of a jumbotron at the top.
+        '''
+        from . import urls
+        from django.core.urlresolvers import NoReverseMatch
 
-            #TODO finish writing this test.
+        # build a provider and log in.
+        build_provider(username='timmy', password='password',
+                       roles=["Attending"])
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(self.selenium, 'timmy', 'password')
+
+        for url in urls.urlpatterns:
+            # except 'choose-clintype' and action item modifiers from test
+            # since they're redirects.
+            if url.name in ['choose-clintype', 'done-action-item',
+                            'reset-action-item', 'document-detail',
+                            'document-update']:
+                # TODO: add test data for documents so document-detail and
+                # document-update can be tested as well.
+                continue
+
+            # all the URLs have either one parameter or none. Try one
+            # parameter first; if that fails, try with none.
+            try:
+                self.selenium.get('%s%s' % (self.live_server_url,
+                                            reverse(url.name, args=(1,))))
+            except NoReverseMatch:
+                self.selenium.get('%s%s' % (self.live_server_url,
+                                            reverse(url.name)))
+
+            jumbotron_elements = self.selenium.find_elements_by_xpath(
+                '//div[@class="jumbotron"]')
+            self.assertNotEqual(
+                len(jumbotron_elements), 0,
+                msg=" ".join(["Expected the URL ", url.name,
+                              " to have a jumbotron element."]))
 
 class ViewsExistTest(TestCase):
     fixtures = [BASIC_FIXTURE]
