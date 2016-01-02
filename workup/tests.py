@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
@@ -8,8 +10,6 @@ from pttrack.models import Patient, ProviderType, Provider
 
 from . import validators
 from . import models
-
-BASIC_FIXTURE = 'basic_fixture'
 
 class TestModelFieldValidators(TestCase):
     '''
@@ -41,7 +41,7 @@ class ViewsExistTest(TestCase):
     '''
     Verify that views involving the wokrup are functioning.
     '''
-    fixtures = [BASIC_FIXTURE]
+    fixtures = ['workup', 'pttrack']
 
     def setUp(self):
 
@@ -174,3 +174,112 @@ class ViewsExistTest(TestCase):
         self.assertTrue(models.Workup.objects.get(pk=wu.id).signed())
 
 
+class AttendingTests(TestCase):
+    fixtures = ['pttrack', 'workup']
+
+    def setUp(self):
+        log_in_provider(self.client, build_provider(["Attending"]))
+
+    def test_home_has_correct_patients_attending(self):
+
+        # TODO: probably, the solution is a "home" app.
+        from pttrack.models import Gender, ContactMethod
+
+        models.ClinicDate.objects.create(
+            clinic_type=models.ClinicType.objects.all()[0],
+            clinic_date=now(),
+            gcal_id="435345")
+        # we need > 1 pt, because one will have an active AI and one won't
+        pt1 = Patient.objects.create(
+            first_name="Juggie",
+            last_name="Brodeltein",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=Gender.objects.all()[1],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            needs_workup=True,
+            preferred_contact_method=ContactMethod.objects.all()[0],
+        )
+
+        pt2 = Patient.objects.create(
+            first_name="Juggie",
+            last_name="Brodeltein",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=Gender.objects.all()[1],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=date(1990, 01, 01),
+            patient_comfortable_with_english=True,
+            needs_workup=True,
+            preferred_contact_method=ContactMethod.objects.all()[0],
+        )
+
+        pt3 = Patient.objects.create(
+            first_name="asdf",
+            last_name="lkjh",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=Gender.objects.all()[0],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            needs_workup=True,
+            preferred_contact_method=ContactMethod.objects.all()[0],
+        )
+
+        wu1 = models.Workup.objects.create(
+            clinic_day=models.ClinicDate.objects.all()[0],
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=Provider.objects.all()[0],
+            author_type=ProviderType.objects.all()[0],
+            patient=pt1)
+
+        wu2 = models.Workup.objects.create(
+            clinic_day=models.ClinicDate.objects.all()[0],
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=Provider.objects.all()[0],
+            author_type=ProviderType.objects.all()[0],
+            patient=pt2,
+            signer=Provider.objects.all().filter(
+                clinical_roles=ProviderType.objects.all().filter(
+                    short_name="Attending")[0])[0])
+
+        wu3 = models.Workup.objects.create(
+            clinic_day=models.ClinicDate.objects.all()[0],
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=models.Provider.objects.all()[0],
+            author_type=ProviderType.objects.all()[0],
+            patient=pt3)
+
+        url = reverse("home")
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # pt1, pt3 should be present since they are not signed
+        self.assertEqual(len(response.context['zipped_list'][0][1]), 2)
+        self.assertIn(pt1, response.context['zipped_list'][0][1])
+        self.assertIn(pt3, response.context['zipped_list'][0][1])

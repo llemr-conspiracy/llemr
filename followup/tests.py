@@ -5,14 +5,83 @@ import datetime
 from django.test import TestCase
 from django.core.urlresolvers import reverse
 
+# For live tests.
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium.webdriver.firefox.webdriver import WebDriver
+
 from pttrack.models import Gender, Patient, Provider, ProviderType
 
 from . import forms
 from . import models
+from . import urls
 
 # pylint: disable=invalid-name
 
-BASIC_FIXTURE = 'basic_fixture'
+
+FU_TYPES = ["labs", "general", "vaccine"]
+
+
+class FollowupLiveTesting(StaticLiveServerTestCase):
+    fixtures = ['followup', 'pttrack']
+
+    @classmethod
+    def setUpClass(cls):
+        super(FollowupLiveTesting, cls).setUpClass()
+        cls.selenium = WebDriver()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super(FollowupLiveTesting, cls).tearDownClass()
+
+    def setUp(self):
+        from pttrack.test_views import build_provider, live_submit_login
+
+        build_provider(username='timmy', password='password',
+                       roles=["Attending"])
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(self.selenium, 'timmy', 'password')
+
+    def verify_rendering(self, url, url_args=None, kwargs=None):
+        if url_args is None and kwargs is None:
+            self.selenium.get('%s%s' % (self.live_server_url,
+                                        reverse(url)))
+        elif url_args is None:
+            self.selenium.get('%s%s' % (self.live_server_url,
+                                        reverse(url, kwargs=kwargs)))
+        else:
+            self.selenium.get('%s%s' % (self.live_server_url,
+                                        reverse(url, args=url_args)))
+
+        jumbotron_elements = self.selenium.find_elements_by_xpath(
+            '//div[@class="jumbotron"]')
+        self.assertNotEqual(
+            len(jumbotron_elements), 0,
+            msg=" ".join(["Expected the URL ", url,
+                          " to have a jumbotron element."]))
+
+    def test_followup_view_rendering(self):
+        from django.core.urlresolvers import NoReverseMatch
+
+        for url in urls.urlpatterns:
+            if url.name in ['new-followup', 'followup']:
+                continue
+
+            # all the URLs have either one parameter or none. Try one
+            # parameter first; if that fails, try with none.
+            try:
+                self.verify_rendering(url.name, (1,))
+            except NoReverseMatch:
+                self.verify_rendering(url.name)
+
+        for fu_type in FU_TYPES:
+            self.verify_rendering('new-followup', (1,fu_type,))
+
+        # TODO: build in checks for 'followup' once the objects exist.
+        # for model in ['General', 'Lab']:
+        #     self.verify_rendering('followup',
+        #                           kwargs={"pk": 1, "model": model})
 
 
 class TestReferralFollowupForms(TestCase):
@@ -210,7 +279,7 @@ class TestReferralFollowupForms(TestCase):
 
 
 class FollowupTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
+    fixtures = ['followup', 'pttrack']
 
     def setUp(self):
         from pttrack.test_views import log_in_provider, build_provider
@@ -291,7 +360,7 @@ class FollowupTest(TestCase):
         '''
         pt = Patient.objects.all()[0]
 
-        for fu_type in ["labs", "general", "vaccine"]:
+        for fu_type in FU_TYPES:
             url = reverse("new-followup",
                           kwargs={"pt_id": pt.id, 'ftype': fu_type.lower()})
 
