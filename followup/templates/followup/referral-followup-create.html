@@ -23,6 +23,7 @@
 
 <script>
   $( document ).ready(function() {
+    $('#div_id_noapt_reason').show();
     $('#div_id_pt_showed').hide();
     $('#div_id_apt_location').hide();
     $('#div_id_noshow_reason').hide();
@@ -32,15 +33,19 @@
     var has_apt = $("#id_has_appointment").is(":checked");
 
     if (has_apt){
-      // has_apt => supply if pt showed        
-      $('#div_id_noapt_reason').hide();
+      // has_apt => supply if pt showed
+      // 
+      $('#div_id_noapt_reason').hide();    $("#id_noapt_reason").val("");
       $('#div_id_pt_showed').show();
       $('#div_id_apt_location').show();
     } else {
       // no apt => explain why not
       $('#div_id_noapt_reason').show();
-      $('#div_id_pt_showed').hide();
-      $('#div_id_apt_location').hide();
+      $('#div_id_pt_showed').hide();       $("#id_pt_showed").val('');
+      $('#div_id_apt_location').hide();    $('#id_apt_location').val('');
+
+      // no apt => never show noshow
+      $('#div_id_noshow_reason').hide();   $("#id_noshow_reason").val('');
     }
   })
 
@@ -49,7 +54,7 @@
     var showed_val = $("#id_pt_showed").val();
 
     if(showed_val === "Yes"){
-      $('#div_id_noshow_reason').hide();
+      $('#div_id_noshow_reason').hide();  $("#id_noshow_reason").val('');
     } else {
       $('#div_id_noshow_reason').show();
     }

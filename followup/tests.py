@@ -97,6 +97,19 @@ class FollowupLiveTesting(StaticLiveServerTestCase):
         self.assertTrue(not elements['noshow_reason'].is_displayed())
         self.assertTrue(not elements['apt_location'].is_displayed())
 
+        NOAPT_REASON = models.NoAptReason.objects.all()[0]
+        Select(elements['noapt_reason']).select_by_visible_text(
+            str(NOAPT_REASON))
+
+        # double-tap on the 'has_appointment' should clear the state of 
+        # 'noshow_reason' element
+        elements['has_appointment'].click()
+        elements['has_appointment'].click()
+
+        self.assertNotEqual(
+            str(NOAPT_REASON),
+            Select(elements['noapt_reason']).first_selected_option.text)
+
         elements['has_appointment'].click()
 
         # with 'has_appointment' checked, we should now see pt_showed
@@ -105,7 +118,9 @@ class FollowupLiveTesting(StaticLiveServerTestCase):
         self.assertTrue(not elements['noshow_reason'].is_displayed())
         self.assertTrue(elements['apt_location'])
 
-        Select(elements['apt_location']).select_by_index(1)
+        APT_LOCATION = models.ReferralLocation.objects.all()[0]
+        Select(elements['apt_location']).select_by_visible_text(str(
+            APT_LOCATION))
         Select(elements['pt_showed']).select_by_value("Yes")
 
         # if we uncheck 'has_appointment', we go back to the initial state,
@@ -118,7 +133,18 @@ class FollowupLiveTesting(StaticLiveServerTestCase):
         self.assertTrue(not elements['apt_location'].is_displayed())
 
         elements['has_appointment'].click()
-        # self.assertNotEqual(Select(elements['apt_location']))
+
+        # we should lose the state of the apt_location SELECT.
+        self.assertNotEqual(
+            Select(elements['apt_location']).first_selected_option.text,
+            str(APT_LOCATION))
+        self.assertNotEqual(
+            Select(elements['apt_location']).first_selected_option.text, "Yes")
+
+        # re-set the state of the options
+        Select(elements['apt_location']).select_by_visible_text(str(
+            APT_LOCATION))
+        Select(elements['pt_showed']).select_by_value("Yes")
 
         # if pt showed, no further data is required, visibility is as above.
         self.assertTrue(not elements['noapt_reason'].is_displayed())
