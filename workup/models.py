@@ -53,9 +53,9 @@ class Workup(Note):
     PMH_PSH = models.TextField(verbose_name="PMH/PSH")
     meds = models.TextField(verbose_name="Medications")
     allergies = models.TextField()
-    fam_hx = models.TextField()
-    soc_hx = models.TextField()
-    ros = models.TextField()
+    fam_hx = models.TextField(verbose_name="Family History")
+    soc_hx = models.TextField(verbose_name="Social History")
+    ros = models.TextField(verbose_name="ROS")
 
     hr = models.PositiveSmallIntegerField(blank=True, null=True)
     bp = models.CharField(blank=True, null=True,
@@ -69,10 +69,13 @@ class Workup(Note):
 
     pe = models.TextField(verbose_name="Physical Examination")
 
-    labs_ordered_quest = models.TextField(blank=True, null=True)
-    labs_ordered_internal = models.TextField(blank=True, null=True)
+    labs_ordered_quest = models.TextField(
+        blank=True, null=True, verbose_name="Labs Ordered from Quest")
+    labs_ordered_internal = models.TextField(
+        blank=True, null=True, verbose_name="Labs Ordered Internally")
 
-    rx = models.TextField(blank=True, null=True)
+    rx = models.TextField(blank=True, null=True,
+                          verbose_name="Prescription Orders")
 
     got_voucher = models.BooleanField(default=False)
     voucher_amount = models.PositiveSmallIntegerField(blank=True, null=True)

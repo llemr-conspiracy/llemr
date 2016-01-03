@@ -1,6 +1,7 @@
 from base_settings import *
 
 DEBUG = TEMPLATE_DEBUG = False
+CRISPY_FAIL_SILENTLY = not DEBUG
 ALLOWED_HOSTS = ['osler.wustl.edu']
 
 with open(os.path.join(BASE_DIR, 'secrets/secret_key.txt')) as f:
@@ -33,7 +34,6 @@ DATABASES = {
         'NAME': 'osler',
         'USER': 'django',
         'PASSWORD': DB_PASSWORD,
-#        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }

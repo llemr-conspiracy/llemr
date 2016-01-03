@@ -58,13 +58,13 @@ class NoteFormView(FormView):
     note_type = None
 
     def get_context_data(self, **kwargs):
-        '''Inject self.note_type as the note type.'''
+        '''Inject self.note_type and patient into the context.'''
 
         if self.note_type is None:
             raise ImproperlyConfigured("NoteCreate view must have" +
                                        "'note_type' variable set.")
 
-        context = super(FormView, self).get_context_data(**kwargs)
+        context = super(NoteFormView, self).get_context_data(**kwargs)
         context['note_type'] = self.note_type
 
         if 'pt_id' in self.kwargs:
@@ -84,7 +84,7 @@ class NoteUpdate(UpdateView):
             raise ImproperlyConfigured("NoteUpdate view must have" +
                                        "'note_type' variable set.")
 
-        context = super(UpdateView, self).get_context_data(**kwargs)
+        context = super(NoteUpdate, self).get_context_data(**kwargs)
         context['note_type'] = self.note_type
 
         return context
@@ -98,9 +98,12 @@ class ProviderCreate(FormView):
     form_class = myforms.ProviderForm
 
     def get_initial(self):
+        initial = super(ProviderCreate, self).get_initial()
 
-        return {'first_name': self.request.user.first_name,
-                'last_name': self.request.user.last_name}
+        initial['first_name'] = self.request.user.first_name
+        initial['last_name'] = self.request.user.last_name
+
+        return initial
 
     def form_valid(self, form):
         provider = form.save(commit=False)
