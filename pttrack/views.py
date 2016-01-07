@@ -225,7 +225,7 @@ def choose_clintype(request):
         request.session['clintype_pk'] = request.POST[RADIO_CHOICE_KEY]
         active_provider_type = get_current_provider_type(request)
         request.session['signs_charts'] = active_provider_type.signs_charts
-        request.session['is_staff'] = active_provider_type.staff_view
+        request.session['staff_view'] = active_provider_type.staff_view
         return HttpResponseRedirect(request.GET['next'])
 
     if request.GET:
@@ -235,7 +235,7 @@ def choose_clintype(request):
             request.session['clintype_pk'] = role_options[0].pk
             active_provider_type = get_current_provider_type(request)
             request.session['signs_charts'] = active_provider_type.signs_charts
-            request.session['is_staff'] = active_provider_type.staff_view
+            request.session['staff_view'] = active_provider_type.staff_view
             return HttpResponseRedirect(request.GET['next'])
         elif len(role_options) == 0:
             return HttpResponseServerError(

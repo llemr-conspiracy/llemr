@@ -16,7 +16,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		<h2>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }} <a href="{% url 'patient-update' pk=patient.id %}"><small>{% bootstrap_icon "pencil" %}</small></a></h2>
 		<p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
 		<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
-		{% if request.session.is_staff %}
+		{% if request.session.staff_view %}
 			{% if patient.needs_workup %}
   	    <p class="lead"> Patient is Active <a href="{% url 'patient-activate-detail' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></p>
       {% endif %}
@@ -90,7 +90,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	  						<div class="panel-body">
 								<p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
 								<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-								{% if request.session.is_staff %}
+								{% if request.session.staff_view %}
 								<p class="text-right">
 								<a href="{% url 'admin:workup_workup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
 								</p>
@@ -112,7 +112,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	  						<div class="panel-body">
 								<p><a href="{% url 'document-detail' pk=note.pk %}"><strong>{{ note.document_type | title }}:</strong></a> {{ note.short_text }}</p>
 								<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-								{% if request.session.is_staff %}
+								{% if request.session.staff_view %}
 								<p class="text-right">
 								<a href="{% url 'admin:pttrack_document_change' note.id %}" target="_blank"><i>Edit</i></a></p>
 								</p>
@@ -136,8 +136,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 								{# here, the url takes an arugment to route it to the correct  #}
 								<p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
 								<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-								{% if request.session.is_staff %}
-								<p class="text-right">
+								{% if request.session.staff_view %}
 									{% if note.CS_HELP %}
 									<a href="{% url 'admin:followup_labfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
 									{% elif note.SUBSQ_DOSE_HELP %}
@@ -171,7 +170,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 								<p><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a>
 								<strong><a href="{% url 'update-action-item' pk=action_item.pk%}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
 								<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
-								{% if request.session.is_staff %}
+								{% if request.session.staff_view %}
 								<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
 								{% endif %}
 								</p>
@@ -193,7 +192,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 								<p><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a>
 								<strong><a href="{% url 'update-action-item' pk=action_item.pk%}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
 								<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
-								{% if request.session.is_staff %}
+								{% if request.session.staff_view %}
 								<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
 								{% endif %}
 								</p>
@@ -215,7 +214,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 								<p><a href="{% url 'reset-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "check" %}</a>
 								<strong><a href="{% url 'update-action-item' pk=action_item.pk%}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
 								<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
-								{% if request.session.is_staff %}
+								{% if request.session.staff_view %}
 								<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
 								{% endif %}
 								</p>
