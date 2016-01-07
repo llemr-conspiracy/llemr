@@ -222,7 +222,7 @@ def choose_clintype(request):
         request.session['clintype_pk'] = request.POST[RADIO_CHOICE_KEY]
         active_provider_type = get_current_provider_type(request)
         request.session['signs_charts'] = active_provider_type.signs_charts
-        request.session['is_staff'] = active_provider_type.is_staff
+        request.session['is_staff'] = active_provider_type.staff_view
         return HttpResponseRedirect(request.GET['next'])
 
     if request.GET:
@@ -232,7 +232,7 @@ def choose_clintype(request):
             request.session['clintype_pk'] = role_options[0].pk
             active_provider_type = get_current_provider_type(request)
             request.session['signs_charts'] = active_provider_type.signs_charts
-            request.session['is_staff'] = active_provider_type.is_staff
+            request.session['is_staff'] = active_provider_type.staff_view
             return HttpResponseRedirect(request.GET['next'])
         elif len(role_options) == 0:
             return HttpResponseServerError(
@@ -263,7 +263,7 @@ def home_page(request):
         zipped_list = zip(["Patients with Unsigned Workups", "Active Patients"],
                             [pt_list_unsigned, pt_list_active])
 
-    elif active_provider_type.is_staff:
+    elif active_provider_type.staff_view:
         
         pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
         ai_list_active = mymodels.ActionItem.objects.filter(due_date__lte=django.utils.timezone.now().date())

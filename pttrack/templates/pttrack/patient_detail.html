@@ -156,53 +156,73 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		</div>
 	</div>
 	<div class="col-md-6">
-		<h3>Active Action Items ({{ patient.active_action_items | length }})</h3>
-		<table class="table">
-			{% for action_item in patient.active_action_items %}
-			<tr><td><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a></td>
-				<td>
-				<p><strong><a href="{% url 'update-action-item' pk=action_item.pk%}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
-				<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
-				{% if request.session.is_staff %}
-					<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
-				{% endif %}
-			</td></tr>
-			{% empty %}
-				<p class="text-muted"> No due action items for {{ patient.name }}</p>
-			{% endfor %}
-		</table>
-
-		<h3>Pending Action Items ({{ patient.inactive_action_items | length }})</h3>
-		<table class="table">
-			{% for action_item in patient.inactive_action_items %}
-			<tr><td><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a></td>
-				<td>
-					<p><strong><a href="{% url 'update-action-item' pk=action_item.pk %}">{{ action_item.instruction }}:</a></strong>, due {{action_item.due_date}}: {{ action_item.comments }}</p>
-					<p class="text-muted  text-right"> Written by {{ action_item.author }} on {{ action_item.written_datetime }}</p>
-					{% if request.session.is_staff %}
-						<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
-					{% endif %}
-				</td></tr>
-			{% empty %}
-				<p class="text-muted"> No pending action items for {{ patient.name }}</p>
-			{% endfor %}
-		</table>
-
-		<h3>Completed Action Items ({{ patient.done_action_items | length }})</h3>
-		<table class="table">
-			{% for action_item in patient.done_action_items %}
-			<tr><td><a href="{% url 'reset-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "check" %}</a></td>
-				<td>
-					<p><strong><a href="{% url 'update-action-item' pk=action_item.pk%}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
-					<p class="text-muted  text-right">Marked done by {{ action_item.completion_author }} on {{ action_item.completion_date }}</p>
-					{% if request.session.is_staff %}
-						<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
-					{% endif %}
-				</td></tr>
-			{% empty %}
-				<p class="text-muted"> No finished action items for {{ patient.name }}</p>
-			{% endfor %}
-		</table>
-	</div>
+		<h3>Action Items ({{ patient.actionitem_set.all | length }} Total)</h3>
+		<div class="panel-group">
+  			<div class="panel panel-default">
+  				{% with patient.active_action_items as ai_set %}
+	    			<div class="panel-heading">
+	      				<h4 class="panel-title">
+	        			<a data-toggle="collapse" href="#collapse4">Active Action Items ({{ ai_set | length }})</a>
+	      				</h4>
+	    			</div>
+	    			<div id="collapse4" class="panel-collapse collapse">
+	      				{% for action_item in ai_set %}	
+	  						<div class="panel-body">
+								<p><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a>
+								<strong><a href="{% url 'update-action-item' pk=action_item.pk%}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
+								<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
+								{% if request.session.is_staff %}
+								<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
+								{% endif %}
+								</p>
+	  						</div>
+	      				{% endfor %}	
+	    			</div>
+    			{% endwith %}
+  			</div>
+  			<div class="panel panel-default">
+  				{% with patient.inactive_action_items as ai_set %}
+	    			<div class="panel-heading">
+	      				<h4 class="panel-title">
+	        			<a data-toggle="collapse" href="#collapse5">Pending Action Items ({{ ai_set | length }})</a>
+	      				</h4>
+	    			</div>
+	    			<div id="collapse5" class="panel-collapse collapse">
+	      				{% for action_item in ai_set %}	
+	  						<div class="panel-body">
+								<p><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a>
+								<strong><a href="{% url 'update-action-item' pk=action_item.pk%}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
+								<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
+								{% if request.session.is_staff %}
+								<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
+								{% endif %}
+								</p>
+	  						</div>
+	      				{% endfor %}	
+	    			</div>
+    			{% endwith %}
+  			</div>
+  			<div class="panel panel-default">
+  				{% with patient.done_action_items as ai_set %}
+	    			<div class="panel-heading">
+	      				<h4 class="panel-title">
+	        			<a data-toggle="collapse" href="#collapse6">Completed Action Items ({{ ai_set | length }})</a>
+	      				</h4>
+	    			</div>
+	    			<div id="collapse6" class="panel-collapse collapse">
+	      				{% for action_item in ai_set %}	
+	  						<div class="panel-body">
+								<p><a href="{% url 'reset-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "check" %}</a>
+								<strong><a href="{% url 'update-action-item' pk=action_item.pk%}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
+								<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
+								{% if request.session.is_staff %}
+								<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
+								{% endif %}
+								</p>
+	  						</div>
+	      				{% endfor %}	
+	    			</div>
+    			{% endwith %}
+  			</div>
 </div>
 {% endblock %}

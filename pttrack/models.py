@@ -94,7 +94,7 @@ class ProviderType(models.Model):
     long_name = models.CharField(max_length=100)
     short_name = models.CharField(max_length=30, primary_key=True)
     signs_charts = models.BooleanField(default=False)
-    is_staff = models.BooleanField(default=False)
+    staff_view = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.short_name

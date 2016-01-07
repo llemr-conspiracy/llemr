@@ -48,7 +48,7 @@ def build_provider_and_log_in(client, roles=None):
         phone="425-243-9115", gender=g, associated_user=user)
 
     coordinator_provider = models.ProviderType.objects.all()[2]
-    coordinator_provider.is_staff = True
+    coordinator_provider.staff_view = True
     coordinator_provider.save()
 
     for role in roles:
@@ -398,7 +398,7 @@ class ActionItemTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-        print models.ProviderType.objects.all()[2].is_staff
+        print models.ProviderType.objects.all()[2].staff_view
 
         #pt2, pt3 should be present since pt 1 is not past due
         self.assertEqual(len(response.context['zipped_list'][1][1]), 2)
