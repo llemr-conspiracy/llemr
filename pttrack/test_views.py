@@ -1,15 +1,21 @@
+import datetime
+
 from django.test import TestCase
-from .  import models
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django.core.files import File
-import datetime
+
+# For live tests.
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium.webdriver.firefox.webdriver import WebDriver
+
+from .  import models
 
 # pylint: disable=invalid-name
 # Whatever, whatever. I name them what I want.
 
-BASIC_FIXTURE = 'basic_fixture'
+BASIC_FIXTURE = 'pttrack.json'
 
 def note_check(test, note, client, pt_pk):
     '''
@@ -30,16 +36,17 @@ def note_check(test, note, client, pt_pk):
     test.assertLessEqual((now() - note.last_modified).total_seconds(), 10)
 
 
-def build_provider_and_log_in(client, roles=None):
-    ''' Creates a provider and logs them in. Role defines their provider_type,
-    default is all '''
+def build_provider(roles=None, username=None, password='password'):
 
     if roles is None:
         roles = ["Coordinator", "Attending", "Clinical", "Preclinical"]
 
+    if username is None:
+        username = 'user'+str(User.objects.all().count())
+
     user = User.objects.create_user(
-        'tljones'+str(User.objects.all().count()),
-        'tommyljones@gmail.com', 'password')
+        username,
+        'tommyljones@gmail.com', password)
     user.save()
 
     g = models.Gender.objects.all()[0]
@@ -60,6 +67,14 @@ def build_provider_and_log_in(client, roles=None):
                 str([p.short_name for p in models.ProviderType.objects.all()]))
         user.provider.clinical_roles.add(ptype)
 
+    return user.provider
+
+def log_in_provider(client, provider):
+    ''' Creates a provider and logs them in. Role defines their provider_type,
+    default is all '''
+
+    user = provider.associated_user
+
     client.login(username=user.username, password='password')
 
     session = client.session
@@ -68,12 +83,113 @@ def build_provider_and_log_in(client, roles=None):
 
     return user.provider
 
+def live_submit_login(selenium, username, password):
+    username_input = selenium.find_element_by_name("username")
+    username_input.send_keys(username)
+    password_input = selenium.find_element_by_name("password")
+    password_input.send_keys(password)
+    selenium.find_element_by_xpath('//button[@type="submit"]').click()
+
+class LiveTesting(StaticLiveServerTestCase):
+    fixtures = [BASIC_FIXTURE]
+
+    @classmethod
+    def setUpClass(cls):
+        super(LiveTesting, cls).setUpClass()
+        cls.selenium = WebDriver()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super(LiveTesting, cls).tearDownClass()
+
+    def test_login(self):
+        '''
+        Test the login sequence for one clinical role and mulitiple clinical
+        roles.
+        '''
+
+        build_provider(username='jrporter', password='password')
+
+        # any valid URL should redirect to login at this point.
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(self.selenium, 'jrporter', 'password')
+
+        # now we should have to choose a clinical role
+        self.assertEquals(self.selenium.current_url,
+                          '%s%s%s' % (self.live_server_url,
+                                      reverse('choose-clintype'),
+                                      '?next='+reverse('home')))
+
+        self.selenium.find_element_by_xpath(
+            '//input[@value="Coordinator"]').click()
+        self.selenium.find_element_by_xpath(
+            '//button[@type="submit"]').click()
+
+        self.assertEquals(self.selenium.current_url,
+                          '%s%s' % (self.live_server_url,
+                                    reverse('home')))
+
+        self.selenium.get('%s%s' % (self.live_server_url,
+                                    reverse('logout')))
+
+        # make a provider with only one role.
+        build_provider(username='timmy', password='password',
+                       roles=["Attending"])
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(self.selenium, 'timmy', 'password')
+
+        # now we should be redirected directly to home.
+        self.assertEquals(self.selenium.current_url,
+                          '%s%s' % (self.live_server_url,
+                                    reverse('home')))
+
+    def test_pttrack_view_rendering(self):
+        '''
+        Test that pttrack urls render correctly, as determined by the
+        existance of a jumbotron at the top.
+        '''
+        from . import urls
+        from django.core.urlresolvers import NoReverseMatch
+
+        # build a provider and log in.
+        build_provider(username='timmy', password='password',
+                       roles=["Attending"])
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(self.selenium, 'timmy', 'password')
+
+        for url in urls.urlpatterns:
+            # except 'choose-clintype' and action item modifiers from test
+            # since they're redirects.
+            if url.name in ['choose-clintype', 'done-action-item',
+                            'reset-action-item', 'document-detail',
+                            'document-update']:
+                # TODO: add test data for documents so document-detail and
+                # document-update can be tested as well.
+                continue
+
+            # all the URLs have either one parameter or none. Try one
+            # parameter first; if that fails, try with none.
+            try:
+                self.selenium.get('%s%s' % (self.live_server_url,
+                                            reverse(url.name, args=(1,))))
+            except NoReverseMatch:
+                self.selenium.get('%s%s' % (self.live_server_url,
+                                            reverse(url.name)))
+
+            jumbotron_elements = self.selenium.find_elements_by_xpath(
+                '//div[@class="jumbotron"]')
+            self.assertNotEqual(
+                len(jumbotron_elements), 0,
+                msg=" ".join(["Expected the URL ", url.name,
+                              " to have a jumbotron element."]))
 
 class ViewsExistTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        build_provider_and_log_in(self.client)
+        log_in_provider(self.client, build_provider())
 
     def test_basic_urls(self):
         basic_urls = ["home",
@@ -214,7 +330,7 @@ class ProviderCreateTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        build_provider_and_log_in(self.client)
+        log_in_provider(self.client, build_provider())
 
     def test_provider_creation(self):
         '''Verify that, in the absence of a provider, a provider is created,
@@ -263,7 +379,7 @@ class IntakeTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        build_provider_and_log_in(self.client)
+        log_in_provider(self.client, build_provider())
 
         self.valid_pt_dict = {
             'first_name': "Juggie",
@@ -327,8 +443,7 @@ class ActionItemTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        build_provider_and_log_in(self.client, ["Coordinator"])
-
+        log_in_provider(self.client, build_provider(["Coordinator"]))
 
     def test_home_has_correct_patients(self):
         pt1 = models.Patient.objects.get(pk=1)
@@ -493,115 +608,3 @@ class ActionItemTest(TestCase):
                               str(getattr(new_ai, param)))
 
         note_check(self, new_ai, self.client, 1)
-
-
-class AttendingTests(TestCase):
-    fixtures = [BASIC_FIXTURE]
-
-    def setUp(self):
-        build_provider_and_log_in(self.client, ["Attending"])
-
-    def test_home_has_correct_patients_attending(self):
-
-        # TODO: clearly, this dependency implies this shouldn't be here.
-        # probably, the solution is a "home" app.
-        from workup.models import ClinicDate, ClinicType, Workup
-
-        ClinicDate.objects.create(
-            clinic_type=ClinicType.objects.all()[0],
-            clinic_date=datetime.datetime.now(),
-            gcal_id="435345")
-        # we need > 1 pt, because one will have an active AI and one won't
-        pt1 = models.Patient.objects.create(
-            first_name="Juggie",
-            last_name="Brodeltein",
-            middle_name="Bayer",
-            phone='+49 178 236 5288',
-            gender=models.Gender.objects.all()[1],
-            address='Schulstrasse 9',
-            city='Munich',
-            state='BA',
-            zip_code='63108',
-            pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 01, 01),
-            patient_comfortable_with_english=False,
-            needs_workup=True,
-            preferred_contact_method=models.ContactMethod.objects.all()[0],
-        )
-
-        pt2 = models.Patient.objects.create(
-            first_name="Juggie",
-            last_name="Brodeltein",
-            middle_name="Bayer",
-            phone='+49 178 236 5288',
-            gender=models.Gender.objects.all()[1],
-            address='Schulstrasse 9',
-            city='Munich',
-            state='BA',
-            zip_code='63108',
-            pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 01, 01),
-            patient_comfortable_with_english=True,
-            needs_workup=True,
-            preferred_contact_method=models.ContactMethod.objects.all()[0],
-        )
-
-        pt3 = models.Patient.objects.create(
-            first_name="asdf",
-            last_name="lkjh",
-            middle_name="Bayer",
-            phone='+49 178 236 5288',
-            gender=models.Gender.objects.all()[0],
-            address='Schulstrasse 9',
-            city='Munich',
-            state='BA',
-            zip_code='63108',
-            pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 01, 01),
-            patient_comfortable_with_english=False,
-            needs_workup=True,
-            preferred_contact_method=models.ContactMethod.objects.all()[0],
-        )
-
-        wu1 = Workup.objects.create(
-            clinic_day=ClinicDate.objects.all()[0],
-            chief_complaint="SOB",
-            diagnosis="MI",
-            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
-            ros="", pe="", A_and_P="",
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=pt1)
-
-        wu2 = Workup.objects.create(
-            clinic_day=ClinicDate.objects.all()[0],
-            chief_complaint="SOB",
-            diagnosis="MI",
-            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
-            ros="", pe="", A_and_P="",
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=pt2,
-            signer=models.Provider.objects.all().filter(
-                clinical_roles=models.ProviderType.objects.all().filter(
-                    short_name="Attending")[0])[0])
-
-        wu3 = Workup.objects.create(
-            clinic_day=ClinicDate.objects.all()[0],
-            chief_complaint="SOB",
-            diagnosis="MI",
-            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
-            ros="", pe="", A_and_P="",
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=pt3)
-
-        url = reverse("home")
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        # pt1, pt3 should be present since they are not signed
-        self.assertEqual(len(response.context['zipped_list'][0][1]), 2)
-        self.assertIn(pt1, response.context['zipped_list'][0][1])
-        self.assertIn(pt3, response.context['zipped_list'][0][1])

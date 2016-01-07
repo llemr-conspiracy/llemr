@@ -56,8 +56,7 @@ class FollowupCreate(NoteFormView):
 
         ftype = self.kwargs['ftype']
 
-        futypes = {'referral': forms.ReferralFollowup,
-                   'labs': forms.LabFollowup,
+        futypes = {'labs': forms.LabFollowup,
                    'vaccine': forms.VaccineFollowup,
                    'general': forms.GeneralFollowup}
 
@@ -89,3 +88,10 @@ class FollowupCreate(NoteFormView):
             return HttpResponseRedirect(reverse("patient-detail",
                                                 args=(pt.id,)))
 
+class ReferralFollowupCreate(FollowupCreate):
+    '''A view for creating a new ReferralFollowup'''
+    template_name = 'followup/referral-followup-create.html'
+    form_class = forms.ReferralFollowup
+
+    def get_form_class(self, **kwargs):
+        return self.form_class

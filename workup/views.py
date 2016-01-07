@@ -20,7 +20,7 @@ def get_clindates():
 class WorkupCreate(NoteFormView):
     '''A view for creating a new workup. Checks to see if today is a
     clinic date first, and prompts its creation if none exist.'''
-    template_name = 'pttrack/form_submission.html'
+    template_name = 'workup/workup-create.html'
     form_class = forms.WorkupForm
     note_type = 'Workup'
 

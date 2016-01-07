@@ -25,6 +25,7 @@ INSTALLED_APPS = (
     'pttrack',
     'followup',
     'workup',
+    'crispy_forms',
     'bootstrap3',
     'bootstrap3_datetime',
     'djangular',
@@ -85,3 +86,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+
+# for crispy_forms
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
