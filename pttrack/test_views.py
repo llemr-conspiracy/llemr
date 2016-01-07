@@ -164,7 +164,7 @@ class LiveTesting(StaticLiveServerTestCase):
             # since they're redirects.
             if url.name in ['choose-clintype', 'done-action-item',
                             'reset-action-item', 'document-detail',
-                            'document-update']:
+                            'document-update', 'update-action-item']:
                 # TODO: add test data for documents so document-detail and
                 # document-update can be tested as well.
                 continue
