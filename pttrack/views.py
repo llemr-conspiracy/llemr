@@ -277,8 +277,7 @@ def home_page(request):
         pt_list_ai_inactive.sort(key = lambda pt: pt.inactive_action_items()[-1].due_date)
 
         title = "Coordinator Tasks"
-        zipped_list = zip(["Active Patients", "Active Action Items", "Pending Action Items"], 
-                            [pt_list_active, pt_list_ai_active, pt_list_ai_inactive])
+        zipped_list = zip(["Active Patients", "Active Action Items", "Pending Action Items"], [pt_list_active, pt_list_ai_active, pt_list_ai_inactive])
 
     else:
         pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
@@ -291,6 +290,25 @@ def home_page(request):
                   'pttrack/patient_list.html',
                   {'zipped_list': zipped_list,
                     'title': title})
+
+def patient_detail(request, pk):
+
+    pt = get_object_or_404(mymodels.Patient, pk=pk)
+
+    #   Special zipped list of action item types so they can be looped over. 
+    #   List 1: Labels for the panel objects of the action items 
+    #   List 2: Action Item lists based on type (active, pending, completed)
+    #   List 3: Title labels for the action items
+    #   List 4: True and False determines if the link should be for done_action_item or update_action_item
+
+    zipped_ai_list = zip(['collapse4', 'collapse5', 'collapse6'], [pt.active_action_items(), pt.inactive_action_items(), pt.done_action_items()],
+                            ['Active Action Items', 'Pending Action Items', 'Completed Action Items'], [True, True, False])
+
+    return render(request,
+                  'pttrack/patient_detail.html',
+                  {'zipped_ai_list': zipped_ai_list,
+                    'patient': pt})
+
 
 
 def phone_directory(request):

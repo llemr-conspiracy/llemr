@@ -24,7 +24,7 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
         views.PatientCreate.as_view(),
         name="intake"),
     url(r'^(?P<pk>[0-9]+)/$',
-        DetailView.as_view(model=mymodels.Patient),
+        views.patient_detail,
         name='patient-detail'),
     url(r'^patient/update/(?P<pk>[0-9]+)$',
         views.PatientUpdate.as_view(),

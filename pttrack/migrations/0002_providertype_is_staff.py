@@ -16,4 +16,9 @@ class Migration(migrations.Migration):
             name='is_staff',
             field=models.BooleanField(default=False),
         ),
+        migrations.RenameField(
+            model_name='providertype',
+            old_name='is_staff',
+            new_name='staff_view',
+        ),
     ]
