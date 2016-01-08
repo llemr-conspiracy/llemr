@@ -31,7 +31,7 @@ Osler: {{ title | default:"All Patients"}}
                 <td><a href="{% url 'patient-update' pk=patient.pk %}">Intake</a>: {{ patient.history.last.history_date }}</td>
                 {% endif %}
                 <td>{{ patient.status }}</td>
-                {% if request.session.clintype_pk == "Coordinator" %}
+                {% if request.session.staff_view %}
                 {% if patient.needs_workup %}
                 <td> Active <a href="{% url 'patient-activate-home' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></td>
                 {% endif %}

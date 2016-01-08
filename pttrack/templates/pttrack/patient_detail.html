@@ -16,7 +16,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		<h2>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }} <a href="{% url 'patient-update' pk=patient.id %}"><small>{% bootstrap_icon "pencil" %}</small></a></h2>
 		<p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
 		<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
-		{% if request.session.clintype_pk == "Coordinator" %}
+		{% if request.session.staff_view %}
 			{% if patient.needs_workup %}
   	    <p class="lead"> Patient is Active <a href="{% url 'patient-activate-detail' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></p>
       {% endif %}
@@ -78,44 +78,34 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	<div class="col-md-6">
 		<h3>Submitted Notes ({{ patient.notes | length }} Total)</h3>
 		<div class="panel-group">
-  			<div class="panel panel-default">
-  				{% with patient.workup_set.all as note_set %}
-	    			<div class="panel-heading">
-	      				<h4 class="panel-title">
-	        			<a data-toggle="collapse" href="#collapse1">Workups ({{ note_set | length }})</a>
-	      				</h4>
-	    			</div>
-	    			<div id="collapse1" class="panel-collapse collapse">
-	      				{% for note in note_set %}	
-	  						<div class="panel-body">
-								<p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
-								<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-								{% if request.session.clintype_pk == "Coordinator" %}
-								<p class="text-right">
-								<a href="{% url 'admin:workup_workup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
-								</p>
-								{% endif %}
-	  						</div>
-	      				{% endfor %}	
-	    			</div>
-    			{% endwith %}
+			<div class="panel panel-default">
+				<div class="panel-heading">
+      				<h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">Workups ({{ patient.workup_set.all | length }})</a></h4>
+    			</div>
+    			<div id="collapse1" class="panel-collapse collapse">
+      				{% for note in patient.workup_set.all %}	
+  						<div class="panel-body">
+							<p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
+							<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+							{% if request.session.staff_view %}
+							<p class="text-right"><a href="{% url 'admin:workup_workup_change' note.id %}" target="_blank"><i>Edit</i></a></p></p>
+							{% endif %}
+  						</div>
+      				{% endfor %}	
+    			</div>
   			</div>
   			<div class="panel panel-default">
   				{% with patient.document_set.all as note_set %}
 	    			<div class="panel-heading">
-	      				<h4 class="panel-title">
-	        			<a data-toggle="collapse" href="#collapse2">Uploaded Prescriptions and Documents ({{ note_set | length }})</a>
-	      				</h4>
+	      				<h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">Uploaded Prescriptions and Documents ({{ patient.document_set.all | length }})</a></h4>
 	    			</div>
 	    			<div id="collapse2" class="panel-collapse collapse">
-	      				{% for note in note_set %}	
+	      				{% for note in patient.document_set.all %}	
 	  						<div class="panel-body">
 								<p><a href="{% url 'document-detail' pk=note.pk %}"><strong>{{ note.document_type | title }}:</strong></a> {{ note.short_text }}</p>
 								<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-								{% if request.session.clintype_pk == "Coordinator" %}
-								<p class="text-right">
-								<a href="{% url 'admin:pttrack_document_change' note.id %}" target="_blank"><i>Edit</i></a></p>
-								</p>
+								{% if request.session.staff_view %}
+								<p class="text-right"><a href="{% url 'admin:pttrack_document_change' note.id %}" target="_blank"><i>Edit</i></a></p>
 								{% endif %}
 	  						</div>
 	      				{% endfor %}	
@@ -124,20 +114,16 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
   			</div>
   			<div class="panel panel-default">
   				{# followup_set is a custom method in the patient object returns a list rather than a queryset, so no .all() #}
-  				{% with patient.followup_set as note_set %}
     			<div class="panel-heading">
-      				<h4 class="panel-title">
-        			<a data-toggle="collapse" href="#collapse3">Followups ({{ note_set | length }})</a>
-      				</h4>
+      				<h4 class="panel-title"><a data-toggle="collapse" href="#collapse3">Followups ({{ patient.followup_set | length }})</a></h4>
     			</div>
     			<div id="collapse3" class="panel-collapse collapse">
-      				{% for note in note_set %}	
+      				{% for note in patient.followup_set %}	
   							<div class="panel-body">
 								{# here, the url takes an arugment to route it to the correct  #}
 								<p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
 								<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-								{% if request.session.clintype_pk == "Coordinator" %}
-								<p class="text-right">
+								{% if request.session.staff_view %}
 									{% if note.CS_HELP %}
 									<a href="{% url 'admin:followup_labfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
 									{% elif note.SUBSQ_DOSE_HELP %}
@@ -151,58 +137,38 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
   							</div>
       				{% endfor %}	
     			</div>
-    			{% endwith %}
   			</div>
 		</div>
 	</div>
 	<div class="col-md-6">
-		<h3>Active Action Items ({{ patient.active_action_items | length }})</h3>
-		<table class="table">
-			{% for action_item in patient.active_action_items %}
-			<tr><td><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a></td>
-				<td>
-				<p><strong>{{ action_item.instruction }}:</strong> {{ action_item.comments }}</p>
-				<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
-				{% if request.session.clintype_pk == "Coordinator" %}
-					<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
-				{% endif %}
-			</td></tr>
-			{% empty %}
-				<p class="text-muted"> No due action items for {{ patient.name }}</p>
-			{% endfor %}
-		</table>
-
-		<h3>Pending Action Items ({{ patient.inactive_action_items | length }})</h3>
-		<table class="table">
-			{% for action_item in patient.inactive_action_items %}
-			<tr><td><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a></td>
-				<td>
-					<p><strong>{{ action_item.instruction }}</strong>, due {{action_item.due_date}}: {{ action_item.comments }}</p>
-					<p class="text-muted  text-right"> Written by {{ action_item.author }} on {{ action_item.written_datetime }}</p>
-					{% if request.session.clintype_pk == "Coordinator" %}
-						<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
-					{% endif %}
-				</td></tr>
-			{% empty %}
-				<p class="text-muted"> No pending action items for {{ patient.name }}</p>
-			{% endfor %}
-		</table>
-
-		<h3>Completed Action Items ({{ patient.done_action_items | length }})</h3>
-		<table class="table">
-			{% for action_item in patient.done_action_items %}
-			<tr><td><a href="{% url 'reset-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "check" %}</a></td>
-				<td>
-					<p><strong>{{ action_item.instruction }}:</strong> {{ action_item.comments }}</p>
-					<p class="text-muted  text-right">Marked done by {{ action_item.completion_author }} on {{ action_item.completion_date }}</p>
-					{% if request.session.clintype_pk == "Coordinator" %}
-						<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
-					{% endif %}
-				</td></tr>
-			{% empty %}
-				<p class="text-muted"> No finished action items for {{ patient.name }}</p>
-			{% endfor %}
-		</table>
-	</div>
+		<h3>Action Items ({{ patient.actionitem_set.all | length }} Total)</h3>
+		<div class="panel-group">
+  			{% for ai_type in zipped_ai_list %}
+	  			<div class="panel panel-default">
+		    			<div class="panel-heading">
+		      				<h4 class="panel-title">
+		        			<a data-toggle="collapse" href="#{{ ai_type.0 }}">{{ ai_type.2 }} ({{ ai_type.1 | length }})</a>
+		      				</h4>
+		    			</div>
+		    			<div id="{{ ai_type.0 }}" class="panel-collapse collapse">
+		      				{% for action_item in ai_type.1 %}	
+		  						<div class="panel-body">
+		  							{% if ai_type.3 %}
+										<p><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a>
+									{% else %}
+										<p><a href="{% url 'reset-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "check" %}</a>
+									{% endif %}
+									<strong><a href="{% url 'update-action-item' pk=action_item.pk%}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
+									<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
+									{% if request.session.staff_view %}
+									<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
+									{% endif %}
+									</p>
+		  						</div>
+		      				{% endfor %}	
+		    			</div>
+	  			</div>
+	  		{% endfor %}
+  		</div>
 </div>
 {% endblock %}

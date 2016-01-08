@@ -94,6 +94,7 @@ class ProviderType(models.Model):
     long_name = models.CharField(max_length=100)
     short_name = models.CharField(max_length=30, primary_key=True)
     signs_charts = models.BooleanField(default=False)
+    staff_view = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.short_name
@@ -343,7 +344,7 @@ class Document(Note):
 class ActionItem(Note):
     instruction = models.ForeignKey(ActionInstruction)
     due_date = models.DateField(help_text="MM/DD/YYYY or YYYY-MM-DD")
-    comments = models.CharField(max_length=300)
+    comments = models.TextField(max_length=300)
     completion_date = models.DateTimeField(blank=True, null=True)
     completion_author = models.ForeignKey(
         Provider,

@@ -54,6 +54,10 @@ def build_provider(roles=None, username=None, password='password'):
         first_name="Tommy", middle_name="Lee", last_name="Jones",
         phone="425-243-9115", gender=g, associated_user=user)
 
+    coordinator_provider = models.ProviderType.objects.all()[2]
+    coordinator_provider.staff_view = True
+    coordinator_provider.save()
+
     for role in roles:
         try:
             ptype = models.ProviderType.objects.filter(short_name=role)[0]
@@ -160,7 +164,7 @@ class LiveTesting(StaticLiveServerTestCase):
             # since they're redirects.
             if url.name in ['choose-clintype', 'done-action-item',
                             'reset-action-item', 'document-detail',
-                            'document-update']:
+                            'document-update', 'update-action-item']:
                 # TODO: add test data for documents so document-detail and
                 # document-update can be tested as well.
                 continue
@@ -220,12 +224,25 @@ class ViewsExistTest(TestCase):
                    'new-action-item',
                    'followup-choice',
                    'patient-update']
+
+        pt_urls_redirect = ['patient-activate-detail',
+                            'patient-activate-home']
+
         pt = models.Patient.objects.all()[0]
 
         for pt_url in pt_urls:
             response = self.client.get(reverse(pt_url, args=(pt.id,)))
             try:
                 self.assertEqual(response.status_code, 200)
+            except AssertionError as e:
+                print pt_url
+                print response
+                raise e
+
+        for pt_url in pt_urls_redirect:
+            response = self.client.get(reverse(pt_url, args=(pt.id,)))
+            try:
+                self.assertEqual(response.status_code, 302)
             except AssertionError as e:
                 print pt_url
                 print response
@@ -496,6 +513,8 @@ class ActionItemTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
+        print models.ProviderType.objects.all()[2].staff_view
+
         #pt2, pt3 should be present since pt 1 is not past due
         self.assertEqual(len(response.context['zipped_list'][1][1]), 2)
         self.assertIn(pt2, response.context['zipped_list'][1][1])
@@ -556,6 +575,11 @@ class ActionItemTest(TestCase):
             models.ActionItem.objects.all()[0].last_modified)
         self.assertNotEqual(prev_mod_datetime,
                             models.ActionItem.objects.all()[0].last_modified)
+
+        # make sure updating the action items url works
+        ai_url = 'update-action-item'
+        response = self.client.get(reverse(ai_url, args=(ai.pk,)))
+        self.assertEqual(response.status_code, 200)
 
     def test_create_action_item(self):
 

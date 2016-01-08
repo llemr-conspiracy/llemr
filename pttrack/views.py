@@ -148,6 +148,15 @@ class ActionItemCreate(NoteFormView):
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
+class ActionItemUpdate(NoteUpdate):
+    template_name = "pttrack/form-update.html"
+    model = mymodels.ActionItem
+    form_class = myforms.ActionItemForm
+    note_type = "Action Item"
+
+    def get_success_url(self):
+        pt = self.object.patient
+        return reverse("patient-detail", args=(pt.id, ))
 
 class PatientUpdate(UpdateView):
     template_name = 'pttrack/patient-update.html'
@@ -189,6 +198,7 @@ class DocumentUpdate(NoteUpdate):
         return reverse("document-detail", args=(doc.id, ))
 
 
+
 class DocumentCreate(NoteFormView):
     '''A view for uploading a document'''
     template_name = 'pttrack/form_submission.html'
@@ -213,6 +223,9 @@ def choose_clintype(request):
 
     if request.POST:
         request.session['clintype_pk'] = request.POST[RADIO_CHOICE_KEY]
+        active_provider_type = get_current_provider_type(request)
+        request.session['signs_charts'] = active_provider_type.signs_charts
+        request.session['staff_view'] = active_provider_type.staff_view
         return HttpResponseRedirect(request.GET['next'])
 
     if request.GET:
@@ -220,6 +233,9 @@ def choose_clintype(request):
 
         if len(role_options) == 1:
             request.session['clintype_pk'] = role_options[0].pk
+            active_provider_type = get_current_provider_type(request)
+            request.session['signs_charts'] = active_provider_type.signs_charts
+            request.session['staff_view'] = active_provider_type.staff_view
             return HttpResponseRedirect(request.GET['next'])
         elif len(role_options) == 0:
             return HttpResponseServerError(
@@ -232,104 +248,67 @@ def choose_clintype(request):
 
 
 def home_page(request):
+
     #TODO wow so this is messed up. This should be a circular dependency...
     from workup.models import Workup
 
     active_provider_type = get_object_or_404(mymodels.ProviderType,
                                              pk=request.session['clintype_pk'])
     if active_provider_type.signs_charts:
-        workup_list = Workup.objects.all()
-        pt_list_1 = list(set([wu.patient for wu in workup_list if wu.signer is None]))
-        patient_list = mymodels.Patient.objects.all().order_by('last_name')
-        pt_list_2 = []
-
-        for patient in patient_list:
-            if (patient.needs_workup):
-                pt_list_2.append(patient)
         
-        def byName_key(patient):
-            return patient.last_name
+        wu_list_unsigned = Workup.objects.filter(signer__isnull=True).select_related('patient')
+        pt_list_unsigned = list(set([wu.patient for wu in wu_list_unsigned]))
+        pt_list_unsigned.sort(key = lambda pt: pt.last_name)
 
-        pt_list_1.sort(key = byName_key)
-        pt_list_2.sort(key = byName_key)
+        pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
+        
         title = "Attending Tasks"
-        pt_list_list = [pt_list_1, pt_list_2]
-        sectiontitle_list = ["Patients with Unsigned Workups", "Active Patients"]
-        zipped_list = zip(sectiontitle_list,pt_list_list)
+        zipped_list = zip(["Patients with Unsigned Workups", "Active Patients"],
+                            [pt_list_unsigned, pt_list_active])
 
+    elif active_provider_type.staff_view:
+        
+        pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
+        ai_list_active = mymodels.ActionItem.objects.filter(due_date__lte=django.utils.timezone.now().date())
+        pt_list_ai_active = list(set([ai.patient for ai in ai_list_active if not ai.done()]))
 
-        return render(request,
-                  'pttrack/patient_list.html',
-                  {'zipped_list': zipped_list,
-                    'title': title})
-
-    elif active_provider_type.short_name == "Coordinator":
-        ai_list = mymodels.ActionItem.objects.filter(
-            due_date__lte=django.utils.timezone.now().today())
-
-        ai_list_2 = mymodels.ActionItem.objects.filter(
-            due_date__gt=django.utils.timezone.now().today()).order_by('due_date')
-
-
-        patient_list = mymodels.Patient.objects.all().order_by('last_name')
-        pt_list_1 = []
-
-        def byName_key(patient):
-            return patient.last_name
-
-        pt_list_1.sort(key = byName_key)
-
-        for patient in patient_list:
-            if (patient.needs_workup):
-                pt_list_1.append(patient)
-
-        # if the AI is marked as done, it doesn't contribute to the pt being on
-        # the list.
-        pt_list_2 = list(set([ai.patient for ai in ai_list if not ai.done()]))
-
-        # The third list consists of patients that have action items due
-        pt_list_3 = list(set([ai.patient for ai in ai_list_2 if not ai.done()]))
-
-        def byAI_key(patient):
-            return patient.inactive_action_items()[0].due_date
-
-        pt_list_3.sort(key = byAI_key)
-
+        ai_list_inactive = mymodels.ActionItem.objects.filter(due_date__gt=django.utils.timezone.now().date()).order_by('due_date')
+        pt_list_ai_inactive = list(set([ai.patient for ai in ai_list_inactive if not ai.done()]))
+        pt_list_ai_inactive.sort(key = lambda pt: pt.inactive_action_items()[-1].due_date)
 
         title = "Coordinator Tasks"
-        pt_list_list = [pt_list_1, pt_list_2, pt_list_3]
-        sectiontitle_list = ["Active Patients", "Active Action Items", "Pending Action Items"]
-        zipped_list = zip(sectiontitle_list,pt_list_list)
-
-
-        return render(request,
-                  'pttrack/patient_list.html',
-                  {'zipped_list': zipped_list,
-                    'title': title})
+        zipped_list = zip(["Active Patients", "Active Action Items", "Pending Action Items"], [pt_list_active, pt_list_ai_active, pt_list_ai_inactive])
 
     else:
-        patient_list = mymodels.Patient.objects.all().order_by('last_name')
-        pt_list = []
-
-        def byName_key(patient):
-            return patient.last_name
-
-        pt_list.sort(key = byName_key)
-
-        for patient in patient_list:
-            if (patient.needs_workup):
-                pt_list.append(patient)
+        pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
 
         title = "Active Patients"
-        pt_list_list = [pt_list]
-        sectiontitle_list = ["Active Patients"]
-        zipped_list = zip(sectiontitle_list,pt_list_list)
+        zipped_list = zip(["Active Patients"],
+                        [pt_list_active])
 
-
-        return render(request,
+    return render(request,
                   'pttrack/patient_list.html',
                   {'zipped_list': zipped_list,
                     'title': title})
+
+def patient_detail(request, pk):
+
+    pt = get_object_or_404(mymodels.Patient, pk=pk)
+
+    #   Special zipped list of action item types so they can be looped over. 
+    #   List 1: Labels for the panel objects of the action items 
+    #   List 2: Action Item lists based on type (active, pending, completed)
+    #   List 3: Title labels for the action items
+    #   List 4: True and False determines if the link should be for done_action_item or update_action_item
+
+    zipped_ai_list = zip(['collapse4', 'collapse5', 'collapse6'], [pt.active_action_items(), pt.inactive_action_items(), pt.done_action_items()],
+                            ['Active Action Items', 'Pending Action Items', 'Completed Action Items'], [True, True, False])
+
+    return render(request,
+                  'pttrack/patient_detail.html',
+                  {'zipped_ai_list': zipped_ai_list,
+                    'patient': pt})
+
 
 
 def phone_directory(request):
