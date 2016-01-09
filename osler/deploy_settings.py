@@ -25,6 +25,7 @@ X_FRAME_OPTIONS = 'DENY'
 DEFAULT_FROM_EMAIL = "webmaster@pttrack.snhc.wustl.edu"
 SERVER_EMAIL = "admin@pttrack.snhc.wustl.edu"
 EMAIL_HOST = "irony.wusm.wustl.edu"
+ADMINS = ['nakul.m.shah@wustl.edu', 'jrporter@wustl.edu']
 
 with open(os.path.join(BASE_DIR, 'secrets/database_password.txt')) as f:
     DB_PASSWORD = f.read().strip()
