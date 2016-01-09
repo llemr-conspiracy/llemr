@@ -1,5 +1,6 @@
 from datetime import date
-from pttrack.models import Provider, Workup
+from pttrack.models import Provider
+from workup.models import Workup
 
 unsigned_workups = Workup.objects.filter(signer=None)
 
@@ -11,4 +12,3 @@ for wu in unsigned_workups:
         signed_workups__in=Workup.objects.filter(
             clinic_day__clinic_date=d)).distinct()
     print wu.patient, providers, d
-
