@@ -22,8 +22,8 @@ CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = 'DENY'
 
-DEFAULT_FROM_EMAIL = "webmaster@pttrack.snhc.wustl.edu"
-SERVER_EMAIL = "admin@pttrack.snhc.wustl.edu"
+DEFAULT_FROM_EMAIL = "webmaster@osler.wustl.edu"
+SERVER_EMAIL = "admin@osler.wustl.edu"
 EMAIL_HOST = "irony.wusm.wustl.edu"
 ADMINS = (
     ('Nakul Shah', 'nakul.m.shah@wustl.edu'),
