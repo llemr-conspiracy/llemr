@@ -18,7 +18,7 @@ droplet.
 First, clone our repository
 
 ```bash
-git clone https://github.com/SaturdayNeghborhoodHealthClinic/osler.git
+git clone https://github.com/SaturdayNeighborhoodHealthClinic/osler.git
 ```
 
 First, get [pip](https://pip.pypa.io/en/stable/).
