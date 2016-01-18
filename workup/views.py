@@ -82,10 +82,13 @@ class WorkupUpdate(NoteUpdate):
 
         # if it's an attending, we allow updates.
         if current_user_type.signs_charts or not wu.signed():
-            return super(NoteUpdate, self).dispatch(*args, **kwargs)
+            return super(WorkupUpdate, self).dispatch(*args, **kwargs)
         else:
             return HttpResponseRedirect(reverse('workup',
                                         args=(kwargs['pk'],)))
+
+    def get_success_url(self):
+        return reverse('workup', args=(self.object.id,))
 
 
 class ClinicDateCreate(FormView):
