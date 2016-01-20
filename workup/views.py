@@ -1,14 +1,22 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponseServerError
+from django.http import HttpResponseRedirect, HttpResponseServerError, HttpResponse
+from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.template import Context
+from django.template.loader import  get_template
 from django.utils.timezone import now
 from django.views.generic.edit import FormView
 
 from pttrack.views import NoteFormView, NoteUpdate, get_current_provider_type
 from pttrack.models import Patient, ProviderType
 
+from xhtml2pdf import pisa
+
 from . import models
 from . import forms
+
+import os
+import datetime
 
 def get_clindates():
     '''Get the clinic dates associated with today.'''
@@ -135,4 +143,29 @@ def error_workup(request, pk):
 
     #TODO: clearly a template error here.
     return render(request, 'pttrack/workup_error.html', {'workup': wu})
+
+def pdf_workup(request, pk):
+    wu = get_object_or_404(models.Workup, pk=pk)
+
+    data = {'workup': wu}
+
+    template = get_template('workup/workup_detail_pdf.html')
+    html  = template.render(Context(data))
+
+    file = open('test.pdf', "w+b")
+    pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
+            encoding='utf-8')
+
+    file.seek(0)
+    pdf = file.read()
+    file.close()
+
+    initials = ''.join(name[0].upper() for name in wu.patient.name().split())
+    formatdate = '.'.join([str(wu.clinic_day.clinic_date.month).zfill(2), str(wu.clinic_day.clinic_date.day).zfill(2), str(wu.clinic_day.clinic_date.year)])
+    filename = ''.join([initials, ' (', formatdate, ')'])   
+
+    response = HttpResponse(pdf, 'application/pdf')
+    response["Content-Disposition"]= "attachment; filename=%s.pdf" % (filename,)        
+    return response
+
 
