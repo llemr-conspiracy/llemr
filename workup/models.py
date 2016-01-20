@@ -81,6 +81,10 @@ class Workup(Note):
     voucher_amount = models.PositiveSmallIntegerField(blank=True, null=True)
     patient_pays = models.PositiveSmallIntegerField(blank=True, null=True)
 
+    got_imaging_voucher = models.BooleanField(default=False)
+    imaging_voucher_amount = models.PositiveSmallIntegerField(blank=True, null=True)
+    patient_pays_imaging = models.PositiveSmallIntegerField(blank=True, null=True)
+
     referral_type = models.ManyToManyField(ReferralType, blank=True)
     referral_location = models.ManyToManyField(ReferralLocation, blank=True)
 
