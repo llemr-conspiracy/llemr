@@ -173,6 +173,35 @@ class ViewsExistTest(TestCase):
         # the wu has been updated, so we have to hit the db again.
         self.assertTrue(models.Workup.objects.get(pk=wu.id).signed())
 
+    def test_workup_pdf(self):
+        '''
+        Verify that pdf download with the correct naming protocol is working
+        '''
+        wu_url = "workup-pdf"
+
+        wu = models.Workup.objects.create(
+            clinic_day=models.ClinicDate.objects.all()[0],
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=Provider.objects.all()[0],
+            author_type=ProviderType.objects.all()[0],
+            patient=Patient.objects.all()[0])
+
+        wu.diagnosis_categories.add(models.DiagnosisType.objects.all()[0])
+        wu.save()
+
+        for nonstaff_role in ["Preclinical", "Clinical", "Attending"]:
+            log_in_provider(self.client, build_provider([nonstaff_role]))
+
+            response = self.client.get(reverse(wu_url, args=(wu.id,)))
+            self.assertRedirects(response, reverse('workup', args=(wu.id,)))
+
+        log_in_provider(self.client, build_provider(["Coordinator"]))
+        response = self.client.get(reverse(wu_url, args=(wu.id,)))
+        self.assertEqual(response.status_code, 200)
+
 
 class AttendingTests(TestCase):
     fixtures = ['pttrack', 'workup']

@@ -146,27 +146,39 @@ def error_workup(request, pk):
     return render(request, 'pttrack/workup_error.html', {'workup': wu})
 
 def pdf_workup(request, pk):
+    
     wu = get_object_or_404(models.Workup, pk=pk)
+    active_provider_type = get_object_or_404(ProviderType,
+                                             pk=request.session['clintype_pk'])
 
-    data = {'workup': wu}
+    if active_provider_type.staff_view:
+        data = {'workup': wu}
 
-    template = get_template('workup/workup_detail_pdf.html')
-    html  = template.render(Context(data))
+        template = get_template('workup/workup_detail_pdf.html')
+        html  = template.render(Context(data))
 
-    file = TemporaryFile(mode="w+b")
-    pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
-            encoding='utf-8')
+        file = TemporaryFile(mode="w+b")
+        pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
+                encoding='utf-8')
 
-    file.seek(0)
-    pdf = file.read()
-    file.close()
+        file.seek(0)
+        pdf = file.read()
+        file.close()
 
-    initials = ''.join(name[0].upper() for name in wu.patient.name().split())
-    formatdate = '.'.join([str(wu.clinic_day.clinic_date.month).zfill(2), str(wu.clinic_day.clinic_date.day).zfill(2), str(wu.clinic_day.clinic_date.year)])
-    filename = ''.join([initials, ' (', formatdate, ')'])   
+        initials = ''.join(name[0].upper() for name in wu.patient.name().split())
+        formatdate = '.'.join([str(wu.clinic_day.clinic_date.month).zfill(2), str(wu.clinic_day.clinic_date.day).zfill(2), str(wu.clinic_day.clinic_date.year)])
+        filename = ''.join([initials, ' (', formatdate, ')'])   
 
-    response = HttpResponse(pdf, 'application/pdf')
-    response["Content-Disposition"]= "attachment; filename=%s.pdf" % (filename,)        
-    return response
+        response = HttpResponse(pdf, 'application/pdf')
+        response["Content-Disposition"]= "attachment; filename=%s.pdf" % (filename,)        
+        return response
+
+    else:
+        return HttpResponseRedirect(reverse('workup',
+                                        args=(wu.id,)))
+
+    
+
+    
 
 
