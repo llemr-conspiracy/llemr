@@ -154,7 +154,7 @@ def pdf_workup(request, pk):
     if active_provider_type.staff_view:
         data = {'workup': wu}
 
-        template = get_template('workup/workup_detail_pdf.html')
+        template = get_template('workup/workup_body.html')
         html  = template.render(Context(data))
 
         file = TemporaryFile(mode="w+b")
