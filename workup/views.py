@@ -17,6 +17,7 @@ from . import forms
 
 import os
 import datetime
+from tempfile import TemporaryFile
 
 def get_clindates():
     '''Get the clinic dates associated with today.'''
@@ -152,7 +153,7 @@ def pdf_workup(request, pk):
     template = get_template('workup/workup_detail_pdf.html')
     html  = template.render(Context(data))
 
-    file = open('test.pdf', "w+b")
+    file = TemporaryFile(mode="w+b")
     pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
             encoding='utf-8')
 
