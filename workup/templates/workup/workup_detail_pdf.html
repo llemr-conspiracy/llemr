@@ -1,16 +1,21 @@
-{% block header %}
-    <h1>Workup on {{ workup.patient.name }}</h1>
-    <p class="lead">Seen on {{ workup.clinic_day.clinic_date }}</p>
-    {% if workup.signed %}
-    <p class="lead">Attested by {{workup.signer}} on {{workup.signed_date}} </p>
-    {% else %}
-    <p class="lead">Workup unattested.</p>
-    {% endif%}
-{% endblock %}
-
 {% block content %}
 
 <div class="container">
+    <div class="row">
+        <h4>Workup on {{ workup.patient.name }}</h4>
+        <div class="col-md-4">
+            <strong>Seen on:</strong> {{ workup.clinic_day.clinic_date }}
+        </div>
+        {% if workup.signed %}
+        <div class="col-md-4">
+            <strong>Attested by</strong> {{workup.signer}} <strong>on:</strong> {{workup.signed_date}} 
+        </div>
+        {% else %}
+        <div class="col-md-4">
+            <strong>Workup unattested.</strong>
+        </div>
+        {% endif%}
+    </div>
     <div class="row">
         <h4>At a Glance</h4>
         <div class="col-md-4">
