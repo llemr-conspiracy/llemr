@@ -21,6 +21,9 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^(?P<pk>[0-9]+)/error/$',
         views.error_workup,
         name="workup-error"),
+    url(r'^(?P<pk>[0-9]+)/pdf/$',
+        views.pdf_workup,
+        name="workup-pdf"),
 
     url(r'^(?P<pt_id>[0-9]+)/clindate/$',
         views.ClinicDateCreate.as_view(),
