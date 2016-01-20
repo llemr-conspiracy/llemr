@@ -344,7 +344,7 @@ class Document(Note):
 class ActionItem(Note):
     instruction = models.ForeignKey(ActionInstruction)
     due_date = models.DateField(help_text="MM/DD/YYYY or YYYY-MM-DD")
-    comments = models.TextField(max_length=300)
+    comments = models.TextField()
     completion_date = models.DateTimeField(blank=True, null=True)
     completion_author = models.ForeignKey(
         Provider,
