@@ -264,7 +264,9 @@ def home_page(request):
         
         title = "Attending Tasks"
         zipped_list = zip(["Patients with Unsigned Workups", "Active Patients"],
-                            [pt_list_unsigned, pt_list_active])
+                            [pt_list_unsigned, pt_list_active],
+                            ["unsignedwu", "activept"],
+                            [True, False])
 
     elif active_provider_type.staff_view:
         
@@ -276,15 +278,24 @@ def home_page(request):
         pt_list_ai_inactive = list(set([ai.patient for ai in ai_list_inactive if not ai.done()]))
         pt_list_ai_inactive.sort(key = lambda pt: pt.inactive_action_items()[-1].due_date)
 
+        wu_list_unsigned = Workup.objects.filter(signer__isnull=True).select_related('patient')
+        pt_list_unsigned = list(set([wu.patient for wu in wu_list_unsigned]))
+        pt_list_unsigned.sort(key = lambda pt: pt.last_name)
+
         title = "Coordinator Tasks"
-        zipped_list = zip(["Active Patients", "Active Action Items", "Pending Action Items"], [pt_list_active, pt_list_ai_active, pt_list_ai_inactive])
+        zipped_list = zip(["Active Patients", "Active Action Items", "Pending Action Items", "Unsigned Workups"], 
+                            [pt_list_active, pt_list_ai_active, pt_list_ai_inactive, pt_list_unsigned],
+                            ["activept", "activeai", "pendingai", "unsignedwu"],
+                            [True, False, False, False])
 
     else:
         pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
 
         title = "Active Patients"
         zipped_list = zip(["Active Patients"],
-                        [pt_list_active])
+                        [pt_list_active],
+                        ["activept"],
+                        [True])
 
     return render(request,
                   'pttrack/patient_list.html',
@@ -322,10 +333,24 @@ def phone_directory(request):
 
 
 def all_patients(request):
-    pt_list = list(mymodels.Patient.objects.all().order_by('last_name'))
-    pt_list_list = [pt_list]
-    sectiontitle_list = ["Alphabetized by Last Name"]
-    zipped_list = zip(sectiontitle_list,pt_list_list)
+    pt_list_last = list(mymodels.Patient.objects.all().order_by('last_name'))
+    pt_list_first = list(mymodels.Patient.objects.all().order_by('first_name'))
+    pt_list_latest = list(mymodels.Patient.objects.all())
+
+    def bylatestKey(pt):
+        latestwu = pt.latest_workup()
+        if latestwu == None:
+            latestdate = pt.history.last().history_date.date()
+        else:
+            latestdate = latestwu.clinic_day.clinic_date
+        return latestdate
+
+    pt_list_latest.sort(key = bylatestKey, reverse=True)
+
+    zipped_list = zip(["Alphabetized by Last Name", "Alphabetized by First Name", "Ordered by Latest Activity"],
+                        [pt_list_last, pt_list_first, pt_list_latest],
+                        ['ptlast', 'ptfirst', 'ptlatest'],
+                        [False, False, True])
     return render(request,
                   'pttrack/patient_list.html',
                   {'zipped_list': zipped_list,
