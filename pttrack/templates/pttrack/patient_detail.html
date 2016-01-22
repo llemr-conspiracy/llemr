@@ -78,9 +78,9 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 <div class="container">
 	<div class="col-md-12">
 		{% if patient.demographics %}
-		<a href="{% url 'demographics-detail' patient.id %}" class="btn btn-default" role="button">See Patient Survey Data</a>
+		<a href="{% url 'demographics-detail' patient.demographics.id %}" class="btn btn-default" role="button">See Patient Survey Data</a>
 		{% else %}
-		<div class="alert alert-danger" role="alert"><strong>Warning!</strong> There is no survey data for this patient. Please click on the following pencil to enter the data: <a href="{% url 'demographics-create' patient.id %}">{% bootstrap_icon "pencil" %}</a></div>
+		<div class="alert alert-danger" role="alert"><strong>Warning!</strong> There is no survey data for this patient. Please click on the following pencil to enter the data: <a href="{% url 'demographics-create' patient.demographics.id %}">{% bootstrap_icon "pencil" %}</a></div>
 		{% endif %}
 	</div>
 </div>
