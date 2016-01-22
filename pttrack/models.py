@@ -8,8 +8,6 @@ import os
 from simple_history.models import HistoricalRecords
 from . import validators
 
-from demographics.models import Demographics
-
 # pylint: disable=I0011,missing-docstring,E1305
 
 def make_filepath(instance, filename):
@@ -197,8 +195,6 @@ class Patient(Person):
     # needs_workup. Default value is false for all the previous patients
 
     needs_workup = models.BooleanField(default=False)
-
-    demographics = models.OneToOneField(Demographics, null=True)
 
     history = HistoricalRecords()
 

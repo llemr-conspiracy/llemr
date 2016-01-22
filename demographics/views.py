@@ -29,8 +29,8 @@ class DemographicsCreate(FormView):
         
         dg = form.save(commit=False)
         dg.creation_date = datetime.date.today()
+        dg.patient = pt
         dg.save()
-        pt.demographics = dg
         pt.save()
         form.save_m2m()
 

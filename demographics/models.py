@@ -2,6 +2,8 @@ from django.db import models
 from django.utils.timezone import now
 from simple_history.models import HistoricalRecords
 
+from pttrack.models import Patient
+
 # Create your models here.
 
 class IncomeRange(models.Model):
@@ -41,6 +43,8 @@ class TransportationOption(models.Model):
         return self.name
 
 class Demographics(models.Model):
+
+    patient= models.OneToOneField(Patient, null=True)
 
     creation_date = models.DateField(blank=True,null=True)
 
