@@ -65,3 +65,53 @@ class ViewsExistTest(TestCase):
 
         response = self.client.get(reverse('demographics-create', args=(pt.id,)))
         self.assertEqual(response.status_code, 200)
+
+
+class FormSubmissionTest(TestCase):
+    '''
+    Verify that views involving the wokrup are functioning.
+    '''
+    fixtures = ['pttrack']
+
+    def setUp(self):
+
+        log_in_provider(self.client, build_provider())
+
+        models.IncomeRange.objects.create(name="Default")
+        models.EducationLevel.objects.create(name="Default")
+        models.WorkStatus.objects.create(name="Default")
+        models.ResourceAccess.objects.create(name="Default")
+        models.ChronicCondition.objects.create(name="Default")
+        models.TransportationOption.objects.create(name="Default")
+
+        self.valid_dg_dict = {
+            'creation_date': date.today(),
+            'annual_income': models.IncomeRange.objects.all()[0],
+            'education_level': models.EducationLevel.objects.all()[0],
+            'transportation': models.TransportationOption.objects.all()[0],
+            'work_status': models.WorkStatus.objects.all()[0],
+            'has_insurance': True,
+            'ER_visit_last_year': True,
+            'last_date_physician_visit': date.today(),
+            'lives_alone': True,
+            'dependents': 4,
+            'currently_employed': True,
+        }
+
+    def test_demographics_form_submission(self):
+    	'''
+    	Test submission of a demographics form
+    	'''
+
+    	pt = Patient.objects.all()[0]
+    	form_data = self.valid_dg_dict
+    	final_url = reverse('demographics-create', args=(pt.id,))
+
+    	dg_number = len(models.Demographics.objects.all())
+    	response = self.client.get(final_url)
+    	response = self.client.post(final_url, form_data)
+
+    	self.assertEqual(response.status_code, 302)
+        self.assertEquals(len(models.Demographics.objects.all()), dg_number + 1)
+
+
