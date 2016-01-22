@@ -25,6 +25,7 @@ INSTALLED_APPS = (
     'pttrack',
     'followup',
     'workup',
+    'demographics',
     'crispy_forms',
     'bootstrap3',
     'bootstrap3_datetime',

@@ -9,7 +9,7 @@ from . import models
 class PatientForm(ModelForm):
     class Meta:
         model = models.Patient
-        exclude = ['needs_workup']
+        exclude = ['needs_workup', 'demographics']
 
     def clean(self):
 

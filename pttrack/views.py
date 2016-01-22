@@ -183,7 +183,7 @@ class PatientCreate(FormView):
             pt.ssn = pt.ssn[0:3] + '-' + pt.ssn[3:5] + '-' + pt.ssn[5:]
 
         pt.save()
-        return HttpResponseRedirect(reverse("patient-detail",
+        return HttpResponseRedirect(reverse("demographics-create",  
                                             args=(pt.id,)))
 
 

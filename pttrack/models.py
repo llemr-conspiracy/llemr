@@ -5,6 +5,7 @@ from django.conf import settings
 from django.utils.timezone import now
 import os
 
+from demographics.models import Demographics
 from simple_history.models import HistoricalRecords
 from . import validators
 
@@ -82,42 +83,6 @@ class Ethnicity(models.Model):
     def __unicode__(self):
         return self.name
 
-class IncomeRanges(models.Model):
-    name = models.CharField(max_length=50, primary_key=True)
-
-    def __unicode__(self):
-        return self.name
-
-class EducationLevel(models.Model):
-    name = models.CharField(max_length=50, primary_key=True)
-
-    def __unicode__(self):
-        return self.name
-
-class WorkStatus(models.Model):
-    name = models.CharField(max_length=50, primary_key=True)
-
-    def __unicode__(self):
-        return self.name
-
-class ResourceAccess(models.Model):
-    name = models.CharField(max_length=50, primary_key=True)
-
-    def __unicode__(self):
-        return self.name
-
-class ChronicConditions(models.Model):
-    name = models.CharField(max_length=50, primary_key=True)
-
-    def __unicode__(self):
-        return self.name
-
-class TransportationOptions(models.Model):
-    name = models.CharField(max_length=50, primary_key=True)
-
-    def __unicode__(self):
-        return self.name
-
 class ActionInstruction(models.Model):
     instruction = models.CharField(max_length=50, primary_key=True)
 
@@ -179,6 +144,7 @@ class Person(models.Model):
 
 class Patient(Person):
     address = models.CharField(max_length=200)
+
     city = models.CharField(max_length=50,
                             default="St. Louis")
     state = models.CharField(max_length=2,
@@ -226,35 +192,12 @@ class Patient(Person):
 
     preferred_contact_method = models.ForeignKey(ContactMethod, blank=True, null=True)
 
-    chronic_condition = models.ManyToManyField(ChronicConditions, blank=True, null=True)
-
-    has_insurance = models.BooleanField(default=False)
-
-    ER_visit_last_year = models.BooleanField(default=False, verbose_name="Visited ER in the past year")
-
-    last_date_physician_visit = models.DateField(blank=True,null=True, verbose_name="Date Last Visited Patient")
-
-    resource_access = models.ManyToManyField(ResourceAccess, blank=True,
-                                                 null=True, verbose_name="Access to Resources")
-
-    lives_alone = models.BooleanField(default=False)
-
-    dependents = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Number of Dependents")
-
-    currently_employed = models.BooleanField(default=False)
-
-    work_status = models.ForeignKey(WorkStatus, blank=True,null=True)
-
-    education_level = models.ForeignKey(EducationLevel, blank=True,null=True)
-
-    annual_income = models.ForeignKey(IncomeRanges, blank=True,null=True)
-
-    transportation = models.ForeignKey(TransportationOptions, blank=True,null=True)
-
     # If the patient is in clinic and needs a workup, that is specified by
     # needs_workup. Default value is false for all the previous patients
 
     needs_workup = models.BooleanField(default=False)
+
+    demographics = models.OneToOneField(Demographics, null=True)
 
     history = HistoricalRecords()
 
