@@ -21,7 +21,7 @@ Osler: {{ title | default:"All Patients"}}
 <ul class="nav nav-pills">
     {% for combination in zipped_list %}
         {% if combination.3 %}
-        <li class="active"><a data-toggle="pill" href="#{{ combination.2 }}">{{ combination.0 }}</a></li>
+        <li class="active"><a data-toggle="pill" href="#{{ combination.2 }}">{{ combination.0 }}<span class="badge">{{ combination.1 | length }}</span></a></li>
         {% else %}
         <li><a data-toggle="pill" href="#{{ combination.2 }}">{{ combination.0 }}</a></li>
         {% endif %}
