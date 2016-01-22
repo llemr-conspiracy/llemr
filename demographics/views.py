@@ -15,6 +15,15 @@ class DemographicsCreate(FormView):
     template_name = 'demographics/demographics-create.html'
     form_class = myforms.DemographicsForm
 
+    def get_context_data(self, **kwargs):
+
+    	context = super(DemographicsCreate, self).get_context_data(**kwargs)
+
+        if 'pt_id' in self.kwargs:
+            context['patient'] = Patient.objects.get(pk=self.kwargs['pt_id'])
+
+        return context
+
     def form_valid(self, form):
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         
@@ -32,17 +41,6 @@ class DemographicsUpdate(UpdateView):
     template_name = 'demographics/demographics-create.html'
     form_class = myforms.DemographicsForm
     model = mymodels.Demographics
-
-    def get_context_data(self, **kwargs):
-
-        context = super(DemographicsUpdate, self).get_context_data(**kwargs)
-
-        context['note_type'] = "Demographic Survey"
-        if 'pt_id' in self.kwargs:
-            context['patient'] = Patient.objects. \
-                get(pk=self.kwargs['pt_id'])
-
-        return context
 
     def get_success_url(self):
         return reverse('demographics-detail', args=(self.object.id,))

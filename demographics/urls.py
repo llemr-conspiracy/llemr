@@ -6,13 +6,13 @@ from . import views
 from . import models as mymodels
 
 unwrapped_urlconf = [  # pylint: disable=invalid-name
-    url(r'^(?P<pt_id>[0-9]+)/demographics/$',
+    url(r'^new/(?P<pt_id>[0-9]+)$',
         views.DemographicsCreate.as_view(),
         name='demographics-create'),
-    url(r'^demographics/(?P<pk>[0-9]+)/$',
+    url(r'^(?P<pk>[0-9]+)/$',
         DetailView.as_view(model=mymodels.Demographics),
         name='demographics-detail'),
-    url(r'^demographics/(?P<pk>[0-9]+)/update/$',
+    url(r'^(?P<pk>[0-9]+)/update/$',
         views.DemographicsUpdate.as_view(),
         name='demographics-update'),
 ]
