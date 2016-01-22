@@ -5,9 +5,10 @@ from django.conf import settings
 from django.utils.timezone import now
 import os
 
-from demographics.models import Demographics
 from simple_history.models import HistoricalRecords
 from . import validators
+
+from demographics.models import Demographics
 
 # pylint: disable=I0011,missing-docstring,E1305
 

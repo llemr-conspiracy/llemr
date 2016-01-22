@@ -12,6 +12,9 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^demographics/(?P<pk>[0-9]+)/$',
         DetailView.as_view(model=mymodels.Demographics),
         name='demographics-detail'),
+    url(r'^demographics/(?P<pk>[0-9]+)/update/$',
+        views.DemographicsUpdate.as_view(),
+        name='demographics-update'),
 ]
 
 urlpatterns = url_wrap(unwrapped_urlconf)

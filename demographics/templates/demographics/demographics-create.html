@@ -1,12 +1,12 @@
 {% extends "pttrack/base.html" %}
 
 {% block title %}
-{{ patient.name }}
+{{ demographics.patient.name }}
 {% endblock %}
 
 {% block header %}
 <h1>New Survey </h1>
-<p class="lead">Demographics for <em><a href="{% url 'patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
+<p class="lead">Demographics for <em><a href="{% url 'patient-detail' pk=demographics.patient.id %}">{{ demographics.patient.name }}</a></em></p>
 {% endblock %}
 
 

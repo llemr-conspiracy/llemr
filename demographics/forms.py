@@ -31,6 +31,7 @@ class DemographicsForm(ModelForm):
                 Tab('Social',
                     'lives_alone',
                     'dependents',
+                    'resource_access',
                     'transportation'),
                 Tab('Employment',
                 	'education_level',

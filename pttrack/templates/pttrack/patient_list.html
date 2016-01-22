@@ -23,7 +23,7 @@ Osler: {{ title | default:"All Patients"}}
         {% if combination.3 %}
         <li class="active"><a data-toggle="pill" href="#{{ combination.2 }}">{{ combination.0 }}<span class="badge">{{ combination.1 | length }}</span></a></li>
         {% else %}
-        <li><a data-toggle="pill" href="#{{ combination.2 }}">{{ combination.0 }}</a></li>
+        <li><a data-toggle="pill" href="#{{ combination.2 }}">{{ combination.0 }}<span class="badge">{{ combination.1 | length }}</span></a></li>
         {% endif %}
     {% endfor %}
 </ul>
