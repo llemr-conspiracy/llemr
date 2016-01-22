@@ -82,7 +82,6 @@ class Ethnicity(models.Model):
     def __unicode__(self):
         return self.name
 
-
 class ActionInstruction(models.Model):
     instruction = models.CharField(max_length=50, primary_key=True)
 
@@ -144,6 +143,7 @@ class Person(models.Model):
 
 class Patient(Person):
     address = models.CharField(max_length=200)
+
     city = models.CharField(max_length=50,
                             default="St. Louis")
     state = models.CharField(max_length=2,
@@ -152,6 +152,7 @@ class Patient(Person):
                                 validators=[validators.validate_zip])
     country = models.CharField(max_length=100,
                                default="USA")
+
 
     pcp_preferred_zip = models.CharField(max_length=5,
                                          validators=[validators.validate_zip],
@@ -188,8 +189,7 @@ class Patient(Person):
     alternate_phone_4_owner = models.CharField(max_length=40, blank=True, null=True)  
     alternate_phone_4 = models.CharField(max_length=40, blank=True, null=True)
 
-    preferred_contact_method = models.ForeignKey(ContactMethod, blank=True,
-                                                 null=True)
+    preferred_contact_method = models.ForeignKey(ContactMethod, blank=True, null=True)
 
     # If the patient is in clinic and needs a workup, that is specified by
     # needs_workup. Default value is false for all the previous patients

@@ -107,6 +107,14 @@
             <strong>Pt Pays:</strong> {{workup.patient_pays | default_if_none:"n/a" }}
         </div>
         {% endif %}
+        {% if workup.got_imaging_voucher %}
+        <div class="col-md-4">
+            <strong>Voucher Amount:</strong> {{workup.imaging_voucher_amount}}
+        </div>
+        <div class="col-md-4">
+            <strong>Pt Pays:</strong> {{workup.patient_pays_imaging | default_if_none:"n/a" }}
+        </div>
+        {% endif %}
         <div class="col-md-4">
             <strong>Referral Type:</strong> 
             {% for type in workup.referral_type.all %}

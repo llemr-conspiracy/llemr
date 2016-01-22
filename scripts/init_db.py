@@ -35,8 +35,8 @@ for (lname, can_sign, part_staff) in [("Attending Physician", True, False),
                           ("Preclinical Medical Student", False, False),
                           ("Clinical Medical Student", False, False),
                           ("Coordinator", False, True)]:
-    p = models.ProviderType(long_name=lname, short_name=lname.split()[0],
-                            signs_charts=can_sign, is_staff=part_staff)
+    p = core.ProviderType(long_name=lname, short_name=lname.split()[0],
+                            signs_charts=can_sign, staff_view=part_staff)
     p.save()
 
 

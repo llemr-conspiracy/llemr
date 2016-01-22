@@ -6,10 +6,11 @@ from django.utils.timezone import now
 from django.core.urlresolvers import reverse
 
 from pttrack.test_views import build_provider, log_in_provider
-from pttrack.models import Patient, ProviderType, Provider
+from pttrack.models import Patient, ProviderType, Provider, ReferralLocation, ReferralType
 
 from . import validators
 from . import models
+from . import forms
 
 class TestModelFieldValidators(TestCase):
     '''
@@ -202,6 +203,62 @@ class ViewsExistTest(TestCase):
         response = self.client.get(reverse(wu_url, args=(wu.id,)))
         self.assertEqual(response.status_code, 200)
 
+class TestFormFieldValidators(TestCase):
+    
+    fixtures = ['workup', 'pttrack']
+
+    def setUp(self):
+        log_in_provider(self.client, build_provider())
+
+        models.ClinicType.objects.create(name="Basic Care Clinic")
+        models.ClinicDate.objects.create(
+            clinic_type=models.ClinicType.objects.all()[0],
+            clinic_date=now().date(),
+            gcal_id="tmp")
+
+
+        self.valid_pt_dict = {
+            'clinic_day': models.ClinicDate.objects.all()[0],
+            'chief_complaint': "SOB",
+            'diagnosis': "MI",
+            'HPI': "f", 'PMH_PSH': "f", 'meds': "f", 'allergies': "f", 'fam_hx': "f", 'soc_hx': "f",
+            'ros': "f", 'pe': "f", 'A_and_P': "f",
+            'hr': '89', 'bp': '120/80', 'rr': '16', 't': '98',
+            'labs_ordered_internal': 'f', 'labs_ordered_quest': 'f',
+            'got_voucher': True,
+            'got_imaging_voucher': True,
+            'will_return': True,
+            'author': Provider.objects.all()[0],
+            'author_type': ProviderType.objects.all()[0],
+            'patient': Patient.objects.all()[0]
+        }
+
+    def test_missing_voucher_amount(self):
+
+        form_data = self.valid_pt_dict
+
+        form = forms.WorkupForm(data=form_data)
+
+        # and expect an error to be on the empty altphone field
+        self.assertNotEqual(form['voucher_amount'].errors, [])
+        self.assertNotEqual(form['patient_pays'].errors, [])
+        
+        form_data['voucher_amount'] = '40'
+        form_data['patient_pays'] = '40'
+
+        form = forms.WorkupForm(data=form_data)
+        self.assertEqual(form['voucher_amount'].errors, [])
+        self.assertEqual(form['patient_pays'].errors, [])
+
+        self.assertNotEqual(form['imaging_voucher_amount'].errors, [])
+        self.assertNotEqual(form['patient_pays_imaging'].errors, [])
+
+        form_data['imaging_voucher_amount'] = '40'
+        form_data['patient_pays_imaging'] = '40'
+
+        form = forms.WorkupForm(data=form_data)
+        self.assertEqual(form['imaging_voucher_amount'].errors, [])
+        self.assertEqual(form['patient_pays_imaging'].errors, [])
 
 class AttendingTests(TestCase):
     fixtures = ['pttrack', 'workup']

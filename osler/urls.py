@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^pttrack/', include('pttrack.urls')),
     url(r'^followup/', include('followup.urls')),
     url(r'^workup/', include('workup.urls')),
+    url(r'^demographics/', include('demographics.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^$', RedirectView.as_view(pattern_name="home", permanent=False)),

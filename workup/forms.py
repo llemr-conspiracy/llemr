@@ -63,6 +63,10 @@ class WorkupForm(ModelForm):
                              'got_voucher',
                              PrependedText('voucher_amount', '$'),
                              PrependedText('patient_pays', '$')),
+                    Fieldset('Metro Imaging Vouchers',
+                             'got_imaging_voucher',
+                             PrependedText('imaging_voucher_amount', '$'),
+                             PrependedText('patient_pays_imaging', '$')),
                     Fieldset('Referral',
                              'will_return',
                              Field(
@@ -95,6 +99,18 @@ class WorkupForm(ModelForm):
 
             self.add_error('patient_pays', "If the patient recieved a " +
                            "voucher, specify the amount the patient pays.")
+
+        if cleaned_data.get('got_imaging_voucher') and \
+           not cleaned_data.get('imaging_voucher_amount'):
+
+            self.add_error('imaging_voucher_amount', "If the patient recieved a " +
+                           "imaging voucher, value of the voucher must be specified.")
+
+        if cleaned_data.get('got_imaging_voucher') and \
+           not cleaned_data.get('patient_pays_imaging'):
+
+            self.add_error('patient_pays_imaging', "If the patient recieved a " +
+                           "imaging voucher, specify the amount the patient pays.")
 
 
 class ClinicDateForm(ModelForm):
