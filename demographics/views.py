@@ -30,9 +30,40 @@ class DemographicsCreate(FormView):
         dg = form.save(commit=False)
         dg.creation_date = datetime.date.today()
         dg.patient = pt
+
+        if form.cleaned_data['has_insurance'] == '1':
+            dg.has_insurance = True
+        elif form.cleaned_data['has_insurance'] == '2':
+            dg.has_insurance = False
+        else:
+            dg.has_insurance = None
+
+
+        if form.cleaned_data['lives_alone'] == '1':
+            dg.lives_alone = True
+        elif form.cleaned_data['lives_alone'] == '2':
+            dg.lives_alone = False
+        else:
+            dg.lives_alone = None
+
+        if form.cleaned_data['currently_employed'] == '1':
+            dg.currently_employed = True
+        elif form.cleaned_data['currently_employed'] == '2':
+            dg.currently_employed = False
+        else:
+            dg.currently_employed = None
+
+        if form.cleaned_data['ER_visit_last_year'] == '1':
+            dg.ER_visit_last_year = True
+        elif form.cleaned_data['ER_visit_last_year'] == '2':
+            dg.ER_visit_last_year = False
+        else:
+            dg.ER_visit_last_year = None
+
         dg.save()
         pt.save()
         form.save_m2m()
+        form.save()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
@@ -42,7 +73,72 @@ class DemographicsUpdate(UpdateView):
     form_class = myforms.DemographicsForm
     model = mymodels.Demographics
 
-    def get_success_url(self):
-        return reverse('demographics-detail', args=(self.object.id,))
+
+    def get_initial(self):
+        initial = super(DemographicsUpdate, self).get_initial()
+
+        dg = self.object
+        
+        if dg.has_insurance == True:
+            initial['has_insurance'] = '1'
+        elif dg.has_insurance == False:
+            initial['has_insurance'] = '2'
+
+        if dg.lives_alone == True:
+            initial['lives_alone'] = '1'
+        elif dg.lives_alone == False:
+            initial['lives_alone'] = '2'
+
+        if dg.currently_employed == True:
+            initial['currently_employed'] = '1'
+        elif dg.currently_employed == False:
+            initial['currently_employed'] = '2'
+
+        if dg.ER_visit_last_year == True:
+            initial['ER_visit_last_year'] = '1'
+        elif dg.ER_visit_last_year == False:
+            initial['ER_visit_last_year'] = '2'
+
+        return initial
+
+    def form_valid(self, form):
+        dg = form.save(commit=False)
+        pt = dg.patient
+        dg.creation_date = datetime.date.today()
+
+        if form.cleaned_data['has_insurance'] == '1':
+            dg.has_insurance = True
+        elif form.cleaned_data['has_insurance'] == '2':
+            dg.has_insurance = False
+        else:
+            dg.has_insurance = None
+
+
+        if form.cleaned_data['lives_alone'] == '1':
+            dg.lives_alone = True
+        elif form.cleaned_data['lives_alone'] == '2':
+            dg.lives_alone = False
+        else:
+            dg.lives_alone = None
+
+        if form.cleaned_data['currently_employed'] == '1':
+            dg.currently_employed = True
+        elif form.cleaned_data['currently_employed'] == '2':
+            dg.currently_employed = False
+        else:
+            dg.currently_employed = None
+
+        if form.cleaned_data['ER_visit_last_year'] == '1':
+            dg.ER_visit_last_year = True
+        elif form.cleaned_data['ER_visit_last_year'] == '2':
+            dg.ER_visit_last_year = False
+        else:
+            dg.ER_visit_last_year = None
+
+        dg.save()
+        form.save_m2m()
+        form.save()
+
+        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
 

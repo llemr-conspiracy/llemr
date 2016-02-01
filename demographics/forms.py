@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, ChoiceField
 
 
 from crispy_forms.helper import FormHelper
@@ -9,9 +9,20 @@ from . import models
 
 class DemographicsForm(ModelForm):
 
+    my_choices = (
+        ('0', 'Not Answered'),
+        ('1', 'Yes'),
+        ('2', 'No'),
+        )
+
+    has_insurance = ChoiceField(choices=my_choices, required=False)
+    lives_alone = ChoiceField(choices=my_choices, required=False)
+    currently_employed = ChoiceField(choices=my_choices, required=False)
+    ER_visit_last_year = ChoiceField(choices=my_choices, required=False)
+    
     class Meta:
         model = models.Demographics
-        exclude = ['patient', 'creation_date']
+        exclude = ['patient', 'creation_date', 'has_insurance', 'lives_alone', 'currently_employed', 'ER_visit_last_year']
 
     def __init__(self, *args, **kwargs):
         super(DemographicsForm, self).__init__(*args, **kwargs)
@@ -34,8 +45,8 @@ class DemographicsForm(ModelForm):
                     'resource_access',
                     'transportation'),
                 Tab('Employment',
+                    'currently_employed',
                 	'education_level',
-                	'currently_employed',
                 	'work_status',
                 	'annual_income',
                 	)
@@ -43,4 +54,8 @@ class DemographicsForm(ModelForm):
         )
 
         self.helper.add_input(Submit('submit', 'Submit'))
+
+
+
+
                     

@@ -90,12 +90,12 @@ class FormSubmissionTest(TestCase):
             'education_level': models.EducationLevel.objects.all()[0],
             'transportation': models.TransportationOption.objects.all()[0],
             'work_status': models.WorkStatus.objects.all()[0],
-            'has_insurance': True,
-            'ER_visit_last_year': True,
+            'has_insurance': "1",
+            'ER_visit_last_year': "2",
             'last_date_physician_visit': date.today(),
-            'lives_alone': True,
+            'lives_alone': "0",
             'dependents': 4,
-            'currently_employed': True,
+            'currently_employed': "1",
         }
 
     def test_demographics_form_submission(self):

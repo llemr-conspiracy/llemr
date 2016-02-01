@@ -48,22 +48,22 @@ class Demographics(models.Model):
 
     creation_date = models.DateField(blank=True,null=True)
 
-    chronic_condition = models.ManyToManyField(ChronicCondition, blank=True, null=True)
+    chronic_condition = models.ManyToManyField(ChronicCondition, blank=True)
 
-    has_insurance = models.BooleanField(default=False)
+    has_insurance = models.NullBooleanField()
 
-    ER_visit_last_year = models.BooleanField(default=False, verbose_name="Visited ER in the past year")
+    ER_visit_last_year = models.NullBooleanField(verbose_name="Visited ER in the past year")
 
     last_date_physician_visit = models.DateField(blank=True,null=True, verbose_name="Date Last Visited Patient")
 
     resource_access = models.ManyToManyField(ResourceAccess, blank=True,
-                                                 null=True, verbose_name="Access to Resources")
+                                                  verbose_name="Access to Resources")
 
-    lives_alone = models.BooleanField(default=False)
+    lives_alone = models.NullBooleanField()
 
     dependents = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Number of Dependents")
 
-    currently_employed = models.BooleanField(default=False)
+    currently_employed = models.NullBooleanField()
 
     work_status = models.ForeignKey(WorkStatus, blank=True,null=True)
 
