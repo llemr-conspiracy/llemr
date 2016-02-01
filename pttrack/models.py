@@ -116,7 +116,7 @@ class Person(models.Model):
     last_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True)
 
-    phone = models.CharField(max_length=40)
+    phone = models.CharField(max_length=40, null=True, blank=True)
     languages = models.ManyToManyField(Language, help_text="Specify here languages that are spoken at a level sufficient to be used for medical communication.")
 
     gender = models.ForeignKey(Gender)
@@ -191,6 +191,8 @@ class Patient(Person):
 
     preferred_contact_method = models.ForeignKey(ContactMethod, blank=True, null=True)
 
+    email = models.EmailField(blank=True, null=True)
+
     # If the patient is in clinic and needs a workup, that is specified by
     # needs_workup. Default value is false for all the previous patients
 
@@ -199,7 +201,7 @@ class Patient(Person):
     history = HistoricalRecords()
 
     def age(self):
-        return (now().date()-self.date_of_birth).days/365
+        return (now().date()-self.date_of_birth).days//365
 
     def __unicode__(self):
         return self.name()
