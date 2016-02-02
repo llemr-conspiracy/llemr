@@ -131,4 +131,7 @@ class FormSubmissionTest(TestCase):
             self.assertEqual(response.status_code, 302)
             self.assertEquals(len(models.Demographics.objects.all()), dg_number + 1)
 
+            form = forms.DemographicsForm(data=form_data)
+            self.assertTrue(form.is_valid())
+
 
