@@ -6,7 +6,7 @@ from django.utils.timezone import now
 from django.core.urlresolvers import reverse
 
 from pttrack.test_views import build_provider, log_in_provider
-from pttrack.models import Patient
+from pttrack.models import Patient, Gender, ContactMethod
 
 from . import models
 from . import forms
@@ -89,7 +89,7 @@ class FormSubmissionTest(TestCase):
     	Test submission of a demographics form
     	'''
 
-        for i in ["0","1", "2"]:
+        for i in ["0", "1", "2"]:
 
             self.valid_dg_dict = {
                 'creation_date': date.today(),
@@ -110,26 +110,25 @@ class FormSubmissionTest(TestCase):
                 last_name="lkjh",
                 middle_name="Bayer",
                 phone='+49 178 236 5288',
-                gender=models.Gender.objects.all()[0],
+                gender=Gender.objects.all()[0],
                 address='Schulstrasse 9',
                 city='Munich',
                 state='BA',
                 zip_code='63108',
                 pcp_preferred_zip='63018',
-                date_of_birth=datetime.date(1990, 01, 01),
+                date_of_birth=date(1990, 01, 01),
                 patient_comfortable_with_english=False,
-                preferred_contact_method=models.ContactMethod.objects.all()[0],
+                preferred_contact_method=ContactMethod.objects.all()[0],
             )
 
-        	pt = Patient.objects.all()[0]
-        	form_data = self.valid_dg_dict
-        	final_url = reverse('demographics-create', args=(pt.id,))
+            form_data = self.valid_dg_dict
+            final_url = reverse('demographics-create', args=(pt.id,))
 
-        	dg_number = len(models.Demographics.objects.all())
-        	response = self.client.get(final_url)
-        	response = self.client.post(final_url, form_data)
+            dg_number = len(models.Demographics.objects.all())
+            response = self.client.get(final_url)
+            response = self.client.post(final_url, form_data)
 
-        	self.assertEqual(response.status_code, 302)
+            self.assertEqual(response.status_code, 302)
             self.assertEquals(len(models.Demographics.objects.all()), dg_number + 1)
 
 
