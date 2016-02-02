@@ -124,6 +124,9 @@ class FormSubmissionTest(TestCase):
             form_data = self.valid_dg_dict
             final_url = reverse('demographics-create', args=(pt.id,))
 
+            form = forms.DemographicsForm(data=form_data)
+            self.assertTrue(form.is_valid())
+
             dg_number = len(models.Demographics.objects.all())
             response = self.client.get(final_url)
             response = self.client.post(final_url, form_data)
@@ -131,7 +134,13 @@ class FormSubmissionTest(TestCase):
             self.assertEqual(response.status_code, 302)
             self.assertEquals(len(models.Demographics.objects.all()), dg_number + 1)
 
-            form = forms.DemographicsForm(data=form_data)
-            self.assertTrue(form.is_valid())
+            dg = models.Demographics.objects.all()[len(models.Demographics.objects.all())-1]
+
+            final_url = reverse('demographics-update', args=(dg.pk,))
+            response = self.client.get(final_url)
+            response = self.client.post(final_url, form_data)
+
+            self.assertEqual(response.status_code, 302)
+
 
 
