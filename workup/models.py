@@ -66,6 +66,8 @@ class Workup(Note):
     t = models.DecimalField(max_digits=3,
                             decimal_places=1,
                             blank=True, null=True)
+    height = models.PositiveSmallIntegerField(blank=True, null=True)
+    weight = models.PositiveSmallIntegerField(blank=True, null=True)
 
     pe = models.TextField(verbose_name="Physical Examination")
 

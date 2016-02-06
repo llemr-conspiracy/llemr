@@ -6,7 +6,7 @@ from django.utils.timezone import now
 from django.core.urlresolvers import reverse
 
 from pttrack.test_views import build_provider, log_in_provider
-from pttrack.models import Patient
+from pttrack.models import Patient, Gender, ContactMethod
 
 from . import models
 from . import forms
@@ -84,34 +84,63 @@ class FormSubmissionTest(TestCase):
         models.ChronicCondition.objects.create(name="Default")
         models.TransportationOption.objects.create(name="Default")
 
-        self.valid_dg_dict = {
-            'creation_date': date.today(),
-            'annual_income': models.IncomeRange.objects.all()[0],
-            'education_level': models.EducationLevel.objects.all()[0],
-            'transportation': models.TransportationOption.objects.all()[0],
-            'work_status': models.WorkStatus.objects.all()[0],
-            'has_insurance': True,
-            'ER_visit_last_year': True,
-            'last_date_physician_visit': date.today(),
-            'lives_alone': True,
-            'dependents': 4,
-            'currently_employed': True,
-        }
-
     def test_demographics_form_submission(self):
     	'''
     	Test submission of a demographics form
     	'''
 
-    	pt = Patient.objects.all()[0]
-    	form_data = self.valid_dg_dict
-    	final_url = reverse('demographics-create', args=(pt.id,))
+        for i in ["0", "1", "2"]:
 
-    	dg_number = len(models.Demographics.objects.all())
-    	response = self.client.get(final_url)
-    	response = self.client.post(final_url, form_data)
+            self.valid_dg_dict = {
+                'creation_date': date.today(),
+                'annual_income': models.IncomeRange.objects.all()[0],
+                'education_level': models.EducationLevel.objects.all()[0],
+                'transportation': models.TransportationOption.objects.all()[0],
+                'work_status': models.WorkStatus.objects.all()[0],
+                'has_insurance': i,
+                'ER_visit_last_year': i,
+                'last_date_physician_visit': date.today(),
+                'lives_alone':i,
+                'dependents': 4,
+                'currently_employed': i,
+            }
 
-    	self.assertEqual(response.status_code, 302)
-        self.assertEquals(len(models.Demographics.objects.all()), dg_number + 1)
+            pt = models.Patient.objects.create(
+                first_name="asdf",
+                last_name="lkjh",
+                middle_name="Bayer",
+                phone='+49 178 236 5288',
+                gender=Gender.objects.all()[0],
+                address='Schulstrasse 9',
+                city='Munich',
+                state='BA',
+                zip_code='63108',
+                pcp_preferred_zip='63018',
+                date_of_birth=date(1990, 01, 01),
+                patient_comfortable_with_english=False,
+                preferred_contact_method=ContactMethod.objects.all()[0],
+            )
+
+            form_data = self.valid_dg_dict
+            final_url = reverse('demographics-create', args=(pt.id,))
+
+            form = forms.DemographicsForm(data=form_data)
+            self.assertTrue(form.is_valid())
+
+            dg_number = len(models.Demographics.objects.all())
+            response = self.client.get(final_url)
+            response = self.client.post(final_url, form_data)
+
+            self.assertEqual(response.status_code, 302)
+            self.assertEquals(len(models.Demographics.objects.all()), dg_number + 1)
+
+            dg = models.Demographics.objects.all()[len(models.Demographics.objects.all())-1]
+
+            final_url = reverse('demographics-update', args=(dg.pk,))
+            response = self.client.get(final_url)
+            response = self.client.post(final_url, form_data)
+
+            self.assertEqual(response.status_code, 302)
+
 
 
