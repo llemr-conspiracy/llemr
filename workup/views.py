@@ -165,7 +165,7 @@ def pdf_workup(request, pk):
         pdf = file.read()
         file.close()
 
-        initials = ''.join(name[0].upper() for name in wu.patient.name().split())
+        initials = ''.join(name[0].upper() for name in wu.patient.name(reverse=False, middle_short=False).split())
         formatdate = '.'.join([str(wu.clinic_day.clinic_date.month).zfill(2), str(wu.clinic_day.clinic_date.day).zfill(2), str(wu.clinic_day.clinic_date.year)])
         filename = ''.join([initials, ' (', formatdate, ')'])   
 
