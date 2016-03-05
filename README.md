@@ -58,8 +58,6 @@ python manage.py runserver --settings osler.debug_settings
 Once you have it running, you should be able to log into the debug database-backed
 app with the user 'jrporter' with password 'password'.
 
-## Running tests
-
 To run tests, run
 
 ```bash
