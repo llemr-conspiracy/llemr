@@ -63,3 +63,13 @@ app with the user 'jrporter' with password 'password'.
 There a lot of good resources that teach you how to deploy a django app, and there
 are many ways to do it correctly. There's nothing too special about Osler in this regard!
 However, we strongly recommmend [nginx, gunicorn, and postgres](http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/).
+
+## Running tests
+
+To run tests, run
+
+```bash
+python manage.py test
+```
+
+Remote servers without GUI access may need to [configure headless selenium](http://www.installationpage.com/selenium/how-to-run-selenium-headless-firefox-in-ubuntu/).

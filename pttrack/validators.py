@@ -56,6 +56,13 @@ def validate_birth_date(value):
     if today - value > datetime.timedelta(365 * 150):
         raise ValidationError("Birth dates cannot be more than 150 years in the past.")
 
+def validate_name(value):
+    '''
+    Validate that name (first, last middle) does not start or end with a space or tab
+    '''
+    if value.startswith((' ', '\t')) or value.endswith((' ', '\t')):
+        raise ValidationError("Name cannot start or end with a space")
+
 
 def validate_attending(value):
     '''
