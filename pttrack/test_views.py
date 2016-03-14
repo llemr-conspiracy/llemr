@@ -376,9 +376,7 @@ class ProviderCreateTest(TestCase):
 
         # Test for proper resubmission behavior.
         n_provider = len(models.Provider.objects.all())
-
-        response = self.client.get(reverse('new-provider'))
-        # self.assertRedirects(response, reverse('new-provider')+'?next='+final_url)
+        WebDriver().back()
 
         # POST a form with new names
         form_data['first_name'] = 'Janet'
