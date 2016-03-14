@@ -341,6 +341,7 @@ class ProviderCreateTest(TestCase):
         # verify: no provider -> create provider
         models.Provider.objects.all().delete()
         response = self.client.get(final_url)
+        final_response_url = response.url
         self.assertRedirects(response, reverse('new-provider')+'?next='+final_url)
 
         n_provider = len(models.Provider.objects.all())
@@ -355,7 +356,6 @@ class ProviderCreateTest(TestCase):
             'provider_email': "jj@wustl.edu",
             'clinical_roles': models.ProviderType.objects.all()[0].pk,
         }
-
         response = self.client.post(response.url, form_data)
         # redirects anywhere; don't care where (would be the 'next' parameter)
         self.assertEqual(response.status_code, 302)
@@ -373,6 +373,31 @@ class ProviderCreateTest(TestCase):
         # now verify we're redirected
         response = self.client.get(final_url)
         self.assertEquals(response.status_code, 200)
+
+        # Test for proper resubmission behavior.
+        n_provider = len(models.Provider.objects.all())
+
+        response = self.client.get(reverse('new-provider'))
+        # self.assertRedirects(response, reverse('new-provider')+'?next='+final_url)
+
+        # POST a form with new names
+        form_data['first_name'] = 'Janet'
+        form_data['last_name'] = 'Jane'
+        response = self.client.post(final_response_url, form_data)
+
+        # Verify redirect anywhere; don't care where (would be the 'next' parameter)
+        self.assertEqual(response.status_code, 302)
+
+        # Verify that number of providers has not changed, and user's names is still the original new_provider's names
+        self.assertEquals(len(models.Provider.objects.all()), n_provider)
+        for name in ['first_name', 'last_name']:
+            self.assertEquals(getattr(new_provider, name),
+                              getattr(new_provider.associated_user, name))
+
+        # now verify we're redirected
+        response = self.client.get(final_url)
+        self.assertEquals(response.status_code, 200)
+
 
 
 class IntakeTest(TestCase):
