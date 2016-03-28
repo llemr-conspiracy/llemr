@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/SaturdayNeighborhoodHealthClinic/osler.svg?branch=master)](https://travis-ci.org/SaturdayNeighborhoodHealthClinic/osler)
+[![Circle CI](https://circleci.com/gh/SaturdayNeighborhoodHealthClinic/osler.svg?style=svg)](https://circleci.com/gh/SaturdayNeighborhoodHealthClinic/osler)
 [![codecov.io](https://codecov.io/github/SaturdayNeighborhoodHealthClinic/osler/coverage.svg?branch=master)](https://codecov.io/github/SaturdayNeighborhoodHealthClinic)
 
 [![forthebadge](http://forthebadge.com/images/badges/powered-by-electricity.svg)](https://forthebadge.com)

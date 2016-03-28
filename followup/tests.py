@@ -123,31 +123,9 @@ class FollowupLiveTesting(StaticLiveServerTestCase):
             APT_LOCATION))
         Select(elements['pt_showed']).select_by_value("Yes")
 
-        import time, os, os.path
-        time.sleep(10)
-
-        print "3", self.selenium.title
-        time.sleep(10)
-
         # if we uncheck 'has_appointment', we go back to the initial state,
         # and lose the data we entered
-        dirname = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-        print self.selenium.save_screenshot(dirname+"/screenshot1.png")
-        print self.selenium.find_element_by_name('has_appointment').text
-        print self.selenium.find_element_by_name('has_appointment').location
-        self.selenium.find_element_by_name('has_appointment').click()
-
-        time.sleep(10)
-        print self.selenium.save_screenshot(dirname+"/screenshot2.png")
-        print "4", self.selenium.title
-
-        # referesh elements in dictionary, perhaps because the dictionary now
-        # contains stale DOM elements?
-        for element in ['contact_resolution', 'contact_method',
-                        'referral_type', 'has_appointment', 'apt_location',
-                        'pt_showed', 'noapt_reason', 'noshow_reason']:
-            elements[element] = self.selenium.find_element_by_name(element)
+        elements['has_appointment'].click()
 
         self.assertTrue(elements['noapt_reason'].is_displayed())
         self.assertTrue(not elements['pt_showed'].is_displayed())
