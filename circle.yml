@@ -1,0 +1,15 @@
+machine:
+  timezone:
+    America/Chicago
+
+dependencies:
+  post:
+    - cd /home/ubuntu/osler
+    - pip install codecov
+    - ./manage.py migrate
+
+test:
+  override:
+    - cd /home/ubuntu/osler && coverage run --source='.' ./manage.py test
+  post:
+    - codecov
