@@ -14,3 +14,9 @@ script:
   - coverage run --source='.' manage.py test
 after_success:
   - codecov
+addons:
+  artifacts:
+    debug: true
+    paths:
+      - $( find . -name "screenshot*.png" )
+      
