@@ -15,7 +15,7 @@
 			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
 			"name": "Anaconda Python Builder",
 			"selector": "source.python",
-			"shell_cmd": "python -u \"$file\""
+			"shell_cmd": "\"python\" -u \"$file\""
 		}
 	],
 	"folders":
@@ -49,12 +49,11 @@
 			"path": "scripts"
 		},
 		{
-			"path": "workup",
 			"file_exclude_patterns":
 			[
 				"__init__.py"
 			],
-
+			"path": "workup"
 		}
 	]
 }
