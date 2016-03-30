@@ -21,7 +21,7 @@ First, clone our repository
 git clone https://github.com/SaturdayNeighborhoodHealthClinic/osler.git
 ```
 
-First, get [pip](https://pip.pypa.io/en/stable/).
+Next, get [pip](https://pip.pypa.io/en/stable/).
 
 We also recommend running Osler in a virtual environment.
 If you're going to run our project in a virtual env do th following:
@@ -42,7 +42,7 @@ pip install -r requirements.txt
 
 One of our dependencies is Pillow, which requires [some other libraries.](https://pillow.readthedocs.org/en/3.0.x/installation.html)
 
-Once you've done that, *from the `osler/` build the test database with
+Once you've done that, from the `osler/` build the test database with
 
 ```bash
 sh scripts/reset_db.sh
@@ -57,6 +57,14 @@ python manage.py runserver --settings osler.debug_settings
 
 Once you have it running, you should be able to log into the debug database-backed
 app with the user 'jrporter' with password 'password'.
+
+To run tests, run
+
+```bash
+python manage.py test
+```
+
+Remote servers without GUI access may need to [configure headless selenium](http://www.installationpage.com/selenium/how-to-run-selenium-headless-firefox-in-ubuntu/).
 
 ## Deployment
 
