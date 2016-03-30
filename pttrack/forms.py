@@ -1,6 +1,11 @@
 '''Forms for the Oser core components.'''
 from bootstrap3_datetime.widgets import DateTimePicker
-from django.forms import ModelForm, EmailField
+from django.forms import ModelForm, EmailField, CheckboxSelectMultiple
+
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit, Layout, Fieldset, Div, Field
+from crispy_forms.bootstrap import TabHolder, Tab, InlineCheckboxes, \
+    AppendedText, PrependedText
 
 from . import models
 
@@ -51,6 +56,29 @@ class ProviderForm(ModelForm):
     class Meta:
         model = models.Provider
         exclude = ['associated_user']
+        widgets = {'clinical_roles': CheckboxSelectMultiple}
+
+    def __init__(self, *args, **kwargs):
+        super(ProviderForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+        self.helper.layout = Layout(
+            'first_name',
+            'last_name',
+            'middle_name',
+            'phone',
+            InlineCheckboxes('languages'),
+            'gender',
+            'clinical_roles',
+            'provider_email'
+            )
+
+        self.helper.add_input(Submit('submit', 'Submit'))
+
 
 
 class DocumentForm(ModelForm):
