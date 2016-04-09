@@ -16,6 +16,44 @@ class PatientForm(ModelForm):
         model = models.Patient
         exclude = ['needs_workup', 'demographics']
 
+    
+    def __init__(self, *args, **kwargs):
+        super(PatientForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+        self.helper.layout = Layout(
+            'first_name',
+            'last_name',
+            'middle_name',
+            'phone',
+            InlineCheckboxes('languages'),
+            'gender',
+            'address',
+            'city',
+            'state',
+            'zip_code',
+            'country',
+            'pcp_preferred_zip',
+            'date_of_birth',
+            'patient_comfortable_with_english',
+            InlineCheckboxes('ethnicities'),
+            'ssn',
+            'alternate_phone_1_owner',
+            'alternate_phone_1',
+            'alternate_phone_2_owner',
+            'alternate_phone_2',
+            'alternate_phone_3_owner',
+            'alternate_phone_3',
+            'alternate_phone_4_owner',
+            'alternate_phone_4',
+            'preferred_contact_method',
+            'email'
+            )
+
     def clean(self):
 
         cleaned_data = super(ModelForm, self).clean()
@@ -56,7 +94,8 @@ class ProviderForm(ModelForm):
     class Meta:
         model = models.Provider
         exclude = ['associated_user']
-        widgets = {'clinical_roles': CheckboxSelectMultiple}
+        widgets = {'referral_location': CheckboxSelectMultiple,
+                   'referral_type': CheckboxSelectMultiple}
 
     def __init__(self, *args, **kwargs):
         super(ProviderForm, self).__init__(*args, **kwargs)
