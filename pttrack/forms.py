@@ -53,6 +53,7 @@ class PatientForm(ModelForm):
             'preferred_contact_method',
             'email'
             )
+        self.helper.add_input(Submit('submit', 'Submit'))
 
     def clean(self):
 
