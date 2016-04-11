@@ -20,39 +20,13 @@ class PatientForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
 
-        self.helper = FormHelper()
+        self.helper = FormHelper(self)
         self.helper.form_method = 'post'
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
-        self.helper.layout = Layout(
-            'first_name',
-            'last_name',
-            'middle_name',
-            'phone',
-            InlineCheckboxes('languages'),
-            'gender',
-            'address',
-            'city',
-            'state',
-            'zip_code',
-            'country',
-            'pcp_preferred_zip',
-            'date_of_birth',
-            'patient_comfortable_with_english',
-            InlineCheckboxes('ethnicities'),
-            'ssn',
-            'alternate_phone_1_owner',
-            'alternate_phone_1',
-            'alternate_phone_2_owner',
-            'alternate_phone_2',
-            'alternate_phone_3_owner',
-            'alternate_phone_3',
-            'alternate_phone_4_owner',
-            'alternate_phone_4',
-            'preferred_contact_method',
-            'email'
-            )
+        self.helper['languages'].wrap(InlineCheckboxes)
+        self.helper['ethnicities'].wrap(InlineCheckboxes)
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def clean(self):
@@ -101,25 +75,14 @@ class ProviderForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProviderForm, self).__init__(*args, **kwargs)
 
-        self.helper = FormHelper()
+        self.helper = FormHelper(self)
         self.helper.form_method = 'post'
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
-        self.helper.layout = Layout(
-            'first_name',
-            'last_name',
-            'middle_name',
-            'phone',
-            InlineCheckboxes('languages'),
-            'gender',
-            'clinical_roles',
-            'provider_email'
-            )
-
+        self.helper['languages'].wrap(InlineCheckboxes)
+        self.helper['clinical_roles'].wrap(InlineCheckboxes)
         self.helper.add_input(Submit('submit', 'Submit'))
-
-
 
 class DocumentForm(ModelForm):
     class Meta:
