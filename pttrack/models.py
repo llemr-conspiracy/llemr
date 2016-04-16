@@ -112,9 +112,9 @@ class Person(models.Model):
     class Meta:  # pylint: disable=W0232,R0903,C1001
         abstract = True
 
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    middle_name = models.CharField(max_length=100, blank=True)
+    first_name = models.CharField(max_length=100, validators=[validators.validate_name])
+    last_name = models.CharField(max_length=100, validators=[validators.validate_name])
+    middle_name = models.CharField(max_length=100, blank=True, validators=[validators.validate_name])
 
     phone = models.CharField(max_length=40, null=True, blank=True)
     languages = models.ManyToManyField(Language, help_text="Specify here languages that are spoken at a level sufficient to be used for medical communication.")

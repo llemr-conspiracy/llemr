@@ -107,18 +107,19 @@ class ProviderCreate(FormView):
 
     def form_valid(self, form):
         provider = form.save(commit=False)
-        provider.associated_user = self.request.user
-
-        # populate the User object with the email and name data from the
-        # Provider form
-        user = provider.associated_user
-        user.email = form.cleaned_data['provider_email']
-        user.first_name = provider.first_name
-        user.last_name = provider.last_name
-        
-        user.save()
-        provider.save()
-        form.save_m2m()
+        # check that user did not previously create a provider
+        if not hasattr(self.request.user, 'provider'):
+            provider.associated_user = self.request.user
+            # populate the User object with the email and name data from the
+            # Provider form
+            user = provider.associated_user
+            user.email = form.cleaned_data['provider_email']
+            user.first_name = provider.first_name
+            user.last_name = provider.last_name
+            
+            user.save()
+            provider.save()
+            form.save_m2m()
 
         return HttpResponseRedirect(self.request.GET['next'])
 
