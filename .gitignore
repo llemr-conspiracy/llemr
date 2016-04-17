@@ -1,11 +1,5 @@
-# Ignore virtualenv
-venv/
-
 # Ignore SublimeText workspace
 *.sublime-workspace
-
-# don't control the database.
-db.sqlite3
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
