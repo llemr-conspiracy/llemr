@@ -178,7 +178,27 @@ class ViewsExistTest(TestCase):
         '''
         Verify that pdf download with the correct naming protocol is working
         '''
+
+        from pttrack.models import Gender, ContactMethod
+        
         wu_url = "workup-pdf"
+
+        pt1 = Patient.objects.create(
+            first_name="Juggie ",
+            last_name="Brodeltein ",
+            middle_name="Bayer ",
+            phone='+49 178 236 5288',
+            gender=Gender.objects.all()[1],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            needs_workup=True,
+            preferred_contact_method=ContactMethod.objects.all()[0],
+        )
 
         wu = models.Workup.objects.create(
             clinic_day=models.ClinicDate.objects.all()[0],
@@ -188,7 +208,8 @@ class ViewsExistTest(TestCase):
             ros="", pe="", A_and_P="",
             author=Provider.objects.all()[0],
             author_type=ProviderType.objects.all()[0],
-            patient=Patient.objects.all()[0])
+            patient=pt1,
+            )
 
         wu.diagnosis_categories.add(models.DiagnosisType.objects.all()[0])
         wu.save()
