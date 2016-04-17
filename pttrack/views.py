@@ -163,9 +163,15 @@ class PatientUpdate(UpdateView):
     model = mymodels.Patient
     form_class = myforms.PatientForm
 
-    def get_success_url(self):
-        pt = self.object
-        return reverse("patient-detail", args=(pt.id, ))
+    def form_valid(self, form):
+        pt = form.save()
+
+        if not '-' in pt.ssn:
+            pt.ssn = pt.ssn[0:3] + '-' + pt.ssn[3:5] + '-' + pt.ssn[5:]
+
+        pt.save()
+        return HttpResponseRedirect(reverse("patient-detail",  
+                                            args=(pt.id,)))
 
 
 class PatientCreate(FormView):
