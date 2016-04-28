@@ -435,6 +435,20 @@ class IntakeTest(TestCase):
         new_pt = list(models.Patient.objects.all())[-1]
         self.assertEquals(new_pt.ssn, "123-45-6789")
 
+    def test_ssn_update(self):
+        '''SSNs given without hypens should be automatically hypenated.'''
+
+        submitted_pt = self.valid_pt_dict
+        submitted_pt['ssn'] = "123456789"
+
+        response = self.client.post(reverse('intake'), submitted_pt)
+
+        new_pt = list(models.Patient.objects.all())[-1]
+
+        response = self.client.post(reverse('patient-update', args=(new_pt.pk,)), submitted_pt)
+        self.assertEqual(response.status_code, 302)
+
+
     def test_can_intake_pt(self):
 
         n_pt = len(models.Patient.objects.all())
