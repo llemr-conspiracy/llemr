@@ -352,10 +352,10 @@ def all_patients(request):
 
     pt_list_latest.sort(key = bylatestKey, reverse=True)
 
-    zipped_list = zip(["Alphabetized by Last Name", "Alphabetized by First Name", "Ordered by Latest Activity"],
-                        [pt_list_last, pt_list_first, pt_list_latest],
-                        ['ptlast', 'ptfirst', 'ptlatest'],
-                        [False, False, True])
+    zipped_list = zip(["Alphabetized by Last Name", "Ordered by Latest Activity"],
+                        [pt_list_last, pt_list_latest],
+                        ['ptlast', 'ptlatest'],
+                        [False, True])
     return render(request,
                   'pttrack/patient_list.html',
                   {'zipped_list': zipped_list,
