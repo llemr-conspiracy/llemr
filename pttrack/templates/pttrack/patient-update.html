@@ -1,4 +1,4 @@
-{% extends "pttrack/base-form.html" %}
+{% extends "pttrack/base.html" %}
 
 {% load bootstrap3 %}
 
@@ -11,4 +11,11 @@ Edit Patient ({{ object.name }})
   Edit Patient
 </h1>
 <p class="lead">Edit <em><a href="{% url 'patient-detail' pk=object.id %}">{{ object.name }}</a></em></p>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	{% load crispy_forms_tags %}
+	{% crispy form %}
+</div>
 {% endblock %}
