@@ -31,6 +31,7 @@ INSTALLED_APPS = (
     'bootstrap3_datetime',
     'djangular',
     'simple_history',
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (
