@@ -9,8 +9,7 @@ from . import models as mymodels
 from . import forms as myforms
 from . import serializers
 # from rest_framework import status # not needed in the meantime
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from rest_framework import generics
 
 import datetime
 
@@ -400,13 +399,10 @@ def reset_action_item(request, ai_id):
     return HttpResponseRedirect(reverse("patient-detail",
                                         args=(ai.patient.id,)))
 
-# @api_view(['GET'])
-class PatientList(APIView):
+class PatientList(generics.ListAPIView): # read only
     '''
     List all patients, or create a new patient.
     Examples for one patient and posting in tutorial
     '''
-    def get(self, request, format=None):
-        patients = mymodels.Patient.objects.all()
-        serializer = serializers.PatientSerializer(patients, many=True)
-        return Response(serializer.data)
+    queryset = mymodels.Patient.objects.all()
+    serializer_class = serializers.PatientSerializer
