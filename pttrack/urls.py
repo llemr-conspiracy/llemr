@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from .decorators import provider_required
 from . import models as mymodels
 from . import views
+from rest_framework.urlpatterns import format_suffix_patterns
 
 # pylint: disable=I0011
 
@@ -35,7 +36,7 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
     url(r'^patient/activate_home/(?P<pk>[0-9]+)$',
         views.patient_activate_home,
         name='patient-activate-home'),
-    url(r'^patients/$', views.patient_list),
+    url(r'^patients/$', views.PatientList.as_view()),
 
 
     # PROVIDERS
@@ -97,4 +98,4 @@ def url_wrap(urls):
     return wrapped_urls
 
 urlpatterns = url_wrap(unwrapped_urlpatterns)
-
+urlpatterns = format_suffix_patterns(urlpatterns)

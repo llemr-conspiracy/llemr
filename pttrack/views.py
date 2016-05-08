@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponseServerError, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.views.generic.edit import FormView, UpdateView
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
@@ -8,8 +8,9 @@ import django.utils.timezone
 from . import models as mymodels
 from . import forms as myforms
 from . import serializers
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
+# from rest_framework import status # not needed in the meantime
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 import datetime
 
@@ -399,29 +400,13 @@ def reset_action_item(request, ai_id):
     return HttpResponseRedirect(reverse("patient-detail",
                                         args=(ai.patient.id,)))
 
-class JSONResponse(HttpResponse):
-    '''
-    An HttpResponse that renders its content into JSON.
-    '''
-    def __init__(self, data, **kwargs):
-        content = JSONRenderer().render(data)
-        kwargs['content_type'] = 'application/json'
-        super(JSONResponse, self).__init__(content, **kwargs)
-
-def patient_list(request):
+# @api_view(['GET'])
+class PatientList(APIView):
     '''
     List all patients, or create a new patient.
-    Example for one patient in tutorial under snippet_detail
+    Examples for one patient and posting in tutorial
     '''
-    if request.method == 'GET':
+    def get(self, request, format=None):
         patients = mymodels.Patient.objects.all()
         serializer = serializers.PatientSerializer(patients, many=True)
-        return JSONResponse(serializer.data)
-
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = serializers.PatientSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JSONResponse(serializer.data, status=201)
-        return JSONResponse(serializer.errors, status=400)
+        return Response(serializer.data)
