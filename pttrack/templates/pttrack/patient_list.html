@@ -71,4 +71,43 @@ Osler: {{ title | default:"All Patients"}}
 </div>
 </div>
 
+<script type="text/javascript">
+
+    // function buildPatientTable(patients){
+    //     for (var i = 0; i < patients.length; i++){
+
+    //     }
+    // }
+
+    function doUponLoading(event){
+        console.log("*************HIIIIIIIIII**********");
+
+        $.ajax({
+            url: '/pttrack/patients.json',
+            type: 'get',
+            success: function(data) {
+                console.log(data.length);
+                // data.sort(function(a,b) {
+                //     return a.born - b.born;
+                // });
+                // console.log(data);
+
+                data.sort(function(a,b) {
+                    var x = a.last_name.toLowerCase();
+                    var y = b.last_name.toLowerCase();
+                    return x < y ? -1 : x > y ? 1 : 0;
+                });
+                console.log(data);
+            },
+            failure: function(data) { 
+                console.log('Error in ajax call');
+            }
+        }); 
+        console.log("*************HEEEEEEEEEEEEEEEY**********");
+
+    }
+    document.addEventListener("DOMContentLoaded", doUponLoading, false);
+    console.log("*************YOOOOOOOO**********");
+</script>
+
 {% endblock %}

@@ -342,7 +342,6 @@ def phone_directory(request):
 
 def all_patients(request):
     pt_list_last = list(mymodels.Patient.objects.all().order_by('last_name'))
-    pt_list_first = list(mymodels.Patient.objects.all().order_by('first_name'))
     pt_list_latest = list(mymodels.Patient.objects.all())
 
     def bylatestKey(pt):

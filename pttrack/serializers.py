@@ -1,10 +1,16 @@
 from rest_framework import serializers
 from . import models
+from simple_history.models import HistoricalRecords
 
 class PatientSerializer(serializers.ModelSerializer):
+
+	# latest_history = serializers.
+	# latest_workup = 
+	# history = serializers.HistoricalRecords()
 	class Meta: # this defines the fields that get serialized/deserialized
 		model = models.Patient
-		exclude = ['needs_workup'] # maybe not here, might need for update
+		# fields = ['latest_workup']
+		# exclude = ['needs_workup'] # maybe not here, might need for update
 
 	# ModelSerializer gives simple default implementations of create() and update()
 	# # We actually don't need these? Since it's just for the all-patients view?
