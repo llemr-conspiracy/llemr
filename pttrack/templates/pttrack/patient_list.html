@@ -18,60 +18,35 @@ Osler: {{ title | default:"All Patients"}}
 </div> -->
 
 <div class="container">
-<ul class="nav nav-pills">
-    {% for combination in zipped_list %}
+    <ul class="nav nav-pills">
+        {% for combination in zipped_list %}
         {% if combination.3 %}
         <li class="active"><a data-toggle="pill" href="#{{ combination.2 }}">{{ combination.0 }}<span class="badge">{{ combination.1 | length }}</span></a></li>
         {% else %}
         <li><a data-toggle="pill" href="#{{ combination.2 }}">{{ combination.0 }}<span class="badge">{{ combination.1 | length }}</span></a></li>
         {% endif %}
-    {% endfor %}
-</ul>
+        {% endfor %}
+    </ul>
+    <div class="tab-content">
 
-<div class="tab-content">
-    {% for combination in zipped_list %}
-        {% if combination.3 %}
+
+        <!-- <div id="{{ combination.2 }}" class="tab-pane fade in active"></div> -->
+
         <div id="{{ combination.2 }}" class="tab-pane fade in active">
-        {% else %}
-        <div id="{{ combination.2 }}" class="tab-pane fade">
-        {% endif %}
-            <h3>{{ combination.0 }}</h3>
-            <table class="table">
+            <h3>Alphabetized by Last Name</h3>
+            <table class="table" id = "by_last_name">
                 <tr><th>Name</th><th>Age / Gender</th><th>Latest Activity</th><th>Next AI Due</th><th>Status</th></td>
-                {% for patient in combination.1 %}
-                    <tr>
-                    <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
-                    <td>{{ patient.age }} / {{ patient.gender }}</td>
-                    {% if patient.latest_workup %}
-                    <td><a href="{% url 'workup' pk=patient.latest_workup.pk %}">Seen {{ patient.latest_workup.clinic_day.clinic_date }}</a>: {{ patient.latest_workup.chief_complaint }}</td>
-                    {% else %}
-                    <td><a href="{% url 'patient-update' pk=patient.pk %}">Intake</a>: {{ patient.history.last.history_date }}</td>
-                    {% endif %}
-                    <td>{{ patient.status }}</td>
-                    {% if request.session.staff_view %}
-                    {% if patient.needs_workup %}
-                    <td> Active <a href="{% url 'patient-activate-home' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></td>
-                    {% endif %}
-                    {% if not patient.needs_workup %}
-                    <td> Inactive <a href="{% url 'patient-activate-home' pk=patient.id %}">{% bootstrap_icon "play-circle" %}</a></td>
-                    {% endif %}
-                    {% else %}
-                    {% if patient.needs_workup %}
-                    <td> Active </td>
-                    {% endif %}
-                    {% if not patient.needs_workup %}
-                    <td> Inactive </td>
-                    {% endif %}
-                    {% endif %}
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
-    {% endfor %}
-</div>
-</div>
 
-<script type="text/javascript">
+                </table>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+    <script type="text/javascript">
 
     // function buildPatientTable(patients){
     //     for (var i = 0; i < patients.length; i++){
@@ -80,7 +55,6 @@ Osler: {{ title | default:"All Patients"}}
     // }
 
     function doUponLoading(event){
-        console.log("*************HIIIIIIIIII**********");
 
         $.ajax({
             url: '/pttrack/patients.json',
@@ -98,16 +72,68 @@ Osler: {{ title | default:"All Patients"}}
                     return x < y ? -1 : x > y ? 1 : 0;
                 });
                 console.log(data);
+
+                for (var i = 0; i < data.length; i++){
+                    patient = data[i];
+                    var patientRow = $("<tr>").append(
+                        $("<td>").append(
+                            $("<a>").attr({
+                                href :"/pttrack/"+patient.pk
+                            }).text(patient.name)),
+                        $("<td>").text(patient.age+" / "+patient.gender)
+                        );
+                    if (patient.latest_workup){
+                        $(patientRow).append(
+                            $("<td>").append(
+                                $("<a>").attr({
+                                    href :"/workup/"+patient.latest_workup.pk
+                                }).text("Seen "+patient.latest_workup.clinic_day.clinic_date),
+                                $("<span>").text(": "+patient.latest_workup.chief_complaint))
+                            );
+                    } else{
+                        $(patientRow).append(
+                            $("<td>").append(
+                                $("<a>").attr({
+                                    href :"/pttrack/patient/update/"+patient.pk
+                                }).text("Intake"),
+                                $("<span>").text(": "+" // insert history"))
+                            );
+                    }
+                    $(patientRow).append(
+                        $("<td>").text(patient.status),
+                        $("<td>").append(
+                            $("<span>").text(function(){
+                                return patient.needs_workup ? "Active " : "Inactive ";
+                            }),
+                            $("<a>").attr({
+                                href :"/pttrack/patient/activate_home/"+patient.pk
+                            }).append(
+                            $("<span>").attr({
+                                class :function(){
+                                    return patient.needs_workup ? "glyphicon glyphicon-remove-circle" : "glyphicon glyphicon-play-circle";
+                                },
+                                'aria-hidden' : "true"
+                            })
+                            )
+                            )                        
+                        );
+                    $('#by_last_name').append($(patientRow));
+                }
+                
+
+
+
+
+
+
             },
             failure: function(data) { 
                 console.log('Error in ajax call');
             }
         }); 
-        console.log("*************HEEEEEEEEEEEEEEEY**********");
 
     }
     document.addEventListener("DOMContentLoaded", doUponLoading, false);
-    console.log("*************YOOOOOOOO**********");
 </script>
 
 {% endblock %}

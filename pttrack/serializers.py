@@ -14,7 +14,7 @@ class WorkupSerializer(serializers.ModelSerializer):
 	clinic_day = ClinicDateSerializer()
 	class Meta: # this defines the fields that get serialized/deserialized
 		model = workupModels.Workup
-		fields = ['chief_complaint', 'clinic_day']
+		fields = ['chief_complaint', 'clinic_day', 'pk']
 
 class PatientSerializer(serializers.ModelSerializer):
 	# history = HistorySerializer() # <------ vs this
@@ -24,7 +24,7 @@ class PatientSerializer(serializers.ModelSerializer):
 	# history = serializers.HistoricalRecords()
 	class Meta: # this defines the fields that get serialized/deserialized
 		model = models.Patient
-		# fields = ['history','latest_workup'] # <------ vs this
+		fields = ['age','latest_workup', 'name', 'last_name', 'pk', 'gender', 'status', 'needs_workup'] # <------ vs this
 		# exclude = ['needs_workup'] # maybe not here, might need for update
 
 	# ModelSerializer gives simple default implementations of create() and update()
