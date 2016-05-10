@@ -8,6 +8,7 @@ import django.utils.timezone
 from . import models as mymodels
 from . import forms as myforms
 from . import serializers
+from workup import models as workupmodels # <------- TESTING
 # from rest_framework import status # not needed in the meantime
 from rest_framework import generics
 
@@ -405,3 +406,7 @@ class PatientList(generics.ListAPIView): # read only
     '''
     queryset = mymodels.Patient.objects.all()
     serializer_class = serializers.PatientSerializer
+
+class WorkupList (generics.ListAPIView): # <------- TESTING
+    queryset = workupmodels.Workup.objects.all()
+    serializer_class = serializers.WorkupSerializer    

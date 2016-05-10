@@ -38,6 +38,7 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
         name='patient-activate-home'),
     url(r'^patients/$',
         views.PatientList.as_view(),
+        # views.WorkupList.as_view(),
         name='patients-api'),
 
 
