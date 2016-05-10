@@ -55,7 +55,7 @@ Osler: {{ title | default:"All Patients"}}
     // }
 
     function doUponLoading(event){
-
+        if ("{{title}}" == "All Patients"){ // else, need to set up API for attending tasks
         $.ajax({
             url: '/pttrack/patients.json',
             type: 'get',
@@ -96,7 +96,7 @@ Osler: {{ title | default:"All Patients"}}
                                 $("<a>").attr({
                                     href :"/pttrack/patient/update/"+patient.pk
                                 }).text("Intake"),
-                                $("<span>").text(": "+" // insert history"))
+                                $("<span>").text(": "+"patient.history.last.history_date"))
                             );
                     }
                     $(patientRow).append(
@@ -131,7 +131,7 @@ Osler: {{ title | default:"All Patients"}}
                 console.log('Error in ajax call');
             }
         }); 
-
+}
     }
     document.addEventListener("DOMContentLoaded", doUponLoading, false);
 </script>

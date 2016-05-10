@@ -3,8 +3,14 @@ from . import models
 from workup import models as workupModels
 from simple_history.models import HistoricalRecords
 
-# class HistorySerializer(serializers.Serializer):
-# 	history = serializers.HistoricalRecords()
+class lastHistorySerializer(serializers.Serializer):
+	history_date = serializers.DateTimeField()
+
+class HistorySerializer(serializers.Serializer):
+	last = lastHistorySerializer()
+	# class Meta:
+	# 	model = HistoricalRecords()
+	# 	fields = ['last']
 
 class ClinicDateSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -17,14 +23,14 @@ class WorkupSerializer(serializers.ModelSerializer):
 		fields = ['chief_complaint', 'clinic_day', 'pk']
 
 class PatientSerializer(serializers.ModelSerializer):
-	# history = HistorySerializer() # <------ vs this
+	history = HistorySerializer() # <------ vs this
 	latest_workup = WorkupSerializer()
 	# latest_history = serializers.
 	# latest_workup = serializers.latest_workup # <------ test this
 	# history = serializers.HistoricalRecords()
 	class Meta: # this defines the fields that get serialized/deserialized
 		model = models.Patient
-		fields = ['age','latest_workup', 'name', 'last_name', 'pk', 'gender', 'status', 'needs_workup'] # <------ vs this
+		fields = ['history','age','latest_workup', 'name', 'last_name', 'pk', 'gender', 'status', 'needs_workup'] # <------ vs this
 		# exclude = ['needs_workup'] # maybe not here, might need for update
 
 	# ModelSerializer gives simple default implementations of create() and update()
