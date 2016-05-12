@@ -105,10 +105,9 @@ Osler: {{ title | default:"All Patients"}}
 
     function doUponLoading(event){
         if ("{{title}}" == "All Patients"){ // else, need to set up API for attending tasks
-        $.ajax({
-            url: '/pttrack/patients.json',
-            type: 'get',
-            success: function(data) {
+
+            $.get('/pttrack/patients.json')
+            .success(function(data) {
                 console.log(data.length);
                 // data.sort(function(a,b) {
 
@@ -131,14 +130,15 @@ Osler: {{ title | default:"All Patients"}}
                 });
                 console.log(data);
                 buildTable(data);
-                          
+            })
+            .error(function(jqXHR, textStatus, errorThrown) { 
+                if (textStatus == 'timeout')
+                    console.log('The server is not responding');
 
-            },
-            failure: function(data) { 
-                console.log('Error in ajax call');
-            }
-        }); 
-}
+                if (textStatus == 'error')
+                    console.log(errorThrown);
+            });
+        }
     }
     document.addEventListener("DOMContentLoaded", doUponLoading, false);
 </script>
