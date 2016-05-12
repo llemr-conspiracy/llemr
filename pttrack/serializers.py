@@ -5,6 +5,7 @@ from simple_history.models import HistoricalRecords
 
 class lastHistorySerializer(serializers.Serializer):
 	history_date = serializers.DateTimeField()
+	# history_date = serializers.CharField(max_length=200)
 
 class HistorySerializer(serializers.Serializer):
 	last = lastHistorySerializer()

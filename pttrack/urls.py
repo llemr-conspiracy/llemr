@@ -40,7 +40,21 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
         views.PatientList.as_view(),
         # views.WorkupList.as_view(),
         name='patients-api'),
-
+    url(r'^signs/$',
+        views.AttendingListSignsCharts.as_view(),
+        name='signs-api'),
+    url(r'^actives/$',
+        views.PatientListActive.as_view(),
+        name='actives-api'),
+    url(r'^active-actions/$',
+        views.ActionItemListActive.as_view(),
+        name='active-actions-api'),
+    url(r'^inactives/$',
+        views.ActionItemListInactive.as_view(),
+        name='inactives-api'),
+    url(r'^unsigned-workups/$',
+        views.WorkupUnsigned.as_view(),
+        name='unsigned-workups-api'),
 
     # PROVIDERS
     url(r'^new-provider/$',

@@ -54,6 +54,55 @@ Osler: {{ title | default:"All Patients"}}
     //     }
     // }
 
+    function buildTable(patients){
+        for (var i = 0; i < patients.length; i++){
+            patient = patients[i];
+            var patientRow = $("<tr>").append(
+                $("<td>").append(
+                    $("<a>").attr({
+                        href :"/pttrack/"+patient.pk
+                    }).text(patient.name)),
+                $("<td>").text(patient.age+" / "+patient.gender)
+                );
+            if (patient.latest_workup){
+                $(patientRow).append(
+                    $("<td>").append(
+                        $("<a>").attr({
+                            href :"/workup/"+patient.latest_workup.pk
+                        }).text("Seen "+patient.latest_workup.clinic_day.clinic_date),
+                        $("<span>").text(": "+patient.latest_workup.chief_complaint))
+                    );
+            } else{
+                $(patientRow).append(
+                    $("<td>").append(
+                        $("<a>").attr({
+                            href :"/pttrack/patient/update/"+patient.pk
+                        }).text("Intake"),
+                        $("<span>").text(": "+"patient.history.last.history_date"))
+                    );
+            }
+            $(patientRow).append(
+                $("<td>").text(patient.status),
+                $("<td>").append(
+                    $("<span>").text(function(){
+                        return patient.needs_workup ? "Active " : "Inactive ";
+                    }),
+                    $("<a>").attr({
+                        href :"/pttrack/patient/activate_home/"+patient.pk
+                    }).append(
+                    $("<span>").attr({
+                        class :function(){
+                            return patient.needs_workup ? "glyphicon glyphicon-remove-circle" : "glyphicon glyphicon-play-circle";
+                        },
+                        'aria-hidden' : "true"
+                    })
+                    )
+                    )                        
+                );
+            $('#by_last_name').append($(patientRow));
+        }
+    }
+
     function doUponLoading(event){
         if ("{{title}}" == "All Patients"){ // else, need to set up API for attending tasks
         $.ajax({
@@ -62,7 +111,16 @@ Osler: {{ title | default:"All Patients"}}
             success: function(data) {
                 console.log(data.length);
                 // data.sort(function(a,b) {
-                //     return a.born - b.born;
+
+                //     // def bylatestKey(pt):
+                //     // latestwu = pt.latest_workup()
+                //     // if latestwu == None:
+                //     //     latestdate = pt.history.last().history_date.date() // need this to sort
+                //     // else:
+                //     //     latestdate = latestwu.clinic_day.clinic_date
+                //     // return latestdate
+
+                //     return a.history - b.history;
                 // });
                 // console.log(data);
 
@@ -72,59 +130,8 @@ Osler: {{ title | default:"All Patients"}}
                     return x < y ? -1 : x > y ? 1 : 0;
                 });
                 console.log(data);
-
-                for (var i = 0; i < data.length; i++){
-                    patient = data[i];
-                    var patientRow = $("<tr>").append(
-                        $("<td>").append(
-                            $("<a>").attr({
-                                href :"/pttrack/"+patient.pk
-                            }).text(patient.name)),
-                        $("<td>").text(patient.age+" / "+patient.gender)
-                        );
-                    if (patient.latest_workup){
-                        $(patientRow).append(
-                            $("<td>").append(
-                                $("<a>").attr({
-                                    href :"/workup/"+patient.latest_workup.pk
-                                }).text("Seen "+patient.latest_workup.clinic_day.clinic_date),
-                                $("<span>").text(": "+patient.latest_workup.chief_complaint))
-                            );
-                    } else{
-                        $(patientRow).append(
-                            $("<td>").append(
-                                $("<a>").attr({
-                                    href :"/pttrack/patient/update/"+patient.pk
-                                }).text("Intake"),
-                                $("<span>").text(": "+"patient.history.last.history_date"))
-                            );
-                    }
-                    $(patientRow).append(
-                        $("<td>").text(patient.status),
-                        $("<td>").append(
-                            $("<span>").text(function(){
-                                return patient.needs_workup ? "Active " : "Inactive ";
-                            }),
-                            $("<a>").attr({
-                                href :"/pttrack/patient/activate_home/"+patient.pk
-                            }).append(
-                            $("<span>").attr({
-                                class :function(){
-                                    return patient.needs_workup ? "glyphicon glyphicon-remove-circle" : "glyphicon glyphicon-play-circle";
-                                },
-                                'aria-hidden' : "true"
-                            })
-                            )
-                            )                        
-                        );
-                    $('#by_last_name').append($(patientRow));
-                }
-                
-
-
-
-
-
+                buildTable(data);
+                          
 
             },
             failure: function(data) { 

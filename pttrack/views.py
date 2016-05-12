@@ -401,12 +401,53 @@ def reset_action_item(request, ai_id):
 
 class PatientList(generics.ListAPIView): # read only
     '''
-    List all patients, or create a new patient.
-    Examples for one patient and posting in tutorial
+    List all patients.
     '''
     queryset = mymodels.Patient.objects.all()
     serializer_class = serializers.PatientSerializer
 
-class WorkupList (generics.ListAPIView): # <------- TESTING
-    queryset = workupmodels.Workup.objects.all()
-    serializer_class = serializers.WorkupSerializer    
+class AttendingListSignsCharts(generics.ListAPIView): # home page list when provider type is signs charts
+    '''
+    List all for the home attending page.
+    '''
+    wu_list_unsigned = workupmodels.Workup.objects.filter(signer__isnull=True).select_related('patient')
+    queryset = list(set([wu.patient for wu in wu_list_unsigned])) # sort client side
+    serializer_class = serializers.PatientSerializer
+
+class PatientListActive(generics.ListAPIView): # home page list when provider type is signs charts
+    '''
+    List all active patients.
+    '''
+    queryset = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
+    serializer_class = serializers.PatientSerializer
+
+class ActionItemListActive(generics.ListAPIView):
+    '''
+    List patients with active action items.
+    '''
+    ai_list_active = mymodels.ActionItem.objects.filter(due_date__lte=django.utils.timezone.now().date())
+    queryset = list(set([ai.patient for ai in ai_list_active if not ai.done()]))
+    serializer_class = serializers.PatientSerializer
+
+class ActionItemListInactive(generics.ListAPIView):
+    '''
+    List patients with pending action items.
+    '''
+    ai_list_inactive = mymodels.ActionItem.objects.filter(due_date__gt=django.utils.timezone.now().date()).order_by('due_date')
+    queryset = pt_list_ai_inactive = list(set([ai.patient for ai in ai_list_inactive if not ai.done()])) # need to sort: .sort(key = lambda pt: pt.inactive_action_items()[-1].due_date)
+    serializer_class = serializers.PatientSerializer
+
+class WorkupUnsigned(generics.ListAPIView):
+    '''
+    List patients with unsigned workups.
+    '''
+    wu_list_unsigned = workupmodels.Workup.objects.filter(signer__isnull=True).select_related('patient')
+    queryset = pt_list_ai_inactive = list(set([wu.patient for wu in wu_list_unsigned])) # need to sort by last name
+    serializer_class = serializers.PatientSerializer
+
+
+
+    
+# class WorkupList (generics.ListAPIView): # <------- TESTING
+#     queryset = workupmodels.Workup.objects.all()
+#     serializer_class = serializers.WorkupSerializer    
