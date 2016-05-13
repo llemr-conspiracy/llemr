@@ -48,67 +48,67 @@ Osler: {{ title | default:"All Patients"}}
 
     <script type="text/javascript">
 
-    // function buildPatientTable(patients){
-    //     for (var i = 0; i < patients.length; i++){
 
-    //     }
-    // }
-
-    function buildTable(patients){
-        for (var i = 0; i < patients.length; i++){
-            patient = patients[i];
-            var patientRow = $("<tr>").append(
-                $("<td>").append(
-                    $("<a>").attr({
-                        href :"/pttrack/"+patient.pk
-                    }).text(patient.name)),
-                $("<td>").text(patient.age+" / "+patient.gender)
-                );
-            if (patient.latest_workup){
-                $(patientRow).append(
+    function buildTable(title, patients, active){ // need to fix for multiple sets
+        // for (var j = 0; j < tab_data.length; j++){
+        //     patients = tab_data[j];
+            for (var i = 0; i < patients.length; i++){
+                patient = patients[i];
+                var patientRow = $("<tr>").append(
                     $("<td>").append(
                         $("<a>").attr({
-                            href :"/workup/"+patient.latest_workup.pk
-                        }).text("Seen "+patient.latest_workup.clinic_day.clinic_date),
-                        $("<span>").text(": "+patient.latest_workup.chief_complaint))
+                            href :"/pttrack/"+patient.pk
+                        }).text(patient.name)),
+                    $("<td>").text(patient.age+" / "+patient.gender)
                     );
-            } else{
+                if (patient.latest_workup){
+                    $(patientRow).append(
+                        $("<td>").append(
+                            $("<a>").attr({
+                                href :"/workup/"+patient.latest_workup.pk
+                            }).text("Seen "+patient.latest_workup.clinic_day.clinic_date),
+                            $("<span>").text(": "+patient.latest_workup.chief_complaint))
+                        );
+                } else{
+                    $(patientRow).append(
+                        $("<td>").append(
+                            $("<a>").attr({
+                                href :"/pttrack/patient/update/"+patient.pk
+                            }).text("Intake"),
+                            $("<span>").text(": "+"patient.history.last.history_date"))
+                        );
+                }
                 $(patientRow).append(
+                    $("<td>").text(patient.status),
                     $("<td>").append(
+                        $("<span>").text(function(){
+                            return patient.needs_workup ? "Active " : "Inactive ";
+                        }),
                         $("<a>").attr({
-                            href :"/pttrack/patient/update/"+patient.pk
-                        }).text("Intake"),
-                        $("<span>").text(": "+"patient.history.last.history_date"))
+                            href :"/pttrack/patient/activate_home/"+patient.pk
+                        }).append(
+                        $("<span>").attr({
+                            class :function(){
+                                return patient.needs_workup ? "glyphicon glyphicon-remove-circle" : "glyphicon glyphicon-play-circle";
+                            },
+                            'aria-hidden' : "true"
+                        })
+                        )
+                        )                        
                     );
+                $('#by_last_name').append($(patientRow));
             }
-            $(patientRow).append(
-                $("<td>").text(patient.status),
-                $("<td>").append(
-                    $("<span>").text(function(){
-                        return patient.needs_workup ? "Active " : "Inactive ";
-                    }),
-                    $("<a>").attr({
-                        href :"/pttrack/patient/activate_home/"+patient.pk
-                    }).append(
-                    $("<span>").attr({
-                        class :function(){
-                            return patient.needs_workup ? "glyphicon glyphicon-remove-circle" : "glyphicon glyphicon-play-circle";
-                        },
-                        'aria-hidden' : "true"
-                    })
-                    )
-                    )                        
-                );
-            $('#by_last_name').append($(patientRow));
-        }
+        // }
     }
 
     function doUponLoading(event){
-        if ("{{title}}" == "All Patients"){ // else, need to set up API for attending tasks
 
-            $.get('/pttrack/patients.json')
-            .success(function(data) {
-                console.log(data.length);
+        var lists = {{lists|safe}};
+        console.log(lists);
+        for (var i = 0; i < lists.length; i++){
+        $.get('/pttrack/'+lists[i]['url']+'.json')
+        .success(function(data) {
+            console.log(data.length);
                 // data.sort(function(a,b) {
 
                 //     // def bylatestKey(pt):
@@ -122,23 +122,25 @@ Osler: {{ title | default:"All Patients"}}
                 //     return a.history - b.history;
                 // });
                 // console.log(data);
+                // tab_data.push(data);
 
-                data.sort(function(a,b) {
-                    var x = a.last_name.toLowerCase();
-                    var y = b.last_name.toLowerCase();
-                    return x < y ? -1 : x > y ? 1 : 0;
-                });
-                console.log(data);
-                buildTable(data);
+                // data.sort(function(a,b) {
+                //     var x = a.last_name.toLowerCase();
+                //     var y = b.last_name.toLowerCase();
+                //     return x < y ? -1 : x > y ? 1 : 0;
+                // });
+                console.log(data); // push into array of patient data
+                buildTable("hey",data);
             })
-            .error(function(jqXHR, textStatus, errorThrown) { 
-                if (textStatus == 'timeout')
-                    console.log('The server is not responding');
+        .error(function(jqXHR, textStatus, errorThrown) { 
+            if (textStatus == 'timeout')
+                console.log('The server is not responding');
 
-                if (textStatus == 'error')
-                    console.log(errorThrown);
-            });
+            if (textStatus == 'error')
+                console.log(errorThrown);
+        });
         }
+        
     }
     document.addEventListener("DOMContentLoaded", doUponLoading, false);
 </script>

@@ -11,6 +11,8 @@ from . import serializers
 from workup import models as workupmodels # <------- TESTING
 # from rest_framework import status # not needed in the meantime
 from rest_framework import generics
+from rest_framework.filters import OrderingFilter
+import json
 
 import datetime
 
@@ -265,6 +267,8 @@ def home_page(request):
                                              pk=request.session['clintype_pk'])
     if active_provider_type.signs_charts:
         
+        lists = ['pt_list_unsigned','pt_list_active']
+
         wu_list_unsigned = Workup.objects.filter(signer__isnull=True).select_related('patient')
         pt_list_unsigned = list(set([wu.patient for wu in wu_list_unsigned]))
         pt_list_unsigned.sort(key = lambda pt: pt.last_name)
@@ -278,6 +282,8 @@ def home_page(request):
                             [True, False])
 
     elif active_provider_type.staff_view:
+
+        lists = ['pt_list_active', 'pt_list_ai_active', 'pt_list_ai_inactive', 'pt_list_unsigned']
         
         pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
         ai_list_active = mymodels.ActionItem.objects.filter(due_date__lte=django.utils.timezone.now().date())
@@ -298,6 +304,9 @@ def home_page(request):
                             [True, False, False, False])
 
     else:
+
+        lists = ['pt_list_active']
+
         pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
 
         title = "Active Patients"
@@ -342,6 +351,8 @@ def phone_directory(request):
 
 
 def all_patients(request):
+
+    hey = "yo"
     pt_list_last = list(mymodels.Patient.objects.all().order_by('last_name'))
     pt_list_latest = list(mymodels.Patient.objects.all())
 
@@ -355,13 +366,22 @@ def all_patients(request):
 
     pt_list_latest.sort(key = bylatestKey, reverse=True)
 
-    zipped_list = zip(["Alphabetized by Last Name", "Ordered by Latest Activity"],
-                        [pt_list_last, pt_list_latest],
-                        ['ptlast', 'ptlatest'],
-                        [False, True])
+    lists = [{'url':'pt_list_last', # I think an array of dictionaries/json is a better idea than zipping lists
+    'title':"Alphabetized by Last Name",
+    'active':False}
+    # ,
+    #  {'url':'pt_list_latest',
+    # 'title':"Ordered by Latest Activity",
+    # 'active':True}
+    ]
+
+    # zipped_list = zip(["Alphabetized by Last Name", "Ordered by Latest Activity"], # title of tab
+    #                     ['pt_list_last', 'pt_list_latest'], # API url to hit
+    #                     [False, True]) # active?
     return render(request,
                   'pttrack/patient_list.html',
-                  {'zipped_list': zipped_list,
+                  # {'zipped_list': zipped_list,
+                  {'lists': json.dumps(lists),
                     'title': "All Patients"})
 
 
@@ -399,29 +419,24 @@ def reset_action_item(request, ai_id):
     return HttpResponseRedirect(reverse("patient-detail",
                                         args=(ai.patient.id,)))
 
-class PatientList(generics.ListAPIView): # read only
+class PtListLastName(generics.ListAPIView): # read only
     '''
     List all patients.
     '''
     queryset = mymodels.Patient.objects.all()
     serializer_class = serializers.PatientSerializer
+    filter_backends = (OrderingFilter,)
+    ordering_fields = ('last_name')
+    ordering = ('last_name')
 
-class AttendingListSignsCharts(generics.ListAPIView): # home page list when provider type is signs charts
-    '''
-    List all for the home attending page.
-    '''
-    wu_list_unsigned = workupmodels.Workup.objects.filter(signer__isnull=True).select_related('patient')
-    queryset = list(set([wu.patient for wu in wu_list_unsigned])) # sort client side
-    serializer_class = serializers.PatientSerializer
-
-class PatientListActive(generics.ListAPIView): # home page list when provider type is signs charts
+class PtListActive(generics.ListAPIView): # home page list when provider type is signs charts
     '''
     List all active patients.
     '''
     queryset = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
     serializer_class = serializers.PatientSerializer
 
-class ActionItemListActive(generics.ListAPIView):
+class PtListActionItemListActive(generics.ListAPIView):
     '''
     List patients with active action items.
     '''
@@ -429,7 +444,7 @@ class ActionItemListActive(generics.ListAPIView):
     queryset = list(set([ai.patient for ai in ai_list_active if not ai.done()]))
     serializer_class = serializers.PatientSerializer
 
-class ActionItemListInactive(generics.ListAPIView):
+class PtListActionItemListInactive(generics.ListAPIView):
     '''
     List patients with pending action items.
     '''
@@ -437,15 +452,13 @@ class ActionItemListInactive(generics.ListAPIView):
     queryset = pt_list_ai_inactive = list(set([ai.patient for ai in ai_list_inactive if not ai.done()])) # need to sort: .sort(key = lambda pt: pt.inactive_action_items()[-1].due_date)
     serializer_class = serializers.PatientSerializer
 
-class WorkupUnsigned(generics.ListAPIView):
+class PtListWorkupUnsigned(generics.ListAPIView):
     '''
     List patients with unsigned workups.
     '''
     wu_list_unsigned = workupmodels.Workup.objects.filter(signer__isnull=True).select_related('patient')
-    queryset = pt_list_ai_inactive = list(set([wu.patient for wu in wu_list_unsigned])) # need to sort by last name
+    queryset = list(set([wu.patient for wu in wu_list_unsigned])) # need to sort by last name
     serializer_class = serializers.PatientSerializer
-
-
 
     
 # class WorkupList (generics.ListAPIView): # <------- TESTING
