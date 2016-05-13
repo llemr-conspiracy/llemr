@@ -267,21 +267,9 @@ def home_page(request):
                                              pk=request.session['clintype_pk'])
     if active_provider_type.signs_charts:
         
-        # lists = ['pt_list_unsigned','pt_list_active']
-
-        wu_list_unsigned = Workup.objects.filter(signer__isnull=True).select_related('patient')
-        pt_list_unsigned = list(set([wu.patient for wu in wu_list_unsigned]))
-        pt_list_unsigned.sort(key = lambda pt: pt.last_name)
-
-        pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
-        
         title = "Attending Tasks"
-        zipped_list = zip(["Patients with Unsigned Workups", "Active Patients"],
-                            [pt_list_unsigned, pt_list_active],
-                            ["unsignedwu", "activept"],
-                            [True, False])
 
-        lists = [{'url':'pt_list_unsigned',
+        lists = [{'url':'pt_list_unsigned', # I think an array of dictionaries/json is clearer syntax than zipped lists
         'title':"Unsigned Workups",
         'identifier':'unsignedwu',
         'active':True},
@@ -291,27 +279,9 @@ def home_page(request):
         'active':False}]
 
     elif active_provider_type.staff_view:
-
-        # lists = ['pt_list_active', 'pt_list_ai_active', 'pt_list_ai_inactive', 'pt_list_unsigned']
-        
-        pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
-        ai_list_active = mymodels.ActionItem.objects.filter(due_date__lte=django.utils.timezone.now().date())
-        pt_list_ai_active = list(set([ai.patient for ai in ai_list_active if not ai.done()]))
-
-        ai_list_inactive = mymodels.ActionItem.objects.filter(due_date__gt=django.utils.timezone.now().date()).order_by('due_date')
-        pt_list_ai_inactive = list(set([ai.patient for ai in ai_list_inactive if not ai.done()]))
-        pt_list_ai_inactive.sort(key = lambda pt: pt.inactive_action_items()[-1].due_date)
-
-        wu_list_unsigned = Workup.objects.filter(signer__isnull=True).select_related('patient')
-        pt_list_unsigned = list(set([wu.patient for wu in wu_list_unsigned]))
-        pt_list_unsigned.sort(key = lambda pt: pt.last_name)
-
+ 
         title = "Coordinator Tasks"
-        zipped_list = zip(["Active Patients", "Active Action Items", "Pending Action Items", "Unsigned Workups"], 
-                            [pt_list_active, pt_list_ai_active, pt_list_ai_inactive, pt_list_unsigned],
-                            ["activept", "activeai", "pendingai", "unsignedwu"],
-                            [True, False, False, False])
-
+ 
         lists = [{'url':'pt_list_active',
         'title':"Active Patients",
         'identifier':'activept',
@@ -331,15 +301,7 @@ def home_page(request):
 
     else:
 
-        # lists = ['pt_list_active']
-
-        pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
-
         title = "Active Patients"
-        zipped_list = zip(["Active Patients"],
-                        [pt_list_active],
-                        ["activept"],
-                        [True])
 
         lists = [{'url':'pt_list_active',
         'title':"Active Patients",
@@ -348,8 +310,7 @@ def home_page(request):
 
     return render(request,
                   'pttrack/patient_list.html',
-                  {'zipped_list': zipped_list,
-                  'lists': json.dumps(lists),
+                  {'lists': json.dumps(lists),
                     'title': title})
 
 def patient_detail(request, pk):
@@ -384,21 +345,16 @@ def phone_directory(request):
 
 def all_patients(request):
 
-    hey = "yo"
-    pt_list_last = list(mymodels.Patient.objects.all().order_by('last_name'))
-    pt_list_latest = list(mymodels.Patient.objects.all())
+    # leaving this here cos it'll probably come in useful
+    # def bylatestKey(pt):
+    #     latestwu = pt.latest_workup()
+    #     if latestwu == None:
+    #         latestdate = pt.history.last().history_date.date()
+    #     else:
+    #         latestdate = latestwu.clinic_day.clinic_date
+    #     return latestdate
 
-    def bylatestKey(pt):
-        latestwu = pt.latest_workup()
-        if latestwu == None:
-            latestdate = pt.history.last().history_date.date()
-        else:
-            latestdate = latestwu.clinic_day.clinic_date
-        return latestdate
-
-    pt_list_latest.sort(key = bylatestKey, reverse=True)
-
-    lists = [{'url':'pt_list_last', # I think an array of dictionaries/json is a better idea than zipping lists
+    lists = [{'url':'pt_list_last',
     'title':"Alphabetized by Last Name",
     'identifier':'ptlast',
     'active':False},
@@ -407,14 +363,9 @@ def all_patients(request):
     'identifier':'ptlatest',
     'active':True}]
 
-    zipped_list = zip(["Alphabetized by Last Name", "Ordered by Latest Activity"], # title of tab
-                        ['pt_list_last', 'pt_list_latest'], # API url to hit
-                        ['ptlast', 'ptlatest'],
-                        [False, True]) # active?
     return render(request,
                   'pttrack/patient_list.html',
-                  {'zipped_list': zipped_list,
-                  'lists': json.dumps(lists),
+                  {'lists': json.dumps(lists),
                     'title': "All Patients"})
 
 
@@ -492,8 +443,3 @@ class PtListWorkupUnsigned(generics.ListAPIView):
     wu_list_unsigned = workupmodels.Workup.objects.filter(signer__isnull=True).select_related('patient')
     queryset = list(set([wu.patient for wu in wu_list_unsigned])) # need to sort by last name
     serializer_class = serializers.PatientSerializer
-
-    
-# class WorkupList (generics.ListAPIView): # <------- TESTING
-#     queryset = workupmodels.Workup.objects.all()
-#     serializer_class = serializers.WorkupSerializer    
