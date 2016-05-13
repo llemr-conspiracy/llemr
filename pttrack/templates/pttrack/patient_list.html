@@ -18,28 +18,28 @@ Osler: {{ title | default:"All Patients"}}
 </div> -->
 
 <div class="container">
-    <ul class="nav nav-pills">
-        {% for combination in zipped_list %}
+    <ul class="nav nav-pills" id = "tab-selection">
+        <!-- {% for combination in zipped_list %}
         {% if combination.3 %}
         <li class="active"><a data-toggle="pill" href="#{{ combination.2 }}">{{ combination.0 }}<span class="badge">{{ combination.1 | length }}</span></a></li>
         {% else %}
         <li><a data-toggle="pill" href="#{{ combination.2 }}">{{ combination.0 }}<span class="badge">{{ combination.1 | length }}</span></a></li>
         {% endif %}
-        {% endfor %}
+        {% endfor %} -->
     </ul>
-    <div class="tab-content">
+    <div class="tab-content" id = "patient-data">
 
 
         <!-- <div id="{{ combination.2 }}" class="tab-pane fade in active"></div> -->
 
-        <div id="{{ combination.2 }}" class="tab-pane fade in active">
+        <!-- <div id="{{ combination.2 }}" class="tab-pane fade in active">
             <h3>Alphabetized by Last Name</h3>
             <table class="table" id = "by_last_name">
                 <tr><th>Name</th><th>Age / Gender</th><th>Latest Activity</th><th>Next AI Due</th><th>Status</th></td>
 
                 </table>
             </div>
-        </div>
+        </div> -->
 
 
 
@@ -49,9 +49,43 @@ Osler: {{ title | default:"All Patients"}}
     <script type="text/javascript">
 
 
-    function buildTable(title, patients, active){ // need to fix for multiple sets
-        // for (var j = 0; j < tab_data.length; j++){
-        //     patients = tab_data[j];
+    function buildTable(title, patients, identifier, active){ // need to fix for multiple sets
+
+
+        // <ul class="nav nav-pills" id = "tab-selection">
+        //     {% for combination in zipped_list %}
+        //     {% if combination.3 %}
+        //     <li class="active"><a data-toggle="pill" href="#{{ combination.2 }}">{{ combination.0 }}<span class="badge">{{ combination.1 | length }}</span></a></li>
+        //     {% else %}
+        //     <li><a data-toggle="pill" href="#{{ combination.2 }}">{{ combination.0 }}<span class="badge">{{ combination.1 | length }}</span></a></li>
+        //     {% endif %}
+        //     {% endfor %}
+        // </ul>
+
+            // build tab pane with title
+            var tabPane = $("<div>").attr({
+                id : identifier,
+                class : function(){
+                            return active ? "tab-pane fade in active" : "tab-pane fade";
+                        }
+            }).append(
+            $("<h3>").text(title)
+            );
+
+            // build empty table
+            var table = $("<table>").attr({
+                class:"table"
+            }).append(
+            $("<tr>").append(
+                $("<th>").text("Name"),
+                $("<th>").text("Age / Gender"),
+                $("<th>").text("Latest Activity"),
+                $("<th>").text("Next AI Due"),
+                $("<th>").text("Status")
+                )
+            );
+
+            // build table contents and append to table
             for (var i = 0; i < patients.length; i++){
                 patient = patients[i];
                 var patientRow = $("<tr>").append(
@@ -96,42 +130,57 @@ Osler: {{ title | default:"All Patients"}}
                         )
                         )                        
                     );
-                $('#by_last_name').append($(patientRow));
+                $(table).append($(patientRow));
             }
-        // }
+            $(tabPane).append($(table));
+            $("#patient-data").append($(tabPane));
+            $("#num-"+identifier).text(patients.length);
+    }
+
+    function passDataToBuildTable(list){ // FIXME, put build table in this.
+        return function(data){
+            console.log(data.length);
+                console.log(data);
+                console.log(list['title']);
+                buildTable(list['title'], data, list['identifier'], list['active']);
+        }
     }
 
     function doUponLoading(event){
-
+        //var tab_data = []; // wait we do need this, so that we don't query the server every time a tab is clicked. no wait actually we don't. querying happens upon loading, then we build the html. thats fine.
+        console.log("coming");
+        console.log({{lists|safe}});
         var lists = {{lists|safe}};
         console.log(lists);
         for (var i = 0; i < lists.length; i++){
+            console.log("getting"); // get last before latest, but latest comes back before last
+            console.log(lists[i]);
+
+            // build pill tabs. do this here so that order is preserved
+            // build tab selection (nav-pills)
+            $("#tab-selection").append(
+                $("<li>").attr({
+                    class : function(){
+                            return lists[i]['active'] ? "active" : "";
+                        }
+                }).append(
+                $("<a>").attr({
+                    'data-toggle' : "pill",
+                    href : "#"+lists[i]['identifier']
+                }).append(
+                $("<span>").text(lists[i]['title']),
+                $("<span>").attr({
+                    class:"badge",
+                    id:"num-"+lists[i]['identifier']
+                })
+                )
+
+                )
+                );
+
+
         $.get('/pttrack/'+lists[i]['url']+'.json')
-        .success(function(data) {
-            console.log(data.length);
-                // data.sort(function(a,b) {
-
-                //     // def bylatestKey(pt):
-                //     // latestwu = pt.latest_workup()
-                //     // if latestwu == None:
-                //     //     latestdate = pt.history.last().history_date.date() // need this to sort
-                //     // else:
-                //     //     latestdate = latestwu.clinic_day.clinic_date
-                //     // return latestdate
-
-                //     return a.history - b.history;
-                // });
-                // console.log(data);
-                // tab_data.push(data);
-
-                // data.sort(function(a,b) {
-                //     var x = a.last_name.toLowerCase();
-                //     var y = b.last_name.toLowerCase();
-                //     return x < y ? -1 : x > y ? 1 : 0;
-                // });
-                console.log(data); // push into array of patient data
-                buildTable("hey",data);
-            })
+        .success(passDataToBuildTable(lists[i])) // need separate scoping to pass in lists[i]
         .error(function(jqXHR, textStatus, errorThrown) { 
             if (textStatus == 'timeout')
                 console.log('The server is not responding');

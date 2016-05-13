@@ -39,6 +39,9 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
     url(r'^pt_list_last/$',
         views.PtListLastName.as_view(),
         name='pt_list_last_api'),
+    url(r'^pt_list_latest/$',
+        views.PtListLastName.as_view(), # FIXME replace with latest view
+        name='pt_list_latest_api'),
     url(r'^pt_list_active/$',
         views.PtListActive.as_view(),
         name='pt_list_active_api'),

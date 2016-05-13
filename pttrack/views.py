@@ -267,7 +267,7 @@ def home_page(request):
                                              pk=request.session['clintype_pk'])
     if active_provider_type.signs_charts:
         
-        lists = ['pt_list_unsigned','pt_list_active']
+        # lists = ['pt_list_unsigned','pt_list_active']
 
         wu_list_unsigned = Workup.objects.filter(signer__isnull=True).select_related('patient')
         pt_list_unsigned = list(set([wu.patient for wu in wu_list_unsigned]))
@@ -281,9 +281,18 @@ def home_page(request):
                             ["unsignedwu", "activept"],
                             [True, False])
 
+        lists = [{'url':'pt_list_unsigned',
+        'title':"Unsigned Workups",
+        'identifier':'unsignedwu',
+        'active':True},
+        {'url':'pt_list_active',
+        'title':"Active Patients",
+        'identifier':'activept',
+        'active':False}]
+
     elif active_provider_type.staff_view:
 
-        lists = ['pt_list_active', 'pt_list_ai_active', 'pt_list_ai_inactive', 'pt_list_unsigned']
+        # lists = ['pt_list_active', 'pt_list_ai_active', 'pt_list_ai_inactive', 'pt_list_unsigned']
         
         pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
         ai_list_active = mymodels.ActionItem.objects.filter(due_date__lte=django.utils.timezone.now().date())
@@ -303,9 +312,26 @@ def home_page(request):
                             ["activept", "activeai", "pendingai", "unsignedwu"],
                             [True, False, False, False])
 
+        lists = [{'url':'pt_list_active',
+        'title':"Active Patients",
+        'identifier':'activept',
+        'active':True},
+        {'url':'pt_list_ai_active',
+        'title':"Active Action Items",
+        'identifier':'activeai',
+        'active':False},
+        {'url':'pt_list_ai_inactive',
+        'title':"Pending Action Items",
+        'identifier':'pendingai',
+        'active':False},
+        {'url':'pt_list_unsigned',
+        'title':"Unsigned Workups",
+        'identifier':'unsignedwu',
+        'active':False}]
+
     else:
 
-        lists = ['pt_list_active']
+        # lists = ['pt_list_active']
 
         pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
 
@@ -315,9 +341,15 @@ def home_page(request):
                         ["activept"],
                         [True])
 
+        lists = [{'url':'pt_list_active',
+        'title':"Active Patients",
+        'identifier':'activept',
+        'active':True}]
+
     return render(request,
                   'pttrack/patient_list.html',
                   {'zipped_list': zipped_list,
+                  'lists': json.dumps(lists),
                     'title': title})
 
 def patient_detail(request, pk):
@@ -368,20 +400,21 @@ def all_patients(request):
 
     lists = [{'url':'pt_list_last', # I think an array of dictionaries/json is a better idea than zipping lists
     'title':"Alphabetized by Last Name",
-    'active':False}
-    # ,
-    #  {'url':'pt_list_latest',
-    # 'title':"Ordered by Latest Activity",
-    # 'active':True}
-    ]
+    'identifier':'ptlast',
+    'active':False},
+     {'url':'pt_list_active',
+    'title':"Ordered by Latest Activity",
+    'identifier':'ptlatest',
+    'active':True}]
 
-    # zipped_list = zip(["Alphabetized by Last Name", "Ordered by Latest Activity"], # title of tab
-    #                     ['pt_list_last', 'pt_list_latest'], # API url to hit
-    #                     [False, True]) # active?
+    zipped_list = zip(["Alphabetized by Last Name", "Ordered by Latest Activity"], # title of tab
+                        ['pt_list_last', 'pt_list_latest'], # API url to hit
+                        ['ptlast', 'ptlatest'],
+                        [False, True]) # active?
     return render(request,
                   'pttrack/patient_list.html',
-                  # {'zipped_list': zipped_list,
-                  {'lists': json.dumps(lists),
+                  {'zipped_list': zipped_list,
+                  'lists': json.dumps(lists),
                     'title': "All Patients"})
 
 
