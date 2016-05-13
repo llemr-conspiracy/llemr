@@ -8,7 +8,7 @@ import django.utils.timezone
 from . import models as mymodels
 from . import forms as myforms
 from . import serializers
-from workup import models as workupmodels # <------- TESTING
+from workup import models as workupmodels
 # from rest_framework import status # not needed in the meantime
 from rest_framework import generics
 from rest_framework.filters import OrderingFilter
