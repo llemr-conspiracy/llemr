@@ -269,44 +269,24 @@ def home_page(request):
         
         title = "Attending Tasks"
 
-        lists = [{'url':'pt_list_unsigned', # I think an array of dictionaries/json is clearer syntax than zipped lists
-        'title':"Unsigned Workups",
-        'identifier':'unsignedwu',
-        'active':True},
-        {'url':'pt_list_active',
-        'title':"Active Patients",
-        'identifier':'activept',
-        'active':False}]
+        # I think an array of dictionaries/json is clearer syntax than zipped lists
+        lists = [{'url':'pt_list_unsigned', 'title':"Unsigned Workups", 'identifier':'unsignedwu','active':True},
+        {'url':'pt_list_active', 'title':"Active Patients", 'identifier':'activept', 'active':False}]
 
     elif active_provider_type.staff_view:
  
         title = "Coordinator Tasks"
  
-        lists = [{'url':'pt_list_active',
-        'title':"Active Patients",
-        'identifier':'activept',
-        'active':True},
-        {'url':'pt_list_ai_active',
-        'title':"Active Action Items",
-        'identifier':'activeai',
-        'active':False},
-        {'url':'pt_list_ai_inactive',
-        'title':"Pending Action Items",
-        'identifier':'pendingai',
-        'active':False},
-        {'url':'pt_list_unsigned',
-        'title':"Unsigned Workups",
-        'identifier':'unsignedwu',
-        'active':False}]
+        lists = [{'url':'pt_list_active', 'title':"Active Patients", 'identifier':'activept', 'active':True},
+        {'url':'pt_list_ai_active', 'title':"Active Action Items", 'identifier':'activeai', 'active':False},
+        {'url':'pt_list_ai_inactive', 'title':"Pending Action Items", 'identifier':'pendingai', 'active':False},
+        {'url':'pt_list_unsigned', 'title':"Unsigned Workups", 'identifier':'unsignedwu', 'active':False}]
 
     else:
 
         title = "Active Patients"
 
-        lists = [{'url':'pt_list_active',
-        'title':"Active Patients",
-        'identifier':'activept',
-        'active':True}]
+        lists = [{'url':'pt_list_active', 'title':"Active Patients", 'identifier':'activept', 'active':True}]
 
     return render(request,
                   'pttrack/patient_list.html',
@@ -354,14 +334,8 @@ def all_patients(request):
     #         latestdate = latestwu.clinic_day.clinic_date
     #     return latestdate
 
-    lists = [{'url':'pt_list_last',
-    'title':"Alphabetized by Last Name",
-    'identifier':'ptlast',
-    'active':False},
-     {'url':'pt_list_active',
-    'title':"Ordered by Latest Activity",
-    'identifier':'ptlatest',
-    'active':True}]
+    lists = [{'url':'pt_list_last', 'title':"Alphabetized by Last Name", 'identifier':'ptlast', 'active':False},
+     {'url':'pt_list_active', 'title':"Ordered by Latest Activity", 'identifier':'ptlatest', 'active':True}]
 
     return render(request,
                   'pttrack/patient_list.html',
