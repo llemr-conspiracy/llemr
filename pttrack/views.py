@@ -11,7 +11,6 @@ from . import serializers
 from workup import models as workupmodels
 # from rest_framework import status # not needed in the meantime
 from rest_framework import generics
-from rest_framework.filters import OrderingFilter
 import json
 
 import datetime
@@ -325,17 +324,8 @@ def phone_directory(request):
 
 def all_patients(request):
 
-    # leaving this here cos it'll probably come in useful
-    # def bylatestKey(pt):
-    #     latestwu = pt.latest_workup()
-    #     if latestwu == None:
-    #         latestdate = pt.history.last().history_date.date()
-    #     else:
-    #         latestdate = latestwu.clinic_day.clinic_date
-    #     return latestdate
-
     lists = [{'url':'pt_list_last', 'title':"Alphabetized by Last Name", 'identifier':'ptlast', 'active':False},
-     {'url':'pt_list_active', 'title':"Ordered by Latest Activity", 'identifier':'ptlatest', 'active':True}]
+     {'url':'pt_list_latest', 'title':"Ordered by Latest Activity", 'identifier':'ptlatest', 'active':True}]
 
     return render(request,
                   'pttrack/patient_list.html',
@@ -379,15 +369,29 @@ def reset_action_item(request, ai_id):
 
 class PtListLastName(generics.ListAPIView): # read only
     '''
-    List all patients.
+    List all patients by last name.
     '''
-    queryset = mymodels.Patient.objects.all()
+    queryset = mymodels.Patient.objects.all().order_by('last_name')
     serializer_class = serializers.PatientSerializer
-    filter_backends = (OrderingFilter,)
-    ordering_fields = ('last_name')
-    ordering = ('last_name')
 
-class PtListActive(generics.ListAPIView): # home page list when provider type is signs charts
+class PtListLatest(generics.ListAPIView):
+    '''
+    List all patients by latest workup, or intake if no workup.
+    '''
+    def bylatestKey(pt):
+        latestwu = pt.latest_workup()
+        if latestwu == None:
+            latestdate = pt.history.last().history_date.date()
+        else:
+            latestdate = latestwu.clinic_day.clinic_date
+        return latestdate
+
+    pt_list_latest = list(mymodels.Patient.objects.all())
+    pt_list_latest.sort(key = bylatestKey, reverse=True)
+    queryset = pt_list_latest
+    serializer_class = serializers.PatientSerializer
+
+class PtListActive(generics.ListAPIView):
     '''
     List all active patients.
     '''
@@ -396,7 +400,7 @@ class PtListActive(generics.ListAPIView): # home page list when provider type is
 
 class PtListActionItemListActive(generics.ListAPIView):
     '''
-    List patients with active action items.
+    List patients with active action items. No sorting, is that intended?
     '''
     ai_list_active = mymodels.ActionItem.objects.filter(due_date__lte=django.utils.timezone.now().date())
     queryset = list(set([ai.patient for ai in ai_list_active if not ai.done()]))
@@ -407,7 +411,9 @@ class PtListActionItemListInactive(generics.ListAPIView):
     List patients with pending action items.
     '''
     ai_list_inactive = mymodels.ActionItem.objects.filter(due_date__gt=django.utils.timezone.now().date()).order_by('due_date')
-    queryset = pt_list_ai_inactive = list(set([ai.patient for ai in ai_list_inactive if not ai.done()])) # need to sort: .sort(key = lambda pt: pt.inactive_action_items()[-1].due_date)
+    pt_list_ai_inactive = list(set([ai.patient for ai in ai_list_inactive if not ai.done()]))
+    pt_list_ai_inactive.sort(key = lambda pt: pt.inactive_action_items()[-1].due_date)
+    queryset = pt_list_ai_inactive
     serializer_class = serializers.PatientSerializer
 
 class PtListWorkupUnsigned(generics.ListAPIView):
@@ -415,5 +421,7 @@ class PtListWorkupUnsigned(generics.ListAPIView):
     List patients with unsigned workups.
     '''
     wu_list_unsigned = workupmodels.Workup.objects.filter(signer__isnull=True).select_related('patient')
-    queryset = list(set([wu.patient for wu in wu_list_unsigned])) # need to sort by last name
+    pt_list_unsigned= list(set([wu.patient for wu in wu_list_unsigned]))
+    pt_list_unsigned.sort(key = lambda pt: pt.last_name)
+    queryset = pt_list_unsigned
     serializer_class = serializers.PatientSerializer
