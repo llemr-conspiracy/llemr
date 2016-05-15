@@ -98,6 +98,30 @@ class ViewsExistTest(TestCase):
                     response = self.client.get(reverse(wu_url, args=(wu.id,)))
                     self.assertEqual(response.status_code, 200)
 
+    def test_workup_initial(self):
+
+        pt = Patient.objects.all()[0]
+        wu = models.Workup.objects.create(
+            clinic_day=models.ClinicDate.objects.all()[0],
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="A", PMH_PSH="B", meds="C", allergies="D", fam_hx="E", soc_hx="F",
+            ros="", pe="", A_and_P="",
+            author=models.Provider.objects.all()[0],
+            author_type=ProviderType.objects.all()[0],
+            patient=Patient.objects.all()[0])
+
+        date_string = wu.written_datetime.strftime("%B %d, %Y")
+        heading_text = "Migrated from previous workup on " + date_string + ". Please delete this heading and modify the following:\n\n"
+
+        response = self.client.get(reverse('new-workup', args=(pt.id,)))
+        self.assertEqual(response.context['form'].initial['PMH_PSH'], heading_text + "B")
+        self.assertEqual(response.context['form'].initial['meds'], heading_text + "C")
+        self.assertEqual(response.context['form'].initial['allergies'], heading_text + "D")
+        self.assertEqual(response.context['form'].initial['fam_hx'], heading_text + "E")
+        self.assertEqual(response.context['form'].initial['soc_hx'], heading_text + "F")
+
+
     def test_workup_update(self):
         '''
         Updating should be possible always for attendings, only without
