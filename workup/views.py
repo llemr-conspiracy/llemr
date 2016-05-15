@@ -54,6 +54,22 @@ class WorkupCreate(NoteFormView):
                                            ">1 clinic day on a particular " +
                                            "day!</h3>")
 
+    def get_initial(self):
+        initial = super(WorkupCreate, self).get_initial()
+        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        wu_previous = pt.latest_workup()
+        if wu_previous != None:
+            date_string = wu_previous.written_datetime.strftime("%B %d, %Y")
+            heading_text = "Migrated from previous workup on " + date_string + ". Please delete this heading and modify the following:\n\n"
+            initial['PMH_PSH'] = heading_text + wu_previous.PMH_PSH
+            initial['fam_hx'] = heading_text + wu_previous.fam_hx
+            initial['soc_hx'] = heading_text + wu_previous.soc_hx
+            initial['meds'] = heading_text + wu_previous.meds
+            initial['allergies'] = heading_text + wu_previous.allergies
+
+        initial['ros'] = "Default: reviewed and negative"
+        return initial
+
     def form_valid(self, form):
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         active_provider_type = get_object_or_404(
