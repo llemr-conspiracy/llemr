@@ -24,6 +24,18 @@ Osler: {{ title | default:"All Patients"}}
     </div>
 
     <script type="text/javascript">
+    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    function formatDate(date) {
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+      var ampm = hours >= 12 ? 'p.m.' : 'a.m.';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+      var strTime = hours + ':' + minutes + ' ' + ampm;
+      return monthNames[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear() + ", " + strTime;
+    }
 
     function buildTable(list){
         return function(patients){
@@ -73,7 +85,7 @@ Osler: {{ title | default:"All Patients"}}
                             $("<a>").attr({
                                 href :"/pttrack/patient/update/"+patient.pk
                             }).text("Intake"),
-                            $("<span>").text(": "+patient.history.last.history_date))
+                            $("<span>").text(": "+formatDate(new Date(patient.history.last.history_date))))
                         );
                 }
                 $(patientRow).append(
