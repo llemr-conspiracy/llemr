@@ -73,7 +73,7 @@ Osler: {{ title | default:"All Patients"}}
                             $("<a>").attr({
                                 href :"/pttrack/patient/update/"+patient.pk
                             }).text("Intake"),
-                            $("<span>").text(": "+"patient.history.last.history_date"))
+                            $("<span>").text(": "+patient.history.last.history_date))
                         );
                 }
                 $(patientRow).append(

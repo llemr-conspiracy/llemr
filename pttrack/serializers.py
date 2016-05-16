@@ -26,9 +26,13 @@ class WorkupSerializer(serializers.ModelSerializer):
 class PatientSerializer(serializers.ModelSerializer):
 	history = HistorySerializer() # <------ vs this
 	latest_workup = WorkupSerializer()
+	gender = serializers.StringRelatedField(read_only=True)
 	# latest_history = serializers.
 	# latest_workup = serializers.latest_workup # <------ test this
 	# history = serializers.HistoricalRecords()
 	class Meta:
 		model = models.Patient
-		fields = ['history','age','latest_workup', 'name', 'last_name', 'pk', 'gender', 'status', 'needs_workup'] # <------ vs this
+		# serializer_related_field = serializers.StringRelatedField # any time there is a foreign key, serialize it as a string, unless listed below
+		# serializer_related_field = serializers.PrimaryKeyRelatedField # this is the default behavior
+		exclude = ['language_detail']
+		# fields = ['history','age','latest_workup', 'name', 'last_name', 'pk', 'gender', 'status', 'needs_workup'] # <------ vs this
