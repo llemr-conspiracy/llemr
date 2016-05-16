@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.timezone import now
 import os
+from django.core.urlresolvers import reverse
 
 from simple_history.models import HistoricalRecords
 from . import validators
@@ -294,6 +295,14 @@ class Patient(Person):
         ''' Will Activate or Inactivate the Patient'''
         self.needs_workup = not self.needs_workup
 
+    def detail_url(self):
+        return reverse('patient-detail', args=(self.pk,))
+
+    def update_url(self):
+        return reverse('patient-update', args=(self.pk,))
+
+    def activate_url(self):
+        return reverse('patient-activate-home', args=(self.pk,))
 
 class Provider(Person):
 

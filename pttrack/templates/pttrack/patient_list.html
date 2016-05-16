@@ -67,7 +67,8 @@ Osler: {{ title | default:"All Patients"}}
                 var patientRow = $("<tr>").append(
                     $("<td>").append(
                         $("<a>").attr({
-                            href :"/pttrack/"+patient.pk // FIXME currently hardcoding urls
+                            // href :"/pttrack/"+patient.pk // FIXME currently hardcoding urls
+                            href : patient.detail_url
                         }).text(patient.name)),
                     $("<td>").text(patient.age+" / "+patient.gender)
                     );
@@ -75,7 +76,7 @@ Osler: {{ title | default:"All Patients"}}
                     $(patientRow).append(
                         $("<td>").append(
                             $("<a>").attr({
-                                href :"/workup/"+patient.latest_workup.pk
+                                href :patient.latest_workup.url
                             }).text("Seen "+patient.latest_workup.clinic_day.clinic_date),
                             $("<span>").text(": "+patient.latest_workup.chief_complaint))
                         );
@@ -83,7 +84,8 @@ Osler: {{ title | default:"All Patients"}}
                     $(patientRow).append(
                         $("<td>").append(
                             $("<a>").attr({
-                                href :"/pttrack/patient/update/"+patient.pk
+                                // href :"/pttrack/patient/update/"+patient.pk
+                                href : patient.update_url
                             }).text("Intake"),
                             $("<span>").text(": "+formatDate(new Date(patient.history.last.history_date))))
                         );
@@ -95,7 +97,8 @@ Osler: {{ title | default:"All Patients"}}
                             return patient.needs_workup ? "Active " : "Inactive ";
                         }),
                         $("<a>").attr({
-                            href :"/pttrack/patient/activate_home/"+patient.pk
+                            // href :"/pttrack/patient/activate_home/"+patient.pk
+                            href : patient.activate_url
                         }).append(
                         $("<span>").attr({
                             class :function(){

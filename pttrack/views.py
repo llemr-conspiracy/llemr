@@ -259,9 +259,6 @@ def choose_clintype(request):
 
 def home_page(request):
 
-    #TODO wow so this is messed up. This should be a circular dependency...
-    from workup.models import Workup
-
     active_provider_type = get_object_or_404(mymodels.ProviderType,
                                              pk=request.session['clintype_pk'])
     if active_provider_type.signs_charts:
@@ -359,13 +356,20 @@ def done_action_item(request, ai_id):
     return HttpResponseRedirect(reverse("followup-choice",
                                         args=(ai.patient.pk,)))
 
-
 def reset_action_item(request, ai_id):
     ai = get_object_or_404(mymodels.ActionItem, pk=ai_id)
     ai.clear_done()
     ai.save()
     return HttpResponseRedirect(reverse("patient-detail",
                                         args=(ai.patient.id,)))
+
+# class PtList(generics.ListAPIView): # read only
+#     '''
+#     List all patients.
+#     '''
+#     queryset = mymodels.Patient.objects.all().order_by('last_name')
+#     serializer_class = serializers.PatientSerializer
+
 
 class PtListLastName(generics.ListAPIView): # read only
     '''
