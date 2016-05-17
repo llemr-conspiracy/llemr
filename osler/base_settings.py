@@ -26,6 +26,7 @@ INSTALLED_APPS = (
     'followup',
     'workup',
     'demographics',
+    'api',
     'crispy_forms',
     'bootstrap3',
     'bootstrap3_datetime',

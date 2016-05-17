@@ -137,8 +137,7 @@ Osler: {{ title | default:"All Patients"}}
                 })))
             );
 
-        // $.get('/pttrack/'+lists[i]['url']+'.json') // make ajax call
-        $.get('/pttrack/pt_list.json/?'+lists[i]['url']) // make ajax call
+        $.get('/api/pt_list.json/?'+lists[i]['url']) // make ajax call
         .success(buildTable(lists[i])) // need separate scoping to pass in lists[i]
         .error(function(jqXHR, textStatus, errorThrown) { 
             if (textStatus == 'timeout')

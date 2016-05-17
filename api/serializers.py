@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from . import models
+from pttrack import models
 from workup import models as workupModels
 from simple_history.models import HistoricalRecords
 # from django.core.urlresolvers import reverse
