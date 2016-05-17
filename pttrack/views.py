@@ -266,23 +266,23 @@ def home_page(request):
         title = "Attending Tasks"
 
         # I think an array of dictionaries/json is clearer syntax than zipped lists
-        lists = [{'url':'pt_list_unsigned', 'title':"Unsigned Workups", 'identifier':'unsignedwu','active':True},
-        {'url':'pt_list_active', 'title':"Active Patients", 'identifier':'activept', 'active':False}]
+        lists = [{'url':'filter=unsigned_workup', 'title':"Unsigned Workups", 'identifier':'unsignedwu','active':True},
+        {'url':'filter=active', 'title':"Active Patients", 'identifier':'activept', 'active':False}]
 
     elif active_provider_type.staff_view:
  
         title = "Coordinator Tasks"
  
-        lists = [{'url':'pt_list_active', 'title':"Active Patients", 'identifier':'activept', 'active':True},
-        {'url':'pt_list_ai_active', 'title':"Active Action Items", 'identifier':'activeai', 'active':False},
-        {'url':'pt_list_ai_inactive', 'title':"Pending Action Items", 'identifier':'pendingai', 'active':False},
-        {'url':'pt_list_unsigned', 'title':"Unsigned Workups", 'identifier':'unsignedwu', 'active':False}]
+        lists = [{'url':'filter=active', 'title':"Active Patients", 'identifier':'activept', 'active':True},
+        {'url':'filter=ai_active', 'title':"Active Action Items", 'identifier':'activeai', 'active':False},
+        {'url':'filter=ai_inactive', 'title':"Pending Action Items", 'identifier':'pendingai', 'active':False},
+        {'url':'filter=unsigned_workup', 'title':"Unsigned Workups", 'identifier':'unsignedwu', 'active':False}]
 
     else:
 
         title = "Active Patients"
 
-        lists = [{'url':'pt_list_active', 'title':"Active Patients", 'identifier':'activept', 'active':True}]
+        lists = [{'url':'filter=ai_active', 'title':"Active Patients", 'identifier':'activept', 'active':True}]
 
     return render(request,
                   'pttrack/patient_list.html',
@@ -321,8 +321,8 @@ def phone_directory(request):
 
 def all_patients(request):
 
-    lists = [{'url':'pt_list_last', 'title':"Alphabetized by Last Name", 'identifier':'ptlast', 'active':False},
-     {'url':'pt_list_latest', 'title':"Ordered by Latest Activity", 'identifier':'ptlatest', 'active':True}]
+    lists = [{'url':'sort=last_name', 'title':"Alphabetized by Last Name", 'identifier':'ptlast', 'active':False},
+     {'url':'sort=latest_workup', 'title':"Ordered by Latest Activity", 'identifier':'ptlatest', 'active':True}]
 
     return render(request,
                   'pttrack/patient_list.html',
@@ -363,69 +363,122 @@ def reset_action_item(request, ai_id):
     return HttpResponseRedirect(reverse("patient-detail",
                                         args=(ai.patient.id,)))
 
-# class PtList(generics.ListAPIView): # read only
+class PtList(generics.ListAPIView): # read only
+    '''
+    List patients
+    '''
+
+    def get_queryset(self):
+        '''
+        Restricts returned patients according to query params
+        '''
+        def bylatestKey(pt):
+            latestwu = pt.latest_workup()
+            if latestwu == None:
+                latestdate = pt.history.last().history_date.date()
+            else:
+                latestdate = latestwu.clinic_day.clinic_date
+            return latestdate
+
+        queryset = mymodels.Patient.objects
+        sort = self.request.query_params.get('sort', None)
+        test = self.request.query_params.get('filter', None)
+        # import logging
+        # logger = logging.getLogger(__name__)
+        # logger.error('sort')
+        if sort is not None:
+            if str(sort) == 'latest_workup':
+                pt_list_latest = list(mymodels.Patient.objects.all())
+                pt_list_latest.sort(key = bylatestKey, reverse=True)
+                queryset = pt_list_latest
+            else:
+                queryset = queryset.order_by(sort)
+
+        if test is not None:
+            test = str(test)
+            if test == 'active':
+                queryset = queryset.filter(needs_workup__exact=True).order_by('last_name')
+            elif test == 'ai_active':
+                ai_list_active = mymodels.ActionItem.objects.filter(due_date__lte=django.utils.timezone.now().date())
+                queryset = list(set([ai.patient for ai in ai_list_active if not ai.done()]))
+            elif test == 'ai_inactive':
+                ai_list_inactive = mymodels.ActionItem.objects.filter(due_date__gt=django.utils.timezone.now().date()).order_by('due_date')
+                pt_list_ai_inactive = list(set([ai.patient for ai in ai_list_inactive if not ai.done()]))
+                pt_list_ai_inactive.sort(key = lambda pt: pt.inactive_action_items()[-1].due_date)
+                queryset = pt_list_ai_inactive
+            elif test == 'unsigned_workup':
+                wu_list_unsigned = workupmodels.Workup.objects.filter(signer__isnull=True).select_related('patient')
+                pt_list_unsigned= list(set([wu.patient for wu in wu_list_unsigned]))
+                pt_list_unsigned.sort(key = lambda pt: pt.last_name)
+                queryset = pt_list_unsigned
+        return queryset
+
+    serializer_class = serializers.PatientSerializer
+
+
+# class PtListLastName(generics.ListAPIView): # read only
 #     '''
-#     List all patients.
+#     List all patients by last name.
 #     '''
-#     queryset = mymodels.Patient.objects.all().order_by('last_name')
+#     queryset = mymodels.Patient.objects.order_by('last_name')
 #     serializer_class = serializers.PatientSerializer
 
+# class PtListLatest(generics.ListAPIView):
+#     '''
+#     List all patients by latest workup, or intake if no workup.
+#     '''
+#     def bylatestKey(pt):
+#         latestwu = pt.latest_workup()
+#         if latestwu == None:
+#             latestdate = pt.history.last().history_date.date()
+#         else:
+#             latestdate = latestwu.clinic_day.clinic_date
+#         return latestdate
 
-class PtListLastName(generics.ListAPIView): # read only
-    '''
-    List all patients by last name.
-    '''
-    queryset = mymodels.Patient.objects.all().order_by('last_name')
-    serializer_class = serializers.PatientSerializer
+#     pt_list_latest = list(mymodels.Patient.objects.all())
+#     # trying to sort without forcing to a list.
+#     # not the priority atm, can come back to this
+#     # https://docs.djangoproject.com/en/1.9/ref/models/expressions/#writing-your-own-query-expressions
+#     # use coalesce
 
-class PtListLatest(generics.ListAPIView):
-    '''
-    List all patients by latest workup, or intake if no workup.
-    '''
-    def bylatestKey(pt):
-        latestwu = pt.latest_workup()
-        if latestwu == None:
-            latestdate = pt.history.last().history_date.date()
-        else:
-            latestdate = latestwu.clinic_day.clinic_date
-        return latestdate
+#     # test = mymodels.Patient.objects.annotate(latestKey = Coalesce([
+#     #     Patient('')]
+#     #     ))
+#     pt_list_latest.sort(key = bylatestKey, reverse=True)
+#     queryset = pt_list_latest
+#     serializer_class = serializers.PatientSerializer
 
-    pt_list_latest = list(mymodels.Patient.objects.all())
-    pt_list_latest.sort(key = bylatestKey, reverse=True)
-    queryset = pt_list_latest
-    serializer_class = serializers.PatientSerializer
+# class PtListActive(generics.ListAPIView):
+#     '''
+#     List all active patients.
+#     '''
+#     queryset = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
+#     serializer_class = serializers.PatientSerializer
 
-class PtListActive(generics.ListAPIView):
-    '''
-    List all active patients.
-    '''
-    queryset = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
-    serializer_class = serializers.PatientSerializer
+# class PtListActionItemListActive(generics.ListAPIView):
+#     '''
+#     List patients with active action items. No sorting, is that intended?
+#     '''
+#     ai_list_active = mymodels.ActionItem.objects.filter(due_date__lte=django.utils.timezone.now().date())
+#     queryset = list(set([ai.patient for ai in ai_list_active if not ai.done()]))
+#     serializer_class = serializers.PatientSerializer
 
-class PtListActionItemListActive(generics.ListAPIView):
-    '''
-    List patients with active action items. No sorting, is that intended?
-    '''
-    ai_list_active = mymodels.ActionItem.objects.filter(due_date__lte=django.utils.timezone.now().date())
-    queryset = list(set([ai.patient for ai in ai_list_active if not ai.done()]))
-    serializer_class = serializers.PatientSerializer
+# class PtListActionItemListInactive(generics.ListAPIView):
+#     '''
+#     List patients with pending action items.
+#     '''
+#     ai_list_inactive = mymodels.ActionItem.objects.filter(due_date__gt=django.utils.timezone.now().date()).order_by('due_date')
+#     pt_list_ai_inactive = list(set([ai.patient for ai in ai_list_inactive if not ai.done()]))
+#     pt_list_ai_inactive.sort(key = lambda pt: pt.inactive_action_items()[-1].due_date)
+#     queryset = pt_list_ai_inactive
+#     serializer_class = serializers.PatientSerializer
 
-class PtListActionItemListInactive(generics.ListAPIView):
-    '''
-    List patients with pending action items.
-    '''
-    ai_list_inactive = mymodels.ActionItem.objects.filter(due_date__gt=django.utils.timezone.now().date()).order_by('due_date')
-    pt_list_ai_inactive = list(set([ai.patient for ai in ai_list_inactive if not ai.done()]))
-    pt_list_ai_inactive.sort(key = lambda pt: pt.inactive_action_items()[-1].due_date)
-    queryset = pt_list_ai_inactive
-    serializer_class = serializers.PatientSerializer
-
-class PtListWorkupUnsigned(generics.ListAPIView):
-    '''
-    List patients with unsigned workups.
-    '''
-    wu_list_unsigned = workupmodels.Workup.objects.filter(signer__isnull=True).select_related('patient')
-    pt_list_unsigned= list(set([wu.patient for wu in wu_list_unsigned]))
-    pt_list_unsigned.sort(key = lambda pt: pt.last_name)
-    queryset = pt_list_unsigned
-    serializer_class = serializers.PatientSerializer
+# class PtListWorkupUnsigned(generics.ListAPIView):
+#     '''
+#     List patients with unsigned workups.
+#     '''
+#     wu_list_unsigned = workupmodels.Workup.objects.filter(signer__isnull=True).select_related('patient')
+#     pt_list_unsigned= list(set([wu.patient for wu in wu_list_unsigned]))
+#     pt_list_unsigned.sort(key = lambda pt: pt.last_name)
+#     queryset = pt_list_unsigned
+#     serializer_class = serializers.PatientSerializer
