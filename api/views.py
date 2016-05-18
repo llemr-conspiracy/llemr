@@ -34,7 +34,7 @@ class PtList(generics.ListAPIView): # read only
 
         queryset = mymodels.Patient.objects
         sort = self.request.query_params.get('sort', None)
-        list_type = self.request.query_params.get('filter', None)
+        list_type = self.request.query_params.get('filter', None) # use var 'list_type' because 'filter' namespace is taken
         # import logging
         # logger = logging.getLogger(__name__)
         # logger.error('sort')
