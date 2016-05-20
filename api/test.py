@@ -1,75 +1,20 @@
 import datetime
 
-from django.test import TestCase
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.utils.timezone import now
-from django.core.files import File
 from rest_framework.test import APITestCase
-
-# For live tests.
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium.webdriver.firefox.webdriver import WebDriver
 
 from pttrack import models
 from workup import models as workupModels
-# from pttrack.test_views import build_provider, log_in_provider # runs faster if you just past the code here
+from pttrack.test_views import build_provider, log_in_provider
 
 BASIC_FIXTURE = 'api.json'
-
-# These defs can be imported as above, but runs faster if pasted here
-def build_provider(roles=None, username=None, password='password'):
-
-    if roles is None:
-        roles = ["Coordinator", "Attending", "Clinical", "Preclinical"]
-
-    if username is None:
-        username = 'user'+str(User.objects.all().count())
-
-    user = User.objects.create_user(
-        username,
-        'tommyljones@gmail.com', password)
-    user.save()
-
-    g = models.Gender.objects.all()[0]
-    models.Provider.objects.create(
-        first_name="Tommy", middle_name="Lee", last_name="Jones",
-        phone="425-243-9115", gender=g, associated_user=user)
-
-    coordinator_provider = models.ProviderType.objects.all()[2]
-    coordinator_provider.staff_view = True
-    coordinator_provider.save()
-
-    for role in roles:
-        try:
-            ptype = models.ProviderType.objects.filter(short_name=role)[0]
-        except IndexError:
-            raise KeyError(
-                "'"+role+"' isn't in the list of ProviderTypes: "+
-                str([p.short_name for p in models.ProviderType.objects.all()]))
-        user.provider.clinical_roles.add(ptype)
-
-    return user.provider
-
-def log_in_provider(client, provider):
-    ''' Creates a provider and logs them in. Role defines their provider_type,
-    default is all '''
-
-    user = provider.associated_user
-
-    client.login(username=user.username, password='password')
-
-    session = client.session
-    session['clintype_pk'] = user.provider.clinical_roles.all()[0].pk
-    session.save()
-
-    return user.provider
 
 class APITest(APITestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-
         workupModels.ClinicType.objects.create(name="Basic Care Clinic")
         workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.all()[0],
@@ -79,7 +24,6 @@ class APITest(APITestCase):
             clinic_type=workupModels.ClinicType.objects.all()[0],
             clinic_date=now().date()-datetime.timedelta(days=1),
             gcal_id="tmp")
-
         log_in_provider(self.client, build_provider(["Coordinator"]))
 
     def test_api_correctly_lists_patients(self):
@@ -134,7 +78,7 @@ class APITest(APITestCase):
         )
 
         # Give pt2 a workup one day later.
-        wu = workupModels.Workup.objects.create(
+        workupModels.Workup.objects.create(
                 clinic_day=workupModels.ClinicDate.objects.all()[0], # one day later
                 chief_complaint="SOB",
                 diagnosis="MI",
@@ -145,8 +89,8 @@ class APITest(APITestCase):
                 patient=pt2)
 
         # Give pt3 a workup one days before.
-        wu = workupModels.Workup.objects.create(
-                clinic_day=workupModels.ClinicDate.objects.all()[1], # two days later
+        workupModels.Workup.objects.create(
+                clinic_day=workupModels.ClinicDate.objects.all()[1], # one day before
                 chief_complaint="SOB",
                 diagnosis="MI",
                 HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
@@ -182,11 +126,9 @@ class APITest(APITestCase):
             comments="",
             patient=pt3)
 
-        # pt4 has no AI
-
         url = reverse("pt_list_api")
 
-        # test last_name ordering
+        # Test last_name ordering
         data = {'sort':'last_name'}
         response = self.client.get(url, data, format='json')
         self.assertEqual(response.status_code, 200)
@@ -222,10 +164,12 @@ class APITest(APITestCase):
         response = self.client.get(url, data, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 0) # default needs_workup is false
+
         pt1.change_active_status()
         pt1.save()
         pt2.change_active_status()
         pt2.save()
+        
         response = self.client.get(url, data, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
