@@ -1,18 +1,11 @@
-from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponseServerError
-from django.views.generic.edit import FormView, UpdateView
-from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 import django.utils.timezone
 
 from pttrack import models as mymodels
 from . import serializers
 from workup import models as workupmodels
-# from rest_framework import status # not needed in the meantime
 from rest_framework import generics
 import json
-
-import datetime
 
 class PtList(generics.ListAPIView): # read only
     '''
@@ -33,10 +26,7 @@ class PtList(generics.ListAPIView): # read only
 
         queryset = mymodels.Patient.objects
         sort = self.request.query_params.get('sort', None)
-        list_type = self.request.query_params.get('filter', None) # use var 'list_type' because 'filter' namespace is taken
-        # import logging
-        # logger = logging.getLogger(__name__)
-        # logger.error('sort')
+        list_type = self.request.query_params.get('filter', None) # var 'list_type' because 'filter' namespace is taken
         if sort is not None:
             if str(sort) == 'latest_workup':
                 pt_list_latest = list(mymodels.Patient.objects.all())

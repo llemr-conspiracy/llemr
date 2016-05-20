@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from .decorators import provider_required
 from . import models as mymodels
 from . import views
-from rest_framework.urlpatterns import format_suffix_patterns
 
 # pylint: disable=I0011
 
@@ -99,4 +98,3 @@ def url_wrap(urls):
     return wrapped_urls
 
 urlpatterns = url_wrap(unwrapped_urlpatterns)
-urlpatterns = format_suffix_patterns(urlpatterns)

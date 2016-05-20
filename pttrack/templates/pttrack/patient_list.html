@@ -67,7 +67,6 @@ Osler: {{ title | default:"All Patients"}}
                 var patientRow = $("<tr>").append(
                     $("<td>").append(
                         $("<a>").attr({
-                            // href :"/pttrack/"+patient.pk // FIXME currently hardcoding urls
                             href : patient.detail_url
                         }).text(patient.name)),
                     $("<td>").text(patient.age+" / "+patient.gender)
@@ -84,7 +83,6 @@ Osler: {{ title | default:"All Patients"}}
                     $(patientRow).append(
                         $("<td>").append(
                             $("<a>").attr({
-                                // href :"/pttrack/patient/update/"+patient.pk
                                 href : patient.update_url
                             }).text("Intake"),
                             $("<span>").text(": "+formatDate(new Date(patient.history.last.history_date))))
@@ -97,7 +95,6 @@ Osler: {{ title | default:"All Patients"}}
                             return patient.needs_workup ? "Active " : "Inactive ";
                         }),
                         $("<a>").attr({
-                            // href :"/pttrack/patient/activate_home/"+patient.pk
                             href : patient.activate_url
                         }).append(
                         $("<span>").attr({
@@ -120,7 +117,7 @@ Osler: {{ title | default:"All Patients"}}
     function doUponLoading(event){
         var lists = {{lists|safe}};
         for (var i = 0; i < lists.length; i++){
-            $("#tab-selection").append( // build pill tabs. Do here before ajax call so order is preserved
+            $("#tab-selection").append( // build pill tabs. Do here before ajax call so order of tabs is preserved
                 $("<li>").attr({
                     class : function(){
                         return lists[i]['active'] ? "active" : "";

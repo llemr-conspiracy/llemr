@@ -7,11 +7,7 @@ import django.utils.timezone
 
 from . import models as mymodels
 from . import forms as myforms
-# from api import urls
-# from . import serializers
 from workup import models as workupmodels
-# from rest_framework import status # not needed in the meantime
-from rest_framework import generics
 import json
 
 import datetime
@@ -285,7 +281,7 @@ def home_page(request):
 
         lists = [{'url':'filter=ai_active', 'title':"Active Patients", 'identifier':'activept', 'active':True}]
 
-    # api_url = reverse('pt_list_api')
+    # api_url = reverse('pt_list_api') # get the error TemplateDoesNotExist at /pttrack/all/
 
     return render(request,
     # return render(request, api_url,

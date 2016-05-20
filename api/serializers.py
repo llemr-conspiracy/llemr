@@ -33,7 +33,7 @@ class PatientSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = models.Patient
 
-	history = HistorySerializer() # <------ vs this
+	history = HistorySerializer()
 	latest_workup = WorkupSerializer()
 	gender = serializers.StringRelatedField(read_only=True)
 	age = serializers.StringRelatedField(read_only=True)
@@ -43,5 +43,5 @@ class PatientSerializer(serializers.ModelSerializer):
 	detail_url = serializers.StringRelatedField(read_only=True)
 	update_url = serializers.StringRelatedField(read_only=True)
 	activate_url = serializers.StringRelatedField(read_only=True)
-	# patient_url = UrlReverser('patient-detail')
+	# Put urls as model properties because unable to do: patient_url = UrlReverser('patient-detail')
 	

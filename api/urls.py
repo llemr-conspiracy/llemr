@@ -1,11 +1,8 @@
 from django.conf.urls import url
-from django.views.generic import ListView, DetailView
-from django.views.generic.base import TemplateView
 
 from django.contrib.auth.decorators import login_required
 
 from pttrack.decorators import provider_required
-# from . import models as mymodels
 from . import views
 from rest_framework.urlpatterns import format_suffix_patterns
 
