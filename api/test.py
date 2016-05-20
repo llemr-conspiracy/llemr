@@ -24,7 +24,11 @@ class APITest(APITestCase):
             clinic_type=workupModels.ClinicType.objects.all()[0],
             clinic_date=now().date()-datetime.timedelta(days=1),
             gcal_id="tmp")
-        log_in_provider(self.client, build_provider(["Coordinator"]))
+        workupModels.ClinicDate.objects.create(
+            clinic_type=workupModels.ClinicType.objects.all()[0],
+            clinic_date=now().date()-datetime.timedelta(days=5),
+            gcal_id="tmp")
+        log_in_provider(self.client, build_provider(["Attending"]))
 
     def test_api_correctly_lists_patients(self):
         pt1 = models.Patient.objects.get(pk=1)
@@ -79,25 +83,40 @@ class APITest(APITestCase):
 
         # Give pt2 a workup one day later.
         workupModels.Workup.objects.create(
-                clinic_day=workupModels.ClinicDate.objects.all()[0], # one day later
-                chief_complaint="SOB",
-                diagnosis="MI",
-                HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
-                ros="", pe="", A_and_P="",
-                author=models.Provider.objects.all()[0],
-                author_type=models.ProviderType.objects.all()[0],
-                patient=pt2)
+            clinic_day=workupModels.ClinicDate.objects.all()[0], # one day later
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt2)
 
-        # Give pt3 a workup one days before.
+        # Give pt3 a workup one day ago.
         workupModels.Workup.objects.create(
-                clinic_day=workupModels.ClinicDate.objects.all()[1], # one day before
-                chief_complaint="SOB",
-                diagnosis="MI",
-                HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
-                ros="", pe="", A_and_P="",
-                author=models.Provider.objects.all()[0],
-                author_type=models.ProviderType.objects.all()[0],
-                patient=pt3)
+            clinic_day=workupModels.ClinicDate.objects.all()[1], # one day ago
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt3)
+
+
+        # Give pt1 a signed workup five days ago.
+        workupModels.Workup.objects.create(
+            clinic_day=workupModels.ClinicDate.objects.all()[2], # five days ago
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt1,
+            signer=models.Provider.objects.all().filter(
+            clinical_roles=models.ProviderType.objects.all().filter(
+                short_name="Attending")[0])[0])
 
         # make pt1 have and AI due tomorrow
         pt1_ai = models.ActionItem.objects.create(
@@ -143,20 +162,20 @@ class APITest(APITestCase):
         self.assertNotEqual(response.data[0]['latest_workup'], None) # pt2, workup date now()+1day
         self.assertEqual(response.data[1]['latest_workup'], None) # pt4, intake date now
         self.assertNotEqual(response.data[2]['latest_workup'], None) # pt3, workup date now()-1day
-        self.assertEqual(response.data[3]['latest_workup'], None) # pt1, intake date 2016-01-02
+        self.assertNotEqual(response.data[3]['latest_workup'], None) # pt1, workup date now()-5days
 
         # Check that dates are correcly sorted
         self.assertGreaterEqual(response.data[0]['latest_workup']['clinic_day']['clinic_date'],response.data[1]['history']['last']['history_date'])
         self.assertGreaterEqual(response.data[1]['history']['last']['history_date'],response.data[2]['latest_workup']['clinic_day']['clinic_date'])
-        self.assertGreaterEqual(response.data[2]['latest_workup']['clinic_day']['clinic_date'],response.data[3]['history']['last']['history_date'])
+        self.assertGreaterEqual(response.data[2]['latest_workup']['clinic_day']['clinic_date'],response.data[3]['latest_workup']['clinic_day']['clinic_date'])
         
         # Test for unsigned_workup
         data = {'filter':'unsigned_workup'}
         response = self.client.get(url, data, format='json')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2) # check that all of the two patients with workups are returned
-        self.assertNotEqual(response.data[0]['latest_workup'], None)
-        self.assertNotEqual(response.data[1]['latest_workup'], None)
+        self.assertEqual(len(response.data), 2) # check that only the two patients with unsigned workups are returned
+        self.assertEqual(response.data[0]['id'], pt2.id)
+        self.assertEqual(response.data[1]['id'], pt3.id)
         self.assertLessEqual(response.data[0]['last_name'],response.data[1]['last_name']) # check that sorting is correct
 
         # Test displaying active patients (needs_workup is true).

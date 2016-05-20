@@ -482,6 +482,7 @@ class ActionItemTest(TestCase):
     def setUp(self):
         log_in_provider(self.client, build_provider(["Coordinator"]))
 
+    # Zipped_list no longer used. Replaced by tests in API module        
     # def test_home_has_correct_patients(self):
     #     pt1 = models.Patient.objects.get(pk=1)
 
