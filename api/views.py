@@ -23,7 +23,7 @@ class PtList(generics.ListAPIView): # read only
         '''
         Restricts returned patients according to query params
         '''
-        def bylatestKey(pt):
+        def bylatestKey(pt): # This doesn't sort by latest time, just latest date
             latestwu = pt.latest_workup()
             if latestwu == None:
                 latestdate = pt.history.last().history_date.date()
