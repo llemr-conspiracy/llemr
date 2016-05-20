@@ -18,7 +18,7 @@ from workup import models as workupModels
 # pylint: disable=invalid-name
 # Whatever, whatever. I name them what I want.
 
-BASIC_FIXTURE = 'pttrack.json' # this needs to be pttrack, else gender list goes out of bounds
+BASIC_FIXTURE = 'api.json' # this needs to be pttrack, else gender list goes out of bounds
 # BASIC_FIXTURE = 'api.json'
 
 # These defs can be imported as above, but runs faster if pasted here
@@ -73,6 +73,13 @@ class APITest(APITestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
+
+        workupModels.ClinicType.objects.create(name="Basic Care Clinic")
+        workupModels.ClinicDate.objects.create(
+            clinic_type=workupModels.ClinicType.objects.all()[0],
+            clinic_date=now().date(),
+            gcal_id="tmp")
+
         log_in_provider(self.client, build_provider(["Coordinator"]))
 
     def test_api_correctly_lists_patients(self):
@@ -135,7 +142,7 @@ class APITest(APITestCase):
         #         HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
         #         ros="", pe="", A_and_P="",
         #         author=models.Provider.objects.all()[0],
-        #         author_type=ProviderType.objects.all()[0],
+        #         author_type=models.ProviderType.objects.all()[0],
         #         patient=pt2)
 
         # make pt1 have and AI due tomorrow

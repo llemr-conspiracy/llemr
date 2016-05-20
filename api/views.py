@@ -6,7 +6,6 @@ from django.core.exceptions import ImproperlyConfigured
 import django.utils.timezone
 
 from pttrack import models as mymodels
-# from . import forms as myforms
 from . import serializers
 from workup import models as workupmodels
 # from rest_framework import status # not needed in the meantime
