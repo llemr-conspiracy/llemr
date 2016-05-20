@@ -1,7 +1,7 @@
 from django.forms import ModelForm, CheckboxSelectMultiple
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Fieldset, Div, Field
+from crispy_forms.layout import Submit, Layout, Fieldset, Div, Field, Button, ButtonHolder
 from crispy_forms.bootstrap import TabHolder, Tab, InlineCheckboxes, \
     AppendedText, PrependedText
 
@@ -24,12 +24,16 @@ class WorkupForm(ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
+
+        js_tab_switch = "$(document).ready(function(){activaTab('TAB-CHANGE');});function activaTab(tab){$('.nav-tabs a[href=\"#' + tab + '\"]').tab('show');};"
+
         self.helper.layout = Layout(
             TabHolder(
                 Tab('Basics',
                     'chief_complaint',
                     'diagnosis',
-                    InlineCheckboxes('diagnosis_categories')),
+                    InlineCheckboxes('diagnosis_categories'),
+                    Button('next', 'Next Section', onclick=js_tab_switch.replace('TAB-CHANGE', 'h-p'))),
                 Tab('H & P',
                     'HPI',
                     'PMH_PSH',
@@ -37,7 +41,8 @@ class WorkupForm(ModelForm):
                     'soc_hx',
                     'meds',
                     'allergies',
-                    'ros'),
+                    'ros',
+                    Button('next', 'Next Section', onclick=js_tab_switch.replace('TAB-CHANGE', 'physical-exam'))),
                 Tab('Physical Exam',
                     Div(
                         #Div(HTML("<strong>Vital Signs</strong>"),
@@ -51,8 +56,8 @@ class WorkupForm(ModelForm):
                     Div(
                         Div(AppendedText('height', 'in'), css_class='col-lg-4'),
                         Div(AppendedText('weight', 'kg'), css_class='col-lg-4'),
-                        css_class="col-lg-12"),
-                    'pe'),
+                        css_class="col-lg-12"),'pe',
+                    Button('next', 'Next Section', onclick=js_tab_switch.replace('TAB-CHANGE', 'assessment-plan'))),
                 Tab('Assessment & Plan',
                     'A_and_P',
                     'rx',
@@ -61,7 +66,8 @@ class WorkupForm(ModelForm):
                         # Div(HTML("<strong>Labs</strong>"),
                         #    css_class='col-lg-1'),
                         Div('labs_ordered_internal', css_class='col-lg-6', form_class=''),
-                        Div('labs_ordered_quest', css_class='col-lg-6'))),
+                        Div('labs_ordered_quest', css_class='col-lg-6')),
+                    Button('next', 'Next Section', onclick=js_tab_switch.replace('TAB-CHANGE', 'referraldischarge'))),
                 Tab('Referral/Discharge',
                     Fieldset('Medication Vouchers',
                              'got_voucher',
@@ -79,11 +85,10 @@ class WorkupForm(ModelForm):
                              Field(
                                  'referral_type',
                                  style="background: #FAFAFA; padding: 10px;")),
+                    Submit('submit', 'Submit')
                    )
             )
         )
-
-        self.helper.add_input(Submit('submit', 'Submit'))
 
     def clean(self):
         '''Use form's clean hook to verify that fields in Workup are
