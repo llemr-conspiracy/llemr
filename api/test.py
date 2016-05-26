@@ -30,7 +30,6 @@ class APITest(APITestCase):
             gcal_id="tmp")
         log_in_provider(self.client, build_provider(["Attending"]))
 
-    def test_api_correctly_lists_patients(self):
         pt1 = models.Patient.objects.get(pk=1)
 
         pt2 = models.Patient.objects.create(
@@ -145,19 +144,22 @@ class APITest(APITestCase):
             comments="",
             patient=pt3)
 
-        url = reverse("pt_list_api")
+    def test_api_list_patients_by_last_name(self):
+
+        url = reverse("pt_list_api") # Way to have this here and not repeat this line? Reverse is called in every test now
 
         # Test last_name ordering
         data = {'sort':'last_name'}
-        response = self.client.get(url, data, format='json')
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertLessEqual(response.data[0]['last_name'],response.data[1]['last_name'])
         self.assertLessEqual(response.data[1]['last_name'],response.data[2]['last_name'])
         self.assertLessEqual(response.data[2]['last_name'],response.data[3]['last_name'])
 
+    def test_api_list_patients_by_latest_activity(self):
         # Test workup/intake ordering.
         data = {'sort':'latest_workup'}
-        response = self.client.get(url, data, format='json')
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertNotEqual(response.data[0]['latest_workup'], None) # pt2, workup date now()+1day
         self.assertEqual(response.data[1]['latest_workup'], None) # pt4, intake date now
@@ -169,42 +171,54 @@ class APITest(APITestCase):
         self.assertGreaterEqual(response.data[1]['history']['last']['history_date'],response.data[2]['latest_workup']['clinic_day']['clinic_date'])
         self.assertGreaterEqual(response.data[2]['latest_workup']['clinic_day']['clinic_date'],response.data[3]['latest_workup']['clinic_day']['clinic_date'])
         
+    def test_api_list_patients_with_unsigned_workup(self):
         # Test for unsigned_workup
         data = {'filter':'unsigned_workup'}
-        response = self.client.get(url, data, format='json')
+        pt2 = models.Patient.objects.get(pk=2)
+        pt3 = models.Patient.objects.get(pk=3)
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2) # check that only the two patients with unsigned workups are returned
         self.assertEqual(response.data[0]['id'], pt2.id)
         self.assertEqual(response.data[1]['id'], pt3.id)
         self.assertLessEqual(response.data[0]['last_name'],response.data[1]['last_name']) # check that sorting is correct
 
+    def test_api_list_active_patients(self):
         # Test displaying active patients (needs_workup is true).
         data = {'filter':'active'}
-        response = self.client.get(url, data, format='json')
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 0) # default needs_workup is false
+
+        pt1 = models.Patient.objects.get(pk=1)
+        pt2 = models.Patient.objects.get(pk=2)
 
         pt1.change_active_status()
         pt1.save()
         pt2.change_active_status()
         pt2.save()
         
-        response = self.client.get(url, data, format='json')
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]['needs_workup'], True)
         self.assertEqual(response.data[1]['needs_workup'], True)
         self.assertLessEqual(response.data[0]['last_name'],response.data[1]['last_name']) # check that sorting is correct
 
+    def test_api_list_patients_with_active_action_item(self):
         # Test displaying patients with active action items (active means not due in the future?)
         data = {'filter':'ai_active'}
-        response = self.client.get(url, data, format='json')
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2) #pt2, pt3 should be present since pt 1 is not past due and pt4 has no ai   
 
+    def test_api_list_patients_with_inactive_action_item(self):
         # Test displaying patients with inactive action items
         data = {'filter':'ai_inactive'}
-        response = self.client.get(url, data, format='json')
+        pt1 = models.Patient.objects.get(pk=1)
+        pt2 = models.Patient.objects.get(pk=2)
+        pt3_ai = models.ActionItem.objects.get(pk=3)
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['id'], pt1.id)
@@ -214,14 +228,14 @@ class APITest(APITestCase):
 
         # Test now only has pt2
         data = {'filter':'ai_active'}
-        response = self.client.get(url, data, format='json')
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, 200) # Not sure if I should keep repeating this line
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['id'], pt2.id)
 
         # Should be unchanged, still only have pt1
         data = {'filter':'ai_inactive'}
-        response = self.client.get(url, data, format='json')
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['id'], pt1.id)
