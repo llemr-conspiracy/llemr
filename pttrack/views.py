@@ -262,7 +262,6 @@ def home_page(request):
         
         title = "Attending Tasks"
 
-        # I think an array of dictionaries/json is clearer syntax than zipped lists
         lists = [{'url':'filter=unsigned_workup', 'title':"Unsigned Workups", 'identifier':'unsignedwu','active':True},
         {'url':'filter=active', 'title':"Active Patients", 'identifier':'activept', 'active':False}]
 
@@ -281,13 +280,13 @@ def home_page(request):
 
         lists = [{'url':'filter=ai_active', 'title':"Active Patients", 'identifier':'activept', 'active':True}]
 
-    # api_url = reverse('pt_list_api') # get the error TemplateDoesNotExist at /pttrack/all/
+    api_url = reverse('pt_list_api')[:-1] + '.json/?' # remove last '/' before adding because there no '/' between /api/pt_list and .json, but reverse generates '/api/pt_list/'
 
     return render(request,
-    # return render(request, api_url,
                   'pttrack/patient_list.html',
                   {'lists': json.dumps(lists),
-                    'title': title})
+                    'title': title,
+                    'api_url': api_url})
 
 def patient_detail(request, pk):
 
@@ -324,19 +323,19 @@ def all_patients(request):
     lists = [{'url':'sort=last_name', 'title':"Alphabetized by Last Name", 'identifier':'ptlast', 'active':False},
      {'url':'sort=latest_workup', 'title':"Ordered by Latest Activity", 'identifier':'ptlatest', 'active':True}]
 
-    # api_url = reverse('pt_list_api')
+    api_url = reverse('pt_list_api')[:-1] + '.json/?' # remove last '/' before adding because there no '/' between /api/pt_list and .json, but reverse generates '/api/pt_list/'
 
     return render(request,
-    # return render(request, api_url,
                   'pttrack/patient_list.html',
                   {'lists': json.dumps(lists),
-                    'title': "All Patients"})
+                    'title': "All Patients",
+                    'api_url': api_url})
 
 
 def patient_activate_detail(request, pk):
     pt = get_object_or_404(mymodels.Patient, pk=pk)
 
-    pt.change_active_status()
+    pt.toggle_active_status()
 
     pt.save()
 
@@ -345,7 +344,7 @@ def patient_activate_detail(request, pk):
 def patient_activate_home(request, pk):
     pt = get_object_or_404(mymodels.Patient, pk=pk)
 
-    pt.change_active_status()
+    pt.toggle_active_status()
 
     pt.save()
 

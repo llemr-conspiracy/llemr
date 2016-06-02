@@ -134,7 +134,7 @@ Osler: {{ title | default:"All Patients"}}
                 })))
             );
 
-        $.get('/api/pt_list.json/?'+lists[i]['url']) // make ajax call
+        $.get('{{api_url}}'+lists[i]['url']) // make ajax call
         .success(buildTable(lists[i])) // need separate scoping to pass in lists[i]
         .error(function(jqXHR, textStatus, errorThrown) { 
             if (textStatus == 'timeout')

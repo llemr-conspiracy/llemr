@@ -291,7 +291,7 @@ class Patient(Person):
 
         return phones
 
-    def change_active_status(self):
+    def toggle_active_status(self):
         ''' Will Activate or Inactivate the Patient'''
         self.needs_workup = not self.needs_workup
 

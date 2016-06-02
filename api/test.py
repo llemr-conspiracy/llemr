@@ -193,9 +193,9 @@ class APITest(APITestCase):
         pt1 = models.Patient.objects.get(pk=1)
         pt2 = models.Patient.objects.get(pk=2)
 
-        pt1.change_active_status()
+        pt1.toggle_active_status()
         pt1.save()
-        pt2.change_active_status()
+        pt2.toggle_active_status()
         pt2.save()
         
         response = self.client.get(reverse("pt_list_api"), data, format='json')
