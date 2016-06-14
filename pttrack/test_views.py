@@ -193,11 +193,26 @@ class LiveTesting(StaticLiveServerTestCase):
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
         live_submit_login(self.selenium, 'timmy', 'password')
 
-
         self.selenium.get('%s%s' % (self.live_server_url,
                                             reverse("home"))) # causing a broken pipe error
 
-        
+        list_tab_pane_elements = self.selenium.find_elements_by_xpath(
+                "//div[@id='patient-data']/div")
+
+        self.assertEqual(list_tab_pane_elements, "hi")
+
+        # for tab_pane in list_tab_pane_elements: # need to assert there is at least one
+        #     first_patient_name = tab_pane.find_element_by_xpath(".//table/tbody/tr[2]/td[1]/a")
+        #     self.assertEqual(first_patient_name.text, "hi")
+
+        # /html/body/div[2]/div/div[1]/table/tbody/tr[2]/td[1]/a
+        # jumbotron_elements = self.selenium.find_elements_by_xpath(
+        #         '//div[@class="jumbotron"]')
+        #     self.assertNotEqual(
+        #         len(jumbotron_elements), 0,
+        #         msg=" ".join(["Expected the URL ", url.name,
+        #                       " to have a jumbotron element."]))
+
 
 class ViewsExistTest(TestCase):
     fixtures = [BASIC_FIXTURE]
