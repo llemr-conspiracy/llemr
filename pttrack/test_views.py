@@ -199,11 +199,14 @@ class LiveTesting(StaticLiveServerTestCase):
         list_tab_pane_elements = self.selenium.find_elements_by_xpath(
                 "//div[@id='patient-data']/div")
 
-        self.assertEqual(list_tab_pane_elements, "hi")
+        # self.assertEqual(list_tab_pane_elements, "hi")
 
-        # for tab_pane in list_tab_pane_elements: # need to assert there is at least one
-        #     first_patient_name = tab_pane.find_element_by_xpath(".//table/tbody/tr[2]/td[1]/a")
-        #     self.assertEqual(first_patient_name.text, "hi")
+        for tab_pane in list_tab_pane_elements: # need to assert there is at least one
+            # self.assertEqual(tab_pane.get_attribute("id"), "hi")
+            first_patient_name = tab_pane.find_elements_by_xpath(".//table/tbody/tr")
+            # first_patient_name = tab_pane.find_element_by_xpath(".//table/tbody/tr[2]/td[1]/a")
+            self.assertEqual(len(first_patient_name), 2)
+            # self.assertEqual(first_patient_name.text, "hi")
 
         # /html/body/div[2]/div/div[1]/table/tbody/tr[2]/td[1]/a
         # jumbotron_elements = self.selenium.find_elements_by_xpath(
@@ -214,462 +217,462 @@ class LiveTesting(StaticLiveServerTestCase):
         #                       " to have a jumbotron element."]))
 
 
-class ViewsExistTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
-
-    def setUp(self):
-        log_in_provider(self.client, build_provider())
-
-    def test_basic_urls(self):
-        basic_urls = ["home",
-                      "all-patients",
-                      "intake"]
-
-        for basic_url in basic_urls:
-            response = self.client.get(reverse(basic_url))
-            self.assertEqual(response.status_code, 200)
-
-    def test_initial_config(self):
-        session = self.client.session
-        del session['clintype_pk']
-        session.save()
-
-        # verify: no clinic date -> create clinic date
-        response = self.client.get(reverse('all-patients'))
-        self.assertRedirects(response,
-                             reverse('choose-clintype')+"?next="+reverse('all-patients'))
-
-        # verify: no provider -> provider creation
-        # (now done in ProviderCreateTest)
-
-        # verify: not logged in -> log in
-        self.client.logout()
-        response = self.client.get(reverse('all-patients'))
-        self.assertRedirects(response, reverse('login')+'?next='+reverse('all-patients'))
-
-    def test_pt_urls(self):
-        pt_urls = ['patient-detail',
-                   "new-clindate",
-                   'new-action-item',
-                   'followup-choice',
-                   'patient-update']
-
-        pt_urls_redirect = ['patient-activate-detail',
-                            'patient-activate-home']
-
-        pt = models.Patient.objects.all()[0]
-
-        for pt_url in pt_urls:
-            response = self.client.get(reverse(pt_url, args=(pt.id,)))
-            try:
-                self.assertEqual(response.status_code, 200)
-            except AssertionError as e:
-                print pt_url
-                print response
-                raise e
-
-        for pt_url in pt_urls_redirect:
-            response = self.client.get(reverse(pt_url, args=(pt.id,)))
-            try:
-                self.assertEqual(response.status_code, 302)
-            except AssertionError as e:
-                print pt_url
-                print response
-                raise e
-
-    def test_provider_urls(self):
-        response = self.client.get(reverse('new-provider'))
-        self.assertEqual(response.status_code, 200)
-
-    def test_document_urls(self):
-        '''
-        Test the views showing documents, as well as the integrity of path
-        saving in document creation (probably superfluous).
-        '''
-        import os
-
-        self.test_img = 'media/test.jpg'
-
-        url = reverse('new-document', args=(1,))
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        dtype = models.DocumentType.objects.create(name="Silly Picture")
-
-        doc = models.Document.objects.create(
-            title="who done it?",
-            comments="Pictured: silliness",
-            document_type=dtype,
-            image=File(open(self.test_img)),
-            patient=models.Patient.objects.get(id=1),
-            author=models.Provider.objects.get(id=1),
-            author_type=models.ProviderType.objects.all()[0])
-
-        p = models.Document.objects.get(id=1).image.path
-        random_name = p.split("/")[-1]
-        random_name = random_name.split(".")[0]
-        self.failUnless(open(p), 'file not found')
-        self.assertEqual(doc.image.path, p)
-        self.assertTrue(os.path.isfile(p))
-
-        # Checking to make sure the path is 48 characters (the length of the random password
-
-        self.assertEqual(len(random_name), 48)
-
-
-        url = reverse('document-detail', args=(1,))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        # test the creation of many documents, just in case.
-        for i in range(101):
-            doc = models.Document.objects.create(
-                title="who done it? "+str(i),
-                comments="Pictured: silliness",
-                document_type=dtype,
-                image=File(open(self.test_img)),
-                patient=models.Patient.objects.get(id=1),
-                author=models.Provider.objects.get(id=1),
-                author_type=models.ProviderType.objects.all()[0])
-
-            p = models.Document.objects.get(id=doc.pk).image.path
-            random_name = p.split("/")[-1]
-            random_name = random_name.split(".")[0]
-            self.failUnless(open(p), 'file not found')
-            self.assertEqual(doc.image.path, p)
-            self.assertTrue(os.path.isfile(p))
-
-            # Checking to make sure the path is 48 characters (the length of the random password
-
-            self.assertEqual(len(random_name), 48)
-
-            url = reverse('document-detail', args=(doc.pk,))
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
-
-            url = reverse('document-detail', args=(doc.pk,))
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
-
-            os.remove(p)
-            self.assertFalse(os.path.isfile(p))
-
-
-class ProviderCreateTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
-
-    def setUp(self):
-        log_in_provider(self.client, build_provider())
-
-    def test_provider_creation(self):
-        '''Verify that, in the absence of a provider, a provider is created,
-        and that it is created correctly.'''
-
-        final_url = reverse('all-patients')
-
-        # verify: no provider -> create provider
-        models.Provider.objects.all().delete()
-        response = self.client.get(final_url)
-        final_response_url = response.url
-        self.assertRedirects(response, reverse('new-provider')+'?next='+final_url)
-
-        n_provider = len(models.Provider.objects.all())
-
-        # The data submitted by a User when creating the Provider.
-        form_data = {
-            'first_name': "John",
-            'last_name': "James",
-            'phone': "8888888888",
-            'languages': models.Language.objects.all()[0].pk,
-            'gender': models.Gender.objects.all()[0].pk,
-            'provider_email': "jj@wustl.edu",
-            'clinical_roles': models.ProviderType.objects.all()[0].pk,
-        }
-        response = self.client.post(response.url, form_data)
-        # redirects anywhere; don't care where (would be the 'next' parameter)
-        self.assertEqual(response.status_code, 302)
-        self.assertEquals(len(models.Provider.objects.all()), n_provider + 1)
+# class ViewsExistTest(TestCase):
+#     fixtures = [BASIC_FIXTURE]
+
+#     def setUp(self):
+#         log_in_provider(self.client, build_provider())
+
+#     def test_basic_urls(self):
+#         basic_urls = ["home",
+#                       "all-patients",
+#                       "intake"]
+
+#         for basic_url in basic_urls:
+#             response = self.client.get(reverse(basic_url))
+#             self.assertEqual(response.status_code, 200)
+
+#     def test_initial_config(self):
+#         session = self.client.session
+#         del session['clintype_pk']
+#         session.save()
+
+#         # verify: no clinic date -> create clinic date
+#         response = self.client.get(reverse('all-patients'))
+#         self.assertRedirects(response,
+#                              reverse('choose-clintype')+"?next="+reverse('all-patients'))
+
+#         # verify: no provider -> provider creation
+#         # (now done in ProviderCreateTest)
+
+#         # verify: not logged in -> log in
+#         self.client.logout()
+#         response = self.client.get(reverse('all-patients'))
+#         self.assertRedirects(response, reverse('login')+'?next='+reverse('all-patients'))
+
+#     def test_pt_urls(self):
+#         pt_urls = ['patient-detail',
+#                    "new-clindate",
+#                    'new-action-item',
+#                    'followup-choice',
+#                    'patient-update']
+
+#         pt_urls_redirect = ['patient-activate-detail',
+#                             'patient-activate-home']
+
+#         pt = models.Patient.objects.all()[0]
+
+#         for pt_url in pt_urls:
+#             response = self.client.get(reverse(pt_url, args=(pt.id,)))
+#             try:
+#                 self.assertEqual(response.status_code, 200)
+#             except AssertionError as e:
+#                 print pt_url
+#                 print response
+#                 raise e
+
+#         for pt_url in pt_urls_redirect:
+#             response = self.client.get(reverse(pt_url, args=(pt.id,)))
+#             try:
+#                 self.assertEqual(response.status_code, 302)
+#             except AssertionError as e:
+#                 print pt_url
+#                 print response
+#                 raise e
+
+#     def test_provider_urls(self):
+#         response = self.client.get(reverse('new-provider'))
+#         self.assertEqual(response.status_code, 200)
+
+#     def test_document_urls(self):
+#         '''
+#         Test the views showing documents, as well as the integrity of path
+#         saving in document creation (probably superfluous).
+#         '''
+#         import os
+
+#         self.test_img = 'media/test.jpg'
+
+#         url = reverse('new-document', args=(1,))
+
+#         response = self.client.get(url)
+#         self.assertEqual(response.status_code, 200)
+#         dtype = models.DocumentType.objects.create(name="Silly Picture")
+
+#         doc = models.Document.objects.create(
+#             title="who done it?",
+#             comments="Pictured: silliness",
+#             document_type=dtype,
+#             image=File(open(self.test_img)),
+#             patient=models.Patient.objects.get(id=1),
+#             author=models.Provider.objects.get(id=1),
+#             author_type=models.ProviderType.objects.all()[0])
+
+#         p = models.Document.objects.get(id=1).image.path
+#         random_name = p.split("/")[-1]
+#         random_name = random_name.split(".")[0]
+#         self.failUnless(open(p), 'file not found')
+#         self.assertEqual(doc.image.path, p)
+#         self.assertTrue(os.path.isfile(p))
+
+#         # Checking to make sure the path is 48 characters (the length of the random password
+
+#         self.assertEqual(len(random_name), 48)
+
+
+#         url = reverse('document-detail', args=(1,))
+#         response = self.client.get(url)
+#         self.assertEqual(response.status_code, 200)
+
+#         # test the creation of many documents, just in case.
+#         for i in range(101):
+#             doc = models.Document.objects.create(
+#                 title="who done it? "+str(i),
+#                 comments="Pictured: silliness",
+#                 document_type=dtype,
+#                 image=File(open(self.test_img)),
+#                 patient=models.Patient.objects.get(id=1),
+#                 author=models.Provider.objects.get(id=1),
+#                 author_type=models.ProviderType.objects.all()[0])
+
+#             p = models.Document.objects.get(id=doc.pk).image.path
+#             random_name = p.split("/")[-1]
+#             random_name = random_name.split(".")[0]
+#             self.failUnless(open(p), 'file not found')
+#             self.assertEqual(doc.image.path, p)
+#             self.assertTrue(os.path.isfile(p))
+
+#             # Checking to make sure the path is 48 characters (the length of the random password
+
+#             self.assertEqual(len(random_name), 48)
+
+#             url = reverse('document-detail', args=(doc.pk,))
+#             response = self.client.get(url)
+#             self.assertEqual(response.status_code, 200)
+
+#             url = reverse('document-detail', args=(doc.pk,))
+#             response = self.client.get(url)
+#             self.assertEqual(response.status_code, 200)
+
+#             os.remove(p)
+#             self.assertFalse(os.path.isfile(p))
+
+
+# class ProviderCreateTest(TestCase):
+#     fixtures = [BASIC_FIXTURE]
+
+#     def setUp(self):
+#         log_in_provider(self.client, build_provider())
+
+#     def test_provider_creation(self):
+#         '''Verify that, in the absence of a provider, a provider is created,
+#         and that it is created correctly.'''
+
+#         final_url = reverse('all-patients')
+
+#         # verify: no provider -> create provider
+#         models.Provider.objects.all().delete()
+#         response = self.client.get(final_url)
+#         final_response_url = response.url
+#         self.assertRedirects(response, reverse('new-provider')+'?next='+final_url)
+
+#         n_provider = len(models.Provider.objects.all())
+
+#         # The data submitted by a User when creating the Provider.
+#         form_data = {
+#             'first_name': "John",
+#             'last_name': "James",
+#             'phone': "8888888888",
+#             'languages': models.Language.objects.all()[0].pk,
+#             'gender': models.Gender.objects.all()[0].pk,
+#             'provider_email': "jj@wustl.edu",
+#             'clinical_roles': models.ProviderType.objects.all()[0].pk,
+#         }
+#         response = self.client.post(response.url, form_data)
+#         # redirects anywhere; don't care where (would be the 'next' parameter)
+#         self.assertEqual(response.status_code, 302)
+#         self.assertEquals(len(models.Provider.objects.all()), n_provider + 1)
 
-        new_provider = list(models.Provider.objects.all())[-1]
+#         new_provider = list(models.Provider.objects.all())[-1]
 
-        # verify the writethrough
-        for name in ['first_name', 'last_name']:
-            self.assertEquals(getattr(new_provider, name),
-                              getattr(new_provider.associated_user, name))
-        self.assertEquals(form_data['provider_email'],
-                          new_provider.associated_user.email)
+#         # verify the writethrough
+#         for name in ['first_name', 'last_name']:
+#             self.assertEquals(getattr(new_provider, name),
+#                               getattr(new_provider.associated_user, name))
+#         self.assertEquals(form_data['provider_email'],
+#                           new_provider.associated_user.email)
 
-        # now verify we're redirected
-        response = self.client.get(final_url)
-        self.assertEquals(response.status_code, 200)
+#         # now verify we're redirected
+#         response = self.client.get(final_url)
+#         self.assertEquals(response.status_code, 200)
 
-        # Test for proper resubmission behavior.
-        n_provider = len(models.Provider.objects.all())
-        WebDriver().back()
+#         # Test for proper resubmission behavior.
+#         n_provider = len(models.Provider.objects.all())
+#         WebDriver().back()
 
-        # POST a form with new names
-        form_data['first_name'] = 'Janet'
-        form_data['last_name'] = 'Jane'
-        response = self.client.post(final_response_url, form_data)
+#         # POST a form with new names
+#         form_data['first_name'] = 'Janet'
+#         form_data['last_name'] = 'Jane'
+#         response = self.client.post(final_response_url, form_data)
 
-        # Verify redirect anywhere; don't care where (would be the 'next' parameter)
-        self.assertEqual(response.status_code, 302)
+#         # Verify redirect anywhere; don't care where (would be the 'next' parameter)
+#         self.assertEqual(response.status_code, 302)
 
-        # Verify that number of providers has not changed, and user's names is still the original new_provider's names
-        self.assertEquals(len(models.Provider.objects.all()), n_provider)
-        for name in ['first_name', 'last_name']:
-            self.assertEquals(getattr(new_provider, name),
-                              getattr(new_provider.associated_user, name))
+#         # Verify that number of providers has not changed, and user's names is still the original new_provider's names
+#         self.assertEquals(len(models.Provider.objects.all()), n_provider)
+#         for name in ['first_name', 'last_name']:
+#             self.assertEquals(getattr(new_provider, name),
+#                               getattr(new_provider.associated_user, name))
 
-        # now verify we're redirected
-        response = self.client.get(final_url)
-        self.assertEquals(response.status_code, 200)
+#         # now verify we're redirected
+#         response = self.client.get(final_url)
+#         self.assertEquals(response.status_code, 200)
 
 
 
-class IntakeTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
+# class IntakeTest(TestCase):
+#     fixtures = [BASIC_FIXTURE]
 
-    def setUp(self):
-        log_in_provider(self.client, build_provider())
+#     def setUp(self):
+#         log_in_provider(self.client, build_provider())
 
-        self.valid_pt_dict = {
-            'first_name': "Juggie",
-            'last_name': "Brodeltein",
-            'middle_name': "Bayer",
-            'phone': '+49 178 236 5288',
-            'languages': [models.Language.objects.all()[0]],
-            'gender': models.Gender.objects.all()[0].pk,
-            'address': 'Schulstrasse 9',
-            'city': 'Munich',
-            'state': 'BA',
-            'country': 'Germany',
-            'zip_code': '63108',
-            'pcp_preferred_zip': '63018',
-            'date_of_birth': datetime.date(1990, 01, 01),
-            'patient_comfortable_with_english': False,
-            'ethnicities': [models.Ethnicity.objects.all()[0]],
-            'preferred_contact_method':
-                models.ContactMethod.objects.all()[0].pk,
-        }
+#         self.valid_pt_dict = {
+#             'first_name': "Juggie",
+#             'last_name': "Brodeltein",
+#             'middle_name': "Bayer",
+#             'phone': '+49 178 236 5288',
+#             'languages': [models.Language.objects.all()[0]],
+#             'gender': models.Gender.objects.all()[0].pk,
+#             'address': 'Schulstrasse 9',
+#             'city': 'Munich',
+#             'state': 'BA',
+#             'country': 'Germany',
+#             'zip_code': '63108',
+#             'pcp_preferred_zip': '63018',
+#             'date_of_birth': datetime.date(1990, 01, 01),
+#             'patient_comfortable_with_english': False,
+#             'ethnicities': [models.Ethnicity.objects.all()[0]],
+#             'preferred_contact_method':
+#                 models.ContactMethod.objects.all()[0].pk,
+#         }
 
-    def test_ssn_rewrite(self):
-        '''SSNs given without hypens should be automatically hypenated.'''
+#     def test_ssn_rewrite(self):
+#         '''SSNs given without hypens should be automatically hypenated.'''
 
-        submitted_pt = self.valid_pt_dict
-        submitted_pt['ssn'] = "123456789"
+#         submitted_pt = self.valid_pt_dict
+#         submitted_pt['ssn'] = "123456789"
 
-        response = self.client.post(reverse('intake'), submitted_pt)
+#         response = self.client.post(reverse('intake'), submitted_pt)
 
-        new_pt = list(models.Patient.objects.all())[-1]
-        self.assertEquals(new_pt.ssn, "123-45-6789")
+#         new_pt = list(models.Patient.objects.all())[-1]
+#         self.assertEquals(new_pt.ssn, "123-45-6789")
 
-    def test_ssn_update(self):
-        '''SSNs given without hypens should be automatically hypenated.'''
+#     def test_ssn_update(self):
+#         '''SSNs given without hypens should be automatically hypenated.'''
 
-        submitted_pt = self.valid_pt_dict
-        submitted_pt['ssn'] = "123456789"
+#         submitted_pt = self.valid_pt_dict
+#         submitted_pt['ssn'] = "123456789"
 
-        response = self.client.post(reverse('intake'), submitted_pt)
+#         response = self.client.post(reverse('intake'), submitted_pt)
 
-        new_pt = list(models.Patient.objects.all())[-1]
+#         new_pt = list(models.Patient.objects.all())[-1]
 
-        response = self.client.post(reverse('patient-update', args=(new_pt.pk,)), submitted_pt)
-        self.assertEqual(response.status_code, 302)
+#         response = self.client.post(reverse('patient-update', args=(new_pt.pk,)), submitted_pt)
+#         self.assertEqual(response.status_code, 302)
 
 
-    def test_can_intake_pt(self):
+#     def test_can_intake_pt(self):
 
-        n_pt = len(models.Patient.objects.all())
+#         n_pt = len(models.Patient.objects.all())
 
-        submitted_pt = self.valid_pt_dict
+#         submitted_pt = self.valid_pt_dict
 
-        url = reverse('intake')
+#         url = reverse('intake')
 
-        response = self.client.post(url, submitted_pt)
+#         response = self.client.post(url, submitted_pt)
 
-        self.assertEqual(response.status_code, 302)
-        self.assertEquals(len(models.Patient.objects.all()), n_pt + 1)
+#         self.assertEqual(response.status_code, 302)
+#         self.assertEquals(len(models.Patient.objects.all()), n_pt + 1)
 
-        new_pt = models.Patient.objects.all()[n_pt]
+#         new_pt = models.Patient.objects.all()[n_pt]
         
-        for param in submitted_pt:
-            try:
-                self.assertEquals(str(submitted_pt[param]),
-                                  str(getattr(new_pt, param)))
-            except AssertionError:
-                self.assertEquals(str(submitted_pt[param]),
-                                  str(getattr(new_pt, param).all()))
+#         for param in submitted_pt:
+#             try:
+#                 self.assertEquals(str(submitted_pt[param]),
+#                                   str(getattr(new_pt, param)))
+#             except AssertionError:
+#                 self.assertEquals(str(submitted_pt[param]),
+#                                   str(getattr(new_pt, param).all()))
 
-        # new patients should be marked as active by default
-        self.assertTrue(new_pt.needs_workup)
-
-
-class ActionItemTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
-
-    def setUp(self):
-        log_in_provider(self.client, build_provider(["Coordinator"]))
-
-    # Zipped_list no longer used. Replaced by tests in API module        
-    # def test_home_has_correct_patients(self):
-    #     pt1 = models.Patient.objects.get(pk=1)
-
-    #     # we need > 1 pt, because one will have an active AI and one won't
-    #     pt2 = models.Patient.objects.create(
-    #         first_name="Juggie",
-    #         last_name="Brodeltein",
-    #         middle_name="Bayer",
-    #         phone='+49 178 236 5288',
-    #         gender=models.Gender.objects.all()[1],
-    #         address='Schulstrasse 9',
-    #         city='Munich',
-    #         state='BA',
-    #         zip_code='63108',
-    #         pcp_preferred_zip='63018',
-    #         date_of_birth=datetime.date(1990, 01, 01),
-    #         patient_comfortable_with_english=False,
-    #         preferred_contact_method=models.ContactMethod.objects.all()[0],
-    #     )
-
-    #     pt3 = models.Patient.objects.create(
-    #         first_name="asdf",
-    #         last_name="lkjh",
-    #         middle_name="Bayer",
-    #         phone='+49 178 236 5288',
-    #         gender=models.Gender.objects.all()[0],
-    #         address='Schulstrasse 9',
-    #         city='Munich',
-    #         state='BA',
-    #         zip_code='63108',
-    #         pcp_preferred_zip='63018',
-    #         date_of_birth=datetime.date(1990, 01, 01),
-    #         patient_comfortable_with_english=False,
-    #         preferred_contact_method=models.ContactMethod.objects.all()[0],
-    #     )
-
-    #     # make pt1 have and AI due tomorrow
-    #     pt1_ai = models.ActionItem.objects.create(
-    #         author=models.Provider.objects.all()[0],
-    #         author_type=models.ProviderType.objects.all()[0],
-    #         instruction=models.ActionInstruction.objects.all()[0],
-    #         due_date=now().date()+datetime.timedelta(days=1),
-    #         comments="",
-    #         patient=pt1)
-
-    #     # make pt2 have an AI due yesterday
-    #     pt2_ai = models.ActionItem.objects.create(
-    #         author=models.Provider.objects.all()[0],
-    #         author_type=models.ProviderType.objects.all()[0],
-    #         instruction=models.ActionInstruction.objects.all()[0],
-    #         due_date=now().date()-datetime.timedelta(days=1),
-    #         comments="",
-    #         patient=pt2)
-
-    #     # make pt3 have an AI that's done
-    #     pt3_ai = models.ActionItem.objects.create(
-    #         author=models.Provider.objects.all()[0],
-    #         author_type=models.ProviderType.objects.all()[0],
-    #         instruction=models.ActionInstruction.objects.all()[0],
-    #         due_date=now().date()-datetime.timedelta(days=15),
-    #         comments="",
-    #         patient=pt3)
-
-    #     url = reverse("home")
-
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, 200)
-
-    #     #pt2, pt3 should be present since pt 1 is not past due
-    #     self.assertEqual(len(response.context['zipped_list'][1][1]), 2)
-    #     self.assertIn(pt2, response.context['zipped_list'][1][1])
-    #     self.assertIn(pt3, response.context['zipped_list'][1][1])
-
-    #     pt3_ai.mark_done(models.Provider.objects.all()[0])
-    #     pt3_ai.save()
-
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, 200)
-
-    #     # now only pt2 should be present, since only pt3's AI is now done
-    #     self.assertEqual(len(response.context['zipped_list'][1][1]), 1)
-    #     self.assertIn(pt2, response.context['zipped_list'][1][1])
+#         # new patients should be marked as active by default
+#         self.assertTrue(new_pt.needs_workup)
 
 
-    def test_action_item_urls(self):
-        pt = models.Patient.objects.all()[0]
+# class ActionItemTest(TestCase):
+#     fixtures = [BASIC_FIXTURE]
 
-        ai_inst = models.ActionInstruction.objects.create(
-            instruction="Follow up on labs")
-        ai = models.ActionItem.objects.create(
-            instruction=ai_inst,
-            due_date=datetime.datetime.today(),
-            comments="",
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            patient=pt)
+#     def setUp(self):
+#         log_in_provider(self.client, build_provider(["Coordinator"]))
 
-        # new action items should not be done
-        self.assertFalse(ai.done())
+#     # Zipped_list no longer used. Replaced by tests in API module        
+#     # def test_home_has_correct_patients(self):
+#     #     pt1 = models.Patient.objects.get(pk=1)
 
-        # submit a request to mark the new ai as done. should redirect to 
-        # choose a followup type.
-        ai_url = 'done-action-item'
-        response = self.client.get(reverse(ai_url, args=(ai.id,)))
-        self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse("followup-choice", args=(ai.patient.pk,)),
-                      response.url)
-        self.assertTrue(models.ActionItem.objects.all()[0].done())
-        self.assertEquals(models.ActionItem.objects.all()[0].author.pk,
-                          int(self.client.session['_auth_user_id']))
-        self.assertNotEqual(
-            models.ActionItem.objects.all()[0].written_datetime,
-            models.ActionItem.objects.all()[0].last_modified)
+#     #     # we need > 1 pt, because one will have an active AI and one won't
+#     #     pt2 = models.Patient.objects.create(
+#     #         first_name="Juggie",
+#     #         last_name="Brodeltein",
+#     #         middle_name="Bayer",
+#     #         phone='+49 178 236 5288',
+#     #         gender=models.Gender.objects.all()[1],
+#     #         address='Schulstrasse 9',
+#     #         city='Munich',
+#     #         state='BA',
+#     #         zip_code='63108',
+#     #         pcp_preferred_zip='63018',
+#     #         date_of_birth=datetime.date(1990, 01, 01),
+#     #         patient_comfortable_with_english=False,
+#     #         preferred_contact_method=models.ContactMethod.objects.all()[0],
+#     #     )
 
-        # submit a request to reset the ai. should redirect to pt
-        ai_url = 'reset-action-item'
-        prev_mod_datetime = models.ActionItem.objects.all()[0].last_modified
-        response = self.client.get(reverse(ai_url, args=(ai.id,)))
-        self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('patient-detail', args=(pt.id,)),
-                      response.url)
-        self.assertFalse(models.ActionItem.objects.all()[0].done())
+#     #     pt3 = models.Patient.objects.create(
+#     #         first_name="asdf",
+#     #         last_name="lkjh",
+#     #         middle_name="Bayer",
+#     #         phone='+49 178 236 5288',
+#     #         gender=models.Gender.objects.all()[0],
+#     #         address='Schulstrasse 9',
+#     #         city='Munich',
+#     #         state='BA',
+#     #         zip_code='63108',
+#     #         pcp_preferred_zip='63018',
+#     #         date_of_birth=datetime.date(1990, 01, 01),
+#     #         patient_comfortable_with_english=False,
+#     #         preferred_contact_method=models.ContactMethod.objects.all()[0],
+#     #     )
 
-        self.assertNotEqual(
-            models.ActionItem.objects.all()[0].written_datetime,
-            models.ActionItem.objects.all()[0].last_modified)
-        self.assertNotEqual(prev_mod_datetime,
-                            models.ActionItem.objects.all()[0].last_modified)
+#     #     # make pt1 have and AI due tomorrow
+#     #     pt1_ai = models.ActionItem.objects.create(
+#     #         author=models.Provider.objects.all()[0],
+#     #         author_type=models.ProviderType.objects.all()[0],
+#     #         instruction=models.ActionInstruction.objects.all()[0],
+#     #         due_date=now().date()+datetime.timedelta(days=1),
+#     #         comments="",
+#     #         patient=pt1)
 
-        # make sure updating the action items url works
-        ai_url = 'update-action-item'
-        response = self.client.get(reverse(ai_url, args=(ai.pk,)))
-        self.assertEqual(response.status_code, 200)
+#     #     # make pt2 have an AI due yesterday
+#     #     pt2_ai = models.ActionItem.objects.create(
+#     #         author=models.Provider.objects.all()[0],
+#     #         author_type=models.ProviderType.objects.all()[0],
+#     #         instruction=models.ActionInstruction.objects.all()[0],
+#     #         due_date=now().date()-datetime.timedelta(days=1),
+#     #         comments="",
+#     #         patient=pt2)
 
-    def test_create_action_item(self):
+#     #     # make pt3 have an AI that's done
+#     #     pt3_ai = models.ActionItem.objects.create(
+#     #         author=models.Provider.objects.all()[0],
+#     #         author_type=models.ProviderType.objects.all()[0],
+#     #         instruction=models.ActionInstruction.objects.all()[0],
+#     #         due_date=now().date()-datetime.timedelta(days=15),
+#     #         comments="",
+#     #         patient=pt3)
 
-        self.assertEquals(len(models.ActionItem.objects.all()), 0)
+#     #     url = reverse("home")
 
-        submitted_ai = {
-            "instruction": models.ActionInstruction.objects.all()[0].pk,
-            "due_date": str(datetime.date.today() + datetime.timedelta(10)),
-            "comments": "models.CharField(max_length=300)" # arbitrary string
-            }
+#     #     response = self.client.get(url)
+#     #     self.assertEqual(response.status_code, 200)
 
-        url = reverse('new-action-item', kwargs={'pt_id': 1})
-        response = self.client.post(url, submitted_ai)
+#     #     #pt2, pt3 should be present since pt 1 is not past due
+#     #     self.assertEqual(len(response.context['zipped_list'][1][1]), 2)
+#     #     self.assertIn(pt2, response.context['zipped_list'][1][1])
+#     #     self.assertIn(pt3, response.context['zipped_list'][1][1])
 
-        self.assertEquals(response.status_code, 302)
-        self.assertIn(reverse('patient-detail', args=(1,)), response.url)
+#     #     pt3_ai.mark_done(models.Provider.objects.all()[0])
+#     #     pt3_ai.save()
 
-        self.assertEquals(len(models.ActionItem.objects.all()), 1)
-        new_ai = models.ActionItem.objects.all()[0]
+#     #     response = self.client.get(url)
+#     #     self.assertEqual(response.status_code, 200)
 
-        submitted_ai['due_date'] = datetime.date(
-            *([int(i) for i in submitted_ai['due_date'].split('-')]))
+#     #     # now only pt2 should be present, since only pt3's AI is now done
+#     #     self.assertEqual(len(response.context['zipped_list'][1][1]), 1)
+#     #     self.assertIn(pt2, response.context['zipped_list'][1][1])
 
-        for param in submitted_ai:
-            self.assertEquals(str(submitted_ai[param]),
-                              str(getattr(new_ai, param)))
 
-        note_check(self, new_ai, self.client, 1)
+#     def test_action_item_urls(self):
+#         pt = models.Patient.objects.all()[0]
+
+#         ai_inst = models.ActionInstruction.objects.create(
+#             instruction="Follow up on labs")
+#         ai = models.ActionItem.objects.create(
+#             instruction=ai_inst,
+#             due_date=datetime.datetime.today(),
+#             comments="",
+#             author=models.Provider.objects.all()[0],
+#             author_type=models.ProviderType.objects.all()[0],
+#             patient=pt)
+
+#         # new action items should not be done
+#         self.assertFalse(ai.done())
+
+#         # submit a request to mark the new ai as done. should redirect to 
+#         # choose a followup type.
+#         ai_url = 'done-action-item'
+#         response = self.client.get(reverse(ai_url, args=(ai.id,)))
+#         self.assertEqual(response.status_code, 302)
+#         self.assertIn(reverse("followup-choice", args=(ai.patient.pk,)),
+#                       response.url)
+#         self.assertTrue(models.ActionItem.objects.all()[0].done())
+#         self.assertEquals(models.ActionItem.objects.all()[0].author.pk,
+#                           int(self.client.session['_auth_user_id']))
+#         self.assertNotEqual(
+#             models.ActionItem.objects.all()[0].written_datetime,
+#             models.ActionItem.objects.all()[0].last_modified)
+
+#         # submit a request to reset the ai. should redirect to pt
+#         ai_url = 'reset-action-item'
+#         prev_mod_datetime = models.ActionItem.objects.all()[0].last_modified
+#         response = self.client.get(reverse(ai_url, args=(ai.id,)))
+#         self.assertEqual(response.status_code, 302)
+#         self.assertIn(reverse('patient-detail', args=(pt.id,)),
+#                       response.url)
+#         self.assertFalse(models.ActionItem.objects.all()[0].done())
+
+#         self.assertNotEqual(
+#             models.ActionItem.objects.all()[0].written_datetime,
+#             models.ActionItem.objects.all()[0].last_modified)
+#         self.assertNotEqual(prev_mod_datetime,
+#                             models.ActionItem.objects.all()[0].last_modified)
+
+#         # make sure updating the action items url works
+#         ai_url = 'update-action-item'
+#         response = self.client.get(reverse(ai_url, args=(ai.pk,)))
+#         self.assertEqual(response.status_code, 200)
+
+#     def test_create_action_item(self):
+
+#         self.assertEquals(len(models.ActionItem.objects.all()), 0)
+
+#         submitted_ai = {
+#             "instruction": models.ActionInstruction.objects.all()[0].pk,
+#             "due_date": str(datetime.date.today() + datetime.timedelta(10)),
+#             "comments": "models.CharField(max_length=300)" # arbitrary string
+#             }
+
+#         url = reverse('new-action-item', kwargs={'pt_id': 1})
+#         response = self.client.post(url, submitted_ai)
+
+#         self.assertEquals(response.status_code, 302)
+#         self.assertIn(reverse('patient-detail', args=(1,)), response.url)
+
+#         self.assertEquals(len(models.ActionItem.objects.all()), 1)
+#         new_ai = models.ActionItem.objects.all()[0]
+
+#         submitted_ai['due_date'] = datetime.date(
+#             *([int(i) for i in submitted_ai['due_date'].split('-')]))
+
+#         for param in submitted_ai:
+#             self.assertEquals(str(submitted_ai[param]),
+#                               str(getattr(new_ai, param)))
+
+#         note_check(self, new_ai, self.client, 1)
