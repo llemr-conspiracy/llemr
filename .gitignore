@@ -61,6 +61,3 @@ target/
 
 # Database
 db.sqlite3
-
-# venv
-venv
