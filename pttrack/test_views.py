@@ -206,10 +206,8 @@ class LiveTesting(StaticLiveServerTestCase):
 
         list_tab_pane_elements = self.selenium.find_elements_by_xpath(
                 "//div[@id='patient-data']/div")
-        # self.assertEqual(len(list_tab_pane_elements), 8)
-        # self.assertEqual(list_tab_pane_elements, "hi")
 
-        for tab_pane in list_tab_pane_elements: # need to assert there is at least one
+        for tab_pane in list_tab_pane_elements:
             first_patient_name = tab_pane.find_element_by_xpath(".//table/tbody/tr[2]/td[1]/a")
             self.assertEqual(first_patient_name.get_attribute("text"), "McNath, Frankie L.")
 
