@@ -104,87 +104,87 @@ class LiveTesting(StaticLiveServerTestCase):
         cls.selenium.quit()
         super(LiveTesting, cls).tearDownClass()
 
-    def test_login(self):
-        '''
-        Test the login sequence for one clinical role and mulitiple clinical
-        roles.
-        '''
+    # def test_login(self):
+    #     '''
+    #     Test the login sequence for one clinical role and mulitiple clinical
+    #     roles.
+    #     '''
 
-        build_provider(username='jrporter', password='password')
+    #     build_provider(username='jrporter', password='password')
 
-        # any valid URL should redirect to login at this point.
-        self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        live_submit_login(self.selenium, 'jrporter', 'password')
+    #     # any valid URL should redirect to login at this point.
+    #     self.selenium.get('%s%s' % (self.live_server_url, '/'))
+    #     live_submit_login(self.selenium, 'jrporter', 'password')
 
-        # now we should have to choose a clinical role
-        self.assertEquals(self.selenium.current_url,
-                          '%s%s%s' % (self.live_server_url,
-                                      reverse('choose-clintype'),
-                                      '?next='+reverse('home')))
+    #     # now we should have to choose a clinical role
+    #     self.assertEquals(self.selenium.current_url,
+    #                       '%s%s%s' % (self.live_server_url,
+    #                                   reverse('choose-clintype'),
+    #                                   '?next='+reverse('home')))
 
-        self.selenium.find_element_by_xpath(
-            '//input[@value="Coordinator"]').click()
-        self.selenium.find_element_by_xpath(
-            '//button[@type="submit"]').click()
+    #     self.selenium.find_element_by_xpath(
+    #         '//input[@value="Coordinator"]').click()
+    #     self.selenium.find_element_by_xpath(
+    #         '//button[@type="submit"]').click()
 
-        self.assertEquals(self.selenium.current_url,
-                          '%s%s' % (self.live_server_url,
-                                    reverse('home')))
+    #     self.assertEquals(self.selenium.current_url,
+    #                       '%s%s' % (self.live_server_url,
+    #                                 reverse('home')))
 
-        self.selenium.get('%s%s' % (self.live_server_url,
-                                    reverse('logout')))
+    #     self.selenium.get('%s%s' % (self.live_server_url,
+    #                                 reverse('logout')))
 
-        # make a provider with only one role.
-        build_provider(username='timmy', password='password',
-                       roles=["Attending"])
+    #     # make a provider with only one role.
+    #     build_provider(username='timmy', password='password',
+    #                    roles=["Attending"])
 
-        self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        live_submit_login(self.selenium, 'timmy', 'password')
+    #     self.selenium.get('%s%s' % (self.live_server_url, '/'))
+    #     live_submit_login(self.selenium, 'timmy', 'password')
 
-        # now we should be redirected directly to home.
-        self.assertEquals(self.selenium.current_url,
-                          '%s%s' % (self.live_server_url,
-                                    reverse('home')))
+    #     # now we should be redirected directly to home.
+    #     self.assertEquals(self.selenium.current_url,
+    #                       '%s%s' % (self.live_server_url,
+    #                                 reverse('home')))
 
-    def test_pttrack_view_rendering(self):
-        '''
-        Test that pttrack urls render correctly, as determined by the
-        existance of a jumbotron at the top.
-        '''
-        from . import urls
-        from django.core.urlresolvers import NoReverseMatch
+    # def test_pttrack_view_rendering(self):
+    #     '''
+    #     Test that pttrack urls render correctly, as determined by the
+    #     existance of a jumbotron at the top.
+    #     '''
+    #     from . import urls
+    #     from django.core.urlresolvers import NoReverseMatch
 
-        # build a provider and log in.
-        build_provider(username='timmy', password='password',
-                       roles=["Attending"])
-        self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        live_submit_login(self.selenium, 'timmy', 'password')
+    #     # build a provider and log in.
+    #     build_provider(username='timmy', password='password',
+    #                    roles=["Attending"])
+    #     self.selenium.get('%s%s' % (self.live_server_url, '/'))
+    #     live_submit_login(self.selenium, 'timmy', 'password')
 
-        for url in urls.urlpatterns:
-            # except 'choose-clintype' and action item modifiers from test
-            # since they're redirects.
-            if url.name in ['choose-clintype', 'done-action-item',
-                            'reset-action-item', 'document-detail',
-                            'document-update', 'update-action-item']:
-                # TODO: add test data for documents so document-detail and
-                # document-update can be tested as well.
-                continue
+    #     for url in urls.urlpatterns:
+    #         # except 'choose-clintype' and action item modifiers from test
+    #         # since they're redirects.
+    #         if url.name in ['choose-clintype', 'done-action-item',
+    #                         'reset-action-item', 'document-detail',
+    #                         'document-update', 'update-action-item']:
+    #             # TODO: add test data for documents so document-detail and
+    #             # document-update can be tested as well.
+    #             continue
 
-            # all the URLs have either one parameter or none. Try one
-            # parameter first; if that fails, try with none.
-            try:
-                self.selenium.get('%s%s' % (self.live_server_url,
-                                            reverse(url.name, args=(1,))))
-            except NoReverseMatch:
-                self.selenium.get('%s%s' % (self.live_server_url,
-                                            reverse(url.name)))
+    #         # all the URLs have either one parameter or none. Try one
+    #         # parameter first; if that fails, try with none.
+    #         try:
+    #             self.selenium.get('%s%s' % (self.live_server_url,
+    #                                         reverse(url.name, args=(1,))))
+    #         except NoReverseMatch:
+    #             self.selenium.get('%s%s' % (self.live_server_url,
+    #                                         reverse(url.name)))
 
-            jumbotron_elements = self.selenium.find_elements_by_xpath(
-                '//div[@class="jumbotron"]')
-            self.assertNotEqual(
-                len(jumbotron_elements), 0,
-                msg=" ".join(["Expected the URL ", url.name,
-                              " to have a jumbotron element."]))
+    #         jumbotron_elements = self.selenium.find_elements_by_xpath(
+    #             '//div[@class="jumbotron"]')
+    #         self.assertNotEqual(
+    #             len(jumbotron_elements), 0,
+    #             msg=" ".join(["Expected the URL ", url.name,
+    #                           " to have a jumbotron element."]))
     
     def test_home_has_correct_patients(self):
         # build a provider and log in
@@ -194,27 +194,24 @@ class LiveTesting(StaticLiveServerTestCase):
         live_submit_login(self.selenium, 'timmy', 'password')
 
         self.selenium.get('%s%s' % (self.live_server_url,
-                                            reverse("home"))) # causing a broken pipe error
+                                            reverse("all-patients"))) # causing a broken pipe error
+        self.assertEquals(self.selenium.current_url,
+                                  '%s%s' % (self.live_server_url,
+                                            reverse('all-patients')))
+        from selenium.webdriver.common.by import By
+        from selenium.webdriver.support.ui import WebDriverWait
+        from selenium.webdriver.support import expected_conditions as EC
+        WebDriverWait(self.selenium, 60).until(
+        EC.presence_of_element_located((By.XPATH, "//div[@id='patient-data']/div/table/tbody/tr/td/a")))
 
         list_tab_pane_elements = self.selenium.find_elements_by_xpath(
                 "//div[@id='patient-data']/div")
-
+        # self.assertEqual(len(list_tab_pane_elements), 8)
         # self.assertEqual(list_tab_pane_elements, "hi")
 
         for tab_pane in list_tab_pane_elements: # need to assert there is at least one
-            # self.assertEqual(tab_pane.get_attribute("id"), "hi")
-            first_patient_name = tab_pane.find_elements_by_xpath(".//table/tbody/tr")
-            # first_patient_name = tab_pane.find_element_by_xpath(".//table/tbody/tr[2]/td[1]/a")
-            self.assertEqual(len(first_patient_name), 2)
-            # self.assertEqual(first_patient_name.text, "hi")
-
-        # /html/body/div[2]/div/div[1]/table/tbody/tr[2]/td[1]/a
-        # jumbotron_elements = self.selenium.find_elements_by_xpath(
-        #         '//div[@class="jumbotron"]')
-        #     self.assertNotEqual(
-        #         len(jumbotron_elements), 0,
-        #         msg=" ".join(["Expected the URL ", url.name,
-        #                       " to have a jumbotron element."]))
+            first_patient_name = tab_pane.find_element_by_xpath(".//table/tbody/tr[2]/td[1]/a")
+            self.assertEqual(first_patient_name.get_attribute("text"), "McNath, Frankie L.")
 
 
 # class ViewsExistTest(TestCase):
