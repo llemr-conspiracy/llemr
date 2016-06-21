@@ -189,29 +189,224 @@ class LiveTesting(StaticLiveServerTestCase):
                 msg=" ".join(["Expected the URL ", url.name,
                               " to have a jumbotron element."]))
     
-    def test_home_has_correct_patients(self):
-        # build a provider and log in
-        build_provider(username='timmy', password='password',
-                       roles=["Attending"])
-        self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        live_submit_login(self.selenium, 'timmy', 'password')
+class LiveTestPatientLists(StaticLiveServerTestCase):
+    fixtures = [BASIC_FIXTURE]
 
+    @classmethod
+    def setUpClass(cls):
+        super(LiveTestPatientLists, cls).setUpClass()
+        cls.selenium = WebDriver()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super(LiveTestPatientLists, cls).tearDownClass()
+
+    def setUp(self):
+        # build a provider and log in
+        build_provider(username='timmy', password='password', roles=["Attending"])
+        build_provider(username='timmy_coordinator', password='password', roles=["Coordinator"])
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(self.selenium, 'timmy_coordinator', 'password')
+
+        workupModels.ClinicType.objects.create(name="Basic Care Clinic")
+        workupModels.ClinicDate.objects.create(
+            clinic_type=workupModels.ClinicType.objects.all()[0],
+            clinic_date=now().date()+datetime.timedelta(days=1),
+            gcal_id="tmp")
+        workupModels.ClinicDate.objects.create(
+            clinic_type=workupModels.ClinicType.objects.all()[0],
+            clinic_date=now().date()-datetime.timedelta(days=1),
+            gcal_id="tmp")
+        workupModels.ClinicDate.objects.create(
+            clinic_type=workupModels.ClinicType.objects.all()[0],
+            clinic_date=now().date()-datetime.timedelta(days=5),
+            gcal_id="tmp")
+        # log_in_provider(self.client, build_provider(["Attending"]))
+
+        pt1 = models.Patient.objects.get(pk=1)
+        pt1.toggle_active_status()
+        pt1.save()
+
+        pt2 = models.Patient.objects.create(
+            first_name="Juggie",
+            last_name="Brodeltein",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=models.Gender.objects.all()[1],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=models.ContactMethod.objects.all()[0],
+        )
+
+        pt3 = models.Patient.objects.create(
+            first_name="Asdf",
+            last_name="Lkjh",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=models.Gender.objects.all()[0],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=models.ContactMethod.objects.all()[0],
+        )
+
+        pt4 = models.Patient.objects.create(
+            first_name="No",
+            last_name="Action",
+            middle_name="Item",
+            phone='+12 345 678 9000',
+            gender=models.Gender.objects.all()[0],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=models.ContactMethod.objects.all()[0],
+        )
+
+        # Give pt2 a workup one day later.
+        workupModels.Workup.objects.create(
+            clinic_day=workupModels.ClinicDate.objects.all()[0], # one day later
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt2)
+
+        # Give pt3 a workup one day ago.
+        workupModels.Workup.objects.create(
+            clinic_day=workupModels.ClinicDate.objects.all()[1], # one day ago
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt3)
+
+
+        # Give pt1 a signed workup five days ago.
+        workupModels.Workup.objects.create(
+            clinic_day=workupModels.ClinicDate.objects.all()[2], # five days ago
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt1,
+            signer=models.Provider.objects.all().filter(
+            clinical_roles=models.ProviderType.objects.all().filter(
+                short_name="Attending")[0])[0])
+
+        # make pt1 have and AI due tomorrow
+        pt1_ai = models.ActionItem.objects.create(
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            instruction=models.ActionInstruction.objects.all()[0],
+            due_date=now().date()+datetime.timedelta(days=1),
+            comments="",
+            patient=pt1)
+
+        # make pt2 have an AI due yesterday
+        pt2_ai = models.ActionItem.objects.create(
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            instruction=models.ActionInstruction.objects.all()[0],
+            due_date=now().date()-datetime.timedelta(days=1),
+            comments="",
+            patient=pt2)
+
+        # make pt3 have an AI that during the test will be marked done
+        pt3_ai = models.ActionItem.objects.create(
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            instruction=models.ActionInstruction.objects.all()[0],
+            due_date=now().date()-datetime.timedelta(days=15),
+            comments="",
+            patient=pt3)
+
+    def test_all_patients_correct_order(self):
         self.selenium.get('%s%s' % (self.live_server_url,
                                             reverse("all-patients"))) # causing a broken pipe error
         self.assertEquals(self.selenium.current_url,
                                   '%s%s' % (self.live_server_url,
                                             reverse('all-patients')))
 
+        # change to wait until four elements (or as appropriate) are found
+        # might need to write own expectedconditions for this
+        # cos really only need to check that the four sub-divs under 'patient-data' are present,
+        # because DOM is appended child-up
         WebDriverWait(self.selenium, 60).until(
         EC.presence_of_element_located((By.XPATH, "//div[@id='patient-data']/div/table/tbody/tr/td/a")))
 
-        list_tab_pane_elements = self.selenium.find_elements_by_xpath(
-                "//div[@id='patient-data']/div")
 
-        for tab_pane in list_tab_pane_elements:
-            first_patient_name = tab_pane.find_element_by_xpath(".//table/tbody/tr[2]/td[1]/a")
-            self.assertEqual(first_patient_name.get_attribute("text"), "McNath, Frankie L.")
+        # test ordered by last name
+        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='ptlast']/table/tbody") # this line does throw an error if the id-ed element does not exist
+        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        second_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[3]/td[1]/a").get_attribute("text")
+        self.assertLessEqual(first_patient_name,second_patient_name)
+        self.assertEqual(first_patient_name, "Action, No I.")
 
+        # test order by latest activity
+        # more difficult to test attributes, I'm just testing that the first name is correct
+        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='ptlatest']/table/tbody")
+        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")        
+
+    # looks like the setup happens twice, which isn't what I want?
+    # same applies for API tests. We don't want to make the same four patients over and over agin
+    def test_home_correct_order(self):
+        self.selenium.get('%s%s' % (self.live_server_url,
+                                            reverse("home")))
+        self.assertEquals(self.selenium.current_url,
+                                  '%s%s' % (self.live_server_url,
+                                            reverse('home')))
+        WebDriverWait(self.selenium, 60).until(
+        EC.presence_of_element_located((By.XPATH, "//div[@id='patient-data']/div/table/tbody/tr/td/a")))
+
+        # test active ai
+        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='activeai']/table/tbody")
+        num_activeai_table_rows = len(pt_last_tbody.find_elements_by_xpath(".//tr"))
+        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        self.assertEqual(num_activeai_table_rows, 3) # 2 patients + 1 heading   
+        self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
+
+        # test pending (inactive) ai
+        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='pendingai']/table/tbody")
+        num_activeai_table_rows = len(pt_last_tbody.find_elements_by_xpath(".//tr"))
+        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        self.assertEqual(num_activeai_table_rows, 2) # 1 patient + 1 heading   
+        self.assertEqual(first_patient_name, "McNath, Frankie L.")
+
+        # test unsigned workup
+        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='unsignedwu']/table/tbody")
+        num_activeai_table_rows = len(pt_last_tbody.find_elements_by_xpath(".//tr"))
+        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        self.assertEqual(num_activeai_table_rows, 3) # 2 patients + 1 heading   
+        self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
+
+        # test active patients
+        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='activept']/table/tbody")
+        num_activeai_table_rows = len(pt_last_tbody.find_elements_by_xpath(".//tr"))
+        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        self.assertEqual(num_activeai_table_rows, 2) # 1 patient + 1 heading   
+        self.assertEqual(first_patient_name, "McNath, Frankie L.")
 
 class ViewsExistTest(TestCase):
     fixtures = [BASIC_FIXTURE]
