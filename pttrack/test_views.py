@@ -352,6 +352,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         # might need to write own expectedconditions for this
         # cos really only need to check that the four sub-divs under 'patient-data' are present,
         # because DOM is appended child-up
+        # test failing on circleCI?
         WebDriverWait(self.selenium, 60).until(
         EC.presence_of_element_located((By.XPATH, "//div[@id='patient-data']/div/table/tbody/tr/td/a")))
 
