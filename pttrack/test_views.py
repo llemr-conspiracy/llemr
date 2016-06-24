@@ -15,6 +15,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from .  import models
 from workup import models as workupModels
+import json
 
 # pylint: disable=invalid-name
 # Whatever, whatever. I name them what I want.
@@ -93,6 +94,16 @@ def live_submit_login(selenium, username, password):
     password_input = selenium.find_element_by_name("password")
     password_input.send_keys(password)
     selenium.find_element_by_xpath('//button[@type="submit"]').click()
+
+def get_url_pt_list_identifiers(self, url):
+    response = self.client.get(url)
+    self.assertEqual(response.status_code, 200)
+
+    list_identifiers = []
+    pt_lists = json.loads(response.context['lists'])
+    for pt_list in pt_lists:
+        list_identifiers.append(pt_list['identifier'])
+    return list_identifiers
 
 class LiveTesting(StaticLiveServerTestCase):
     fixtures = [BASIC_FIXTURE]
@@ -352,8 +363,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         # might need to write own expectedconditions for this
         # cos really only need to check that the four sub-divs under 'patient-data' are present,
         # because DOM is appended child-up
-        # test failing on circleCI?
-        WebDriverWait(self.selenium, 60).until(
+        WebDriverWait(self.selenium, 120).until(
         EC.presence_of_element_located((By.XPATH, "//div[@id='patient-data']/div/table/tbody/tr/td/a")))
 
 
@@ -370,8 +380,6 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
         self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")        
 
-    # looks like the setup happens twice, which isn't what I want?
-    # same applies for API tests. We don't want to make the same four patients over and over agin
     def test_home_correct_order(self):
         self.selenium.get('%s%s' % (self.live_server_url,
                                             reverse("home")))
@@ -620,7 +628,23 @@ class ProviderCreateTest(TestCase):
         response = self.client.get(final_url)
         self.assertEquals(response.status_code, 200)
 
+class ProviderTypeTest(TestCase):
+    fixtures = [BASIC_FIXTURE]
 
+    def test_home_pt_list_types(self):
+        url = reverse("home")
+
+        log_in_provider(self.client, build_provider(["Coordinator"]))
+        self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept','activeai','pendingai','unsignedwu'])
+
+        log_in_provider(self.client, build_provider(["Attending"]))
+        self.assertEqual(get_url_pt_list_identifiers(self, url), ['unsignedwu','activept'])  
+
+        log_in_provider(self.client, build_provider(["Clinical"]))
+        self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept'])
+
+        log_in_provider(self.client, build_provider(["Preclinical"]))
+        self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept'])
 
 class IntakeTest(TestCase):
     fixtures = [BASIC_FIXTURE]
@@ -705,91 +729,6 @@ class ActionItemTest(TestCase):
 
     def setUp(self):
         log_in_provider(self.client, build_provider(["Coordinator"]))
-
-    # Zipped_list no longer used. Replaced by tests in API module        
-    # def test_home_has_correct_patients(self):
-    #     pt1 = models.Patient.objects.get(pk=1)
-
-    #     # we need > 1 pt, because one will have an active AI and one won't
-    #     pt2 = models.Patient.objects.create(
-    #         first_name="Juggie",
-    #         last_name="Brodeltein",
-    #         middle_name="Bayer",
-    #         phone='+49 178 236 5288',
-    #         gender=models.Gender.objects.all()[1],
-    #         address='Schulstrasse 9',
-    #         city='Munich',
-    #         state='BA',
-    #         zip_code='63108',
-    #         pcp_preferred_zip='63018',
-    #         date_of_birth=datetime.date(1990, 01, 01),
-    #         patient_comfortable_with_english=False,
-    #         preferred_contact_method=models.ContactMethod.objects.all()[0],
-    #     )
-
-    #     pt3 = models.Patient.objects.create(
-    #         first_name="asdf",
-    #         last_name="lkjh",
-    #         middle_name="Bayer",
-    #         phone='+49 178 236 5288',
-    #         gender=models.Gender.objects.all()[0],
-    #         address='Schulstrasse 9',
-    #         city='Munich',
-    #         state='BA',
-    #         zip_code='63108',
-    #         pcp_preferred_zip='63018',
-    #         date_of_birth=datetime.date(1990, 01, 01),
-    #         patient_comfortable_with_english=False,
-    #         preferred_contact_method=models.ContactMethod.objects.all()[0],
-    #     )
-
-    #     # make pt1 have and AI due tomorrow
-    #     pt1_ai = models.ActionItem.objects.create(
-    #         author=models.Provider.objects.all()[0],
-    #         author_type=models.ProviderType.objects.all()[0],
-    #         instruction=models.ActionInstruction.objects.all()[0],
-    #         due_date=now().date()+datetime.timedelta(days=1),
-    #         comments="",
-    #         patient=pt1)
-
-    #     # make pt2 have an AI due yesterday
-    #     pt2_ai = models.ActionItem.objects.create(
-    #         author=models.Provider.objects.all()[0],
-    #         author_type=models.ProviderType.objects.all()[0],
-    #         instruction=models.ActionInstruction.objects.all()[0],
-    #         due_date=now().date()-datetime.timedelta(days=1),
-    #         comments="",
-    #         patient=pt2)
-
-    #     # make pt3 have an AI that's done
-    #     pt3_ai = models.ActionItem.objects.create(
-    #         author=models.Provider.objects.all()[0],
-    #         author_type=models.ProviderType.objects.all()[0],
-    #         instruction=models.ActionInstruction.objects.all()[0],
-    #         due_date=now().date()-datetime.timedelta(days=15),
-    #         comments="",
-    #         patient=pt3)
-
-    #     url = reverse("home")
-
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, 200)
-
-    #     #pt2, pt3 should be present since pt 1 is not past due
-    #     self.assertEqual(len(response.context['zipped_list'][1][1]), 2)
-    #     self.assertIn(pt2, response.context['zipped_list'][1][1])
-    #     self.assertIn(pt3, response.context['zipped_list'][1][1])
-
-    #     pt3_ai.mark_done(models.Provider.objects.all()[0])
-    #     pt3_ai.save()
-
-    #     response = self.client.get(url)
-    #     self.assertEqual(response.status_code, 200)
-
-    #     # now only pt2 should be present, since only pt3's AI is now done
-    #     self.assertEqual(len(response.context['zipped_list'][1][1]), 1)
-    #     self.assertIn(pt2, response.context['zipped_list'][1][1])
-
 
     def test_action_item_urls(self):
         pt = models.Patient.objects.all()[0]
