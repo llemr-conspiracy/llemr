@@ -359,13 +359,9 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
                                   '%s%s' % (self.live_server_url,
                                             reverse('all-patients')))
 
-        # change to wait until four elements (or as appropriate) are found
-        # might need to write own expectedconditions for this
-        # cos really only need to check that the four sub-divs under 'patient-data' are present,
-        # because DOM is appended child-up
-        WebDriverWait(self.selenium, 120).until(
-        EC.presence_of_element_located((By.XPATH, "//div[@id='patient-data']/div/table/tbody/tr/td/a")))
-
+        # unsure how to test for multiple elements/a certain number of elements
+        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlast")))
+        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlatest")))
 
         # test ordered by last name
         pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='ptlast']/table/tbody") # this line does throw an error if the id-ed element does not exist
@@ -386,8 +382,12 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         self.assertEquals(self.selenium.current_url,
                                   '%s%s' % (self.live_server_url,
                                             reverse('home')))
-        WebDriverWait(self.selenium, 60).until(
-        EC.presence_of_element_located((By.XPATH, "//div[@id='patient-data']/div/table/tbody/tr/td/a")))
+        
+        # unsure how to test for multiple elements/a certain number of elements
+        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "activeai")))
+        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "pendingai")))
+        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "unsignedwu")))
+        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "activept")))
 
         # test active ai
         pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='activeai']/table/tbody")
