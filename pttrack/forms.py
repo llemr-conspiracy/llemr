@@ -72,7 +72,7 @@ class ProviderForm(ModelForm):
 
     class Meta:
         model = models.Provider
-        exclude = ['associated_user']
+        exclude = ['associated_user', 'updated']
         widgets = {'referral_location': CheckboxSelectMultiple,
                    'referral_type': CheckboxSelectMultiple}
 

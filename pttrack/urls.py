@@ -35,9 +35,6 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
     url(r'^patient/activate_home/(?P<pk>[0-9]+)$',
         views.patient_activate_home,
         name='patient-activate-home'),
-    # url(r'^pt_list/$',
-    #     views.PtList.as_view(),
-    #     name='pt_list_api'),
 
     # PROVIDERS
     url(r'^new-provider/$',
@@ -46,6 +43,9 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
     url(r'^choose-role/$',
         views.choose_clintype,
         name='choose-clintype'),
+    url(r'^provider-update/(?P<pk>[0-9]+)$',
+        views.ProviderUpdate.as_view(),
+        name='provider-update'),
 
     # ACTION ITEMS
     url(r'^(?P<pt_id>[0-9]+)/action-item/$',
