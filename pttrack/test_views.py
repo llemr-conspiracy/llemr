@@ -822,6 +822,7 @@ class ProviderUpdateTest(TestCase):
 
         initial_num_providers = models.Provider.objects.count()
         provider_pk = provider.pk
+        self.assertEqual(provider.needs_updating, True)
 
         form_data = {
             'first_name': "John",
@@ -840,7 +841,7 @@ class ProviderUpdateTest(TestCase):
         roles = [role.short_name for role in getattr(provider,'clinical_roles').all()]
         self.assertEqual(roles, ['Clinical'])
         self.assertEqual(getattr(provider, 'phone'), '8888888888')
-        self.assertEqual(getattr(provider, 'needs_update'), True)
+        self.assertEqual(getattr(provider, 'needs_updating'), False)
 
 
         

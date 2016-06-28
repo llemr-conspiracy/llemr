@@ -167,8 +167,8 @@ class ProviderUpdate(UpdateView):
         provider = form.save(commit=False)
             # provider = self.object
 
-        provider.needs_update = False
-            # setattr(provider, 'needs_update', False)
+        provider.needs_updating = False
+            # setattr(provider, 'needs_updating', False)
         # provider.associated_user = self.request.user
             # populate the User object with the email and name data from the Provider form
         user = provider.associated_user

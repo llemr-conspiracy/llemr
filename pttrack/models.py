@@ -311,7 +311,7 @@ class Provider(Person):
 
     clinical_roles = models.ManyToManyField(ProviderType)
 
-    needs_update = models.BooleanField(default=True)
+    needs_updating = models.BooleanField(default=True)
 
     history = HistoricalRecords()
 
