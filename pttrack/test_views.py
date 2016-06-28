@@ -9,8 +9,13 @@ from django.core.files import File
 # For live tests.
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from .  import models
+from workup import models as workupModels
+import json
 
 # pylint: disable=invalid-name
 # Whatever, whatever. I name them what I want.
@@ -89,6 +94,16 @@ def live_submit_login(selenium, username, password):
     password_input = selenium.find_element_by_name("password")
     password_input.send_keys(password)
     selenium.find_element_by_xpath('//button[@type="submit"]').click()
+
+def get_url_pt_list_identifiers(self, url):
+    response = self.client.get(url)
+    self.assertEqual(response.status_code, 200)
+
+    list_identifiers = []
+    pt_lists = json.loads(response.context['lists'])
+    for pt_list in pt_lists:
+        list_identifiers.append(pt_list['identifier'])
+    return list_identifiers
 
 class LiveTesting(StaticLiveServerTestCase):
     fixtures = [BASIC_FIXTURE]
@@ -184,6 +199,223 @@ class LiveTesting(StaticLiveServerTestCase):
                 len(jumbotron_elements), 0,
                 msg=" ".join(["Expected the URL ", url.name,
                               " to have a jumbotron element."]))
+    
+class LiveTestPatientLists(StaticLiveServerTestCase):
+    fixtures = [BASIC_FIXTURE]
+
+    @classmethod
+    def setUpClass(cls):
+        super(LiveTestPatientLists, cls).setUpClass()
+        cls.selenium = WebDriver()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super(LiveTestPatientLists, cls).tearDownClass()
+
+    def setUp(self):
+        # build a provider and log in
+        build_provider(username='timmy', password='password', roles=["Attending"])
+        build_provider(username='timmy_coordinator', password='password', roles=["Coordinator"])
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(self.selenium, 'timmy_coordinator', 'password')
+
+        workupModels.ClinicType.objects.create(name="Basic Care Clinic")
+        workupModels.ClinicDate.objects.create(
+            clinic_type=workupModels.ClinicType.objects.all()[0],
+            clinic_date=now().date()+datetime.timedelta(days=1),
+            gcal_id="tmp")
+        workupModels.ClinicDate.objects.create(
+            clinic_type=workupModels.ClinicType.objects.all()[0],
+            clinic_date=now().date()-datetime.timedelta(days=1),
+            gcal_id="tmp")
+        workupModels.ClinicDate.objects.create(
+            clinic_type=workupModels.ClinicType.objects.all()[0],
+            clinic_date=now().date()-datetime.timedelta(days=5),
+            gcal_id="tmp")
+        # log_in_provider(self.client, build_provider(["Attending"]))
+
+        pt1 = models.Patient.objects.get(pk=1)
+        pt1.toggle_active_status()
+        pt1.save()
+
+        pt2 = models.Patient.objects.create(
+            first_name="Juggie",
+            last_name="Brodeltein",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=models.Gender.objects.all()[1],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=models.ContactMethod.objects.all()[0],
+        )
+
+        pt3 = models.Patient.objects.create(
+            first_name="Asdf",
+            last_name="Lkjh",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=models.Gender.objects.all()[0],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=models.ContactMethod.objects.all()[0],
+        )
+
+        pt4 = models.Patient.objects.create(
+            first_name="No",
+            last_name="Action",
+            middle_name="Item",
+            phone='+12 345 678 9000',
+            gender=models.Gender.objects.all()[0],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=models.ContactMethod.objects.all()[0],
+        )
+
+        # Give pt2 a workup one day later.
+        workupModels.Workup.objects.create(
+            clinic_day=workupModels.ClinicDate.objects.all()[0], # one day later
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt2)
+
+        # Give pt3 a workup one day ago.
+        workupModels.Workup.objects.create(
+            clinic_day=workupModels.ClinicDate.objects.all()[1], # one day ago
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt3)
+
+
+        # Give pt1 a signed workup five days ago.
+        workupModels.Workup.objects.create(
+            clinic_day=workupModels.ClinicDate.objects.all()[2], # five days ago
+            chief_complaint="SOB",
+            diagnosis="MI",
+            HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
+            ros="", pe="", A_and_P="",
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            patient=pt1,
+            signer=models.Provider.objects.all().filter(
+            clinical_roles=models.ProviderType.objects.all().filter(
+                short_name="Attending")[0])[0])
+
+        # make pt1 have and AI due tomorrow
+        pt1_ai = models.ActionItem.objects.create(
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            instruction=models.ActionInstruction.objects.all()[0],
+            due_date=now().date()+datetime.timedelta(days=1),
+            comments="",
+            patient=pt1)
+
+        # make pt2 have an AI due yesterday
+        pt2_ai = models.ActionItem.objects.create(
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            instruction=models.ActionInstruction.objects.all()[0],
+            due_date=now().date()-datetime.timedelta(days=1),
+            comments="",
+            patient=pt2)
+
+        # make pt3 have an AI that during the test will be marked done
+        pt3_ai = models.ActionItem.objects.create(
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            instruction=models.ActionInstruction.objects.all()[0],
+            due_date=now().date()-datetime.timedelta(days=15),
+            comments="",
+            patient=pt3)
+
+    def test_all_patients_correct_order(self):
+        self.selenium.get('%s%s' % (self.live_server_url,
+                                            reverse("all-patients"))) # causing a broken pipe error
+        self.assertEquals(self.selenium.current_url,
+                                  '%s%s' % (self.live_server_url,
+                                            reverse('all-patients')))
+
+        # unsure how to test for multiple elements/a certain number of elements
+        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlast")))
+        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlatest")))
+
+        # test ordered by last name
+        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='ptlast']/table/tbody") # this line does throw an error if the id-ed element does not exist
+        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        second_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[3]/td[1]/a").get_attribute("text")
+        self.assertLessEqual(first_patient_name,second_patient_name)
+        self.assertEqual(first_patient_name, "Action, No I.")
+
+        # test order by latest activity
+        # more difficult to test attributes, I'm just testing that the first name is correct
+        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='ptlatest']/table/tbody")
+        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")        
+
+    def test_home_correct_order(self):
+        self.selenium.get('%s%s' % (self.live_server_url,
+                                            reverse("home")))
+        self.assertEquals(self.selenium.current_url,
+                                  '%s%s' % (self.live_server_url,
+                                            reverse('home')))
+        
+        # unsure how to test for multiple elements/a certain number of elements
+        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "activeai")))
+        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "pendingai")))
+        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "unsignedwu")))
+        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "activept")))
+
+        # test active ai
+        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='activeai']/table/tbody")
+        num_activeai_table_rows = len(pt_last_tbody.find_elements_by_xpath(".//tr"))
+        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        self.assertEqual(num_activeai_table_rows, 3) # 2 patients + 1 heading   
+        self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
+
+        # test pending (inactive) ai
+        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='pendingai']/table/tbody")
+        num_activeai_table_rows = len(pt_last_tbody.find_elements_by_xpath(".//tr"))
+        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        self.assertEqual(num_activeai_table_rows, 2) # 1 patient + 1 heading   
+        self.assertEqual(first_patient_name, "McNath, Frankie L.")
+
+        # test unsigned workup
+        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='unsignedwu']/table/tbody")
+        num_activeai_table_rows = len(pt_last_tbody.find_elements_by_xpath(".//tr"))
+        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        self.assertEqual(num_activeai_table_rows, 3) # 2 patients + 1 heading   
+        self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
+
+        # test active patients
+        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='activept']/table/tbody")
+        num_activeai_table_rows = len(pt_last_tbody.find_elements_by_xpath(".//tr"))
+        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        self.assertEqual(num_activeai_table_rows, 2) # 1 patient + 1 heading   
+        self.assertEqual(first_patient_name, "McNath, Frankie L.")
 
 class ViewsExistTest(TestCase):
     fixtures = [BASIC_FIXTURE]
@@ -396,7 +628,23 @@ class ProviderCreateTest(TestCase):
         response = self.client.get(final_url)
         self.assertEquals(response.status_code, 200)
 
+class ProviderTypeTest(TestCase):
+    fixtures = [BASIC_FIXTURE]
 
+    def test_home_pt_list_types(self):
+        url = reverse("home")
+
+        log_in_provider(self.client, build_provider(["Coordinator"]))
+        self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept','activeai','pendingai','unsignedwu'])
+
+        log_in_provider(self.client, build_provider(["Attending"]))
+        self.assertEqual(get_url_pt_list_identifiers(self, url), ['unsignedwu','activept'])  
+
+        log_in_provider(self.client, build_provider(["Clinical"]))
+        self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept'])
+
+        log_in_provider(self.client, build_provider(["Preclinical"]))
+        self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept'])
 
 class IntakeTest(TestCase):
     fixtures = [BASIC_FIXTURE]
@@ -482,90 +730,6 @@ class ActionItemTest(TestCase):
     def setUp(self):
         log_in_provider(self.client, build_provider(["Coordinator"]))
 
-    def test_home_has_correct_patients(self):
-        pt1 = models.Patient.objects.get(pk=1)
-
-        # we need > 1 pt, because one will have an active AI and one won't
-        pt2 = models.Patient.objects.create(
-            first_name="Juggie",
-            last_name="Brodeltein",
-            middle_name="Bayer",
-            phone='+49 178 236 5288',
-            gender=models.Gender.objects.all()[1],
-            address='Schulstrasse 9',
-            city='Munich',
-            state='BA',
-            zip_code='63108',
-            pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 01, 01),
-            patient_comfortable_with_english=False,
-            preferred_contact_method=models.ContactMethod.objects.all()[0],
-        )
-
-        pt3 = models.Patient.objects.create(
-            first_name="asdf",
-            last_name="lkjh",
-            middle_name="Bayer",
-            phone='+49 178 236 5288',
-            gender=models.Gender.objects.all()[0],
-            address='Schulstrasse 9',
-            city='Munich',
-            state='BA',
-            zip_code='63108',
-            pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 01, 01),
-            patient_comfortable_with_english=False,
-            preferred_contact_method=models.ContactMethod.objects.all()[0],
-        )
-
-        # make pt1 have and AI due tomorrow
-        pt1_ai = models.ActionItem.objects.create(
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            instruction=models.ActionInstruction.objects.all()[0],
-            due_date=now().date()+datetime.timedelta(days=1),
-            comments="",
-            patient=pt1)
-
-        # make pt2 have an AI due yesterday
-        pt2_ai = models.ActionItem.objects.create(
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            instruction=models.ActionInstruction.objects.all()[0],
-            due_date=now().date()-datetime.timedelta(days=1),
-            comments="",
-            patient=pt2)
-
-        # make pt3 have an AI that's done
-        pt3_ai = models.ActionItem.objects.create(
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            instruction=models.ActionInstruction.objects.all()[0],
-            due_date=now().date()-datetime.timedelta(days=15),
-            comments="",
-            patient=pt3)
-
-        url = reverse("home")
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        #pt2, pt3 should be present since pt 1 is not past due
-        self.assertEqual(len(response.context['zipped_list'][1][1]), 2)
-        self.assertIn(pt2, response.context['zipped_list'][1][1])
-        self.assertIn(pt3, response.context['zipped_list'][1][1])
-
-        pt3_ai.mark_done(models.Provider.objects.all()[0])
-        pt3_ai.save()
-
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        # now only pt2 should be present, since only pt3's AI is now done
-        self.assertEqual(len(response.context['zipped_list'][1][1]), 1)
-        self.assertIn(pt2, response.context['zipped_list'][1][1])
-
-
     def test_action_item_urls(self):
         pt = models.Patient.objects.all()[0]
 
@@ -643,3 +807,41 @@ class ActionItemTest(TestCase):
                               str(getattr(new_ai, param)))
 
         note_check(self, new_ai, self.client, 1)
+
+class ProviderUpdateTest(TestCase):
+    '''
+    # FIXME comments
+    Test tha provider is updated, that no extra provider is created
+    '''
+    fixtures = [BASIC_FIXTURE]
+
+    # this tests posting. need to test getting
+    def test_set_true(self):
+        provider = build_provider(username='jrporter', password='password', roles=['Preclinical'])
+        log_in_provider(self.client, provider)
+
+        initial_num_providers = models.Provider.objects.count()
+        provider_pk = provider.pk
+        self.assertEqual(provider.needs_updating, True)
+
+        form_data = {
+            'first_name': "John",
+            'last_name': "James",
+            'phone': "8888888888",
+            'languages': models.Language.objects.all()[0].pk,
+            'gender': models.Gender.objects.all()[0].pk,
+            'provider_email': "jj@wustl.edu",
+            'clinical_roles': ['Clinical'],
+        }
+        self.client.post(reverse('provider-update', args=(provider_pk,)), form_data)
+
+        self.assertEqual(models.Provider.objects.count(), initial_num_providers)
+        provider = models.Provider.objects.get(pk=provider_pk)
+
+        roles = [role.short_name for role in getattr(provider,'clinical_roles').all()]
+        self.assertEqual(roles, ['Clinical'])
+        self.assertEqual(getattr(provider, 'phone'), '8888888888')
+        self.assertEqual(getattr(provider, 'needs_updating'), False)
+
+
+        

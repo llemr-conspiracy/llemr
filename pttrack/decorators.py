@@ -59,7 +59,7 @@ def provider_required(func):
 
     func = session_passes_test(clintype_set,
                                fail_url=reverse_lazy('choose-clintype'))(func)
-
+    # put here
     func = user_passes_test(provider_exists,
                             login_url=reverse_lazy('new-provider'))(func)
 

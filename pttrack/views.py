@@ -7,6 +7,8 @@ import django.utils.timezone
 
 from . import models as mymodels
 from . import forms as myforms
+from workup import models as workupmodels
+import json
 
 import datetime
 
@@ -126,7 +128,6 @@ class ProviderCreate(FormView):
         context['next'] = self.request.GET.get('next')
         return context
 
-
 class ActionItemCreate(NoteFormView):
     '''A view for creating ActionItems using the ActionItemForm.'''
     template_name = 'pttrack/form_submission.html'
@@ -157,6 +158,31 @@ class ActionItemUpdate(NoteUpdate):
         pt = self.object.patient
         return reverse("patient-detail", args=(pt.id, ))
 
+class ProviderUpdate(UpdateView):
+    template_name = 'pttrack/provider-update.html'
+    model = mymodels.Provider
+    form_class = myforms.ProviderForm
+
+    def form_valid(self, form):
+        provider = form.save(commit=False)
+            # provider = self.object
+
+        provider.needs_updating = False
+            # setattr(provider, 'needs_updating', False)
+        # provider.associated_user = self.request.user
+            # populate the User object with the email and name data from the Provider form
+        user = provider.associated_user
+        user.email = form.cleaned_data['provider_email']
+        user.first_name = provider.first_name
+        user.last_name = provider.last_name            
+        user.save()
+        provider.save() # this creates a new provider
+        form.save_m2m()
+
+        # return HttpResponseRedirect(self.request.GET['next'])
+        # FIXME, re-instantiate above
+        return HttpResponseRedirect(reverse("home")) #FIXME
+
 class PatientUpdate(UpdateView):
     template_name = 'pttrack/patient-update.html'
     model = mymodels.Patient
@@ -171,7 +197,6 @@ class PatientUpdate(UpdateView):
         pt.save()
         return HttpResponseRedirect(reverse("patient-detail",  
                                             args=(pt.id,)))
-
 
 class PatientCreate(FormView):
     '''A view for creating a new patient using PatientForm.'''
@@ -254,58 +279,37 @@ def choose_clintype(request):
 
 def home_page(request):
 
-    #TODO wow so this is messed up. This should be a circular dependency...
-    from workup.models import Workup
-
     active_provider_type = get_object_or_404(mymodels.ProviderType,
                                              pk=request.session['clintype_pk'])
     if active_provider_type.signs_charts:
         
-        wu_list_unsigned = Workup.objects.filter(signer__isnull=True).select_related('patient')
-        pt_list_unsigned = list(set([wu.patient for wu in wu_list_unsigned]))
-        pt_list_unsigned.sort(key = lambda pt: pt.last_name)
-
-        pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
-        
         title = "Attending Tasks"
-        zipped_list = zip(["Patients with Unsigned Workups", "Active Patients"],
-                            [pt_list_unsigned, pt_list_active],
-                            ["unsignedwu", "activept"],
-                            [True, False])
+
+        lists = [{'url':'filter=unsigned_workup', 'title':"Unsigned Workups", 'identifier':'unsignedwu','active':True},
+        {'url':'filter=active', 'title':"Active Patients", 'identifier':'activept', 'active':False}]
 
     elif active_provider_type.staff_view:
-        
-        pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
-        ai_list_active = mymodels.ActionItem.objects.filter(due_date__lte=django.utils.timezone.now().date())
-        pt_list_ai_active = list(set([ai.patient for ai in ai_list_active if not ai.done()]))
-
-        ai_list_inactive = mymodels.ActionItem.objects.filter(due_date__gt=django.utils.timezone.now().date()).order_by('due_date')
-        pt_list_ai_inactive = list(set([ai.patient for ai in ai_list_inactive if not ai.done()]))
-        pt_list_ai_inactive.sort(key = lambda pt: pt.inactive_action_items()[-1].due_date)
-
-        wu_list_unsigned = Workup.objects.filter(signer__isnull=True).select_related('patient')
-        pt_list_unsigned = list(set([wu.patient for wu in wu_list_unsigned]))
-        pt_list_unsigned.sort(key = lambda pt: pt.last_name)
-
+ 
         title = "Coordinator Tasks"
-        zipped_list = zip(["Active Patients", "Active Action Items", "Pending Action Items", "Unsigned Workups"], 
-                            [pt_list_active, pt_list_ai_active, pt_list_ai_inactive, pt_list_unsigned],
-                            ["activept", "activeai", "pendingai", "unsignedwu"],
-                            [True, False, False, False])
+ 
+        lists = [{'url':'filter=active', 'title':"Active Patients", 'identifier':'activept', 'active':True},
+        {'url':'filter=ai_active', 'title':"Active Action Items", 'identifier':'activeai', 'active':False},
+        {'url':'filter=ai_inactive', 'title':"Pending Action Items", 'identifier':'pendingai', 'active':False},
+        {'url':'filter=unsigned_workup', 'title':"Unsigned Workups", 'identifier':'unsignedwu', 'active':False}]
 
     else:
-        pt_list_active = mymodels.Patient.objects.filter(needs_workup__exact=True).order_by('last_name')
 
         title = "Active Patients"
-        zipped_list = zip(["Active Patients"],
-                        [pt_list_active],
-                        ["activept"],
-                        [True])
+
+        lists = [{'url':'filter=ai_active', 'title':"Active Patients", 'identifier':'activept', 'active':True}]
+
+    api_url = reverse('pt_list_api')[:-1] + '.json/?' # remove last '/' before adding because there no '/' between /api/pt_list and .json, but reverse generates '/api/pt_list/'
 
     return render(request,
                   'pttrack/patient_list.html',
-                  {'zipped_list': zipped_list,
-                    'title': title})
+                  {'lists': json.dumps(lists),
+                    'title': title,
+                    'api_url': api_url})
 
 def patient_detail(request, pk):
 
@@ -338,34 +342,23 @@ def phone_directory(request):
 
 
 def all_patients(request):
-    pt_list_last = list(mymodels.Patient.objects.all().order_by('last_name'))
-    pt_list_first = list(mymodels.Patient.objects.all().order_by('first_name'))
-    pt_list_latest = list(mymodels.Patient.objects.all())
 
-    def bylatestKey(pt):
-        latestwu = pt.latest_workup()
-        if latestwu == None:
-            latestdate = pt.history.last().history_date.date()
-        else:
-            latestdate = latestwu.clinic_day.clinic_date
-        return latestdate
+    lists = [{'url':'sort=last_name', 'title':"Alphabetized by Last Name", 'identifier':'ptlast', 'active':False},
+     {'url':'sort=latest_workup', 'title':"Ordered by Latest Activity", 'identifier':'ptlatest', 'active':True}]
 
-    pt_list_latest.sort(key = bylatestKey, reverse=True)
+    api_url = reverse('pt_list_api')[:-1] + '.json/?' # remove last '/' before adding because there no '/' between /api/pt_list and .json, but reverse generates '/api/pt_list/'
 
-    zipped_list = zip(["Alphabetized by Last Name", "Ordered by Latest Activity"],
-                        [pt_list_last, pt_list_latest],
-                        ['ptlast', 'ptlatest'],
-                        [False, True])
     return render(request,
                   'pttrack/patient_list.html',
-                  {'zipped_list': zipped_list,
-                    'title': "All Patients"})
+                  {'lists': json.dumps(lists),
+                    'title': "All Patients",
+                    'api_url': api_url})
 
 
 def patient_activate_detail(request, pk):
     pt = get_object_or_404(mymodels.Patient, pk=pk)
 
-    pt.change_active_status()
+    pt.toggle_active_status()
 
     pt.save()
 
@@ -374,7 +367,7 @@ def patient_activate_detail(request, pk):
 def patient_activate_home(request, pk):
     pt = get_object_or_404(mymodels.Patient, pk=pk)
 
-    pt.change_active_status()
+    pt.toggle_active_status()
 
     pt.save()
 
@@ -388,10 +381,10 @@ def done_action_item(request, ai_id):
     return HttpResponseRedirect(reverse("followup-choice",
                                         args=(ai.patient.pk,)))
 
-
 def reset_action_item(request, ai_id):
     ai = get_object_or_404(mymodels.ActionItem, pk=ai_id)
     ai.clear_done()
     ai.save()
     return HttpResponseRedirect(reverse("patient-detail",
                                         args=(ai.patient.id,)))
+
