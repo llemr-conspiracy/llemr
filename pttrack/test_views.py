@@ -811,6 +811,7 @@ class ActionItemTest(TestCase):
 class ProviderUpdateTest(TestCase):
     '''
     # FIXME comments
+    Test tha provider is updated, that no extra provider is created
     '''
     fixtures = [BASIC_FIXTURE]
 
@@ -819,8 +820,8 @@ class ProviderUpdateTest(TestCase):
         provider = build_provider(username='jrporter', password='password', roles=['Preclinical'])
         log_in_provider(self.client, provider)
 
-        # want to get, edit, post, assert that edited
-        # response = self.client.get(reverse('provider-update', args=(provider.pk,)))
+        initial_num_providers = models.Provider.objects.count()
+        provider_pk = provider.pk
 
         form_data = {
             'first_name': "John",
@@ -831,164 +832,15 @@ class ProviderUpdateTest(TestCase):
             'provider_email': "jj@wustl.edu",
             'clinical_roles': ['Clinical'],
         }
+        self.client.post(reverse('provider-update', args=(provider_pk,)), form_data)
 
-        # provider.clinical_roles = ['Clinical'] # this isn't testing that it works. this alone, without posting should change the clinical_role
+        self.assertEqual(models.Provider.objects.count(), initial_num_providers)
+        provider = models.Provider.objects.get(pk=provider_pk)
 
-        # response = self.client.get(reverse('provider-update', args=(provider.pk,)))
+        roles = [role.short_name for role in getattr(provider,'clinical_roles').all()]
+        self.assertEqual(roles, ['Clinical'])
+        self.assertEqual(getattr(provider, 'phone'), '8888888888')
+        self.assertEqual(getattr(provider, 'needs_update'), True)
 
-        # self.assertEqual(response, 'hi')
 
-        response = self.client.post(reverse('provider-update', args=(provider.pk,)), form_data)
-
-        # self.assertEqual(models.Provider.objects.all()[0].clinical_roles, ['Clinical'])
-
-        # Not sure a better way to do this... been formatting statements...
-        roles = []
-        for role in getattr(provider,'clinical_roles').all():
-            roles.append(role.short_name)
-
-        self.assertEqual(roles, ['Clinical']) # passes despite phone number failing
-        # self.assertEqual(list(getattr(provider,'clinical_roles').all()), ['Clinical'])
-        # self.assertEqual(getattr(provider,'clinical_roles'), ['Clinical'])
         
-        self.assertEqual(getattr(provider, 'phone'), '8888888888') # fails, is the default phone number. why??
-        self.assertEqual(getattr(provider, 'first_name'), 'John')
-
-#             self.assertEquals(getattr(new_provider, name),
-#                               getattr(new_provider.associated_user, name))
-
-        # def test_ssn_update(self):
-        # '''SSNs given without hypens should be automatically hypenated.'''
-
-        # submitted_pt = self.valid_pt_dict
-        # submitted_pt['ssn'] = "123456789"
-
-        # response = self.client.post(reverse('intake'), submitted_pt)
-
-        # new_pt = list(models.Patient.objects.all())[-1]
-
-        # response = self.client.post(reverse('patient-update', args=(new_pt.pk,)), submitted_pt)
-        # self.assertEqual(response.status_code, 302)
-
-        # def test_workup_update(self):
-        # '''
-        # Updating should be possible always for attendings, only without
-        # attestation for non-attendings.
-        # '''
-        
-        # #TODO: pull all these Workup creations into the setup function.
-        # wu = models.Workup.objects.create(
-        #     clinic_day=models.ClinicDate.objects.all()[0],
-        #     chief_complaint="SOB",
-        #     diagnosis="MI",
-        #     HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
-        #     ros="", pe="", A_and_P="",
-        #     author=Provider.objects.all()[0],
-        #     author_type=ProviderType.objects.all()[0],
-        #     patient=Patient.objects.all()[0])
-
-        # # if the wu is unsigned, all can access update.
-        # for role in ["Preclinical", "Clinical", "Coordinator", "Attending"]:
-        #     log_in_provider(self.client, build_provider([role]))
-        #     response = self.client.get(reverse('workup-update', args=(wu.id,)))
-        #     self.assertEqual(response.status_code, 200)
-
-        # wu.sign(build_provider(["Attending"]).associated_user)
-        # wu.save()
-
-        # #nonattesting cannot access
-        # for role in ["Preclinical", "Clinical", "Coordinator"]:
-        #     log_in_provider(self.client, build_provider([role]))
-        #     response = self.client.get(reverse('workup-update', args=(wu.id,)))
-        #     self.assertRedirects(response, reverse('workup', args=(wu.id,)))
-
-        # #attesting can
-        # log_in_provider(self.client, build_provider(["Attending"]))
-        # response = self.client.get(reverse('workup-update', args=(wu.id,)))
-        # self.assertEqual(response.status_code, 200)
-
-        # test redirect
-
-        # provider = build_provider(username='jrporter', password='password')
-        # self.assertEqual(provider.updated, False)
-
-        # provider.updated = True
-        # provider.save()
-
-        # self.assertEqual(provider.updated, True)
-
-        # response = self.client.get(url)
-        # self.assertEqual(response.status_code, 200)
-
-        # list_identifiers = []
-        # pt_lists = json.loads(response.context['lists'])
-        # for pt_list in pt_lists:
-        #     list_identifiers.append(pt_list['identifier'])
-        # return list_identifiers
-
-# fixtures = [BASIC_FIXTURE]
-
-#     def setUp(self):
-#         log_in_provider(self.client, build_provider())
-# '''Verify that, in the absence of a provider, a provider is created,
-#         and that it is created correctly.'''
-
-#         final_url = reverse('all-patients')
-
-#         # verify: no provider -> create provider
-#         models.Provider.objects.all().delete()
-#         response = self.client.get(final_url)
-#         final_response_url = response.url
-#         self.assertRedirects(response, reverse('new-provider')+'?next='+final_url)
-
-#         n_provider = len(models.Provider.objects.all())
-
-#         # The data submitted by a User when creating the Provider.
-#         form_data = {
-#             'first_name': "John",
-#             'last_name': "James",
-#             'phone': "8888888888",
-#             'languages': models.Language.objects.all()[0].pk,
-#             'gender': models.Gender.objects.all()[0].pk,
-#             'provider_email': "jj@wustl.edu",
-#             'clinical_roles': models.ProviderType.objects.all()[0].pk,
-#         }
-#         response = self.client.post(response.url, form_data)
-#         # redirects anywhere; don't care where (would be the 'next' parameter)
-#         self.assertEqual(response.status_code, 302)
-#         self.assertEquals(len(models.Provider.objects.all()), n_provider + 1)
-
-#         new_provider = list(models.Provider.objects.all())[-1]
-
-#         # verify the writethrough
-#         for name in ['first_name', 'last_name']:
-#             self.assertEquals(getattr(new_provider, name),
-#                               getattr(new_provider.associated_user, name))
-#         self.assertEquals(form_data['provider_email'],
-#                           new_provider.associated_user.email)
-
-#         # now verify we're redirected
-#         response = self.client.get(final_url)
-#         self.assertEquals(response.status_code, 200)
-
-#         # Test for proper resubmission behavior.
-#         n_provider = len(models.Provider.objects.all())
-#         WebDriver().back()
-
-#         # POST a form with new names
-#         form_data['first_name'] = 'Janet'
-#         form_data['last_name'] = 'Jane'
-#         response = self.client.post(final_response_url, form_data)
-
-#         # Verify redirect anywhere; don't care where (would be the 'next' parameter)
-#         self.assertEqual(response.status_code, 302)
-
-#         # Verify that number of providers has not changed, and user's names is still the original new_provider's names
-#         self.assertEquals(len(models.Provider.objects.all()), n_provider)
-#         for name in ['first_name', 'last_name']:
-#             self.assertEquals(getattr(new_provider, name),
-#                               getattr(new_provider.associated_user, name))
-
-#         # now verify we're redirected
-#         response = self.client.get(final_url)
-#         self.assertEquals(response.status_code, 200)

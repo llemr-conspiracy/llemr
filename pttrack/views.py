@@ -166,11 +166,9 @@ class ProviderUpdate(UpdateView):
     def form_valid(self, form):
         provider = form.save(commit=False)
             # provider = self.object
-            # check that user did not previously create a provider
-            # if not hasattr(self.request.user, 'provider'): don't want to do this, cos updating
 
-        provider.updated = True # doesn't seem to be working?
-            # setattr(provider, 'updated', True)
+        provider.needs_update = False
+            # setattr(provider, 'needs_update', False)
         # provider.associated_user = self.request.user
             # populate the User object with the email and name data from the Provider form
         user = provider.associated_user
@@ -178,12 +176,12 @@ class ProviderUpdate(UpdateView):
         user.first_name = provider.first_name
         user.last_name = provider.last_name            
         user.save()
-        provider.save()
+        provider.save() # this creates a new provider
         form.save_m2m()
 
         # return HttpResponseRedirect(self.request.GET['next'])
         # FIXME, re-instantiate above
-        return HttpResponseRedirect(reverse("home"))
+        return HttpResponseRedirect(reverse("home")) #FIXME
 
 class PatientUpdate(UpdateView):
     template_name = 'pttrack/patient-update.html'

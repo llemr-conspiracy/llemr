@@ -14,13 +14,13 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='historicalprovider',
-            name='updated',
-            field=models.BooleanField(default=False),
+            name='needs_update',
+            field=models.BooleanField(default=True),
         ),
         migrations.AddField(
             model_name='provider',
-            name='updated',
-            field=models.BooleanField(default=False),
+            name='needs_update',
+            field=models.BooleanField(default=True),
         ),
         migrations.AlterField(
             model_name='historicalpatient',
