@@ -842,6 +842,7 @@ class ProviderUpdateTest(TestCase):
         self.assertEqual(roles, ['Clinical'])
         self.assertEqual(getattr(provider, 'phone'), '8888888888')
         self.assertEqual(getattr(provider, 'needs_updating'), False)
+        # self.assertEqual(getattr(models.User.objects.all()[0], 'provider').needs_updating, 'bar')
 
 
         

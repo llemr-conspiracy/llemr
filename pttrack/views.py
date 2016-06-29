@@ -162,8 +162,10 @@ class ProviderUpdate(UpdateView):
     template_name = 'pttrack/provider-update.html'
     model = mymodels.Provider
     form_class = myforms.ProviderForm
+    # pk = request #HERE FOO
 
     def form_valid(self, form):
+        pk = self.request.user.provider.pk
         provider = form.save(commit=False)
             # provider = self.object
 
@@ -182,6 +184,19 @@ class ProviderUpdate(UpdateView):
         # return HttpResponseRedirect(self.request.GET['next'])
         # FIXME, re-instantiate above
         return HttpResponseRedirect(reverse("home")) #FIXME
+
+    # def get_context_data(self, **kwargs):
+
+    #     context = super(ProviderUpdate, self).get_context_data(**kwargs)
+
+    #     if 'pt_id' in self.kwargs:
+    #         Patient.objects.get(pk=self.kwargs['pt_id'])
+
+    #     return context
+
+# if 'pt_id' in self.kwargs:
+#             context['patient'] = Patient.objects.get(pk=self.kwargs['pt_id'])
+
 
 class PatientUpdate(UpdateView):
     template_name = 'pttrack/patient-update.html'

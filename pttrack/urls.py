@@ -43,7 +43,10 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
     url(r'^choose-role/$',
         views.choose_clintype,
         name='choose-clintype'),
-    url(r'^provider-update/(?P<pk>[0-9]+)$',
+    # url(r'^provider-update/(?P<pk>[0-9]+)$',
+    #     views.ProviderUpdate.as_view(),
+    #     name='provider-update'),
+    url(r'^provider-update/$',
         views.ProviderUpdate.as_view(),
         name='provider-update'),
 
@@ -85,7 +88,7 @@ def url_wrap(urls):
     '''
     wrapped_urls = []
     for u in urls:
-        if u.name in ['new-provider', 'choose-clintype']:
+        if u.name in ['new-provider', 'choose-clintype', 'provider-update']: #FIXME, provider-update should be separate
             # do not wrap in full regalia
             u._callback = login_required(u._callback)
         elif u.name in ['about']:

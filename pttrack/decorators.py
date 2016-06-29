@@ -17,6 +17,8 @@ def clintype_set(session):
     # print "Checking clintype", 'clintype_pk' in session
     return 'clintype_pk' in session
 
+def has_updated(user):
+    return (not getattr(user, 'provider').needs_updating)
 
 def session_passes_test(test_func, fail_url,
                         redirect_field_name=REDIRECT_FIELD_NAME):
@@ -60,6 +62,9 @@ def provider_required(func):
     func = session_passes_test(clintype_set,
                                fail_url=reverse_lazy('choose-clintype'))(func)
     # put here
+    func = user_passes_test(has_updated,
+                            login_url=reverse_lazy('provider-update'))(func)
+
     func = user_passes_test(provider_exists,
                             login_url=reverse_lazy('new-provider'))(func)
 
