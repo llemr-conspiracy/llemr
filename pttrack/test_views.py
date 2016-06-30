@@ -833,7 +833,7 @@ class ProviderUpdateTest(TestCase):
             'provider_email': "jj@wustl.edu",
             'clinical_roles': ['Clinical'],
         }
-        self.client.post(reverse('provider-update', args=(provider_pk,)), form_data)
+        self.client.post(reverse('provider-update'), form_data)
 
         self.assertEqual(models.Provider.objects.count(), initial_num_providers)
         provider = models.Provider.objects.get(pk=provider_pk)
@@ -843,6 +843,7 @@ class ProviderUpdateTest(TestCase):
         self.assertEqual(getattr(provider, 'phone'), '8888888888')
         self.assertEqual(getattr(provider, 'needs_updating'), False)
         # self.assertEqual(getattr(models.User.objects.all()[0], 'provider').needs_updating, 'bar')
+
 
 
         
