@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from pttrack.urls import url_wrap
+from pttrack.urls import wrap_url
 from django.views.generic import DetailView
 
 from . import views
@@ -17,4 +17,5 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
         name='demographics-update'),
 ]
 
-urlpatterns = url_wrap(unwrapped_urlconf)
+wrap_config = {}
+urlpatterns = [wrap_url(url, **wrap_config) for url in unwrapped_urlconf]

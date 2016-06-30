@@ -164,8 +164,14 @@ class ProviderUpdate(UpdateView):
     form_class = myforms.ProviderForm
     # pk = request #HERE FOO
 
+    def get_object(self):
+        '''
+        Returns the request's provider
+        '''
+        return self.request.user.provider
+
     def form_valid(self, form):
-        pk = self.request.user.provider.pk
+        # pk = self.request.user.provider.pk
         provider = form.save(commit=False)
             # provider = self.object
 
@@ -178,7 +184,7 @@ class ProviderUpdate(UpdateView):
         user.first_name = provider.first_name
         user.last_name = provider.last_name            
         user.save()
-        provider.save() # this creates a new provider
+        provider.save() # this creates a new provider?
         form.save_m2m()
 
         # return HttpResponseRedirect(self.request.GET['next'])

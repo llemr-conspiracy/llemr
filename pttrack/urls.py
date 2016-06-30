@@ -3,8 +3,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.base import TemplateView
 
 from django.contrib.auth.decorators import login_required
-
-from .decorators import provider_required
+from .decorators import provider_required, clintype_required, provider_update_required
 from . import models as mymodels
 from . import views
 
@@ -43,9 +42,6 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
     url(r'^choose-role/$',
         views.choose_clintype,
         name='choose-clintype'),
-    # url(r'^provider-update/(?P<pk>[0-9]+)$',
-    #     views.ProviderUpdate.as_view(),
-    #     name='provider-update'),
     url(r'^provider-update/$',
         views.ProviderUpdate.as_view(),
         name='provider-update'),
@@ -81,23 +77,31 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
         name='about'),
 ]
 
-def url_wrap(urls):
+def wrap_url(url, no_wrap=[], login_only=[], provider_only=[]):
     '''
-    Wrap URLs in login_required and provider_required decorators as
-    appropriate.
+    Wrap URL in decorators as appropriate.
     '''
-    wrapped_urls = []
-    for u in urls:
-        if u.name in ['new-provider', 'choose-clintype', 'provider-update']: #FIXME, provider-update should be separate
-            # do not wrap in full regalia
-            u._callback = login_required(u._callback)
-        elif u.name in ['about']:
-            # do not wrap at all, fully public
-            pass
-        else:
-            u._callback = provider_required(u._callback)
+    if url.name in login_only:
+        # do not wrap in full regalia
+        url._callback = login_required(url._callback)
+    elif url.name in provider_only:
+        # callback = url._callback
+        url._callback = provider_required(url._callback)
+        url._callback = login_required(url._callback)
+        # url._callback = callback
+    elif url.name in no_wrap:
+        # do not wrap at all, fully public
+        pass
+    else:  # wrap in everything
+        url._callback = clintype_required(url._callback)
+        url._callback = provider_update_required(url._callback)
+        url._callback = provider_required(url._callback)
+        url._callback = login_required(url._callback)
 
-        wrapped_urls.append(u)
-    return wrapped_urls
+    return url
 
-urlpatterns = url_wrap(unwrapped_urlpatterns)
+wrap_config = {'no_wrap': ['about'],
+               'login_only': ['new-provider', 'choose-clintype'],
+               'provider_only': ['provider-update']}
+
+urlpatterns = [wrap_url(url, **wrap_config) for url in unwrapped_urlpatterns]
