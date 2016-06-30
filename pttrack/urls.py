@@ -77,21 +77,26 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
         name='about'),
 ]
 
-def wrap_url(url, no_wrap=[], login_only=[], provider_only=[]):
+def wrap_url(url, no_wrap=[], login_only=[], provider_only=[], updated_provider_only=[]):
     '''
     Wrap URL in decorators as appropriate.
     '''
-    if url.name in login_only:
-        # do not wrap in full regalia
-        url._callback = login_required(url._callback)
-    elif url.name in provider_only:
-        # callback = url._callback
-        url._callback = provider_required(url._callback)
-        url._callback = login_required(url._callback)
-        # url._callback = callback
-    elif url.name in no_wrap:
+    if url.name in no_wrap:
         # do not wrap at all, fully public
         pass
+
+    elif url.name in login_only:
+        url._callback = login_required(url._callback)
+
+    elif url.name in provider_only: 
+        url._callback = provider_required(url._callback)
+        url._callback = login_required(url._callback)
+
+    elif url.name in updated_provider_only:
+        url._callback = provider_update_required(url._callback)
+        url._callback = provider_required(url._callback)
+        url._callback = login_required(url._callback)
+        
     else:  # wrap in everything
         url._callback = clintype_required(url._callback)
         url._callback = provider_update_required(url._callback)
@@ -101,7 +106,8 @@ def wrap_url(url, no_wrap=[], login_only=[], provider_only=[]):
     return url
 
 wrap_config = {'no_wrap': ['about'],
-               'login_only': ['new-provider', 'choose-clintype'],
-               'provider_only': ['provider-update']}
+               'login_only': ['new-provider'],
+               'provider_only': ['provider-update'],
+               'updated_provider_only': ['choose-clintype']}
 
 urlpatterns = [wrap_url(url, **wrap_config) for url in unwrapped_urlpatterns]
