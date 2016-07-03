@@ -35,7 +35,9 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
     url(r'^patient/activate_home/(?P<pk>[0-9]+)$',
         views.patient_activate_home,
         name='patient-activate-home'),
-
+    # url(r'^pt_list/$',
+    #     views.PtList.as_view(),
+    #     name='pt_list_api'),
 
     # PROVIDERS
     url(r'^new-provider/$',
@@ -96,4 +98,3 @@ def url_wrap(urls):
     return wrapped_urls
 
 urlpatterns = url_wrap(unwrapped_urlpatterns)
-

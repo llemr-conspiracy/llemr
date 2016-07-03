@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.timezone import now
 
 from simple_history.models import HistoricalRecords
+from django.core.urlresolvers import reverse
 
 from pttrack.models import Note, Provider, ReferralLocation, ReferralType
 from pttrack.validators import validate_attending
@@ -145,6 +146,9 @@ class Workup(Note):
     def attribution(self):
         '''Builds an attribution string of the form Doe, John on DATE'''
         return " ".join([str(self.author), "on", str(self.written_date())])
+
+    def url(self):
+        return reverse('workup', args=(self.pk,))
 
     def __unicode__(self):
         return self.patient.name()+" on "+str(self.clinic_day.clinic_date)

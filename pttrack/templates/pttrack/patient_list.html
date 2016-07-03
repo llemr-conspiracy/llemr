@@ -18,57 +18,135 @@ Osler: {{ title | default:"All Patients"}}
 </div> -->
 
 <div class="container">
-<ul class="nav nav-pills">
-    {% for combination in zipped_list %}
-        {% if combination.3 %}
-        <li class="active"><a data-toggle="pill" href="#{{ combination.2 }}">{{ combination.0 }}<span class="badge">{{ combination.1 | length }}</span></a></li>
-        {% else %}
-        <li><a data-toggle="pill" href="#{{ combination.2 }}">{{ combination.0 }}<span class="badge">{{ combination.1 | length }}</span></a></li>
-        {% endif %}
-    {% endfor %}
-</ul>
+    <ul class="nav nav-pills" id = "tab-selection">
+    </ul>
+    <div class="tab-content" id = "patient-data">
+    </div>
 
-<div class="tab-content">
-    {% for combination in zipped_list %}
-        {% if combination.3 %}
-        <div id="{{ combination.2 }}" class="tab-pane fade in active">
-        {% else %}
-        <div id="{{ combination.2 }}" class="tab-pane fade">
-        {% endif %}
-            <h3>{{ combination.0 }}</h3>
-            <table class="table">
-                <tr><th>Name</th><th>Age / Gender</th><th>Latest Activity</th><th>Next AI Due</th><th>Status</th></td>
-                {% for patient in combination.1 %}
-                    <tr>
-                    <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
-                    <td>{{ patient.age }} / {{ patient.gender }}</td>
-                    {% if patient.latest_workup %}
-                    <td><a href="{% url 'workup' pk=patient.latest_workup.pk %}">Seen {{ patient.latest_workup.clinic_day.clinic_date }}</a>: {{ patient.latest_workup.chief_complaint }}</td>
-                    {% else %}
-                    <td><a href="{% url 'patient-update' pk=patient.pk %}">Intake</a>: {{ patient.history.last.history_date }}</td>
-                    {% endif %}
-                    <td>{{ patient.status }}</td>
-                    {% if request.session.staff_view %}
-                    {% if patient.needs_workup %}
-                    <td> Active <a href="{% url 'patient-activate-home' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></td>
-                    {% endif %}
-                    {% if not patient.needs_workup %}
-                    <td> Inactive <a href="{% url 'patient-activate-home' pk=patient.id %}">{% bootstrap_icon "play-circle" %}</a></td>
-                    {% endif %}
-                    {% else %}
-                    {% if patient.needs_workup %}
-                    <td> Active </td>
-                    {% endif %}
-                    {% if not patient.needs_workup %}
-                    <td> Inactive </td>
-                    {% endif %}
-                    {% endif %}
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
-    {% endfor %}
-</div>
-</div>
+    <script type="text/javascript">
+    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    function formatDate(date) {
+      var hours = date.getHours();
+      var minutes = date.getMinutes();
+      var ampm = hours >= 12 ? 'p.m.' : 'a.m.';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+      var strTime = hours + ':' + minutes + ' ' + ampm;
+      return monthNames[date.getMonth()] + " " + date.getDate() + ", " + date.getFullYear() + ", " + strTime;
+    }
+
+    function buildTable(list){
+        return function(patients){
+            var tabPane = $("<div>").attr({
+                id : list['identifier'],
+                class : function(){
+                            return list['active'] ? "tab-pane fade in active" : "tab-pane fade";
+                        }
+            }).append(
+            $("<h3>").text(list['title'])
+            );
+
+            // build empty table
+            var table = $("<table>").attr({
+                class:"table"
+            }).append(
+            $("<tr>").append( // headings
+                $("<th>").text("Name"),
+                $("<th>").text("Age / Gender"),
+                $("<th>").text("Latest Activity"),
+                $("<th>").text("Next AI Due"),
+                $("<th>").text("Status")
+                )
+            );
+
+            // build table contents and append to table
+            for (var i = 0; i < patients.length; i++){
+                patient = patients[i];
+                var patientRow = $("<tr>").append(
+                    $("<td>").append(
+                        $("<a>").attr({
+                            href : patient.detail_url
+                        }).text(patient.name)),
+                    $("<td>").text(patient.age+" / "+patient.gender)
+                    );
+                if (patient.latest_workup){
+                    $(patientRow).append(
+                        $("<td>").append(
+                            $("<a>").attr({
+                                href :patient.latest_workup.url
+                            }).text("Seen "+patient.latest_workup.clinic_day.clinic_date),
+                            $("<span>").text(": "+patient.latest_workup.chief_complaint))
+                        );
+                } else{
+                    $(patientRow).append(
+                        $("<td>").append(
+                            $("<a>").attr({
+                                href : patient.update_url
+                            }).text("Intake"),
+                            $("<span>").text(": "+formatDate(new Date(patient.history.last.history_date))))
+                        );
+                }
+                $(patientRow).append(
+                    $("<td>").text(patient.status),
+                    $("<td>").append(
+                        $("<span>").text(function(){
+                            return patient.needs_workup ? "Active " : "Inactive ";
+                        }),
+                        $("<a>").attr({
+                            href : patient.activate_url
+                        }).append(
+                        $("<span>").attr({
+                            class :function(){
+                                return patient.needs_workup ? "glyphicon glyphicon-remove-circle" : "glyphicon glyphicon-play-circle";
+                            },
+                            'aria-hidden' : "true"
+                        })
+                        )
+                        )                        
+                    );
+                $(table).append($(patientRow));
+            }
+            $(tabPane).append($(table));
+            $("#patient-data").append($(tabPane));
+            $("#num-"+list['identifier']).text(patients.length);
+        }
+    }
+
+    function doUponLoading(event){
+        var lists = {{lists|safe}};
+        for (var i = 0; i < lists.length; i++){
+            $("#tab-selection").append( // build pill tabs. Do here before ajax call so order of tabs is preserved
+                $("<li>").attr({
+                    class : function(){
+                        return lists[i]['active'] ? "active" : "";
+                    }
+                }).append(
+                $("<a>").attr({
+                    'data-toggle' : "pill",
+                    href : "#"+lists[i]['identifier']
+                }).append(
+                $("<span>").text(lists[i]['title']),
+                $("<span>").attr({
+                    class:"badge",
+                    id:"num-"+lists[i]['identifier']
+                })))
+            );
+
+        $.get('{{api_url}}'+lists[i]['url']) // make ajax call
+        .success(buildTable(lists[i])) // need separate scoping to pass in lists[i]
+        .error(function(jqXHR, textStatus, errorThrown) { 
+            if (textStatus == 'timeout')
+                console.log('The server is not responding');
+
+            if (textStatus == 'error')
+                console.log(errorThrown);
+        });
+        }
+        
+    }
+    document.addEventListener("DOMContentLoaded", doUponLoading, false);
+</script>
 
 {% endblock %}
