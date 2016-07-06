@@ -93,13 +93,13 @@ def wrap_url(url, no_wrap=[], login_only=[], provider_only=[], updated_provider_
         url._callback = login_required(url._callback)
 
     elif url.name in updated_provider_only:
-        # url._callback = provider_update_required(url._callback)
+        url._callback = provider_update_required(url._callback)
         url._callback = provider_required(url._callback)
         url._callback = login_required(url._callback)
         
     else:  # wrap in everything
         url._callback = clintype_required(url._callback)
-        # url._callback = provider_update_required(url._callback)
+        url._callback = provider_update_required(url._callback)
         url._callback = provider_required(url._callback)
         url._callback = login_required(url._callback)
 

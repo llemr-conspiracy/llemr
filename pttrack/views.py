@@ -162,7 +162,6 @@ class ProviderUpdate(UpdateView):
     template_name = 'pttrack/provider-update.html'
     model = mymodels.Provider
     form_class = myforms.ProviderForm
-    # pk = request #HERE FOO
 
     def get_object(self):
         '''
@@ -171,38 +170,18 @@ class ProviderUpdate(UpdateView):
         return self.request.user.provider
 
     def form_valid(self, form):
-        # pk = self.request.user.provider.pk
         provider = form.save(commit=False)
-            # provider = self.object
-
         provider.needs_updating = False
-            # setattr(provider, 'needs_updating', False)
-        # provider.associated_user = self.request.user
-            # populate the User object with the email and name data from the Provider form
+        # populate the User object with the email and name data from the Provider form
         user = provider.associated_user
         user.email = form.cleaned_data['provider_email']
         user.first_name = provider.first_name
         user.last_name = provider.last_name            
         user.save()
-        provider.save() # this creates a new provider?
+        provider.save()
         form.save_m2m()
 
-        # return HttpResponseRedirect(self.request.GET['next'])
-        # FIXME, re-instantiate above
-        return HttpResponseRedirect(reverse("home")) #FIXME
-
-    # def get_context_data(self, **kwargs):
-
-    #     context = super(ProviderUpdate, self).get_context_data(**kwargs)
-
-    #     if 'pt_id' in self.kwargs:
-    #         Patient.objects.get(pk=self.kwargs['pt_id'])
-
-    #     return context
-
-# if 'pt_id' in self.kwargs:
-#             context['patient'] = Patient.objects.get(pk=self.kwargs['pt_id'])
-
+        return HttpResponseRedirect(self.request.GET['next'])
 
 class PatientUpdate(UpdateView):
     template_name = 'pttrack/patient-update.html'

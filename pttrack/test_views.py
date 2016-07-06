@@ -809,21 +809,41 @@ class ActionItemTest(TestCase):
         note_check(self, new_ai, self.client, 1)
 
 class ProviderUpdateTest(TestCase):
-    '''
-    # FIXME comments
-    Test tha provider is updated, that no extra provider is created
-    '''
     fixtures = [BASIC_FIXTURE]
 
-    # this tests posting. need to test getting
-    def test_set_true(self):
+    def test_require_providers_update(self):
+        '''
+        Test that the require_providers_update() method sets all needs_update to True
+        '''
+        provider = build_provider(username='jrporter', password='password', roles=['Preclinical']) # this line is repeated for every test instead of in a setUp def so that we can store the provider variable
+        log_in_provider(self.client, provider)
+        for provider in models.Provider.objects.all():
+            self.assertEqual(provider.needs_updating, False)
+
+        models.require_providers_update()
+
+        for provider in models.Provider.objects.all():
+            self.assertEqual(provider.needs_updating, True)
+
+    # FIXME test getting that all fields are pre-populated
+
+    def test_redirect_and_form_submit(self):
+        '''
+        Test correct redirect and form submit behavior
+        '''
+        final_url = reverse('home')
+
         provider = build_provider(username='jrporter', password='password', roles=['Preclinical'])
         log_in_provider(self.client, provider)
-
         initial_num_providers = models.Provider.objects.count()
         provider_pk = provider.pk
-        self.assertEqual(provider.needs_updating, True)
 
+        # Verify needs_update -> will redirect
+        models.require_providers_update()
+        self.assertEqual(models.Provider.objects.get(pk=provider_pk).needs_updating, True)
+        response = self.client.get(reverse('home'))
+        self.assertRedirects(response, reverse('provider-update')+"?next="+final_url)
+        
         form_data = {
             'first_name': "John",
             'last_name': "James",
@@ -833,17 +853,21 @@ class ProviderUpdateTest(TestCase):
             'provider_email': "jj@wustl.edu",
             'clinical_roles': ['Clinical'],
         }
-        self.client.post(reverse('provider-update'), form_data)
+        response = self.client.post(response.url, form_data)
 
+        # Redirects anywhere; don't care where (would be the 'next' parameter)
+        self.assertEqual(response.status_code, 302)
+
+        # Verify number of providers is still the same
         self.assertEqual(models.Provider.objects.count(), initial_num_providers)
-        provider = models.Provider.objects.get(pk=provider_pk)
 
+        # Verify write-through and no longer needs update
+        provider = models.Provider.objects.get(pk=provider_pk)
         roles = [role.short_name for role in getattr(provider,'clinical_roles').all()]
         self.assertEqual(roles, ['Clinical'])
         self.assertEqual(getattr(provider, 'phone'), '8888888888')
         self.assertEqual(getattr(provider, 'needs_updating'), False)
-        # self.assertEqual(getattr(models.User.objects.all()[0], 'provider').needs_updating, 'bar')
 
-
-
-        
+        # Verify that accessing final url no longer redirects
+        response = self.client.get(final_url)
+        self.assertEqual(response.status_code, 200)
