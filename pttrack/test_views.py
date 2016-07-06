@@ -825,8 +825,6 @@ class ProviderUpdateTest(TestCase):
         for provider in models.Provider.objects.all():
             self.assertEqual(provider.needs_updating, True)
 
-    # FIXME test getting that all fields are pre-populated
-
     def test_redirect_and_form_submit(self):
         '''
         Test correct redirect and form submit behavior
@@ -843,7 +841,7 @@ class ProviderUpdateTest(TestCase):
         self.assertEqual(models.Provider.objects.get(pk=provider_pk).needs_updating, True)
         response = self.client.get(reverse('home'))
         self.assertRedirects(response, reverse('provider-update')+"?next="+final_url)
-        
+
         form_data = {
             'first_name': "John",
             'last_name': "James",
