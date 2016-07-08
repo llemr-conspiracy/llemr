@@ -840,7 +840,7 @@ class ProviderUpdateTest(TestCase):
         models.require_providers_update()
         self.assertEqual(models.Provider.objects.get(pk=provider_pk).needs_updating, True)
         response = self.client.get(reverse('home'), follow=True)
-        self.assertEqual(response.context[0][3].view, "hi")
+        self.assertEqual(response.context[0], "hi")
         self.assertRedirects(response, reverse('provider-update')+"?next="+final_url)
 
         form_data = {
