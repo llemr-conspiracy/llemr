@@ -842,7 +842,7 @@ class ProviderUpdateTest(TestCase):
         response = self.client.get(reverse('home'), follow=True)
         for item in response.context[0]:
             print item
-        self.assertEqual(response.context[0]['view'].provider_email, "hi")
+        self.assertEqual(response.context[0]['view'].initial, "hi")
         self.assertRedirects(response, reverse('provider-update')+"?next="+final_url)
 
         form_data = {
