@@ -839,7 +839,6 @@ class ProviderUpdateTest(TestCase):
         # Verify needs_update -> will redirect
         models.require_providers_update()
         self.assertEqual(models.Provider.objects.get(pk=provider_pk).needs_updating, True)
-        # response = self.client.get(reverse('home'))
         response = self.client.get(reverse('home'), follow=True)
         self.assertEqual(response.context[0]['form'].initial['provider_email'], 'tommyljones@gmail.com')
         self.assertRedirects(response, reverse('provider-update')+"?next="+final_url)
@@ -854,7 +853,6 @@ class ProviderUpdateTest(TestCase):
             'clinical_roles': ['Clinical'],
         }
         response = self.client.post(response.redirect_chain[0][0], form_data)
-        # response = self.client.post(response.url, form_data)
 
         # Redirects anywhere; don't care where (would be the 'next' parameter)
         self.assertEqual(response.status_code, 302)
