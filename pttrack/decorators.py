@@ -17,6 +17,8 @@ def clintype_set(session):
     # print "Checking clintype", 'clintype_pk' in session
     return 'clintype_pk' in session
 
+def provider_has_updated(user):
+    return (not getattr(user, 'provider').needs_updating)
 
 def session_passes_test(test_func, fail_url,
                         redirect_field_name=REDIRECT_FIELD_NAME):
@@ -52,17 +54,11 @@ def session_passes_test(test_func, fail_url,
         return _wrapped_view
     return decorator
 
+def clintype_required(func):
+    return session_passes_test(clintype_set, fail_url=reverse_lazy('choose-clintype'))(func)
+
+def provider_update_required(func):
+    return user_passes_test(provider_has_updated, login_url=reverse_lazy('provider-update'))(func)
 
 def provider_required(func):
-    '''Provides composite multi-decorator support for the standard login
-    procedure wrapping most views.'''
-
-    func = session_passes_test(clintype_set,
-                               fail_url=reverse_lazy('choose-clintype'))(func)
-
-    func = user_passes_test(provider_exists,
-                            login_url=reverse_lazy('new-provider'))(func)
-
-    func = login_required(func)
-
-    return func
+    return user_passes_test(provider_exists, login_url=reverse_lazy('new-provider'))(func)

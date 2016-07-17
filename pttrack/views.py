@@ -129,6 +129,43 @@ class ProviderCreate(FormView):
         return context
 
 
+class ProviderUpdate(UpdateView):
+    '''
+    For updating a provider, e.g. used during a new school year when preclinicals become clinicals. Set needs_update to false using require_providers_update() in pttrack.models
+    '''
+    template_name = 'pttrack/provider-update.html'
+    model = mymodels.Provider
+    form_class = myforms.ProviderForm
+
+    def get_initial(self):
+        '''
+        Pre-populates email, which is a property of the User
+        '''
+        initial = super(ProviderUpdate, self).get_initial()
+        initial['provider_email'] = self.request.user.email
+        return initial
+
+    def get_object(self):
+        '''
+        Returns the request's provider
+        '''
+        return self.request.user.provider
+
+    def form_valid(self, form):
+        provider = form.save(commit=False)
+        provider.needs_updating = False
+        # populate the User object with the email and name data from the Provider form
+        user = provider.associated_user
+        user.email = form.cleaned_data['provider_email']
+        user.first_name = provider.first_name
+        user.last_name = provider.last_name            
+        user.save()
+        provider.save()
+        form.save_m2m()
+
+        return HttpResponseRedirect(self.request.GET['next'])
+
+
 class ActionItemCreate(NoteFormView):
     '''A view for creating ActionItems using the ActionItemForm.'''
     template_name = 'pttrack/form_submission.html'
@@ -159,6 +196,7 @@ class ActionItemUpdate(NoteUpdate):
         pt = self.object.patient
         return reverse("patient-detail", args=(pt.id, ))
 
+
 class PatientUpdate(UpdateView):
     template_name = 'pttrack/patient-update.html'
     model = mymodels.Patient
@@ -173,7 +211,6 @@ class PatientUpdate(UpdateView):
         pt.save()
         return HttpResponseRedirect(reverse("patient-detail",  
                                             args=(pt.id,)))
-
 
 class PatientCreate(FormView):
     '''A view for creating a new patient using PatientForm.'''

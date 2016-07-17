@@ -1,0 +1,18 @@
+{% extends "pttrack/base.html" %}
+
+{% block title %}
+Update Provider: {{ object.name }}
+{% endblock %}
+
+{% block header %}
+<h1>It's a new school year!</h1>
+<p class="lead">Has anything changed? Somehow highlight the preclinical -> clinical thing</p>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	{% load crispy_forms_tags %}
+	{% crispy form %}
+</div>
+{% endblock %}

@@ -1,6 +1,6 @@
 from django.conf.urls import url
 
-from pttrack.urls import url_wrap
+from pttrack.urls import wrap_url
 from . import views
 from rest_framework.urlpatterns import format_suffix_patterns
 
@@ -12,5 +12,6 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
         name='pt_list_api'),
 ]
 
-urlpatterns = url_wrap(unwrapped_urlpatterns)
+wrap_config = {}
+urlpatterns = [wrap_url(url, **wrap_config) for url in unwrapped_urlpatterns]
 urlpatterns = format_suffix_patterns(urlpatterns)
