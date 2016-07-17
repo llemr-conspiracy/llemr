@@ -215,7 +215,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
     def setUp(self):
         # build a provider and log in
-        build_provider(username='timmy', password='password', roles=["Attending"])
+        build_provider(username='timmy', password='password', roles=["Attending"]) # create an attending to sign a workup
         build_provider(username='timmy_coordinator', password='password', roles=["Coordinator"])
 
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
