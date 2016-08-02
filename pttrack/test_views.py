@@ -13,7 +13,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from .  import models
+from . import models
 from workup import models as workupModels
 import json
 
@@ -21,6 +21,7 @@ import json
 # Whatever, whatever. I name them what I want.
 
 BASIC_FIXTURE = 'pttrack.json'
+
 
 def note_check(test, note, client, pt_pk):
     '''
@@ -43,8 +44,13 @@ def note_check(test, note, client, pt_pk):
 
 def build_provider(roles=None, username=None, password='password'):
 
+    # TODO this is not preferred. Should swap None for '__all__'
+    # this will require hunting down all the places this is called, though.
     if roles is None:
         roles = ["Coordinator", "Attending", "Clinical", "Preclinical"]
+
+    provtypes = [models.ProviderType.objects.get(short_name=role)
+                 for role in roles]
 
     if username is None:
         username = 'user'+str(User.objects.all().count())
@@ -55,7 +61,7 @@ def build_provider(roles=None, username=None, password='password'):
     user.save()
 
     g = models.Gender.objects.all()[0]
-    models.Provider.objects.create(
+    prov = models.Provider.objects.create(
         first_name="Tommy", middle_name="Lee", last_name="Jones",
         phone="425-243-9115", gender=g, associated_user=user)
 
@@ -63,16 +69,15 @@ def build_provider(roles=None, username=None, password='password'):
     coordinator_provider.staff_view = True
     coordinator_provider.save()
 
-    for role in roles:
-        try:
-            ptype = models.ProviderType.objects.filter(short_name=role)[0]
-        except IndexError:
-            raise KeyError(
-                "'"+role+"' isn't in the list of ProviderTypes: "+
-                str([p.short_name for p in models.ProviderType.objects.all()]))
-        user.provider.clinical_roles.add(ptype)
+    prov.clinical_roles.add(*provtypes)
+    prov.save()
+    user.save()
+
+    assert len(roles) == prov.clinical_roles.count()
+    assert user.provider is not None
 
     return user.provider
+
 
 def log_in_provider(client, provider):
     ''' Creates a provider and logs them in. Role defines their provider_type,

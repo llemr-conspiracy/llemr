@@ -115,6 +115,10 @@ class Workup(Note):
                 raise ValueError("For users with > role, it must be provided.")
             else:
                 active_role = user.provider.clinical_roles.all()[0]
+        elif active_role not in user.provider.clinical_roles.all():
+            raise ValueError(
+                "Provider {p} doesn't have role {r}!".format(
+                    p=user.provider, r=active_role))
 
         if active_role.signs_charts:
             assert active_role in user.provider.clinical_roles.all()
