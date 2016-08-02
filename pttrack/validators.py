@@ -1,11 +1,15 @@
 '''Custom validators for Osler.'''
+
 import datetime
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 
 
 def validate_ssn(value):
-    '''Validate an SSN. Check length, and that it's only numbers except for hyphens at positions 3 and 6.'''
+    '''
+    Validate an SSN. Check length, and that it's only numbers except for
+    hyphens at positions 3 and 6.
+    '''
 
     init_value = value
 
@@ -24,7 +28,8 @@ def validate_ssn(value):
     if not value.isdigit():
         raise ValidationError(" ".join(
             ['{0} is not a valid SSN. Your SSN shoud consist only of digits ',
-             'with the form xxx-xx-xxxx (hyphens optional).']).format(init_value))
+             'with the form xxx-xx-xxxx (hyphens optional).']).format(
+                init_value))
     if len(value) > 9:
         raise ValidationError(" ".join([
             '{0} is not a valid SSN, since it is longer than 9 characters.'
@@ -43,30 +48,34 @@ def validate_zip(value):
             % value)
 
 
-def validate_birth_date(value):
+def validate_birth_date(value, max_years=150):
     '''
     Validate birtdays, requiring that they be 1) in the past and 2) less than
-    150 years ago.
+    max_years ago.
     '''
     today = now().date()
 
     if today - value < datetime.timedelta(0):
         raise ValidationError("Birth dates cannot be in the future.")
 
-    if today - value > datetime.timedelta(365 * 150):
-        raise ValidationError("Birth dates cannot be more than 150 years in the past.")
+    if today - value > datetime.timedelta(365 * max_years):
+        raise ValidationError(
+            "Birth dates cannot be more than {0} years in the past.".format(
+                max_years))
+
 
 def validate_name(value):
     '''
-    To validate that name (first, last middle) does not start or end with a space or tab
+    To validate that name (first, last middle) does not start or end with a
+    space or tab
     '''
+
     if value.startswith((' ', '\t')) or value.endswith((' ', '\t')):
         raise ValidationError("Name cannot start or end with a space")
 
 
 def validate_attending(value):
     '''
-    Verify that a provider has attending priviledges
+    Verify that a provider has attending priviledges.
     '''
     return value.can_attend
-

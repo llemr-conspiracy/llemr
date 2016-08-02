@@ -83,6 +83,7 @@ class Ethnicity(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class ActionInstruction(models.Model):
     instruction = models.CharField(max_length=50, primary_key=True)
 

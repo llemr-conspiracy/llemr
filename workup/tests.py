@@ -6,11 +6,12 @@ from django.utils.timezone import now
 from django.core.urlresolvers import reverse
 
 from pttrack.test_views import build_provider, log_in_provider
-from pttrack.models import Patient, ProviderType, Provider, ReferralLocation, ReferralType
+from pttrack.models import Patient, ProviderType, Provider, ReferralLocation
 
 from . import validators
 from . import models
 from . import forms
+
 
 class TestModelFieldValidators(TestCase):
     '''
@@ -37,6 +38,7 @@ class TestModelFieldValidators(TestCase):
             validators.validate_bp("90/200")
         with self.assertRaises(ValidationError):
             validators.validate_bp("-120/80")
+
 
 class ViewsExistTest(TestCase):
     '''
@@ -84,8 +86,8 @@ class ViewsExistTest(TestCase):
                 clinic_day=models.ClinicDate.objects.all()[0],
                 chief_complaint="SOB",
                 diagnosis="MI",
-                HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
-                ros="", pe="", A_and_P="",
+                HPI="", PMH_PSH="", meds="", allergies="", fam_hx="",
+                soc_hx="", ros="", pe="", A_and_P="",
                 author=models.Provider.objects.all()[0],
                 author_type=ProviderType.objects.all()[0],
                 patient=Patient.objects.all()[0])
@@ -105,8 +107,8 @@ class ViewsExistTest(TestCase):
             clinic_day=models.ClinicDate.objects.all()[0],
             chief_complaint="SOB",
             diagnosis="MI",
-            HPI="A", PMH_PSH="B", meds="C", allergies="D", fam_hx="E", soc_hx="F",
-            ros="", pe="", A_and_P="",
+            HPI="A", PMH_PSH="B", meds="C", allergies="D", fam_hx="E",
+            soc_hx="F", ros="", pe="", A_and_P="",
             author=models.Provider.objects.all()[0],
             author_type=ProviderType.objects.all()[0],
             patient=Patient.objects.all()[0])
@@ -115,20 +117,24 @@ class ViewsExistTest(TestCase):
         heading_text = "Migrated from previous workup on " + date_string + ". Please delete this heading and modify the following:\n\n"
 
         response = self.client.get(reverse('new-workup', args=(pt.id,)))
-        self.assertEqual(response.context['form'].initial['PMH_PSH'], heading_text + "B")
-        self.assertEqual(response.context['form'].initial['meds'], heading_text + "C")
-        self.assertEqual(response.context['form'].initial['allergies'], heading_text + "D")
-        self.assertEqual(response.context['form'].initial['fam_hx'], heading_text + "E")
-        self.assertEqual(response.context['form'].initial['soc_hx'], heading_text + "F")
-
+        self.assertEqual(response.context['form'].initial['PMH_PSH'],
+                         heading_text + "B")
+        self.assertEqual(response.context['form'].initial['meds'],
+                         heading_text + "C")
+        self.assertEqual(response.context['form'].initial['allergies'],
+                         heading_text + "D")
+        self.assertEqual(response.context['form'].initial['fam_hx'],
+                         heading_text + "E")
+        self.assertEqual(response.context['form'].initial['soc_hx'],
+                         heading_text + "F")
 
     def test_workup_update(self):
         '''
         Updating should be possible always for attendings, only without
         attestation for non-attendings.
         '''
-        
-        #TODO: pull all these Workup creations into the setup function.
+
+        # TODO: pull all these Workup creations into the setup function.
         wu = models.Workup.objects.create(
             clinic_day=models.ClinicDate.objects.all()[0],
             chief_complaint="SOB",
@@ -148,13 +154,13 @@ class ViewsExistTest(TestCase):
         wu.sign(build_provider(["Attending"]).associated_user)
         wu.save()
 
-        #nonattesting cannot access
+        # nonattesting cannot access
         for role in ["Preclinical", "Clinical", "Coordinator"]:
             log_in_provider(self.client, build_provider([role]))
             response = self.client.get(reverse('workup-update', args=(wu.id,)))
             self.assertRedirects(response, reverse('workup', args=(wu.id,)))
 
-        #attesting can
+        # attesting can
         log_in_provider(self.client, build_provider(["Attending"]))
         response = self.client.get(reverse('workup-update', args=(wu.id,)))
         self.assertEqual(response.status_code, 200)
@@ -204,7 +210,7 @@ class ViewsExistTest(TestCase):
         '''
 
         from pttrack.models import Gender, ContactMethod
-        
+
         wu_url = "workup-pdf"
 
         pt1 = Patient.objects.create(
@@ -248,8 +254,9 @@ class ViewsExistTest(TestCase):
         response = self.client.get(reverse(wu_url, args=(wu.id,)))
         self.assertEqual(response.status_code, 200)
 
+
 class TestFormFieldValidators(TestCase):
-    
+
     fixtures = ['workup', 'pttrack']
 
     def setUp(self):
@@ -261,12 +268,12 @@ class TestFormFieldValidators(TestCase):
             clinic_date=now().date(),
             gcal_id="tmp")
 
-
         self.valid_pt_dict = {
             'clinic_day': models.ClinicDate.objects.all()[0],
             'chief_complaint': "SOB",
             'diagnosis': "MI",
-            'HPI': "f", 'PMH_PSH': "f", 'meds': "f", 'allergies': "f", 'fam_hx': "f", 'soc_hx': "f",
+            'HPI': "f", 'PMH_PSH': "f", 'meds': "f", 'allergies': "f",
+            'fam_hx': "f", 'soc_hx': "f",
             'ros': "f", 'pe': "f", 'A_and_P': "f",
             'hr': '89', 'bp': '120/80', 'rr': '16', 't': '98',
             'labs_ordered_internal': 'f', 'labs_ordered_quest': 'f',
@@ -287,7 +294,7 @@ class TestFormFieldValidators(TestCase):
         # and expect an error to be on the empty altphone field
         self.assertNotEqual(form['voucher_amount'].errors, [])
         self.assertNotEqual(form['patient_pays'].errors, [])
-        
+
         form_data['voucher_amount'] = '40'
         form_data['patient_pays'] = '40'
 
@@ -304,115 +311,3 @@ class TestFormFieldValidators(TestCase):
         form = forms.WorkupForm(data=form_data)
         self.assertEqual(form['imaging_voucher_amount'].errors, [])
         self.assertEqual(form['patient_pays_imaging'].errors, [])
-
-# Zipped_list no longer used. Replaced by tests in API module
-# Need to add tests that each provider type calls the correct set of APIs
-# class AttendingTests(TestCase):
-#     fixtures = ['pttrack', 'workup']
-
-#     def setUp(self):
-#         log_in_provider(self.client, build_provider(["Attending"]))
-
-#     def test_home_has_correct_patients_attending(self):
-
-#         # TODO: probably, the solution is a "home" app.
-#         from pttrack.models import Gender, ContactMethod
-
-#         models.ClinicDate.objects.create(
-#             clinic_type=models.ClinicType.objects.all()[0],
-#             clinic_date=now(),
-#             gcal_id="435345")
-#         # we need > 1 pt, because one will have an active AI and one won't
-#         pt1 = Patient.objects.create(
-#             first_name="Juggie",
-#             last_name="Brodeltein",
-#             middle_name="Bayer",
-#             phone='+49 178 236 5288',
-#             gender=Gender.objects.all()[1],
-#             address='Schulstrasse 9',
-#             city='Munich',
-#             state='BA',
-#             zip_code='63108',
-#             pcp_preferred_zip='63018',
-#             date_of_birth=date(1990, 01, 01),
-#             patient_comfortable_with_english=False,
-#             needs_workup=True,
-#             preferred_contact_method=ContactMethod.objects.all()[0],
-#         )
-
-#         pt2 = Patient.objects.create(
-#             first_name="Juggie",
-#             last_name="Brodeltein",
-#             middle_name="Bayer",
-#             phone='+49 178 236 5288',
-#             gender=Gender.objects.all()[1],
-#             address='Schulstrasse 9',
-#             city='Munich',
-#             state='BA',
-#             zip_code='63108',
-#             pcp_preferred_zip='63018',
-#             date_of_birth=date(1990, 01, 01),
-#             patient_comfortable_with_english=True,
-#             needs_workup=True,
-#             preferred_contact_method=ContactMethod.objects.all()[0],
-#         )
-
-#         pt3 = Patient.objects.create(
-#             first_name="asdf",
-#             last_name="lkjh",
-#             middle_name="Bayer",
-#             phone='+49 178 236 5288',
-#             gender=Gender.objects.all()[0],
-#             address='Schulstrasse 9',
-#             city='Munich',
-#             state='BA',
-#             zip_code='63108',
-#             pcp_preferred_zip='63018',
-#             date_of_birth=date(1990, 01, 01),
-#             patient_comfortable_with_english=False,
-#             needs_workup=True,
-#             preferred_contact_method=ContactMethod.objects.all()[0],
-#         )
-
-#         wu1 = models.Workup.objects.create(
-#             clinic_day=models.ClinicDate.objects.all()[0],
-#             chief_complaint="SOB",
-#             diagnosis="MI",
-#             HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
-#             ros="", pe="", A_and_P="",
-#             author=Provider.objects.all()[0],
-#             author_type=ProviderType.objects.all()[0],
-#             patient=pt1)
-
-#         wu2 = models.Workup.objects.create(
-#             clinic_day=models.ClinicDate.objects.all()[0],
-#             chief_complaint="SOB",
-#             diagnosis="MI",
-#             HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
-#             ros="", pe="", A_and_P="",
-#             author=Provider.objects.all()[0],
-#             author_type=ProviderType.objects.all()[0],
-#             patient=pt2,
-#             signer=Provider.objects.all().filter(
-#                 clinical_roles=ProviderType.objects.all().filter(
-#                     short_name="Attending")[0])[0])
-
-#         wu3 = models.Workup.objects.create(
-#             clinic_day=models.ClinicDate.objects.all()[0],
-#             chief_complaint="SOB",
-#             diagnosis="MI",
-#             HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
-#             ros="", pe="", A_and_P="",
-#             author=models.Provider.objects.all()[0],
-#             author_type=ProviderType.objects.all()[0],
-#             patient=pt3)
-
-#         url = reverse("home")
-
-#         response = self.client.get(url)
-#         self.assertEqual(response.status_code, 200)
-
-#         # pt1, pt3 should be present since they are not signed
-#         self.assertEqual(len(response.context['zipped_list'][0][1]), 2)
-#         self.assertIn(pt1, response.context['zipped_list'][0][1])
-#         self.assertIn(pt3, response.context['zipped_list'][0][1])

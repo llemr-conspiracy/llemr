@@ -5,6 +5,7 @@ from django.test import TestCase
 from .models import Language, Gender, Ethnicity, ContactMethod
 from . import forms
 
+
 class TestPatientCreateForms(TestCase):
     '''Tests for the form used to create new Patients.'''
 

@@ -1,10 +1,11 @@
 from django.conf.urls import url
-from django.views.generic import ListView, DetailView
+from django.views.generic import DetailView
 from django.views.generic.base import TemplateView
 
 from django.contrib.auth.decorators import login_required
-from .decorators import provider_required, clintype_required, provider_update_required
-from . import models as mymodels
+from .decorators import provider_required, clintype_required, \
+    provider_update_required
+from . import models
 from . import views
 
 # pylint: disable=I0011
@@ -65,7 +66,7 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
         views.DocumentCreate.as_view(),
         name="new-document"),
     url(r'^document/(?P<pk>[0-9]+)$',
-        DetailView.as_view(model=mymodels.Document),
+        DetailView.as_view(model=models.Document),
         name="document-detail"),
     url(r'^document/update/(?P<pk>[0-9]+)$',
         views.DocumentUpdate.as_view(),
@@ -77,7 +78,9 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
         name='about'),
 ]
 
-def wrap_url(url, no_wrap=[], login_only=[], provider_only=[], updated_provider_only=[]):
+
+def wrap_url(url, no_wrap=[], login_only=[], provider_only=[],
+             updated_provider_only=[]):
     '''
     Wrap URL in decorators as appropriate.
     '''
@@ -88,7 +91,7 @@ def wrap_url(url, no_wrap=[], login_only=[], provider_only=[], updated_provider_
     elif url.name in login_only:
         url._callback = login_required(url._callback)
 
-    elif url.name in provider_only: 
+    elif url.name in provider_only:
         url._callback = provider_required(url._callback)
         url._callback = login_required(url._callback)
 
@@ -96,7 +99,7 @@ def wrap_url(url, no_wrap=[], login_only=[], provider_only=[], updated_provider_
         url._callback = provider_update_required(url._callback)
         url._callback = provider_required(url._callback)
         url._callback = login_required(url._callback)
-        
+
     else:  # wrap in everything
         url._callback = clintype_required(url._callback)
         url._callback = provider_update_required(url._callback)
@@ -110,4 +113,5 @@ wrap_config = {'no_wrap': ['about'],
                'provider_only': ['provider-update'],
                'updated_provider_only': ['choose-clintype']}
 
-urlpatterns = [wrap_url(url, **wrap_config) for url in unwrapped_urlpatterns]
+
+urlpatterns = [wrap_url(u, **wrap_config) for u in unwrapped_urlpatterns]
