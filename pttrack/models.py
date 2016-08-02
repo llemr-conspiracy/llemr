@@ -305,6 +305,7 @@ class Patient(Person):
     def activate_url(self):
         return reverse('patient-activate-home', args=(self.pk,))
 
+
 class Provider(Person):
 
     associated_user = models.OneToOneField(settings.AUTH_USER_MODEL,
