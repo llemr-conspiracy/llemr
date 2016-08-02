@@ -5,7 +5,6 @@ from django.utils.timezone import now
 
 from . import validators
 
-BASIC_FIXTURE = 'pttrack'
 
 class TestModelFieldValidators(TestCase):
     def test_validate_zip(self):
