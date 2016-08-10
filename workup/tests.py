@@ -3,6 +3,15 @@ from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 from django.core.urlresolvers import reverse
 
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.common.exceptions import ElementNotVisibleException,\
+    WebDriverException
+from selenium.webdriver.common.action_chains import ActionChains
+from pttrack.test_views import live_submit_login
+from selenium.webdriver.common.by import By
+
+
 from pttrack.test_views import build_provider, log_in_provider
 from pttrack.models import Patient, ProviderType, Provider
 
@@ -315,3 +324,142 @@ class TestFormFieldValidators(TestCase):
         form = forms.WorkupForm(data=form_data)
         self.assertEqual(form['imaging_voucher_amount'].errors, [])
         self.assertEqual(form['patient_pays_imaging'].errors, [])
+
+
+class LiveTesting(StaticLiveServerTestCase):
+
+    fixtures = ['workup', 'pttrack']
+
+    @classmethod
+    def setUpClass(cls):
+        super(LiveTesting, cls).setUpClass()
+        cls.selenium = WebDriver()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.selenium.quit()
+        super(LiveTesting, cls).tearDownClass()
+
+    def setUp(self):
+
+        models.ClinicDate.objects.create(
+            clinic_type=models.ClinicType.objects.first(),
+            clinic_date=now().date())
+
+        build_provider(username='jrporter', password='password')
+
+        # any valid URL should redirect to login at this point.
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(self.selenium, 'jrporter', 'password')
+
+        PROVIDER_TYPE = 'Coordinator'
+        self.selenium.find_element_by_xpath(
+            '//input[@value="%s"]' % PROVIDER_TYPE).click()
+        self.selenium.find_element_by_xpath(
+            '//button[@type="submit"]').click()
+
+    def select_tab(self, tab):
+
+        self.selenium.execute_script("window.scrollTo(0, 0)")
+        self.selenium.find_element_by_xpath(
+            '//a[@href="#{t}"]'.format(t=tab)).click()
+
+    def fill_out_workup(self, wu_data,
+                        dx_cats=[models.DiagnosisType.objects.all()],
+                        submit=True):
+
+        self.select_tab('basics')
+        for dx in dx_cats:
+            self.selenium.find_element_by_xpath(
+                '//input[@value="{dx}"]'.format(dx=dx)).click()
+
+        for tab_name in ['basics', 'h-p', 'physical-exam', 'assessment-plan',
+                         'referraldischarge']:
+
+            self.select_tab(tab_name)
+
+            for key in wu_data:
+                # these form elements are excluded from the form, so we 
+                # shouldn't try to fill them out.
+                if key in forms.WorkupForm.Meta.exclude:
+                    continue
+
+                try:
+                    self.selenium.find_element_by_name(key).send_keys(
+                        wu_data[key])
+                except ElementNotVisibleException:
+                    pass
+
+        # scroll to the bottom of the page so we can click submit.
+        self.selenium.execute_script(
+            "window.scrollTo(0, document.body.scrollHeight);")
+
+        if submit:
+            self.selenium.find_element_by_xpath(
+                '//input[@type="submit"]').click()
+
+    def test_ok_wu_submit(self):
+        '''
+        We should be able to successfully submit a well-formatted workup
+        '''
+
+        # navigate a new workup for the first patient in the database
+        pt_url = reverse('new-workup', args=(Patient.objects.first().pk,))
+        self.selenium.get('%s%s' % (self.live_server_url, pt_url))
+
+        wu_data = wu_dict()
+        dx_cats = [models.DiagnosisType.objects.first().pk]
+        self.fill_out_workup(wu_data, dx_cats=dx_cats)
+
+        ai_url = reverse('new-action-item', args=(Patient.objects.first().pk,))
+        self.assertEquals(
+            self.selenium.current_url,
+            '%s%s' % (self.live_server_url, ai_url))
+
+    def test_tab_switch_on_error(self):
+        '''
+        Verify that, when an error is on a tab that's on the last tab,
+        we switch to that tab.
+        '''
+
+        # navigate a new workup for the first patient in the database
+        pt_url = reverse('new-workup', args=(Patient.objects.first().pk,))
+        self.selenium.get('%s%s' % (self.live_server_url, pt_url))
+
+        wu_data = wu_dict()
+        self.fill_out_workup(wu_data, dx_cats=[])
+
+        tab_class = self.selenium.find_element_by_xpath(
+            '/html/body/div[2]/form/ul/li[1]').get_attribute("class")
+        self.assertIn("active", tab_class)
+
+        dx_class = self.selenium.find_element_by_xpath(
+            '//div[@id="div_id_diagnosis_categories"]').get_attribute("class")
+        self.assertIn("has-error", dx_class)
+
+    def test_noninteger_weight_wu(self):
+        '''
+        Test that when a noninteger weight is given, that we properly present
+        the error.
+        '''
+
+        # navigate a new workup for the first patient in the database
+        new_wu_url = reverse('new-workup', args=(Patient.objects.first().pk,))
+        self.selenium.get('%s%s' % (self.live_server_url, new_wu_url))
+
+        wu_data = wu_dict()
+        dx_cats = [models.DiagnosisType.objects.first().pk]
+        wu_data['height'] = '13.6'
+
+        self.fill_out_workup(wu_data, dx_cats=dx_cats)
+
+        # 'has-error' should be in the class description of the div, since it's
+        # got an invalid value.
+        dx_class = self.selenium.find_element_by_xpath(
+            '//div[@id="div_id_height"]').get_attribute("class")
+        self.assertIn("has-error", dx_class.split())
+
+        # since we should have a successful submission, we should redirect away
+        self.assertNotEquals(
+            self.selenium.current_url,
+            '%s%s' % (self.live_server_url, new_wu_url))

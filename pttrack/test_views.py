@@ -204,7 +204,8 @@ class LiveTesting(StaticLiveServerTestCase):
                 len(jumbotron_elements), 0,
                 msg=" ".join(["Expected the URL ", url.name,
                               " to have a jumbotron element."]))
-    
+
+
 class LiveTestPatientLists(StaticLiveServerTestCase):
     fixtures = [BASIC_FIXTURE]
 
@@ -219,9 +220,11 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         super(LiveTestPatientLists, cls).tearDownClass()
 
     def setUp(self):
-        # build a provider and log in
-        build_provider(username='timmy', password='password', roles=["Attending"]) # create an attending to sign a workup
-        build_provider(username='timmy_coordinator', password='password', roles=["Coordinator"])
+        # build a provider (attending, then coordinator) and log in
+        build_provider(username='timmy', password='password',
+                       roles=["Attending"])
+        build_provider(username='timmy_coordinator', password='password',
+                       roles=["Coordinator"])
 
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
         live_submit_login(self.selenium, 'timmy_coordinator', 'password')
@@ -359,10 +362,10 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
     def test_all_patients_correct_order(self):
         self.selenium.get('%s%s' % (self.live_server_url,
-                                            reverse("all-patients"))) # causing a broken pipe error
+                                    reverse("all-patients"))) # causes broken pipe?
         self.assertEquals(self.selenium.current_url,
-                                  '%s%s' % (self.live_server_url,
-                                            reverse('all-patients')))
+                          '%s%s' % (self.live_server_url,
+                                    reverse('all-patients')))
 
         # unsure how to test for multiple elements/a certain number of elements
         WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlast")))
@@ -421,6 +424,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
         self.assertEqual(num_activeai_table_rows, 2) # 1 patient + 1 heading   
         self.assertEqual(first_patient_name, "McNath, Frankie L.")
+
 
 class ViewsExistTest(TestCase):
     fixtures = [BASIC_FIXTURE]
