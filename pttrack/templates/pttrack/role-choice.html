@@ -21,7 +21,7 @@ Choose Clinical Role
     <div class="row">
     {% for role in roles %}
     <label class="radio-inline">
-      <input type="radio" name="{{choice_key}}" value="{{role}}">
+      <input type="radio" name="{{choice_key}}" value="{{role}}" required>
       {{ role }}
     </label>
     {% endfor %}
