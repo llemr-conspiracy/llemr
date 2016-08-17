@@ -11,12 +11,12 @@ from . import models
 
 # pylint: disable=I0011,E1305
 
+
 class PatientForm(ModelForm):
     class Meta:
         model = models.Patient
         exclude = ['needs_workup', 'demographics']
 
-    
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
 
@@ -31,7 +31,16 @@ class PatientForm(ModelForm):
 
     def clean(self):
 
+        # handle SSN (strip hyphens)
+        if 'ssn' in self.data:
+            self.data['ssn'] = self.data['ssn'].replace('-', '')
+
+            print self.data['ssn']
+            assert len(self.data['ssn']) == 9
+
         cleaned_data = super(ModelForm, self).clean()
+
+        # handle alternative contact info
 
         N_ALTS = 5
 
@@ -65,6 +74,7 @@ class ActionItemForm(ModelForm):
         super(ActionItemForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
+
 
 class ProviderForm(ModelForm):
 

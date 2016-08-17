@@ -186,6 +186,7 @@ class ActionItemCreate(NoteFormView):
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
+
 class ActionItemUpdate(NoteUpdate):
     template_name = "pttrack/form-update.html"
     model = mymodels.ActionItem
@@ -202,33 +203,29 @@ class PatientUpdate(UpdateView):
     model = mymodels.Patient
     form_class = myforms.PatientForm
 
-    def form_valid(self, form):
-        pt = form.save()
-
-        if not '-' in pt.ssn:
-            pt.ssn = pt.ssn[0:3] + '-' + pt.ssn[3:5] + '-' + pt.ssn[5:]
-
-        pt.save()
-        return HttpResponseRedirect(reverse("patient-detail",  
+    def get_success_url(self):
+        pt = self.object.patient
+        return HttpResponseRedirect(reverse("patient-detail",
                                             args=(pt.id,)))
+
 
 class PatientCreate(FormView):
     '''A view for creating a new patient using PatientForm.'''
     template_name = 'pttrack/intake.html'
     form_class = myforms.PatientForm
 
+    def get_success_url(self):
+        pt = self.object.patient
+        return HttpResponseRedirect(reverse("demographics-create",
+                                            args=(pt.id,)))
+
     def form_valid(self, form):
         pt = form.save()
 
-        # Action of creating the patient should indicate the patient is active (needs a workup)
+        # Creating the patient indicates the patient is active (needs a workup)
         pt.needs_workup = True
 
-        if not '-' in pt.ssn:
-            pt.ssn = pt.ssn[0:3] + '-' + pt.ssn[3:5] + '-' + pt.ssn[5:]
-
         pt.save()
-        return HttpResponseRedirect(reverse("demographics-create",  
-                                            args=(pt.id,)))
 
 
 class DocumentUpdate(NoteUpdate):

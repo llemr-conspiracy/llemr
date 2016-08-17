@@ -4,6 +4,8 @@ import datetime
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 
+SSN_REGEX = r'[0-9]{3}-[0-9]{2}-[0-9]{4}'
+
 
 def validate_ssn(value):
     '''
