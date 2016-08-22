@@ -66,15 +66,13 @@ class FollowupLiveTesting(StaticLiveServerTestCase):
         Verify that the ReferralFollowup form is renderable, submittable, and
         that the javascript controlling the display of the various parameters
         is functioning. This includes 1) correct traversal of the decision
-        tree and 2) correct clearing of parameters when we back up the tree.  
+        tree and 2) correct clearing of parameters when we back up the tree.
         '''
         from selenium.webdriver.support.ui import Select
 
         self.selenium.get('%s%s' % (self.live_server_url,
                                     reverse('new-followup',
                                             args=(1, 'referral'))))
-
-        
 
         elements = {}
         for element in ['contact_resolution', 'contact_method',
