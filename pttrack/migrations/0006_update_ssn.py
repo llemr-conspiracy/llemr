@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import re
 
 from django.db import migrations, models
 import django.core.validators
@@ -17,6 +16,7 @@ def update_hisorical_ssn(apps, schema_editor):
             # PANIC!
             assert False
 
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(combine_names),
+        migrations.RunPython(update_hisorical_ssn),
         migrations.AlterField(
             model_name='historicalpatient',
             name='ssn',
