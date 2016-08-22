@@ -10,7 +10,7 @@ from django.core.files import File
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 
 from . import models
@@ -93,12 +93,14 @@ def log_in_provider(client, provider):
 
     return user.provider
 
+
 def live_submit_login(selenium, username, password):
     username_input = selenium.find_element_by_name("username")
     username_input.send_keys(username)
     password_input = selenium.find_element_by_name("password")
     password_input.send_keys(password)
     selenium.find_element_by_xpath('//button[@type="submit"]').click()
+
 
 def get_url_pt_list_identifiers(self, url):
     response = self.client.get(url)
@@ -109,6 +111,7 @@ def get_url_pt_list_identifiers(self, url):
     for pt_list in pt_lists:
         list_identifiers.append(pt_list['identifier'])
     return list_identifiers
+
 
 class LiveTesting(StaticLiveServerTestCase):
     fixtures = [BASIC_FIXTURE]
@@ -204,7 +207,72 @@ class LiveTesting(StaticLiveServerTestCase):
                 len(jumbotron_elements), 0,
                 msg=" ".join(["Expected the URL ", url.name,
                               " to have a jumbotron element."]))
-    
+
+    def test_pt_create_js(self):
+        '''
+        Test the use of the new patient form. In particular, make sure that
+        the SSN javascript is working.
+        '''
+
+        # build a provider and log in.
+        build_provider(username='timmy', password='password',
+                       roles=["Attending"])
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(self.selenium, 'timmy', 'password')
+
+        self.selenium.get('%s%s' % (self.live_server_url, reverse('intake')))
+
+        # because we're entering data manually, we separate into stuff that
+        # can be entered with sendkeys and stuff that has to be clicked.
+        pt_str_data = {
+            "first_name": "Juggie",
+            "last_name": "Brodeltein",
+            "middle_name": "Bayer",
+            "address": 'Schulstrasse 9',
+            "city": 'Munich',
+            "state": 'BA',
+            "zip_code": '63108',
+            "date_of_birth": "1990-01-01",
+            "ssn": '012010123'
+        }
+
+        pt_to_click = [
+            "id_languages_1",
+            "id_ethnicities_1",
+            ]
+
+        # select dropdown-type elements
+        Select(self.selenium.find_element_by_name(
+            'gender')).select_by_index(1)
+        Select(self.selenium.find_element_by_name(
+            'preferred_contact_method')).select_by_index(1)
+
+        # input free-text time inputs
+        for name, value in pt_str_data.iteritems():
+            self.selenium.find_element_by_name('ssn').click()
+            self.selenium.find_element_by_name(name).send_keys(value)
+
+        # input click-box type elements
+        for html_id in pt_to_click:
+            self.selenium.find_element_by_id(html_id).click()
+
+        self.selenium.find_element_by_id("submit-id-submit").click()
+
+        WebDriverWait(self.selenium, 60).\
+            until(EC.title_contains(pt_str_data['last_name']))
+
+        pt = models.Patient.objects.last()
+
+        self.assertEquals(
+            self.selenium.current_url,
+            '%s%s' % (self.live_server_url,
+                      reverse('demographics-create', args=(pt.id,))))
+
+        in_ssn = pt_str_data['ssn']
+        out_ssn = "-".join([in_ssn[0:3], in_ssn[3:5], in_ssn[5:]])
+        self.assertEquals(pt.ssn, out_ssn)
+
+
 class LiveTestPatientLists(StaticLiveServerTestCase):
     fixtures = [BASIC_FIXTURE]
 
@@ -651,6 +719,7 @@ class ProviderTypeTest(TestCase):
         log_in_provider(self.client, build_provider(["Preclinical"]))
         self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept'])
 
+
 class IntakeTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
@@ -670,37 +739,13 @@ class IntakeTest(TestCase):
             'country': 'Germany',
             'zip_code': '63108',
             'pcp_preferred_zip': '63018',
+            'ssn': "123-45-6789",
             'date_of_birth': datetime.date(1990, 01, 01),
             'patient_comfortable_with_english': False,
             'ethnicities': [models.Ethnicity.objects.all()[0]],
             'preferred_contact_method':
                 models.ContactMethod.objects.all()[0].pk,
         }
-
-    def test_ssn_rewrite(self):
-        '''SSNs given without hypens should be automatically hypenated.'''
-
-        submitted_pt = self.valid_pt_dict
-        submitted_pt['ssn'] = "123456789"
-
-        response = self.client.post(reverse('intake'), submitted_pt)
-
-        new_pt = list(models.Patient.objects.all())[-1]
-        self.assertEquals(new_pt.ssn, "123-45-6789")
-
-    def test_ssn_update(self):
-        '''SSNs given without hypens should be automatically hypenated.'''
-
-        submitted_pt = self.valid_pt_dict
-        submitted_pt['ssn'] = "123456789"
-
-        response = self.client.post(reverse('intake'), submitted_pt)
-
-        new_pt = list(models.Patient.objects.all())[-1]
-
-        response = self.client.post(reverse('patient-update', args=(new_pt.pk,)), submitted_pt)
-        self.assertEqual(response.status_code, 302)
-
 
     def test_can_intake_pt(self):
 
@@ -715,8 +760,8 @@ class IntakeTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEquals(len(models.Patient.objects.all()), n_pt + 1)
 
-        new_pt = models.Patient.objects.all()[n_pt]
-        
+        new_pt = models.Patient.objects.last()
+
         for param in submitted_pt:
             try:
                 self.assertEquals(str(submitted_pt[param]),
@@ -813,12 +858,14 @@ class ActionItemTest(TestCase):
 
         note_check(self, new_ai, self.client, 1)
 
+
 class ProviderUpdateTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def test_require_providers_update(self):
         '''
-        Test that the require_providers_update() method sets all needs_update to True
+        Test that the require_providers_update() method sets all needs_update
+        to True
         '''
         provider = build_provider(username='jrporter', password='password', roles=['Preclinical']) # this line is repeated for every test instead of in a setUp def so that we can store the provider variable
         log_in_provider(self.client, provider)

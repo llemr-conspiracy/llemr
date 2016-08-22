@@ -214,10 +214,9 @@ class PatientCreate(FormView):
     template_name = 'pttrack/intake.html'
     form_class = myforms.PatientForm
 
-    def get_success_url(self):
-        pt = self.object.patient
+    def get_success_url(self, pt_id):
         return HttpResponseRedirect(reverse("demographics-create",
-                                            args=(pt.id,)))
+                                            args=(pt_id,)))
 
     def form_valid(self, form):
         pt = form.save()
@@ -226,6 +225,8 @@ class PatientCreate(FormView):
         pt.needs_workup = True
 
         pt.save()
+
+        return self.get_success_url(pt.id)
 
 
 class DocumentUpdate(NoteUpdate):
@@ -237,7 +238,6 @@ class DocumentUpdate(NoteUpdate):
     def get_success_url(self):
         doc = self.object
         return reverse("document-detail", args=(doc.id, ))
-
 
 
 class DocumentCreate(NoteFormView):

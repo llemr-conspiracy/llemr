@@ -27,16 +27,10 @@ class PatientForm(ModelForm):
         self.helper.field_class = 'col-lg-8'
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['ethnicities'].wrap(InlineCheckboxes)
+
         self.helper.add_input(Submit('submit', 'Submit'))
 
     def clean(self):
-
-        # handle SSN (strip hyphens)
-        if 'ssn' in self.data:
-            self.data['ssn'] = self.data['ssn'].replace('-', '')
-
-            print self.data['ssn']
-            assert len(self.data['ssn']) == 9
 
         cleaned_data = super(ModelForm, self).clean()
 

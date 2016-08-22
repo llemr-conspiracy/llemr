@@ -158,7 +158,6 @@ class Patient(Person):
     country = models.CharField(max_length=100,
                                default="USA")
 
-
     pcp_preferred_zip = models.CharField(max_length=5,
                                          validators=[validators.validate_zip],
                                          blank=True,
@@ -171,7 +170,7 @@ class Patient(Person):
 
     ethnicities = models.ManyToManyField(Ethnicity)
 
-    ssn = models.CharField(max_length=9,
+    ssn = models.CharField(max_length=11,
                            validators=[RegexValidator(
                                regex=validators.SSN_REGEX)],
                            blank=True,

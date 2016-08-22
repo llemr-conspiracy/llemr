@@ -2,7 +2,7 @@ import datetime
 
 from django.test import TestCase
 
-from .models import Language, Gender, Ethnicity, ContactMethod
+from .models import Language, Gender, Ethnicity, ContactMethod, Patient
 from . import forms
 
 
@@ -47,7 +47,11 @@ class TestPatientCreateForms(TestCase):
 
         form = forms.PatientForm(data=form_data)
         self.assertEqual(form['ssn'].errors, [])
-        self.assertEqual(form['ssn'].data, '001121234')
+        self.assertEqual(form['ssn'].data, '001-12-1234')
+
+        form.save()
+
+        self.assertEqual(Patient.objects.last().ssn, form['ssn'].data)
 
     def test_missing_alt_phone(self):
         '''Missing the alternative phone w/o alt phone owner should fail.'''

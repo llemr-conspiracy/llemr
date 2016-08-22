@@ -16,4 +16,11 @@ Patient Intake
 	{% load crispy_forms_tags %}
 	{% crispy form %}
 </div>
+
+{% load static %}
+<script src="{% static "pttrack/jquery.maskedinput.min.js" %}" ></script>
+
+<script type="text/javascript">
+  $("#id_ssn").mask("999-99-9999");
+</script>
 {% endblock %}
