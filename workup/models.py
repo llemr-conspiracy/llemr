@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from pttrack.models import Note, Provider, ReferralLocation, ReferralType
 from pttrack.validators import validate_attending
 
-from .validators import validate_bp
+from .validators import validate_bp, validate_hr, validate_rr, validate_t, validate_height, validate_weight
 
 
 class DiagnosisType(models.Model):
@@ -58,17 +58,16 @@ class Workup(Note):
     soc_hx = models.TextField(verbose_name="Social History")
     ros = models.TextField(verbose_name="ROS")
 
-    hr = models.PositiveSmallIntegerField(blank=True, null=True)
-    bp = models.CharField(blank=True, null=True,
-                          max_length=7,
-                          validators=[validate_bp])
+    hr = models.CharField(blank=True, null=True, max_length=12, validators=[validate_hr])
+    bp = models.CharField(blank=True, null=True, max_length=12, validators=[validate_bp])
 
-    rr = models.PositiveSmallIntegerField(blank=True, null=True)
-    t = models.DecimalField(max_digits=3,
-                            decimal_places=1,
-                            blank=True, null=True)
-    height = models.PositiveSmallIntegerField(blank=True, null=True)
-    weight = models.PositiveSmallIntegerField(blank=True, null=True)
+    rr = models.CharField(blank=True, null=True, max_length=12, validators=[validate_rr])
+    t = models.CharField(blank=True, null=True, max_length=12, validators=[validate_t])
+
+    # this is a hotfix that needs to be changed in terms of error handeling for the entire form so that 
+    # people are not confused when they cannot submit their form.
+    height = models.CharField(blank=True, null=True, max_length=12, validators=[validate_height])
+    weight = models.CharField(blank=True, null=True, max_length=12, validators=[validate_weight])
 
     pe = models.TextField(verbose_name="Physical Examination")
 
