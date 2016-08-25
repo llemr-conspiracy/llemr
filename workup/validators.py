@@ -65,10 +65,10 @@ def validate_rr(value):
 def validate_t(value):
     '''validate that a value is a valid temperature'''
     try:
-        temperature = int(value)
+        temperature = float(value)
     except ValueError:
         raise ValidationError(
-            str(value) + " is not a integer")
+            str(value) + " is not a decimal value")
 
     if temperature < 1:
         raise ValidationError(
