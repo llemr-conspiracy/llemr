@@ -98,25 +98,25 @@ class WorkupForm(ModelForm):
         cleaned_data = super(WorkupForm, self).clean()
 
         if cleaned_data.get('got_voucher') and \
-           not cleaned_data.get('voucher_amount'):
+           (cleaned_data.get('voucher_amount'))==None:
 
             self.add_error('voucher_amount', "If the patient recieved a " +
                            "voucher, value of the voucher must be specified.")
 
         if cleaned_data.get('got_voucher') and \
-           not cleaned_data.get('patient_pays'):
+           (cleaned_data.get('patient_pays'))==None:
 
             self.add_error('patient_pays', "If the patient recieved a " +
                            "voucher, specify the amount the patient pays.")
 
         if cleaned_data.get('got_imaging_voucher') and \
-           not cleaned_data.get('imaging_voucher_amount'):
+            (cleaned_data.get('imaging_voucher_amount'))==None:
 
             self.add_error('imaging_voucher_amount', "If the patient recieved a " +
                            "imaging voucher, value of the voucher must be specified.")
 
         if cleaned_data.get('got_imaging_voucher') and \
-           not cleaned_data.get('patient_pays_imaging'):
+           (cleaned_data.get('patient_pays_imaging'))==None:
 
             self.add_error('patient_pays_imaging', "If the patient recieved a " +
                            "imaging voucher, specify the amount the patient pays.")
