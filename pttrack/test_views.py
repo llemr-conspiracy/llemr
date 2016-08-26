@@ -12,6 +12,7 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException
 
 from . import models
 from workup import models as workupModels
@@ -109,6 +110,7 @@ def get_url_pt_list_identifiers(self, url):
     for pt_list in pt_lists:
         list_identifiers.append(pt_list['identifier'])
     return list_identifiers
+
 
 class LiveTesting(StaticLiveServerTestCase):
     fixtures = [BASIC_FIXTURE]
@@ -221,7 +223,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
     def setUp(self):
         # build a provider and log in
-        attending = build_provider(
+        self.attending = build_provider(
             username='timmy', password='password', roles=["Attending"])
         coordinator = build_provider(
             username='timmy_coord', password='password', roles=["Coordinator"])
@@ -254,6 +256,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         pt1 = models.Patient.objects.get(pk=1)
         pt1.toggle_active_status()
         pt1.save()
+        self.pt1 = pt1
 
         pt_prototype = {
             'phone': '+49 178 236 5288',
@@ -268,7 +271,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             'preferred_contact_method': models.ContactMethod.objects.first(),
         }
 
-        pt2 = models.Patient.objects.create(
+        self.pt2 = models.Patient.objects.create(
             first_name="Juggie",
             last_name="Brodeltein",
             middle_name="Bayer",
@@ -282,7 +285,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             **pt_prototype
         )
 
-        pt4 = models.Patient.objects.create(
+        self.pt4 = models.Patient.objects.create(
             first_name="No",
             last_name="Action",
             middle_name="Item",
@@ -298,10 +301,10 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             'author_type': coordinator.clinical_roles.first(),
         }
 
-        # Give pt2 a workup one day later.
+        # Give self.pt2 a workup one day later.
         workupModels.Workup.objects.create(
             clinic_day=tomorrow_clindate,
-            patient=pt2,
+            patient=self.pt2,
             **wu_prototype)
 
         # Give pt3 a workup one day ago.
@@ -314,7 +317,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         workupModels.Workup.objects.create(
             clinic_day=last_week_clindate,
             patient=pt1,
-            signer=attending,
+            signer=self.attending,
             **wu_prototype)
 
         ai_prototype = {
@@ -330,10 +333,10 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             patient=pt1,
             **ai_prototype)
 
-        # make pt2 have an AI due yesterday
+        # make self.pt2 have an AI due yesterday
         models.ActionItem.objects.create(
             due_date=yesterday,
-            patient=pt2,
+            patient=self.pt2,
             **ai_prototype)
 
         # make pt3 have an AI that during the test will be marked done
@@ -341,6 +344,45 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             due_date=last_week,
             patient=pt3,
             **ai_prototype)
+
+    def test_attestation_column(self):
+
+        self.selenium.get('%s%s' % (self.live_server_url,
+                                    reverse("all-patients")))
+
+        pt1_attest_status_id = 'id_pt_%s_attestation' % self.pt1.pk
+
+        WebDriverWait(self.selenium, 30).until(
+            EC.text_to_be_present_in_element(By.ID, str(self.attending)))
+
+        import time
+        time.sleep(1)
+        try:
+            # attested note is marked as having been attested by the attending
+            pt1_attest_status = self.selenium.find_element_by_id(
+                pt1_attest_status_id)
+            self.assertEquals(pt1_attest_status.text, str(self.attending))
+
+            # now a patient with no workup
+            pt4_attest_status = self.selenium.find_element_by_id(
+                'id_pt_%s_attestation' % self.pt4.pk)
+            self.assertEquals(pt4_attest_status.text, 'no note')
+
+            # now a patient with unattested workup
+            pt2_attest_status = self.selenium.find_element_by_id(
+                'id_pt_%s_attestation' % self.pt2.pk)
+            self.assertEquals(pt2_attest_status.text, 'unattested')
+        except:
+            print pt1_attest_status
+            print pt1_attest_status.id
+            print pt1_attest_status.text
+            print pt1_attest_status.get_attribute('id')
+            print pt1_attest_status.get_attribute('text')
+            print dir(pt1_attest_status)
+
+            import time
+            time.sleep(60)
+            raise
 
     def test_all_patients_correct_order(self):
 
@@ -360,7 +402,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='ptlast']/table/tbody") # this line does throw an error if the id-ed element does not exist
         first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
         second_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[3]/td[1]/a").get_attribute("text")
-        self.assertLessEqual(first_patient_name,second_patient_name)
+        self.assertLessEqual(first_patient_name, second_patient_name)
         self.assertEqual(first_patient_name, "Action, No I.")
 
         # test order by latest activity

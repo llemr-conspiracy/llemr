@@ -24,10 +24,11 @@ class ClinicDateSerializer(serializers.ModelSerializer):
 class WorkupSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = workupModels.Workup
-		fields = ['chief_complaint', 'clinic_day', 'pk', 'url']
+		fields = ['chief_complaint', 'clinic_day', 'pk', 'url', 'signer']
 
 	clinic_day = ClinicDateSerializer()
 	url = serializers.StringRelatedField(read_only=True)
+	signer = serializers.StringRelatedField(read_only=True)
 
 class PatientSerializer(serializers.ModelSerializer):
 	class Meta:

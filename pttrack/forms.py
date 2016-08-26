@@ -11,12 +11,12 @@ from . import models
 
 # pylint: disable=I0011,E1305
 
+
 class PatientForm(ModelForm):
     class Meta:
         model = models.Patient
         exclude = ['needs_workup', 'demographics']
 
-    
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
 
