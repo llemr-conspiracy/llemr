@@ -12,7 +12,7 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import StaleElementReferenceException, TimeoutException, NoSuchElementException, ElementNotVisibleException
+from selenium.common.exceptions import StaleElementReferenceException
 
 from . import models
 from workup import models as workupModels
@@ -94,12 +94,14 @@ def log_in_provider(client, provider):
 
     return user.provider
 
+
 def live_submit_login(selenium, username, password):
     username_input = selenium.find_element_by_name("username")
     username_input.send_keys(username)
     password_input = selenium.find_element_by_name("password")
     password_input.send_keys(password)
     selenium.find_element_by_xpath('//button[@type="submit"]').click()
+
 
 def get_url_pt_list_identifiers(self, url):
     response = self.client.get(url)
@@ -356,23 +358,17 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
         for id_str, xpath in tabs:
             # ensure that the tab is active (i.e. click the tab)
-            try:
-                self.selenium.find_element_by_xpath(xpath).click()
-            except Exception as e:
-                print e
-                import time
-                time.sleep(60)
-                raise
+            self.selenium.find_element_by_xpath(xpath).click()
 
             # wait for js to build the table (i.e. pt1 attestation cell exists)
             pt1_attest_status_id = id_str % self.pt1.pk
-            WebDriverWait(self.selenium, 20).until(
+            WebDriverWait(self.selenium, 10).until(
                 EC.presence_of_element_located((By.ID, pt1_attest_status_id)))
 
             # wait to ensure js has filled in the pt1 attestation cell
             pt1_attest_status = self.selenium.find_element_by_id(
                 pt1_attest_status_id)
-            WebDriverWait(self.selenium, 50).until(
+            WebDriverWait(self.selenium, 10).until(
                 EC.text_to_be_present_in_element(
                     (By.ID, pt1_attest_status_id),
                     str(self.attending)))
