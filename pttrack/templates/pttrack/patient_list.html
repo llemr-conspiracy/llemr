@@ -50,13 +50,14 @@ Osler: {{ title | default:"All Patients"}}
 
             // build empty table
             var table = $("<table>").attr({
-                class:"table"
+                class:"table",
             }).append(
             $("<tr>").append( // headings
                 $("<th>").text("Name"),
                 $("<th>").text("Age / Gender"),
                 $("<th>").text("Latest Activity"),
                 $("<th>").text("Next AI Due"),
+                $("<th>").text("Attestation"),
                 $("<th>").text("Status")
                 )
             );
@@ -64,13 +65,23 @@ Osler: {{ title | default:"All Patients"}}
             // build table contents and append to table
             for (var i = 0; i < patients.length; i++){
                 patient = patients[i];
-                var patientRow = $("<tr>").append(
+                pt_id = "id_pt_"+patient.id+"_"+list['identifier']
+
+                console.log(list)
+
+                // Build a patient row, assign it an id (pt pk)
+                var patientRow = $("<tr>").attr({
+                        id: pt_id
+                    });
+
+                $(patientRow).append(
                     $("<td>").append(
                         $("<a>").attr({
                             href : patient.detail_url
                         }).text(patient.name)),
                     $("<td>").text(patient.age+" / "+patient.gender)
-                    );
+                    )
+
                 if (patient.latest_workup){
                     $(patientRow).append(
                         $("<td>").append(
@@ -88,24 +99,48 @@ Osler: {{ title | default:"All Patients"}}
                             $("<span>").text(": "+formatDate(new Date(patient.history.last.history_date))))
                         );
                 }
+
+                // build "Next AI Due column" column
                 $(patientRow).append(
-                    $("<td>").text(patient.status),
-                    $("<td>").append(
+                    $("<td>").text(patient.status)
+                );
+
+                // build "attested by" column
+                var attested_td = $("<td>").attr({
+                    id: pt_id+"_attestation"
+                })
+
+                if(patient.latest_workup == null){
+                    $(attested_td).append($("<i>").text("no note"));
+                } else if(patient.latest_workup.signer == null){
+                    $(attested_td).append($("<i>").text("unattested"));
+                } else {
+                    $(attested_td).text(patient.latest_workup.signer);
+                }
+                $(patientRow).append(attested_td)
+
+                // build "Status" column
+                $(patientRow).append(
+                    $("<td>").attr({
+                        id: 'id_pt_'+patient.id+'_status'
+                    })
+                    .append(
                         $("<span>").text(function(){
                             return patient.needs_workup ? "Active " : "Inactive ";
                         }),
                         $("<a>").attr({
                             href : patient.activate_url
                         }).append(
-                        $("<span>").attr({
-                            class :function(){
-                                return patient.needs_workup ? "glyphicon glyphicon-remove-circle" : "glyphicon glyphicon-play-circle";
-                            },
-                            'aria-hidden' : "true"
-                        })
+                            $("<span>").attr({
+                                class :function(){
+                                    return patient.needs_workup ? "glyphicon glyphicon-remove-circle" : "glyphicon glyphicon-play-circle";
+                                },
+                                'aria-hidden' : "true"
+                            })
                         )
-                        )                        
-                    );
+                    )
+                );
+
                 $(table).append($(patientRow));
             }
             $(tabPane).append($(table));
@@ -134,15 +169,15 @@ Osler: {{ title | default:"All Patients"}}
                 })))
             );
 
-        $.get('{{api_url}}'+lists[i]['url']) // make ajax call
-        .success(buildTable(lists[i])) // need separate scoping to pass in lists[i]
-        .error(function(jqXHR, textStatus, errorThrown) { 
-            if (textStatus == 'timeout')
-                console.log('The server is not responding');
+            $.get('{{api_url}}'+lists[i]['url']) // make ajax call
+            .success(buildTable(lists[i])) // need separate scoping to pass in lists[i]
+            .error(function(jqXHR, textStatus, errorThrown) { 
+                if (textStatus == 'timeout')
+                    console.log('The server is not responding');
 
-            if (textStatus == 'error')
-                console.log(errorThrown);
-        });
+                if (textStatus == 'error')
+                    console.log(errorThrown);
+            });
         }
         
     }
