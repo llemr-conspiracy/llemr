@@ -65,12 +65,13 @@ Osler: {{ title | default:"All Patients"}}
             // build table contents and append to table
             for (var i = 0; i < patients.length; i++){
                 patient = patients[i];
+                pt_id = "id_pt_"+patient.id+"_"+list['identifier']
 
                 console.log(list)
 
                 // Build a patient row, assign it an id (pt pk)
                 var patientRow = $("<tr>").attr({
-                        id: "id_pt_"+patient.id
+                        id: pt_id
                     });
 
                 $(patientRow).append(
@@ -106,7 +107,7 @@ Osler: {{ title | default:"All Patients"}}
 
                 // build "attested by" column
                 var attested_td = $("<td>").attr({
-                    id: "id_pt_"+patient.id+"_attestation"
+                    id: pt_id+"_attestation"
                 })
 
                 if(patient.latest_workup == null){
@@ -168,15 +169,15 @@ Osler: {{ title | default:"All Patients"}}
                 })))
             );
 
-        $.get('{{api_url}}'+lists[i]['url']) // make ajax call
-        .success(buildTable(lists[i])) // need separate scoping to pass in lists[i]
-        .error(function(jqXHR, textStatus, errorThrown) { 
-            if (textStatus == 'timeout')
-                console.log('The server is not responding');
+            $.get('{{api_url}}'+lists[i]['url']) // make ajax call
+            .success(buildTable(lists[i])) // need separate scoping to pass in lists[i]
+            .error(function(jqXHR, textStatus, errorThrown) { 
+                if (textStatus == 'timeout')
+                    console.log('The server is not responding');
 
-            if (textStatus == 'error')
-                console.log(errorThrown);
-        });
+                if (textStatus == 'error')
+                    console.log(errorThrown);
+            });
         }
         
     }

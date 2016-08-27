@@ -12,7 +12,7 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException, NoSuchElementException, ElementNotVisibleException
 
 from . import models
 from workup import models as workupModels
@@ -350,39 +350,45 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         self.selenium.get('%s%s' % (self.live_server_url,
                                     reverse("all-patients")))
 
-        pt1_attest_status_id = 'id_pt_%s_attestation' % self.pt1.pk
+        tabs = [
+            ('id_pt_%s_ptlatest_attestation', '//*[@href="#ptlatest"]'),
+            ('id_pt_%s_ptlast_attestation', '//*[@href="#ptlast"]')]
 
-        WebDriverWait(self.selenium, 30).until(
-            EC.text_to_be_present_in_element(By.ID, str(self.attending)))
+        for id_str, xpath in tabs:
+            # ensure that the tab is active (i.e. click the tab)
+            try:
+                self.selenium.find_element_by_xpath(xpath).click()
+            except Exception as e:
+                print e
+                import time
+                time.sleep(60)
+                raise
 
-        import time
-        time.sleep(1)
-        try:
-            # attested note is marked as having been attested by the attending
+            # wait for js to build the table (i.e. pt1 attestation cell exists)
+            pt1_attest_status_id = id_str % self.pt1.pk
+            WebDriverWait(self.selenium, 20).until(
+                EC.presence_of_element_located((By.ID, pt1_attest_status_id)))
+
+            # wait to ensure js has filled in the pt1 attestation cell
             pt1_attest_status = self.selenium.find_element_by_id(
                 pt1_attest_status_id)
+            WebDriverWait(self.selenium, 50).until(
+                EC.text_to_be_present_in_element(
+                    (By.ID, pt1_attest_status_id),
+                    str(self.attending)))
+
+            # attested note is marked as having been attested by the attending
             self.assertEquals(pt1_attest_status.text, str(self.attending))
 
-            # now a patient with no workup
+            # now a patient with no workup should have 'no note'
             pt4_attest_status = self.selenium.find_element_by_id(
-                'id_pt_%s_attestation' % self.pt4.pk)
+                id_str % self.pt4.pk)
             self.assertEquals(pt4_attest_status.text, 'no note')
 
-            # now a patient with unattested workup
+            # now a patient with unattested workup should have 'unattested'
             pt2_attest_status = self.selenium.find_element_by_id(
-                'id_pt_%s_attestation' % self.pt2.pk)
+                id_str % self.pt2.pk)
             self.assertEquals(pt2_attest_status.text, 'unattested')
-        except:
-            print pt1_attest_status
-            print pt1_attest_status.id
-            print pt1_attest_status.text
-            print pt1_attest_status.get_attribute('id')
-            print pt1_attest_status.get_attribute('text')
-            print dir(pt1_attest_status)
-
-            import time
-            time.sleep(60)
-            raise
 
     def test_all_patients_correct_order(self):
 
