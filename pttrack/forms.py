@@ -3,20 +3,19 @@ from bootstrap3_datetime.widgets import DateTimePicker
 from django.forms import ModelForm, EmailField, CheckboxSelectMultiple
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Fieldset, Div, Field
-from crispy_forms.bootstrap import TabHolder, Tab, InlineCheckboxes, \
-    AppendedText, PrependedText
+from crispy_forms.layout import Submit
+from crispy_forms.bootstrap import InlineCheckboxes
 
 from . import models
 
 # pylint: disable=I0011,E1305
+
 
 class PatientForm(ModelForm):
     class Meta:
         model = models.Patient
         exclude = ['needs_workup', 'demographics']
 
-    
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
 
