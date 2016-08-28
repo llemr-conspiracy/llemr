@@ -69,6 +69,73 @@ class TestModelFieldValidators(TestCase):
         with self.assertRaises(ValidationError):
             validators.validate_bp("200/20")
 
+    def test_validate_hr(self):
+        '''
+        Test our validator for heart rate.
+        '''
+        self.assertEqual(validators.validate_hr("100"), None)
+        self.assertEqual(validators.validate_hr("90"), None)
+
+        with self.assertRaises(ValidationError):
+            validators.validate_hr("902/")
+        with self.assertRaises(ValidationError):
+            validators.validate_hr("..90")
+        with self.assertRaises(ValidationError):
+            validators.validate_hr("93.232")
+
+    def test_validate_rr(self):
+        '''
+        Test our validator for heart rate.
+        '''
+        self.assertEqual(validators.validate_rr("100"), None)
+        self.assertEqual(validators.validate_rr("90"), None)
+
+        with self.assertRaises(ValidationError):
+            validators.validate_rr("90/")
+        with self.assertRaises(ValidationError):
+            validators.validate_rr("..90")
+        with self.assertRaises(ValidationError):
+            validators.validate_rr("93.232")
+
+    def test_validate_t(self):
+        '''
+        Test our validator for heart rate.
+        '''
+        self.assertEqual(validators.validate_t("100.11"), None)
+        self.assertEqual(validators.validate_t("90.21"), None)
+
+        with self.assertRaises(ValidationError):
+            validators.validate_t("90x")
+
+
+    def test_validate_height(self):
+        '''
+        Test our validator for heart rate.
+        '''
+        self.assertEqual(validators.validate_height("100"), None)
+        self.assertEqual(validators.validate_height("90"), None)
+
+        with self.assertRaises(ValidationError):
+            validators.validate_height("90x")
+        with self.assertRaises(ValidationError):
+            validators.validate_height("90.0")
+        with self.assertRaises(ValidationError):
+            validators.validate_height("93.232")
+
+    def test_validate_weight(self):
+        '''
+        Test our validator for heart rate.
+        '''
+        self.assertEqual(validators.validate_weight("100"), None)
+        self.assertEqual(validators.validate_weight("90"), None)
+
+        with self.assertRaises(ValidationError):
+            validators.validate_weight("90x")
+        with self.assertRaises(ValidationError):
+            validators.validate_weight("9.0")
+        with self.assertRaises(ValidationError):
+            validators.validate_weight("93.232")
+
 
 class TestWorkupModel(TestCase):
 

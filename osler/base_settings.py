@@ -53,7 +53,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(BASE_DIR, 'pttrack/templates'),
-                ],
+                 ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -93,4 +93,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # for crispy_forms
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
-
