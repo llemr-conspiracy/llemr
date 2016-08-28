@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 
+{% load static %}
+
 <html lang="en">
 <head>
 	<meta charset="utf-8">
@@ -9,11 +11,11 @@
   <title>{% block title %}{% endblock %}</title>
 
     <!-- Bootstrap -->
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href={% static "pttrack/css/bootstrap.min.css" %}>
+	<link rel="stylesheet" href={% static "pttrack/css/bootstrap-theme.min.css" %}>
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	<script src={% static "pttrack/js/jquery-1.11.2.min.js" %}></script>
+  <script src={% static "pttrack/js/bootstrap.min.js" %}></script>
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
