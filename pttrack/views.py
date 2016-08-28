@@ -3,11 +3,9 @@ from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.views.generic.edit import FormView, UpdateView
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
-import django.utils.timezone
 
 from . import models as mymodels
 from . import forms as myforms
-from workup import models as workupmodels
 import json
 
 import datetime
