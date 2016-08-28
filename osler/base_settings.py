@@ -30,7 +30,6 @@ INSTALLED_APPS = (
     'crispy_forms',
     'bootstrap3',
     'bootstrap3_datetime',
-    'djangular',
     'simple_history',
     'rest_framework',
 )
