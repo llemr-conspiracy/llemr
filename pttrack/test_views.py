@@ -225,13 +225,23 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
     def setUp(self):
         # build a provider and log in
+        self.provider_password = 'password'
         self.attending = build_provider(
-            username='timmy', password='password', roles=["Attending"])
-        coordinator = build_provider(
-            username='timmy_coord', password='password', roles=["Coordinator"])
-
-        self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        live_submit_login(self.selenium, 'timmy_coord', 'password')
+            username='timmy_attend',
+            password=self.provider_password,
+            roles=["Attending"])
+        self.coordinator = build_provider(
+            username='timmy_coord',
+            password=self.provider_password,
+            roles=["Coordinator"])
+        self.clinical = build_provider(
+            username='timmy_clinical',
+            password=self.provider_password,
+            roles=["Clinical"])
+        self.preclinical = build_provider(
+            username='timmy_preclin',
+            password=self.provider_password,
+            roles=["Clinical"])
 
         workupModels.ClinicType.objects.create(name="Basic Care Clinic")
 
@@ -299,8 +309,8 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             'HPI': "", 'PMH_PSH': "", 'meds': "", 'allergies': "",
             'fam_hx': "", 'soc_hx': "",
             'ros': "", 'pe': "", 'A_and_P': "",
-            'author': coordinator,
-            'author_type': coordinator.clinical_roles.first(),
+            'author': self.coordinator,
+            'author_type': self.coordinator.clinical_roles.first(),
         }
 
         # Give self.pt2 a workup one day later.
@@ -323,8 +333,8 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             **wu_prototype)
 
         ai_prototype = {
-            'author': coordinator,
-            'author_type': coordinator.clinical_roles.first(),
+            'author': self.coordinator,
+            'author_type': self.coordinator.clinical_roles.first(),
             'instruction': models.ActionInstruction.objects.first(),
             'comments': ""
         }
@@ -349,8 +359,12 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
     def test_attestation_column(self):
 
-        self.selenium.get('%s%s' % (self.live_server_url,
-                                    reverse("all-patients")))
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(
+            self.selenium, self.coordinator.username, self.provider_password)
+
+        self.selenium.get(
+            '%s%s' % (self.live_server_url, reverse("all-patients")))
 
         tabs = [
             ('id_pt_%s_ptlatest_attestation', '//*[@href="#ptlatest"]'),
@@ -388,6 +402,13 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
     def test_all_patients_correct_order(self):
 
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(
+            self.selenium, self.coordinator.username, self.provider_password)
+
+        self.selenium.get('%s%s' % (self.live_server_url,
+                                    reverse("all-patients")))
+
         # causes a broken pipe error
         self.selenium.get('%s%s' % (self.live_server_url,
                                     reverse("all-patients")))
@@ -414,17 +435,26 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
 
     def test_home_correct_order(self):
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(
+            self.selenium, self.coordinator.username, self.provider_password)
+
         self.selenium.get('%s%s' % (self.live_server_url,
-                                            reverse("home")))
+                                    reverse("home")))
         self.assertEquals(self.selenium.current_url,
-                                  '%s%s' % (self.live_server_url,
-                                            reverse('home')))
+                          '%s%s' % (self.live_server_url,
+                                    reverse('home')))
 
         # unsure how to test for multiple elements/a certain number of elements
-        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "activeai")))
-        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "pendingai")))
-        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "unsignedwu")))
-        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "activept")))
+        WebDriverWait(self.selenium, 60).until(
+            EC.presence_of_element_located((By.ID, "activeai")))
+        WebDriverWait(self.selenium, 60).until(
+            EC.presence_of_element_located((By.ID, "pendingai")))
+        WebDriverWait(self.selenium, 60).until(
+            EC.presence_of_element_located((By.ID, "unsignedwu")))
+        WebDriverWait(self.selenium, 60).until(
+            EC.presence_of_element_located((By.ID, "activept")))
 
         # test active ai
         pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='activeai']/table/tbody")
