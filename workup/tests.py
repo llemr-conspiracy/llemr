@@ -446,7 +446,7 @@ class LiveTesting(StaticLiveServerTestCase):
             self.select_tab(tab_name)
 
             for key in wu_data:
-                # these form elements are excluded from the form, so we 
+                # these form elements are excluded from the form, so we
                 # shouldn't try to fill them out.
                 if key in forms.WorkupForm.Meta.exclude:
                     continue
@@ -504,7 +504,7 @@ class LiveTesting(StaticLiveServerTestCase):
             '//div[@id="div_id_diagnosis_categories"]').get_attribute("class")
         self.assertIn("has-error", dx_class)
 
-    def test_noninteger_weight_wu(self):
+    def test_noninteger_height_weight_wu(self):
         '''
         Test that when a noninteger weight is given, that we properly present
         the error.
@@ -512,21 +512,18 @@ class LiveTesting(StaticLiveServerTestCase):
 
         # navigate a new workup for the first patient in the database
         new_wu_url = reverse('new-workup', args=(Patient.objects.first().pk,))
-        self.selenium.get('%s%s' % (self.live_server_url, new_wu_url))
 
-        wu_data = wu_dict()
-        dx_cats = [models.DiagnosisType.objects.first().pk]
-        wu_data['height'] = '13.6'
+        for param in ['height', 'weight']:
+            self.selenium.get('%s%s' % (self.live_server_url, new_wu_url))
 
-        self.fill_out_workup(wu_data, dx_cats=dx_cats)
+            wu_data = wu_dict()
+            dx_cats = [models.DiagnosisType.objects.first().pk]
+            wu_data[param] = '13.6'
 
-        # 'has-error' should be in the class description of the div, since it's
-        # got an invalid value.
-        dx_class = self.selenium.find_element_by_xpath(
-            '//div[@id="div_id_height"]').get_attribute("class")
-        self.assertIn("has-error", dx_class.split())
+            self.fill_out_workup(wu_data, dx_cats=dx_cats)
 
-        # since we should have a successful submission, we should redirect away
-        self.assertNotEquals(
-            self.selenium.current_url,
-            '%s%s' % (self.live_server_url, new_wu_url))
+            # 'has-error' should be in the class description of the div,
+            # since it's got an invalid value.
+            dx_class = self.selenium.find_element_by_xpath(
+                '//div[@id="div_id_%s"]' % param).get_attribute("class")
+            self.assertIn("has-error", dx_class.split())
