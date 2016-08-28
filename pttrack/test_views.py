@@ -454,6 +454,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         self.assertEqual(num_activeai_table_rows, 2) # 1 patient + 1 heading   
         self.assertEqual(first_patient_name, "McNath, Frankie L.")
 
+
 class ViewsExistTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
