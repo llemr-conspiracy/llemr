@@ -290,7 +290,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             **pt_prototype
         )
 
-        pt3 = models.Patient.objects.create(
+        self.pt3 = models.Patient.objects.create(
             first_name="Asdf",
             last_name="Lkjh",
             middle_name="Bayer",
@@ -322,7 +322,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         # Give pt3 a workup one day ago.
         workupModels.Workup.objects.create(
             clinic_day=yesterday_clindate,
-            patient=pt3,
+            patient=self.pt3,
             **wu_prototype)
 
         # Give pt1 a signed workup five days ago.
@@ -354,7 +354,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         # make pt3 have an AI that during the test will be marked done
         models.ActionItem.objects.create(
             due_date=last_week,
-            patient=pt3,
+            patient=self.pt3,
             **ai_prototype)
 
     def test_attestation_column(self):
@@ -434,7 +434,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
         self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
 
-    def test_home_correct_order(self):
+    def test_home_correct_order_coordinator(self):
 
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
         live_submit_login(
@@ -442,47 +442,42 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
         self.selenium.get('%s%s' % (self.live_server_url,
                                     reverse("home")))
-        self.assertEquals(self.selenium.current_url,
-                          '%s%s' % (self.live_server_url,
-                                    reverse('home')))
 
-        # unsure how to test for multiple elements/a certain number of elements
-        WebDriverWait(self.selenium, 60).until(
-            EC.presence_of_element_located((By.ID, "activeai")))
-        WebDriverWait(self.selenium, 60).until(
-            EC.presence_of_element_located((By.ID, "pendingai")))
-        WebDriverWait(self.selenium, 60).until(
-            EC.presence_of_element_located((By.ID, "unsignedwu")))
-        WebDriverWait(self.selenium, 60).until(
-            EC.presence_of_element_located((By.ID, "activept")))
+        tabs = {
+            'activeai': [self.pt2, self.pt3],
+            'pendingai': [self.pt1],
+            'unsignedwu': [self.pt2, self.pt3],
+            'activept': [self.pt1]
+        }
 
-        # test active ai
-        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='activeai']/table/tbody")
-        num_activeai_table_rows = len(pt_last_tbody.find_elements_by_xpath(".//tr"))
-        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
-        self.assertEqual(num_activeai_table_rows, 3) # 2 patients + 1 heading   
-        self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
+        # make sure the correct tabs are present.
+        for tab_name in tabs.keys():
+            WebDriverWait(self.selenium, 20).until(
+                EC.presence_of_element_located((By.ID, tab_name)))
 
-        # test pending (inactive) ai
-        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='pendingai']/table/tbody")
-        num_activeai_table_rows = len(pt_last_tbody.find_elements_by_xpath(".//tr"))
-        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
-        self.assertEqual(num_activeai_table_rows, 2) # 1 patient + 1 heading   
-        self.assertEqual(first_patient_name, "McNath, Frankie L.")
+        for tab_name, pts in tabs.iteritems():
 
-        # test unsigned workup
-        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='unsignedwu']/table/tbody")
-        num_activeai_table_rows = len(pt_last_tbody.find_elements_by_xpath(".//tr"))
-        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
-        self.assertEqual(num_activeai_table_rows, 3) # 2 patients + 1 heading   
-        self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
+            tbody = self.selenium.find_element_by_xpath(
+                "//div[@id='%s']/table/tbody" % tab_name)
 
-        # test active patients
-        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='activept']/table/tbody")
-        num_activeai_table_rows = len(pt_last_tbody.find_elements_by_xpath(".//tr"))
-        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
-        self.assertEqual(num_activeai_table_rows, 2) # 1 patient + 1 heading   
-        self.assertEqual(first_patient_name, "McNath, Frankie L.")
+            # verify all patients expected are present
+            for i, pt in enumerate(pts):
+                # xpath is i+2 because xpath is 1 indexed and header is 1.
+                pt_name = tbody.find_element_by_xpath(
+                    ".//tr[%s]/td[1]/a" % (i+2)).get_attribute("text")
+                self.assertEqual(
+                    pt_name, pt.name())
+
+            # verify the number of present pateints is as expected.
+            table_rows = tbody.find_elements_by_xpath(".//tr")
+            self.assertEqual(
+                len(table_rows)-1,  # number of rows is header + patients
+                len(pts),
+                msg="{n_tbl} != {n_pts}; Pts: {pts}".format(
+                    n_tbl=len(table_rows)-1,
+                    n_pts=len(pts),
+                    pts=pts))
+
 
 class ViewsExistTest(TestCase):
     fixtures = [BASIC_FIXTURE]
