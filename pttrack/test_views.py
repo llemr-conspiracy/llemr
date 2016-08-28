@@ -202,6 +202,10 @@ class LiveTesting(StaticLiveServerTestCase):
                 self.selenium.get('%s%s' % (self.live_server_url,
                                             reverse(url.name)))
 
+            WebDriverWait(self.selenium, 10).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, '//div[@class="jumbotron"]')))
+
             jumbotron_elements = self.selenium.find_elements_by_xpath(
                 '//div[@class="jumbotron"]')
             self.assertNotEqual(
