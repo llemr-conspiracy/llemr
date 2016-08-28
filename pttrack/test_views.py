@@ -304,6 +304,13 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             **pt_prototype
         )
 
+        self.pt5 = models.Patient.objects.create(
+            first_name="New",
+            last_name="Patient",
+            middle_name="No Workup",
+            **pt_prototype
+        )
+
         wu_prototype = {
             'chief_complaint': "SOB", 'diagnosis': "MI",
             'HPI': "", 'PMH_PSH': "", 'meds': "", 'allergies': "",
@@ -435,48 +442,38 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
 
     def test_home_correct_order_coordinator(self):
-
+        '''
+        Verify that the patients that are expected appear on each tab of the
+        the coordinators' home page, and that they are in the correct order.
+        '''
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
         live_submit_login(
             self.selenium, self.coordinator.username, self.provider_password)
-
-        self.selenium.get('%s%s' % (self.live_server_url,
-                                    reverse("home")))
+        self.selenium.get('%s%s' % (self.live_server_url, reverse("home")))
 
         tabs = {
             'activeai': [self.pt2, self.pt3],
             'pendingai': [self.pt1],
             'unsignedwu': [self.pt2, self.pt3],
-            'activept': [self.pt1]
+            'activept': [self.pt1, self.pt5]
         }
 
-        # make sure the correct tabs are present.
+        # make sure the all the tabs are present.
         for tab_name in tabs.keys():
             WebDriverWait(self.selenium, 20).until(
                 EC.presence_of_element_located((By.ID, tab_name)))
 
+        # examine each tab and establish identity of expected and present pts.
         for tab_name, pts in tabs.iteritems():
-
             tbody = self.selenium.find_element_by_xpath(
                 "//div[@id='%s']/table/tbody" % tab_name)
 
-            # verify all patients expected are present
-            for i, pt in enumerate(pts):
-                # xpath is i+2 because xpath is 1 indexed and header is 1.
-                pt_name = tbody.find_element_by_xpath(
-                    ".//tr[%s]/td[1]/a" % (i+2)).get_attribute("text")
-                self.assertEqual(
-                    pt_name, pt.name())
+            present_pt_names = [t.get_attribute('text') for t in
+                                tbody.find_elements_by_xpath(
+                                    ".//tr[*]/td[1]/a")]
+            expected_pt_names = [p.name() for p in pts]
 
-            # verify the number of present pateints is as expected.
-            table_rows = tbody.find_elements_by_xpath(".//tr")
-            self.assertEqual(
-                len(table_rows)-1,  # number of rows is header + patients
-                len(pts),
-                msg="{n_tbl} != {n_pts}; Pts: {pts}".format(
-                    n_tbl=len(table_rows)-1,
-                    n_pts=len(pts),
-                    pts=pts))
+            self.assertEqual(present_pt_names, expected_pt_names)
 
 
 class ViewsExistTest(TestCase):
