@@ -202,6 +202,10 @@ class LiveTesting(StaticLiveServerTestCase):
                 self.selenium.get('%s%s' % (self.live_server_url,
                                             reverse(url.name)))
 
+            WebDriverWait(self.selenium, 10).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, '//div[@class="jumbotron"]')))
+
             jumbotron_elements = self.selenium.find_elements_by_xpath(
                 '//div[@class="jumbotron"]')
             self.assertNotEqual(
@@ -731,31 +735,6 @@ class IntakeTest(TestCase):
                 models.ContactMethod.objects.first().pk,
         }
 
-    def test_ssn_rewrite(self):
-        '''SSNs given without hypens should be automatically hypenated.'''
-
-        submitted_pt = self.valid_pt_dict
-        submitted_pt['ssn'] = "123456789"
-
-        response = self.client.post(reverse('intake'), submitted_pt)
-
-        new_pt = list(models.Patient.objects.all())[-1]
-        self.assertEquals(new_pt.ssn, "123-45-6789")
-
-    def test_ssn_update(self):
-        '''SSNs given without hypens should be automatically hypenated.'''
-
-        submitted_pt = self.valid_pt_dict
-        submitted_pt['ssn'] = "123456789"
-
-        response = self.client.post(reverse('intake'), submitted_pt)
-
-        new_pt = list(models.Patient.objects.all())[-1]
-
-        response = self.client.post(reverse('patient-update', args=(new_pt.pk,)), submitted_pt)
-        self.assertEqual(response.status_code, 302)
-
-
     def test_can_intake_pt(self):
 
         n_pt = len(models.Patient.objects.all())
@@ -767,10 +746,10 @@ class IntakeTest(TestCase):
         response = self.client.post(url, submitted_pt)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEquals(len(models.Patient.objects.all()), n_pt + 1)
+        self.assertEquals(models.Patient.objects.count(), n_pt + 1)
 
-        new_pt = models.Patient.objects.all()[n_pt]
-        
+        new_pt = models.Patient.objects.last()
+
         for param in submitted_pt:
             try:
                 self.assertEquals(str(submitted_pt[param]),
