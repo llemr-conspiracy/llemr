@@ -1,7 +1,6 @@
 import datetime
 
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 from django.utils.timezone import now
 from rest_framework.test import APITestCase
 from rest_framework import status
@@ -11,6 +10,7 @@ from workup import models as workupModels
 from pttrack.test_views import build_provider, log_in_provider
 
 BASIC_FIXTURE = 'api.json'
+
 
 class APITest(APITestCase):
     fixtures = [BASIC_FIXTURE]

@@ -168,11 +168,6 @@ class Patient(Person):
 
     ethnicities = models.ManyToManyField(Ethnicity)
 
-    ssn = models.CharField(max_length=9,
-                           validators=[validators.validate_ssn],
-                           blank=True,
-                           null=True)
-
     # Alternative phone numbers have up to 4 fields and each one is associated
     # with the person that owns phone
 
