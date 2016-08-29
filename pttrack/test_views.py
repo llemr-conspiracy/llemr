@@ -441,8 +441,13 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='pendingai']/table/tbody")
         num_activeai_table_rows = len(pt_last_tbody.find_elements_by_xpath(".//tr"))
         first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
-        self.assertEqual(num_activeai_table_rows, 2) # 1 patient + 1 heading   
-        self.assertEqual(first_patient_name, "McNath, Frankie L.")
+        try:
+            self.assertEqual(num_activeai_table_rows, 2) # 1 patient + 1 heading   
+            self.assertEqual(first_patient_name, "McNath, Frankie L.")
+        except AssertionError:
+            import time
+            time.sleep(60)
+            raise
 
         # test unsigned workup
         pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='unsignedwu']/table/tbody")
@@ -714,31 +719,6 @@ class IntakeTest(TestCase):
                 models.ContactMethod.objects.first().pk,
         }
 
-    def test_ssn_rewrite(self):
-        '''SSNs given without hypens should be automatically hypenated.'''
-
-        submitted_pt = self.valid_pt_dict
-        submitted_pt['ssn'] = "123456789"
-
-        response = self.client.post(reverse('intake'), submitted_pt)
-
-        new_pt = list(models.Patient.objects.all())[-1]
-        self.assertEquals(new_pt.ssn, "123-45-6789")
-
-    def test_ssn_update(self):
-        '''SSNs given without hypens should be automatically hypenated.'''
-
-        submitted_pt = self.valid_pt_dict
-        submitted_pt['ssn'] = "123456789"
-
-        response = self.client.post(reverse('intake'), submitted_pt)
-
-        new_pt = list(models.Patient.objects.all())[-1]
-
-        response = self.client.post(reverse('patient-update', args=(new_pt.pk,)), submitted_pt)
-        self.assertEqual(response.status_code, 302)
-
-
     def test_can_intake_pt(self):
 
         n_pt = len(models.Patient.objects.all())
@@ -750,10 +730,10 @@ class IntakeTest(TestCase):
         response = self.client.post(url, submitted_pt)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEquals(len(models.Patient.objects.all()), n_pt + 1)
+        self.assertEquals(models.Patient.objects.count(), n_pt + 1)
 
-        new_pt = models.Patient.objects.all()[n_pt]
-        
+        new_pt = models.Patient.objects.last()
+
         for param in submitted_pt:
             try:
                 self.assertEquals(str(submitted_pt[param]),

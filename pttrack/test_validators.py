@@ -22,27 +22,6 @@ class TestModelFieldValidators(TestCase):
         with self.assertRaises(ValidationError):
             validators.validate_zip('12a45')
 
-    def test_validate_ssn(self):
-        '''
-        Test the social security number parser. It should accept both the
-        format with hypens and the format without.
-        '''
-        self.assertEqual(validators.validate_ssn("123-45-6789"), None)
-        self.assertEqual(validators.validate_ssn("123456789"), None)
-
-        with self.assertRaises(ValidationError):
-            validators.validate_ssn("000-aa-0000")
-        with self.assertRaises(ValidationError):
-            validators.validate_ssn("000-00-00000")
-        with self.assertRaises(ValidationError):
-            validators.validate_ssn("000-000-000")
-        with self.assertRaises(ValidationError):
-            validators.validate_ssn("1234567890")
-        with self.assertRaises(ValidationError):
-            validators.validate_ssn('-123456789')
-        with self.assertRaises(ValidationError):
-            validators.validate_ssn('-12345678')
-
     def test_validate_birth_date(self):
         '''
         Test our validator for birth dates. Birth dates should be in the past
