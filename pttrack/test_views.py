@@ -309,9 +309,9 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         )
 
         self.pt5 = models.Patient.objects.create(
-            first_name="New",
-            last_name="Patient",
-            middle_name="No Workup",
+            first_name="No",
+            last_name="Workup",
+            middle_name="Patient",
             **pt_prototype
         )
 
@@ -460,6 +460,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             'pendingai': [self.pt1],
             'unsignedwu': [self.pt2, self.pt3],
             'activept': [self.pt1, self.pt5]
+            # 'activept': [self.pt1]
         }
 
         # make sure the all the tabs are present.
