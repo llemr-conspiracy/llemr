@@ -306,7 +306,7 @@ def home_page(request):
 
         title = "Active Patients"
 
-        lists = [{'url':'filter=ai_active', 'title':"Active Patients", 'identifier':'activept', 'active':True}]
+        lists = [{'url':'filter=active', 'title':"Active Patients", 'identifier':'activept', 'active':True}]
 
     api_url = reverse('pt_list_api')[:-1] + '.json/?' # remove last '/' before adding because there no '/' between /api/pt_list and .json, but reverse generates '/api/pt_list/'
 
