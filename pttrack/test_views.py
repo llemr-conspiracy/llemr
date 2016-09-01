@@ -230,22 +230,28 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
     def setUp(self):
         # build a provider and log in
         self.provider_password = 'password'
-        self.attending = build_provider(
+        attending = build_provider(
             username='timmy_attend',
             password=self.provider_password,
             roles=["Attending"])
-        self.coordinator = build_provider(
+        coordinator = build_provider(
             username='timmy_coord',
             password=self.provider_password,
             roles=["Coordinator"])
-        self.clinical = build_provider(
+        clinical = build_provider(
             username='timmy_clinical',
             password=self.provider_password,
             roles=["Clinical"])
-        self.preclinical = build_provider(
+        preclinical = build_provider(
             username='timmy_preclin',
             password=self.provider_password,
-            roles=["Clinical"])
+            roles=["Preclinical"])
+        self.providers = {
+            'attending' : attending,
+            'coordinator' : coordinator,
+            'clinical' : clinical,
+            'preclinical' : preclinical
+        }
 
         workupModels.ClinicType.objects.create(name="Basic Care Clinic")
 
@@ -320,8 +326,8 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             'HPI': "", 'PMH_PSH': "", 'meds': "", 'allergies': "",
             'fam_hx': "", 'soc_hx': "",
             'ros': "", 'pe': "", 'A_and_P': "",
-            'author': self.coordinator,
-            'author_type': self.coordinator.clinical_roles.first(),
+            'author': self.providers['coordinator'],
+            'author_type': self.providers['coordinator'].clinical_roles.first(),
         }
 
         # Give self.pt2 a workup one day later.
@@ -340,12 +346,12 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         workupModels.Workup.objects.create(
             clinic_day=last_week_clindate,
             patient=pt1,
-            signer=self.attending,
+            signer=self.providers['attending'],
             **wu_prototype)
 
         ai_prototype = {
-            'author': self.coordinator,
-            'author_type': self.coordinator.clinical_roles.first(),
+            'author': self.providers['coordinator'],
+            'author_type': self.providers['coordinator'].clinical_roles.first(),
             'instruction': models.ActionInstruction.objects.first(),
             'comments': ""
         }
@@ -372,7 +378,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
         live_submit_login(
-            self.selenium, self.coordinator.username, self.provider_password)
+            self.selenium, self.providers['coordinator'].username, self.provider_password)
 
         self.selenium.get(
             '%s%s' % (self.live_server_url, reverse("all-patients")))
@@ -396,10 +402,10 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             WebDriverWait(self.selenium, 10).until(
                 EC.text_to_be_present_in_element(
                     (By.ID, pt1_attest_status_id),
-                    str(self.attending)))
+                    str(self.providers['attending'])))
 
             # attested note is marked as having been attested by the attending
-            self.assertEquals(pt1_attest_status.text, str(self.attending))
+            self.assertEquals(pt1_attest_status.text, str(self.providers['attending']))
 
             # now a patient with no workup should have 'no note'
             pt4_attest_status = self.selenium.find_element_by_id(
@@ -415,7 +421,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
         live_submit_login(
-            self.selenium, self.coordinator.username, self.provider_password)
+            self.selenium, self.providers['coordinator'].username, self.provider_password)
 
         self.selenium.get('%s%s' % (self.live_server_url,
                                     reverse("all-patients")))
@@ -445,40 +451,44 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
         self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
 
-    def test_home_correct_order_coordinator(self):
+    def test_provider_types_correct_home_order(self):
         '''
-        Verify that the patients that are expected appear on each tab of the
-        the coordinators' home page, and that they are in the correct order.
+        Verify that for each provider type, on the home page the expected tabs appear and the expected patients for in each tab appear in the correct order.
         '''
-        self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        live_submit_login(
-            self.selenium, self.coordinator.username, self.provider_password)
-        self.selenium.get('%s%s' % (self.live_server_url, reverse("home")))
+        provider_tabs = {
+            'attending' : ['unsignedwu', 'activept'],
+            'coordinator' : ['activept', 'activeai', 'pendingai', 'unsignedwu'],
+            'clinical' : ['activept'],
+            'preclinical' : ['activept']
+        }
 
-        tabs = {
+        tab_patients = {
             'activeai': [self.pt2, self.pt3],
             'pendingai': [self.pt1],
             'unsignedwu': [self.pt2, self.pt3],
             'activept': [self.pt4, self.pt2, self.pt3, self.pt5]
-            # 'activept': [self.pt1]
         }
 
-        # make sure the all the tabs are present.
-        for tab_name in tabs.keys():
-            WebDriverWait(self.selenium, 20).until(
+        for provider_type in provider_tabs:
+            self.selenium.get('%s%s' % (self.live_server_url, '/'))
+            print self.providers[provider_type].username
+            live_submit_login(self.selenium, self.providers[provider_type].username, self.provider_password)
+            self.selenium.get('%s%s' % (self.live_server_url, reverse("home")))
+
+            for tab_name in provider_tabs[provider_type]:
+                WebDriverWait(self.selenium, 20).until(
                 EC.presence_of_element_located((By.ID, tab_name)))
 
-        # examine each tab and establish identity of expected and present pts.
-        for tab_name, pts in tabs.iteritems():
-            tbody = self.selenium.find_element_by_xpath(
-                "//div[@id='%s']/table/tbody" % tab_name)
+                # examine each tab and establish identity of expected and present patients.
+                tbody = self.selenium.find_element_by_xpath(
+                    "//div[@id='%s']/table/tbody" % tab_name)
 
-            present_pt_names = [t.get_attribute('text') for t in
-                                tbody.find_elements_by_xpath(
-                                    ".//tr[*]/td[1]/a")]
-            expected_pt_names = [p.name() for p in pts]
-            self.assertEqual(present_pt_names, expected_pt_names)
-
+                present_pt_names = [t.get_attribute('text') for t in
+                                    tbody.find_elements_by_xpath(
+                                        ".//tr[*]/td[1]/a")]
+                expected_pt_names = [p.name() for p in tab_patients[tab_name]]
+                self.assertEqual(present_pt_names, expected_pt_names)
+            self.selenium.get('%s%s' % (self.live_server_url, reverse('logout')))
 
 class ViewsExistTest(TestCase):
     fixtures = [BASIC_FIXTURE]
