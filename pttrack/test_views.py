@@ -459,7 +459,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             'activeai': [self.pt2, self.pt3],
             'pendingai': [self.pt1],
             'unsignedwu': [self.pt2, self.pt3],
-            'activept': [self.pt1, self.pt5]
+            'activept': [self.pt4, self.pt2, self.pt3, self.pt5]
             # 'activept': [self.pt1]
         }
 
@@ -477,7 +477,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
                                 tbody.find_elements_by_xpath(
                                     ".//tr[*]/td[1]/a")]
             expected_pt_names = [p.name() for p in pts]
-
+            print tab_name
             self.assertEqual(present_pt_names, expected_pt_names)
 
 
