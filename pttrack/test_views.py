@@ -488,6 +488,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
                                         ".//tr[*]/td[1]/a")]
                 expected_pt_names = [p.name() for p in tab_patients[tab_name]]
                 self.assertEqual(present_pt_names, expected_pt_names)
+                
             self.selenium.get('%s%s' % (self.live_server_url, reverse('logout')))
 
 class ViewsExistTest(TestCase):
