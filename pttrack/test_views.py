@@ -477,7 +477,6 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
                                 tbody.find_elements_by_xpath(
                                     ".//tr[*]/td[1]/a")]
             expected_pt_names = [p.name() for p in pts]
-            print tab_name
             self.assertEqual(present_pt_names, expected_pt_names)
 
 
