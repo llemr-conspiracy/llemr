@@ -216,7 +216,6 @@ class PatientCreate(FormView):
 
     def form_valid(self, form):
         pt = form.save()
-        pt.needs_workup = True
         pt.save()
 
         return HttpResponseRedirect(reverse("demographics-create",

@@ -193,7 +193,7 @@ class Patient(Person):
     # If the patient is in clinic and needs a workup, that is specified by
     # needs_workup. Default value is false for all the previous patients
 
-    needs_workup = models.BooleanField(default=False)
+    needs_workup = models.BooleanField(default=True)
 
     history = HistoricalRecords()
 
