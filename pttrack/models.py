@@ -193,7 +193,7 @@ class Patient(Person):
     # If the patient is in clinic and needs a workup, that is specified by
     # needs_workup. Default value is false for all the previous patients
 
-    needs_workup = models.BooleanField(default=False)
+    needs_workup = models.BooleanField(default=True)
 
     history = HistoricalRecords()
 
@@ -308,22 +308,29 @@ class Provider(Person):
 
     clinical_roles = models.ManyToManyField(ProviderType)
 
-    needs_updating = models.BooleanField(default=False) # False upon creation
+    needs_updating = models.BooleanField(default=False)
 
     history = HistoricalRecords()
 
+    @property
+    def username(self):
+        return self.associated_user.username
+
     def __unicode__(self):
         return self.name()
+
 
 def require_providers_update():
     '''
     Sets needs_update to True for all providers
     Not sure where this should go
-    Is an independent function that sets all providers so the setter doesn't have to figure out what to type.
+    Is an independent function that sets all providers so the setter doesn't
+    have to figure out what to type.
     '''
     for provider in Provider.objects.all():
         provider.needs_updating = True
         provider.save()
+
 
 class Note(models.Model):
     class Meta:  # pylint: disable=W0232,R0903,C1001
