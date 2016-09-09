@@ -129,7 +129,9 @@ Osler: {{ title | default:"All Patients"}}
                             return patient.needs_workup ? "Active " : "Inactive ";
                         }),
                         $("<a>").attr({
-                            href : function(){return patient.needs_workup ? patient.deactivate_url : patient.activate_url}
+                            href : function(){
+                                return patient.needs_workup ? patient.deactivate_url : patient.activate_url;
+                            }
                         }).append(
                             $("<span>").attr({
                                 class :function(){

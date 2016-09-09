@@ -44,5 +44,6 @@ class PatientSerializer(serializers.ModelSerializer):
 	detail_url = serializers.StringRelatedField(read_only=True)
 	update_url = serializers.StringRelatedField(read_only=True)
 	activate_url = serializers.StringRelatedField(read_only=True)
+	deactivate_url = serializers.StringRelatedField(read_only=True)
 	# Put urls as model properties because unable to do: patient_url = UrlReverser('patient-detail')
 	
