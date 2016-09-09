@@ -395,6 +395,24 @@ def patient_deactivate_home(request, pk):
 
     return HttpResponseRedirect(reverse("home"))
 
+def patient_activate_all_pt(request, pk):
+    pt = get_object_or_404(mymodels.Patient, pk=pk)
+
+    pt.needs_workup = True
+
+    pt.save()
+
+    return HttpResponseRedirect(reverse("all-patients"))
+
+def patient_deactivate_all_pt(request, pk):
+    pt = get_object_or_404(mymodels.Patient, pk=pk)
+
+    pt.needs_workup = False
+
+    pt.save()
+
+    return HttpResponseRedirect(reverse("all-patients"))
+
 def done_action_item(request, ai_id):
     ai = get_object_or_404(mymodels.ActionItem, pk=ai_id)
     ai.mark_done(request.user.provider)

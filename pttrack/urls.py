@@ -41,6 +41,12 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
     url(r'^patient/deactivate_home/(?P<pk>[0-9]+)$',
         views.patient_deactivate_home,
         name='patient-deactivate-home'),
+    url(r'^patient/activate_all_pt/(?P<pk>[0-9]+)$',
+        views.patient_activate_all_pt,
+        name='patient-activate-all-pt'),
+    url(r'^patient/deactivate_all_pt/(?P<pk>[0-9]+)$',
+        views.patient_deactivate_all_pt,
+        name='patient-deactivate-all-pt'),
 
     # PROVIDERS
     url(r'^new-provider/$',

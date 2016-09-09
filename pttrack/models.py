@@ -297,12 +297,17 @@ class Patient(Person):
     def update_url(self):
         return reverse('patient-update', args=(self.pk,))
 
-    def activate_url(self):
-        return reverse('patient-activate-home', args=(self.pk,))
+    def activate_url(self, title):
+        if title == "ALl Patients":
+            return reverse('patient-activate-all-pt', args=(self.pk,))
+        else:
+            return reverse('patient-activate-home', args=(self.pk,))
 
-    def deactivate_url(self):
-        return reverse('patient-deactivate-home', args=(self.pk,))
-
+    def deactivate_url(self, title):
+        if title == "ALl Patients":
+            return reverse('patient-deactivate-all-pt', args=(self.pk,))
+        else:
+            return reverse('patient-deactivate-home', args=(self.pk,))
 
 class Provider(Person):
 
