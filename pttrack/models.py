@@ -300,6 +300,9 @@ class Patient(Person):
     def activate_url(self):
         return reverse('patient-activate-home', args=(self.pk,))
 
+    def deactivate_url(self):
+        return reverse('patient-deactivate-home', args=(self.pk,))
+
 
 class Provider(Person):
 
