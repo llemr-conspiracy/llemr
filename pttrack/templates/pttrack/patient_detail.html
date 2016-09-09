@@ -18,7 +18,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
 		{% if request.session.staff_view %}
 			{% if patient.needs_workup %}
-  	    <p class="lead"> Patient is Active <a href="{% url 'patient-activate-detail' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></p>
+  	    <p class="lead"> Patient is Active <a href="{% url 'patient-deactivate-detail' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></p>
       {% endif %}
       {% if not patient.needs_workup %}
     	  <p class="lead"> Patient is Inactive <a href="{% url 'patient-activate-detail' pk=patient.id %}">{% bootstrap_icon "play-circle" %}</a></p>

@@ -362,7 +362,16 @@ def all_patients(request):
 def patient_activate_detail(request, pk):
     pt = get_object_or_404(mymodels.Patient, pk=pk)
 
-    pt.toggle_active_status()
+    pt.needs_workup = True
+
+    pt.save()
+
+    return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+
+def patient_deactivate_detail(request, pk):
+    pt = get_object_or_404(mymodels.Patient, pk=pk)
+
+    pt.needs_workup = False
 
     pt.save()
 
@@ -371,7 +380,16 @@ def patient_activate_detail(request, pk):
 def patient_activate_home(request, pk):
     pt = get_object_or_404(mymodels.Patient, pk=pk)
 
-    pt.toggle_active_status()
+    pt.needs_workup = True
+
+    pt.save()
+
+    return HttpResponseRedirect(reverse("home"))
+
+def patient_deactivate_home(request, pk):
+    pt = get_object_or_404(mymodels.Patient, pk=pk)
+
+    pt.needs_workup = False
 
     pt.save()
 
