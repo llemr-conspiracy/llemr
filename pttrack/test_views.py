@@ -471,15 +471,16 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
         for provider_type in provider_tabs:
             self.selenium.get('%s%s' % (self.live_server_url, '/'))
-            print self.providers[provider_type].username
-            live_submit_login(self.selenium, self.providers[provider_type].username, self.provider_password)
+            live_submit_login(
+                self.selenium, self.providers[provider_type].username,
+                self.provider_password)
             self.selenium.get('%s%s' % (self.live_server_url, reverse("home")))
 
             for tab_name in provider_tabs[provider_type]:
                 WebDriverWait(self.selenium, 20).until(
-                EC.presence_of_element_located((By.ID, tab_name)))
+                    EC.presence_of_element_located((By.ID, tab_name)))
 
-                # examine each tab and establish identity of expected and present patients.
+                # examine each tab and get pk of expected and present patients.
                 tbody = self.selenium.find_element_by_xpath(
                     "//div[@id='%s']/table/tbody" % tab_name)
 
@@ -488,8 +489,10 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
                                         ".//tr[*]/td[1]/a")]
                 expected_pt_names = [p.name() for p in tab_patients[tab_name]]
                 self.assertEqual(present_pt_names, expected_pt_names)
-                
-            self.selenium.get('%s%s' % (self.live_server_url, reverse('logout')))
+
+            self.selenium.get(
+                '%s%s' % (self.live_server_url, reverse('logout')))
+
 
 class ViewsExistTest(TestCase):
     fixtures = [BASIC_FIXTURE]
@@ -755,6 +758,8 @@ class IntakeTest(TestCase):
         url = reverse('intake')
 
         response = self.client.post(url, submitted_pt)
+
+        print(response)
 
         self.assertEqual(response.status_code, 302)
         self.assertEquals(models.Patient.objects.count(), n_pt + 1)
