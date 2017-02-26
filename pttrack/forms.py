@@ -1,6 +1,4 @@
 '''Forms for the Oser core components.'''
-import operator
-
 from bootstrap3_datetime.widgets import DateTimePicker
 from django.forms import ModelForm, EmailField, CheckboxSelectMultiple, \
     ModelChoiceField
@@ -76,6 +74,7 @@ class ActionItemForm(ModelForm):
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
 
+
 class ProviderForm(ModelForm):
 
     provider_email = EmailField(label="Email")
@@ -97,6 +96,7 @@ class ProviderForm(ModelForm):
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['clinical_roles'].wrap(InlineCheckboxes)
         self.helper.add_input(Submit('submit', 'Submit'))
+
 
 class DocumentForm(ModelForm):
     class Meta:
