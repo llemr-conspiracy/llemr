@@ -746,7 +746,7 @@ class IntakeTest(TestCase):
             'patient_comfortable_with_english': False,
             'ethnicities': [models.Ethnicity.objects.first()],
             'preferred_contact_method':
-                models.ContactMethod.objects.first().pk,
+                models.ContactMethod.objects.first().pk
         }
 
     def test_can_intake_pt(self):
@@ -758,8 +758,6 @@ class IntakeTest(TestCase):
         url = reverse('intake')
 
         response = self.client.post(url, submitted_pt)
-
-        print(response)
 
         self.assertEqual(response.status_code, 302)
         self.assertEquals(models.Patient.objects.count(), n_pt + 1)

@@ -111,12 +111,15 @@ class Gender(models.Model):
 
 class Person(models.Model):
 
-    class Meta:  # pylint: disable=W0232,R0903,C1001
+    class Meta:
         abstract = True
 
-    first_name = models.CharField(max_length=100, validators=[validators.validate_name])
-    last_name = models.CharField(max_length=100, validators=[validators.validate_name])
-    middle_name = models.CharField(max_length=100, blank=True, validators=[validators.validate_name])
+    first_name = models.CharField(
+        max_length=100, validators=[validators.validate_name])
+    last_name = models.CharField(
+        max_length=100, validators=[validators.validate_name])
+    middle_name = models.CharField(
+        max_length=100, blank=True, validators=[validators.validate_name])
 
     phone = models.CharField(max_length=40, null=True, blank=True)
     languages = models.ManyToManyField(Language, help_text="Specify here languages that are spoken at a level sufficient to be used for medical communication.")
@@ -157,10 +160,6 @@ class Provider(Person):
     @property
     def username(self):
         return self.associated_user.username
-
-    @property
-    def manages_cases(self):
-        any([pt.staff_view for pt in self.clinical_roles])
 
     def __unicode__(self):
         return self.name()

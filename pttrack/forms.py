@@ -20,6 +20,7 @@ class PatientForm(ModelForm):
     # limit the options for the case_managers field to Providers with
     # ProviderType with staff_view=True
     case_manager = ModelChoiceField(
+            required=False,
             queryset=models.Provider.objects.filter(
                 clinical_roles__in=models.ProviderType.objects.filter(
                     staff_view=True))
