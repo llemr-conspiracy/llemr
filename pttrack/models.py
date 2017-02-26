@@ -143,7 +143,33 @@ class Person(models.Model):
                              self.last_name])
 
 
+class Provider(Person):
+
+    associated_user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                           blank=True, null=True)
+
+    clinical_roles = models.ManyToManyField(ProviderType)
+
+    needs_updating = models.BooleanField(default=False)
+
+    history = HistoricalRecords()
+
+    @property
+    def username(self):
+        return self.associated_user.username
+
+    @property
+    def manages_cases(self):
+        any([pt.staff_view for pt in self.clinical_roles])
+
+    def __unicode__(self):
+        return self.name()
+
+
 class Patient(Person):
+
+    case_manager = models.ForeignKey(Provider, blank=True, null=True)
+
     address = models.CharField(max_length=200)
 
     city = models.CharField(max_length=50,
@@ -299,25 +325,6 @@ class Patient(Person):
 
     def activate_url(self):
         return reverse('patient-activate-home', args=(self.pk,))
-
-
-class Provider(Person):
-
-    associated_user = models.OneToOneField(settings.AUTH_USER_MODEL,
-                                           blank=True, null=True)
-
-    clinical_roles = models.ManyToManyField(ProviderType)
-
-    needs_updating = models.BooleanField(default=False)
-
-    history = HistoricalRecords()
-
-    @property
-    def username(self):
-        return self.associated_user.username
-
-    def __unicode__(self):
-        return self.name()
 
 
 def require_providers_update():

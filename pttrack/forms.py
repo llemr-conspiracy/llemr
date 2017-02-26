@@ -1,6 +1,9 @@
 '''Forms for the Oser core components.'''
+import operator
+
 from bootstrap3_datetime.widgets import DateTimePicker
-from django.forms import ModelForm, EmailField, CheckboxSelectMultiple
+from django.forms import ModelForm, EmailField, CheckboxSelectMultiple, \
+    ModelChoiceField
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
@@ -15,6 +18,14 @@ class PatientForm(ModelForm):
     class Meta:
         model = models.Patient
         exclude = ['needs_workup', 'demographics']
+
+    # limit the options for the case_managers field to Providers with
+    # ProviderType with staff_view=True
+    case_manager = ModelChoiceField(
+            queryset=models.Provider.objects.filter(
+                clinical_roles__in=models.ProviderType.objects.filter(
+                    staff_view=True))
+            )
 
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
