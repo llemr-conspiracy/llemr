@@ -5,20 +5,23 @@ from pttrack import models as mymodels
 from . import serializers
 from workup import models as workupmodels
 from rest_framework import generics
-import json
 
-class PtList(generics.ListAPIView): # read only
+
+class PtList(generics.ListAPIView):  # read only
     '''
     List patients
     '''
+
+    serializer_class = serializers.PatientSerializer
 
     def get_queryset(self):
         '''
         Restricts returned patients according to query params
         '''
+
         def bylatestKey(pt): # This doesn't sort by latest time, just latest date
             latestwu = pt.latest_workup()
-            if latestwu == None:
+            if latestwu is None:
                 latestdate = pt.history.last().history_date.date()
             else:
                 latestdate = latestwu.clinic_day.clinic_date
@@ -27,6 +30,7 @@ class PtList(generics.ListAPIView): # read only
         queryset = mymodels.Patient.objects
         sort = self.request.query_params.get('sort', None)
         list_type = self.request.query_params.get('filter', None) # var 'list_type' because 'filter' namespace is taken
+
         if sort is not None:
             if str(sort) == 'latest_workup':
                 pt_list_latest = list(mymodels.Patient.objects.all())
@@ -53,5 +57,3 @@ class PtList(generics.ListAPIView): # read only
                 pt_list_unsigned.sort(key = lambda pt: pt.last_name)
                 queryset = pt_list_unsigned
         return queryset
-
-    serializer_class = serializers.PatientSerializer
