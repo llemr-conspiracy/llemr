@@ -61,6 +61,13 @@
 				"__init__.py"
 			],
 			"path": "api"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "demographics"
 		}
 	]
 }

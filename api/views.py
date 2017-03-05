@@ -28,8 +28,6 @@ def active_ai_patients_filter(qs):
         .filter(completion_date=None) \
         .select_related('patient')
 
-    print("activeai")
-
     return coremodels.Patient.objects \
         .filter(actionitem=ai_qs) \
         .order_by('-actionitem__due_date')

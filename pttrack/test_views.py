@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.test import TestCase
 from django.core.urlresolvers import reverse
@@ -12,11 +13,9 @@ from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import StaleElementReferenceException
 
 from . import models
 from workup import models as workupModels
-import json
 
 # pylint: disable=invalid-name
 # Whatever, whatever. I name them what I want.
@@ -446,20 +445,25 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         self.assertEqual(first_patient_name, "Action, No I.")
 
         # test order by latest activity
-        # more difficult to test attributes, I'm just testing that the first name is correct
-        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='ptlatest']/table/tbody")
-        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        # more difficult to test attributes, I'm just testing that the first
+        # name is correct
+        pt_last_tbody = self.selenium.find_element_by_xpath(
+            "//div[@id='ptlatest']/table/tbody")
+        first_patient_name = pt_last_tbody.find_element_by_xpath(
+            ".//tr[2]/td[1]/a").get_attribute("text")
         self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
 
     def test_provider_types_correct_home_order(self):
-        '''
-        Verify that for each provider type, on the home page the expected tabs appear and the expected patients for in each tab appear in the correct order.
+        '''Verify that for each provider type, on the home page the
+        expected tabs appear and the expected patients for in each tab
+        appear in the correct order.
         '''
         provider_tabs = {
-            'attending' : ['unsignedwu', 'activept'],
-            'coordinator' : ['activept', 'activeai', 'pendingai', 'unsignedwu'],
-            'clinical' : ['activept'],
-            'preclinical' : ['activept']
+            'attending': ['unsignedwu', 'activept'],
+            'coordinator': ['activept', 'activeai',
+                            'pendingai', 'unsignedwu'],
+            'clinical': ['activept'],
+            'preclinical': ['activept']
         }
 
         tab_patients = {
@@ -484,10 +488,13 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
                 tbody = self.selenium.find_element_by_xpath(
                     "//div[@id='%s']/table/tbody" % tab_name)
 
-                present_pt_names = [t.get_attribute('text') for t in
-                                    tbody.find_elements_by_xpath(
-                                        ".//tr[*]/td[1]/a")]
+                present_pt_names = [
+                    t.get_attribute('text') for t in
+                    tbody.find_elements_by_xpath(".//tr[*]/td[1]/a")
+                ]
+
                 expected_pt_names = [p.name() for p in tab_patients[tab_name]]
+
                 self.assertEqual(present_pt_names, expected_pt_names)
 
             self.selenium.get(
@@ -798,7 +805,7 @@ class ActionItemTest(TestCase):
         # new action items should not be done
         self.assertFalse(ai.done())
 
-        # submit a request to mark the new ai as done. should redirect to 
+        # submit a request to mark the new ai as done. should redirect to
         # choose a followup type.
         ai_url = 'done-action-item'
         response = self.client.get(reverse(ai_url, args=(ai.id,)))

@@ -285,35 +285,43 @@ def home_page(request):
 
     active_provider_type = get_object_or_404(mymodels.ProviderType,
                                              pk=request.session['clintype_pk'])
-    if active_provider_type.signs_charts:
-        
-        title = "Attending Tasks"
 
-        lists = [{'url':'filter=unsigned_workup', 'title':"Unsigned Workups", 'identifier':'unsignedwu','active':True},
-        {'url':'filter=active', 'title':"Active Patients", 'identifier':'activept', 'active':False}]
+    if active_provider_type.signs_charts:
+        title = "Attending Tasks"
+        lists = [
+            {'url': 'filter=unsigned_workup', 'title': "Unsigned Workups",
+             'identifier': 'unsignedwu', 'active': True},
+            {'url': 'filter=active', 'title': "Active Patients",
+             'identifier': 'activept', 'active': False}]
 
     elif active_provider_type.staff_view:
- 
         title = "Coordinator Tasks"
- 
-        lists = [{'url':'filter=active', 'title':"Active Patients", 'identifier':'activept', 'active':True},
-        {'url':'filter=ai_active', 'title':"Active Action Items", 'identifier':'activeai', 'active':False},
-        {'url':'filter=ai_inactive', 'title':"Pending Action Items", 'identifier':'pendingai', 'active':False},
-        {'url':'filter=unsigned_workup', 'title':"Unsigned Workups", 'identifier':'unsignedwu', 'active':False}]
+        lists = [
+            {'url': 'filter=active', 'title': "Active Patients",
+             'identifier': 'activept', 'active': True},
+            {'url': 'filter=ai_active', 'title': "Active Action Items",
+             'identifier': 'activeai', 'active': False},
+            {'url': 'filter=ai_inactive', 'title': "Pending Action Items",
+             'identifier': 'pendingai', 'active': False},
+            {'url': 'filter=unsigned_workup', 'title': "Unsigned Workups",
+             'identifier': 'unsignedwu', 'active': False}
+        ]
 
     else:
-
         title = "Active Patients"
-
-        lists = [{'url':'filter=active', 'title':"Active Patients", 'identifier':'activept', 'active':True}]
+        lists = [
+            {'url': 'filter=active',
+             'title': "Active Patients",
+             'identifier': 'activept',
+             'active': True}]
 
     api_url = reverse('pt_list_api')[:-1] + '.json/?' # remove last '/' before adding because there no '/' between /api/pt_list and .json, but reverse generates '/api/pt_list/'
 
-    return render(request,
-                  'pttrack/patient_list.html',
+    return render(request, 'pttrack/patient_list.html',
                   {'lists': json.dumps(lists),
-                    'title': title,
-                    'api_url': api_url})
+                   'title': title,
+                   'api_url': api_url})
+
 
 def patient_detail(request, pk):
 
@@ -347,8 +355,15 @@ def phone_directory(request):
 
 def all_patients(request):
 
-    lists = [{'url':'sort=last_name', 'title':"Alphabetized by Last Name", 'identifier':'ptlast', 'active':False},
-     {'url':'sort=latest_workup', 'title':"Ordered by Latest Activity", 'identifier':'ptlatest', 'active':True}]
+    lists = [
+        {'url': 'sort=last_name',
+         'title': "Alphabetized by Last Name",
+         'identifier': 'ptlast',
+         'active': False },
+        {'url': 'sort=latest_workup',
+         'title': "Ordered by Latest Activity",
+         'identifier': 'ptlatest',
+         'active': True }]
 
     api_url = reverse('pt_list_api')[:-1] + '.json/?' # remove last '/' before adding because there no '/' between /api/pt_list and .json, but reverse generates '/api/pt_list/'
 
