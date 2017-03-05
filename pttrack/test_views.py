@@ -317,6 +317,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             first_name="No",
             last_name="Workup",
             middle_name="Patient",
+            case_manager=coordinator,
             **pt_prototype
         )
 
@@ -460,8 +461,8 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         '''
         provider_tabs = {
             'attending': ['unsignedwu', 'activept'],
-            'coordinator': ['activept', 'activeai',
-                            'pendingai', 'unsignedwu'],
+            'coordinator': ['activept', 'activeai', 'pendingai', 'unsignedwu',
+                            'usercases'],
             'clinical': ['activept'],
             'preclinical': ['activept']
         }
@@ -470,7 +471,8 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             'activeai': [self.pt2, self.pt3],
             'pendingai': [self.pt1],
             'unsignedwu': [self.pt2, self.pt3],
-            'activept': [self.pt4, self.pt2, self.pt3, self.pt5]
+            'activept': [self.pt4, self.pt2, self.pt3, self.pt5],
+            'usercases': [self.pt5],
         }
 
         for provider_type in provider_tabs:
@@ -712,6 +714,7 @@ class ProviderCreateTest(TestCase):
         response = self.client.get(final_url)
         self.assertEquals(response.status_code, 200)
 
+
 class ProviderTypeTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
@@ -719,16 +722,21 @@ class ProviderTypeTest(TestCase):
         url = reverse("home")
 
         log_in_provider(self.client, build_provider(["Coordinator"]))
-        self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept','activeai','pendingai','unsignedwu'])
+        self.assertEqual(
+            get_url_pt_list_identifiers(self, url),
+            ['activept', 'activeai', 'pendingai', 'unsignedwu', 'usercases'])
 
         log_in_provider(self.client, build_provider(["Attending"]))
-        self.assertEqual(get_url_pt_list_identifiers(self, url), ['unsignedwu','activept'])  
+        self.assertEqual(
+            get_url_pt_list_identifiers(self, url),
+            ['unsignedwu', 'activept'])
 
         log_in_provider(self.client, build_provider(["Clinical"]))
         self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept'])
 
         log_in_provider(self.client, build_provider(["Preclinical"]))
         self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept'])
+
 
 class IntakeTest(TestCase):
     fixtures = [BASIC_FIXTURE]

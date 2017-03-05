@@ -304,7 +304,9 @@ def home_page(request):
             {'url': 'filter=ai_inactive', 'title': "Pending Action Items",
              'identifier': 'pendingai', 'active': False},
             {'url': 'filter=unsigned_workup', 'title': "Unsigned Workups",
-             'identifier': 'unsignedwu', 'active': False}
+             'identifier': 'unsignedwu', 'active': False},
+            {'url': 'filter=user_cases', 'title': "My Cases",
+             'identifier': 'usercases', 'active': False}
         ]
 
     else:

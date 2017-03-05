@@ -1,3 +1,5 @@
+from functools import partial
+
 from django.core.exceptions import ImproperlyConfigured
 import django.utils.timezone
 
@@ -34,7 +36,7 @@ def active_ai_patients_filter(qs):
 
 
 def inactive_ai_patients_filter(qs):
-    '''Filter a queryset of patients for those that have active action
+    '''Build a queryset of patients for those that have active action
     items due in the future.
     '''
 
@@ -43,15 +45,15 @@ def inactive_ai_patients_filter(qs):
             .filter(due_date__gt=django.utils.timezone.now().date())
             .filter(completion_date=None)
             .select_related('patient')
-        ).order_by('actionitem__due_date')
-
-    # # TODO: make this op a QuerySet
-    # future_ai_pts.sort(key=lambda pt: pt.inactive_action_items()[-1].due_date)
+        ).order_by('-actionitem__due_date')
 
     return future_ai_pts
 
 
 def unsigned_workup_patients_filter(qs):
+    '''Build a queryset that returs a list of patients with an unsigned
+    workup.
+    '''
 
     wu_qs = workupmodels.Workup.objects \
         .filter(signer__isnull=True) \
@@ -59,6 +61,18 @@ def unsigned_workup_patients_filter(qs):
         .select_related('patient')  # optimization only
 
     return coremodels.Patient.objects.filter(workup=wu_qs)
+
+
+def user_cases(user, qs):
+    '''Build a queryset of the pateints that this user is the case
+    manager for
+    '''
+
+    qs = coremodels.Patient.objects.filter(
+        case_manager=user.provider
+        )
+
+    return qs
 
 
 class PtList(generics.ListAPIView):  # read only
@@ -79,6 +93,7 @@ class PtList(generics.ListAPIView):  # read only
             'ai_active': active_ai_patients_filter,
             'ai_inactive': inactive_ai_patients_filter,
             'unsigned_workup': unsigned_workup_patients_filter,
+            'user_cases': partial(user_cases, self.request.user)
         }
 
         def bylatestKey(pt): # This doesn't sort by latest time, just latest date

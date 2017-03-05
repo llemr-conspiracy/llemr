@@ -55,6 +55,7 @@ Osler: {{ title | default:"All Patients"}}
             $("<tr>").append( // headings
                 $("<th>").text("Name"),
                 $("<th>").text("Age / Gender"),
+                $("<th>").text("Case Manager"),
                 $("<th>").text("Latest Activity"),
                 $("<th>").text("Next AI Due"),
                 $("<th>").text("Attestation"),
@@ -66,8 +67,6 @@ Osler: {{ title | default:"All Patients"}}
             for (var i = 0; i < patients.length; i++){
                 patient = patients[i];
                 pt_id = "id_pt_"+patient.id+"_"+list['identifier']
-
-                console.log(list)
 
                 // Build a patient row, assign it an id (pt pk)
                 var patientRow = $("<tr>").attr({
@@ -82,6 +81,12 @@ Osler: {{ title | default:"All Patients"}}
                     $("<td>").text(patient.age+" / "+patient.gender)
                     )
 
+                // Build "Case Manager" Column (if relevant)
+                $(patientRow).append(
+                    $("<td>").text(patient.case_manager ? patient.case_manager : "None")
+                );
+
+                // Build "Latest Activity" Column
                 if (patient.latest_workup){
                     $(patientRow).append(
                         $("<td>").append(
@@ -100,7 +105,7 @@ Osler: {{ title | default:"All Patients"}}
                         );
                 }
 
-                // build "Next AI Due column" column
+                // build "Next AI Due" column
                 $(patientRow).append(
                     $("<td>").text(patient.status)
                 );
