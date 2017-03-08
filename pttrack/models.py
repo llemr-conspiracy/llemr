@@ -111,12 +111,15 @@ class Gender(models.Model):
 
 class Person(models.Model):
 
-    class Meta:  # pylint: disable=W0232,R0903,C1001
+    class Meta:
         abstract = True
 
-    first_name = models.CharField(max_length=100, validators=[validators.validate_name])
-    last_name = models.CharField(max_length=100, validators=[validators.validate_name])
-    middle_name = models.CharField(max_length=100, blank=True, validators=[validators.validate_name])
+    first_name = models.CharField(
+        max_length=100, validators=[validators.validate_name])
+    last_name = models.CharField(
+        max_length=100, validators=[validators.validate_name])
+    middle_name = models.CharField(
+        max_length=100, blank=True, validators=[validators.validate_name])
 
     phone = models.CharField(max_length=40, null=True, blank=True)
     languages = models.ManyToManyField(Language, help_text="Specify here languages that are spoken at a level sufficient to be used for medical communication.")
@@ -143,7 +146,29 @@ class Person(models.Model):
                              self.last_name])
 
 
+class Provider(Person):
+
+    associated_user = models.OneToOneField(settings.AUTH_USER_MODEL,
+                                           blank=True, null=True)
+
+    clinical_roles = models.ManyToManyField(ProviderType)
+
+    needs_updating = models.BooleanField(default=False)
+
+    history = HistoricalRecords()
+
+    @property
+    def username(self):
+        return self.associated_user.username
+
+    def __unicode__(self):
+        return self.name()
+
+
 class Patient(Person):
+
+    case_manager = models.ForeignKey(Provider, blank=True, null=True)
+
     address = models.CharField(max_length=200)
 
     city = models.CharField(max_length=50,
@@ -299,25 +324,6 @@ class Patient(Person):
 
     def activate_url(self):
         return reverse('patient-activate-home', args=(self.pk,))
-
-
-class Provider(Person):
-
-    associated_user = models.OneToOneField(settings.AUTH_USER_MODEL,
-                                           blank=True, null=True)
-
-    clinical_roles = models.ManyToManyField(ProviderType)
-
-    needs_updating = models.BooleanField(default=False)
-
-    history = HistoricalRecords()
-
-    @property
-    def username(self):
-        return self.associated_user.username
-
-    def __unicode__(self):
-        return self.name()
 
 
 def require_providers_update():

@@ -4,6 +4,7 @@ from workup import models as workupModels
 from simple_history.models import HistoricalRecords
 # from django.core.urlresolvers import reverse
 
+
 class UrlReverser():
     def __init__(self, url_name):
         self.url_name = url_name
@@ -11,38 +12,44 @@ class UrlReverser():
     def to_representation(self, obj):
         return reverse(self.url_name, args=(obj.id,))
 
+
 class lastHistorySerializer(serializers.Serializer):
-	history_date = serializers.DateTimeField()
+    history_date = serializers.DateTimeField()
+
 
 class HistorySerializer(serializers.Serializer):
-	last = lastHistorySerializer()
+    last = lastHistorySerializer()
+
 
 class ClinicDateSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = workupModels.ClinicDate
+    class Meta:
+        model = workupModels.ClinicDate
+
 
 class WorkupSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = workupModels.Workup
-		fields = ['chief_complaint', 'clinic_day', 'pk', 'url', 'signer']
+    class Meta:
+        model = workupModels.Workup
+        fields = ['chief_complaint', 'clinic_day', 'pk', 'url', 'signer']
 
-	clinic_day = ClinicDateSerializer()
-	url = serializers.StringRelatedField(read_only=True)
-	signer = serializers.StringRelatedField(read_only=True)
+    clinic_day = ClinicDateSerializer()
+    url = serializers.StringRelatedField(read_only=True)
+    signer = serializers.StringRelatedField(read_only=True)
+
 
 class PatientSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = models.Patient
+    class Meta:
+        model = models.Patient
 
-	history = HistorySerializer()
-	latest_workup = WorkupSerializer()
-	gender = serializers.StringRelatedField(read_only=True)
-	age = serializers.StringRelatedField(read_only=True)
-	name = serializers.StringRelatedField(read_only=True)
-	pk = serializers.StringRelatedField(read_only=True)
-	status = serializers.StringRelatedField(read_only=True)
-	detail_url = serializers.StringRelatedField(read_only=True)
-	update_url = serializers.StringRelatedField(read_only=True)
-	activate_url = serializers.StringRelatedField(read_only=True)
-	# Put urls as model properties because unable to do: patient_url = UrlReverser('patient-detail')
-	
+    history = HistorySerializer()
+    latest_workup = WorkupSerializer()
+    gender = serializers.StringRelatedField(read_only=True)
+    age = serializers.StringRelatedField(read_only=True)
+    name = serializers.StringRelatedField(read_only=True)
+    pk = serializers.StringRelatedField(read_only=True)
+    status = serializers.StringRelatedField(read_only=True)
+    case_manager = serializers.StringRelatedField(read_only=True)
+
+    # Put urls as model properties because unable to do: patient_url = UrlReverser('patient-detail')
+    detail_url = serializers.StringRelatedField(read_only=True)
+    update_url = serializers.StringRelatedField(read_only=True)
+    activate_url = serializers.StringRelatedField(read_only=True)

@@ -208,7 +208,7 @@ class APITest(APITestCase):
 
     def test_api_list_patients_with_inactive_action_item(self):
         # Test displaying patients with inactive action items
-        data = {'filter':'ai_inactive'}
+        data = {'filter': 'ai_inactive'}
         pt1 = models.Patient.objects.get(pk=1)
         pt2 = models.Patient.objects.get(pk=2)
         pt3_ai = models.ActionItem.objects.get(pk=3)
@@ -221,15 +221,30 @@ class APITest(APITestCase):
         pt3_ai.save()
 
         # Test now only has pt2
-        data = {'filter':'ai_active'}
+        data = {'filter': 'ai_active'}
         response = self.client.get(reverse("pt_list_api"), data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_200_OK) # Not sure if I should keep repeating this line
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['id'], pt2.id)
 
         # Should be unchanged, still only have pt1
-        data = {'filter':'ai_inactive'}
+        data = {'filter': 'ai_inactive'}
         response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['id'], pt1.id)
+
+    def test_api_list_cases(self):
+
+        p = log_in_provider(self.client, build_provider(["Coordinator"]))
+
+        pt1 = models.Patient.objects.get(pk=1)
+
+        pt1.case_manager = p
+        pt1.save()
+
+        data = {'filter': 'user_cases'}
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
+
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['id'], pt1.id)

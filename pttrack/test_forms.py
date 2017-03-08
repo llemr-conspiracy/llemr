@@ -2,7 +2,8 @@ import datetime
 
 from django.test import TestCase
 
-from .models import Language, Gender, Ethnicity, ContactMethod
+from .models import Language, Gender, Ethnicity, ContactMethod, ProviderType, \
+    Provider
 from . import forms
 
 
@@ -32,6 +33,69 @@ class TestPatientCreateForms(TestCase):
                 ContactMethod.objects.create(
                     name="Tin Cans + String").pk,
         }
+
+    def test_form_casemanager_options(self):
+        '''
+        PatientForm only offers valid case managers as options.
+        '''
+
+        casemanager = ProviderType.objects.create(
+            long_name='Case Manager', short_name='CM',
+            signs_charts=False, staff_view=True)
+
+        not_casemanager = ProviderType.objects.create(
+            long_name='Not Case Manager', short_name='NCM',
+            signs_charts=False, staff_view=False)
+
+        provider_skeleton = {
+            'first_name': "Firstname",
+            'last_name': "Lastname",
+            'gender': Gender.objects.first(),
+        }
+
+        pvds = [Provider.objects.create(
+            middle_name=str(i), **provider_skeleton) for i in range(4)]
+        pvds[1].clinical_roles.add(not_casemanager)
+        pvds[2].clinical_roles.add(casemanager)
+        pvds[3].clinical_roles.add(not_casemanager, casemanager)
+        [p.save() for p in pvds]
+
+        cm_qs = Provider.objects.filter(
+            clinical_roles__in=[casemanager]).values_list('id', flat=True)
+
+        form = forms.PatientForm()
+
+        # c[0] is the pk of each, [1:] indexing required because element 0
+        # is the "blank" option.
+        form_list = [c[0] for c in form['case_manager'].field.choices][1:]
+
+        # cast to set for 1) order-insensitivity and 2) b/c cm_qs is
+        # a queryset and form_list is a list
+        self.assertEqual(set(cm_qs), set(form_list))
+
+        # Make sure we reject non-case manager providers
+
+        form_data = self.valid_pt_dict.copy()
+        form_data['case_manager'] = pvds[0].pk
+        form = forms.PatientForm(data=form_data)
+        self.assertNotEqual(form['case_manager'].errors, [])
+
+        form_data = self.valid_pt_dict.copy()
+        form_data['case_manager'] = pvds[1].pk
+        form = forms.PatientForm(data=form_data)
+        self.assertNotEqual(form['case_manager'].errors, [])
+
+        # Make sure we accept case manager providers
+
+        form_data = self.valid_pt_dict.copy()
+        form_data['case_manager'] = pvds[2].pk
+        form = forms.PatientForm(data=form_data)
+        self.assertEqual(form['case_manager'].errors, [])
+
+        form_data = self.valid_pt_dict.copy()
+        form_data['case_manager'] = pvds[3].pk
+        form = forms.PatientForm(data=form_data)
+        self.assertEqual(form['case_manager'].errors, [])
 
     def test_missing_alt_phone(self):
         '''Missing the alternative phone w/o alt phone owner should fail.'''
