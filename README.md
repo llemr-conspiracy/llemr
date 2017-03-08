@@ -9,10 +9,6 @@
 This is our osler project, which is a collection for all our
 patient tracking. It's a django project.
 
-You can check out a running demo at [oslerproject.org](http://oslerproject.org). The stack
-for this implementation is nginx + gunicorn + sqlite on a smallest-possible DigitalOcean
-droplet.
-
 ## Running locally
 
 First, clone our repository
