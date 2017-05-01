@@ -13,6 +13,14 @@ class GeneralFollowup(ModelForm):
         model = models.GeneralFollowup
         exclude = ['patient', 'author', 'author_type']
 
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('followup_close', 'Submit and Close Action'))
+        self.helper.add_input(Submit('followup_create', 'Submit and Create Action'))
+        super(GeneralFollowup, self).__init__(*args, **kwargs)
+
 
 class ReferralFollowup(ModelForm):
     '''The form instantiation of a followup for PCP referral.'''
@@ -28,7 +36,8 @@ class ReferralFollowup(ModelForm):
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('followup_close', 'Submit and Close Action'))
+        self.helper.add_input(Submit('followup_create', 'Submit and Create Action'))
         super(ReferralFollowup, self).__init__(*args, **kwargs)
 
     def clean(self):
@@ -92,7 +101,16 @@ class VaccineFollowup(ModelForm):
         model = models.VaccineFollowup
         exclude = ['patient', 'author', 'author_type']
         widgets = {'dose_date': DateTimePicker(options={"format": "YYYY-MM-DD",
+ 
                                                         "pickTime": False})}
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('followup_close', 'Submit and Close Action'))
+        self.helper.add_input(Submit('followup_create', 'Submit and Create Action'))
+        super(VaccineFollowup, self).__init__(*args, **kwargs)
 
     def clean(self):
         '''VaccineFollowups require a next dose date iff there there is a next
@@ -112,3 +130,11 @@ class LabFollowup(ModelForm):
     class Meta:
         model = models.LabFollowup
         exclude = ['patient', 'author', 'author_type']
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('followup_close', 'Submit and Close Action'))
+        self.helper.add_input(Submit('followup_create', 'Submit and Create Action'))
+        super(LabFollowup, self).__init__(*args, **kwargs)
