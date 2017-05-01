@@ -186,7 +186,7 @@ class Patient(Person):
                                          blank=True,
                                          null=True)
 
-    date_of_birth = models.DateField(
+    date_of_birth = models.DateField(help_text='MM/DD/YYYY',
         validators=[validators.validate_birth_date])
 
     patient_comfortable_with_english = models.BooleanField(default=True)
