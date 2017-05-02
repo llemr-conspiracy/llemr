@@ -48,7 +48,8 @@ class WorkupForm(ModelForm):
                         #Div(HTML("<strong>Vital Signs</strong>"),
                         #    css_class='col-lg-1'),
                         Div(AppendedText('hr', 'bpm'), css_class='col-lg-3'),
-                        Div(AppendedText('bp', 'mmHg'), css_class='col-lg-3'),
+                        Div(AppendedText('bp_sys', 'mmHg'), css_class='col-lg-4'),
+                        Div(AppendedText('bp_dia', 'mmHg'), css_class='col-lg-4'),
                         Div(AppendedText('rr', '/min'), css_class='col-lg-3'),
                         Div(AppendedText('t', 'C'), css_class='col-lg-3'),
                         title="Vital Signs",
@@ -97,6 +98,7 @@ class WorkupForm(ModelForm):
 
         cleaned_data = super(WorkupForm, self).clean()
 
+        #validating voucher things
         if cleaned_data.get('got_voucher') and \
            (cleaned_data.get('voucher_amount'))==None:
 

@@ -5,38 +5,44 @@ Validators for the Workups subapp.
 from django.core.exceptions import ValidationError
 
 MAX_SYSTOLIC = 400
-MIN_DIASOLIC = 40
+MIN_DIASTOLIC = 40
 
+def validate_sys(value):
+    try:
+        validate_sys.bp = value
+    except ValueError:
+        ValidationError("test")
 
 def validate_bp(value):
     '''validate that a value is a valid blood pressure'''
+    # try:
+    #     (systolic, diastolic) = value.split('/')
+    # except ValueError:
+    #     raise ValidationError(
+    #         str(value) + " is not a validly formatted blood pressure since " +
+    #         "it cannot be split into two values using '/'.")
+    
+    (systolic,diastolic) = (validate_sys.bp,value)
     try:
-        (systolic, diastolic) = value.split('/')
-    except ValueError:
-        raise ValidationError(
-            str(value) + " is not a validly formatted blood pressure since " +
-            "it cannot be split into two values using '/'.")
-
-    try:
-        (systolic, diastolic) = (int(systolic), int(diastolic))
+        (systolic, diastolic) = (int(systolic),int(diastolic))
     except ValueError:
         raise ValidationError(
             "Either %s or %s is not a small, positive integer." %
             (systolic, diastolic))
-    if systolic < diastolic:
-        raise ValidationError("".join([
-            "The systolic blood pressure (", str(systolic),
-            ") has to be higher than the diastolic blood pressure (",
-            str(diastolic), ")."]))
-
+    
     if systolic > MAX_SYSTOLIC:
         raise ValidationError(
             "Systolic bp (%s) is unreasonably high." % systolic)
 
-    if diastolic < MIN_DIASOLIC:
+    if diastolic < MIN_DIASTOLIC:
         raise ValidationError(
             "Diastolic bp (%s) is unreasonably low." % diastolic)
 
+    if systolic < diastolic:
+        raise ValidationError("".join([
+            "The diastolic blood pressure (", str(diastolic),
+            ") has to be lower than the systolic blood pressure (",
+            str(systolic), ")."]))
 
 def validate_hr(value):
     '''validate that a value is a valid heart rate'''

@@ -16,6 +16,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		<h2>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }} <a href="{% url 'patient-update' pk=patient.id %}"><small>{% bootstrap_icon "pencil" %}</small></a></h2>
 		<p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
 		<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
+		<p class="lead"><strong>Case Manager:</strong> {{ patient.case_manager }}</p>
 		{% if request.session.staff_view %}
 			{% if patient.needs_workup %}
   	    <p class="lead"> Patient is Active <a href="{% url 'patient-activate-detail' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></p>
