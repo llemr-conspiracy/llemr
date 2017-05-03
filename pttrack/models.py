@@ -263,11 +263,14 @@ class Patient(Person):
         n_done = len(self.done_action_items())
 
         if n_active > 0:
-            return str(n_active)+" action items past due"
+            due_dates = ", ".join([str((now().date()-ai.due_date).days) for ai in self.active_action_items()])
+            
+            return "Action items " + due_dates + " days past due"
         elif n_pending > 0:
             next_item = min(self.inactive_action_items(),
                             key=lambda(k): k.due_date)
             tdelta = next_item.due_date - now().date()
+
             return "next action in "+str(tdelta.days)+" days"
         elif n_done > 0:
             return "all actions complete"
