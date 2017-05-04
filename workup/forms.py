@@ -97,6 +97,18 @@ class WorkupForm(ModelForm):
         given).'''
 
         cleaned_data = super(WorkupForm, self).clean()
+        #validating blood pressure
+        MAX_SYSTOLIC = 400
+        MIN_DIASTOLIC = 40
+
+        if cleaned_data.get('bp_sys') > MAX_SYSTOLIC:
+            self.add_error('bp_sys', "Systolic BP is unreasonably high.")
+
+        elif cleaned_data.get('bp_dia') > cleaned_data.get('bp_sys'):
+            self.add_error('bp_sys', 'Systolic BP must be higher than diastolic BP.')
+
+        if cleaned_data.get('bp_dia') < MIN_DIASTOLIC:
+            self.add_error('bp_dia', 'Diastolic BP is unreasonably low.')
 
         #validating voucher things
         if cleaned_data.get('got_voucher') and \

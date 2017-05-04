@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import workup.validators
+#import workup.validators
 
 def split_bp(apps, schema_editor):
 	Workup = apps.get_model('workup','Workup')
@@ -21,22 +21,22 @@ class Migration(migrations.Migration):
     	migrations.AddField(
             model_name='historicalworkup',
             name='bp_dia',
-            field=models.CharField(blank=True, max_length=3, null=True, validators=[workup.validators.validate_bp]),
+            field=models.PositiveSmallIntegerField(blank=True, null=True, verbose_name=b'Diastolic'),
         ),
         migrations.AddField(
             model_name='historicalworkup',
             name='bp_sys',
-            field=models.CharField(blank=True, max_length=3, null=True, validators=[workup.validators.validate_bp]),
+            field=models.PositiveSmallIntegerField(blank=True, null=True, verbose_name=b'Systolic'),
         ),
         migrations.AddField(
             model_name='workup',
             name='bp_dia',
-            field=models.CharField(blank=True, max_length=3, null=True, validators=[workup.validators.validate_bp]),
+            field=models.PositiveSmallIntegerField(blank=True, null=True, verbose_name=b'Diastolic'),
         ),
         migrations.AddField(
             model_name='workup',
             name='bp_sys',
-            field=models.CharField(blank=True, max_length=3, null=True, validators=[workup.validators.validate_bp]),
+            field=models.PositiveSmallIntegerField(blank=True, null=True, verbose_name=b'Systolic'),
         ),
         migrations.RunPython(split_bp),
         migrations.RemoveField(

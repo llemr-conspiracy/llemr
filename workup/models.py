@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from pttrack.models import Note, Provider, ReferralLocation, ReferralType
 from pttrack.validators import validate_attending
 
-from .validators import validate_sys, validate_bp, validate_hr, validate_rr, validate_t, validate_height, validate_weight
+from .validators import validate_hr, validate_rr, validate_t, validate_height, validate_weight
 
 
 class DiagnosisType(models.Model):
@@ -59,8 +59,8 @@ class Workup(Note):
     ros = models.TextField(verbose_name="ROS")
 
     hr = models.CharField(blank=True, null=True, max_length=12, validators=[validate_hr])
-    bp_sys = models.CharField(blank=True, null=True, max_length=3, validators=[validate_sys], verbose_name="Systolic")
-    bp_dia =models.CharField(blank=True, null=True, max_length=3, validators=[validate_bp], verbose_name="Diastolic")
+    bp_sys = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Systolic")
+    bp_dia =models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Diastolic")
 
     rr = models.CharField(blank=True, null=True, max_length=12, validators=[validate_rr])
     t = models.CharField(blank=True, null=True, max_length=12, validators=[validate_t])
