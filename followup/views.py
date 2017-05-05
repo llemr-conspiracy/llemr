@@ -72,7 +72,7 @@ class FollowupCreate(NoteFormView):
     def form_valid(self, form):
 
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
-        fu = form.save(commit=False);
+        fu = form.save(commit=False)
         fu.patient = pt
         fu.author = self.request.user.provider
         fu.author_type = get_current_provider_type(self.request)

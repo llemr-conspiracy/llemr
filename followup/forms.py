@@ -7,38 +7,35 @@ from crispy_forms.layout import Submit
 
 from . import models
 
-class GeneralFollowup(ModelForm):
+class BaseFollowup(ModelForm):
+    '''The base class for followup forms'''
+    class Meta:
+        abstract = True
+        model = models.Followup
+        exclude = []
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('followup_close', 'Submit and Close Action', css_class = 'btn btn-warning'))
+        self.helper.add_input(Submit('followup_create', 'Submit and Create Action', css_class = 'btn btn-info'))
+        super(BaseFollowup, self).__init__(*args, **kwargs)
+
+
+class GeneralFollowup(BaseFollowup):
     '''The form instantiation of a general followup note.'''
     class Meta:
         model = models.GeneralFollowup
         exclude = ['patient', 'author', 'author_type']
 
-    def __init__(self, *args, **kwargs):
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
 
-        self.helper.add_input(Submit('followup_close', 'Submit and Close Action'))
-        self.helper.add_input(Submit('followup_create', 'Submit and Create Action'))
-        super(GeneralFollowup, self).__init__(*args, **kwargs)
-
-
-class ReferralFollowup(ModelForm):
+class ReferralFollowup(BaseFollowup):
     '''The form instantiation of a followup for PCP referral.'''
 
     class Meta:
         model = models.ReferralFollowup
         exclude = ['patient', 'author', 'author_type']
-
-    def __init__(self, *args, **kwargs):
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-lg-2'
-        self.helper.field_class = 'col-lg-8'
-
-        self.helper.add_input(Submit('followup_close', 'Submit and Close Action'))
-        self.helper.add_input(Submit('followup_create', 'Submit and Create Action'))
-        super(ReferralFollowup, self).__init__(*args, **kwargs)
 
     def clean(self):
         '''ReferralFollowup has some pretty complicated behavior regarding
@@ -95,7 +92,7 @@ class ReferralFollowup(ModelForm):
                         " value if contact was unsuccessful")
 
 
-class VaccineFollowup(ModelForm):
+class VaccineFollowup(BaseFollowup):
     '''A form to process the handling of a vaccine followup.'''
     class Meta:
         model = models.VaccineFollowup
@@ -103,14 +100,6 @@ class VaccineFollowup(ModelForm):
         widgets = {'dose_date': DateTimePicker(options={"format": "YYYY-MM-DD",
  
                                                         "pickTime": False})}
-
-    def __init__(self, *args, **kwargs):
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
-
-        self.helper.add_input(Submit('followup_close', 'Submit and Close Action'))
-        self.helper.add_input(Submit('followup_create', 'Submit and Create Action'))
-        super(VaccineFollowup, self).__init__(*args, **kwargs)
 
     def clean(self):
         '''VaccineFollowups require a next dose date iff there there is a next
@@ -125,16 +114,8 @@ class VaccineFollowup(ModelForm):
                            'the patient is returning for another dose.')
 
 
-class LabFollowup(ModelForm):
+class LabFollowup(BaseFollowup):
     '''The form instantiation of a followup to communicate lab results.'''
     class Meta:
         model = models.LabFollowup
         exclude = ['patient', 'author', 'author_type']
-
-    def __init__(self, *args, **kwargs):
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
-
-        self.helper.add_input(Submit('followup_close', 'Submit and Close Action'))
-        self.helper.add_input(Submit('followup_create', 'Submit and Create Action'))
-        super(LabFollowup, self).__init__(*args, **kwargs)
