@@ -12,7 +12,7 @@
     {% csrf_token %}
     {% bootstrap_form form %}
     {% buttons %}
-      <button type="submit" class="btn btn-success">Submit</button>
+    <button type="submit" class="btn btn-success">Submit</button>
     {% endbuttons %}
     <input type="hidden" name="next" value="{{ next }}" />
   </form>

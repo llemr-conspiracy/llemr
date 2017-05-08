@@ -81,12 +81,13 @@ class FollowupCreate(NoteFormView):
 
         form.save_m2m()
 
-        if fu.contact_resolution.attempt_again:
+        if 'followup_create' in self.request.POST:
             return HttpResponseRedirect(reverse('new-action-item',
                                                 args=(pt.id,)))
         else:
             return HttpResponseRedirect(reverse("patient-detail",
                                                 args=(pt.id,)))
+
 
 class ReferralFollowupCreate(FollowupCreate):
     '''A view for creating a new ReferralFollowup'''

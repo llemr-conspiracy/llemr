@@ -489,21 +489,16 @@ class FollowupTest(TestCase):
 
     def test_create_followups(self):
 
-        attempt_again_cr = models.ContactResult.objects.create(
-            name="didn't reach the pt",
-            attempt_again=True)
-        no_attempt_again_cr = models.ContactResult.objects.create(
-            name="totally reached the pt",
-            attempt_again=False)
+        contactRes = models.ContactResult.objects.create(
+                    name="didn't reach the pt", attempt_again=True)
 
-        # Try creating a followup that requires re-contacts and one that does
-        # not. Verification for correctness of the redirect is in verify_fu
-        for contact_result in [attempt_again_cr, no_attempt_again_cr]:
+        for button_clicked in ['followup_create', 'followup_close']:
             submitted_gen_fu = {
                 "contact_method":
                     models.ContactMethod.objects.all()[0].pk,
-                "contact_resolution": contact_result,
-                "comments": ""
+                "contact_resolution": contactRes,
+                "comments": "",
+                button_clicked: True
                 }
 
             self.verify_fu(models.GeneralFollowup, 'general',
@@ -547,12 +542,13 @@ class FollowupTest(TestCase):
 
         self.assertEqual(response.status_code, 302)
 
-        if submitted_fu["contact_resolution"].attempt_again:
+        if 'followup_create' in submitted_fu:
             self.assertRedirects(response,
                                  reverse("new-action-item", args=(pt.id,)))
-        else:
+        elif 'followup_close' in submitted_fu:
             self.assertRedirects(response,
                                  reverse('patient-detail', args=(pt.id,)))
+
 
         self.assertEquals(len(fu_type.objects.all()), n_followup + 1)
 
@@ -562,12 +558,18 @@ class FollowupTest(TestCase):
 
         # make sure that all of the parameters in the submitted fu make it
         # into the object.
+
         for param in submitted_fu:
             if submitted_fu[param]:
-                try:
-                    self.assertEquals(str(submitted_fu[param]),
-                                      str(getattr(new_fu, param)))
-                except AssertionError:
-                    self.assertEquals(submitted_fu[param],
-                                      getattr(new_fu, param).pk)
+                #ignore followup_create/close because they're not attributes of
+                #followup object, they're post information from the buttons
+                if param=='followup_create' or param=='followup_close':
+                    pass
+                else:
+                    try:
+                        self.assertEquals(str(submitted_fu[param]),
+                                          str(getattr(new_fu, param)))
+                    except AssertionError:
+                        self.assertEquals(submitted_fu[param],
+                                          getattr(new_fu, param).pk)
 
