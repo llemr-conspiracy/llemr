@@ -8,7 +8,11 @@ def split_bp(apps, schema_editor):
 	Workup = apps.get_model('workup','Workup')
 	for workup_note in Workup.objects.all():
 		bp = workup_note.bp
-		(workup_note.bp_sys, workup_note.bp_dia) = bp.split('/')
+		try:
+			(workup_note.bp_sys, workup_note.bp_dia) = bp.split('/')
+		except ValueError:
+			workup_note.bp_sys = None
+			workup_note.bp_dia = None
 		workup_note.save()
 
 class Migration(migrations.Migration):
