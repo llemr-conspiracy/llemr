@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='historicalworkup',
             name='bp',
-            field=models.CharField(blank=True, max_length=12, null=True, validators=[workup.validators.validate_bp]),
+            field=models.CharField(blank=True, max_length=12, null=True),
         ),
         migrations.AlterField(
             model_name='historicalworkup',
@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='workup',
             name='bp',
-            field=models.CharField(blank=True, max_length=12, null=True, validators=[workup.validators.validate_bp]),
+            field=models.CharField(blank=True, max_length=12, null=True),
         ),
         migrations.AlterField(
             model_name='workup',

@@ -32,7 +32,8 @@ def active_ai_patients_filter(qs):
 
     return coremodels.Patient.objects \
         .filter(actionitem=ai_qs) \
-        .order_by('-actionitem__due_date')
+        .distinct()
+        # .order_by('-actionitem__due_date')
 
 
 def inactive_ai_patients_filter(qs):

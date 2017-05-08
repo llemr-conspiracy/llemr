@@ -28,7 +28,7 @@ def wu_dict():
             'HPI': "f", 'PMH_PSH': "f", 'meds': "f", 'allergies': "f",
             'fam_hx': "f", 'soc_hx': "f",
             'ros': "f", 'pe': "f", 'A_and_P': "f",
-            'hr': '89', 'bp': '120/80', 'rr': '16', 't': '98',
+            'hr': '89', 'bp_sys': '120', 'bp_dia': '80', 'rr': '16', 't': '98',
             'labs_ordered_internal': 'f', 'labs_ordered_quest': 'f',
             'got_voucher': True,
             'got_imaging_voucher': True,
@@ -43,31 +43,6 @@ class TestModelFieldValidators(TestCase):
     '''
     TestCase to verify that validators are functioning.
     '''
-
-    def test_validate_bp(self):
-        '''
-        Test our validator for blood pressures. There should be a '/' between
-        systolic and diastolic, it should be able to handle 2 and 3 digit
-        pressures, and systolic should always be higher than diastolic.
-        '''
-        self.assertEqual(validators.validate_bp("110/90"), None)
-        self.assertEqual(validators.validate_bp("90/50"), None)
-        self.assertEqual(validators.validate_bp("170/100"), None)
-
-        with self.assertRaises(ValidationError):
-            validators.validate_bp("90")
-        with self.assertRaises(ValidationError):
-            validators.validate_bp("/90")
-        with self.assertRaises(ValidationError):
-            validators.validate_bp("100/")
-        with self.assertRaises(ValidationError):
-            validators.validate_bp("90/200")
-        with self.assertRaises(ValidationError):
-            validators.validate_bp("-120/80")
-        with self.assertRaises(ValidationError):
-            validators.validate_bp("1200/80")
-        with self.assertRaises(ValidationError):
-            validators.validate_bp("200/20")
 
     def test_validate_hr(self):
         '''
@@ -365,10 +340,38 @@ class TestFormFieldValidators(TestCase):
 
         self.valid_wu_dict = wu_dict()
 
+    def test_blood_pressure(self):
+
+        form_data = self.valid_wu_dict
+        form = forms.WorkupForm(data=form_data)
+
+        self.assertEqual(form['bp_sys'].errors, [])
+        self.assertEqual(form['bp_dia'].errors, [])
+
+        form_data['bp_sys'] = '800'
+
+        form = forms.WorkupForm(data=form_data)
+        self.assertNotEqual(form['bp_sys'].errors, [])
+
+        form_data['bp_sys'] = '70'
+
+        form = forms.WorkupForm(data=form_data)
+        self.assertNotEqual(form['bp_sys'].errors, [])
+
+        form_data['bp_sys'] = '120'
+        form_data['bp_dia'] = '30'
+
+        form = forms.WorkupForm(data=form_data)
+        self.assertNotEqual(form['bp_dia'].errors, [])
+
+        #the systolic < diastolic error is a bp_sys error not bp_dia
+        form_data['bp_dia'] = '130'
+        form = forms.WorkupForm(data=form_data)
+        self.assertNotEqual(form['bp_sys'].errors, [])
+
     def test_missing_voucher_amount(self):
 
         form_data = self.valid_wu_dict
-
         form = forms.WorkupForm(data=form_data)
 
         # and expect an error to be on the empty altphone field
