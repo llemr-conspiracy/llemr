@@ -39,7 +39,42 @@ def wu_dict():
         }
 
 
-class TestModelFieldValidators(TestCase):
+class TestClinDateViews(TestCase):
+
+    fixtures = ['workup', 'pttrack']
+
+    def setUp(self):
+        self.provider = log_in_provider(
+            self.client,
+            build_provider())
+
+    def test_create_clindate(self):
+
+        pt = Patient.objects.first()
+
+        # First delete clindate that's created in the fixtures.
+        models.ClinicDate.objects.all().delete()
+        self.assertEqual(models.ClinicDate.objects.count(), 0)
+
+        r = self.client.get(reverse('new-clindate', args=(pt.id,)))
+        self.assertEqual(r.status_code, 200)
+
+        r = self.client.post(
+            reverse('new-clindate', args=(pt.id,)),
+            {'clinic_type': models.ClinicType.objects.first().pk})
+
+        self.assertRedirects(r, reverse('new-workup', args=(pt.id,)))
+        self.assertEqual(models.ClinicDate.objects.count(), 1)
+
+        # what happens if we submit twice?
+        r = self.client.post(
+            reverse('new-clindate', args=(pt.id,)),
+            {'clinic_type': models.ClinicType.objects.first().pk})
+        self.assertRedirects(r, reverse('new-workup', args=(pt.id,)))
+        self.assertEqual(models.ClinicDate.objects.count(), 1)
+
+
+class TestWorkupFieldValidators(TestCase):
     '''
     TestCase to verify that validators are functioning.
     '''
