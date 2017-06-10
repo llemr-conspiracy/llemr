@@ -54,7 +54,7 @@ class WorkupCreate(NoteFormView):
                 'for today. Since notes are associated with one and only one '
                 'clinic day, one clinic day has to be deleted. This can be '
                 'done in the admin panel by a user with sufficient ',
-                'priviledges (e.g. coordinator).')
+                'privileges (e.g. coordinator).')
 
     def get_initial(self):
         initial = super(WorkupCreate, self).get_initial()
@@ -125,17 +125,20 @@ class ClinicDateCreate(FormView):
     form_class = forms.ClinicDateForm
 
     def form_valid(self, form):
-        '''Update clinic day's internal date.'''
-        clindate = form.save(commit=False)
-
-        today = now().date()
-        clindate.clinic_date = today
-        clindate.save()
+        '''Add today's date to the ClinicDate form and submit the form.'''
 
         # determine from our URL which patient we wanted to work up before we
         # got redirected to create a clinic date
-
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+
+        # if there's already a clindate for today, redirect to workup create
+        if len(get_clindates()) == 0:
+            clindate = form.save(commit=False)
+
+            today = now().date()
+            clindate.clinic_date = today
+            clindate.save()
+
         return HttpResponseRedirect(reverse("new-workup", args=(pt.id,)))
 
 
