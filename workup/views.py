@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponseServerError, HttpResponse
-from django.conf import settings
+from django.http import HttpResponseRedirect, HttpResponseServerError, \
+    HttpResponse
 from django.core.urlresolvers import reverse
 from django.template import Context
-from django.template.loader import  get_template
+from django.template.loader import get_template
 from django.utils.timezone import now
 from django.views.generic.edit import FormView
 
@@ -15,9 +15,8 @@ from xhtml2pdf import pisa
 from . import models
 from . import forms
 
-import os
-import datetime
 from tempfile import TemporaryFile
+
 
 def get_clindates():
     '''Get the clinic dates associated with today.'''
@@ -50,15 +49,18 @@ class WorkupCreate(NoteFormView):
             return super(WorkupCreate,
                          self).get(self, *args, **kwargs)
         else:  # we have >1 clindate today.
-            return HttpResponseServerError("<h3>We don't know how to handle " +
-                                           ">1 clinic day on a particular " +
-                                           "day!</h3>")
+            return HttpResponseServerError(
+                'There are two or more "clinic day" entries in the database '
+                'for today. Since notes are associated with one and only one '
+                'clinic day, one clinic day has to be deleted. This can be '
+                'done in the admin panel by a user with sufficient ',
+                'priviledges (e.g. coordinator).')
 
     def get_initial(self):
         initial = super(WorkupCreate, self).get_initial()
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         wu_previous = pt.latest_workup()
-        if wu_previous != None:
+        if wu_previous is not None:
             date_string = wu_previous.written_datetime.strftime("%B %d, %Y")
             heading_text = "Migrated from previous workup on " + date_string + ". Please delete this heading and modify the following:\n\n"
             initial['PMH_PSH'] = heading_text + wu_previous.PMH_PSH
@@ -99,7 +101,7 @@ class WorkupUpdate(NoteUpdate):
 
     def dispatch(self, *args, **kwargs):
         '''
-        Intercept dispatch for NoteUpdate and verify that the user has 
+        Intercept dispatch for NoteUpdate and verify that the user has
         permission to modify this Workup.
         '''
         current_user_type = get_current_provider_type(self.request)
@@ -147,7 +149,7 @@ def sign_workup(request, pk):
         wu.sign(request.user, active_provider_type)
         wu.save()
     except ValueError:
-        # thrown exception can be ignored since we just redirect back to the 
+        # thrown exception can be ignored since we just redirect back to the
         # workup detail view anyway
         pass
 
@@ -162,7 +164,7 @@ def error_workup(request, pk):
     return render(request, 'pttrack/workup_error.html', {'workup': wu})
 
 def pdf_workup(request, pk):
-    
+
     wu = get_object_or_404(models.Workup, pk=pk)
     active_provider_type = get_object_or_404(ProviderType,
                                              pk=request.session['clintype_pk'])
@@ -183,18 +185,18 @@ def pdf_workup(request, pk):
 
         initials = ''.join(name[0].upper() for name in wu.patient.name(reverse=False, middle_short=False).split())
         formatdate = '.'.join([str(wu.clinic_day.clinic_date.month).zfill(2), str(wu.clinic_day.clinic_date.day).zfill(2), str(wu.clinic_day.clinic_date.year)])
-        filename = ''.join([initials, ' (', formatdate, ')'])   
+        filename = ''.join([initials, ' (', formatdate, ')'])
 
         response = HttpResponse(pdf, 'application/pdf')
-        response["Content-Disposition"]= "attachment; filename=%s.pdf" % (filename,)        
+        response["Content-Disposition"]= "attachment; filename=%s.pdf" % (filename,)
         return response
 
     else:
         return HttpResponseRedirect(reverse('workup',
                                         args=(wu.id,)))
 
-    
 
-    
+
+
 
 
