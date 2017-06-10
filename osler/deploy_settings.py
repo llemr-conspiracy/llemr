@@ -27,7 +27,8 @@ SERVER_EMAIL = "admin@osler.wustl.edu"
 EMAIL_HOST = "irony.wusm.wustl.edu"
 ADMINS = (
     ('Nakul Shah', 'nakul.m.shah@wustl.edu'),
-    ('Justin Porter', 'jrporter@wustl.edu')
+    ('Justin Porter', 'jrporter@wustl.edu'),
+    ('Minerva Zhou', 'zhouminerva@wustl.edu')
 )
 
 with open(os.path.join(BASE_DIR, 'secrets/database_password.txt')) as f:
@@ -35,7 +36,7 @@ with open(os.path.join(BASE_DIR, 'secrets/database_password.txt')) as f:
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'osler',
         'USER': 'django',
         'PASSWORD': DB_PASSWORD,
