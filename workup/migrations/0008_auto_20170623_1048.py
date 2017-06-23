@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='workup',
             name='attending',
-            field=models.ForeignKey(related_name='attending_physician', to='pttrack.Provider', null=True),
+            field=models.ForeignKey(related_name='attending_physician', to='pttrack.Provider', blank=True, null=True),
         ),
         migrations.AddField(
             model_name='workup',

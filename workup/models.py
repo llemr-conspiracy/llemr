@@ -42,7 +42,7 @@ class Workup(Note):
     along with SNHC-specific info about where the patient has been referred for
     continuity care.'''
 
-    attending = models.ForeignKey(Provider, null=True, related_name="attending_physician")
+    attending = models.ForeignKey(Provider, null=True, blank=True, related_name="attending_physician")
     other_volunteer = models.ForeignKey(Provider, blank=True, null=True, related_name="other_volunteer")
 
     clinic_day = models.ForeignKey(ClinicDate)
