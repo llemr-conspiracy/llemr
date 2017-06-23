@@ -598,6 +598,8 @@ class LiveTesting(StaticLiveServerTestCase):
         self.selenium.get('%s%s' % (self.live_server_url, pt_url))
 
         wu_data = wu_dict()
+        #need to add required attending info
+        wu_data['attending']=Provider.objects.first()
         dx_cats = [models.DiagnosisType.objects.first().pk]
         self.fill_out_workup(wu_data, dx_cats=dx_cats)
 
