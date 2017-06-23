@@ -13,11 +13,14 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		<h2><br><a href="{% url 'all-patients' %}">{% bootstrap_icon "chevron-left" %}</a></h2>
 	</div>
 	<div class="col-md-11">
-		<h2>{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }} <a href="{% url 'patient-update' pk=patient.id %}"><small>{% bootstrap_icon "pencil" %}</small></a></h2>
+		<h2> <a href="{% url 'patient-update' pk=patient.id %}">{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
+<!-- 			<small>{% bootstrap_icon "pencil" %}</small> -->
+		</a></h2>
 		<p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
 		<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
 		<p class="lead"><strong>Case Manager:</strong> {{ patient.case_manager }}</p>
 		{% if request.session.staff_view %}
+		<p class="lead"><strong>Outcome:</strong> {{ patient.outcome }} <a href="{% url 'patient-update' pk=patient.id %}"><small>{% bootstrap_icon "pencil" %}</small></a></p>
 			{% if patient.needs_workup %}
   	    <p class="lead"> Patient is Active <a href="{% url 'patient-activate-detail' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></p>
       {% endif %}
@@ -25,6 +28,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
     	  <p class="lead"> Patient is Inactive <a href="{% url 'patient-activate-detail' pk=patient.id %}">{% bootstrap_icon "play-circle" %}</a></p>
       {% endif %}
     {% else %}
+    <p class="lead"><strong>Outcome:</strong> {{ patient.outcome }}</p>
       {% if patient.needs_workup %}
 	      <p class="lead"> Patient is Active </p>
       {% endif %}

@@ -13,7 +13,7 @@ from selenium.webdriver.common.by import By
 
 
 from pttrack.test_views import build_provider, log_in_provider
-from pttrack.models import Patient, ProviderType, Provider
+from pttrack.models import Patient, ProviderType, Provider, Gender
 
 from . import validators
 from . import models
@@ -254,6 +254,91 @@ class ViewsExistTest(TestCase):
             for wu_url in wu_urls:
                 response = self.client.get(reverse(wu_url, args=(wu.id,)))
                 self.assertEqual(response.status_code, 200)
+
+    def test_form_attending_volunteer_options(self):
+        '''
+            WorkupForm only offers valid attendings as options
+            and non-attendings for the "other volunteer" field
+        '''
+        attending = ProviderType.objects.create(
+            long_name='Attending Physician', short_name='AP',
+            signs_charts=True, staff_view=True)
+
+        coordinator = ProviderType.objects.create(
+            long_name='Coordinator', short_name='C',
+            signs_charts=False, staff_view=True)
+
+        volunteer = ProviderType.objects.create(
+            long_name='Volunteer', short_name='V',
+            signs_charts=False, staff_view=False)
+
+        provider_skeleton = {
+            'first_name': "Firstname",
+            'last_name': "Lastname",
+            'gender': Gender.objects.first(),
+        }
+
+        pvds = [Provider.objects.create(
+            middle_name=str(i), **provider_skeleton) for i in range(4)]
+        pvds[1].clinical_roles.add(attending)
+        pvds[2].clinical_roles.add(coordinator)
+        pvds[3].clinical_roles.add(volunteer)
+        [p.save() for p in pvds]
+
+        cm_qs = Provider.objects.filter(
+            clinical_roles__in=ProviderType.objects.filter(
+                signs_charts=True)).values_list('id', flat=True)
+
+        form = forms.WorkupForm()
+
+        # c[0] is the pk of each, [1:] indexing required because element 0
+        # is the "blank" option.
+        form_list = [c[0] for c in form['attending'].field.choices][1:]
+
+        # cast to set for 1) order-insensitivity and 2) b/c cm_qs is
+        # a queryset and form_list is a list
+        self.assertEqual(set(cm_qs), set(form_list))
+
+        # Make sure we reject non-attending providers
+
+        form_data = wu_dict()
+        form_data['attending'] = pvds[2].pk
+        form = forms.WorkupForm(data=form_data)
+        self.assertNotEqual(form['attending'].errors, [])
+
+        form_data['attending'] = pvds[3].pk
+        form = forms.WorkupForm(data=form_data)
+        self.assertNotEqual(form['attending'].errors, [])
+
+        # Make sure we accept attending providers
+
+        form_data['attending'] = pvds[1].pk
+        form = forms.WorkupForm(data=form_data)
+        self.assertEqual(form['attending'].errors, [])
+
+        #do again for other_volunteer field
+
+        cm_qs = Provider.objects.filter(
+            clinical_roles__in=ProviderType.objects.filter(
+                signs_charts=False)).values_list('id', flat=True)
+        form_list = [c[0] for c in form['other_volunteer'].field.choices][1:]
+
+        self.assertEqual(set(cm_qs), set(form_list))
+
+        #Reject attending providers
+        form_data = wu_dict()
+        form_data['other_volunteer'] = pvds[1].pk
+        form = forms.WorkupForm(data=form_data)
+        self.assertNotEqual(form['other_volunteer'].errors, [])
+
+        #Accept coordinators and volunteers
+        form_data['other_volunteer'] = pvds[2].pk
+        form = forms.WorkupForm(data=form_data)
+        self.assertEqual(form['other_volunteer'].errors, [])
+
+        form_data['other_volunteer'] = pvds[3].pk
+        form = forms.WorkupForm(data=form_data)
+        self.assertEqual(form['other_volunteer'].errors, [])
 
     def test_workup_initial(self):
 

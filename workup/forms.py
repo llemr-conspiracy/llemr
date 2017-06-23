@@ -1,10 +1,11 @@
-from django.forms import ModelForm, CheckboxSelectMultiple
+from django.forms import ModelForm, CheckboxSelectMultiple, ModelChoiceField
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Fieldset, Div, Field, Button, ButtonHolder
 from crispy_forms.bootstrap import TabHolder, Tab, InlineCheckboxes, \
     AppendedText, PrependedText
 
+from pttrack.models import Provider, ProviderType
 from . import models
 
 class WorkupForm(ModelForm):
@@ -16,6 +17,20 @@ class WorkupForm(ModelForm):
         widgets = {'referral_location': CheckboxSelectMultiple,
                    'referral_type': CheckboxSelectMultiple}
 
+    # limit the options for the attending, other_volunteer field to Providers with
+    # ProviderType with signs_charts=True, False (includes coordinators and volunteers)
+    attending = ModelChoiceField(
+        queryset=Provider.objects.filter(
+            clinical_roles__in=ProviderType.objects.filter(
+                signs_charts=True))
+        )
+    other_volunteer = ModelChoiceField(
+        required=False,
+        queryset=Provider.objects.filter(
+            clinical_roles__in=ProviderType.objects.filter(
+                signs_charts=False)).distinct()
+        )
+    
     def __init__(self, *args, **kwargs):
         super(WorkupForm, self).__init__(*args, **kwargs)
 
@@ -30,6 +45,8 @@ class WorkupForm(ModelForm):
         self.helper.layout = Layout(
             TabHolder(
                 Tab('Basics',
+                    'attending',
+                    'other_volunteer',
                     'chief_complaint',
                     'diagnosis',
                     InlineCheckboxes('diagnosis_categories'),

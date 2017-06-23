@@ -4,7 +4,7 @@ from django.utils.timezone import now
 from simple_history.models import HistoricalRecords
 from django.core.urlresolvers import reverse
 
-from pttrack.models import Note, Provider, ReferralLocation, ReferralType
+from pttrack.models import Note, Provider, ReferralLocation, ReferralType, ProviderType
 from pttrack.validators import validate_attending
 
 from .validators import validate_hr, validate_rr, validate_t, validate_height, validate_weight
@@ -41,6 +41,9 @@ class Workup(Note):
     '''Datamodel of a workup. Has fields specific to each part of an exam,
     along with SNHC-specific info about where the patient has been referred for
     continuity care.'''
+
+    attending = models.ForeignKey(Provider, null=True, related_name="attending_physician")
+    other_volunteer = models.ForeignKey(Provider, blank=True, null=True, related_name="other_volunteer")
 
     clinic_day = models.ForeignKey(ClinicDate)
 
