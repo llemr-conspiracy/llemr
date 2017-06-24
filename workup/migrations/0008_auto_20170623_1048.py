@@ -33,4 +33,15 @@ class Migration(migrations.Migration):
             name='other_volunteer',
             field=models.ForeignKey(related_name='other_volunteer', blank=True, to='pttrack.Provider', null=True),
         ),
+
+        migrations.AddField(
+            model_name='historicalworkup',
+            name='other_volunteer_2',
+            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='pttrack.Provider', null=True),
+        ),
+        migrations.AddField(
+            model_name='workup',
+            name='other_volunteer_2',
+            field=models.ForeignKey(related_name='other_volunteer2', blank=True, to='pttrack.Provider', null=True),
+        ),
     ]

@@ -25,7 +25,15 @@ class WorkupForm(ModelForm):
             clinical_roles__in=ProviderType.objects.filter(
                 signs_charts=True))
         )
+    
     other_volunteer = ModelChoiceField(
+        required=False,
+        queryset=Provider.objects.filter(
+            clinical_roles__in=ProviderType.objects.filter(
+                signs_charts=False)).distinct()
+        )
+    
+    other_volunteer2 = ModelChoiceField(
         required=False,
         queryset=Provider.objects.filter(
             clinical_roles__in=ProviderType.objects.filter(
@@ -48,6 +56,7 @@ class WorkupForm(ModelForm):
                 Tab('Basics',
                     'attending',
                     'other_volunteer',
+                    'other_volunteer_2',
                     'chief_complaint',
                     'diagnosis',
                     InlineCheckboxes('diagnosis_categories'),
@@ -115,6 +124,7 @@ class WorkupForm(ModelForm):
         given).'''
 
         cleaned_data = super(WorkupForm, self).clean()
+        
         #validating blood pressure
         MAX_SYSTOLIC = 400
         MIN_DIASTOLIC = 40

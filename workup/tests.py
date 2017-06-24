@@ -340,6 +340,15 @@ class ViewsExistTest(TestCase):
         form = forms.WorkupForm(data=form_data)
         self.assertEqual(form['other_volunteer'].errors, [])
 
+        #Check the other volunteer2 field
+        form_data['other_volunteer_2'] = pvds[2].pk
+        form = forms.WorkupForm(data=form_data)
+        self.assertEqual(form['other_volunteer_2'].errors, [])
+
+        form_data['other_volunteer_2'] = pvds[3].pk
+        form = forms.WorkupForm(data=form_data)
+        self.assertEqual(form['other_volunteer_2'].errors, [])
+
     def test_workup_initial(self):
 
         pt = Patient.objects.first()

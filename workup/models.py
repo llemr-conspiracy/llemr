@@ -44,6 +44,7 @@ class Workup(Note):
 
     attending = models.ForeignKey(Provider, null=True, blank=True, related_name="attending_physician")
     other_volunteer = models.ForeignKey(Provider, blank=True, null=True, related_name="other_volunteer")
+    other_volunteer_2 = models.ForeignKey(Provider, blank=True, null=True, related_name="other_volunteer2")
 
     clinic_day = models.ForeignKey(ClinicDate)
 
