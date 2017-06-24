@@ -20,6 +20,7 @@ class WorkupForm(ModelForm):
     # limit the options for the attending, other_volunteer field to Providers with
     # ProviderType with signs_charts=True, False (includes coordinators and volunteers)
     attending = ModelChoiceField(
+        required=False,
         queryset=Provider.objects.filter(
             clinical_roles__in=ProviderType.objects.filter(
                 signs_charts=True))
