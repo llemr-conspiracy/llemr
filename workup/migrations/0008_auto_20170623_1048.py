@@ -8,7 +8,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('pttrack', '0009_auto_20170502_1103'),
+        ('pttrack', '0010_auto_20170623_1300'),
         ('workup', '0007_auto_20170502_1107'),
     ]
 
@@ -19,11 +19,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='pttrack.Provider', null=True),
         ),
         migrations.AddField(
-            model_name='historicalworkup',
-            name='other_volunteer',
-            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='pttrack.Provider', null=True),
-        ),
-        migrations.AddField(
             model_name='workup',
             name='attending',
             field=models.ForeignKey(related_name='attending_physician', to='pttrack.Provider', blank=True, null=True),
@@ -31,17 +26,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='workup',
             name='other_volunteer',
-            field=models.ForeignKey(related_name='other_volunteer', blank=True, to='pttrack.Provider', null=True),
-        ),
-
-        migrations.AddField(
-            model_name='historicalworkup',
-            name='other_volunteer_2',
-            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='pttrack.Provider', null=True),
-        ),
-        migrations.AddField(
-            model_name='workup',
-            name='other_volunteer_2',
-            field=models.ForeignKey(related_name='other_volunteer2', blank=True, to='pttrack.Provider', null=True),
+            field=models.ManyToManyField(related_name='other_volunteer', to='pttrack.Provider', blank=True),
         ),
     ]

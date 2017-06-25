@@ -1,4 +1,4 @@
-from django.forms import ModelForm, CheckboxSelectMultiple, ModelChoiceField
+from django.forms import ModelForm, CheckboxSelectMultiple, ModelChoiceField, ModelMultipleChoiceField
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Fieldset, Div, Field, Button, ButtonHolder
@@ -26,18 +26,11 @@ class WorkupForm(ModelForm):
                 signs_charts=True))
         )
     
-    other_volunteer = ModelChoiceField(
+    other_volunteer = ModelMultipleChoiceField(
         required=False,
         queryset=Provider.objects.filter(
             clinical_roles__in=ProviderType.objects.filter(
-                signs_charts=False)).distinct()
-        )
-    
-    other_volunteer2 = ModelChoiceField(
-        required=False,
-        queryset=Provider.objects.filter(
-            clinical_roles__in=ProviderType.objects.filter(
-                signs_charts=False)).distinct()
+                signs_charts=False)).distinct(),
         )
     
     def __init__(self, *args, **kwargs):
@@ -56,7 +49,6 @@ class WorkupForm(ModelForm):
                 Tab('Basics',
                     'attending',
                     'other_volunteer',
-                    'other_volunteer_2',
                     'chief_complaint',
                     'diagnosis',
                     InlineCheckboxes('diagnosis_categories'),

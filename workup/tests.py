@@ -285,11 +285,11 @@ class ViewsExistTest(TestCase):
         pvds[3].clinical_roles.add(volunteer)
         [p.save() for p in pvds]
 
+        form = forms.WorkupForm()
+
         cm_qs = Provider.objects.filter(
             clinical_roles__in=ProviderType.objects.filter(
                 signs_charts=True)).values_list('id', flat=True)
-
-        form = forms.WorkupForm()
 
         # c[0] is the pk of each, [1:] indexing required because element 0
         # is the "blank" option.
@@ -300,7 +300,6 @@ class ViewsExistTest(TestCase):
         self.assertEqual(set(cm_qs), set(form_list))
 
         # Make sure we reject non-attending providers
-
         form_data = wu_dict()
         form_data['attending'] = pvds[2].pk
         form = forms.WorkupForm(data=form_data)
@@ -311,17 +310,15 @@ class ViewsExistTest(TestCase):
         self.assertNotEqual(form['attending'].errors, [])
 
         # Make sure we accept attending providers
-
         form_data['attending'] = pvds[1].pk
         form = forms.WorkupForm(data=form_data)
         self.assertEqual(form['attending'].errors, [])
 
         #do again for other_volunteer field
-
         cm_qs = Provider.objects.filter(
             clinical_roles__in=ProviderType.objects.filter(
                 signs_charts=False)).values_list('id', flat=True)
-        form_list = [c[0] for c in form['other_volunteer'].field.choices][1:]
+        form_list = [c[0] for c in form['other_volunteer'].field.choices]
 
         self.assertEqual(set(cm_qs), set(form_list))
 
@@ -331,23 +328,14 @@ class ViewsExistTest(TestCase):
         form = forms.WorkupForm(data=form_data)
         self.assertNotEqual(form['other_volunteer'].errors, [])
 
-        #Accept coordinators and volunteers
-        form_data['other_volunteer'] = pvds[2].pk
+        #Accept non-attending providers
+        form_data['other_volunteer'] = [pvds[2].pk]
         form = forms.WorkupForm(data=form_data)
         self.assertEqual(form['other_volunteer'].errors, [])
 
-        form_data['other_volunteer'] = pvds[3].pk
+        form_data['other_volunteer'] = [pvds[3].pk]
         form = forms.WorkupForm(data=form_data)
         self.assertEqual(form['other_volunteer'].errors, [])
-
-        #Check the other volunteer2 field
-        form_data['other_volunteer_2'] = pvds[2].pk
-        form = forms.WorkupForm(data=form_data)
-        self.assertEqual(form['other_volunteer_2'].errors, [])
-
-        form_data['other_volunteer_2'] = pvds[3].pk
-        form = forms.WorkupForm(data=form_data)
-        self.assertEqual(form['other_volunteer_2'].errors, [])
 
     def test_workup_initial(self):
 

@@ -43,8 +43,7 @@ class Workup(Note):
     continuity care.'''
 
     attending = models.ForeignKey(Provider, null=True, blank=True, related_name="attending_physician")
-    other_volunteer = models.ForeignKey(Provider, blank=True, null=True, related_name="other_volunteer")
-    other_volunteer_2 = models.ForeignKey(Provider, blank=True, null=True, related_name="other_volunteer2")
+    other_volunteer = models.ManyToManyField(Provider, blank=True, related_name="other_volunteer")
 
     clinic_day = models.ForeignKey(ClinicDate)
 
