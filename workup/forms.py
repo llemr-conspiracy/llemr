@@ -23,14 +23,14 @@ class WorkupForm(ModelForm):
         required=False,
         queryset=Provider.objects.filter(
             clinical_roles__in=ProviderType.objects.filter(
-                signs_charts=True))
+                signs_charts=True)).order_by("last_name")
         )
     
     other_volunteer = ModelMultipleChoiceField(
         required=False,
         queryset=Provider.objects.filter(
             clinical_roles__in=ProviderType.objects.filter(
-                signs_charts=False)).distinct(),
+                signs_charts=False)).distinct().order_by("last_name"),
         )
     
     def __init__(self, *args, **kwargs):
