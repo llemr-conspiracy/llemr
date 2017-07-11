@@ -52,9 +52,9 @@ class Demographics(models.Model):
 
     has_insurance = models.NullBooleanField()
 
-    ER_visit_last_year = models.NullBooleanField(verbose_name="Visited ER in the past year")
+    ER_visit_last_year = models.NullBooleanField(verbose_name="Visited ER in the Past Year")
 
-    last_date_physician_visit = models.DateField(blank=True,null=True, verbose_name="Date Last Visited Patient")
+    last_date_physician_visit = models.DateField(blank=True,null=True, verbose_name="Date of Patient's Last Visit to Physician or ER")
 
     resource_access = models.ManyToManyField(ResourceAccess, blank=True,
                                                   verbose_name="Access to Resources")

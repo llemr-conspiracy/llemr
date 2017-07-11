@@ -108,6 +108,11 @@ class Gender(models.Model):
     def __unicode__(self):
         return self.long_name
 
+class Outcome(models.Model):
+    name = models.CharField(max_length=50, primary_key=True)
+
+    def __unicode__(self):
+        return self.name
 
 class Person(models.Model):
 
@@ -168,6 +173,8 @@ class Provider(Person):
 class Patient(Person):
 
     case_manager = models.ForeignKey(Provider, blank=True, null=True)
+
+    outcome = models.ForeignKey(Outcome, null=True, blank=True)
 
     address = models.CharField(max_length=200)
 
