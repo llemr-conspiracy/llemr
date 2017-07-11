@@ -1,13 +1,20 @@
-from django.forms import ModelForm, CheckboxSelectMultiple
+from django.forms import fields, ModelForm, CheckboxSelectMultiple, RadioSelect
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Fieldset, Div, Field, Button, ButtonHolder
+from crispy_forms.layout import Submit, Layout, Fieldset, Div, Field, Button
 from crispy_forms.bootstrap import TabHolder, Tab, InlineCheckboxes, \
-    AppendedText, PrependedText
+    AppendedText, PrependedText, FieldWithButtons, StrictButton, InlineRadios, InlineField
 
 from . import models
 
+
 class WorkupForm(ModelForm):
+
+    temperature_units = fields.ChoiceField(
+        label='',
+        widget = RadioSelect,
+        choices=[('C', 'C'), ('F', 'F')], required=True,
+        initial='C')
 
     class Meta:
         model = models.Workup
@@ -42,31 +49,39 @@ class WorkupForm(ModelForm):
                     'meds',
                     'allergies',
                     'ros',
-                    Button('next', 'Next Section', onclick=js_tab_switch.replace('TAB-CHANGE', 'physical-exam'))),
+                    Button('next', 'Next Section',
+                           onclick=js_tab_switch.replace('TAB-CHANGE',
+                                                         'physical-exam'))),
                 Tab('Physical Exam',
                     Div(
-                        #Div(HTML("<strong>Vital Signs</strong>"),
-                        #    css_class='col-lg-1'),
-                        Div(AppendedText('hr', 'bpm'), css_class='col-lg-3'),
-                        Div(AppendedText('bp_sys', 'mmHg'), css_class='col-lg-4'),
-                        Div(AppendedText('bp_dia', 'mmHg'), css_class='col-lg-4'),
-                        Div(AppendedText('rr', '/min'), css_class='col-lg-3'),
-                        Div(AppendedText('t', 'C'), css_class='col-lg-3'),
+                        Div(AppendedText('hr', 'bpm'),
+                            css_class='col-md-4 col-sm-6 col-xs-12'),
+                        Div(AppendedText('rr', '/min'),
+                            css_class='col-md-4 col-sm-6 col-xs-12'),
+                        Div('t', css_class='col-md-2 col-sm-3 col-xs-6'),
+                        Div(InlineRadios('temperature_units'),
+                            style='text-align: center;',
+                            css_class='col-md-2 col-sm-3 col-xs-6'),
+                        Div(AppendedText('bp_sys', 'mmHg'),
+                            css_class='col-sm-6 col-xs-12'),
+                        Div(AppendedText('bp_dia', 'mmHg'),
+                            css_class='col-sm-6 col-xs-12'),
                         title="Vital Signs",
-                        css_class="col-lg-12"),
+                        css_class="col-xs-12"),
                     Div(
-                        Div(AppendedText('height', 'in'), css_class='col-lg-4'),
-                        Div(AppendedText('weight', 'kg'), css_class='col-lg-4'),
-                        css_class="col-lg-12"),'pe',
+                        Div(AppendedText('height', 'in'),
+                            css_class='col-sm-6'),
+                        Div(AppendedText('weight', 'kg'),
+                            css_class='col-sm-6'),
+                        css_class="col-lg-12"), 'pe',
                     Button('next', 'Next Section', onclick=js_tab_switch.replace('TAB-CHANGE', 'assessment-plan'))),
                 Tab('Assessment & Plan',
                     'A_and_P',
                     'rx',
                     Fieldset(
                         'Labs',
-                        # Div(HTML("<strong>Labs</strong>"),
-                        #    css_class='col-lg-1'),
-                        Div('labs_ordered_internal', css_class='col-lg-6', form_class=''),
+                        Div('labs_ordered_internal', css_class='col-lg-6',
+                            form_class=''),
                         Div('labs_ordered_quest', css_class='col-lg-6')),
                     Button('next', 'Next Section', onclick=js_tab_switch.replace('TAB-CHANGE', 'referraldischarge'))),
                 Tab('Referral/Discharge',
@@ -86,7 +101,7 @@ class WorkupForm(ModelForm):
                              Field(
                                  'referral_type',
                                  style="background: #FAFAFA; padding: 10px;")),
-                    Submit('submit', 'Submit')
+                    Submit('submit', 'Save', css_class='btn btn-success')
                    )
             )
         )
