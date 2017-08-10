@@ -383,16 +383,17 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         self.selenium.get(
             '%s%s' % (self.live_server_url, reverse("all-patients")))
 
-        pt1_attest_status = self.selenium.find_element_by_xpath(".//tr[2]/td[6]/a").get_attribute("text")
+        pt_tbody = self.selenium.find_element_by_xpath("//div[@id='all']/table/tbody")
+        pt1_attest_status = pt_tbody.find_element_by_xpath(".//tr[2]/td[6]/a").get_attribute("text")
             # attested note is marked as having been attested by the attending
         self.assertEquals(pt1_attest_status.text, str(self.providers['attending']))
 
             # now a patient with no workup should have 'no note'
-        pt4_attest_status = self.selenium.find_element_by_xpath(".//tr[5]/td[6]/a").get_attribute("text")
+        pt4_attest_status = pt_tbody.find_element_by_xpath(".//tr[5]/td[6]/a").get_attribute("text")
         self.assertEquals(pt4_attest_status.text, 'No Note')
 
             # now a patient with unattested workup should have 'unattested'
-        pt2_attest_status = self.selenium.find_element_by_xpath(".//tr[3]/td[6]/a").get_attribute("text")
+        pt2_attest_status = pt_tbody.find_element_by_xpath(".//tr[3]/td[6]/a").get_attribute("text")
         self.assertEquals(pt2_attest_status.text, 'Unattested')
 
     def test_all_patients_correct_order(self):
@@ -417,9 +418,9 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         # WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlatest")))
 
         # test ordered by last name
-        # pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='ptlast']/table/tbody") # this line does throw an error if the id-ed element does not exist
-        first_patient_name = self.selenium.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
-        second_patient_name = self.selenium.find_element_by_xpath(".//tr[3]/td[1]/a").get_attribute("text")
+        pt_tbody = self.selenium.find_element_by_xpath("//div[@id='all']/table/tbody") # this line does throw an error if the id-ed element does not exist
+        first_patient_name = pt_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        second_patient_name = pt_tbody.find_element_by_xpath(".//tr[3]/td[1]/a").get_attribute("text")
         self.assertLessEqual(first_patient_name, second_patient_name)
         self.assertEqual(first_patient_name, "Action, No I.")
 
