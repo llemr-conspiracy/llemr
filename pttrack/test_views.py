@@ -383,35 +383,16 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         self.selenium.get(
             '%s%s' % (self.live_server_url, reverse("all-patients")))
 
-        # tabs = [
-        #     ('id_pt_%s_ptlatest_attestation', '//*[@href="#ptlatest"]'),
-        #     ('id_pt_%s_ptlast_attestation', '//*[@href="#ptlast"]')]
-
-        # for id_str, xpath in tabs:
-        #     # ensure that the tab is active (i.e. click the tab)
-        #     self.selenium.find_element_by_xpath(xpath).click()
-
-            # wait for js to build the table (i.e. pt1 attestation cell exists)
-        pt1_attest_status_id = self.pt1.pk
-            # WebDriverWait(self.selenium, 10).until(
-            #     EC.presence_of_element_located((By.ID, pt1_attest_status_id)))
-
-            # wait to ensure js has filled in the pt1 attestation cell
-        pt1_attest_status = self.selenium.find_element_by_id(self.pt1.pk)
-            # WebDriverWait(self.selenium, 10).until(
-            #     EC.text_to_be_present_in_element(
-            #         (By.ID, pt1_attest_status_id),
-            #         str(self.providers['attending'])))
-
+        pt1_attest_status = self.selenium.find_element_by_xpath(".//tr[2]/td[6]/a").get_attribute("text")
             # attested note is marked as having been attested by the attending
         self.assertEquals(pt1_attest_status.text, str(self.providers['attending']))
 
             # now a patient with no workup should have 'no note'
-        pt4_attest_status = self.selenium.find_element_by_id(self.pt4.pk)
+        pt4_attest_status = self.selenium.find_element_by_xpath(".//tr[5]/td[6]/a").get_attribute("text")
         self.assertEquals(pt4_attest_status.text, 'No Note')
 
             # now a patient with unattested workup should have 'unattested'
-        pt2_attest_status = self.selenium.find_element_by_id(self.pt2.pk)
+        pt2_attest_status = self.selenium.find_element_by_xpath(".//tr[3]/td[6]/a").get_attribute("text")
         self.assertEquals(pt2_attest_status.text, 'Unattested')
 
     def test_all_patients_correct_order(self):
