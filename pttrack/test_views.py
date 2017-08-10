@@ -384,16 +384,16 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             '%s%s' % (self.live_server_url, reverse("all-patients")))
 
         pt_tbody = self.selenium.find_element_by_xpath("//div[@class='container']/table/tbody")
-        pt1_attest_status = pt_tbody.find_element_by_xpath("//tr[2]/td[6]").get_attribute("text")
+        pt1_attest_status = pt_tbody.find_element_by_xpath("//tr[5]/td[6]")
             # attested note is marked as having been attested by the attending
         self.assertEquals(pt1_attest_status.text, str(self.providers['attending']))
 
             # now a patient with no workup should have 'no note'
-        pt4_attest_status = pt_tbody.find_element_by_xpath(".//tr[5]/td[6]/a").get_attribute("text")
+        pt4_attest_status = pt_tbody.find_element_by_xpath("//tr[2]/td[6]")
         self.assertEquals(pt4_attest_status.text, 'No Note')
 
             # now a patient with unattested workup should have 'unattested'
-        pt2_attest_status = pt_tbody.find_element_by_xpath(".//tr[3]/td[6]/a").get_attribute("text")
+        pt2_attest_status = pt_tbody.find_element_by_xpath("//tr[3]/td[6]")
         self.assertEquals(pt2_attest_status.text, 'Unattested')
 
     def test_all_patients_correct_order(self):
@@ -419,8 +419,8 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
         # test ordered by last name
         pt_tbody = self.selenium.find_element_by_xpath("//div[@class='container']/table/tbody") # this line does throw an error if the id-ed element does not exist
-        first_patient_name = pt_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
-        second_patient_name = pt_tbody.find_element_by_xpath(".//tr[3]/td[1]/a").get_attribute("text")
+        first_patient_name = pt_tbody.find_element_by_xpath("//tr[2]/td[1]").text
+        second_patient_name = pt_tbody.find_element_by_xpath("//tr[3]/td[1]").text
         self.assertLessEqual(first_patient_name, second_patient_name)
         self.assertEqual(first_patient_name, "Action, No I.")
 
