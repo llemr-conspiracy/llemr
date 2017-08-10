@@ -1,0 +1,40 @@
+{% extends "pttrack/base.html" %}
+
+{% load bootstrap3 %}
+
+{% block title %}
+Osler: {{ title | default:"All Patients"}}
+{% endblock %}
+
+{% block header %}
+<h1>{{ title | default:"All Patients" }}</h1>
+{% endblock %}
+
+{% block content %}
+   <div class="container">
+        <table class="table">
+            <tr><th>Patient Name</th><th>Age/Gender</th><th>Case Manager</th><th>Latest Activity</th><th>Next AI Due</th><th>Attestation</th>
+            </td>
+            {% for patient in object_list %}
+                <tr>
+                <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
+                <td>{{ patient.age }}/{{patient.gender}}</td>
+                <td>{{ patient.case_manager }}</td>
+                {% if patient.latest_workup %}
+                <td><a href="{% url 'workup' pk=patient.latest_workup.pk %}">Seen {{ patient.latest_workup.clinic_day.clinic_date }}</a>: {{patient.latest_workup.chief_complaint}}</td>
+                {% else %}
+                <td><a href="{% url 'patient-update' pk=patient.id %}">Intake</a>: {{patient.history.last.history_date}}</td>
+                {% endif %}
+                <td>{{patient.status}}</td>
+                {% if not patient.latest_workup %}
+                <td>No Note</td>
+                {% elif not patient.latest_workup.signer %}
+                <td>Unattested</td>
+                {% else %}
+                <td>{{ patient.latest_workup.signer }}</td>
+                {% endif %}
+                </tr>
+            {% endfor %}
+        </table>
+	</div>
+{% endblock %}

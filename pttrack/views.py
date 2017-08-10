@@ -3,13 +3,13 @@ from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.views.generic.edit import FormView, UpdateView
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from . import models as mymodels
 from . import forms as myforms
 import json
 
 import datetime
-
 
 def get_current_provider_type(request):
     '''
@@ -344,36 +344,30 @@ def patient_detail(request, pk):
                     'patient': pt})
 
 
-
-def phone_directory(request):
-    patient_list = mymodels.Patient.objects.all().order_by('last_name')
-
-    title = "Patient Phone Number Directory"
-    return render(request,
-                  'pttrack/phone_directory.html',
-                  {'object_list': patient_list,
-                    'title': title})
-
-
 def all_patients(request):
+    # lists = [
+    #     {'url': 'sort=last_name',
+    #      'title': "Alphabetized by Last Name",
+    #      'identifier': 'ptlast',
+    #      'active': False },
+    #     {'url': 'sort=latest_workup',
+    #      'title': "Ordered by Latest Activity",
+    #      'identifier': 'ptlatest',
+    #      'active': True }]
 
-    lists = [
-        {'url': 'sort=last_name',
-         'title': "Alphabetized by Last Name",
-         'identifier': 'ptlast',
-         'active': False },
-        {'url': 'sort=latest_workup',
-         'title': "Ordered by Latest Activity",
-         'identifier': 'ptlatest',
-         'active': True }]
+    # api_url = reverse('pt_list_api')[:-1] + '.json/?' # remove last '/' before adding because there no '/' between /api/pt_list and .json, but reverse generates '/api/pt_list/'
 
-    api_url = reverse('pt_list_api')[:-1] + '.json/?' # remove last '/' before adding because there no '/' between /api/pt_list and .json, but reverse generates '/api/pt_list/'
-
+    # return render(request,
+    #               'pttrack/patient_list.html',
+    #               {'lists': json.dumps(lists),
+    #                 'title': "All Patients",
+    #                 'api_url': api_url})
+    
+    patient_list = mymodels.Patient.objects.all().order_by('last_name')
     return render(request,
-                  'pttrack/patient_list.html',
-                  {'lists': json.dumps(lists),
-                    'title': "All Patients",
-                    'api_url': api_url})
+                  'pttrack/all_patients.html',
+                  {'object_list': patient_list})
+
 
 
 def patient_activate_detail(request, pk):
