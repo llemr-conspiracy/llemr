@@ -418,7 +418,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         # WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlatest")))
 
         # test ordered by last name
-        pt_tbody = self.selenium.find_element_by_xpath("//div[@id='all']/table/tbody") # this line does throw an error if the id-ed element does not exist
+        pt_tbody = self.selenium.find_element_by_xpath("//div[@class='container']/table/tbody") # this line does throw an error if the id-ed element does not exist
         first_patient_name = pt_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
         second_patient_name = pt_tbody.find_element_by_xpath(".//tr[3]/td[1]/a").get_attribute("text")
         self.assertLessEqual(first_patient_name, second_patient_name)
