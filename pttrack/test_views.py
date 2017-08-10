@@ -177,7 +177,7 @@ class SendEmailTest(TestCase):
         Verifies that email is correctly being sent for incomplete, 
         overdue action items
         '''
-        call_command('sendemail')
+        call_command('action_item_spam')
 
         #test that 1 message has been sent for the AI due yesterday and today
         #but only 1 email bc same author
