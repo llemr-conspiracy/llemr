@@ -392,7 +392,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         #     self.selenium.find_element_by_xpath(xpath).click()
 
             # wait for js to build the table (i.e. pt1 attestation cell exists)
-        pt1_attest_status_id = id_str % self.pt1.pk
+        pt1_attest_status_id = self.pt1.pk
             # WebDriverWait(self.selenium, 10).until(
             #     EC.presence_of_element_located((By.ID, pt1_attest_status_id)))
 
@@ -440,7 +440,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
         # test ordered by last name
         # pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='ptlast']/table/tbody") # this line does throw an error if the id-ed element does not exist
-        first_patient_name = self.seleniumfind_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
+        first_patient_name = self.selenium.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
         second_patient_name = self.selenium.find_element_by_xpath(".//tr[3]/td[1]/a").get_attribute("text")
         self.assertLessEqual(first_patient_name, second_patient_name)
         self.assertEqual(first_patient_name, "Action, No I.")
