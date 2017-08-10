@@ -6,7 +6,7 @@ from . import models
 for model in [models.Language, models.Patient, models.Provider,
               models.ActionInstruction, models.ActionItem, models.Ethnicity,
               models.ReferralType, models.ReferralLocation,
-              models.ContactMethod, models.Document, models.DocumentType]:
+              models.ContactMethod, models.Document, models.DocumentType, models.Outcome]:
     if hasattr(model, "history"):
         admin.site.register(model, SimpleHistoryAdmin)
     else:
