@@ -383,8 +383,8 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         self.selenium.get(
             '%s%s' % (self.live_server_url, reverse("all-patients")))
 
-        pt_tbody = self.selenium.find_element_by_xpath("//div[@id='all']/table/tbody")
-        pt1_attest_status = pt_tbody.find_element_by_xpath(".//tr[2]/td[6]/a").get_attribute("text")
+        pt_tbody = self.selenium.find_element_by_xpath("//div[@class='container']/table/tbody")
+        pt1_attest_status = pt_tbody.find_element_by_xpath("//tr[2]/td[6]").get_attribute("text")
             # attested note is marked as having been attested by the attending
         self.assertEquals(pt1_attest_status.text, str(self.providers['attending']))
 
