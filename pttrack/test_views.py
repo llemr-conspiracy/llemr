@@ -397,8 +397,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             #     EC.presence_of_element_located((By.ID, pt1_attest_status_id)))
 
             # wait to ensure js has filled in the pt1 attestation cell
-        pt1_attest_status = self.selenium.find_element_by_id(
-            pt1_attest_status_id)
+        pt1_attest_status = self.selenium.find_element_by_id(self.pt1.pk)
             # WebDriverWait(self.selenium, 10).until(
             #     EC.text_to_be_present_in_element(
             #         (By.ID, pt1_attest_status_id),
@@ -408,13 +407,11 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         self.assertEquals(pt1_attest_status.text, str(self.providers['attending']))
 
             # now a patient with no workup should have 'no note'
-        pt4_attest_status = self.selenium.find_element_by_id(
-            id_str % self.pt4.pk)
+        pt4_attest_status = self.selenium.find_element_by_id(self.pt4.pk)
         self.assertEquals(pt4_attest_status.text, 'No Note')
 
             # now a patient with unattested workup should have 'unattested'
-        pt2_attest_status = self.selenium.find_element_by_id(
-            id_str % self.pt2.pk)
+        pt2_attest_status = self.selenium.find_element_by_id(self.pt2.pk)
         self.assertEquals(pt2_attest_status.text, 'Unattested')
 
     def test_all_patients_correct_order(self):
