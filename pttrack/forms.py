@@ -23,7 +23,7 @@ class PatientForm(ModelForm):
             required=False,
             queryset=models.Provider.objects.filter(
                 clinical_roles__in=models.ProviderType.objects.filter(
-                    staff_view=True))
+                    staff_view=True)).order_by("last_name")
             )
 
     def __init__(self, *args, **kwargs):

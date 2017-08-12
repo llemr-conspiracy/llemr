@@ -12,7 +12,7 @@
         </div>
         {% else %}
         <div class="col-md-4">
-            <strong>Workup unattested.</strong>
+            <strong>Workup unattested. Attending:</strong> {{ workup.attending }}
         </div>
         {% endif%}
     </div>
@@ -25,7 +25,7 @@
             <strong>Author:</strong> {{ workup.author.name }} ({{ workup.author_type }})
         </div>
         <div class="col-md-4">
-            <strong>Patient will Return:</strong> {{ workup.will_return | yesno }}
+            <strong>Other Volunteer(s):</strong> {{ workup.other_volunteer.iterator | join:"; "}}
         </div>
     </div>
     <div class="row">
@@ -34,6 +34,9 @@
         </div>
         <div class="col-md-4">
             <strong>Dx Category:</strong> {{ workup.diagnosis_categories.iterator | join:", " }}
+        </div>
+        <div class="col-md-4">
+            <strong>Patient will Return:</strong> {{ workup.will_return | yesno }}
         </div>
     </div>
     <div class="row">
