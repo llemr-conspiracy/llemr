@@ -460,39 +460,18 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         self.selenium.get(
             '%s%s' % (self.live_server_url, reverse("all-patients")))
 
-        tabs = [
-            ('id_pt_%s_ptlatest_attestation', '//*[@href="#ptlatest"]'),
-            ('id_pt_%s_ptlast_attestation', '//*[@href="#ptlast"]')]
-
-        for id_str, xpath in tabs:
-            # ensure that the tab is active (i.e. click the tab)
-            self.selenium.find_element_by_xpath(xpath).click()
-
-            # wait for js to build the table (i.e. pt1 attestation cell exists)
-            pt1_attest_status_id = id_str % self.pt1.pk
-            WebDriverWait(self.selenium, 10).until(
-                EC.presence_of_element_located((By.ID, pt1_attest_status_id)))
-
-            # wait to ensure js has filled in the pt1 attestation cell
-            pt1_attest_status = self.selenium.find_element_by_id(
-                pt1_attest_status_id)
-            WebDriverWait(self.selenium, 10).until(
-                EC.text_to_be_present_in_element(
-                    (By.ID, pt1_attest_status_id),
-                    str(self.providers['attending'])))
-
+        pt_tbody = self.selenium.find_element_by_xpath("//div[@class='container']/table/tbody")
+        pt1_attest_status = pt_tbody.find_element_by_xpath("//tr[5]/td[6]")
             # attested note is marked as having been attested by the attending
-            self.assertEquals(pt1_attest_status.text, str(self.providers['attending']))
+        self.assertEquals(pt1_attest_status.text, str(self.providers['attending']))
 
             # now a patient with no workup should have 'no note'
-            pt4_attest_status = self.selenium.find_element_by_id(
-                id_str % self.pt4.pk)
-            self.assertEquals(pt4_attest_status.text, 'no note')
+        pt4_attest_status = pt_tbody.find_element_by_xpath("//tr[2]/td[6]")
+        self.assertEquals(pt4_attest_status.text, 'No Note')
 
             # now a patient with unattested workup should have 'unattested'
-            pt2_attest_status = self.selenium.find_element_by_id(
-                id_str % self.pt2.pk)
-            self.assertEquals(pt2_attest_status.text, 'unattested')
+        pt2_attest_status = pt_tbody.find_element_by_xpath("//tr[3]/td[6]")
+        self.assertEquals(pt2_attest_status.text, 'Unattested')
 
     def test_all_patients_correct_order(self):
 
@@ -512,24 +491,24 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
                                     reverse('all-patients')))
 
         # unsure how to test for multiple elements/a certain number of elements
-        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlast")))
-        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlatest")))
+        # WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlast")))
+        # WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlatest")))
 
         # test ordered by last name
-        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='ptlast']/table/tbody") # this line does throw an error if the id-ed element does not exist
-        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
-        second_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[3]/td[1]/a").get_attribute("text")
+        pt_tbody = self.selenium.find_element_by_xpath("//div[@class='container']/table/tbody") # this line does throw an error if the id-ed element does not exist
+        first_patient_name = pt_tbody.find_element_by_xpath("//tr[2]/td[1]").text
+        second_patient_name = pt_tbody.find_element_by_xpath("//tr[3]/td[1]").text
         self.assertLessEqual(first_patient_name, second_patient_name)
         self.assertEqual(first_patient_name, "Action, No I.")
 
-        # test order by latest activity
-        # more difficult to test attributes, I'm just testing that the first
-        # name is correct
-        pt_last_tbody = self.selenium.find_element_by_xpath(
-            "//div[@id='ptlatest']/table/tbody")
-        first_patient_name = pt_last_tbody.find_element_by_xpath(
-            ".//tr[2]/td[1]/a").get_attribute("text")
-        self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
+        # # test order by latest activity
+        # # more difficult to test attributes, I'm just testing that the first
+        # # name is correct
+        # pt_last_tbody = self.selenium.find_element_by_xpath(
+        #     "//div[@id='ptlatest']/table/tbody")
+        # first_patient_name = pt_last_tbody.find_element_by_xpath(
+        #     ".//tr[2]/td[1]/a").get_attribute("text")
+        # self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
 
     def test_provider_types_correct_home_order(self):
         '''Verify that for each provider type, on the home page the
