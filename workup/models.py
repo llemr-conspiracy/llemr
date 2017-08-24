@@ -4,10 +4,10 @@ from django.utils.timezone import now
 from simple_history.models import HistoricalRecords
 from django.core.urlresolvers import reverse
 
-from pttrack.models import Note, Provider, ReferralLocation, ReferralType, ProviderType
-from pttrack.validators import validate_attending
+from pttrack.models import Note, Provider, ReferralLocation, ReferralType
 
-from .validators import validate_hr, validate_rr, validate_t, validate_height, validate_weight
+from pttrack.validators import validate_attending
+from . import validators
 
 
 class DiagnosisType(models.Model):
@@ -61,17 +61,37 @@ class Workup(Note):
     soc_hx = models.TextField(verbose_name="Social History")
     ros = models.TextField(verbose_name="ROS")
 
-    hr = models.CharField(blank=True, null=True, max_length=12, validators=[validate_hr])
-    bp_sys = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Systolic")
-    bp_dia =models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Diastolic")
+    # represented internally in per min
+    hr = models.CharField(
+        blank=True, null=True, max_length=12,
+        validators=[validators.validate_hr],
+        verbose_name="Heart Rate")
 
-    rr = models.CharField(blank=True, null=True, max_length=12, validators=[validate_rr])
-    t = models.CharField(blank=True, null=True, max_length=12, validators=[validate_t])
+    # represented internally as mmHg
+    bp_sys = models.PositiveSmallIntegerField(
+        blank=True, null=True, verbose_name="Systolic",
+        validators=[validators.validate_bp_systolic])
+    bp_dia =models.PositiveSmallIntegerField(
+        blank=True, null=True, verbose_name="Diastolic",
+        validators=[validators.validate_bp_diastolic])
 
-    # this is a hotfix that needs to be changed in terms of error handeling for the entire form so that 
-    # people are not confused when they cannot submit their form.
-    height = models.CharField(blank=True, null=True, max_length=12, validators=[validate_height])
-    weight = models.CharField(blank=True, null=True, max_length=12, validators=[validate_weight])
+    # represented internally in per min
+    rr = models.PositiveSmallIntegerField(
+        blank=True, null=True, verbose_name="Respiratory Rate")
+
+    # represented internally in Fahrenheit
+    t = models.DecimalField(
+        max_digits=4, decimal_places=1,
+        blank=True, null=True,
+        verbose_name="Temperature")
+
+    # represented internally as inches
+    height = models.PositiveSmallIntegerField(
+        blank=True, null=True)
+    # represented internally as kg
+    weight = models.DecimalField(
+        max_digits=5, decimal_places=1,
+        blank=True, null=True)
 
     pe = models.TextField(verbose_name="Physical Examination")
 

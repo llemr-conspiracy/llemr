@@ -1,21 +1,40 @@
-from django.forms import fields, ModelForm, CheckboxSelectMultiple, ModelChoiceField, ModelMultipleChoiceField
+import decimal
+
+from django.conf import settings
+from django.forms import fields, ModelForm, CheckboxSelectMultiple, ModelChoiceField, ModelMultipleChoiceField, RadioSelect
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Fieldset, Div, Field, Button
-from crispy_forms.bootstrap import TabHolder, Tab, InlineCheckboxes, \
-    AppendedText, PrependedText, FieldWithButtons, StrictButton, InlineRadios, InlineField
+from crispy_forms.bootstrap import (
+    TabHolder, Tab, InlineCheckboxes, AppendedText, PrependedText
+    )
 
 from pttrack.models import Provider, ProviderType
 from . import models
+
+
+def centigrade2fahrenheit(c):
+    c = (c * decimal.Decimal(9.0/5.0)) + 32
+    return c
 
 
 class WorkupForm(ModelForm):
 
     temperature_units = fields.ChoiceField(
         label='',
-        widget = RadioSelect,
-        choices=[('C', 'C'), ('F', 'F')], required=True,
-        initial='C')
+        widget=RadioSelect,
+        choices=[('C', 'C'), ('F', 'F')], required=True)
+
+    weight_units = fields.ChoiceField(
+        label='',
+        widget=RadioSelect,
+        choices=[('kg', 'kg'), ('lbs', 'lbs')], required=True)
+
+    height_units = fields.ChoiceField(
+        label='',
+        widget=RadioSelect,
+        choices=[('cm', 'cm'), ('in', 'in')], required=True)
+
 
     class Meta:
         model = models.Workup
@@ -45,9 +64,6 @@ class WorkupForm(ModelForm):
 
         self.helper = FormHelper()
         self.helper.form_method = 'post'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-lg-2'
-        self.helper.field_class = 'col-lg-8'
 
         js_tab_switch = "$(document).ready(function(){activaTab('TAB-CHANGE');});function activaTab(tab){$('.nav-tabs a[href=\"#' + tab + '\"]').tab('show');};"
 
@@ -77,22 +93,47 @@ class WorkupForm(ModelForm):
                             css_class='col-md-4 col-sm-6 col-xs-12'),
                         Div(AppendedText('rr', '/min'),
                             css_class='col-md-4 col-sm-6 col-xs-12'),
-                        Div('t', css_class='col-md-2 col-sm-3 col-xs-6'),
-                        Div(InlineRadios('temperature_units'),
-                            style='text-align: center;',
-                            css_class='col-md-2 col-sm-3 col-xs-6'),
+
+                        # Temperature and units
+                        Div(AppendedText(
+                            't',
+                            '''
+    <label for="temperature_units">C</label>
+    <input name="temperature_units" type="radio" value="C">
+    <label for="temperature_units">F</label>
+    <input name="temperature_units" type="radio" value="F">
+                            '''),
+                        css_class='col-md-4 col-sm-6 col-xs-12'
+                        ),
+
                         Div(AppendedText('bp_sys', 'mmHg'),
-                            css_class='col-sm-6 col-xs-12'),
+                            css_class='col-md-4 col-sm-3 col-xs-6'),
                         Div(AppendedText('bp_dia', 'mmHg'),
-                            css_class='col-sm-6 col-xs-12'),
-                        title="Vital Signs",
-                        css_class="col-xs-12"),
-                    Div(
-                        Div(AppendedText('height', 'in'),
-                            css_class='col-sm-6'),
-                        Div(AppendedText('weight', 'kg'),
-                            css_class='col-sm-6'),
-                        css_class="col-lg-12"), 'pe',
+                            css_class='col-md-4 col-sm-3 col-xs-6'),
+
+                        Div(AppendedText(
+                            'height',
+                            '''
+    <label for="height_units">in</label>
+    <input name="height_units" type="radio" value="in">
+    <label for="height_units">cm</label>
+    <input name="height_units" type="radio" value="cm">
+                            '''),
+                            css_class='col-md-4 col-sm-6 col-xs-12'),
+
+                        # Weight and units
+                        Div(AppendedText(
+                                'weight',
+                                '''
+    <label for="weight_units">kg</label>
+    <input name="weight_units" type="radio" value="kg">
+    <label for="weight_units">lbs</label>
+    <input name="weight_units" type="radio" value="lbs">
+                                '''),
+                            css_class='col-md-4 col-sm-6 col-xs-12'
+                        ),
+
+                        css_class="row"), 'pe',
                     Button('next', 'Next Section', onclick=js_tab_switch.replace('TAB-CHANGE', 'assessment-plan'))),
                 Tab('Assessment & Plan',
                     'A_and_P',
@@ -132,43 +173,36 @@ class WorkupForm(ModelForm):
 
         cleaned_data = super(WorkupForm, self).clean()
 
-        #validating blood pressure
-        MAX_SYSTOLIC = 400
-        MIN_DIASTOLIC = 40
-
-        if cleaned_data.get('bp_sys') > MAX_SYSTOLIC:
-            self.add_error('bp_sys', "Systolic BP is unreasonably high.")
-
-        elif cleaned_data.get('bp_dia') > cleaned_data.get('bp_sys'):
-            self.add_error('bp_sys', 'Systolic BP must be higher than diastolic BP.')
-
-        if cleaned_data.get('bp_dia') < MIN_DIASTOLIC:
-            self.add_error('bp_dia', 'Diastolic BP is unreasonably low.')
+        if cleaned_data['temperature_units'] == 'C':
+            f = centigrade2fahrenheit(cleaned_data.get('t'))
+            cleaned_data['t'] = f
 
         #validating voucher things
         if cleaned_data.get('got_voucher') and \
-           (cleaned_data.get('voucher_amount'))==None:
+            cleaned_data.get('voucher_amount') is None:
 
             self.add_error('voucher_amount', "If the patient recieved a " +
                            "voucher, value of the voucher must be specified.")
 
         if cleaned_data.get('got_voucher') and \
-           (cleaned_data.get('patient_pays'))==None:
+            cleaned_data.get('patient_pays') is None:
 
             self.add_error('patient_pays', "If the patient recieved a " +
                            "voucher, specify the amount the patient pays.")
 
         if cleaned_data.get('got_imaging_voucher') and \
-            (cleaned_data.get('imaging_voucher_amount'))==None:
+            cleaned_data.get('imaging_voucher_amount') is None:
 
             self.add_error('imaging_voucher_amount', "If the patient recieved a " +
                            "imaging voucher, value of the voucher must be specified.")
 
         if cleaned_data.get('got_imaging_voucher') and \
-           (cleaned_data.get('patient_pays_imaging'))==None:
+            cleaned_data.get('patient_pays_imaging') is None:
 
-            self.add_error('patient_pays_imaging', "If the patient recieved a " +
-                           "imaging voucher, specify the amount the patient pays.")
+            self.add_error(
+                'patient_pays_imaging',
+                "If the patient recieved a imaging voucher, specify the "
+                "amount the patient pays.")
 
 
 class ClinicDateForm(ModelForm):

@@ -9,7 +9,6 @@ from selenium.common.exceptions import ElementNotVisibleException,\
     WebDriverException
 from selenium.webdriver.common.action_chains import ActionChains
 from pttrack.test_views import live_submit_login
-from selenium.webdriver.common.by import By
 
 
 from pttrack.test_views import build_provider, log_in_provider
