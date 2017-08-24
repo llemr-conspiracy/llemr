@@ -6,6 +6,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 from django.core.files import File
+from django.core import mail
+from django.core.management import call_command
 
 # For live tests.
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -42,7 +44,7 @@ def note_check(test, note, client, pt_pk):
     test.assertLessEqual((now() - note.last_modified).total_seconds(), 10)
 
 
-def build_provider(roles=None, username=None, password='password'):
+def build_provider(roles=None, username=None, password='password', email=None):
 
     # TODO this is not preferred. Should swap None for '__all__'
     # this will require hunting down all the places this is called, though.
@@ -55,9 +57,11 @@ def build_provider(roles=None, username=None, password='password'):
     if username is None:
         username = 'user'+str(User.objects.all().count())
 
+    if email is None:
+        email = 'tommyljones@gmail.com'
     user = User.objects.create_user(
         username,
-        'tommyljones@gmail.com', password)
+        email, password)
     user.save()
 
     g = models.Gender.objects.first()
@@ -111,6 +115,79 @@ def get_url_pt_list_identifiers(self, url):
     for pt_list in pt_lists:
         list_identifiers.append(pt_list['identifier'])
     return list_identifiers
+
+
+class SendEmailTest(TestCase):
+    fixtures = [BASIC_FIXTURE]
+    '''
+    Test custom django management command sendemail
+    '''
+    def setUp(self):
+        #make 2 providers
+        log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user1@gmail.com'))
+        log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user2@gmail.com'))
+
+        pt = models.Patient.objects.first()
+
+        ai_inst = models.ActionInstruction.objects.create(
+            instruction="Follow up on labs")
+        
+        tomorrow = now().date() + datetime.timedelta(days=1)
+        yesterday = now().date() - datetime.timedelta(days=1)
+
+        ai_prototype = {
+        'instruction':ai_inst,
+        'comments':"",
+        'author_type':models.ProviderType.objects.first(),
+        'patient':pt
+        }
+
+        #action item due today
+        ai_today = models.ActionItem.objects.create(
+            due_date=datetime.datetime.today(),
+            author=models.Provider.objects.first(),
+            **ai_prototype
+            )
+
+        #action item due yesterday
+        ai_yesterday = models.ActionItem.objects.create(
+            due_date=yesterday,
+            author=models.Provider.objects.first(),
+            **ai_prototype
+            )
+
+        #action item due tomorrow
+        ai_tomorrow = models.ActionItem.objects.create(
+            due_date=tomorrow,
+            author=models.Provider.objects.all()[1],
+            **ai_prototype
+            )
+
+        #complete action item from yesterday
+        ai_complete = models.ActionItem.objects.create(
+            due_date=yesterday,
+            author=models.Provider.objects.all()[1],
+            completion_date = now(),
+            completion_author=models.Provider.objects.first(),
+            **ai_prototype
+            )
+
+    def test_sendemail(self):
+        '''
+        Verifies that email is correctly being sent for incomplete, 
+        overdue action items
+        '''
+        call_command('action_item_spam')
+
+        #test that 1 message has been sent for the AI due yesterday and today
+        #but only 1 email bc same author
+        self.assertEqual(len(mail.outbox), 1)
+
+        #verify that subject is correct
+        self.assertEqual(mail.outbox[0].subject, 'SNHC: Action Item Due')
+
+        #verify that the 1 message is to user1
+        self.assertEqual(mail.outbox[0].to, ['user1@gmail.com'])
 
 
 class LiveTesting(StaticLiveServerTestCase):
@@ -383,39 +460,18 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         self.selenium.get(
             '%s%s' % (self.live_server_url, reverse("all-patients")))
 
-        tabs = [
-            ('id_pt_%s_ptlatest_attestation', '//*[@href="#ptlatest"]'),
-            ('id_pt_%s_ptlast_attestation', '//*[@href="#ptlast"]')]
-
-        for id_str, xpath in tabs:
-            # ensure that the tab is active (i.e. click the tab)
-            self.selenium.find_element_by_xpath(xpath).click()
-
-            # wait for js to build the table (i.e. pt1 attestation cell exists)
-            pt1_attest_status_id = id_str % self.pt1.pk
-            WebDriverWait(self.selenium, 10).until(
-                EC.presence_of_element_located((By.ID, pt1_attest_status_id)))
-
-            # wait to ensure js has filled in the pt1 attestation cell
-            pt1_attest_status = self.selenium.find_element_by_id(
-                pt1_attest_status_id)
-            WebDriverWait(self.selenium, 10).until(
-                EC.text_to_be_present_in_element(
-                    (By.ID, pt1_attest_status_id),
-                    str(self.providers['attending'])))
-
+        pt_tbody = self.selenium.find_element_by_xpath("//div[@class='container']/table/tbody")
+        pt1_attest_status = pt_tbody.find_element_by_xpath("//tr[5]/td[6]")
             # attested note is marked as having been attested by the attending
-            self.assertEquals(pt1_attest_status.text, str(self.providers['attending']))
+        self.assertEquals(pt1_attest_status.text, str(self.providers['attending']))
 
             # now a patient with no workup should have 'no note'
-            pt4_attest_status = self.selenium.find_element_by_id(
-                id_str % self.pt4.pk)
-            self.assertEquals(pt4_attest_status.text, 'no note')
+        pt4_attest_status = pt_tbody.find_element_by_xpath("//tr[2]/td[6]")
+        self.assertEquals(pt4_attest_status.text, 'No Note')
 
             # now a patient with unattested workup should have 'unattested'
-            pt2_attest_status = self.selenium.find_element_by_id(
-                id_str % self.pt2.pk)
-            self.assertEquals(pt2_attest_status.text, 'unattested')
+        pt2_attest_status = pt_tbody.find_element_by_xpath("//tr[3]/td[6]")
+        self.assertEquals(pt2_attest_status.text, 'Unattested')
 
     def test_all_patients_correct_order(self):
 
@@ -435,24 +491,24 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
                                     reverse('all-patients')))
 
         # unsure how to test for multiple elements/a certain number of elements
-        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlast")))
-        WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlatest")))
+        # WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlast")))
+        # WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlatest")))
 
         # test ordered by last name
-        pt_last_tbody = self.selenium.find_element_by_xpath("//div[@id='ptlast']/table/tbody") # this line does throw an error if the id-ed element does not exist
-        first_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[2]/td[1]/a").get_attribute("text")
-        second_patient_name = pt_last_tbody.find_element_by_xpath(".//tr[3]/td[1]/a").get_attribute("text")
+        pt_tbody = self.selenium.find_element_by_xpath("//div[@class='container']/table/tbody") # this line does throw an error if the id-ed element does not exist
+        first_patient_name = pt_tbody.find_element_by_xpath("//tr[2]/td[1]").text
+        second_patient_name = pt_tbody.find_element_by_xpath("//tr[3]/td[1]").text
         self.assertLessEqual(first_patient_name, second_patient_name)
         self.assertEqual(first_patient_name, "Action, No I.")
 
-        # test order by latest activity
-        # more difficult to test attributes, I'm just testing that the first
-        # name is correct
-        pt_last_tbody = self.selenium.find_element_by_xpath(
-            "//div[@id='ptlatest']/table/tbody")
-        first_patient_name = pt_last_tbody.find_element_by_xpath(
-            ".//tr[2]/td[1]/a").get_attribute("text")
-        self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
+        # # test order by latest activity
+        # # more difficult to test attributes, I'm just testing that the first
+        # # name is correct
+        # pt_last_tbody = self.selenium.find_element_by_xpath(
+        #     "//div[@id='ptlatest']/table/tbody")
+        # first_patient_name = pt_last_tbody.find_element_by_xpath(
+        #     ".//tr[2]/td[1]/a").get_attribute("text")
+        # self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
 
     def test_provider_types_correct_home_order(self):
         '''Verify that for each provider type, on the home page the
