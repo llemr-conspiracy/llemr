@@ -1,6 +1,5 @@
 import decimal
 
-from django.conf import settings
 from django.forms import fields, ModelForm, CheckboxSelectMultiple, ModelChoiceField, ModelMultipleChoiceField, RadioSelect
 
 from crispy_forms.helper import FormHelper
@@ -13,9 +12,33 @@ from pttrack.models import Provider, ProviderType
 from . import models
 
 
-def centigrade2fahrenheit(c):
-    c = (c * decimal.Decimal(9.0/5.0)) + 32
-    return c
+def fahrenheit2centigrade(f):
+    """Converts a temperature in fahrenheit to a temperature in
+    centigrade. If None, returns None.
+    """
+    if f is not None:
+        return (f - 32) / decimal.Decimal(9.0/5.0)
+    else:
+        return None
+
+def pounds2kilos(lbs):
+    """Converts a weight in pounds to a weight in kilos. If None,
+    returns None.
+    """
+
+    if lbs is not None:
+        return lbs * decimal.Decimal(0.453592)
+    else:
+        return None
+
+def inches2cm(inches):
+    """Converts a length in inches to a length in centimeters. If None,
+    returns None.
+    """
+    if inches is not None:
+        return inches * decimal.Decimal(2.54)
+    else:
+        return None
 
 
 class WorkupForm(ModelForm):
@@ -173,36 +196,50 @@ class WorkupForm(ModelForm):
 
         cleaned_data = super(WorkupForm, self).clean()
 
-        if cleaned_data['temperature_units'] == 'C':
-            f = centigrade2fahrenheit(cleaned_data.get('t'))
-            cleaned_data['t'] = f
+        if cleaned_data['temperature_units'] == 'F':
+            c = fahrenheit2centigrade(cleaned_data.get('t'))
+            cleaned_data['t'] = c
+
+        if cleaned_data['weight_units'] == 'lbs':
+            kgs = pounds2kilos(cleaned_data.get('weight'))
+            cleaned_data['weight'] = kgs
+
+        if cleaned_data['height_units'] == 'in':
+            cm = inches2cm(cleaned_data.get('height'))
+            cleaned_data['height'] = cm
 
         #validating voucher things
         if cleaned_data.get('got_voucher') and \
             cleaned_data.get('voucher_amount') is None:
 
-            self.add_error('voucher_amount', "If the patient recieved a " +
-                           "voucher, value of the voucher must be specified.")
+            self.add_error(
+                'voucher_amount',
+                "If the patient recieved a voucher, value of the "
+                "voucher must be specified.")
 
         if cleaned_data.get('got_voucher') and \
             cleaned_data.get('patient_pays') is None:
 
-            self.add_error('patient_pays', "If the patient recieved a " +
-                           "voucher, specify the amount the patient pays.")
+            self.add_error(
+                'patient_pays',
+                "If the patient recieved a voucher, specify the amount "
+                "the patient pays.")
 
         if cleaned_data.get('got_imaging_voucher') and \
             cleaned_data.get('imaging_voucher_amount') is None:
 
-            self.add_error('imaging_voucher_amount', "If the patient recieved a " +
-                           "imaging voucher, value of the voucher must be specified.")
+            self.add_error(
+                'imaging_voucher_amount',
+                "If the patient recieved a imaging voucher, value of "
+                "the voucher must be specified.")
 
         if cleaned_data.get('got_imaging_voucher') and \
             cleaned_data.get('patient_pays_imaging') is None:
 
             self.add_error(
                 'patient_pays_imaging',
-                "If the patient recieved a imaging voucher, specify the "
-                "amount the patient pays.")
+                "If the patient recieved a imaging voucher, specify "
+                "the amount the patient pays.")
 
 
 class ClinicDateForm(ModelForm):

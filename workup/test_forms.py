@@ -27,54 +27,49 @@ class TestUnitChangeForms(TestCase):
 
         wu_data = self.wu_data
 
-        # temperatures with fahrenheit should be the same
-        wu_data['temperature_units'] = 'F'
+        # temperatures with centigrade should be the same
+        wu_data['temperature_units'] = 'C'
         wu_data['t'] = 37
 
         form = WorkupForm(data=wu_data)
 
-        print(form.errors)
         self.assertTrue(form.is_valid())
         self.assertEquals(
             form.cleaned_data['t'],
             wu_data['t'])
 
         # temperatures given centigrade should be converted
-        wu_data['temperature_units'] = 'C'
+        wu_data['temperature_units'] = 'F'
+        wu_data['t'] = 98
         form = WorkupForm(data=wu_data)
 
-        print(form.errors)
         self.assertTrue(form.is_valid())
-
         self.assertEquals(
-            round((form.cleaned_data['t'] - 32) * decimal.Decimal(5 / 9.0)),
-            decimal.Decimal(wu_data['t']))
+            round((wu_data['t'] - 32) * decimal.Decimal(5 / 9.0)),
+            round(decimal.Decimal(form.cleaned_data['t'])))
 
     def test_note_height_conversion(self):
 
         wu_data = self.wu_data
 
-        # temperatures with centigrade should be the same
-        wu_data['height_units'] = 'in'
-        wu_data['height'] = 72
+        # heights with cm should be the same
+        wu_data['height_units'] = 'cm'
+        wu_data['height'] = 180
 
         form = WorkupForm(data=wu_data)
 
-        print(form.errors)
         self.assertTrue(form.is_valid())
         self.assertEquals(
             form.cleaned_data['height'],
             wu_data['height'])
 
-        # temperatures given F should be converted
-        wu_data['height_units'] = 'cm'
-        wu_data['height'] = 182.8
+        # heights given inches should be converted
+        wu_data['height_units'] = 'in'
+        wu_data['height'] = 71
 
         form = WorkupForm(data=wu_data)
 
-        print(form.errors)
         self.assertTrue(form.is_valid())
-
         self.assertEquals(
             form.cleaned_data['height'],
             wu_data['height'] * decimal.Decimal(2.54))
@@ -83,26 +78,23 @@ class TestUnitChangeForms(TestCase):
 
         wu_data = self.wu_data
 
-        # temperatures with centigrade should be the same
-        wu_data['weight_units'] = 'lbs'
-        wu_data['weight'] = 180
+        # weights with kilograms should be the same
+        wu_data['weight_units'] = 'kg'
+        wu_data['weight'] = 81
 
         form = WorkupForm(data=wu_data)
 
-        print(form.errors)
         self.assertTrue(form.is_valid())
         self.assertEquals(
             form.cleaned_data['weight'],
             wu_data['weight'])
 
-        # temperatures given F should be converted
-        wu_data['weight_units'] = 'kg'
+        # weights given lbs should be converted
+        wu_data['weight_units'] = 'lbs'
 
         form = WorkupForm(data=wu_data)
 
-        print(form.errors)
         self.assertTrue(form.is_valid())
-
         self.assertEquals(
-            form.cleaned_data['weight'] * decimal.Decimal(2.2),
-            wu_data['weight'])
+            round(form.cleaned_data['weight']),
+            round(wu_data['weight'] / decimal.Decimal(2.2)))
