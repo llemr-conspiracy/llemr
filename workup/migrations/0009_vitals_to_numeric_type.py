@@ -2,7 +2,24 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+
 import workup.validators
+from workup.forms import inches2cm, fahrenheit2centigrade
+
+
+def fix_temps_and_heights(apps, schema_editor):
+    Workup = apps.get_model('workup', 'Workup')
+
+    for wu in Workup.objects.all():
+        wu.t = fahrenheit2centigrade(wu.t)
+        wu.height = inches2cm(wu.height)
+        wu.save(update_fields=['t', 'height'])
+
+    HistoricalWorkup = apps.get_model('workup', 'HistoricalWorkup')
+    for wu in HistoricalWorkup.objects.all():
+        wu.t = fahrenheit2centigrade(wu.t)
+        wu.height = inches2cm(wu.height)
+        wu.save(update_fields=['t', 'height'])
 
 
 class Migration(migrations.Migration):
@@ -62,4 +79,6 @@ class Migration(migrations.Migration):
             name='weight',
             field=models.DecimalField(null=True, max_digits=5, decimal_places=1, blank=True),
         ),
+
+        migrations.RunPython(fix_temps_and_heights, reverse_code=migrations.RunPython.noop),
     ]
