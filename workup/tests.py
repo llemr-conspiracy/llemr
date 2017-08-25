@@ -19,8 +19,8 @@ from . import models
 from . import forms
 
 
-def wu_dict():
-    return {
+def wu_dict(form=False):
+    wu = {
             'clinic_day': models.ClinicDate.objects.first(),
             'chief_complaint': "SOB",
             'diagnosis': "MI",
@@ -36,6 +36,13 @@ def wu_dict():
             'author_type': ProviderType.objects.first(),
             'patient': Patient.objects.first()
         }
+
+    if form:
+        wu['temperature_units'] = 'F'
+        wu['weight_units'] = 'lbs'
+        wu['height_units'] = 'in'
+
+    return wu
 
 
 class TestClinDateViews(TestCase):
@@ -465,11 +472,6 @@ class TestFormFieldValidators(TestCase):
         self.assertEqual(form['bp_dia'].errors, [])
 
         form_data['bp_sys'] = '800'
-
-        form = forms.WorkupForm(data=form_data)
-        self.assertNotEqual(form['bp_sys'].errors, [])
-
-        form_data['bp_sys'] = '70'
 
         form = forms.WorkupForm(data=form_data)
         self.assertNotEqual(form['bp_sys'].errors, [])

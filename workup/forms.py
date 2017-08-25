@@ -196,17 +196,24 @@ class WorkupForm(ModelForm):
 
         cleaned_data = super(WorkupForm, self).clean()
 
-        if cleaned_data['temperature_units'] == 'F':
+        if cleaned_data.get('temperature_units') == 'F':
             c = fahrenheit2centigrade(cleaned_data.get('t'))
             cleaned_data['t'] = c
 
-        if cleaned_data['weight_units'] == 'lbs':
+        if cleaned_data.get('weight_units') == 'lbs':
             kgs = pounds2kilos(cleaned_data.get('weight'))
             cleaned_data['weight'] = kgs
 
-        if cleaned_data['height_units'] == 'in':
+        if cleaned_data.get('height_units') == 'in':
             cm = inches2cm(cleaned_data.get('height'))
             cleaned_data['height'] = cm
+
+        if cleaned_data.get('bp_sys') and cleaned_data.get('bp_dia'):
+            if cleaned_data.get('bp_sys') <= cleaned_data.get('bp_dia'):
+                self.add_error(
+                    'bp_sys',
+                    'Systolic blood pressure must be strictly greater '
+                    'than diastolic blood pressure.')
 
         #validating voucher things
         if cleaned_data.get('got_voucher') and \
