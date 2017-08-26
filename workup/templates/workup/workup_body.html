@@ -67,25 +67,25 @@
     <div class="row">
         <h4>Physical Exam</h4>
         <div class="col-md-12">
-            <strong>Vital Signs</strong>
+            <h5>Vital Signs</h5>
         </div>
         <div class="col-md-2">
-            <strong>HR:</strong> {{workup.hr}}
+            <strong>HR:</strong> {{workup.hr}} bpm
         </div>
         <div class="col-md-2">
-            <strong>BP:</strong> {{workup.bp_sys}} / {{workup.bp_dia}}
+            <strong>BP:</strong> {{workup.bp_sys}} / {{workup.bp_dia}} mmHg
         </div>
         <div class="col-md-2">
-            <strong>RR:</strong> {{workup.rr}}
+            <strong>RR:</strong> {{workup.rr}} per min
         </div>
         <div class="col-md-2">
-            <strong>T:</strong> {{workup.t}}
+            <strong>T:</strong> {{workup.t}} &deg;C
         </div>
         <div class="col-md-2">
-            <strong>Height:</strong> {{workup.height}}
+            <strong>Height:</strong> {{workup.height}} cm
         </div>
         <div class="col-md-2">
-            <strong>Weight:</strong> {{workup.weight}}
+            <strong>Weight:</strong> {{workup.weight}} kg
         </div>
     </div>
 
@@ -93,10 +93,10 @@
         <div class="col-md-12">
             <strong>Physical Exam:</strong> {{workup.pe | linebreaksbr }}
         </div>
-        <div class="col-md-12">
+        <div class="col-md-6">
             <strong>Labs (Quest):</strong> {{workup.labs_ordered_quest | linebreaksbr }}
         </div>
-        <div class="col-md-12">
+        <div class="col-md-6">
             <strong>Labs (In House):</strong> {{workup.labs_ordered_internal | linebreaksbr }}
         </div>
         <div class="col-md-12">

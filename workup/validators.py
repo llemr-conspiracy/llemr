@@ -6,6 +6,10 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 
 
+########################
+#    WILL BE REMOVED   #
+########################
+
 def validate_bp_systolic(value):
     if value > settings.OSLER_MAX_SYSTOLIC:
         raise ValidationError(

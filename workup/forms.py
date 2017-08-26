@@ -1,6 +1,9 @@
 import decimal
 
-from django.forms import fields, ModelForm, CheckboxSelectMultiple, ModelChoiceField, ModelMultipleChoiceField, RadioSelect
+from django.forms import (
+    fields, ModelForm, CheckboxSelectMultiple, ModelChoiceField,
+    ModelMultipleChoiceField, RadioSelect
+    )
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Fieldset, Div, Field, Button
@@ -58,7 +61,6 @@ class WorkupForm(ModelForm):
         widget=RadioSelect,
         choices=[('cm', 'cm'), ('in', 'in')], required=True)
 
-
     class Meta:
         model = models.Workup
         exclude = ['patient', 'clinic_day', 'author', 'signer', 'author_type',
@@ -66,8 +68,9 @@ class WorkupForm(ModelForm):
         widgets = {'referral_location': CheckboxSelectMultiple,
                    'referral_type': CheckboxSelectMultiple}
 
-    # limit the options for the attending, other_volunteer field to Providers with
-    # ProviderType with signs_charts=True, False (includes coordinators and volunteers)
+    # limit the options for the attending, other_volunteer field to
+    # Providers with ProviderType with signs_charts=True, False
+    # (includes coordinators and volunteers)
     attending = ModelChoiceField(
         required=False,
         queryset=Provider.objects.filter(
@@ -98,7 +101,9 @@ class WorkupForm(ModelForm):
                     'chief_complaint',
                     'diagnosis',
                     InlineCheckboxes('diagnosis_categories'),
-                    Button('next', 'Next Section', onclick=js_tab_switch.replace('TAB-CHANGE', 'h-p'))),
+                    Button('next', 'Next Section',
+                           onclick=js_tab_switch.replace(
+                            'TAB-CHANGE', 'h-p'))),
                 Tab('H & P',
                     'HPI',
                     'PMH_PSH',
@@ -126,8 +131,7 @@ class WorkupForm(ModelForm):
     <label for="temperature_units">F</label>
     <input name="temperature_units" type="radio" value="F">
                             '''),
-                        css_class='col-md-4 col-sm-6 col-xs-12'
-                        ),
+                            css_class='col-md-4 col-sm-6 col-xs-12'),
 
                         Div(AppendedText('bp_sys', 'mmHg'),
                             css_class='col-md-4 col-sm-3 col-xs-6'),
@@ -153,11 +157,12 @@ class WorkupForm(ModelForm):
     <label for="weight_units">lbs</label>
     <input name="weight_units" type="radio" value="lbs">
                                 '''),
-                            css_class='col-md-4 col-sm-6 col-xs-12'
-                        ),
+                            css_class='col-md-4 col-sm-6 col-xs-12'),
 
                         css_class="row"), 'pe',
-                    Button('next', 'Next Section', onclick=js_tab_switch.replace('TAB-CHANGE', 'assessment-plan'))),
+                    Button('next', 'Next Section',
+                           onclick=js_tab_switch.replace(
+                            'TAB-CHANGE', 'assessment-plan'))),
                 Tab('Assessment & Plan',
                     'A_and_P',
                     'rx',
@@ -166,7 +171,9 @@ class WorkupForm(ModelForm):
                         Div('labs_ordered_internal', css_class='col-lg-6',
                             form_class=''),
                         Div('labs_ordered_quest', css_class='col-lg-6')),
-                    Button('next', 'Next Section', onclick=js_tab_switch.replace('TAB-CHANGE', 'referraldischarge'))),
+                    Button('next', 'Next Section',
+                           onclick=js_tab_switch.replace(
+                            'TAB-CHANGE', 'referraldischarge'))),
                 Tab('Referral/Discharge',
                     Fieldset('Medication Vouchers',
                              'got_voucher',
@@ -184,8 +191,7 @@ class WorkupForm(ModelForm):
                              Field(
                                  'referral_type',
                                  style="background: #FAFAFA; padding: 10px;")),
-                    Submit('submit', 'Save', css_class='btn btn-success')
-                   )
+                    Submit('submit', 'Save', css_class='btn btn-success'))
             )
         )
 
@@ -215,7 +221,7 @@ class WorkupForm(ModelForm):
                     'Systolic blood pressure must be strictly greater '
                     'than diastolic blood pressure.')
 
-        #validating voucher things
+        # validating voucher things
         if cleaned_data.get('got_voucher') and \
             cleaned_data.get('voucher_amount') is None:
 
