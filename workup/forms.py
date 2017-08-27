@@ -6,13 +6,47 @@ from django.forms import (
     )
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Fieldset, Div, Field, Button
+from crispy_forms.layout import (
+    Submit, Layout, Fieldset, Div, Field, Button, Row, HTML)
 from crispy_forms.bootstrap import (
-    TabHolder, Tab, InlineCheckboxes, AppendedText, PrependedText
+    InlineCheckboxes, AppendedText, PrependedText
     )
 
 from pttrack.models import Provider, ProviderType
 from . import models
+
+
+def form_required_if(form, conditional, fields):
+    """Adds an error to the form if conditional is truthy-false and any
+    of fields are None or '' in form's cleaned_data.
+    """
+    data = form.cleaned_data
+
+    if data.get(conditional):
+        for f in fields:
+            val = data.get(f)
+            if val is None or val == '':
+                err_str = ("When %s is specified, %s must also be specified" %
+                           (conditional, fields))
+                err_str += (" (%s wasn't)." % f) if len(fields) > 1 else "."
+
+                form.add_error(f, err_str)
+
+
+def form_require_together(form, fields):
+    """Adds an error to the form if any of fields are None in form's
+    cleaned_data.
+    """
+
+    data = form.cleaned_data
+
+    if any(data.get(f) is not None for f in fields):
+        for field in fields:
+            if data.get(field) is None:
+                form.add_error(
+                    field,
+                    "The fields %s are required together, and %s was "
+                    "not provided." % (fields, field))
 
 
 def fahrenheit2centigrade(f):
@@ -44,22 +78,33 @@ def inches2cm(inches):
         return None
 
 
+def unit_selector_html(unit_name, options):
+    """Format the units HTML for AppendedText"""
+
+    s = ''
+
+    for option in options:
+        s += '''<label for="{name}_units">{option}</label>
+                <input name="{name}_units"
+                       type="radio" value="{option}">'''.format(
+            name=unit_name, option=option)
+
+    return s
+
+
 class WorkupForm(ModelForm):
 
     temperature_units = fields.ChoiceField(
-        label='',
-        widget=RadioSelect,
-        choices=[('C', 'C'), ('F', 'F')], required=True)
+        label='', widget=RadioSelect,
+        choices=[('C', 'C'), ('F', 'F')], required=False)
 
     weight_units = fields.ChoiceField(
-        label='',
-        widget=RadioSelect,
-        choices=[('kg', 'kg'), ('lbs', 'lbs')], required=True)
+        label='', widget=RadioSelect,
+        choices=[('kg', 'kg'), ('lbs', 'lbs')], required=False)
 
     height_units = fields.ChoiceField(
-        label='',
-        widget=RadioSelect,
-        choices=[('cm', 'cm'), ('in', 'in')], required=True)
+        label='', widget=RadioSelect,
+        choices=[('cm', 'cm'), ('in', 'in')], required=False)
 
     class Meta:
         model = models.Workup
@@ -91,108 +136,71 @@ class WorkupForm(ModelForm):
         self.helper = FormHelper()
         self.helper.form_method = 'post'
 
-        js_tab_switch = "$(document).ready(function(){activaTab('TAB-CHANGE');});function activaTab(tab){$('.nav-tabs a[href=\"#' + tab + '\"]').tab('show');};"
-
         self.helper.layout = Layout(
-            TabHolder(
-                Tab('Basics',
-                    'attending',
-                    'other_volunteer',
-                    'chief_complaint',
-                    'diagnosis',
-                    InlineCheckboxes('diagnosis_categories'),
-                    Button('next', 'Next Section',
-                           onclick=js_tab_switch.replace(
-                            'TAB-CHANGE', 'h-p'))),
-                Tab('H & P',
-                    'HPI',
-                    'PMH_PSH',
-                    'fam_hx',
-                    'soc_hx',
-                    'meds',
-                    'allergies',
-                    'ros',
-                    Button('next', 'Next Section',
-                           onclick=js_tab_switch.replace('TAB-CHANGE',
-                                                         'physical-exam'))),
-                Tab('Physical Exam',
-                    Div(
-                        Div(AppendedText('hr', 'bpm'),
-                            css_class='col-md-4 col-sm-6 col-xs-12'),
-                        Div(AppendedText('rr', '/min'),
-                            css_class='col-md-4 col-sm-6 col-xs-12'),
+            Row(HTML('<h3>Clinical Team</h3>'),
+                Div('attending', css_class='col-xs-6'),
+                Div('other_volunteer',  css_class='col-xs-6')),
 
-                        # Temperature and units
-                        Div(AppendedText(
-                            't',
-                            '''
-    <label for="temperature_units">C</label>
-    <input name="temperature_units" type="radio" value="C">
-    <label for="temperature_units">F</label>
-    <input name="temperature_units" type="radio" value="F">
-                            '''),
-                            css_class='col-md-4 col-sm-6 col-xs-12'),
+            Row(HTML('<h3>History</h3>'),
+                Div('chief_complaint', css_class='col-xs-6'),
+                Div('diagnosis', css_class='col-xs-6'),
+                Div(InlineCheckboxes('diagnosis_categories'),
+                    css_class='col-xs-12'),
+                Div('HPI', css_class='col-xs-12'),
+                Div('PMH_PSH', css_class='col-xs-12'),
+                Div('fam_hx', css_class='col-md-6'),
+                Div('soc_hx', css_class='col-md-6'),
+                Div('meds', css_class='col-md-6'),
+                Div('allergies', css_class='col-md-6'),
+                Div('ros', css_class='col-xs-12')),
 
-                        Div(AppendedText('bp_sys', 'mmHg'),
-                            css_class='col-md-4 col-sm-3 col-xs-6'),
-                        Div(AppendedText('bp_dia', 'mmHg'),
-                            css_class='col-md-4 col-sm-3 col-xs-6'),
+            Row(HTML('<h3>Physical Exam</h3>'),
+                HTML('<h4>Vital Signs</h4>'),
+                Div(AppendedText('hr', 'bpm'),
+                    css_class='col-md-4 col-sm-6 col-xs-12'),
+                Div(AppendedText('rr', '/min'),
+                    css_class='col-md-4 col-sm-6 col-xs-12'),
+                Div(AppendedText(
+                    't', unit_selector_html('temperature', ['C', 'F'])),
+                    css_class='col-md-4 col-sm-6 col-xs-12'),
+                Div(AppendedText('bp_sys', 'mmHg'),
+                    css_class='col-md-4 col-sm-3 col-xs-6'),
+                Div(AppendedText('bp_dia', 'mmHg'),
+                    css_class='col-md-4 col-sm-3 col-xs-6'),
+                Div(AppendedText(
+                    'height', unit_selector_html('height', ['in', 'cm'])),
+                    css_class='col-md-4 col-sm-6 col-xs-12'),
+                Div(AppendedText(
+                    'weight', unit_selector_html('weight', ['kg', 'lbs'])),
+                    css_class='col-md-4 col-sm-6 col-xs-12'),
+                Div('pe', css_class='col-xs-12')),
 
-                        Div(AppendedText(
-                            'height',
-                            '''
-    <label for="height_units">in</label>
-    <input name="height_units" type="radio" value="in">
-    <label for="height_units">cm</label>
-    <input name="height_units" type="radio" value="cm">
-                            '''),
-                            css_class='col-md-4 col-sm-6 col-xs-12'),
+            Row(HTML('<h3>Assessment, Plan, & Orders</h3>'),
+                Div('A_and_P', css_class='col-xs-12'),
+                Div('rx', css_class='col-md-4'),
+                Div('labs_ordered_internal', css_class='col-md-4'),
+                Div('labs_ordered_quest', css_class='col-md-4'),
+                Div(HTML('<h4>Medication Voucher</h4>'),
+                    'got_voucher',
+                    PrependedText('voucher_amount', '$'),
+                    PrependedText('patient_pays', '$'),
+                    css_class='col-xs-6',),
+                Div(HTML('<h4>Imaging Voucher</h4>'),
+                    'got_imaging_voucher',
+                    PrependedText('imaging_voucher_amount', '$'),
+                    PrependedText('patient_pays_imaging', '$'),
+                    css_class='col-xs-6')
+                ),
 
-                        # Weight and units
-                        Div(AppendedText(
-                                'weight',
-                                '''
-    <label for="weight_units">kg</label>
-    <input name="weight_units" type="radio" value="kg">
-    <label for="weight_units">lbs</label>
-    <input name="weight_units" type="radio" value="lbs">
-                                '''),
-                            css_class='col-md-4 col-sm-6 col-xs-12'),
-
-                        css_class="row"), 'pe',
-                    Button('next', 'Next Section',
-                           onclick=js_tab_switch.replace(
-                            'TAB-CHANGE', 'assessment-plan'))),
-                Tab('Assessment & Plan',
-                    'A_and_P',
-                    'rx',
-                    Fieldset(
-                        'Labs',
-                        Div('labs_ordered_internal', css_class='col-lg-6',
-                            form_class=''),
-                        Div('labs_ordered_quest', css_class='col-lg-6')),
-                    Button('next', 'Next Section',
-                           onclick=js_tab_switch.replace(
-                            'TAB-CHANGE', 'referraldischarge'))),
-                Tab('Referral/Discharge',
-                    Fieldset('Medication Vouchers',
-                             'got_voucher',
-                             PrependedText('voucher_amount', '$'),
-                             PrependedText('patient_pays', '$')),
-                    Fieldset('Metro Imaging Vouchers',
-                             'got_imaging_voucher',
-                             PrependedText('imaging_voucher_amount', '$'),
-                             PrependedText('patient_pays_imaging', '$')),
-                    Fieldset('Referral',
-                             'will_return',
-                             Field(
-                                 'referral_location',
-                                 style="background: #FAFAFA; padding: 10px;"),
-                             Field(
-                                 'referral_type',
-                                 style="background: #FAFAFA; padding: 10px;")),
-                    Submit('submit', 'Save', css_class='btn btn-success'))
-            )
+            Row(HTML('<h3>Referral & Discharge</h3>'),
+                Div('will_return', css_class='col-xs-12'),
+                Div(Field('referral_location',
+                          style="background: #FAFAFA; padding: 10px;"),
+                    css_class='col-xs-6'),
+                Div(Field('referral_type',
+                          style="background: #FAFAFA; padding: 10px;"),
+                    css_class='col-xs-6')),
+            Submit('submit', 'Save', css_class='btn btn-success')
         )
 
     def clean(self):
@@ -201,6 +209,19 @@ class WorkupForm(ModelForm):
         given).'''
 
         cleaned_data = super(WorkupForm, self).clean()
+
+        # we allow specification of units when the measurement is not given
+        # because you cannot uncheck radios and the converter methods accept
+        # Nones.
+        form_required_if(self, 't', ['temperature_units'])
+        form_required_if(self, 'height', ['height_units'])
+        form_required_if(self, 'weight', ['weight_units'])
+
+        form_required_if(self, 'got_voucher',
+                         ['voucher_amount', 'patient_pays'])
+        form_required_if(self, 'got_imaging_voucher',
+                         ['imaging_voucher_amount',
+                          'patient_pays_imaging'])
 
         if cleaned_data.get('temperature_units') == 'F':
             c = fahrenheit2centigrade(cleaned_data.get('t'))
@@ -214,45 +235,14 @@ class WorkupForm(ModelForm):
             cm = inches2cm(cleaned_data.get('height'))
             cleaned_data['height'] = cm
 
+        form_require_together(self, ['bp_sys', 'bp_dia'])
         if cleaned_data.get('bp_sys') and cleaned_data.get('bp_dia'):
             if cleaned_data.get('bp_sys') <= cleaned_data.get('bp_dia'):
-                self.add_error(
-                    'bp_sys',
-                    'Systolic blood pressure must be strictly greater '
-                    'than diastolic blood pressure.')
-
-        # validating voucher things
-        if cleaned_data.get('got_voucher') and \
-            cleaned_data.get('voucher_amount') is None:
-
-            self.add_error(
-                'voucher_amount',
-                "If the patient recieved a voucher, value of the "
-                "voucher must be specified.")
-
-        if cleaned_data.get('got_voucher') and \
-            cleaned_data.get('patient_pays') is None:
-
-            self.add_error(
-                'patient_pays',
-                "If the patient recieved a voucher, specify the amount "
-                "the patient pays.")
-
-        if cleaned_data.get('got_imaging_voucher') and \
-            cleaned_data.get('imaging_voucher_amount') is None:
-
-            self.add_error(
-                'imaging_voucher_amount',
-                "If the patient recieved a imaging voucher, value of "
-                "the voucher must be specified.")
-
-        if cleaned_data.get('got_imaging_voucher') and \
-            cleaned_data.get('patient_pays_imaging') is None:
-
-            self.add_error(
-                'patient_pays_imaging',
-                "If the patient recieved a imaging voucher, specify "
-                "the amount the patient pays.")
+                for field in ['bp_sys', 'bp_dia']:
+                    self.add_error(
+                        field,
+                        'Systolic blood pressure must be strictly greater '
+                        'than diastolic blood pressure.')
 
 
 class ClinicDateForm(ModelForm):
