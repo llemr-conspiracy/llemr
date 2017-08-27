@@ -188,9 +188,11 @@ class TestWorkupFormValidators(TestCase):
     def test_missing_voucher_amount(self):
 
         form_data = self.valid_wu_dict
+        form_data['got_voucher'] = True
+        form_data['got_imaging_voucher'] = True
+
         form = WorkupForm(data=form_data)
 
-        # and expect an error to be on the empty altphone field
         self.assertNotEqual(form['voucher_amount'].errors, [])
         self.assertNotEqual(form['patient_pays'].errors, [])
 
