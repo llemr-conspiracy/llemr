@@ -138,12 +138,12 @@ class WorkupForm(ModelForm):
 
         self.helper.layout = Layout(
             Row(HTML('<h3>Clinical Team</h3>'),
-                Div('attending', css_class='col-xs-6'),
-                Div('other_volunteer',  css_class='col-xs-6')),
+                Div('attending', css_class='col-sm-6'),
+                Div('other_volunteer',  css_class='col-sm-6')),
 
             Row(HTML('<h3>History</h3>'),
-                Div('chief_complaint', css_class='col-xs-6'),
-                Div('diagnosis', css_class='col-xs-6'),
+                Div('chief_complaint', css_class='col-sm-6'),
+                Div('diagnosis', css_class='col-sm-6'),
                 Div(InlineCheckboxes('diagnosis_categories'),
                     css_class='col-xs-12'),
                 Div('HPI', css_class='col-xs-12'),
@@ -196,10 +196,10 @@ class WorkupForm(ModelForm):
                 Div('will_return', css_class='col-xs-12'),
                 Div(Field('referral_location',
                           style="background: #FAFAFA; padding: 10px;"),
-                    css_class='col-xs-6'),
+                    css_class='col-sm-6'),
                 Div(Field('referral_type',
                           style="background: #FAFAFA; padding: 10px;"),
-                    css_class='col-xs-6')),
+                    css_class='col-sm-6')),
             Submit('submit', 'Save', css_class='btn btn-success')
         )
 

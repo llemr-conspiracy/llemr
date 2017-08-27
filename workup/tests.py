@@ -3,23 +3,11 @@ from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 from django.core.urlresolvers import reverse
 
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-
-from selenium.webdriver.firefox.webdriver import WebDriver
-from selenium.common.exceptions import (
-    ElementNotVisibleException, ElementNotInteractableException)
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-
-
-from pttrack.test_views import live_submit_login
 from pttrack.test_views import build_provider, log_in_provider
 from pttrack.models import Patient, ProviderType, Provider
 
 from . import validators
 from . import models
-from . import forms
 
 
 def wu_dict(units=False):
