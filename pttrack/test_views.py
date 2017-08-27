@@ -131,7 +131,7 @@ class SendEmailTest(TestCase):
 
         ai_inst = models.ActionInstruction.objects.create(
             instruction="Follow up on labs")
-        
+
         tomorrow = now().date() + datetime.timedelta(days=1)
         yesterday = now().date() - datetime.timedelta(days=1)
 
@@ -174,7 +174,7 @@ class SendEmailTest(TestCase):
 
     def test_sendemail(self):
         '''
-        Verifies that email is correctly being sent for incomplete, 
+        Verifies that email is correctly being sent for incomplete,
         overdue action items
         '''
         call_command('action_item_spam')
@@ -197,6 +197,7 @@ class LiveTesting(StaticLiveServerTestCase):
     def setUpClass(cls):
         super(LiveTesting, cls).setUpClass()
         cls.selenium = WebDriver()
+        cls.selenium.implicitly_wait(10)
 
     @classmethod
     def tearDownClass(cls):
