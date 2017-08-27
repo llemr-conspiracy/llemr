@@ -3,6 +3,7 @@
 import datetime
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
+from django.apps import apps
 
 
 def validate_zip(value):
@@ -47,4 +48,9 @@ def validate_attending(value):
     '''
     Verify that a provider has attending priviledges.
     '''
-    return value.can_attend
+
+    Provider = apps.get_model('pttrack', 'Provider')
+    attending = Provider.objects.get(pk=value)
+
+    if not attending.clinical_roles.filter(signs_charts=True).exists():
+        raise ValidationError("This provider is not allowed to sign charts.")

@@ -1,10 +1,10 @@
 from django.db import models
 from django.utils.timezone import now
-from django.core import settings
+from django.conf import settings
 
 from simple_history.models import HistoricalRecords
 from django.core.urlresolvers import reverse
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator
 
 from pttrack.models import Note, Provider, ReferralLocation, ReferralType
 
@@ -46,16 +46,16 @@ class Workup(Note):
 
     attending = models.ForeignKey(
         Provider, null=True, blank=True, related_name="attending_physician",
-        validators=[validate_attending])
+        validators=[validate_attending],
+        help_text="Which attending saw the patient?")
     other_volunteer = models.ManyToManyField(
-        Provider, blank=True, related_name="other_volunteer")
+        Provider, blank=True, related_name="other_volunteer",
+        help_text="Which other volunteer(s) did you work with (if any)?")
 
     clinic_day = models.ForeignKey(ClinicDate)
 
-    chief_complaint = models.CharField(max_length=1000,
-                                       verbose_name="CC")
-    diagnosis = models.CharField(max_length=1000,
-                                 verbose_name="Dx")
+    chief_complaint = models.CharField(max_length=1000, verbose_name="CC")
+    diagnosis = models.CharField(max_length=1000, verbose_name="Dx")
     diagnosis_categories = models.ManyToManyField(DiagnosisType)
 
     HPI = models.TextField(verbose_name="HPI")
@@ -73,10 +73,10 @@ class Workup(Note):
     # represented internally as mmHg
     bp_sys = models.PositiveSmallIntegerField(
         blank=True, null=True, verbose_name="Systolic",
-        validators=[MaxValueValidator(max_value=settings.OSLER_MAX_SYSTOLIC)])
+        validators=[workup_validators.validate_bp_systolic])
     bp_dia = models.PositiveSmallIntegerField(
         blank=True, null=True, verbose_name="Diastolic",
-        validators=[MinValueValidator(min_value=settings.OSLER_MIN_DIASTOLIC)])
+        validators=[workup_validators.validate_bp_diastolic])
 
     # represented internally in per min
     rr = models.PositiveSmallIntegerField(
@@ -109,18 +109,18 @@ class Workup(Note):
     got_voucher = models.BooleanField(default=False)
     voucher_amount = models.DecimalField(
         max_digits=6, decimal_places=2, blank=True, null=True,
-        validators=[MinValueValidator(min_value=0)])
+        validators=[MinValueValidator(0)])
     patient_pays = models.DecimalField(
         max_digits=6, decimal_places=2, blank=True, null=True,
-        validators=[MinValueValidator(min_value=0)])
+        validators=[MinValueValidator(0)])
 
     got_imaging_voucher = models.BooleanField(default=False)
     imaging_voucher_amount = models.DecimalField(
         max_digits=6, decimal_places=2, blank=True, null=True,
-        validators=[MinValueValidator(min_value=0)])
+        validators=[MinValueValidator(0)])
     patient_pays_imaging = models.DecimalField(
         max_digits=6, decimal_places=2, blank=True, null=True,
-        validators=[MinValueValidator(min_value=0)])
+        validators=[MinValueValidator(0)])
 
     referral_type = models.ManyToManyField(ReferralType, blank=True)
     referral_location = models.ManyToManyField(ReferralLocation, blank=True)
