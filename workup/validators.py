@@ -2,7 +2,26 @@
 Validators for the Workups subapp.
 '''
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
+
+
+def validate_bp_systolic(value):
+    if value > settings.OSLER_MAX_SYSTOLIC:
+        raise ValidationError(
+            "Systolic BP %s is higher than the maximum allowed value (%s)."
+            % (value, settings.OSLER_MAX_SYSTOLIC))
+
+def validate_bp_diastolic(value):
+    if value < settings.OSLER_MIN_DIASTOLIC:
+        raise ValidationError(
+            "Diastolic BP %s is lower than the minimum allowed value (%s)."
+            % (value, settings.OSLER_MIN_DIASTOLIC))
+
+
+########################
+#    WILL BE REMOVED   #
+########################
 
 def validate_hr(value):
     '''validate that a value is a valid heart rate'''

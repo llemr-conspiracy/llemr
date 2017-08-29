@@ -1,13 +1,15 @@
 from django.db import models
 from django.utils.timezone import now
+from django.conf import settings
 
 from simple_history.models import HistoricalRecords
 from django.core.urlresolvers import reverse
+from django.core.validators import MinValueValidator
 
-from pttrack.models import Note, Provider, ReferralLocation, ReferralType, ProviderType
+from pttrack.models import Note, Provider, ReferralLocation, ReferralType
+
 from pttrack.validators import validate_attending
-
-from .validators import validate_hr, validate_rr, validate_t, validate_height, validate_weight
+from . import validators as workup_validators
 
 
 class DiagnosisType(models.Model):
@@ -42,15 +44,18 @@ class Workup(Note):
     along with SNHC-specific info about where the patient has been referred for
     continuity care.'''
 
-    attending = models.ForeignKey(Provider, null=True, blank=True, related_name="attending_physician")
-    other_volunteer = models.ManyToManyField(Provider, blank=True, related_name="other_volunteer")
+    attending = models.ForeignKey(
+        Provider, null=True, blank=True, related_name="attending_physician",
+        validators=[validate_attending],
+        help_text="Which attending saw the patient?")
+    other_volunteer = models.ManyToManyField(
+        Provider, blank=True, related_name="other_volunteer",
+        help_text="Which other volunteer(s) did you work with (if any)?")
 
     clinic_day = models.ForeignKey(ClinicDate)
 
-    chief_complaint = models.CharField(max_length=1000,
-                                       verbose_name="CC")
-    diagnosis = models.CharField(max_length=1000,
-                                 verbose_name="Dx")
+    chief_complaint = models.CharField(max_length=1000, verbose_name="CC")
+    diagnosis = models.CharField(max_length=1000, verbose_name="Dx")
     diagnosis_categories = models.ManyToManyField(DiagnosisType)
 
     HPI = models.TextField(verbose_name="HPI")
@@ -61,17 +66,35 @@ class Workup(Note):
     soc_hx = models.TextField(verbose_name="Social History")
     ros = models.TextField(verbose_name="ROS")
 
-    hr = models.CharField(blank=True, null=True, max_length=12, validators=[validate_hr])
-    bp_sys = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Systolic")
-    bp_dia =models.PositiveSmallIntegerField(blank=True, null=True, verbose_name="Diastolic")
+    # represented internally in per min
+    hr = models.PositiveSmallIntegerField(
+        blank=True, null=True, verbose_name="Heart Rate")
 
-    rr = models.CharField(blank=True, null=True, max_length=12, validators=[validate_rr])
-    t = models.CharField(blank=True, null=True, max_length=12, validators=[validate_t])
+    # represented internally as mmHg
+    bp_sys = models.PositiveSmallIntegerField(
+        blank=True, null=True, verbose_name="Systolic",
+        validators=[workup_validators.validate_bp_systolic])
+    bp_dia = models.PositiveSmallIntegerField(
+        blank=True, null=True, verbose_name="Diastolic",
+        validators=[workup_validators.validate_bp_diastolic])
 
-    # this is a hotfix that needs to be changed in terms of error handeling for the entire form so that 
-    # people are not confused when they cannot submit their form.
-    height = models.CharField(blank=True, null=True, max_length=12, validators=[validate_height])
-    weight = models.CharField(blank=True, null=True, max_length=12, validators=[validate_weight])
+    # represented internally in per min
+    rr = models.PositiveSmallIntegerField(
+        blank=True, null=True, verbose_name="Respiratory Rate")
+
+    # represented internally in Fahrenheit
+    t = models.DecimalField(
+        max_digits=4, decimal_places=1,
+        blank=True, null=True,
+        verbose_name="Temperature")
+
+    # represented internally as inches
+    height = models.PositiveSmallIntegerField(
+        blank=True, null=True)
+    # represented internally as kg
+    weight = models.DecimalField(
+        max_digits=5, decimal_places=1,
+        blank=True, null=True)
 
     pe = models.TextField(verbose_name="Physical Examination")
 
@@ -84,12 +107,20 @@ class Workup(Note):
                           verbose_name="Prescription Orders")
 
     got_voucher = models.BooleanField(default=False)
-    voucher_amount = models.PositiveSmallIntegerField(blank=True, null=True)
-    patient_pays = models.PositiveSmallIntegerField(blank=True, null=True)
+    voucher_amount = models.DecimalField(
+        max_digits=6, decimal_places=2, blank=True, null=True,
+        validators=[MinValueValidator(0)])
+    patient_pays = models.DecimalField(
+        max_digits=6, decimal_places=2, blank=True, null=True,
+        validators=[MinValueValidator(0)])
 
     got_imaging_voucher = models.BooleanField(default=False)
-    imaging_voucher_amount = models.PositiveSmallIntegerField(blank=True, null=True)
-    patient_pays_imaging = models.PositiveSmallIntegerField(blank=True, null=True)
+    imaging_voucher_amount = models.DecimalField(
+        max_digits=6, decimal_places=2, blank=True, null=True,
+        validators=[MinValueValidator(0)])
+    patient_pays_imaging = models.DecimalField(
+        max_digits=6, decimal_places=2, blank=True, null=True,
+        validators=[MinValueValidator(0)])
 
     referral_type = models.ManyToManyField(ReferralType, blank=True)
     referral_location = models.ManyToManyField(ReferralLocation, blank=True)
