@@ -11,14 +11,26 @@ def fix_temps_and_heights(apps, schema_editor):
     Workup = apps.get_model('workup', 'Workup')
 
     for wu in Workup.objects.all():
-        wu.t = fahrenheit2centigrade(wu.t)
-        wu.height = inches2cm(wu.height)
+        try:
+            wu.t = fahrenheit2centigrade(int(wu.t))
+        except (TypeError, ValueError):
+            wu.t = None
+        try:
+            wu.height = inches2cm(int(wu.height))
+        except (TypeError, ValueError):
+            wu.height = None
         wu.save(update_fields=['t', 'height'])
 
     HistoricalWorkup = apps.get_model('workup', 'HistoricalWorkup')
     for wu in HistoricalWorkup.objects.all():
-        wu.t = fahrenheit2centigrade(wu.t)
-        wu.height = inches2cm(wu.height)
+        try:
+            wu.t = fahrenheit2centigrade(int(wu.t))
+        except (TypeError, ValueError):
+            wu.t = None
+        try:
+            wu.height = inches2cm(int(wu.height))
+        except (TypeError, ValueError):
+            wu.height = None
         wu.save(update_fields=['t', 'height'])
 
 

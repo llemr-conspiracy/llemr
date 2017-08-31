@@ -49,6 +49,31 @@ class ViewsExistTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('new-clindate', args=(pt.id,)))
 
+    def test_progressnote_urls(self):
+        url = reverse('new-progress-note', args=(1,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        form_data={
+        'title':'Depression',
+        'text':'so sad does testing work???',
+        'patient':Patient.objects.get(id=1),
+        'author':models.Provider.objects.get(id=1),
+        'author_type':ProviderType.objects.first()
+        }
+
+        response = self.client.post(url, form_data)
+        self.assertRedirects(response, reverse('patient-detail', args=(1,)))
+        
+        url=reverse('progress-note-update', args=(1,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        form_data['text']='actually not so bad'
+
+        response = self.client.post(url, form_data)
+        self.assertRedirects(response, reverse('progress-note-detail', args=(1,)))
+
     def test_new_workup_view(self):
 
         pt = Patient.objects.first()
