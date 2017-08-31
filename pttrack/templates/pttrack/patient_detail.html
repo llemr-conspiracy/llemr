@@ -45,6 +45,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
     <a class="btn btn-info pull-left btn-block" href="{% url 'new-action-item' pt_id=patient.pk %}" role="button">Create New Action Item</a>
     <a class="btn btn-warning pull-left btn-block" href="{% url 'new-document' pt_id=patient.pk %}" role="button">Upload Document or Prescription</a>
     <a class="btn btn-primary pull-left btn-block" href="{% url 'followup-choice' pt_id=patient.pk %}" role="button">Create New Followup</a>
+    <a class="btn btn-danger pull-left btn-block" href="{% url 'new-progress-note' pt_id=patient.pk %}" role="button">Create New Psych Progress Note</a>
 	</div>
 </div>
 {% endblock %}
@@ -157,6 +158,23 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 									{% endif %}
 								{% endif %}
   							</div>
+      				{% endfor %}	
+    			</div>
+  			</div>
+  			<div class="panel panel-default">
+				<div class="panel-heading">
+      				<h4 class="panel-title"><a data-toggle="collapse" href="#collapse4">Psych Progress Note ({{ patient.progressnote_set.all | length }})</a></h4>
+    			</div>
+    			<div id="collapse4" class="panel-collapse collapse">
+      				{% for note in patient.progressnote_set.all %}	
+  						<div class="panel-body">
+							<p><a href="{% url 'progress-note-detail' pk=note.pk %}"><strong>Progress Note:</strong></a> {{ note.short_text }}</p>
+							<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+							{% if request.session.staff_view %}
+								<p class="text-right"><a href="{% url 'admin:workup_progressnote_change' note.id %}" target="_blank"><i>Edit</i></a>
+							</p>
+							{% endif %}
+  						</div>
       				{% endfor %}	
     			</div>
   			</div>

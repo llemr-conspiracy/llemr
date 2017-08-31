@@ -1,0 +1,34 @@
+{% extends "pttrack/base.html" %}
+
+{% load bootstrap3 %}
+
+{% block title %}
+Psych Progress Note: {{ progressnote.patient.name }}
+{% endblock %}
+
+{% block header %}
+  <div class="row">
+    <div class="col-md-10">
+      <h2>{{ progressnote.title }}</h2>
+      <p class="lead">For <a href="{% url 'patient-detail' pk=progressnote.patient.id %}">{{ progressnote.patient.name }}</a></p>
+    </div>
+    <div class="col-md-1 pull-right">
+    <h1><a href="{% url 'progress-note-update' pk=progressnote.id %}"><small>{% bootstrap_icon "pencil" %}</small></a></h1>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <h3>{{ progressnote.title}}</h3>
+    <small class="text-muted">written by {{ progressnote.author }} on {{ progressnote.written_datetime }}</small>
+    {% if progressnote.last_modified != progressnote.written_datetime %}
+    <br><small class="text-muted">last modified {{progressnote.last_modified}}</small>
+    {% endif %}
+  	</div> 
+  	<div class="row" style="padding: 20px">
+    	<div class="col-md-12"> {{progressnote.text}}</div>
+  	</div>
+</div>
+{% endblock %}
