@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 
+import decimal
 import workup.validators
 from workup.forms import inches2cm, fahrenheit2centigrade
 
@@ -12,24 +13,24 @@ def fix_temps_and_heights(apps, schema_editor):
 
     for wu in Workup.objects.all():
         try:
-            wu.t = fahrenheit2centigrade(int(wu.t))
-        except (TypeError, ValueError):
+            wu.t = fahrenheit2centigrade(decimal.Decimal(wu.t))
+        except TypeError:
             wu.t = None
         try:
-            wu.height = inches2cm(int(wu.height))
-        except (TypeError, ValueError):
+            wu.height = inches2cm(decimal.Decimal(wu.height))
+        except TypeError:
             wu.height = None
         wu.save(update_fields=['t', 'height'])
 
     HistoricalWorkup = apps.get_model('workup', 'HistoricalWorkup')
     for wu in HistoricalWorkup.objects.all():
         try:
-            wu.t = fahrenheit2centigrade(int(wu.t))
-        except (TypeError, ValueError):
+            wu.t = fahrenheit2centigrade(decimal.Decimal(wu.t))
+        except TypeError:
             wu.t = None
         try:
-            wu.height = inches2cm(int(wu.height))
-        except (TypeError, ValueError):
+            wu.height = inches2cm(decimal.Decimal(wu.height))
+        except TypeError:
             wu.height = None
         wu.save(update_fields=['t', 'height'])
 
