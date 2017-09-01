@@ -15,9 +15,7 @@ class Command(BaseCommand):
 			try:
 				email =  actionItem.patient.case_manager.associated_user.email
 			except AttributeError:
-				email = actionItem.author.associated_user.email
-			except AttributeError:
-				email = "zhouminerva@gmail.com"
+				pass
 			if email not in providerEmails:
 				providerEmails = providerEmails + [email]
 		message = '''Hello Case Manager! You have an action item due. Please do it otherwise you will
