@@ -335,7 +335,7 @@ def patient_detail(request, pk):
     #   List 3: Title labels for the action items
     #   List 4: True and False determines if the link should be for done_action_item or update_action_item
 
-    zipped_ai_list = zip(['collapse4', 'collapse5', 'collapse6'], [pt.active_action_items(), pt.inactive_action_items(), pt.done_action_items()],
+    zipped_ai_list = zip(['collapse5', 'collapse6', 'collapse7'], [pt.active_action_items(), pt.inactive_action_items(), pt.done_action_items()],
                             ['Active Action Items', 'Pending Action Items', 'Completed Action Items'], [True, True, False])
 
     return render(request,
