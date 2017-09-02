@@ -14,10 +14,10 @@ class Command(BaseCommand):
 		for actionItem in actionItemList:
 			try:
 				email =  actionItem.patient.case_manager.associated_user.email
+				if email not in providerEmails:
+					providerEmails = providerEmails + [email]
 			except AttributeError:
 				pass
-			if email not in providerEmails:
-				providerEmails = providerEmails + [email]
 		message = '''Hello Case Manager! You have an action item due. Please do it otherwise you will
 		 continue to be spammed. Thanks! If you are recieving this message but you really don't have
 		 an action item due, please contact your current Tech Tsar to relieve you of your misery.'''

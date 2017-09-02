@@ -128,6 +128,8 @@ class SendEmailTest(TestCase):
         log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user2@gmail.com'))
 
         pt = models.Patient.objects.first()
+        pt.case_manager = models.Provider.objects.first()
+        pt.save()
 
         ai_inst = models.ActionInstruction.objects.create(
             instruction="Follow up on labs")
@@ -180,7 +182,7 @@ class SendEmailTest(TestCase):
         call_command('action_item_spam')
 
         #test that 1 message has been sent for the AI due yesterday and today
-        #but only 1 email bc same author
+        #but only 1 email bc same pt/case manager
         self.assertEqual(len(mail.outbox), 1)
 
         #verify that subject is correct
