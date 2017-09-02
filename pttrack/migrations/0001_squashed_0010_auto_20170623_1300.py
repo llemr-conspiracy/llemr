@@ -10,6 +10,8 @@ from django.conf import settings
 
 class Migration(migrations.Migration):
 
+    replaces = [(b'pttrack', '0001_initial'), (b'pttrack', '0002_providertype_is_staff'), (b'pttrack', '0003_auto_20160119_1459'), (b'pttrack', '0004_auto_20160328_1425'), (b'pttrack', '0005_auto_20160628_1852'), (b'pttrack', '0006_rm_ssn'), (b'pttrack', '0007_needs_workup_default_true'), (b'pttrack', '0008_add_case_manager'), (b'pttrack', '0009_auto_20170502_1103'), (b'pttrack', '0010_auto_20170623_1300')]
+
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
@@ -116,10 +118,10 @@ class Migration(migrations.Migration):
             name='HistoricalPatient',
             fields=[
                 ('id', models.IntegerField(verbose_name='ID', db_index=True, auto_created=True, blank=True)),
-                ('first_name', models.CharField(max_length=100)),
-                ('last_name', models.CharField(max_length=100)),
-                ('middle_name', models.CharField(max_length=100, blank=True)),
-                ('phone', models.CharField(max_length=40)),
+                ('first_name', models.CharField(max_length=100, validators=[pttrack.validators.validate_name])),
+                ('last_name', models.CharField(max_length=100, validators=[pttrack.validators.validate_name])),
+                ('middle_name', models.CharField(blank=True, max_length=100, validators=[pttrack.validators.validate_name])),
+                ('phone', models.CharField(max_length=40, null=True, blank=True)),
                 ('address', models.CharField(max_length=200)),
                 ('city', models.CharField(default=b'St. Louis', max_length=50)),
                 ('state', models.CharField(default=b'MO', max_length=2)),
@@ -128,7 +130,6 @@ class Migration(migrations.Migration):
                 ('pcp_preferred_zip', models.CharField(blank=True, max_length=5, null=True, validators=[pttrack.validators.validate_zip])),
                 ('date_of_birth', models.DateField(validators=[pttrack.validators.validate_birth_date])),
                 ('patient_comfortable_with_english', models.BooleanField(default=True)),
-                ('ssn', models.CharField(blank=True, max_length=9, null=True)),
                 ('alternate_phone_1_owner', models.CharField(max_length=40, null=True, blank=True)),
                 ('alternate_phone_1', models.CharField(max_length=40, null=True, blank=True)),
                 ('alternate_phone_2_owner', models.CharField(max_length=40, null=True, blank=True)),
@@ -137,13 +138,14 @@ class Migration(migrations.Migration):
                 ('alternate_phone_3', models.CharField(max_length=40, null=True, blank=True)),
                 ('alternate_phone_4_owner', models.CharField(max_length=40, null=True, blank=True)),
                 ('alternate_phone_4', models.CharField(max_length=40, null=True, blank=True)),
-                ('needs_workup', models.BooleanField(default=False)),
+                ('needs_workup', models.BooleanField(default=True)),
                 ('history_id', models.AutoField(serialize=False, primary_key=True)),
                 ('history_date', models.DateTimeField()),
                 ('history_type', models.CharField(max_length=1, choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')])),
                 ('gender', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='pttrack.Gender', null=True)),
                 ('history_user', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, null=True)),
                 ('preferred_contact_method', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='pttrack.ContactMethod', null=True)),
+                ('email', models.EmailField(max_length=254, null=True, blank=True)),
             ],
             options={
                 'ordering': ('-history_date', '-history_id'),
@@ -155,16 +157,17 @@ class Migration(migrations.Migration):
             name='HistoricalProvider',
             fields=[
                 ('id', models.IntegerField(verbose_name='ID', db_index=True, auto_created=True, blank=True)),
-                ('first_name', models.CharField(max_length=100)),
-                ('last_name', models.CharField(max_length=100)),
-                ('middle_name', models.CharField(max_length=100, blank=True)),
-                ('phone', models.CharField(max_length=40)),
+                ('first_name', models.CharField(max_length=100, validators=[pttrack.validators.validate_name])),
+                ('last_name', models.CharField(max_length=100, validators=[pttrack.validators.validate_name])),
+                ('middle_name', models.CharField(blank=True, max_length=100, validators=[pttrack.validators.validate_name])),
+                ('phone', models.CharField(max_length=40, null=True, blank=True)),
                 ('history_id', models.AutoField(serialize=False, primary_key=True)),
                 ('history_date', models.DateTimeField()),
                 ('history_type', models.CharField(max_length=1, choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')])),
                 ('associated_user', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to=settings.AUTH_USER_MODEL, null=True)),
                 ('gender', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='pttrack.Gender', null=True)),
                 ('history_user', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, null=True)),
+                ('needs_updating', models.BooleanField(default=False)),
             ],
             options={
                 'ordering': ('-history_date', '-history_id'),
@@ -182,10 +185,10 @@ class Migration(migrations.Migration):
             name='Patient',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('first_name', models.CharField(max_length=100)),
-                ('last_name', models.CharField(max_length=100)),
-                ('middle_name', models.CharField(max_length=100, blank=True)),
-                ('phone', models.CharField(max_length=40)),
+                ('first_name', models.CharField(max_length=100, validators=[pttrack.validators.validate_name])),
+                ('last_name', models.CharField(max_length=100, validators=[pttrack.validators.validate_name])),
+                ('middle_name', models.CharField(blank=True, max_length=100, validators=[pttrack.validators.validate_name])),
+                ('phone', models.CharField(max_length=40, null=True, blank=True)),
                 ('address', models.CharField(max_length=200)),
                 ('city', models.CharField(default=b'St. Louis', max_length=50)),
                 ('state', models.CharField(default=b'MO', max_length=2)),
@@ -194,7 +197,6 @@ class Migration(migrations.Migration):
                 ('pcp_preferred_zip', models.CharField(blank=True, max_length=5, null=True, validators=[pttrack.validators.validate_zip])),
                 ('date_of_birth', models.DateField(validators=[pttrack.validators.validate_birth_date])),
                 ('patient_comfortable_with_english', models.BooleanField(default=True)),
-                ('ssn', models.CharField(blank=True, max_length=9, null=True)),
                 ('alternate_phone_1_owner', models.CharField(max_length=40, null=True, blank=True)),
                 ('alternate_phone_1', models.CharField(max_length=40, null=True, blank=True)),
                 ('alternate_phone_2_owner', models.CharField(max_length=40, null=True, blank=True)),
@@ -203,11 +205,12 @@ class Migration(migrations.Migration):
                 ('alternate_phone_3', models.CharField(max_length=40, null=True, blank=True)),
                 ('alternate_phone_4_owner', models.CharField(max_length=40, null=True, blank=True)),
                 ('alternate_phone_4', models.CharField(max_length=40, null=True, blank=True)),
-                ('needs_workup', models.BooleanField(default=False)),
-                ('ethnicities', models.ManyToManyField(to='pttrack.Ethnicity')),
+                ('needs_workup', models.BooleanField(default=True)),
+                ('ethnicities', models.ManyToManyField(to=b'pttrack.Ethnicity')),
                 ('gender', models.ForeignKey(to='pttrack.Gender')),
-                ('languages', models.ManyToManyField(help_text=b'Specify here languages that are spoken at a level sufficient to be used for medical communication.', to='pttrack.Language')),
+                ('languages', models.ManyToManyField(help_text=b'Specify here languages that are spoken at a level sufficient to be used for medical communication.', to=b'pttrack.Language')),
                 ('preferred_contact_method', models.ForeignKey(blank=True, to='pttrack.ContactMethod', null=True)),
+                ('email', models.EmailField(max_length=254, null=True, blank=True)),
             ],
             options={
                 'abstract': False,
@@ -233,6 +236,7 @@ class Migration(migrations.Migration):
                 ('long_name', models.CharField(max_length=100)),
                 ('short_name', models.CharField(max_length=30, serialize=False, primary_key=True)),
                 ('signs_charts', models.BooleanField(default=False)),
+                ('staff_view', models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
@@ -252,7 +256,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='provider',
             name='clinical_roles',
-            field=models.ManyToManyField(to='pttrack.ProviderType'),
+            field=models.ManyToManyField(to=b'pttrack.ProviderType'),
         ),
         migrations.AddField(
             model_name='provider',
@@ -262,7 +266,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='provider',
             name='languages',
-            field=models.ManyToManyField(help_text=b'Specify here languages that are spoken at a level sufficient to be used for medical communication.', to='pttrack.Language'),
+            field=models.ManyToManyField(help_text=b'Specify here languages that are spoken at a level sufficient to be used for medical communication.', to=b'pttrack.Language'),
         ),
         migrations.AddField(
             model_name='historicaldocument',
@@ -363,5 +367,87 @@ class Migration(migrations.Migration):
             model_name='actionitem',
             name='patient',
             field=models.ForeignKey(to='pttrack.Patient'),
+        ),
+        migrations.AlterField(
+            model_name='actionitem',
+            name='comments',
+            field=models.TextField(max_length=300),
+        ),
+        migrations.AlterField(
+            model_name='historicalactionitem',
+            name='comments',
+            field=models.TextField(max_length=300),
+        ),
+        migrations.AlterField(
+            model_name='actionitem',
+            name='comments',
+            field=models.TextField(),
+        ),
+        migrations.AlterField(
+            model_name='historicalactionitem',
+            name='comments',
+            field=models.TextField(),
+        ),
+        migrations.AlterField(
+            model_name='provider',
+            name='phone',
+            field=models.CharField(max_length=40, null=True, blank=True),
+        ),
+        migrations.AddField(
+            model_name='provider',
+            name='needs_updating',
+            field=models.BooleanField(default=False),
+        ),
+        migrations.AlterField(
+            model_name='provider',
+            name='first_name',
+            field=models.CharField(max_length=100, validators=[pttrack.validators.validate_name]),
+        ),
+        migrations.AlterField(
+            model_name='provider',
+            name='last_name',
+            field=models.CharField(max_length=100, validators=[pttrack.validators.validate_name]),
+        ),
+        migrations.AlterField(
+            model_name='provider',
+            name='middle_name',
+            field=models.CharField(blank=True, max_length=100, validators=[pttrack.validators.validate_name]),
+        ),
+        migrations.AddField(
+            model_name='historicalpatient',
+            name='case_manager',
+            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='pttrack.Provider', null=True),
+        ),
+        migrations.AddField(
+            model_name='patient',
+            name='case_manager',
+            field=models.ForeignKey(blank=True, to='pttrack.Provider', null=True),
+        ),
+        migrations.AlterField(
+            model_name='historicalpatient',
+            name='date_of_birth',
+            field=models.DateField(help_text=b'MM/DD/YYYY', validators=[pttrack.validators.validate_birth_date]),
+        ),
+        migrations.AlterField(
+            model_name='patient',
+            name='date_of_birth',
+            field=models.DateField(help_text=b'MM/DD/YYYY', validators=[pttrack.validators.validate_birth_date]),
+        ),
+        migrations.CreateModel(
+            name='Outcome',
+            fields=[
+                ('name', models.CharField(max_length=50, serialize=False, primary_key=True)),
+            ],
+        ),
+        migrations.AddField(
+            model_name='historicalpatient',
+            name='outcome',
+            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='pttrack.Outcome', null=True),
+        ),
+        migrations.AddField(
+            model_name='patient',
+            name='outcome',
+            field=models.ForeignKey(default='NA', blank=True, to='pttrack.Outcome', null=True),
+            preserve_default=False,
         ),
     ]
