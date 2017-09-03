@@ -53,6 +53,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
             self.assertFalse(
                 form.is_valid(),
                 msg='Failed to raise error if only %s specified' % field)
+            self.assertNotEqual(form[field].errors, [])
 
     def test_vitals_no_value_no_units_ok(self):
         """Units are required only when vitals are provided."""
