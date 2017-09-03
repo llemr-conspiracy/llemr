@@ -229,12 +229,16 @@ class LiveTesting(StaticLiveServerTestCase):
         self.selenium.find_element_by_xpath(
             '//button[@type="submit"]').click()
 
-        self.assertEquals(self.selenium.current_url,
-                          '%s%s' % (self.live_server_url,
-                                    reverse('home')))
+        # import time
+        # time.sleep(10)
+        # self.selenium.get_screenshot_as_file('screencap.png')
+        WebDriverWait(self.selenium, 10).until(
+            EC.presence_of_element_located((By.ID, "id_pt_1_activept")))
 
-        self.selenium.get('%s%s' % (self.live_server_url,
-                                    reverse('logout')))
+        self.assertEquals(self.selenium.current_url,
+                          '%s%s' % (self.live_server_url, reverse('home')))
+
+        self.selenium.get('%s%s' % (self.live_server_url, reverse('logout')))
 
         # make a provider with only one role.
         build_provider(username='timmy', password='password',

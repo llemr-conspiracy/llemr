@@ -6,8 +6,7 @@ from django.forms import (
     )
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import (
-    Submit, Layout, Fieldset, Div, Field, Button, Row, HTML)
+from crispy_forms.layout import Submit, Layout, Div, Field, Row, HTML
 from crispy_forms.bootstrap import (
     InlineCheckboxes, AppendedText, PrependedText
     )
@@ -27,10 +26,11 @@ def form_required_if(form, conditional, fields):
             val = data.get(f)
             if val is None or val == '':
                 err_str = ("When %s is specified, %s must also be specified" %
-                           (conditional, fields))
+                           (conditional, ", ".join(fields)))
                 err_str += (" (%s wasn't)." % f) if len(fields) > 1 else "."
 
-                form.add_error(f, err_str)
+                form.add_error(conditional, err_str)
+                [form.add_error(err_fld, err_str) for err_fld in fields]
 
 
 def form_require_together(form, fields):
@@ -251,7 +251,7 @@ class ProgressNoteForm(ModelForm):
         exclude = ['patient', 'author', 'author_type']
 
     def __init__(self, *args, **kwargs):
-        super(ProgressNoteForm,self).__init__(*args, **kwargs)
+        super(ProgressNoteForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
 
