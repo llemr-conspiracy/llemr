@@ -6,8 +6,10 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
+    replaces = [(b'demographics', '0001_initial'), (b'demographics', '0002_auto_20160328_1425'), (b'demographics', '0003_auto_20170623_1048')]
+
     dependencies = [
-        ('pttrack', '0003_auto_20160119_1459'),
+        ('pttrack', '0001_squashed_0010_auto_20170623_1300'),
     ]
 
     operations = [
@@ -68,7 +70,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='demographics',
             name='chronic_condition',
-            field=models.ManyToManyField(to='demographics.ChronicCondition', null=True, blank=True),
+            field=models.ManyToManyField(to=b'demographics.ChronicCondition', blank=True),
         ),
         migrations.AddField(
             model_name='demographics',
@@ -83,7 +85,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='demographics',
             name='resource_access',
-            field=models.ManyToManyField(to='demographics.ResourceAccess', null=True, verbose_name=b'Access to Resources', blank=True),
+            field=models.ManyToManyField(to=b'demographics.ResourceAccess', verbose_name=b'Access to Resources', blank=True),
         ),
         migrations.AddField(
             model_name='demographics',
@@ -94,5 +96,35 @@ class Migration(migrations.Migration):
             model_name='demographics',
             name='work_status',
             field=models.ForeignKey(blank=True, to='demographics.WorkStatus', null=True),
+        ),
+        migrations.AlterField(
+            model_name='demographics',
+            name='ER_visit_last_year',
+            field=models.NullBooleanField(verbose_name=b'Visited ER in the past year'),
+        ),
+        migrations.AlterField(
+            model_name='demographics',
+            name='currently_employed',
+            field=models.NullBooleanField(),
+        ),
+        migrations.AlterField(
+            model_name='demographics',
+            name='has_insurance',
+            field=models.NullBooleanField(),
+        ),
+        migrations.AlterField(
+            model_name='demographics',
+            name='lives_alone',
+            field=models.NullBooleanField(),
+        ),
+        migrations.AlterField(
+            model_name='demographics',
+            name='ER_visit_last_year',
+            field=models.NullBooleanField(verbose_name=b'Visited ER in the Past Year'),
+        ),
+        migrations.AlterField(
+            model_name='demographics',
+            name='last_date_physician_visit',
+            field=models.DateField(null=True, verbose_name=b"Date of Patient's Last Visit to Physician or ER", blank=True),
         ),
     ]
