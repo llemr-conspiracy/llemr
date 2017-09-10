@@ -12,7 +12,7 @@ import django.core.validators
 class Migration(migrations.Migration):
 
     replaces = [
-        (b'workup', '0001_initial'), (b'workup', '0002_add_verbose_names'),
+        (b'workup', '0002_add_verbose_names'),
         (b'workup', '0003_auto_20160122_1631'),
         (b'workup', '0004_auto_20160328_1425'),
         (b'workup', '0005_auto_20160826_0620'),
