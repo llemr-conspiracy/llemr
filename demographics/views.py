@@ -1,5 +1,5 @@
-from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponseServerError
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
 from django.views.generic.edit import FormView, UpdateView
 from django.core.urlresolvers import reverse
 # Create your views here.
@@ -10,6 +10,7 @@ from pttrack.models import Patient
 
 import datetime
 
+
 class DemographicsCreate(FormView):
 
     template_name = 'demographics/demographics-create.html'
@@ -17,7 +18,7 @@ class DemographicsCreate(FormView):
 
     def get_context_data(self, **kwargs):
 
-    	context = super(DemographicsCreate, self).get_context_data(**kwargs)
+        context = super(DemographicsCreate, self).get_context_data(**kwargs)
 
         if 'pt_id' in self.kwargs:
             context['patient'] = Patient.objects.get(pk=self.kwargs['pt_id'])
@@ -26,7 +27,7 @@ class DemographicsCreate(FormView):
 
     def form_valid(self, form):
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
-        
+
         dg = form.save(commit=False)
         dg.creation_date = datetime.date.today()
         dg.patient = pt
@@ -37,7 +38,6 @@ class DemographicsCreate(FormView):
             dg.has_insurance = False
         else:
             dg.has_insurance = None
-
 
         if form.cleaned_data['lives_alone'] == '1':
             dg.lives_alone = True
@@ -67,36 +67,36 @@ class DemographicsCreate(FormView):
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
+
 class DemographicsUpdate(UpdateView):
 
     template_name = 'demographics/demographics-create.html'
     form_class = myforms.DemographicsForm
     model = mymodels.Demographics
 
-
     def get_initial(self):
         initial = super(DemographicsUpdate, self).get_initial()
 
         dg = self.object
-        
-        if dg.has_insurance == True:
+
+        if dg.has_insurance is True:
             initial['has_insurance'] = '1'
-        elif dg.has_insurance == False:
+        elif dg.has_insurance is False:
             initial['has_insurance'] = '2'
 
-        if dg.lives_alone == True:
+        if dg.lives_alone is True:
             initial['lives_alone'] = '1'
-        elif dg.lives_alone == False:
+        elif dg.lives_alone is False:
             initial['lives_alone'] = '2'
 
-        if dg.currently_employed == True:
+        if dg.currently_employed is True:
             initial['currently_employed'] = '1'
-        elif dg.currently_employed == False:
+        elif dg.currently_employed is False:
             initial['currently_employed'] = '2'
 
-        if dg.ER_visit_last_year == True:
+        if dg.ER_visit_last_year is True:
             initial['ER_visit_last_year'] = '1'
-        elif dg.ER_visit_last_year == False:
+        elif dg.ER_visit_last_year is False:
             initial['ER_visit_last_year'] = '2'
 
         return initial
@@ -112,7 +112,6 @@ class DemographicsUpdate(UpdateView):
             dg.has_insurance = False
         else:
             dg.has_insurance = None
-
 
         if form.cleaned_data['lives_alone'] == '1':
             dg.lives_alone = True
@@ -140,5 +139,3 @@ class DemographicsUpdate(UpdateView):
         form.save()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
-
-
