@@ -125,6 +125,7 @@ class APITest(APITestCase):
             instruction=models.ActionInstruction.objects.all()[0],
             due_date=now().date()+datetime.timedelta(days=1),
             comments="",
+            priority=True,
             patient=pt1)
 
         # make pt2 have an AI due yesterday
@@ -134,6 +135,7 @@ class APITest(APITestCase):
             instruction=models.ActionInstruction.objects.all()[0],
             due_date=now().date()-datetime.timedelta(days=1),
             comments="",
+            priority=True,
             patient=pt2)
 
         # make pt3 have an AI that during the test will be marked done
@@ -198,6 +200,13 @@ class APITest(APITestCase):
         # self.assertEqual(response.data[0]['needs_workup'], True)
         # self.assertEqual(response.data[1]['needs_workup'], True)
         self.assertLessEqual(response.data[0]['last_name'],response.data[1]['last_name']) # check that sorting is correct
+
+    def test_api_list_patients_with_priority_action_item(self):
+        #Test displaying pts with priority action items regardless of due date
+        data = {'filter':'ai_priority'}
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2) #pt1 and 2 since both have priority AI despite due date
 
     def test_api_list_patients_with_active_action_item(self):
         # Test displaying patients with active action items (active means not due in the future?)

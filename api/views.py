@@ -63,6 +63,20 @@ def unsigned_workup_patients_filter(qs):
 
     return coremodels.Patient.objects.filter(workup=wu_qs)
 
+def priority_ai_patients_filter(qs):
+    '''Build a queryset that returs a list of patients with a high priority 
+    action item.
+    '''
+
+    priority_ai_pts = coremodels.Patient.objects.filter(
+        actionitem=coremodels.ActionItem.objects
+        .filter(priority=True)
+        .filter(completion_date=None)
+        .select_related('patient')
+        ).distinct()
+
+    return priority_ai_pts
+
 
 def user_cases(user, qs):
     '''Build a queryset of the pateints that this user is the case
@@ -94,7 +108,8 @@ class PtList(generics.ListAPIView):  # read only
             'ai_active': active_ai_patients_filter,
             'ai_inactive': inactive_ai_patients_filter,
             'unsigned_workup': unsigned_workup_patients_filter,
-            'user_cases': partial(user_cases, self.request.user)
+            'user_cases': partial(user_cases, self.request.user),
+            'ai_priority': priority_ai_patients_filter
         }
 
         def bylatestKey(pt): # This doesn't sort by latest time, just latest date

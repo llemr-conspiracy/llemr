@@ -787,7 +787,7 @@ class ProviderTypeTest(TestCase):
         log_in_provider(self.client, build_provider(["Coordinator"]))
         self.assertEqual(
             get_url_pt_list_identifiers(self, url),
-            ['activept', 'activeai', 'pendingai', 'unsignedwu', 'usercases'])
+            ['activept', 'priorityai', 'activeai', 'pendingai', 'unsignedwu', 'usercases'])
 
         log_in_provider(self.client, build_provider(["Attending"]))
         self.assertEqual(

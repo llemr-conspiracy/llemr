@@ -299,6 +299,8 @@ def home_page(request):
         lists = [
             {'url': 'filter=active', 'title': "Active Patients",
              'identifier': 'activept', 'active': True},
+            {'url': 'filter=ai_priority', 'title':"Priority Action Items",
+            'identifier': 'priorityai', 'active': False},
             {'url': 'filter=ai_active', 'title': "Active Action Items",
              'identifier': 'activeai', 'active': False},
             {'url': 'filter=ai_inactive', 'title': "Pending Action Items",
