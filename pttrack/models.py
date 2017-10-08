@@ -385,6 +385,7 @@ class Document(Note):
 class ActionItem(Note):
     instruction = models.ForeignKey(ActionInstruction)
     due_date = models.DateField(help_text="MM/DD/YYYY or YYYY-MM-DD")
+    priority = models.BooleanField(default=False, help_text='Check this box if this action item is high priority')
     comments = models.TextField()
     completion_date = models.DateTimeField(blank=True, null=True)
     completion_author = models.ForeignKey(

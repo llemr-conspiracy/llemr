@@ -199,6 +199,9 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 										<p><a href="{% url 'reset-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "check" %}</a>
 									{% endif %}
 									<strong><a href="{% url 'update-action-item' pk=action_item.pk%}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
+									{% if action_item.priority %}
+									<h4 class="text-left" style="color:red"><b>PRIORITY</b></h4>
+									{% endif %}
 									<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
 									{% if request.session.staff_view %}
 									<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
