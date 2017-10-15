@@ -4,6 +4,9 @@
     <div class="row">
         <h4>Workup on {{ workup.patient.name }}</h4>
         <div class="col-md-4">
+            <strong>DOB:</strong> {{workup.patient.date_of_birth}} 
+        </div>
+        <div class="col-md-4">
             <strong>Seen on:</strong> {{ workup.clinic_day.clinic_date }}
         </div>
         {% if workup.signed %}
