@@ -13,13 +13,10 @@ class Command(BaseCommand):
 		actionItemList = models.ActionItem.objects.filter(due_date__lte=django.utils.timezone.now().date()).filter(completion_date=None)
 		for actionItem in actionItemList:
 			try:
-				email =  actionItem.patient.case_manager.associated_user.email
-				if email not in providerEmails:
-					providerEmails = providerEmails + [email]
-				if actionItem.patient.case_manager_2 != None:
-					email2 = actionItem.patient.case_manager_2.associated_user.email
-					if email2 not in providerEmails:
-						providerEmails = providerEmails + [email2]
+				for coordinator in actionItem.patient.case_managers.all():
+					email = coordinator.associated_user.email
+					if email not in providerEmails:
+						providerEmails = providerEmails + [email]
 			except AttributeError:
 				pass
 		message = '''Hello Case Manager! You have an action item due. Please do it otherwise you will
