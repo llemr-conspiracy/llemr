@@ -172,7 +172,9 @@ class Provider(Person):
 
 class Patient(Person):
 
-    case_managers = models.ManyToManyField(Provider)
+    case_manager = models.ForeignKey(Provider, blank=True, null=True)
+
+    case_manager_2 = models.ForeignKey(Provider, blank=True, null=True, related_name='secondary_case_manager')
 
     outcome = models.ForeignKey(Outcome, null=True, blank=True)
 

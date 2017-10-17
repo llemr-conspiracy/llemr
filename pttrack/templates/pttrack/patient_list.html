@@ -83,7 +83,7 @@ Osler: {{ title | default:"All Patients"}}
 
                 // Build "Case Manager" Column (if relevant)
                 $(patientRow).append(
-                    $("<td>").text(patient.case_managers ? patient.case_managers : "None")
+                    $("<td>").text(patient.case_manager ? patient.case_manager : "None")
                 );
 
                 // Build "Latest Activity" Column

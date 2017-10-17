@@ -67,7 +67,7 @@ class TestPatientCreateForms(TestCase):
 
         # c[0] is the pk of each, [1:] indexing required because element 0
         # is the "blank" option.
-        form_list = [c[0] for c in form['case_managers'].field.choices]
+        form_list = [c[0] for c in form['case_manager'].field.choices][1:]
 
         # cast to set for 1) order-insensitivity and 2) b/c cm_qs is
         # a queryset and form_list is a list
@@ -76,26 +76,26 @@ class TestPatientCreateForms(TestCase):
         # Make sure we reject non-case manager providers
 
         form_data = self.valid_pt_dict.copy()
-        form_data['case_managers'] = [pvds[0].pk]
+        form_data['case_manager'] = pvds[0].pk
         form = forms.PatientForm(data=form_data)
-        self.assertNotEqual(form['case_managers'].errors, [])
+        self.assertNotEqual(form['case_manager'].errors, [])
 
         form_data = self.valid_pt_dict.copy()
-        form_data['case_managers'] = [pvds[1].pk]
+        form_data['case_manager'] = pvds[1].pk
         form = forms.PatientForm(data=form_data)
-        self.assertNotEqual(form['case_managers'].errors, [])
+        self.assertNotEqual(form['case_manager'].errors, [])
 
         # Make sure we accept case manager providers
 
         form_data = self.valid_pt_dict.copy()
-        form_data['case_managers'] = [pvds[2].pk]
+        form_data['case_manager'] = pvds[2].pk
         form = forms.PatientForm(data=form_data)
-        self.assertEqual(form['case_managers'].errors, [])
+        self.assertEqual(form['case_manager'].errors, [])
 
         form_data = self.valid_pt_dict.copy()
-        form_data['case_managers'] = [pvds[3].pk]
+        form_data['case_manager'] = pvds[3].pk
         form = forms.PatientForm(data=form_data)
-        self.assertEqual(form['case_managers'].errors, [])
+        self.assertEqual(form['case_manager'].errors, [])
 
     def test_missing_alt_phone(self):
         '''Missing the alternative phone w/o alt phone owner should fail.'''

@@ -18,7 +18,10 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		</a></h2>
 		<p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
 		<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
-		<p class="lead"><strong>Case Manager:</strong> {{patient.case_managers.iterator | join:"; "}}
+		<p class="lead"><strong>Case Manager:</strong> {{ patient.case_manager }}
+		{% if patient.case_manager_2 != None %}
+		; {{ patient.case_manager_2 }}
+		{% endif %}
 		</p>
 		{% if request.session.staff_view %}
 		<p class="lead"><strong>Outcome:</strong> {{ patient.outcome }} <a href="{% url 'patient-update' pk=patient.id %}"><small>{% bootstrap_icon "pencil" %}</small></a></p>
