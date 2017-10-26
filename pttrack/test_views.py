@@ -403,9 +403,9 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             first_name="No",
             last_name="Workup",
             middle_name="Patient",
-            case_manager=coordinator,
             **pt_prototype
         )
+        self.pt5.case_managers.add(coordinator)
 
         wu_prototype = {
             'chief_complaint': "SOB", 'diagnosis': "MI",
