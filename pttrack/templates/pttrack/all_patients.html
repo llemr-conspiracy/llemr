@@ -13,13 +13,13 @@ Osler: {{ title | default:"All Patients"}}
 {% block content %}
    <div class="container">
         <table class="table">
-            <tr><th>Patient Name</th><th>Age/Gender</th><th>Case Managers</th><th>Latest Activity</th><th>Next AI Due</th><th>Attestation</th>
+            <tr><th>Patient Name</th><th>Age/Gender</th><th>Case Manager</th><th>Latest Activity</th><th>Next AI Due</th><th>Attestation</th>
             </td>
             {% for patient in object_list %}
                 <tr>
                 <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
                 <td>{{ patient.age }}/{{patient.gender}}</td>
-                <td>{{ patient.case_managers.iterator | join:"; " }}</td>
+                <td>{{ patient.case_manager }}</td>
                 {% if patient.latest_workup %}
                 <td><a href="{% url 'workup' pk=patient.latest_workup.pk %}">Seen {{ patient.latest_workup.clinic_day.clinic_date }}</a>: {{patient.latest_workup.chief_complaint}}</td>
                 {% else %}

@@ -249,7 +249,8 @@ class APITest(APITestCase):
 
         pt1 = models.Patient.objects.get(pk=1)
 
-        pt1.case_managers.add(p)
+        pt1.case_manager = p
+        pt1.save()
 
         data = {'filter': 'user_cases'}
         response = self.client.get(reverse("pt_list_api"), data, format='json')
