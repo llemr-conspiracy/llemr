@@ -129,9 +129,8 @@ class SendEmailTest(TestCase):
         log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user3@gmail.com')) 
 
         pt = models.Patient.objects.first()
-        pt.case_manager = models.Provider.objects.first()
-        pt.case_manager_2 = models.Provider.objects.all()[2]
-        pt.save()
+        pt.case_managers.add(models.Provider.objects.first())
+        pt.case_managers.add(models.Provider.objects.all()[2])
 
         ai_inst = models.ActionInstruction.objects.create(
             instruction="Follow up on labs")
