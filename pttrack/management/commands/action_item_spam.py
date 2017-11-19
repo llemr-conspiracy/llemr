@@ -16,6 +16,10 @@ class Command(BaseCommand):
 				email =  actionItem.patient.case_manager.associated_user.email
 				if email not in providerEmails:
 					providerEmails = providerEmails + [email]
+				if actionItem.patient.case_manager_2 != None:
+					email2 = actionItem.patient.case_manager_2.associated_user.email
+					if email2 not in providerEmails:
+						providerEmails = providerEmails + [email2]
 			except AttributeError:
 				pass
 		message = '''Hello Case Manager! You have an action item due. Please do it otherwise you will

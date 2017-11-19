@@ -126,9 +126,11 @@ class SendEmailTest(TestCase):
         #make 2 providers
         log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user1@gmail.com'))
         log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user2@gmail.com'))
+        log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user3@gmail.com')) 
 
         pt = models.Patient.objects.first()
         pt.case_manager = models.Provider.objects.first()
+        pt.case_manager_2 = models.Provider.objects.all()[2]
         pt.save()
 
         ai_inst = models.ActionInstruction.objects.create(
@@ -188,8 +190,8 @@ class SendEmailTest(TestCase):
         #verify that subject is correct
         self.assertEqual(mail.outbox[0].subject, 'SNHC: Action Item Due')
 
-        #verify that the 1 message is to user1
-        self.assertEqual(mail.outbox[0].to, ['user1@gmail.com'])
+        #verify that the 1 message is to user1 and user3 (second case manager)
+        self.assertEqual(mail.outbox[0].to, ['user1@gmail.com', 'user3@gmail.com'])
 
 
 class LiveTesting(StaticLiveServerTestCase):
