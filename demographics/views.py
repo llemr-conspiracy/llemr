@@ -2,6 +2,9 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.views.generic.edit import FormView, UpdateView
 from django.core.urlresolvers import reverse
+from django.db import IntegrityError
+from django.shortcuts import render
+
 # Create your views here.
 from . import models as mymodels
 from . import forms as myforms
@@ -32,40 +35,55 @@ class DemographicsCreate(FormView):
         dg.creation_date = datetime.date.today()
         dg.patient = pt
 
-        if form.cleaned_data['has_insurance'] == '1':
-            dg.has_insurance = True
-        elif form.cleaned_data['has_insurance'] == '2':
-            dg.has_insurance = False
-        else:
-            dg.has_insurance = None
+        try:
+            dg.save()
+            pt.save()
+            form.save_m2m()
+            form.save()
+            return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+        except IntegrityError:
+            # Create form object containing data from current entry in database
+            dg_old = mymodels.Demographics.objects.get(pk=pt.id)
+            form_old = myforms.DemographicsForm(dg_old.__dict__)
 
-        if form.cleaned_data['lives_alone'] == '1':
-            dg.lives_alone = True
-        elif form.cleaned_data['lives_alone'] == '2':
-            dg.lives_alone = False
-        else:
-            dg.lives_alone = None
+            # Add errors to the forms to point user to fields to fix
 
-        if form.cleaned_data['currently_employed'] == '1':
-            dg.currently_employed = True
-        elif form.cleaned_data['currently_employed'] == '2':
-            dg.currently_employed = False
-        else:
-            dg.currently_employed = None
+            # Create dictionary mapping database entries to front-end choices 
+            # for use in error messages
+            NULL_BOOLEAN_CHOICES = dict([
+                (None, "Not Answered"),
+                (True, "Yes"),
+                (False, "No")
+            ])
 
-        if form.cleaned_data['ER_visit_last_year'] == '1':
-            dg.ER_visit_last_year = True
-        elif form.cleaned_data['ER_visit_last_year'] == '2':
-            dg.ER_visit_last_year = False
-        else:
-            dg.ER_visit_last_year = None
+            if form_old.is_valid():
+                for field, old_value in form_old.cleaned_data.items():
+                    new_value = form.cleaned_data.get(field)
+                    if new_value != old_value:
 
-        dg.save()
-        pt.save()
-        form.save_m2m()
-        form.save()
+                        new_error_message = "Clash in this field. You entered '"
+                        old_error_message = "Clash in this field. Database entry was '"
 
-        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+                        if NULL_BOOLEAN_CHOICES.get(new_value) != None:
+                            new_error_message = new_error_message + "%s'" % NULL_BOOLEAN_CHOICES[new_value]
+                        else:
+                            new_error_message = new_error_message + "%s'" % new_value
+
+                        if NULL_BOOLEAN_CHOICES.get(old_value) != None:
+                            old_error_message = old_error_message + "%s'" % NULL_BOOLEAN_CHOICES[old_value]
+                        else:
+                            old_error_message = old_error_message + "%s'" % old_value
+
+                        form_old.add_error(field, old_error_message)
+                        form.add_error(field, new_error_message)
+
+
+            # Create context variable containing new and old forms
+            context = {"form_old": form_old,
+                       "form_new": form,
+                       "pt_id": pt.id,
+                       "pt_name": pt.name}
+            return render(self.request, "demographics/demographics-resolve.html", context)
 
 
 class DemographicsUpdate(UpdateView):
@@ -79,26 +97,6 @@ class DemographicsUpdate(UpdateView):
 
         dg = self.object
 
-        if dg.has_insurance is True:
-            initial['has_insurance'] = '1'
-        elif dg.has_insurance is False:
-            initial['has_insurance'] = '2'
-
-        if dg.lives_alone is True:
-            initial['lives_alone'] = '1'
-        elif dg.lives_alone is False:
-            initial['lives_alone'] = '2'
-
-        if dg.currently_employed is True:
-            initial['currently_employed'] = '1'
-        elif dg.currently_employed is False:
-            initial['currently_employed'] = '2'
-
-        if dg.ER_visit_last_year is True:
-            initial['ER_visit_last_year'] = '1'
-        elif dg.ER_visit_last_year is False:
-            initial['ER_visit_last_year'] = '2'
-
         return initial
 
     def form_valid(self, form):
@@ -106,36 +104,11 @@ class DemographicsUpdate(UpdateView):
         pt = dg.patient
         dg.creation_date = datetime.date.today()
 
-        if form.cleaned_data['has_insurance'] == '1':
-            dg.has_insurance = True
-        elif form.cleaned_data['has_insurance'] == '2':
-            dg.has_insurance = False
-        else:
-            dg.has_insurance = None
-
-        if form.cleaned_data['lives_alone'] == '1':
-            dg.lives_alone = True
-        elif form.cleaned_data['lives_alone'] == '2':
-            dg.lives_alone = False
-        else:
-            dg.lives_alone = None
-
-        if form.cleaned_data['currently_employed'] == '1':
-            dg.currently_employed = True
-        elif form.cleaned_data['currently_employed'] == '2':
-            dg.currently_employed = False
-        else:
-            dg.currently_employed = None
-
-        if form.cleaned_data['ER_visit_last_year'] == '1':
-            dg.ER_visit_last_year = True
-        elif form.cleaned_data['ER_visit_last_year'] == '2':
-            dg.ER_visit_last_year = False
-        else:
-            dg.ER_visit_last_year = None
-
         dg.save()
         form.save_m2m()
         form.save()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+
+
+

@@ -89,9 +89,9 @@ class FormSubmissionTest(TestCase):
     	Test submission of a demographics form
     	'''
 
-        for i in ["0", "1", "2"]:
+        for i in [None, True, False]:
 
-            self.valid_dg_dict = {
+            valid_dg_dict = {
                 'creation_date': date.today(),
                 'annual_income': models.IncomeRange.objects.all()[0],
                 'education_level': models.EducationLevel.objects.all()[0],
@@ -121,26 +121,73 @@ class FormSubmissionTest(TestCase):
                 preferred_contact_method=ContactMethod.objects.all()[0],
             )
 
-            form_data = self.valid_dg_dict
             final_url = reverse('demographics-create', args=(pt.id,))
 
-            form = forms.DemographicsForm(data=form_data)
+            form = forms.DemographicsForm(data=valid_dg_dict)
             self.assertTrue(form.is_valid())
 
             dg_number = len(models.Demographics.objects.all())
             response = self.client.get(final_url)
-            response = self.client.post(final_url, form_data)
+            response = self.client.post(final_url, valid_dg_dict)
 
             self.assertEqual(response.status_code, 302)
-            self.assertEquals(len(models.Demographics.objects.all()), dg_number + 1)
+            self.assertEquals(len(models.Demographics.objects.all()),
+                              dg_number + 1)
 
-            dg = models.Demographics.objects.all()[len(models.Demographics.objects.all())-1]
+            dg = models.Demographics.objects.last()
 
             final_url = reverse('demographics-update', args=(dg.pk,))
             response = self.client.get(final_url)
-            response = self.client.post(final_url, form_data)
+            response = self.client.post(final_url, valid_dg_dict)
 
             self.assertEqual(response.status_code, 302)
 
+    def test_demographics_form_double_submission(self):
+        '''
+        Test two submissions of the form to avoid duplicate entry errors
+        '''
 
+        # Create patient object
+        pt = models.Patient.objects.create(
+            first_name="asdf",
+            last_name="lkjh",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=Gender.objects.all()[0],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=ContactMethod.objects.all()[0],
+        )
+
+        # Create demographics object
+        # Need to create dictionary to submit a POST request
+        dg = {
+            'patient': pt,
+            'creation_date': date.today(),
+            'annual_income': models.IncomeRange.objects.all()[0],
+            'education_level': models.EducationLevel.objects.all()[0],
+            'transportation': models.TransportationOption.objects.all()[0],
+            'work_status': models.WorkStatus.objects.all()[0],
+            'has_insurance': 1,
+            'ER_visit_last_year': 1,
+            'last_date_physician_visit': date.today(),
+            'lives_alone': 1,
+            'dependents': 4,
+            'currently_employed': 1,
+        }
+
+        # Submit demographics object twice
+        dg_url = reverse('demographics-create', args=(pt.pk,))
+        response = self.client.post(dg_url, dg)
+        # Send in submission with the same patient ID
+        response2 = self.client.post(dg_url, dg)
+
+        # Verify that both submissions worked
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(response2.status_code,200)
 
