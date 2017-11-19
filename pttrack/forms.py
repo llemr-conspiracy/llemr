@@ -25,6 +25,13 @@ class PatientForm(ModelForm):
                 clinical_roles__in=models.ProviderType.objects.filter(
                     staff_view=True)).order_by("last_name")
             )
+            
+    case_manager_2 = ModelChoiceField(
+            required=False,
+            queryset=models.Provider.objects.filter(
+                clinical_roles__in=models.ProviderType.objects.filter(
+                    staff_view=True)).order_by("last_name")
+            )
 
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
