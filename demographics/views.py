@@ -1,23 +1,24 @@
+import datetime
+
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.views.generic.edit import FormView, UpdateView
 from django.core.urlresolvers import reverse
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
+
 from django.shortcuts import render
 
 # Create your views here.
-from . import models as mymodels
-from . import forms as myforms
+from .models import Demographics
+from .forms import DemographicsForm
 
 from pttrack.models import Patient
-
-import datetime
 
 
 class DemographicsCreate(FormView):
 
     template_name = 'demographics/demographics-create.html'
-    form_class = myforms.DemographicsForm
+    form_class = DemographicsForm
 
     def get_context_data(self, **kwargs):
 
@@ -36,66 +37,62 @@ class DemographicsCreate(FormView):
         dg.patient = pt
 
         try:
-            dg.save()
-            pt.save()
-            form.save_m2m()
-            form.save()
-            return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+            with transaction.atomic():
+                dg.save()
+                pt.save()
+                form.save_m2m()
+                form.save()
+            return HttpResponseRedirect(reverse("patient-detail",
+                                                args=(pt.id,)))
         except IntegrityError:
             # Create form object containing data from current entry in database
-            dg_old = mymodels.Demographics.objects.get(pk=pt.id)
-            form_old = myforms.DemographicsForm(dg_old.__dict__)
+            dg_old = Demographics.objects.get(patient=pt.id)
+            form_old = DemographicsForm(dg_old.__dict__)
+
+            # calling is_valid causes cleaned_data to be availiable
+            assert form_old.is_valid()
+
+            NULL_BOOLEAN_CHOICES = dict(Demographics.NULL_BOOLEAN_CHOICES)
 
             # Add errors to the forms to point user to fields to fix
+            for field, old_value in form_old.cleaned_data.items():
+                new_value = form.cleaned_data.get(field)
+                if new_value != old_value:
 
-            # Create dictionary mapping database entries to front-end choices 
-            # for use in error messages
-            NULL_BOOLEAN_CHOICES = dict([
-                (None, "Not Answered"),
-                (True, "Yes"),
-                (False, "No")
-            ])
+                    new_err_msg = "Clash in this field. You entered '%s'"
+                    old_err_msg = "Clash in this field. Database entry is '%s'"
 
-            if form_old.is_valid():
-                for field, old_value in form_old.cleaned_data.items():
-                    new_value = form.cleaned_data.get(field)
-                    if new_value != old_value:
+                    value_msg_form_tuples = [
+                        (new_value, new_err_msg, form),
+                        (old_value, old_err_msg, form_old)
+                    ]
 
-                        new_error_message = "Clash in this field. You entered '"
-                        old_error_message = "Clash in this field. Database entry was '"
-
-                        if NULL_BOOLEAN_CHOICES.get(new_value) != None:
-                            new_error_message = new_error_message + "%s'" % NULL_BOOLEAN_CHOICES[new_value]
+                    for val, err_msg, form in value_msg_form_tuples:
+                        if val in NULL_BOOLEAN_CHOICES:
+                            err_msg = err_msg % NULL_BOOLEAN_CHOICES[val]
                         else:
-                            new_error_message = new_error_message + "%s'" % new_value
+                            err_msg = err_msg % val
 
-                        if NULL_BOOLEAN_CHOICES.get(old_value) != None:
-                            old_error_message = old_error_message + "%s'" % NULL_BOOLEAN_CHOICES[old_value]
-                        else:
-                            old_error_message = old_error_message + "%s'" % old_value
-
-                        form_old.add_error(field, old_error_message)
-                        form.add_error(field, new_error_message)
-
+                        form.add_error(field, err_msg)
 
             # Create context variable containing new and old forms
             context = {"form_old": form_old,
                        "form_new": form,
                        "pt_id": pt.id,
                        "pt_name": pt.name}
-            return render(self.request, "demographics/demographics-resolve.html", context)
+            return render(self.request,
+                          "demographics/demographics-resolve.html",
+                          context)
 
 
 class DemographicsUpdate(UpdateView):
 
     template_name = 'demographics/demographics-create.html'
-    form_class = myforms.DemographicsForm
-    model = mymodels.Demographics
+    form_class = DemographicsForm
+    model = Demographics
 
     def get_initial(self):
         initial = super(DemographicsUpdate, self).get_initial()
-
-        dg = self.object
 
         return initial
 
@@ -109,6 +106,3 @@ class DemographicsUpdate(UpdateView):
         form.save()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
-
-
-

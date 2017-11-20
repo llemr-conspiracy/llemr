@@ -1,9 +1,8 @@
 from datetime import date
 
 from django.test import TestCase
-from django.core.exceptions import ValidationError
-from django.utils.timezone import now
 from django.core.urlresolvers import reverse
+from django.db import transaction
 
 from pttrack.test_views import build_provider, log_in_provider
 from pttrack.models import Patient, Gender, ContactMethod
@@ -21,7 +20,7 @@ class ViewsExistTest(TestCase):
 
     def setUp(self):
 
-    	log_in_provider(self.client, build_provider())
+        log_in_provider(self.client, build_provider())
 
         models.IncomeRange.objects.create(name="Default")
         models.EducationLevel.objects.create(name="Default")
@@ -29,7 +28,6 @@ class ViewsExistTest(TestCase):
         models.ResourceAccess.objects.create(name="Default")
         models.ChronicCondition.objects.create(name="Default")
         models.TransportationOption.objects.create(name="Default")
-
 
     def test_url_response(self):
 
@@ -84,12 +82,30 @@ class FormSubmissionTest(TestCase):
         models.ChronicCondition.objects.create(name="Default")
         models.TransportationOption.objects.create(name="Default")
 
-    def test_demographics_form_submission(self):
-    	'''
-    	Test submission of a demographics form
-    	'''
+    def make_patient(self):
+        return models.Patient.objects.create(
+            first_name="asdf",
+            last_name="lkjh",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=Gender.objects.all()[0],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=date(1990, 1, 1),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=ContactMethod.objects.all()[0])
 
-        for i in [None, True, False]:
+    def test_demographics_form_submission(self):
+        '''
+        Test submission of a demographics form
+        '''
+
+        for i in dict(models.Demographics.NULL_BOOLEAN_CHOICES).keys():
+
+            pt = self.make_patient()
 
             valid_dg_dict = {
                 'creation_date': date.today(),
@@ -100,26 +116,10 @@ class FormSubmissionTest(TestCase):
                 'has_insurance': i,
                 'ER_visit_last_year': i,
                 'last_date_physician_visit': date.today(),
-                'lives_alone':i,
+                'lives_alone': i,
                 'dependents': 4,
                 'currently_employed': i,
             }
-
-            pt = models.Patient.objects.create(
-                first_name="asdf",
-                last_name="lkjh",
-                middle_name="Bayer",
-                phone='+49 178 236 5288',
-                gender=Gender.objects.all()[0],
-                address='Schulstrasse 9',
-                city='Munich',
-                state='BA',
-                zip_code='63108',
-                pcp_preferred_zip='63018',
-                date_of_birth=date(1990, 01, 01),
-                patient_comfortable_with_english=False,
-                preferred_contact_method=ContactMethod.objects.all()[0],
-            )
 
             final_url = reverse('demographics-create', args=(pt.id,))
 
@@ -136,6 +136,11 @@ class FormSubmissionTest(TestCase):
 
             dg = models.Demographics.objects.last()
 
+            self.assertEquals(dg.has_insurance, i)
+            self.assertEquals(dg.ER_visit_last_year, i)
+            self.assertEquals(dg.lives_alone, i)
+            self.assertEquals(dg.currently_employed, i)
+
             final_url = reverse('demographics-update', args=(dg.pk,))
             response = self.client.get(final_url)
             response = self.client.post(final_url, valid_dg_dict)
@@ -143,28 +148,11 @@ class FormSubmissionTest(TestCase):
             self.assertEqual(response.status_code, 302)
 
     def test_demographics_form_double_submission(self):
-        '''
-        Test two submissions of the form to avoid duplicate entry errors
+        '''Test two submissions of the form to avoid duplicate entry errors
         '''
 
-        # Create patient object
-        pt = models.Patient.objects.create(
-            first_name="asdf",
-            last_name="lkjh",
-            middle_name="Bayer",
-            phone='+49 178 236 5288',
-            gender=Gender.objects.all()[0],
-            address='Schulstrasse 9',
-            city='Munich',
-            state='BA',
-            zip_code='63108',
-            pcp_preferred_zip='63018',
-            date_of_birth=date(1990, 01, 01),
-            patient_comfortable_with_english=False,
-            preferred_contact_method=ContactMethod.objects.all()[0],
-        )
+        pt = self.make_patient()
 
-        # Create demographics object
         # Need to create dictionary to submit a POST request
         dg = {
             'patient': pt,
@@ -173,21 +161,24 @@ class FormSubmissionTest(TestCase):
             'education_level': models.EducationLevel.objects.all()[0],
             'transportation': models.TransportationOption.objects.all()[0],
             'work_status': models.WorkStatus.objects.all()[0],
-            'has_insurance': 1,
-            'ER_visit_last_year': 1,
+            'has_insurance': None,
+            'ER_visit_last_year': True,
             'last_date_physician_visit': date.today(),
-            'lives_alone': 1,
+            'lives_alone': False,
             'dependents': 4,
-            'currently_employed': 1,
+            'currently_employed': None,
         }
 
         # Submit demographics object twice
         dg_url = reverse('demographics-create', args=(pt.pk,))
-        response = self.client.post(dg_url, dg)
+        response = self.client.post(dg_url, dg, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, 'pttrack/patient_detail.html')
+        self.assertEqual(models.Demographics.objects.count(), 1)
+
         # Send in submission with the same patient ID
         response2 = self.client.post(dg_url, dg)
-
-        # Verify that both submissions worked
-        self.assertEqual(response.status_code,200)
-        self.assertEqual(response2.status_code,200)
-
+        self.assertEqual(response2.status_code, 200)
+        self.assertTemplateUsed(
+            response2, 'demographics/demographics-resolve.html')
