@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.views.generic.edit import FormView, UpdateView
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError, transaction
+from django.forms.models import model_to_dict
 
 from django.shortcuts import render
 
@@ -55,9 +56,21 @@ class DemographicsCreate(FormView):
             NULL_BOOLEAN_CHOICES = dict(Demographics.NULL_BOOLEAN_CHOICES)
 
             # Add errors to the forms to point user to fields to fix
-            for field, old_value in form_old.cleaned_data.items():
-                new_value = form.cleaned_data.get(field)
+            dg_old_dict = model_to_dict(dg_old)
+            dg_new_dict = model_to_dict(dg)
+            for field, _ in form_old.cleaned_data.items():
+
+                old_value = dg_old_dict.get(field)
+                new_value = dg_new_dict.get(field)
+
                 if new_value != old_value:
+
+                    # print field
+                    # print new_value
+                    # print type(new_value)
+                    # print old_value
+                    # print type(old_value)
+                    # print "---------"
 
                     new_err_msg = "Clash in this field. You entered '%s'"
                     old_err_msg = "Clash in this field. Database entry is '%s'"
@@ -67,13 +80,13 @@ class DemographicsCreate(FormView):
                         (old_value, old_err_msg, form_old)
                     ]
 
-                    for val, err_msg, form in value_msg_form_tuples:
+                    for val, err_msg, f in value_msg_form_tuples:
                         if val in NULL_BOOLEAN_CHOICES:
                             err_msg = err_msg % NULL_BOOLEAN_CHOICES[val]
                         else:
                             err_msg = err_msg % val
 
-                        form.add_error(field, err_msg)
+                        f.add_error(field, err_msg)
 
             # Create context variable containing new and old forms
             context = {"form_old": form_old,
