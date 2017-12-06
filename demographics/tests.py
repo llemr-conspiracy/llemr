@@ -193,10 +193,10 @@ class FormSubmissionTest(TestCase):
         dg = {
             'patient': pt,
             'creation_date': date.today(),
-            'annual_income': models.IncomeRange.objects.all()[0],
-            'education_level': models.EducationLevel.objects.all()[0],
-            'transportation': models.TransportationOption.objects.all()[0],
-            'work_status': models.WorkStatus.objects.all()[0],
+            'annual_income': models.IncomeRange.objects.first(),
+            'education_level': models.EducationLevel.objects.first(),
+            'transportation': models.TransportationOption.objects.first(),
+            'work_status': models.WorkStatus.objects.first(),
             'has_insurance': None,
             'ER_visit_last_year': True,
             'last_date_physician_visit': date.today(),
@@ -204,21 +204,23 @@ class FormSubmissionTest(TestCase):
             'dependents': 4,
             'currently_employed': None,
         }
-        
+
         dg_url = reverse('demographics-create', args=(pt.pk,))
         response = self.client.post(dg_url, dg)
         response2 = self.client.post(dg_url, dg, follow=True)
-        self.assertTrue('Clash' not in response2.content)
+        self.assertNotContains(response2, 'Clash')
 
-        # Test case 2 - two different forms submitted, all fields should have errors
-        # 3 errors introduced in has_insurane, ER_visit_last_year, and dependents
+        # Test case 2 - two different forms submitted
+        # In this case, all fields should have errors
+        # 3 errors introduced in has_insurane, ER_visit_last_year,
+        # and dependents
         dg2 = {
             'patient': pt,
             'creation_date': date.today(),
-            'annual_income': models.IncomeRange.objects.all()[0],
-            'education_level': models.EducationLevel.objects.all()[0],
-            'transportation': models.TransportationOption.objects.all()[0],
-            'work_status': models.WorkStatus.objects.all()[0],
+            'annual_income': models.IncomeRange.objects.first(),
+            'education_level': models.EducationLevel.objects.first(),
+            'transportation': models.TransportationOption.objects.first(),
+            'work_status': models.WorkStatus.objects.first(),
             'has_insurance': True,
             'ER_visit_last_year': False,
             'last_date_physician_visit': date.today(),
@@ -228,8 +230,6 @@ class FormSubmissionTest(TestCase):
         }
 
         response3 = self.client.post(dg_url, dg2, follow=True)
-       
-        #print response3.context['form_old']['has_insurance'].errors
 
         self.assertFormError(response3, 'form_old', 'has_insurance',
                              "Clash in this field. Database entry is 'Not Answered'")
@@ -240,8 +240,5 @@ class FormSubmissionTest(TestCase):
         self.assertFormError(response3, 'form_new','dependents',
                              "Clash in this field. You entered '6'")
 
-        # Verify that there are 6 error messages on the page (3 fields with 2 messages each)
-        self.assertTrue(response3.content.count('Clash') == 6)
-    
-
-
+        # Verify that there are 6 errors on page (3 fields x 2 messages)
+        self.assertContains(response3, 'Clash', count=6)

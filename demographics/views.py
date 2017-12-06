@@ -58,19 +58,13 @@ class DemographicsCreate(FormView):
             # Add errors to the forms to point user to fields to fix
             dg_old_dict = model_to_dict(dg_old)
             dg_new_dict = model_to_dict(dg)
-            for field, _ in form_old.cleaned_data.items():
+
+            for field in form_old.base_fields:
 
                 old_value = dg_old_dict.get(field)
                 new_value = dg_new_dict.get(field)
 
                 if new_value != old_value:
-
-                    # print field
-                    # print new_value
-                    # print type(new_value)
-                    # print old_value
-                    # print type(old_value)
-                    # print "---------"
 
                     new_err_msg = "Clash in this field. You entered '%s'"
                     old_err_msg = "Clash in this field. Database entry is '%s'"
