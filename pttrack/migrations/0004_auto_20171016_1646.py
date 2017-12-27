@@ -7,9 +7,9 @@ from django.db import migrations, models
 def move_case_manager(apps, schema_editor):
     Patient = apps.get_model('pttrack','Patient')
     for patient_person in Patient.objects.all():
-        case_manager = patient_person.case_manager
         try:
-            patient_person.case_managers.add(case_manager)
+            if patient_person.case_manager != None
+                patient_person.case_managers.add(patient_person.case_manager)
             if patient_person.case_manager_2 != None:
                 patient_person.case_managers.add(patient_person.case_manager_2)
         except AttributeError:
