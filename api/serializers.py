@@ -36,6 +36,14 @@ class WorkupSerializer(serializers.ModelSerializer):
     signer = serializers.StringRelatedField(read_only=True)
 
 
+class CaseManagerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Provider
+        fields = ['name']
+
+    name = serializers.StringRelatedField(read_only=True)
+
+
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Patient
@@ -47,7 +55,7 @@ class PatientSerializer(serializers.ModelSerializer):
     name = serializers.StringRelatedField(read_only=True)
     pk = serializers.StringRelatedField(read_only=True)
     status = serializers.StringRelatedField(read_only=True)
-    case_manager = serializers.StringRelatedField(read_only=True)
+    case_managers = CaseManagerSerializer(many=True)
 
     # Put urls as model properties because unable to do: patient_url = UrlReverser('patient-detail')
     detail_url = serializers.StringRelatedField(read_only=True)

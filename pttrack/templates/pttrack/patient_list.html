@@ -81,10 +81,22 @@ Osler: {{ title | default:"All Patients"}}
                     $("<td>").text(patient.age+" / "+patient.gender)
                     )
 
+
+
                 // Build "Case Manager" Column (if relevant)
-                $(patientRow).append(
-                    $("<td>").text(patient.case_manager ? patient.case_manager : "None")
-                );
+                if (patient.case_managers){
+                    var case_managers_names = [];
+                    for (var j = 0; j < patient.case_managers.length; j++) {
+                        case_managers_names = case_managers_names + [patient.case_managers[j].name]+["; "]
+                    }
+                    $(patientRow).append(
+                        $("<td>").text(case_managers_names)
+                        );
+                }else{
+                    $(patientRow).append(
+                        $("<td>").text("None")
+                        );
+                }
 
                 // Build "Latest Activity" Column
                 if (patient.latest_workup){
