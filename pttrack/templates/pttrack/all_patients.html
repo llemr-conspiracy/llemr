@@ -16,24 +16,26 @@ Osler: {{ title | default:"All Patients"}}
             <tr><th>Patient Name</th><th>Age/Gender</th><th>Case Managers</th><th>Latest Activity</th><th>Next AI Due</th><th>Attestation</th>
             </td>
             {% for patient in object_list %}
+                {% with latest_workup=patient.latest_workup %}
                 <tr>
                 <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
                 <td>{{ patient.age }}/{{patient.gender}}</td>
                 <td>{{ patient.case_managers.iterator | join:"; " }}</td>
-                {% if patient.latest_workup %}
-                <td><a href="{% url 'workup' pk=patient.latest_workup.pk %}">Seen {{ patient.latest_workup.clinic_day.clinic_date }}</a>: {{patient.latest_workup.chief_complaint}}</td>
+                {% if latest_workup %}
+                <td><a href="{% url 'workup' pk=latest_workup.pk %}">Seen {{ latest_workup.clinic_day.clinic_date }}</a>: {{latest_workup.chief_complaint}}</td>
                 {% else %}
                 <td><a href="{% url 'patient-update' pk=patient.id %}">Intake</a>: {{patient.history.last.history_date}}</td>
                 {% endif %}
                 <td>{{patient.status}}</td>
-                {% if not patient.latest_workup %}
+                {% if not latest_workup %}
                 <td>No Note</td>
-                {% elif not patient.latest_workup.signer %}
+                {% elif not latest_workup.signer %}
                 <td>Unattested</td>
                 {% else %}
-                <td>{{ patient.latest_workup.signer }}</td>
+                <td>{{ latest_workup.signer }}</td>
                 {% endif %}
                 </tr>
+                {% endwith %}
             {% endfor %}
         </table>
 	</div>
