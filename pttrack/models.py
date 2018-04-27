@@ -265,19 +265,36 @@ class Patient(Person):
             key=lambda(ai): ai.due_date)
 
     def status(self):
-        n_active = len(self.active_action_items())
-        n_pending = len(self.inactive_action_items())
-        n_done = len(self.done_action_items())
+        '''
+        The active_action_items, done_action_items, and inactive_action_items aren't a big deal to use when getting just one patient
+        For the all_patients page though (one of the pages that use status), hitting the db three times per patient adds up
+        Here, we only hit the db once by asking the db for all action items for a patient, then sorting them in memory
+        '''
+        patient_action_items = ActionItem.objects.filter(patient=self.pk).all()
+
+        active = []
+        inactive = []
+        n_done = 0
+
+        for action_item in patient_action_items:
+            if action_item.completion_author is not None:
+                n_done += 1
+            else:
+                pass
+                if action_item.due_date > now().date():
+                    inactive.append(action_item)
+                else:
+                    active.append(action_item)
+
+        n_active = len(active)
+        n_inactive = len(inactive)
 
         if n_active > 0:
-            due_dates = ", ".join([str((now().date()-ai.due_date).days) for ai in self.active_action_items()])
-            
+            due_dates = ", ".join([str((now().date()-ai.due_date).days) for ai in active])
             return "Action items " + due_dates + " days past due"
-        elif n_pending > 0:
-            next_item = min(self.inactive_action_items(),
-                            key=lambda(k): k.due_date)
+        elif n_inactive > 0:
+            next_item = min(inactive, key=lambda(k): k.due_date)
             tdelta = next_item.due_date - now().date()
-
             return "next action in "+str(tdelta.days)+" days"
         elif n_done > 0:
             return "all actions complete"
