@@ -17,24 +17,24 @@ Osler: {{ title | default:"All Patients"}}
             </td>
             {% for patient in object_list %}
                 {% with latest_workup=patient.latest_workup %}
-                <tr>
-                <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
-                <td>{{ patient.age }}/{{patient.gender}}</td>
-                <td>{{ patient.case_managers.iterator | join:"; " }}</td>
-                {% if latest_workup %}
-                <td><a href="{% url 'workup' pk=latest_workup.pk %}">Seen {{ latest_workup.clinic_day.clinic_date }}</a>: {{latest_workup.chief_complaint}}</td>
-                {% else %}
-                <td><a href="{% url 'patient-update' pk=patient.id %}">Intake</a>: {{patient.history.last.history_date}}</td>
-                {% endif %}
-                <td>{{patient.status}}</td>
-                {% if not latest_workup %}
-                <td>No Note</td>
-                {% elif not latest_workup.signer %}
-                <td>Unattested</td>
-                {% else %}
-                <td>{{ latest_workup.signer }}</td>
-                {% endif %}
-                </tr>
+                    <tr>
+                    <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
+                    <td>{{ patient.age }}/{{patient.gender}}</td>
+                    <td>{{ patient.case_managers.iterator | join:"; " }}</td>
+                    {% if latest_workup %}
+                    <td><a href="{% url 'workup' pk=latest_workup.pk %}">Seen {{ latest_workup.clinic_day.clinic_date }}</a>: {{latest_workup.chief_complaint}}</td>
+                    {% else %}
+                    <td><a href="{% url 'patient-update' pk=patient.id %}">Intake</a>: {{patient.history.last.history_date}}</td>
+                    {% endif %}
+                    <td>{{patient.status}}</td>
+                    {% if not latest_workup %}
+                    <td>No Note</td>
+                    {% elif not latest_workup.signer %}
+                    <td>Unattested</td>
+                    {% else %}
+                    <td>{{ latest_workup.signer }}</td>
+                    {% endif %}
+                    </tr>
                 {% endwith %}
             {% endfor %}
         </table>
