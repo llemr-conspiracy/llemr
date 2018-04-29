@@ -1,0 +1,25 @@
+{% extends "pttrack/base.html" %}
+
+{% load bootstrap3 %}
+
+{% block title %}
+Appointment List
+{% endblock %}
+
+{% block header %}
+<h1>Appointment List </h1>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+{% for date, app_list in appointments_by_date.iteritems %}
+<h3>{{ date }}</h3>
+	{% for app in app_list %}
+	<p>{{ app.patient }} - {{ app.comment }}</p>
+	{% endfor %}
+{% endfor %}
+</div>	
+{% endblock %}
+
+
+
