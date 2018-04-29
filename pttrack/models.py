@@ -312,7 +312,7 @@ class Patient(Person):
 
     def latest_workup(self):
         wu_set = self.workup_set
-        wu_set.order_by("clinic_day__clinic_date").first()
+        return wu_set.order_by("clinic_day__clinic_date").first()
 
     def notes(self):
         '''Returns a list of all the notes (workups and followups) associated
