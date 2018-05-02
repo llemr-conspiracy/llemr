@@ -270,7 +270,7 @@ class Patient(Person):
         For the all_patients page though (one of the pages that use status), hitting the db three times per patient adds up
         Here, we only hit the db once by asking the db for all action items for a patient, then sorting them in memory
         '''
-        patient_action_items = ActionItem.objects.filter(patient=self.pk).all()
+        patient_action_items = self.actionitem_set.all()
 
         active = []
         inactive = []

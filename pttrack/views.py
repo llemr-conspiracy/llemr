@@ -370,7 +370,8 @@ def all_patients(request):
         .order_by('last_name') \
         .select_related('gender') \
         .prefetch_related('case_managers') \
-        .prefetch_related(Prefetch('workup_set', queryset=workupmodels.Workup.objects.order_by('clinic_day__clinic_date')))
+        .prefetch_related(Prefetch('workup_set', queryset=workupmodels.Workup.objects.order_by('clinic_day__clinic_date'))) \
+        .prefetch_related('actionitem_set')
 
     return render(request,
                   'pttrack/all_patients.html',
