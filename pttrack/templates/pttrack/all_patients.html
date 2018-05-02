@@ -22,7 +22,7 @@ Osler: {{ title | default:"All Patients"}}
                 <th>Attestation</th>
             </td>
             {% for patient in object_list %}
-                {% with latest_workup=patient.workup_set.0 %}
+                {% with latest_workup=patient.workup_set.all.0 %}
                 {# .0 must be used instead of .first; .first induces additional queries because it is a "different" query (limit 1) and so doesn't use the prefetch_related cache #}
                     <tr>
                         <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
