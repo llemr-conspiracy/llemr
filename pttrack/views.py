@@ -349,29 +349,18 @@ def patient_detail(request, pk):
 
 
 def all_patients(request):
-    # lists = [
-    #     {'url': 'sort=last_name',
-    #      'title': "Alphabetized by Last Name",
-    #      'identifier': 'ptlast',
-    #      'active': False },
-    #     {'url': 'sort=latest_workup',
-    #      'title': "Ordered by Latest Activity",
-    #      'identifier': 'ptlatest',
-    #      'active': True }]
-
-    # api_url = reverse('pt_list_api')[:-1] + '.json/?' # remove last '/' before adding because there no '/' between /api/pt_list and .json, but reverse generates '/api/pt_list/'
-
-    # return render(request,
-    #               'pttrack/patient_list.html',
-    #               {'lists': json.dumps(lists),
-    #                 'title': "All Patients",
-    #                 'api_url': api_url})
+    '''
+    Query is written to minimize hits to the database; number of db hits can be see on the django debug toolbar.
+    '''
     patient_list = mymodels.Patient.objects.all() \
         .order_by('last_name') \
         .select_related('gender') \
         .prefetch_related('case_managers') \
         .prefetch_related(Prefetch('workup_set', queryset=workupmodels.Workup.objects.order_by('clinic_day__clinic_date'))) \
         .prefetch_related('actionitem_set')
+
+    # Don't know how to prefetch history https://stackoverflow.com/questions/45713517/use-prefetch-related-in-django-simple-history
+    # Source code is https://github.com/treyhunner/django-simple-history/blob/master/simple_history/models.py if we want to try to figure out
 
     return render(request,
                   'pttrack/all_patients.html',
