@@ -4,8 +4,10 @@ from django.views.generic.edit import FormView, UpdateView
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db.models import Prefetch
 
 from . import models as mymodels
+from workup import models as workupmodels
 from . import forms as myforms
 import json
 
@@ -364,7 +366,11 @@ def all_patients(request):
     #               {'lists': json.dumps(lists),
     #                 'title': "All Patients",
     #                 'api_url': api_url})
-    patient_list = mymodels.Patient.objects.all().order_by('last_name').select_related('gender').prefetch_related('case_managers')
+    patient_list = mymodels.Patient.objects.all() \
+        .order_by('last_name') \
+        .select_related('gender') \
+        .prefetch_related('case_managers') \
+        .prefetch_related(Prefetch('workup_set', queryset=workupmodels.Workup.objects.order_by('clinic_day__clinic_date')))
 
     return render(request,
                   'pttrack/all_patients.html',

@@ -311,6 +311,10 @@ class Patient(Person):
         return followups
 
     def latest_workup(self):
+        '''
+        Keeping this method because it is used by WorkupCreate.get_initial in workup/views
+        However, this is not used in all_patients in pttrack/views, because it gets all patients in prefetch_related instead of requesting for latest_workup individually.
+        '''
         wu_set = self.workup_set
         return wu_set.order_by("clinic_day__clinic_date").first()
 
