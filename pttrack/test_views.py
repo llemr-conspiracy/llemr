@@ -462,9 +462,6 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
     def test_attestation_column(self):
 
-        self.selenium.implicitly_wait(10)
-        self.selenium.set_page_load_timeout(10)
-
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
         live_submit_login(
             self.selenium, self.providers['coordinator'].username, self.provider_password)
