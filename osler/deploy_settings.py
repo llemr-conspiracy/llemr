@@ -26,9 +26,11 @@ DEFAULT_FROM_EMAIL = "webmaster@osler.wustl.edu"
 SERVER_EMAIL = "admin@osler.wustl.edu"
 EMAIL_HOST = "irony.wusm.wustl.edu"
 ADMINS = (
-    ('Nakul Shah', 'nakul.m.shah@wustl.edu'),
+    ('Artur Meller', 'ameller@wustl.edu'),
     ('Justin Porter', 'jrporter@wustl.edu'),
-    ('Minerva Zhou', 'zhouminerva@wustl.edu')
+    ('Nicolas Ledru', 'nicolas.ledru@wustl.edu'),
+    ('Arjav Shah', 'arjav.shah@wustl.edu'),
+    ('Benji Katz','benjamin.katz@wustl.edu')
 )
 
 with open(os.path.join(BASE_DIR, 'secrets/database_password.txt')) as f:
