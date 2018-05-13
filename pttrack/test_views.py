@@ -13,6 +13,7 @@ from django.core.management import call_command
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -126,7 +127,7 @@ class SendEmailTest(TestCase):
         #make 2 providers
         log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user1@gmail.com'))
         log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user2@gmail.com'))
-        log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user3@gmail.com')) 
+        log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user3@gmail.com'))
 
         pt = models.Patient.objects.first()
         pt.case_managers.add(models.Provider.objects.first())
@@ -461,6 +462,9 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
     def test_attestation_column(self):
 
+        self.selenium.implicitly_wait(10)
+        self.selenium.set_page_load_timeout(10)
+
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
         live_submit_login(
             self.selenium, self.providers['coordinator'].username, self.provider_password)
@@ -565,6 +569,78 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
             self.selenium.get(
                 '%s%s' % (self.live_server_url, reverse('logout')))
+
+    def test_all_patients_filter(self):
+        """Test the All Patients view's filter box.
+
+        We test the following:
+            - Searching for a a patient's entire name
+            = Clearing the search box
+            - Searching for an upper case fragment of a patient's name
+            - Searching for a coordinator's name
+        """
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        live_submit_login(
+            self.selenium, self.providers['coordinator'].username,
+            self.provider_password)
+        self.selenium.get(
+            '%s%s' % (self.live_server_url, reverse("all-patients")))
+
+        # filter on the first patient's entire name
+        filter_box = self.selenium.find_element_by_id('all-patients-filter-input')
+        filter_box.send_keys(self.pt1.first_name)
+
+        def get_present_pt_names():
+            """Grab all the present & displayed names from the table
+            """
+            tbody = self.selenium.find_element_by_id('all-patients-table')
+            return [
+                t.get_attribute('text') for t in
+                tbody.find_elements_by_xpath(".//tr[*]/td[1]/a")
+                if t.is_displayed()
+            ]
+
+        # only patient 1 should be present
+        present_pt_names = get_present_pt_names()
+        self.assertIn(str(self.pt1), present_pt_names)
+        self.assertNotIn(str(self.pt2), present_pt_names)
+        self.assertNotIn(str(self.pt3), present_pt_names)
+
+        def clear_and_check(input_element):
+            # clear the box
+            for i in range(100):
+                input_element.send_keys(Keys.BACK_SPACE)
+            # input_element.send_keys(Keys.DELETE)
+
+            # import time
+            # time.sleep(600)
+
+            # now all patients should be present
+            present_pt_names = get_present_pt_names()
+            for pt in [self.pt1, self.pt2, self.pt3, self.pt4, self.pt5]:
+                self.assertIn(str(pt), present_pt_names)
+
+        clear_and_check(filter_box)
+
+        # fill the box with an upper case fragment
+        filter_box.send_keys(self.pt2.first_name.upper()[0:3])
+
+        # only pt2 should be there now
+        present_pt_names = get_present_pt_names()
+        self.assertNotIn(str(self.pt1), present_pt_names)
+        self.assertIn(str(self.pt2), present_pt_names)
+        self.assertNotIn(str(self.pt3), present_pt_names)
+
+        clear_and_check(filter_box)
+        filter_box.send_keys(self.providers['coordinator'].first_name)
+
+        # check for pt with coordinator
+        present_pt_names = get_present_pt_names()
+        self.assertNotIn(str(self.pt1), present_pt_names)
+        self.assertNotIn(str(self.pt2), present_pt_names)
+        self.assertNotIn(str(self.pt3), present_pt_names)
+        self.assertIn(str(self.pt5), present_pt_names)
 
 
 class ViewsExistTest(TestCase):

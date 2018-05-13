@@ -14,7 +14,7 @@ from . import validators
 def make_filepath(instance, filename):
     '''
         Produces a unique file path for the upload_to of a FileField. This is
-        important because any URL is 1) transmitted unencrypted and 2) 
+        important because any URL is 1) transmitted unencrypted and 2)
         automatically referred to any libraries we include (i.e. Bootstrap,
         AngularJS).
 
@@ -207,15 +207,15 @@ class Patient(Person):
     # data
 
     alternate_phone_1_owner = models.CharField(max_length=40, blank=True, null=True)
-    alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True) 
-   
-    alternate_phone_2_owner = models.CharField(max_length=40, blank=True, null=True)  
+    alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True)
+
+    alternate_phone_2_owner = models.CharField(max_length=40, blank=True, null=True)
     alternate_phone_2 = models.CharField(max_length=40, blank=True, null=True)
-   
-    alternate_phone_3_owner = models.CharField(max_length=40, blank=True, null=True)  
+
+    alternate_phone_3_owner = models.CharField(max_length=40, blank=True, null=True)
     alternate_phone_3 = models.CharField(max_length=40, blank=True, null=True)
-   
-    alternate_phone_4_owner = models.CharField(max_length=40, blank=True, null=True)  
+
+    alternate_phone_4_owner = models.CharField(max_length=40, blank=True, null=True)
     alternate_phone_4 = models.CharField(max_length=40, blank=True, null=True)
 
     preferred_contact_method = models.ForeignKey(ContactMethod, blank=True, null=True)
@@ -271,7 +271,7 @@ class Patient(Person):
 
         if n_active > 0:
             due_dates = ", ".join([str((now().date()-ai.due_date).days) for ai in self.active_action_items()])
-            
+
             return "Action items " + due_dates + " days past due"
         elif n_pending > 0:
             next_item = min(self.inactive_action_items(),
