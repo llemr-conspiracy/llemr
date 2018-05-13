@@ -40,10 +40,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'osler',
-#        'USER': 'django',
-#        'PASSWORD': DB_PASSWORD,
-        'USER':'root',
-        'PASSWORD':'granting sideline jilts italicize',
+        'USER': 'django',
+        'PASSWORD': DB_PASSWORD,
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
