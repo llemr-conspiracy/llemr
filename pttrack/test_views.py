@@ -103,7 +103,13 @@ def live_submit_login(selenium, username, password):
     username_input.send_keys(username)
     password_input = selenium.find_element_by_name("password")
     password_input.send_keys(password)
-    selenium.find_element_by_xpath('//button[@type="submit"]').click()
+
+    try:
+        selenium.find_element_by_xpath('//input[@type="submit"]').click()
+    except:
+        import time
+        time.sleep(600)
+        raise
 
 
 def get_url_pt_list_identifiers(self, url):
@@ -126,7 +132,7 @@ class SendEmailTest(TestCase):
         #make 2 providers
         log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user1@gmail.com'))
         log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user2@gmail.com'))
-        log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user3@gmail.com')) 
+        log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user3@gmail.com'))
 
         pt = models.Patient.objects.first()
         pt.case_managers.add(models.Provider.objects.first())

@@ -6,9 +6,8 @@ from django.conf import settings
 
 
 urlpatterns = [
-    # Examples:
-    # url(r'^blog/', include('blog.urls')),
     url(r'^pttrack/', include('pttrack.urls')),
+    url(r'^accounts/', include('pttrack.auth_urls')),
     url(r'^followup/', include('followup.urls')),
     url(r'^workup/', include('workup.urls')),
     url(r'^demographics/', include('demographics.urls')),
