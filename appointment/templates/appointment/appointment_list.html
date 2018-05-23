@@ -13,9 +13,20 @@ Appointment List
 {% block content %}
 <div class="container">
 {% for date, app_list in appointments_by_date.iteritems %}
-<h3>{{ date }}</h3>
+<h3>{{ date  | date:"l F d, y" }}</h3>
 	{% for app in app_list %}
-	<p>{{ app.patient }} - {{ app.comment }}</p>
+	<div class="row">
+		<div class="col-md-2">{{ app.clintime }}</div>
+  		<div class="col-md-2"><b><a href="{% url 'patient-detail' pk=app.patient.id %}">{{ app.patient }}</a></b></div>
+  		<div class="col-md-2">{{ app.get_appointmentType_display }}</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4"><i>{{ app.comment }}</i></div>
+		<div class="col-md-2"><a href="{% url 'appointment-update' pk=app.id %}">Edit</a></div>
+	</div>
+	<div class="row">
+		<div class="col-md-8"></br></div>
+	</div>
 	{% endfor %}
 {% endfor %}
 </div>	

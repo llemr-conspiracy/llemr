@@ -6,20 +6,18 @@ from pttrack.views import NoteFormView, NoteUpdate, get_current_provider_type
 from .models import Appointment
 from .forms import AppointmentForm
 import datetime
-
+import collections
 
 def list_view(request):
 
     # Want to sort the list so earliest dates are first
-    appointments = Appointment.objects.filter(clindate__gte=datetime.date.today())
-    print(appointments)
-    d = {}
+    appointments = Appointment.objects.filter(clindate__gte=datetime.date.today()).order_by('clindate','clintime')
+    d = collections.OrderedDict()
     for a in appointments:
         if a.clindate in d:
             d[a.clindate].append(a)
         else:
             d[a.clindate] = [a]
-    print(d)
     return render(request, 'appointment/appointment_list.html',
                   {'appointments_by_date': d})
 
