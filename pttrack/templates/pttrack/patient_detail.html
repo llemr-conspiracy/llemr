@@ -219,29 +219,41 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 </div>
 
 <div class="container">
-    <h3>&nbsp;&nbsp;Appointments</h3>
-    <div class="container col-md-4">
-        <p><strong>&nbsp;&nbsp;Language:</strong> {{ patient.languages.iterator | join:", " }}</p>
-        <p><strong>&nbsp;&nbsp;DOB:</strong> {{patient.date_of_birth}}</p>
-        <p><strong>&nbsp;&nbsp;SSN:</strong> {{patient.ssn | default:"Not Provided"}}</p>
-        <p><strong>&nbsp;&nbsp;Email:</strong> {{patient.email | default:"Not Provided"}}</p>
-    </div>
-    <div class="container col-md-4">
-        <p>
-        <strong>Address:</strong><br>
-        {{ patient.address }}<br>
-        {{ patient.city }}, {{ patient.state }} {{ patient.zip_code }}
-        </p>
-    </div>
-    <div class="container col-md-4">
-        <table class="table table-condensed">
-            <tr><th>Contact</th><th>Phone Number</th></tr>
-        {% for phone, owner in patient.all_phones %}
-            {% if phone or owner %}
-            <tr><td>{{ owner | default:"Primary" }}</td><td>{{ phone }}</td></tr>
-            {% endif %}
-        {% endfor %}
-        </table>
+    <div class="col-md-9">
+        <h3>Appointments ({{ patient.appointment_set.all | length }} Total)</h3>
+        <div class="panel-group">
+            {% for apt_type in zipped_apt_list %}
+                <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                            <a data-toggle="collapse" href="#{{ apt_type.0 }}">{{ apt_type.2 }} ({{ apt_type.1 | length }})</a>
+                            </h4>
+                        </div>
+                        <div id="{{ apt_type.0 }}" class="panel-collapse collapse">
+                            {% for date, app_list in apt_type.3.iteritems %}
+                                <div class="panel-body">
+                                    <h3>{{ date  | date:"l F d, y" }}</h3>
+                                    {% for app in app_list %}
+                                        <div class="row">
+                                            <div class="col-md-4">{{ app.clintime }}</div>
+                                            <div class="col-md-4"><b><a href="{% url 'patient-detail' pk=app.patient.id %}">{{ app.patient }}</a></b></div>
+                                            <div class="col-md-4">{{ app.get_appointmentType_display }}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8"><i>{{ app.comment }}</i></div>
+                                            <div class="col-md-4"><a href="{% url 'appointment-update' pk=app.id %}">Edit Appointment</a></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-9"></br></div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}    
+                        </div>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
+
 {% endblock %}

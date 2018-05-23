@@ -22,6 +22,7 @@ def list_view(request):
     return render(request, 'appointment/appointment_list.html',
                   {'appointments_by_date': d})
 
+
 class AppointmentUpdate(NoteUpdate):
     template_name = "pttrack/form-update.html"
     model = Appointment
@@ -51,5 +52,14 @@ class AppointmentCreate(NoteFormView):
         if pt_id is not None:
             patient = get_object_or_404(Patient, pk=pt_id)
             initial['patient'] = patient
+
+        date = self.request.GET.get('current_date', None)
+        if date is not None:
+            '''
+            If appointment attribute clindate = workup.models.ClinicDate,
+            default date could be next clindate.
+            For now, the default value will be the next Saturday (including day of)
+            '''
+            initial['clindate'] = datetime.now()
 
         return initial

@@ -7,8 +7,9 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from . import models as mymodels
 from . import forms as myforms
+from appointment.models import Appointment
 import json
-
+import collections
 import datetime
 
 def get_current_provider_type(request):
@@ -340,10 +341,39 @@ def patient_detail(request, pk):
     zipped_ai_list = zip(['collapse5', 'collapse6', 'collapse7'], [pt.active_action_items(), pt.inactive_action_items(), pt.done_action_items()],
                             ['Active Action Items', 'Pending Action Items', 'Completed Action Items'], [True, True, False])
 
+    appointments = Appointment.objects.filter(patient=pt).order_by('clindate','clintime')
+    # d = collections.OrderedDict()
+    # for a in appointments:
+    #     if a.clindate in d:
+    #         d[a.clindate].append(a)
+    #     else:
+    #         d[a.clindate] = [a]
+
+    future_date_appointments = appointments.filter(clindate__gte=datetime.date.today()).order_by('clindate', 'clintime')
+    previous_date_appointments = appointments.filter(clindate__lt=datetime.date.today()).order_by('-clindate', 'clintime')
+
+    future_apt = collections.OrderedDict()
+    for a in future_date_appointments:
+        if a.clindate in future_apt:
+            future_apt[a.clindate].append(a)
+        else:
+            future_apt[a.clindate] = [a]
+
+    previous_apt = collections.OrderedDict()
+    for a in previous_date_appointments:
+        if a.clindate in previous_apt:
+            previous_apt[a.clindate].append(a)
+        else:
+            previous_apt[a.clindate] = [a]
+
+    zipped_apt_list = zip(['collapse8', 'collapse9'], [future_date_appointments, previous_date_appointments],
+                            ['Future Appointments', 'Past Appointments'], [future_apt, previous_apt])
     return render(request,
                   'pttrack/patient_detail.html',
                   {'zipped_ai_list': zipped_ai_list,
-                    'patient': pt})
+                   'patient': pt,
+                   'appointments_by_date': future_apt,
+                   'zipped_apt_list': zipped_apt_list})
 
 
 def all_patients(request):
@@ -364,7 +394,7 @@ def all_patients(request):
     #               {'lists': json.dumps(lists),
     #                 'title': "All Patients",
     #                 'api_url': api_url})
-    
+
     patient_list = mymodels.Patient.objects.all().order_by('last_name')
     return render(request,
                   'pttrack/all_patients.html',

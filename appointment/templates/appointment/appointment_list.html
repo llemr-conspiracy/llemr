@@ -7,7 +7,16 @@ Appointment List
 {% endblock %}
 
 {% block header %}
-<h1>Appointment List </h1>
+<div class="container">
+	<h1>Appointment List</h1>
+	<div class="row">
+		<div class="col-md-3 pull-right">
+			{% now "Y-m-j" as current_date %}
+		    <a class="btn btn-success btn-block" href="{% url 'appointment-new' %}?date={{current_date}}" role="button">Create New Appointment</a>
+		</div>
+	</div>
+</div>
+
 {% endblock %}
 
 {% block content %}
