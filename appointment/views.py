@@ -1,7 +1,8 @@
 from django.core.urlresolvers import reverse
-from django.shortcuts import render, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 
 from pttrack.views import NoteFormView, NoteUpdate, get_current_provider_type
+from pttrack.models import Patient
 
 from .models import Appointment
 from .forms import AppointmentForm
@@ -44,3 +45,11 @@ class AppointmentCreate(NoteFormView):
 
         return HttpResponseRedirect(reverse("appointment-list"))
 
+    def get_initial(self):
+        initial = super(AppointmentCreate, self).get_initial()
+        pt_id = self.request.GET.get('pt_id', None)
+        if pt_id is not None:
+            patient = get_object_or_404(Patient, pk=pt_id)
+            initial['patient'] = patient
+
+        return initial

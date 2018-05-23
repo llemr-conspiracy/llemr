@@ -47,6 +47,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
     <a class="btn btn-warning pull-left btn-block" href="{% url 'new-document' pt_id=patient.pk %}" role="button">Upload Document or Prescription</a>
     <a class="btn btn-primary pull-left btn-block" href="{% url 'followup-choice' pt_id=patient.pk %}" role="button">Create New Followup</a>
     <a class="btn btn-danger pull-left btn-block" href="{% url 'new-progress-note' pt_id=patient.pk %}" role="button">Create New Psych Progress Note</a>
+    <a class="btn btn-success pull-left btn-block" href="{% url 'appointment-new' %}?pt_id={{patient.pk}}" role="button">Create New Appointment</a>
 	</div>
 </div>
 {% endblock %}
@@ -215,5 +216,32 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	  		{% endfor %}
   		</div>
 	</div>
+</div>
+
+<div class="container">
+    <h3>&nbsp;&nbsp;Appointments</h3>
+    <div class="container col-md-4">
+        <p><strong>&nbsp;&nbsp;Language:</strong> {{ patient.languages.iterator | join:", " }}</p>
+        <p><strong>&nbsp;&nbsp;DOB:</strong> {{patient.date_of_birth}}</p>
+        <p><strong>&nbsp;&nbsp;SSN:</strong> {{patient.ssn | default:"Not Provided"}}</p>
+        <p><strong>&nbsp;&nbsp;Email:</strong> {{patient.email | default:"Not Provided"}}</p>
+    </div>
+    <div class="container col-md-4">
+        <p>
+        <strong>Address:</strong><br>
+        {{ patient.address }}<br>
+        {{ patient.city }}, {{ patient.state }} {{ patient.zip_code }}
+        </p>
+    </div>
+    <div class="container col-md-4">
+        <table class="table table-condensed">
+            <tr><th>Contact</th><th>Phone Number</th></tr>
+        {% for phone, owner in patient.all_phones %}
+            {% if phone or owner %}
+            <tr><td>{{ owner | default:"Primary" }}</td><td>{{ phone }}</td></tr>
+            {% endif %}
+        {% endfor %}
+        </table>
+    </div>
 </div>
 {% endblock %}

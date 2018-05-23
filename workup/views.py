@@ -145,7 +145,7 @@ class ProgressNoteCreate(NoteFormView):
         pnote.save()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
-        
+
 
 class ClinicDateCreate(FormView):
     '''A view for creating a new ClinicDate. On submission, it redirects to
@@ -192,8 +192,9 @@ def error_workup(request, pk):
 
     wu = get_object_or_404(models.Workup, pk=pk)
 
-    #TODO: clearly a template error here.
+    # TODO: clearly a template error here.
     return render(request, 'pttrack/workup_error.html', {'workup': wu})
+
 
 def pdf_workup(request, pk):
 
@@ -205,11 +206,11 @@ def pdf_workup(request, pk):
         data = {'workup': wu}
 
         template = get_template('workup/workup_body.html')
-        html  = template.render(Context(data))
+        html = template.render(Context(data))
 
         file = TemporaryFile(mode="w+b")
         pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
-                encoding='utf-8')
+                                    encoding='utf-8')
 
         file.seek(0)
         pdf = file.read()
@@ -220,15 +221,9 @@ def pdf_workup(request, pk):
         filename = ''.join([initials, ' (', formatdate, ')'])
 
         response = HttpResponse(pdf, 'application/pdf')
-        response["Content-Disposition"]= "attachment; filename=%s.pdf" % (filename,)
+        response["Content-Disposition"] = "attachment; filename=%s.pdf" % (filename,)
         return response
 
     else:
         return HttpResponseRedirect(reverse('workup',
-                                        args=(wu.id,)))
-
-
-
-
-
-
+                                            args=(wu.id,)))

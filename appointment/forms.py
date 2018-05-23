@@ -14,15 +14,21 @@ class AppointmentForm(ModelForm):
     class Meta:
         model = Appointment
         exclude = ['author', 'author_type']
+<<<<<<< Updated upstream
         widgets = {'clindate': DateTimePicker(options={"format": "YYYY-MM-DD",
                                                        "pickTime": False}),
                    'clintime': TimeInput(format='%H:%M')}
+=======
+        widgets = {'clindate': DateTimePicker(
+            options={"format": "YYYY-MM-DD", "pickTime": False})}
+>>>>>>> Stashed changes
 
     def __init__(self, *args, **kwargs):
         super(AppointmentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
 
+<<<<<<< Updated upstream
     def clean(self):
         cleaned_data = super(ModelForm, self).clean()
         date = cleaned_data.get("clindate")
@@ -34,3 +40,5 @@ class AppointmentForm(ModelForm):
                 self.add_error('clindate', 'There cannot be more than 5' +
                                ' appointments per day. Please pick a different date')
 
+=======
+>>>>>>> Stashed changes

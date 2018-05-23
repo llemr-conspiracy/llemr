@@ -64,7 +64,7 @@ class ViewsExistTest(TestCase):
 
         response = self.client.post(url, form_data)
         self.assertRedirects(response, reverse('patient-detail', args=(1,)))
-        
+
         url=reverse('progress-note-update', args=(1,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
