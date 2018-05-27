@@ -275,31 +275,18 @@ class Patient(Person):
         """
         patient_action_items = self.actionitem_set.all()
 
-        active = []
-        inactive = []
-        n_done = 0
+        done = [ai for ai in patient_action_items if ai.completion_author is not None]
+        active = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date > now().date()]
+        inactive = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date <= now().date()]
 
-        for action_item in patient_action_items:
-            if action_item.completion_author is not None:
-                n_done += 1
-            else:
-                pass
-                if action_item.due_date > now().date():
-                    inactive.append(action_item)
-                else:
-                    active.append(action_item)
-
-        n_active = len(active)
-        n_inactive = len(inactive)
-
-        if n_active > 0:
+        if len(active) > 0:
             due_dates = ", ".join([str((now().date()-ai.due_date).days) for ai in active])
             return "Action items " + due_dates + " days past due"
-        elif n_inactive > 0:
+        elif len(inactive) > 0:
             next_item = min(inactive, key=lambda(k): k.due_date)
             tdelta = next_item.due_date - now().date()
             return "next action in "+str(tdelta.days)+" days"
-        elif n_done > 0:
+        elif len(done) > 0:
             return "all actions complete"
         else:
             return "no pending actions"
@@ -315,8 +302,11 @@ class Patient(Person):
 
     def latest_workup(self):
         """
-        Keeping this method because it is used by WorkupCreate.get_initial in workup/views
-        However, this is not used in all_patients in pttrack/views, because it gets all patients in prefetch_related instead of requesting for latest_workup individually.
+        Keeping this method because it is used by WorkupCreate.get_initial in
+            workup/views
+        However, this is not used in all_patients in pttrack/views, because it
+            gets all patients in prefetch_related instead of requesting for
+            latest_workup individually.
         """
         wu_set = self.workup_set
         return wu_set.order_by("clinic_day__clinic_date").first()
