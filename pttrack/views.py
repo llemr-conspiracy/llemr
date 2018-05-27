@@ -349,9 +349,10 @@ def patient_detail(request, pk):
 
 
 def all_patients(request):
-    '''
-    Query is written to minimize hits to the database; number of db hits can be see on the django debug toolbar.
-    '''
+    """
+    Query is written to minimize hits to the database; number of db hits can be
+        see on the django debug toolbar.
+    """
     patient_list = mymodels.Patient.objects.all() \
         .order_by('last_name') \
         .select_related('gender') \

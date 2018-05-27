@@ -265,11 +265,14 @@ class Patient(Person):
             key=lambda(ai): ai.due_date)
 
     def status(self):
-        '''
-        The active_action_items, done_action_items, and inactive_action_items aren't a big deal to use when getting just one patient
-        For the all_patients page though (one of the pages that use status), hitting the db three times per patient adds up
-        Here, we only hit the db once by asking the db for all action items for a patient, then sorting them in memory
-        '''
+        """
+        The active_action_items, done_action_items, and inactive_action_items
+            aren't a big deal to use when getting just one patient
+        For the all_patients page though (one of the pages that use status), 
+            hitting the db three times per patient adds up
+        Here, we only hit the db once by asking the db for all action items for
+            a patient, then sorting them in memory
+        """
         patient_action_items = self.actionitem_set.all()
 
         active = []
@@ -311,10 +314,10 @@ class Patient(Person):
         return followups
 
     def latest_workup(self):
-        '''
+        """
         Keeping this method because it is used by WorkupCreate.get_initial in workup/views
         However, this is not used in all_patients in pttrack/views, because it gets all patients in prefetch_related instead of requesting for latest_workup individually.
-        '''
+        """
         wu_set = self.workup_set
         return wu_set.order_by("clinic_day__clinic_date").first()
 
