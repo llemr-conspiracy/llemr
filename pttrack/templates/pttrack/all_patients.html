@@ -57,8 +57,6 @@ function filterAllPatientsTable() {
   table = document.getElementById("all-patients-table");
   tr = table.getElementsByTagName("tr");
 
-  console.log(tr.length)
-
   // Loop through all table rows, and hide those who don't match the search query
   // Start at one to avoid hitting table header
   for (i = 1; i < tr.length; i++) {
@@ -77,10 +75,8 @@ function filterAllPatientsTable() {
         } 
     }
     if (match == 1) {
-      console.log("Showing", tr[i].getElementsByTagName("td")[0].getElementsByTagName("a")[0].innerHTML)
       tr[i].style.display = "";
     } else {
-      console.log("Hiding", tr[i].getElementsByTagName("td")[0].getElementsByTagName("a")[0].innerHTML)
       tr[i].style.display = "none";
     }
   }
@@ -88,13 +84,10 @@ function filterAllPatientsTable() {
 
 function check(haystack_element, needle){
     var haystack = haystack_element.innerHTML.toUpperCase()
-    console.log('checking if', needle, 'in', haystack)
     if (!needle) {return 1}
     if (haystack && haystack.indexOf(needle) > -1) {
-        console.log("present")
         return 1
     } else {
-        console.log("not present")
         return 0
     }
 }
