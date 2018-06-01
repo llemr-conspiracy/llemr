@@ -1,4 +1,4 @@
-from base_settings import *
+from osler.base_settings import *
 
 DEBUG = True
 CRISPY_FAIL_SILENTLY = not DEBUG
