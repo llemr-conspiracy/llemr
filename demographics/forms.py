@@ -17,9 +17,6 @@ class DemographicsForm(ModelForm):
 
         self.helper = FormHelper()
         self.helper.form_method = 'post'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-lg-2'
-        self.helper.field_class = 'col-lg-8'
 
         self.helper.layout = Layout(
                 Fieldset('Medical',
