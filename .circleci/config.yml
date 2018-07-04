@@ -1,6 +1,9 @@
-machine:
-  timezone:
-    America/Chicago
+version: 2
+
+jobs:
+  build:
+    timezone:
+      America/Chicago
 
 dependencies:
   post:
