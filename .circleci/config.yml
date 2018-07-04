@@ -5,6 +5,7 @@ jobs:
       - image: circleci/python:2.7.15-jessie-browsers
     steps:
       - checkout
+      - run: mkdir test-reports
       - run:
           name: Download Selenium
           command: |
@@ -12,7 +13,7 @@ jobs:
       - run:
           name: Start Selenium
           command: |
-            java -jar selenium-server-standalone-3.5.3.jar -log selenium.log
+            java -jar selenium-server-standalone-3.5.3.jar -log test-reports/selenium.log
           background: true
       - restore_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
