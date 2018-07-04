@@ -31,8 +31,7 @@ INSTALLED_APPS = (
     'bootstrap3',
     'bootstrap3_datetime',
     'simple_history',
-    'rest_framework',
-    'debug_toolbar',
+    'rest_framework'
 )
 
 MIDDLEWARE_CLASSES = (

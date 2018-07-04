@@ -1,5 +1,7 @@
 from osler.base_settings import *
 
+INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
+
 DEBUG = True
 CRISPY_FAIL_SILENTLY = not DEBUG
 ALLOWED_HOSTS = []
