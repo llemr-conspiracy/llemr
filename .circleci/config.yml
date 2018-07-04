@@ -18,9 +18,12 @@ jobs:
       - restore_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
       - run:
+          command: |
+            pip install venv
+      - run:
           name: Install Python deps in a venv
           command: |
-            python2 -m venv venv
+            python -m venv venv
             . venv/bin/activate
             pip install -r requirements-dev.txt
       - save_cache:
