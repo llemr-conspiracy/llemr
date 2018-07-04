@@ -14,6 +14,7 @@ jobs:
           name: Start Selenium
           command: |
             java -jar selenium-server-standalone-3.5.3.jar -log test-reports/selenium.log
+            Xvfb :7055
           background: true
       - restore_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements-dev.txt" }}
