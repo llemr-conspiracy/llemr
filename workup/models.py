@@ -29,6 +29,10 @@ class ClinicType(models.Model):
 
 
 class ClinicDate(models.Model):
+
+    class Meta:
+        ordering = ["-clinic_date"]
+
     clinic_type = models.ForeignKey(ClinicType)
 
     clinic_date = models.DateField()
