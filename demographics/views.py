@@ -1,20 +1,25 @@
+import datetime
+
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.views.generic.edit import FormView, UpdateView
 from django.core.urlresolvers import reverse
+from django.db import IntegrityError, transaction
+from django.forms.models import model_to_dict
+
+from django.shortcuts import render
+
 # Create your views here.
-from . import models as mymodels
-from . import forms as myforms
+from .models import Demographics
+from .forms import DemographicsForm
 
 from pttrack.models import Patient
-
-import datetime
 
 
 class DemographicsCreate(FormView):
 
     template_name = 'demographics/demographics-create.html'
-    form_class = myforms.DemographicsForm
+    form_class = DemographicsForm
 
     def get_context_data(self, **kwargs):
 
@@ -32,72 +37,69 @@ class DemographicsCreate(FormView):
         dg.creation_date = datetime.date.today()
         dg.patient = pt
 
-        if form.cleaned_data['has_insurance'] == '1':
-            dg.has_insurance = True
-        elif form.cleaned_data['has_insurance'] == '2':
-            dg.has_insurance = False
-        else:
-            dg.has_insurance = None
+        try:
+            with transaction.atomic():
+                dg.save()
+                pt.save()
+                form.save_m2m()
+                form.save()
+            return HttpResponseRedirect(reverse("patient-detail",
+                                                args=(pt.id,)))
+        except IntegrityError:
+            # Create form object containing data from current entry in database
+            dg_old = Demographics.objects.get(patient=pt.id)
+            form_old = DemographicsForm(dg_old.__dict__)
 
-        if form.cleaned_data['lives_alone'] == '1':
-            dg.lives_alone = True
-        elif form.cleaned_data['lives_alone'] == '2':
-            dg.lives_alone = False
-        else:
-            dg.lives_alone = None
+            # calling is_valid causes cleaned_data to be availiable
+            assert form_old.is_valid()
 
-        if form.cleaned_data['currently_employed'] == '1':
-            dg.currently_employed = True
-        elif form.cleaned_data['currently_employed'] == '2':
-            dg.currently_employed = False
-        else:
-            dg.currently_employed = None
+            NULL_BOOLEAN_CHOICES = dict(Demographics.NULL_BOOLEAN_CHOICES)
 
-        if form.cleaned_data['ER_visit_last_year'] == '1':
-            dg.ER_visit_last_year = True
-        elif form.cleaned_data['ER_visit_last_year'] == '2':
-            dg.ER_visit_last_year = False
-        else:
-            dg.ER_visit_last_year = None
+            # Add errors to the forms to point user to fields to fix
+            dg_old_dict = model_to_dict(dg_old)
+            dg_new_dict = model_to_dict(dg)
 
-        dg.save()
-        pt.save()
-        form.save_m2m()
-        form.save()
+            for field in form_old.base_fields:
 
-        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+                old_value = dg_old_dict.get(field)
+                new_value = dg_new_dict.get(field)
+
+                if new_value != old_value:
+
+                    new_err_msg = "Clash in this field. You entered '%s'"
+                    old_err_msg = "Clash in this field. Database entry is '%s'"
+
+                    value_msg_form_tuples = [
+                        (new_value, new_err_msg, form),
+                        (old_value, old_err_msg, form_old)
+                    ]
+
+                    for val, err_msg, f in value_msg_form_tuples:
+                        if val in NULL_BOOLEAN_CHOICES:
+                            err_msg = err_msg % NULL_BOOLEAN_CHOICES[val]
+                        else:
+                            err_msg = err_msg % val
+
+                        f.add_error(field, err_msg)
+
+            # Create context variable containing new and old forms
+            context = {"form_old": form_old,
+                       "form_new": form,
+                       "pt_id": pt.id,
+                       "pt_name": pt.name}
+            return render(self.request,
+                          "demographics/demographics-resolve.html",
+                          context)
 
 
 class DemographicsUpdate(UpdateView):
 
     template_name = 'demographics/demographics-create.html'
-    form_class = myforms.DemographicsForm
-    model = mymodels.Demographics
+    form_class = DemographicsForm
+    model = Demographics
 
     def get_initial(self):
         initial = super(DemographicsUpdate, self).get_initial()
-
-        dg = self.object
-
-        if dg.has_insurance is True:
-            initial['has_insurance'] = '1'
-        elif dg.has_insurance is False:
-            initial['has_insurance'] = '2'
-
-        if dg.lives_alone is True:
-            initial['lives_alone'] = '1'
-        elif dg.lives_alone is False:
-            initial['lives_alone'] = '2'
-
-        if dg.currently_employed is True:
-            initial['currently_employed'] = '1'
-        elif dg.currently_employed is False:
-            initial['currently_employed'] = '2'
-
-        if dg.ER_visit_last_year is True:
-            initial['ER_visit_last_year'] = '1'
-        elif dg.ER_visit_last_year is False:
-            initial['ER_visit_last_year'] = '2'
 
         return initial
 
@@ -105,34 +107,6 @@ class DemographicsUpdate(UpdateView):
         dg = form.save(commit=False)
         pt = dg.patient
         dg.creation_date = datetime.date.today()
-
-        if form.cleaned_data['has_insurance'] == '1':
-            dg.has_insurance = True
-        elif form.cleaned_data['has_insurance'] == '2':
-            dg.has_insurance = False
-        else:
-            dg.has_insurance = None
-
-        if form.cleaned_data['lives_alone'] == '1':
-            dg.lives_alone = True
-        elif form.cleaned_data['lives_alone'] == '2':
-            dg.lives_alone = False
-        else:
-            dg.lives_alone = None
-
-        if form.cleaned_data['currently_employed'] == '1':
-            dg.currently_employed = True
-        elif form.cleaned_data['currently_employed'] == '2':
-            dg.currently_employed = False
-        else:
-            dg.currently_employed = None
-
-        if form.cleaned_data['ER_visit_last_year'] == '1':
-            dg.ER_visit_last_year = True
-        elif form.cleaned_data['ER_visit_last_year'] == '2':
-            dg.ER_visit_last_year = False
-        else:
-            dg.ER_visit_last_year = None
 
         dg.save()
         form.save_m2m()

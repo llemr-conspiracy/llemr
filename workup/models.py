@@ -1,6 +1,5 @@
 from django.db import models
 from django.utils.timezone import now
-from django.conf import settings
 
 from simple_history.models import HistoricalRecords
 from django.core.urlresolvers import reverse
@@ -30,6 +29,10 @@ class ClinicType(models.Model):
 
 
 class ClinicDate(models.Model):
+
+    class Meta:
+        ordering = ["-clinic_date"]
+
     clinic_type = models.ForeignKey(ClinicType)
 
     clinic_date = models.DateField()
@@ -147,10 +150,10 @@ class Workup(Note):
     history = HistoricalRecords()
 
     def sign(self, user, active_role=None):
-        '''
-        Signs this workup. The active_role parameter isn't necessary if the
-        user has only one role.
-        '''
+        """Signs this workup.
+
+        The active_role parameter isn't necessary if the user has only one role.
+        """
 
         if active_role is None:
             if len(user.provider.clinical_roles.all()) != 1:

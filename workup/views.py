@@ -6,6 +6,7 @@ from django.template import Context
 from django.template.loader import get_template
 from django.utils.timezone import now
 from django.views.generic.edit import FormView
+from django.views.generic.list import ListView
 
 from pttrack.views import NoteFormView, NoteUpdate, get_current_provider_type
 from pttrack.models import Patient, ProviderType
@@ -145,7 +146,7 @@ class ProgressNoteCreate(NoteFormView):
         pnote.save()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
-        
+
 
 class ClinicDateCreate(FormView):
     '''A view for creating a new ClinicDate. On submission, it redirects to
@@ -170,6 +171,16 @@ class ClinicDateCreate(FormView):
 
         return HttpResponseRedirect(reverse("new-workup", args=(pt.id,)))
 
+
+class ClinicDateList(ListView):
+
+    model = models.ClinicDate
+    template_name = 'workup/clindate-list.html'
+
+    def get_queryset(self):
+        qs = super(ClinicDateList, self).get_queryset()
+        qs = qs.prefetch_related('workup_set', 'clinic_type')
+        return qs
 
 def sign_workup(request, pk):
 

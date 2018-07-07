@@ -39,6 +39,9 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^(?P<pt_id>[0-9]+)/clindate/$',
         views.ClinicDateCreate.as_view(),
         name="new-clindate"),
+    url(r'^clindates/$',
+        views.ClinicDateList.as_view(),
+        name="clindate-list")
 ]
 
 wrap_config = {}
