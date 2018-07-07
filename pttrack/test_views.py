@@ -10,7 +10,6 @@ from django.core import mail
 from django.core.management import call_command
 
 # For live tests.
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -18,6 +17,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from . import models
+from .test import SeleniumLiveTestCase
 from workup import models as workupModels
 
 # pylint: disable=invalid-name
@@ -97,20 +97,6 @@ def log_in_provider(client, provider):
     session.save()
 
     return user.provider
-
-
-def live_submit_login(selenium, username, password):
-    username_input = selenium.find_element_by_name("username")
-    username_input.send_keys(username)
-    password_input = selenium.find_element_by_name("password")
-    password_input.send_keys(password)
-
-    try:
-        selenium.find_element_by_xpath('//input[@type="submit"]').click()
-    except:
-        import time
-        time.sleep(600)
-        raise
 
 
 def get_url_pt_list_identifiers(self, url):
@@ -200,19 +186,8 @@ class SendEmailTest(TestCase):
         self.assertEqual(mail.outbox[0].to, ['user1@gmail.com', 'user3@gmail.com'])
 
 
-class LiveTesting(StaticLiveServerTestCase):
+class LiveTesting(SeleniumLiveTestCase):
     fixtures = [BASIC_FIXTURE]
-
-    @classmethod
-    def setUpClass(cls):
-        super(LiveTesting, cls).setUpClass()
-        cls.selenium = WebDriver()
-        cls.selenium.implicitly_wait(10)
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.selenium.quit()
-        super(LiveTesting, cls).tearDownClass()
 
     def test_login(self):
         '''
@@ -224,7 +199,7 @@ class LiveTesting(StaticLiveServerTestCase):
 
         # any valid URL should redirect to login at this point.
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        live_submit_login(self.selenium, 'jrporter', 'password')
+        self.submit_login('jrporter', 'password')
 
         # now we should have to choose a clinical role
         self.assertEquals(self.selenium.current_url,
@@ -253,7 +228,7 @@ class LiveTesting(StaticLiveServerTestCase):
                        roles=["Attending"])
 
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        live_submit_login(self.selenium, 'timmy', 'password')
+        self.submit_login('timmy', 'password')
 
         # now we should be redirected directly to home.
         self.assertEquals(self.selenium.current_url,
@@ -272,7 +247,7 @@ class LiveTesting(StaticLiveServerTestCase):
         build_provider(username='timmy', password='password',
                        roles=["Attending"])
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        live_submit_login(self.selenium, 'timmy', 'password')
+        self.submit_login('timmy', 'password')
 
         for url in urls.urlpatterns:
             # except 'choose-clintype' and action item modifiers from test
@@ -305,18 +280,8 @@ class LiveTesting(StaticLiveServerTestCase):
                               " to have a jumbotron element."]))
 
 
-class LiveTestPatientLists(StaticLiveServerTestCase):
+class LiveTestPatientLists(SeleniumLiveTestCase):
     fixtures = [BASIC_FIXTURE]
-
-    @classmethod
-    def setUpClass(cls):
-        super(LiveTestPatientLists, cls).setUpClass()
-        cls.selenium = WebDriver()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.selenium.quit()
-        super(LiveTestPatientLists, cls).tearDownClass()
 
     def setUp(self):
         # build a provider and log in
@@ -469,8 +434,8 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
     def test_attestation_column(self):
 
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        live_submit_login(
-            self.selenium, self.providers['coordinator'].username, self.provider_password)
+        self.submit_login(self.providers['coordinator'].username,
+                          self.provider_password)
 
         self.selenium.get(
             '%s%s' % (self.live_server_url, reverse("all-patients")))
@@ -491,8 +456,8 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
     def test_all_patients_correct_order(self):
 
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        live_submit_login(
-            self.selenium, self.providers['coordinator'].username, self.provider_password)
+        self.submit_login(self.providers['coordinator'].username,
+                          self.provider_password)
 
         self.selenium.get('%s%s' % (self.live_server_url,
                                     reverse("all-patients")))
@@ -526,10 +491,10 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         # self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
 
     def test_provider_types_correct_home_order(self):
-        '''Verify that for each provider type, on the home page the
+        """Verify that for each provider type, on the home page the
         expected tabs appear and the expected patients for in each tab
         appear in the correct order.
-        '''
+        """
         provider_tabs = {
             'attending': ['unsignedwu', 'activept'],
             'coordinator': ['activept', 'activeai', 'pendingai', 'unsignedwu',
@@ -548,13 +513,12 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
 
         for provider_type in provider_tabs:
             self.selenium.get('%s%s' % (self.live_server_url, '/'))
-            live_submit_login(
-                self.selenium, self.providers[provider_type].username,
-                self.provider_password)
+            self.submit_login(self.providers[provider_type].username,
+                              self.provider_password)
             self.selenium.get('%s%s' % (self.live_server_url, reverse("home")))
 
             for tab_name in provider_tabs[provider_type]:
-                WebDriverWait(self.selenium, 20).until(
+                WebDriverWait(self.selenium, 30).until(
                     EC.presence_of_element_located((By.ID, tab_name)))
 
                 # examine each tab and get pk of expected and present patients.
@@ -573,6 +537,7 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
             self.selenium.get(
                 '%s%s' % (self.live_server_url, reverse('logout')))
 
+
     def test_all_patients_filter(self):
         """Test the All Patients view's filter box.
 
@@ -584,9 +549,8 @@ class LiveTestPatientLists(StaticLiveServerTestCase):
         """
 
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        live_submit_login(
-            self.selenium, self.providers['coordinator'].username,
-            self.provider_password)
+        self.submit_login(self.providers['coordinator'].username,
+                          self.provider_password)
         self.selenium.get(
             '%s%s' % (self.live_server_url, reverse("all-patients")))
 
@@ -790,8 +754,8 @@ class ProviderCreateTest(TestCase):
         log_in_provider(self.client, build_provider())
 
     def test_provider_creation(self):
-        '''Verify that, in the absence of a provider, a provider is created,
-        and that it is created correctly.'''
+        """Verify that, in the absence of a provider, a provider is created,
+        and that it is created correctly."""
 
         final_url = reverse('all-patients')
 
