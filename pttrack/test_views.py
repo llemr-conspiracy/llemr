@@ -696,8 +696,6 @@ class ViewsExistTest(TestCase):
             try:
                 self.assertEqual(response.status_code, 200)
             except AssertionError as e:
-                print pt_url
-                print response
                 raise e
 
         for pt_url in pt_urls_redirect:
@@ -705,8 +703,6 @@ class ViewsExistTest(TestCase):
             try:
                 self.assertEqual(response.status_code, 302)
             except AssertionError as e:
-                print pt_url
-                print response
                 raise e
 
     def test_provider_urls(self):
