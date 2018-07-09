@@ -119,14 +119,3 @@ class TestPatientCreateForms(TestCase):
         form = forms.PatientForm(data=form_data)
         # we expect errors on the empty alternate_phone_1_owner field
         self.assertNotEqual(form['alternate_phone_1_owner'].errors, [])
-
-    def test_stray_name_space(self):
-        '''Name ending with a space should fail.'''
-        form_data = self.valid_pt_dict
-
-        form_data['last_name'] = "Brodeltein "
-        # name ends with a space, should get an error
-
-        form = forms.PatientForm(data=form_data)
-        # we expect errors on the last_name field
-        self.assertNotEqual(form['last_name'].errors, [])
