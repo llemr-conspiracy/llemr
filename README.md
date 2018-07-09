@@ -25,13 +25,21 @@ virtualenv venv
 source venv/bin/activate
 ```
 
-Then use pip install our dependencies with:
+Then use pip install our dependencies.
+
+If you are trying to make a development build run:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+For a deployment build run:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-(Python dependencies are stored in `requirements.txt`)
+(Python dependencies are stored in `requirements-dev.txt` for a development build and in `requirements.txt` for a deployment build)
 
 One of our dependencies is Pillow, which requires [some other libraries.](https://pillow.readthedocs.org/en/3.0.x/installation.html)
 
