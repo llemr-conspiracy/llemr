@@ -173,13 +173,15 @@ class APITest(APITestCase):
         self.assertGreaterEqual(response.data[0]['latest_workup']['clinic_day']['clinic_date'],response.data[1]['history']['last']['history_date'])
         self.assertGreaterEqual(response.data[1]['history']['last']['history_date'],response.data[2]['latest_workup']['clinic_day']['clinic_date'])
         self.assertGreaterEqual(response.data[2]['latest_workup']['clinic_day']['clinic_date'],response.data[3]['latest_workup']['clinic_day']['clinic_date'])
-        
+
     def test_api_list_patients_with_unsigned_workup(self):
         # Test for unsigned_workup
         data = {'filter':'unsigned_workup'}
         pt2 = models.Patient.objects.get(pk=2)
         pt3 = models.Patient.objects.get(pk=3)
+
         response = self.client.get(reverse("pt_list_api"), data, format='json')
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2) # check that only the two patients with unsigned workups are returned
         self.assertEqual(response.data[0]['id'], pt2.id)
@@ -191,12 +193,12 @@ class APITest(APITestCase):
         data = {'filter':'active'}
         response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        
+
         response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
         for patient in response.data:
-            self.assertEqual(patient['needs_workup'], True)    
+            self.assertEqual(patient['needs_workup'], True)
         # self.assertEqual(response.data[0]['needs_workup'], True)
         # self.assertEqual(response.data[1]['needs_workup'], True)
         self.assertLessEqual(response.data[0]['last_name'],response.data[1]['last_name']) # check that sorting is correct
@@ -213,7 +215,7 @@ class APITest(APITestCase):
         data = {'filter':'ai_active'}
         response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2) #pt2, pt3 should be present since pt 1 is not past due and pt4 has no ai   
+        self.assertEqual(len(response.data), 2) #pt2, pt3 should be present since pt 1 is not past due and pt4 has no ai
 
     def test_api_list_patients_with_inactive_action_item(self):
         # Test displaying patients with inactive action items
