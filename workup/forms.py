@@ -1,4 +1,3 @@
-import decimal
 from decimal import Decimal, ROUND_HALF_UP
 
 from django.forms import (
@@ -224,19 +223,24 @@ class WorkupForm(ModelForm):
                          ['imaging_voucher_amount',
                           'patient_pays_imaging'])
 
-        if cleaned_data.get('temperature_units') == 'F':
-            c = Decimal(fahrenheit2centigrade(cleaned_data.get('t'))).quantize(
-                    Decimal('.1'), rounding=ROUND_HALF_UP)
-            cleaned_data['t'] = c
+        if 't' in cleaned_data and cleaned_data.get('t') is not None:
+            if cleaned_data.get('temperature_units') == 'F':
+                c = Decimal(fahrenheit2centigrade(
+                    cleaned_data.get('t'))).quantize(
+                        Decimal('.1'), rounding=ROUND_HALF_UP)
+                cleaned_data['t'] = c
 
-        if cleaned_data.get('weight_units') == 'lbs':
-            kgs = Decimal(pounds2kilos(cleaned_data.get('weight'))).quantize(
-                Decimal('.1'), rounding=ROUND_HALF_UP)
-            cleaned_data['weight'] = kgs
+        if 'weight' in cleaned_data and cleaned_data.get('weight') is not None:
+            if cleaned_data.get('weight_units') == 'lbs':
+                kgs = Decimal(pounds2kilos(
+                    cleaned_data.get('weight'))).quantize(
+                        Decimal('.1'), rounding=ROUND_HALF_UP)
+                cleaned_data['weight'] = kgs
 
-        if cleaned_data.get('height_units') == 'in':
-            cm = int(inches2cm(cleaned_data.get('height')))
-            cleaned_data['height'] = cm
+        if 'height' in cleaned_data and cleaned_data.get('height') is not None:
+            if cleaned_data.get('height_units') == 'in':
+                cm = int(inches2cm(cleaned_data.get('height')))
+                cleaned_data['height'] = cm
 
         form_require_together(self, ['bp_sys', 'bp_dia'])
         if cleaned_data.get('bp_sys') and cleaned_data.get('bp_dia'):

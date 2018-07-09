@@ -216,10 +216,10 @@ def pdf_workup(request, pk):
         data = {'workup': wu}
 
         template = get_template('workup/workup_body.html')
-        html  = template.render(Context(data))
+        html  = template.render(data)
 
         file = TemporaryFile(mode="w+b")
-        pisaStatus = pisa.CreatePDF(html.encode('utf-8'), dest=file,
+        pisa.CreatePDF(html.encode('utf-8'), dest=file,
                 encoding='utf-8')
 
         file.seek(0)
