@@ -112,7 +112,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         self.assertTrue(form.is_valid(), msg=form.errors)
         self.assertEquals(
             form.cleaned_data['height'],
-            wu_data['height'] * decimal.Decimal(2.54))
+            round(wu_data['height'] * decimal.Decimal(2.54), 0))
 
     def test_note_weight_conversion(self):
 
