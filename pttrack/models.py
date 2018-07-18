@@ -275,14 +275,14 @@ class Patient(Person):
         patient_action_items = self.actionitem_set.all()
 
         done = [ai for ai in patient_action_items if ai.completion_author is not None]
-        active = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date > now().date()]
-        inactive = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date <= now().date()]
+        overdue = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date <= now().date()]
+        pending = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date > now().date()]
 
-        if len(active) > 0:
-            due_dates = ", ".join([str((now().date()-ai.due_date).days) for ai in active])
+        if len(overdue) > 0:
+            due_dates = ", ".join([str((now().date()-ai.due_date).days) for ai in overdue])
             return "Action items " + due_dates + " days past due"
-        elif len(inactive) > 0:
-            next_item = min(inactive, key=lambda(k): k.due_date)
+        elif len(pending) > 0:
+            next_item = min(pending, key=lambda k: k.due_date)
             tdelta = next_item.due_date - now().date()
             return "next action in "+str(tdelta.days)+" days"
         elif len(done) > 0:
