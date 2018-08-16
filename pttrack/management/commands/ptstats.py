@@ -5,6 +5,9 @@ import django.utils.timezone
 from django.utils.timezone import now
 from pttrack.models import Patient
 from workup.models import DiagnosisType
+import geopy
+import gmplot
+import pandas
 
 class Command(BaseCommand):
     help = '''Generates CSV statistics for current patient database.'''
@@ -13,6 +16,7 @@ class Command(BaseCommand):
         #Dictionary of the fields we want to pull for each patient:
         meta = {'filename': 'ptstats.csv','classname': Patient,'fields': ['id', 'address', 'city', 'state', 'zip_code', 'country']}
         self._write_csv(**meta)
+        self.genmap(meta['filename'])
 
     def _write_csv(self, filename, classname, fields):
         with open(filename, 'w+') as f:
@@ -51,3 +55,25 @@ class Command(BaseCommand):
                 writer.writerow(row)
 
         print 'Data written to %s' % filename
+
+    def genmap(self, filename):
+        geolocator = geopy.geocoders.Nominatim(user_agent="ptstats")
+        gmap = gmplot.gmplot.GoogleMapPlotter.from_geocode("St. Louis MO")
+        df = pandas.read_csv(filename)
+        addresslst = df.address
+        citylst = df.city
+        statelst = df.state
+        geodata = []
+        for i in xrange(0,len(addresslst)):
+            newadd = addresslst[i] + ', ' + citylst[i] + ', ' + statelst[i]
+            geodata.append(newadd)
+        coordslst = []
+        for geodatum in geodata:
+            location = geolocator.geocode(geodatum)
+            coords = ((location.latitude, location.longitude))
+            coordslst.append(coords)
+        latslst,longslst = zip(*coordslst)
+        for z in xrange(0,len(latslst)):
+            gmap.marker(latslst[z],longslst[z],'cornflowerblue')
+        gmap.draw("map.html")
+        print "Map of patient address data generated as 'map.html'"

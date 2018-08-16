@@ -2,6 +2,8 @@
 django-debug-toolbar==1.9.1
 codecov==2.0.15
 coverage==4.5.1
+geopy==1.16.0
 gmplot==1.2.0
+pandas==0.23.3
 selenium==3.12.0
 sqlparse==0.2.4
