@@ -78,6 +78,6 @@ Remote servers without GUI access may need to [configure headless selenium](http
 
 ## Deployment
 
-There a lot of good resources that teach you how to deploy a django app, and there
+There are a lot of good resources that teach you how to deploy a django app, and there
 are many ways to do it correctly. There's nothing too special about Osler in this regard!
 However, we strongly recommmend [nginx, gunicorn, and postgres](http://michal.karzynski.pl/blog/2013/06/09/django-nginx-gunicorn-virtualenv-supervisor/).
