@@ -64,3 +64,6 @@ target/
 
 # Database
 db.sqlite3
+
+# ptstats CSV data
+ptstats.csv

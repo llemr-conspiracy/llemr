@@ -48,6 +48,10 @@ Once you've done that, from the `osler/` build the test database with
 ```bash
 sh scripts/reset_db.sh
 ```
+Windows users will need to use the batch file instead:
+```bash
+scripts/reset_db.bat
+```
 
 This script is also used to rebuild the test database after making database
 changes require migrations. Then, you can run the project in debug mode with
