@@ -43,10 +43,15 @@ pip install -r requirements.txt
 
 One of our dependencies is Pillow, which requires [some other libraries.](https://pillow.readthedocs.org/en/3.0.x/installation.html)
 
-Once you've done that, from the `osler/` build the test database with
+Once you've done that, from the `osler/` build the test database with:
 
 ```bash
 sh scripts/reset_db.sh
+```
+
+Windows users will need to use the batch file instead:
+```bash
+scripts/reset_db.bat
 ```
 
 This script is also used to rebuild the test database after making database
