@@ -1,17 +1,17 @@
 from django.db import models
 from django.utils.timezone import now
+from django.core.exceptions import ValidationError
+from django.conf import settings
 from pttrack.models import Note
+
 # from workup.models import ClinicDate
 from simple_history.models import HistoricalRecords
-from datetime import datetime, time
-
 
 # From StackOverflow (https://stackoverflow.com/questions/16027516/can-i-set-a-specific-default-time-for-a-django-datetime-field/16049125)
 # def default_start_time():
 #     now = datetime.now()
 #     start = now.replace(hour=9, minute=0, second=0, microsecond=0)
-#     return start if start > now else start + timedelta(days=7)  
-
+#     return start if start > now else start + timedelta(days=7)
 
 
 class Appointment(Note):
@@ -26,10 +26,26 @@ class Appointment(Note):
     )
 
     clindate = models.DateField(verbose_name="Appointment Date")
-    clintime = models.TimeField(verbose_name="Time of Appointment", default=time(9,0))
-    appointmentType = models.CharField(max_length=15, choices=APPOINTMENT_TYPES,
-                                       verbose_name='Appointment Type',
-                                       default=CHRONIC_CARE)
+    clintime = models.TimeField(
+        verbose_name="Time of Appointment",
+        default=now().replace(
+            hour=settings.OSLER_DEFAULT_APPOINTMENT_HOUR,
+            minute=0,
+            second=0,
+            microsecond=0))
+    appointment_type = models.CharField(
+        max_length=15, choices=APPOINTMENT_TYPES,
+        verbose_name='Appointment Type', default=CHRONIC_CARE)
     comment = models.TextField(
         help_text="What should happen at this appointment?")
     history = HistoricalRecords()
+
+    def clean(self):
+        ids = Appointment.objects.filter(clindate=self.clindate).\
+            values_list('id', flat=True)
+
+        if (ids.count() >= settings.OSLER_MAX_APPOINTMENTS and
+                self.id not in ids):
+            raise ValidationError(
+                "Osler is configured only to allow %s appointments per day" %
+                settings.OSLER_MAX_APPOINTMENTS)

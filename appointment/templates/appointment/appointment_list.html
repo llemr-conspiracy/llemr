@@ -9,12 +9,6 @@ Appointment List
 {% block header %}
 <div class="container">
 	<h1>Appointment List</h1>
-	<div class="row">
-		<div class="col-md-3 pull-right">
-			{% now "Y-m-j" as current_date %}
-		    <a class="btn btn-success btn-block" href="{% url 'appointment-new' %}?date={{current_date}}" role="button">Create New Appointment</a>
-		</div>
-	</div>
 </div>
 
 {% endblock %}
@@ -22,7 +16,13 @@ Appointment List
 {% block content %}
 <div class="container">
 {% for date, app_list in appointments_by_date.iteritems %}
-<h3>{{ date  | date:"l F d, y" }}</h3>
+	<div class="row">
+		<div class="col-md-4">
+			<h3>{{ date  | date:"l F d, Y" }}
+				<a class="btn btn-success btn-xs" href="{% url 'appointment-new' %}?date={{date|date:"Y-m-d"}}" role="button">+</a>
+			</h3>
+		</div>	
+	</div>
 	{% for app in app_list %}
 	<div class="row">
 		<div class="col-md-2">{{ app.clintime }}</div>

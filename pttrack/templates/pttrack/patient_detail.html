@@ -219,7 +219,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 </div>
 
 <div class="container">
-    <div class="col-md-9">
+    <div class="col-md-8">
         <h3>Appointments ({{ patient.appointment_set.all | length }} Total)</h3>
         <div class="panel-group">
             {% for apt_type in zipped_apt_list %}
@@ -232,12 +232,12 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
                         <div id="{{ apt_type.0 }}" class="panel-collapse collapse">
                             {% for date, app_list in apt_type.3.iteritems %}
                                 <div class="panel-body">
-                                    <h3>{{ date  | date:"l F d, y" }}</h3>
+                                    <h3>{{ date  | date:"l F d, Y" }}</h3>
                                     {% for app in app_list %}
                                         <div class="row">
                                             <div class="col-md-4">{{ app.clintime }}</div>
-                                            <div class="col-md-4"><b><a href="{% url 'patient-detail' pk=app.patient.id %}">{{ app.patient }}</a></b></div>
-                                            <div class="col-md-4">{{ app.get_appointmentType_display }}</div>
+                                            
+                                            <div class="col-md-4 pull-right">{{ app.get_appointmentType_display }}</div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-8"><i>{{ app.comment }}</i></div>

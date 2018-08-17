@@ -9,6 +9,7 @@ from .forms import AppointmentForm
 import datetime
 import collections
 
+
 def list_view(request):
 
     # Want to sort the list so earliest dates are first
@@ -53,13 +54,13 @@ class AppointmentCreate(NoteFormView):
             patient = get_object_or_404(Patient, pk=pt_id)
             initial['patient'] = patient
 
-        date = self.request.GET.get('current_date', None)
+        date = self.request.GET.get('date', None)
         if date is not None:
             '''
             If appointment attribute clindate = workup.models.ClinicDate,
             default date could be next clindate.
             For now, the default value will be the next Saturday (including day of)
             '''
-            initial['clindate'] = datetime.now()
+            initial['clindate'] = date
 
         return initial

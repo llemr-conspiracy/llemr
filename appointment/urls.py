@@ -1,6 +1,5 @@
 from django.conf.urls import url
 from pttrack.urls import wrap_url
-from django.views.generic import DetailView
 
 from . import views
 
