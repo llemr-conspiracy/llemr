@@ -1,0 +1,29 @@
+{% extends "pttrack/base.html" %}
+
+{% block header %}
+<h1>Warning: Patient already has Demographics information</h1>
+<p class="lead">Please review differences and submit a single form for <em><a href="{% url 'patient-detail' pk=pt_id %}">{{ pt_name }}</a></em></p>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+	<div class='row'>
+		{% load crispy_forms_tags %}
+		<div class="col-md-6">
+		    <form method="POST" action="{% url 'demographics-update' pt_id %}">
+		  		{% crispy form_old %}
+		  	</form>
+	  	</div>
+	  	<div class="col-md-6">
+		  	<form method="POST" action="{% url 'demographics-update' pt_id %}">
+		  		{% crispy form_new %}
+		  	</form>
+	  	</div>
+	  </div>
+</div>
+
+
+
+{% endblock %}
+

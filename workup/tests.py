@@ -1,7 +1,10 @@
 from django.test import TestCase
+from django.core import mail
 from django.core.exceptions import ValidationError
-from django.utils.timezone import now
 from django.core.urlresolvers import reverse
+from django.core.management import call_command
+from django.utils.timezone import now
+
 
 from pttrack.test_views import build_provider, log_in_provider
 from pttrack.models import Patient, ProviderType, Provider
@@ -34,6 +37,49 @@ def wu_dict(units=False):
         wu['height_units'] = 'in'
 
     return wu
+
+
+class TestEmailForUnsignedNotes(TestCase):
+
+    fixtures = ['workup', 'pttrack']
+
+    def setUp(self):
+        self.provider = log_in_provider(
+            self.client,
+            build_provider())
+
+        models.ClinicType.objects.create(name="Basic Care Clinic")
+        models.ClinicDate.objects.create(
+            clinic_type=models.ClinicType.objects.first(),
+            clinic_date=now().date(),
+            gcal_id="tmp")
+
+
+    def test_unsigned_email(self):
+
+        pt = Patient.objects.first()
+
+        wu_signed = models.Workup.objects.create(**wu_dict())
+        wu_signed.sign(
+            self.provider.associated_user,
+            active_role=self.provider.clinical_roles.filter(
+                signs_charts=True).first())
+        wu_signed.save()
+
+        wu_unsigned = models.Workup.objects.create(**wu_dict())
+
+        call_command('unsigned_wu_notify')
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(
+            mail.outbox[0].subject,
+            '[OSLER] 1 Unattested Notes')
+        self.assertIn(str(pt), mail.outbox[0].body)
+        self.assertIn(self.provider.last_name, mail.outbox[0].body)
+
+        self.assertIn(
+            'https://osler.wustl.edu/workup/%s/' % wu_unsigned.pk,
+            mail.outbox[0].body)
 
 
 class TestClinDateViews(TestCase):

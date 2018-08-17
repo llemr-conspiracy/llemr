@@ -1,0 +1,40 @@
+{% extends "pttrack/base.html" %}
+
+{% block title %}
+Recent Clinic Dates
+{% endblock %}
+
+{% block header %}
+<h1>Recent Clinic Dates</h1>
+{% endblock %}
+
+
+
+{% block content %}
+
+<div class="container">
+
+	{% for clinic_date in object_list %}
+		<h3>{{clinic_date.clinic_type}} &mdash; {{clinic_date.clinic_date}}</h3>
+		<table class="table table-striped">
+	    <tr>
+		    <th>Patient</th>
+		    <th>Chief Complaint</th>
+		    <th>Case Manager</th> 
+		    <th>Note Author</th>
+		    <th>Attestation</th>
+		</tr>
+		{% for wu in clinic_date.workup_set.all %}
+			<tr {% if wu.signer == None %} class="warning" {% endif %}>
+				<td><a href="{% url 'patient-detail' pk=wu.patient.id %}">{{wu.patient}}</a></td>
+				<td><a href="{% url 'workup' pk=wu.id %}">{{wu.chief_complaint}}</a></td>
+				<td>{{wu.patient.case_manager}}</td>
+				<td>{{wu.author}}</td>
+				<td>{{wu.signer | default_if_none:"unattested"}}</td>
+			</tr>
+		{% endfor %}
+		</table>	
+	{% endfor %}
+</div>
+
+{% endblock %}

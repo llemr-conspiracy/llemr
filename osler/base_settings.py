@@ -32,7 +32,7 @@ INSTALLED_APPS = (
     'bootstrap3',
     'bootstrap3_datetime',
     'simple_history',
-    'rest_framework',
+    'rest_framework'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -92,6 +92,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # for crispy_forms
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+INTERNAL_IPS = ('127.0.0.1',) # used for debug toolbar
 
 # Medical Settings
 OSLER_MAX_SYSTOLIC = 400

@@ -1,7 +1,5 @@
 {% extends "pttrack/base.html" %}
 
-{% load bootstrap3 %}
-
 {% block title %}
 Osler: {{ title | default:"All Patients"}}
 {% endblock %}
@@ -12,29 +10,94 @@ Osler: {{ title | default:"All Patients"}}
 
 {% block content %}
    <div class="container">
-        <table class="table">
-            <tr><th>Patient Name</th><th>Age/Gender</th><th>Case Managers</th><th>Latest Activity</th><th>Next AI Due</th><th>Attestation</th>
-            </td>
-            {% for patient in object_list %}
-                <tr>
-                <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
-                <td>{{ patient.age }}/{{patient.gender}}</td>
-                <td>{{ patient.case_managers.iterator | join:"; " }}</td>
-                {% if patient.latest_workup %}
-                <td><a href="{% url 'workup' pk=patient.latest_workup.pk %}">Seen {{ patient.latest_workup.clinic_day.clinic_date }}</a>: {{patient.latest_workup.chief_complaint}}</td>
-                {% else %}
-                <td><a href="{% url 'patient-update' pk=patient.id %}">Intake</a>: {{patient.history.last.history_date}}</td>
-                {% endif %}
-                <td>{{patient.status}}</td>
-                {% if not patient.latest_workup %}
-                <td>No Note</td>
-                {% elif not patient.latest_workup.signer %}
-                <td>Unattested</td>
-                {% else %}
-                <td>{{ patient.latest_workup.signer }}</td>
-                {% endif %}
-                </tr>
-            {% endfor %}
+      <div class="form-group">
+          <label for="all-patients-filter-input"  class="sr-only" >Filter</label>
+          <div class="input-group">
+              <div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+              <input type="text" id="all-patients-filter-input" placeholder="Filter by patient or case manager name" class="form-control" onkeyup="filterAllPatientsTable()">
+          </div>
+      </div>
+
+      <table class="table" id="all-patients-table">
+          <tr><th>Patient Name</th><th>Age/Gender</th><th>Case Managers</th><th>Latest Activity</th><th>Next AI Due</th><th>Attestation</th></td>
+
+          {% for patient in object_list %}
+              {% with latest_workup=patient.workup_set.all.0 %}
+              {# .0 must be used instead of .first; .first induces additional queries because it is a "different" query (limit 1) and so doesn't use the prefetch_related cache #}
+                  <tr>
+                      <td><a href="{% url 'patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
+                      <td>{{ patient.age }}/{{patient.gender}}</td>
+                      <td>{{ patient.case_managers.all | join:"; " }}</td>
+                      <td>
+                          {% if latest_workup %}
+                              <a href="{% url 'workup' pk=latest_workup.pk %}">Seen {{ latest_workup.clinic_day.clinic_date }}</a>: {{latest_workup.chief_complaint}}
+                          {% else %}
+                              <a href="{% url 'patient-update' pk=patient.id %}">Intake</a>: {{patient.history.last.history_date}}
+                          {% endif %}
+                      </td>
+                      <td>{{patient.status}}</td>
+                      <td>
+                          {% if not latest_workup %}
+                              No Note
+                          {% elif not latest_workup.signer %}
+                              Unattested
+                          {% else %}
+                              {{ latest_workup.signer }}
+                          {% endif %}
+                      </td>
+                  </tr>
+              {% endwith %}
+          {% endfor %}
         </table>
 	</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+{# adapted from "https://www.w3schools.com/howto/howto_js_filter_table.asp" #}
+function filterAllPatientsTable() {
+  // Declare variables 
+  var input, filter, table, tr, td, i;
+  input = document.getElementById("all-patients-filter-input");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("all-patients-table");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  // Start at one to avoid hitting table header
+  for (i = 1; i < tr.length; i++) {
+    var match = 0;
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+        // need additional indexing because patient's name is a link
+        if (check(td.getElementsByTagName("a")[0], filter)) {
+            match = 1;
+        }
+    }
+    td = tr[i].getElementsByTagName("td")[2];
+    if (td) {
+        if (check(td, filter)) {
+            match = 1;
+        } 
+    }
+    if (match == 1) {
+      tr[i].style.display = "";
+    } else {
+      tr[i].style.display = "none";
+    }
+  }
+}
+
+function check(haystack_element, needle){
+    var haystack = haystack_element.innerHTML.toUpperCase()
+    if (!needle) {return 1}
+    if (haystack && haystack.indexOf(needle) > -1) {
+        return 1
+    } else {
+        return 0
+    }
+}
+
+</script>
 {% endblock %}

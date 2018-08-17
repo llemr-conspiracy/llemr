@@ -6,42 +6,31 @@ from django.test import TestCase
 from django.core.urlresolvers import reverse
 
 # For live tests.
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 from pttrack.models import Gender, Patient, Provider, ProviderType
+from pttrack.test import SeleniumLiveTestCase
 
 from . import forms
 from . import models
 from . import urls
 
-# pylint: disable=invalid-name
-
-
 FU_TYPES = ["labs", "general", "vaccine"]
 
 
-class FollowupLiveTesting(StaticLiveServerTestCase):
+class FollowupLiveTesting(SeleniumLiveTestCase):
     fixtures = ['followup', 'pttrack']
 
-    @classmethod
-    def setUpClass(cls):
-        super(FollowupLiveTesting, cls).setUpClass()
-        cls.selenium = WebDriver()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.selenium.quit()
-        super(FollowupLiveTesting, cls).tearDownClass()
-
     def setUp(self):
-        from pttrack.test_views import build_provider, live_submit_login
+        from pttrack.test_views import build_provider
 
         build_provider(username='timmy', password='password',
                        roles=["Attending"])
 
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        live_submit_login(self.selenium, 'timmy', 'password')
+        self.submit_login('timmy', 'password')
 
     def verify_rendering(self, url, url_args=None, kwargs=None):
         if url_args is None and kwargs is None:
@@ -99,7 +88,7 @@ class FollowupLiveTesting(StaticLiveServerTestCase):
         Select(elements['noapt_reason']).select_by_visible_text(
             str(NOAPT_REASON))
 
-        # double-tap on the 'has_appointment' should clear the state of 
+        # double-tap on the 'has_appointment' should clear the state of
         # 'noshow_reason' element
         elements['has_appointment'].click()
         elements['has_appointment'].click()
@@ -172,7 +161,7 @@ class FollowupLiveTesting(StaticLiveServerTestCase):
         # and the submission with this comment should be in the db
         self.assertGreater(
             models.ReferralFollowup.objects.\
-                filter(comments=COMMENT).count(), 
+                filter(comments=COMMENT).count(),
             0)
 
     def test_followup_view_rendering(self):
@@ -202,7 +191,7 @@ class TestReferralFollowupForms(TestCase):
     '''
     Test the validation and behavior of the forms used to do followups.
     '''
-    
+
     def setUp(self):
         self.contact_method = models.ContactMethod.objects.create(
             name="Carrier Pidgeon")
@@ -554,7 +543,7 @@ class FollowupTest(TestCase):
 
         # this should get the most recently created followup, which should be
         # the one we just posted to create
-        new_fu = sorted(fu_type.objects.all(), key=lambda(fu): fu.written_datetime)[-1]
+        new_fu = sorted(fu_type.objects.all(), key=lambda fu: fu.written_datetime)[-1]
 
         # make sure that all of the parameters in the submitted fu make it
         # into the object.

@@ -1,8 +1,5 @@
 {% extends "pttrack/base.html" %}
 
-{# unclear if this should be done in base.html or here... #}
-{% load bootstrap3 %}
-
 {% block title %}
 Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
 {% endblock %}
@@ -10,23 +7,22 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 {% block header %}
 <div class="col-md-5">
 	<div class="col-md-1">
-		<h2><br><a href="{% url 'all-patients' %}">{% bootstrap_icon "chevron-left" %}</a></h2>
+		<h2><br><a href="{% url 'all-patients' %}"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a></h2>
 	</div>
 	<div class="col-md-11">
 		<h2> <a href="{% url 'patient-update' pk=patient.id %}">{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
-<!-- 			<small>{% bootstrap_icon "pencil" %}</small> -->
+<!-- 			<small><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></small> -->
 		</a></h2>
 		<p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
 		<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
 		<p class="lead"><strong>Case Manager:</strong> {{patient.case_managers.iterator | join:"; "}}
 		</p>
 		{% if request.session.staff_view %}
-		<p class="lead"><strong>Outcome:</strong> {{ patient.outcome }} <a href="{% url 'patient-update' pk=patient.id %}"><small>{% bootstrap_icon "pencil" %}</small></a></p>
-			{% if patient.needs_workup %}
-  	    <p class="lead"> Patient is Active <a href="{% url 'patient-activate-detail' pk=patient.id %}">{% bootstrap_icon "remove-circle" %}</a></p>
-      {% endif %}
-      {% if not patient.needs_workup %}
-    	  <p class="lead"> Patient is Inactive <a href="{% url 'patient-activate-detail' pk=patient.id %}">{% bootstrap_icon "play-circle" %}</a></p>
+		<p class="lead"><strong>Outcome:</strong> {{ patient.outcome }} <a href="{% url 'patient-update' pk=patient.id %}"><small><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></small></a></p>
+	  {% if patient.needs_workup %}
+  	    <p class="lead"> Patient is Active <a href="{% url 'patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></p>
+      {% else %}
+    	  <p class="lead"> Patient is Inactive <a href="{% url 'patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a></p>
       {% endif %}
     {% else %}
     <p class="lead"><strong>Outcome:</strong> {{ patient.outcome }}</p>
@@ -89,7 +85,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		{% if patient.demographics %}
 		<a href="{% url 'demographics-detail' patient.demographics.id %}" class="btn btn-default" role="button">See Patient Survey Data</a>
 		{% else %}
-		<div class="alert alert-danger" role="alert"><strong>Warning!</strong> There is no survey data for this patient. Please click on the following pencil to enter the data: <a href="{% url 'demographics-create' patient.id %}">{% bootstrap_icon "pencil" %}</a></div>
+		<div class="alert alert-danger" role="alert"><strong>Warning!</strong> There is no survey data for this patient. Please click on the following pencil to enter the data: <a href="{% url 'demographics-create' patient.id %}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></div>
 		{% endif %}
 	</div>
 </div>
@@ -110,7 +106,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 							<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
 							{% if request.session.staff_view %}
 							<p class="text-right">
-								<a href="{% url 'workup-pdf' pk=note.pk %}" target="_blank">{% bootstrap_icon "download-alt" %}</a>
+								<a href="{% url 'workup-pdf' pk=note.pk %}" target="_blank"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
 								&nbsp;|&nbsp;
 								<a href="{% url 'admin:workup_workup_change' note.id %}" target="_blank"><i>Edit</i></a>
 							</p>
@@ -196,9 +192,9 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		      				{% for action_item in ai_type.1 %}	
 		  						<div class="panel-body">
 		  							{% if ai_type.3 %}
-										<p><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "unchecked" %}</a>
+										<p><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span></a>
 									{% else %}
-										<p><a href="{% url 'reset-action-item' ai_id=action_item.pk %}"/> {% bootstrap_icon "check" %}</a>
+										<p><a href="{% url 'reset-action-item' ai_id=action_item.pk %}"/> <span class="glyphicon glyphicon-check" aria-hidden="true"></span></a>
 									{% endif %}
 									<strong><a href="{% url 'update-action-item' pk=action_item.pk%}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
 									{% if action_item.priority %}

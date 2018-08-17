@@ -14,7 +14,7 @@ from . import validators
 def make_filepath(instance, filename):
     '''
         Produces a unique file path for the upload_to of a FileField. This is
-        important because any URL is 1) transmitted unencrypted and 2) 
+        important because any URL is 1) transmitted unencrypted and 2)
         automatically referred to any libraries we include (i.e. Bootstrap,
         AngularJS).
 
@@ -207,15 +207,15 @@ class Patient(Person):
     # data
 
     alternate_phone_1_owner = models.CharField(max_length=40, blank=True, null=True)
-    alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True) 
-   
-    alternate_phone_2_owner = models.CharField(max_length=40, blank=True, null=True)  
+    alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True)
+
+    alternate_phone_2_owner = models.CharField(max_length=40, blank=True, null=True)
     alternate_phone_2 = models.CharField(max_length=40, blank=True, null=True)
-   
-    alternate_phone_3_owner = models.CharField(max_length=40, blank=True, null=True)  
+
+    alternate_phone_3_owner = models.CharField(max_length=40, blank=True, null=True)
     alternate_phone_3 = models.CharField(max_length=40, blank=True, null=True)
-   
-    alternate_phone_4_owner = models.CharField(max_length=40, blank=True, null=True)  
+
+    alternate_phone_4_owner = models.CharField(max_length=40, blank=True, null=True)
     alternate_phone_4 = models.CharField(max_length=40, blank=True, null=True)
 
     preferred_contact_method = models.ForeignKey(ContactMethod, blank=True, null=True)
@@ -265,21 +265,27 @@ class Patient(Person):
             key=lambda(ai): ai.due_date)
 
     def status(self):
-        n_active = len(self.active_action_items())
-        n_pending = len(self.inactive_action_items())
-        n_done = len(self.done_action_items())
+        # The active_action_items, done_action_items, and inactive_action_items
+        # aren't a big deal to use when getting just one patient
+        # For the all_patients page though (one of the pages that use status),
+        # hitting the db three times per patient adds up.
+        # Here, we only hit the db once by asking the db for all action items
+        # for a patient, then sorting them in memory.
 
-        if n_active > 0:
-            due_dates = ", ".join([str((now().date()-ai.due_date).days) for ai in self.active_action_items()])
-            
+        patient_action_items = self.actionitem_set.all()
+
+        done = [ai for ai in patient_action_items if ai.completion_author is not None]
+        overdue = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date <= now().date()]
+        pending = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date > now().date()]
+
+        if len(overdue) > 0:
+            due_dates = ", ".join([str((now().date()-ai.due_date).days) for ai in overdue])
             return "Action items " + due_dates + " days past due"
-        elif n_pending > 0:
-            next_item = min(self.inactive_action_items(),
-                            key=lambda(k): k.due_date)
+        elif len(pending) > 0:
+            next_item = min(pending, key=lambda k: k.due_date)
             tdelta = next_item.due_date - now().date()
-
             return "next action in "+str(tdelta.days)+" days"
-        elif n_done > 0:
+        elif len(done) > 0:
             return "all actions complete"
         else:
             return "no pending actions"
@@ -294,11 +300,15 @@ class Patient(Person):
         return followups
 
     def latest_workup(self):
+        """
+        Keeping this method because it is used by WorkupCreate.get_initial in
+            workup/views
+        However, this is not used in all_patients in pttrack/views, because it
+            gets all patients in prefetch_related instead of requesting for
+            latest_workup individually.
+        """
         wu_set = self.workup_set
-        if wu_set.count() == 0:
-            return None
-        else:
-            return wu_set.latest(field_name="clinic_day__clinic_date")
+        return wu_set.order_by("clinic_day__clinic_date").first()
 
     def notes(self):
         '''Returns a list of all the notes (workups and followups) associated
