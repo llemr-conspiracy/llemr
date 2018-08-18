@@ -13,7 +13,8 @@ import collections
 def list_view(request):
 
     # Want to sort the list so earliest dates are first
-    appointments = Appointment.objects.filter(clindate__gte=datetime.date.today()).order_by('clindate','clintime')
+    appointments = Appointment.objects.filter(
+        clindate__gte=datetime.date.today()).order_by('clindate', 'clintime')
     d = collections.OrderedDict()
     for a in appointments:
         if a.clindate in d:
@@ -56,11 +57,9 @@ class AppointmentCreate(NoteFormView):
 
         date = self.request.GET.get('date', None)
         if date is not None:
-            '''
-            If appointment attribute clindate = workup.models.ClinicDate,
-            default date could be next clindate.
-            For now, the default value will be the next Saturday (including day of)
-            '''
+            # If appointment attribute clindate = workup.models.ClinicDate,
+            # default date could be next clindate.
+            # For now, the default value will be the next Saturday (including day of)
             initial['clindate'] = date
 
         return initial

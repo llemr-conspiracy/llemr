@@ -2,7 +2,6 @@ from django.test import TestCase, override_settings
 from django.utils.timezone import now
 from pttrack.models import Provider, ProviderType, Patient
 from pttrack.test_views import build_provider
-from datetime import time
 from django.conf import settings
 from django.core.exceptions import ValidationError
 
@@ -46,6 +45,7 @@ class TestAppointments(TestCase):
                 second=0,
                 microsecond=0).time(),
             apt.clintime)
+
 
 @override_settings(OSLER_MAX_APPOINTMENTS=3)
 class TestMaxAppointments(TestCase):

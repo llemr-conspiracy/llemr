@@ -4,14 +4,7 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 from pttrack.models import Note
 
-# from workup.models import ClinicDate
 from simple_history.models import HistoricalRecords
-
-# From StackOverflow (https://stackoverflow.com/questions/16027516/can-i-set-a-specific-default-time-for-a-django-datetime-field/16049125)
-# def default_start_time():
-#     now = datetime.now()
-#     start = now.replace(hour=9, minute=0, second=0, microsecond=0)
-#     return start if start > now else start + timedelta(days=7)
 
 
 class Appointment(Note):
