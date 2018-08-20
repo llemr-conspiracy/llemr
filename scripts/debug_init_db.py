@@ -35,7 +35,7 @@ malenames = df.Male_First_Name
 femalesnames = df.Female_First_Name
 lastnames = df.Last_Name
 streetnames = df.Street_Name
-for i in xrange(0,100):
+for i in xrange(0,250):
       a = models.Patient(first_name=malenames[random.randint(0,99)],
                         middle_name="",
                         last_name=lastnames[random.randint(0,399)],
