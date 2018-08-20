@@ -60,7 +60,7 @@ class Command(BaseCommand):
         print 'Data written to %s' % filename
 
     def genmap(self, filename):
-        geolocator = geopy.geocoders.Nominatim(user_agent="osler")
+        geolocator = geopy.geocoders.Nominatim(user_agent="cori")
         gmap = gmplot.gmplot.GoogleMapPlotter.from_geocode("St. Louis MO")
         heatmap = gmplot.gmplot.GoogleMapPlotter.from_geocode("St. Louis MO")
         df = pandas.read_csv(filename)
