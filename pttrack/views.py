@@ -9,8 +9,9 @@ from django.db.models import Prefetch
 from . import models as mymodels
 from workup import models as workupmodels
 from . import forms as myforms
+from appointment.models import Appointment
 import json
-
+import collections
 import datetime
 
 def get_current_provider_type(request):
@@ -116,7 +117,7 @@ class ProviderCreate(FormView):
             user = provider.associated_user
             user.email = form.cleaned_data['provider_email']
             user.first_name = provider.first_name
-            user.last_name = provider.last_name            
+            user.last_name = provider.last_name
             user.save()
             provider.save()
             form.save_m2m()
@@ -158,7 +159,7 @@ class ProviderUpdate(UpdateView):
         user = provider.associated_user
         user.email = form.cleaned_data['provider_email']
         user.first_name = provider.first_name
-        user.last_name = provider.last_name            
+        user.last_name = provider.last_name
         user.save()
         provider.save()
         form.save_m2m()
@@ -333,8 +334,8 @@ def patient_detail(request, pk):
 
     pt = get_object_or_404(mymodels.Patient, pk=pk)
 
-    #   Special zipped list of action item types so they can be looped over. 
-    #   List 1: Labels for the panel objects of the action items 
+    #   Special zipped list of action item types so they can be looped over.
+    #   List 1: Labels for the panel objects of the action items
     #   List 2: Action Item lists based on type (active, pending, completed)
     #   List 3: Title labels for the action items
     #   List 4: True and False determines if the link should be for done_action_item or update_action_item
@@ -342,10 +343,39 @@ def patient_detail(request, pk):
     zipped_ai_list = zip(['collapse5', 'collapse6', 'collapse7'], [pt.active_action_items(), pt.inactive_action_items(), pt.done_action_items()],
                             ['Active Action Items', 'Pending Action Items', 'Completed Action Items'], [True, True, False])
 
+    appointments = Appointment.objects.filter(patient=pt).order_by('clindate','clintime')
+    # d = collections.OrderedDict()
+    # for a in appointments:
+    #     if a.clindate in d:
+    #         d[a.clindate].append(a)
+    #     else:
+    #         d[a.clindate] = [a]
+
+    future_date_appointments = appointments.filter(clindate__gte=datetime.date.today()).order_by('clindate', 'clintime')
+    previous_date_appointments = appointments.filter(clindate__lt=datetime.date.today()).order_by('-clindate', 'clintime')
+
+    future_apt = collections.OrderedDict()
+    for a in future_date_appointments:
+        if a.clindate in future_apt:
+            future_apt[a.clindate].append(a)
+        else:
+            future_apt[a.clindate] = [a]
+
+    previous_apt = collections.OrderedDict()
+    for a in previous_date_appointments:
+        if a.clindate in previous_apt:
+            previous_apt[a.clindate].append(a)
+        else:
+            previous_apt[a.clindate] = [a]
+
+    zipped_apt_list = zip(['collapse8', 'collapse9'], [future_date_appointments, previous_date_appointments],
+                            ['Future Appointments', 'Past Appointments'], [future_apt, previous_apt])
     return render(request,
                   'pttrack/patient_detail.html',
                   {'zipped_ai_list': zipped_ai_list,
-                    'patient': pt})
+                   'patient': pt,
+                   'appointments_by_date': future_apt,
+                   'zipped_apt_list': zipped_apt_list})
 
 
 def all_patients(request):

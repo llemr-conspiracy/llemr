@@ -203,8 +203,9 @@ def error_workup(request, pk):
 
     wu = get_object_or_404(models.Workup, pk=pk)
 
-    #TODO: clearly a template error here.
+    # TODO: clearly a template error here.
     return render(request, 'pttrack/workup_error.html', {'workup': wu})
+
 
 def pdf_workup(request, pk):
 
@@ -231,15 +232,9 @@ def pdf_workup(request, pk):
         filename = ''.join([initials, ' (', formatdate, ')'])
 
         response = HttpResponse(pdf, 'application/pdf')
-        response["Content-Disposition"]= "attachment; filename=%s.pdf" % (filename,)
+        response["Content-Disposition"] = "attachment; filename=%s.pdf" % (filename,)
         return response
 
     else:
         return HttpResponseRedirect(reverse('workup',
-                                        args=(wu.id,)))
-
-
-
-
-
-
+                                            args=(wu.id,)))

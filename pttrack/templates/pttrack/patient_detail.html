@@ -43,6 +43,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
     <a class="btn btn-warning pull-left btn-block" href="{% url 'new-document' pt_id=patient.pk %}" role="button">Upload Document or Prescription</a>
     <a class="btn btn-primary pull-left btn-block" href="{% url 'followup-choice' pt_id=patient.pk %}" role="button">Create New Followup</a>
     <a class="btn btn-danger pull-left btn-block" href="{% url 'new-progress-note' pt_id=patient.pk %}" role="button">Create New Psych Progress Note</a>
+    <a class="btn btn-success pull-left btn-block" href="{% url 'appointment-new' %}?pt_id={{patient.pk}}" role="button">Create New Appointment</a>
 	</div>
 </div>
 {% endblock %}
@@ -212,4 +213,43 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
   		</div>
 	</div>
 </div>
+
+<div class="container">
+    <div class="col-md-8">
+        <h3>Appointments ({{ patient.appointment_set.all | length }} Total)</h3>
+        <div class="panel-group">
+            {% for apt_type in zipped_apt_list %}
+                <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                            <a data-toggle="collapse" href="#{{ apt_type.0 }}">{{ apt_type.2 }} ({{ apt_type.1 | length }})</a>
+                            </h4>
+                        </div>
+                        <div id="{{ apt_type.0 }}" class="panel-collapse collapse">
+                            {% for date, app_list in apt_type.3.iteritems %}
+                                <div class="panel-body">
+                                    <h3>{{ date  | date:"l F d, Y" }}</h3>
+                                    {% for app in app_list %}
+                                        <div class="row">
+                                            <div class="col-md-4">{{ app.clintime }}</div>
+                                            
+                                            <div class="col-md-4 pull-right">{{ app.get_appointmentType_display }}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8"><i>{{ app.comment }}</i></div>
+                                            <div class="col-md-4"><a href="{% url 'appointment-update' pk=app.id %}">Edit Appointment</a></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-9"></br></div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}    
+                        </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
 {% endblock %}

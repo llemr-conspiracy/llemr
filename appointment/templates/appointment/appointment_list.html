@@ -1,0 +1,45 @@
+{% extends "pttrack/base.html" %}
+
+{% load bootstrap3 %}
+
+{% block title %}
+Appointment List
+{% endblock %}
+
+{% block header %}
+<div class="container">
+	<h1>Appointment List</h1>
+</div>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+{% for date, app_list in appointments_by_date.iteritems %}
+	<div class="row">
+		<div class="col-md-4">
+			<h3>{{ date  | date:"l F d, Y" }}
+				<a class="btn btn-success btn-xs" href="{% url 'appointment-new' %}?date={{date|date:"Y-m-d"}}" role="button">+</a>
+			</h3>
+		</div>	
+	</div>
+	{% for app in app_list %}
+	<div class="row">
+		<div class="col-md-2">{{ app.clintime }}</div>
+  		<div class="col-md-2"><b><a href="{% url 'patient-detail' pk=app.patient.id %}">{{ app.patient }}</a></b></div>
+  		<div class="col-md-2">{{ app.get_appointmentType_display }}</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4"><i>{{ app.comment }}</i></div>
+		<div class="col-md-2"><a href="{% url 'appointment-update' pk=app.id %}">Edit</a></div>
+	</div>
+	<div class="row">
+		<div class="col-md-8"></br></div>
+	</div>
+	{% endfor %}
+{% endfor %}
+</div>	
+{% endblock %}
+
+
+
