@@ -6,7 +6,6 @@ from pttrack.models import Patient, ProviderType
 from pttrack.test_views import build_provider, log_in_provider
 
 from . import models
-from .forms import WorkupForm
 from .tests import wu_dict
 
 
@@ -54,25 +53,26 @@ class ViewsExistTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-        form_data={
-        'title':'Depression',
-        'text':'so sad does testing work???',
-        'patient':Patient.objects.get(id=1),
-        'author':models.Provider.objects.get(id=1),
-        'author_type':ProviderType.objects.first()
+        form_data = {
+            'title': 'Depression',
+            'text': 'so sad does testing work???',
+            'patient': Patient.objects.get(id=1),
+            'author': models.Provider.objects.get(id=1),
+            'author_type': ProviderType.objects.first()
         }
 
         response = self.client.post(url, form_data)
         self.assertRedirects(response, reverse('patient-detail', args=(1,)))
 
-        url=reverse('progress-note-update', args=(1,))
+        url = reverse('progress-note-update', args=(1,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-        form_data['text']='actually not so bad'
+        form_data['text'] = 'actually not so bad'
 
         response = self.client.post(url, form_data)
-        self.assertRedirects(response, reverse('progress-note-detail', args=(1,)))
+        self.assertRedirects(
+            response, reverse('progress-note-detail', args=(1,)))
 
     def test_new_workup_view(self):
 
@@ -103,6 +103,7 @@ class ViewsExistTest(TestCase):
         date_string = self.wu.written_datetime.strftime("%B %d, %Y")
         heading_text = "Migrated from previous workup on %s. Please delete this heading and modify the following:\n\n" % date_string
 
+        # TODO test use of settings.OSLER_WORKUP_COPY_FORWARD_FIELDS
         response = self.client.get(reverse('new-workup', args=(pt.id,)))
         self.assertEqual(response.context['form'].initial['PMH_PSH'],
                          heading_text + "B")
@@ -210,18 +211,11 @@ class ViewsExistTest(TestCase):
             wu_data = wu_dict(units=True)
             wu_data['diagnosis_categories'] = [
                 models.DiagnosisType.objects.first().pk]
+            wu_data['clinic_day'] = wu_data['clinic_day'].pk
 
             r = self.client.post(
                 reverse('new-workup', args=(pt_id,)),
                 data=wu_data)
-
-            # print(dir(r))
-            # # print(r.context)
-            # print(r.context['form'].errors)
-
-            # print(provider_type)
-            # with open('./tmp.html', 'wb') as f:
-            #     f.write(r.content)
 
             self.assertRedirects(r, reverse("new-action-item", args=(pt_id,)))
             self.assertEqual(wu_count + 1, models.Workup.objects.all().count())

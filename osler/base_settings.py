@@ -101,3 +101,9 @@ OSLER_MIN_DIASTOLIC = 40
 
 OSLER_MAX_APPOINTMENTS = 5
 OSLER_DEFAULT_APPOINTMENT_HOUR = 9
+
+OSLER_WORKUP_COPY_FORWARD_FIELDS = ['PMH_PSH', 'fam_hx', 'soc_hx', 'meds',
+                                    'allergies']
+OSLER_WORKUP_COPY_FORWARD_MESSAGE = ("Migrated from previous workup on {date}"
+                                     ". Please delete this heading and modify "
+                                     "the following:\n\n{contents}")
