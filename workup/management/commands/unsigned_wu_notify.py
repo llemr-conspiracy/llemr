@@ -13,7 +13,7 @@ class Command(BaseCommand):
 
         unsigned_wus = Workup.objects.filter(signer=None)
 
-        print(unsigned_wus)
+        # print(unsigned_wus)
 
         unsigned_wu2providers = {
             wu: Provider.objects.filter(
@@ -31,7 +31,7 @@ class Command(BaseCommand):
             else:
                 uninferred.append(unsigned_wu)
 
-        print(provider2unsigned)
+        # print(provider2unsigned)
 
         for provider, inferred_wus in provider2unsigned.items():
 
