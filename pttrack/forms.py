@@ -1,16 +1,27 @@
 '''Forms for the Oser core components.'''
 from bootstrap3_datetime.widgets import DateTimePicker
-from django.forms import ModelForm, EmailField, CheckboxSelectMultiple, \
+from django.forms import Form, CharField,DateField, ModelForm, EmailField, CheckboxSelectMultiple, \
     ModelChoiceField, ModelMultipleChoiceField
-
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from crispy_forms.bootstrap import InlineCheckboxes
 
+from . import validators
 from . import models
 
 # pylint: disable=I0011,E1305
 
+
+
+class IsDuplicatePatient(Form):
+    first_name = CharField(label='First Name')
+    last_name = CharField(label='Last Name')
+    #date_of_birth = DateField(help_text='MM/DD/YYYY',validators=[validators.validate_birth_date])
+    def __init__(self, *args, **kwargs):
+        super(IsDuplicatePatient, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.fields['first_name'].widget.attrs['autofocus'] = True
+        self.helper.add_input(Submit('submit', 'Submit'))
 
 class PatientForm(ModelForm):
     class Meta:
@@ -35,9 +46,11 @@ class PatientForm(ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
+        self.fields['phone'].widget.attrs['autofocus'] = True
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['ethnicities'].wrap(InlineCheckboxes)
         self.helper.add_input(Submit('submit', 'Submit'))
+
 
     def clean(self):
 

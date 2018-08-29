@@ -1,16 +1,17 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.list import ListView
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 
 from . import models as mymodels
 from workup import models as workupmodels
 from . import forms as myforms
 import json
-
+import string
 import datetime
 
 def get_current_provider_type(request):
@@ -210,6 +211,104 @@ class PatientUpdate(UpdateView):
         return HttpResponseRedirect(reverse("patient-detail",
                                             args=(pt.id,)))
 
+def all_variations(name):
+    all_vars = []
+    if len(name) < 2:
+        all_vars.append(name)
+        return all_vars
+    else:
+        #try all variations of switching letters
+        for i in range(1,len(name)):
+            #remove letter
+            all_vars.append(name[:i] + name[i+1:])
+            #change letter and add letter
+            for j in string.ascii_lowercase:
+                all_vars.append(name[:i] + j + name[i+1:])
+                all_vars.append(name[:i] + j + name[i:])
+
+        all_vars.append(name)
+        print all_vars
+        return all_vars
+                
+
+''' find all patients whose first or last name has one letter added, changed or removed other than the first letter,
+    Additionally, the first
+    Returns all patients who:
+        have a first_name that:
+            starts with the same letter and matches, or has one added, removed or changed letter.  Additionally could start with first_name_str
+        Has a last name that starts with the same letter and matches, or has one added, removed or changed letter.
+'''
+def return_duplicates(first_name_str, last_name_str):
+    first_name_var = all_variations(first_name_str)
+
+    last_name_var = all_variations(last_name_str)
+    return mymodels.Patient.objects.filter((Q(first_name__in=first_name_var) | Q(first_name__startswith=first_name_str)) & Q(last_name__in=last_name_var))
+    #return mymodels.Patient.objects.filter(first_name__in=first_name_var, last_name__in=last_name_var)
+
+class PreIntakeSelect(ListView):
+    template_name = 'pttrack/preintake-select.html'
+    new_pt_url = ""
+    #new_pt_url = intake_url = "%s?%s=%s&%s=%s&%s=%s" % (reverse("preintake-select"), "first_name", first_name_str, "last_name",last_name_str, "date_of_birth",date_of_birth_str)
+    print "MADE IT TO PREINTAKE"
+    def get_queryset(self):
+        initial = {}
+        for param in ['date_of_birth', 'first_name', 'last_name',
+                      'middle_name']:
+            if param in self.request.GET:
+                initial[param] = self.request.GET[param]
+
+        #m = mymodels.Patient.objects.filter(first_name=initial['first_name'], last_name=initial['last_name'], date_of_birth=initial['date_of_birth'])
+        m = return_duplicates(initial['first_name'], initial['last_name'])
+        return m
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(PreIntakeSelect, self).get_context_data(**kwargs)
+        # Add in the publisher
+        initial = {}
+        for param in ['first_name', 'last_name',]:
+            if param in self.request.GET:
+                initial[param] = self.request.GET[param]
+        context['first_name'] = initial['first_name']
+        context['last_name'] = initial['last_name']
+        context['new_pt_url'] = "%s?%s=%s&%s=%s" % (reverse("intake"), "first_name", initial['first_name'], "last_name",initial['last_name'])
+        context['home'] = reverse("home")
+        return context
+
+class PreIntake(FormView):
+    '''A view for ensuring new patient is not already in the database.'''
+    template_name = 'pttrack/intake.html'
+    form_class = myforms.IsDuplicatePatient  
+    
+
+    def form_valid(self, form):
+        #Patient.objects.filter()
+        #form.cleaned_data
+        #return HttpResponseRedirect(reverse("patient-detail", args=(1,)))
+        first_name_str = form.cleaned_data['first_name'].capitalize()
+        last_name_str = form.cleaned_data['last_name'].capitalize()
+        #date_of_birth_str = form.cleaned_data['date_of_birth']
+        matching_patients = return_duplicates(first_name_str, last_name_str)#mymodels.Patient.objects.filter(first_name=first_name_str, last_name=last_name_str)
+        print "matching patients", len(matching_patients)
+        if len(matching_patients) > 0:
+            intake_url = "%s?%s=%s&%s=%s" % (reverse("preintake-select"), "first_name", first_name_str, "last_name",last_name_str)
+            print "Hello"
+            print intake_url
+            return HttpResponseRedirect(intake_url)
+            return HttpResponseRedirect(reverse("patient-detail",
+                                            args=(matching_patients[0].id,)))
+        
+        pre_populating_vals = {
+            "first_name": first_name_str,
+            "last_name": last_name_str,
+        }
+
+        intake_url = "%s?%s=%s&%s=%s" % (reverse("intake"), "first_name", first_name_str, "last_name",last_name_str)
+        print(intake_url)
+        return HttpResponseRedirect(intake_url)
+        #return HttpResponseRedirect(reverse("intake"))
+
+
 
 class PatientCreate(FormView):
     '''A view for creating a new patient using PatientForm.'''
@@ -222,6 +321,14 @@ class PatientCreate(FormView):
 
         return HttpResponseRedirect(reverse("demographics-create",
                                             args=(pt.id,)))
+    def get_initial(self):
+        initial = super(PatientCreate, self).get_initial()
+        for param in ['date_of_birth', 'first_name', 'last_name',
+                      'middle_name']:
+            if param in self.request.GET:
+                initial[param] = self.request.GET[param]
+
+        return initial
 
 
 class DocumentUpdate(NoteUpdate):
