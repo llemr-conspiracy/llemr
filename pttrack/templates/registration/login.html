@@ -1,7 +1,5 @@
 {% extends "pttrack/base.html" %}
 
-{% load bootstrap3 %}
-
 {% block header %}
 <h2>Who goes there?</h2>
 {% if next %}
@@ -20,16 +18,9 @@
 {% endif %}
 
 <div class="container">
-  <form method="post"  action="{% url 'django.contrib.auth.views.login' %}">
-    {% csrf_token %}
 
-      {% bootstrap_form form %}
-      {% buttons %}
-      <button type="submit" class="btn">Login</button>
-      {% endbuttons %}
-      <input type="hidden" name="next" value="{{ next }}" />
-
-  </form>
+  {% load crispy_forms_tags %}
+  {% crispy form %}
 
   {# Assumes you setup the password_reset view in your URLconf #}
   <p><a href="{% url 'password_reset' %}">Lost password?</a></p>

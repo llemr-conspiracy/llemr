@@ -1,20 +1,13 @@
 {% extends "pttrack/base.html" %}
 
-{% load bootstrap3 %}
-
-
 {% block content %}
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <div class="container">
   <form action="" method="post" {% if note_type == "Document" %} enctype="multipart/form-data" {% endif %} >
-    {% csrf_token %}
-    {% bootstrap_form form %}
-    {% buttons %}
-    <button type="submit" class="btn btn-success">Submit</button>
-    {% endbuttons %}
-    <input type="hidden" name="next" value="{{ next }}" />
+    {% load crispy_forms_tags %}
+	{% crispy form %}
   </form>
 </div>
 

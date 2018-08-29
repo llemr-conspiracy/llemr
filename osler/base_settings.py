@@ -26,6 +26,7 @@ INSTALLED_APPS = (
     'followup',
     'workup',
     'demographics',
+    'appointment',
     'api',
     'crispy_forms',
     'bootstrap3',
@@ -92,8 +93,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # for crispy_forms
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
+INTERNAL_IPS = ('127.0.0.1',) # used for debug toolbar
+
 # Medical Settings
 OSLER_MAX_SYSTOLIC = 400
 OSLER_MIN_DIASTOLIC = 40
 
-INTERNAL_IPS = ('127.0.0.1',) # used for debug toolbar
+OSLER_MAX_APPOINTMENTS = 5
+OSLER_DEFAULT_APPOINTMENT_HOUR = 9

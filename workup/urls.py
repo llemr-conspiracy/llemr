@@ -25,7 +25,7 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
         views.pdf_workup,
         name="workup-pdf"),
 
-    #PROGRESS NOTES
+    # PROGRESS NOTES
     url(r'^(?P<pt_id>[0-9]+)/psychnote/$',
         views.ProgressNoteCreate.as_view(),
         name="new-progress-note"),

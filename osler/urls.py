@@ -6,12 +6,12 @@ from django.conf import settings
 
 
 urlpatterns = [
-    # Examples:
-    # url(r'^blog/', include('blog.urls')),
     url(r'^pttrack/', include('pttrack.urls')),
+    url(r'^accounts/', include('pttrack.auth_urls')),
     url(r'^followup/', include('followup.urls')),
     url(r'^workup/', include('workup.urls')),
     url(r'^demographics/', include('demographics.urls')),
+    url(r'^appointment/', include('appointment.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^api/', include('api.urls')),

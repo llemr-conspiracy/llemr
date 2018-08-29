@@ -1,13 +1,11 @@
 {% extends "pttrack/base-form.html" %}
 
-{% load bootstrap3 %}
-
 {% block title %}
 Edit {{ note_type }}
 {% endblock %}
 
 {% block header %}
-<h1><a href="{% url 'patient-detail' pk=object.patient.id %}"><small>{% bootstrap_icon "chevron-left" %}</small></a>
+<h1><a href="{% url 'patient-detail' pk=object.patient.id %}"><small><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></small></a>
 Edit {{ note_type }}
 </h1>
 <p class="lead">Edit {{ note_type | lower }} for <em><a href="{% url 'patient-detail' pk=object.patient.id %}">{{ object.patient.name }}</a></em></p>

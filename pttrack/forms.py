@@ -2,6 +2,8 @@
 from bootstrap3_datetime.widgets import DateTimePicker
 from django.forms import Form, CharField,DateField, ModelForm, EmailField, CheckboxSelectMultiple, \
     ModelChoiceField, ModelMultipleChoiceField
+from django.contrib.auth.forms import AuthenticationForm
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from crispy_forms.bootstrap import InlineCheckboxes
@@ -30,7 +32,7 @@ class PatientForm(ModelForm):
 
     # limit the options for the case_managers field to Providers with
     # ProviderType with staff_view=True
-            
+
     case_managers = ModelMultipleChoiceField(
         required=False,
         queryset=models.Provider.objects.filter(
@@ -122,3 +124,13 @@ class DocumentForm(ModelForm):
         super(DocumentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
+
+
+
+class CrispyAuthenticationForm(AuthenticationForm):
+
+    def __init__(self, *args, **kwargs):
+        super(CrispyAuthenticationForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.add_input(Submit('submit', 'Login'))

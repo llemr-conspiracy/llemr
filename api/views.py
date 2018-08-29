@@ -1,6 +1,5 @@
 from functools import partial
 
-from django.core.exceptions import ImproperlyConfigured
 import django.utils.timezone
 
 from rest_framework import generics
@@ -31,7 +30,7 @@ def active_ai_patients_filter(qs):
         .select_related('patient')
 
     return coremodels.Patient.objects \
-        .filter(actionitem=ai_qs) \
+        .filter(actionitem__in=ai_qs) \
         .distinct()
         # .order_by('-actionitem__due_date')
 
@@ -42,7 +41,7 @@ def inactive_ai_patients_filter(qs):
     '''
 
     future_ai_pts = coremodels.Patient.objects.filter(
-        actionitem=coremodels.ActionItem.objects
+        actionitem__in=coremodels.ActionItem.objects
             .filter(due_date__gt=django.utils.timezone.now().date())
             .filter(completion_date=None)
             .select_related('patient')
@@ -61,15 +60,15 @@ def unsigned_workup_patients_filter(qs):
         .order_by('last_name') \
         .select_related('patient')  # optimization only
 
-    return coremodels.Patient.objects.filter(workup=wu_qs)
+    return coremodels.Patient.objects.filter(workup__in=wu_qs)
 
 def priority_ai_patients_filter(qs):
-    '''Build a queryset that returs a list of patients with a high priority 
+    '''Build a queryset that returs a list of patients with a high priority
     action item.
     '''
 
     priority_ai_pts = coremodels.Patient.objects.filter(
-        actionitem=coremodels.ActionItem.objects
+        actionitem__in=coremodels.ActionItem.objects
         .filter(priority=True)
         .filter(completion_date=None)
         .select_related('patient')

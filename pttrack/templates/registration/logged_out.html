@@ -1,5 +1,4 @@
 {% extends "pttrack/base.html" %}
-{% load bootstrap3 %}
 
 {% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'home' %}">Home</a></div>{% endblock %}
 
@@ -11,10 +10,7 @@
 {% block content %}
 <div class="container">
   <h4>Thanks for spending some quality time with the Web site today.</strong></h4>
-
-  {% buttons %}
   <a class="btn btn-default" href="{% url 'home' %}" role="button">Log in again</a>
-  {% endbuttons %}
 
 </div>
 {% endblock %}
