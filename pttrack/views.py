@@ -16,7 +16,7 @@ from . import models as mymodels
 from workup import models as workupmodels
 from . import forms as myforms
 from appointment.models import Appointment
-
+from . import utils
 
 def get_current_provider_type(request):
     '''
@@ -215,102 +215,60 @@ class PatientUpdate(UpdateView):
         return HttpResponseRedirect(reverse("patient-detail",
                                             args=(pt.id,)))
 
-def all_variations(name):
-    all_vars = []
-    if len(name) < 2:
-        all_vars.append(name)
-        return all_vars
-    else:
-        #try all variations of switching letters
-        for i in range(1,len(name)):
-            #remove letter
-            all_vars.append(name[:i] + name[i+1:])
-            #change letter and add letter
-            for j in string.ascii_lowercase:
-                all_vars.append(name[:i] + j + name[i+1:])
-                all_vars.append(name[:i] + j + name[i:])
-
-        all_vars.append(name)
-        print all_vars
-        return all_vars
-                
-
-''' find all patients whose first or last name has one letter added, changed or removed other than the first letter,
-    Additionally, the first
-    Returns all patients who:
-        have a first_name that:
-            starts with the same letter and matches, or has one added, removed or changed letter.  Additionally could start with first_name_str
-        Has a last name that starts with the same letter and matches, or has one added, removed or changed letter.
-'''
-def return_duplicates(first_name_str, last_name_str):
-    first_name_var = all_variations(first_name_str)
-
-    last_name_var = all_variations(last_name_str)
-    return mymodels.Patient.objects.filter((Q(first_name__in=first_name_var) | Q(first_name__startswith=first_name_str)) & Q(last_name__in=last_name_var))
-    #return mymodels.Patient.objects.filter(first_name__in=first_name_var, last_name__in=last_name_var)
 
 class PreIntakeSelect(ListView):
+    """Allows users to see all patients with similar name to a
+    particular patient first and last name. Allows user to open one of
+    the simmilarly named patients, or create a new patient
+    """
     template_name = 'pttrack/preintake-select.html'
     new_pt_url = ""
-    #new_pt_url = intake_url = "%s?%s=%s&%s=%s&%s=%s" % (reverse("preintake-select"), "first_name", first_name_str, "last_name",last_name_str, "date_of_birth",date_of_birth_str)
-    print "MADE IT TO PREINTAKE"
+
     def get_queryset(self):
         initial = {}
-        for param in ['date_of_birth', 'first_name', 'last_name',
-                      'middle_name']:
+        for param in ['first_name', 'last_name']:
             if param in self.request.GET:
                 initial[param] = self.request.GET[param]
-
-        #m = mymodels.Patient.objects.filter(first_name=initial['first_name'], last_name=initial['last_name'], date_of_birth=initial['date_of_birth'])
-        m = return_duplicates(initial['first_name'], initial['last_name'])
+        m = utils.return_duplicates(initial.get('first_name', None),
+                              initial.get('last_name', None))
         return m
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(PreIntakeSelect, self).get_context_data(**kwargs)
-        # Add in the publisher
+
         initial = {}
         for param in ['first_name', 'last_name',]:
             if param in self.request.GET:
                 initial[param] = self.request.GET[param]
-        context['first_name'] = initial['first_name']
-        context['last_name'] = initial['last_name']
-        context['new_pt_url'] = "%s?%s=%s&%s=%s" % (reverse("intake"), "first_name", initial['first_name'], "last_name",initial['last_name'])
+        context['first_name'] = initial.get('first_name', None)
+        context['last_name'] = initial.get('last_name', None)
+        context['new_pt_url'] = "%s?%s=%s&%s=%s" % (reverse("intake"), "first_name", initial.get('first_name', None), "last_name",initial.get('last_name', None))
         context['home'] = reverse("home")
         return context
 
+
 class PreIntake(FormView):
-    '''A view for ensuring new patient is not already in the database.'''
+    '''A view for ensuring new patient is not already in the database.
+        Will search if there is a patient with same, or similar first and last name
+        If none similar directs to patient intake
+        If one or more similar directs to preintake-select
+        url's are sent with first and last name in query string notation
+    '''
     template_name = 'pttrack/intake.html'
-    form_class = myforms.IsDuplicatePatient  
-    
+    form_class = myforms.IsDuplicatePatient
+
 
     def form_valid(self, form):
-        #Patient.objects.filter()
-        #form.cleaned_data
-        #return HttpResponseRedirect(reverse("patient-detail", args=(1,)))
         first_name_str = form.cleaned_data['first_name'].capitalize()
         last_name_str = form.cleaned_data['last_name'].capitalize()
-        #date_of_birth_str = form.cleaned_data['date_of_birth']
-        matching_patients = return_duplicates(first_name_str, last_name_str)#mymodels.Patient.objects.filter(first_name=first_name_str, last_name=last_name_str)
-        print "matching patients", len(matching_patients)
+        matching_patients = utils.return_duplicates(first_name_str, last_name_str)
         if len(matching_patients) > 0:
             intake_url = "%s?%s=%s&%s=%s" % (reverse("preintake-select"), "first_name", first_name_str, "last_name",last_name_str)
-            print "Hello"
-            print intake_url
             return HttpResponseRedirect(intake_url)
-            return HttpResponseRedirect(reverse("patient-detail",
-                                            args=(matching_patients[0].id,)))
-        
-        pre_populating_vals = {
-            "first_name": first_name_str,
-            "last_name": last_name_str,
-        }
 
         intake_url = "%s?%s=%s&%s=%s" % (reverse("intake"), "first_name", first_name_str, "last_name",last_name_str)
-        print(intake_url)
         return HttpResponseRedirect(intake_url)
-        #return HttpResponseRedirect(reverse("intake"))
 
 
 
