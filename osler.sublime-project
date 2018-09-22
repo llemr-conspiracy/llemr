@@ -25,57 +25,7 @@
 			[
 				"__init__.py"
 			],
-			"path": "osler"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "pttrack"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "followup"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "scripts"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "workup"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "api"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "demographics"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "appointment"
+			"path": "."
 		}
-
 	]
 }
