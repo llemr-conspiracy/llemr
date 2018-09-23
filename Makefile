@@ -29,5 +29,5 @@ rebuild:
 test:
 	docker-compose run osler_app python osler/manage.py test
 
-clean:
+cleanup:
 	docker system prune

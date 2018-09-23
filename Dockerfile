@@ -15,4 +15,4 @@ RUN python osler/manage.py collectstatic --noinput
 
 EXPOSE 8000
 
-CMD ["gunicorn", "--chdir", "osler", "--bind", "0.0.0.0:8000", "osler.gunicorn_wsgi:application", "--log-file", "-", "--log-level", "DEBUG"]
+CMD ["gunicorn", "--chdir", "osler", "--bind", "0.0.0.0:8000", "osler.gunicorn_wsgi:application", "--log-file", "-"]

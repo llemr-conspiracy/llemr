@@ -10,8 +10,8 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./osler/media:/opt/services/osler/media
-      - ./osler/static:/opt/services/osler/static  # only needed for collectstatic?
+      - ./osler/media:/osler/osler/media
+      - ./osler/static:/osler/osler/static  # only needed for collectstatic?
     networks:
       - nginx_network
       - database_network
