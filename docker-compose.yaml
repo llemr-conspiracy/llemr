@@ -11,17 +11,20 @@ services:
     volumes:
       - ./osler/media:/home/gunicorn_user/osler/osler/media
       - ./osler/static:/home/gunicorn_user/osler/osler/static  # only needed for collectstatic?
+      - ./logs:/home/gunicorn_user/logs
     networks:
       - nginx_network
       - database_network
     depends_on:
       - db
     environment:
+      DJANGO_DEBUG: 0
       DJANGO_SETTINGS_MODULE: osler.docker_settings
       DJANGO_SENDFILE_BACKEND: sendfile.backends.nginx
       DJANGO_SENDFILE_ROOT: /opt/services/osler/media
       DJANGO_SENDFILE_URL: /media
       DJANGO_SECRET_KEY_FILE: /run/secrets/django_secret_key
+      DJANGO_DEBUG_LOG_FILE: /home/gunicorn_user/logs/osler.log
       DATABASE_PASSWORD_FILE: /run/secrets/database_password
       DATABASE_BACKEND: django.db.backends.postgresql_psycopg2
       DATABASE_NAME: osler
@@ -30,6 +33,7 @@ services:
       DATABASE_HOST: db
     secrets:
       - database_password
+      - django_secret_key
   db:
     container_name: osler_db
     image: postgres
@@ -48,7 +52,6 @@ services:
     restart: always
     ports:
       # - "0.0.0.0:80:80"
-      # - "0.0.0.0:80:80"
       - 8000:80
     volumes:
       - ./config/nginx.conf:/etc/nginx/nginx.conf
@@ -58,12 +61,6 @@ services:
       - web
     networks:
       - nginx_network
-
-# secrets:
-#   database_password:
-#     external: true
-#   django_secret_key:
-#     external: true
 
 secrets:
    database_password:

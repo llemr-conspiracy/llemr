@@ -1,4 +1,5 @@
 import os
+import logging
 
 from django.conf.urls import include, url
 from django.contrib import admin
@@ -8,11 +9,13 @@ from django.conf import settings
 
 from sendfile import sendfile
 
+logger = logging.getLogger(__name__)
+
 
 @login_required
 def send_media_file(request, filename):
     fq_filename = os.path.join(settings.SENDFILE_ROOT, filename)
-    print(fq_filename)
+    logger.debug("Serving file %s with sendfile.", fq_filename)
     return sendfile(request, fq_filename)
 
 
@@ -31,7 +34,11 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-    import debug_toolbar
-    urlpatterns = [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
-    ] + urlpatterns
+    try:
+        import debug_toolbar
+        urlpatterns = [
+            url(r'^__debug__/', include(debug_toolbar.urls)),
+        ] + urlpatterns
+    except ImportError:
+        logger.warning('Failed to load django-debug-toolbar. Are you '
+                       'running with DEBUG = True in production?')

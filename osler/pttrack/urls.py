@@ -1,3 +1,5 @@
+import logging
+
 from django.conf.urls import url
 from django.views.generic import DetailView
 from django.views.generic.base import TemplateView
@@ -7,6 +9,9 @@ from .decorators import provider_required, clintype_required, \
     provider_update_required
 from . import models
 from . import views
+
+
+logger = logging.getLogger(__name__)
 
 # pylint: disable=I0011
 
@@ -78,9 +83,12 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
 
 def wrap_url(url, no_wrap=[], login_only=[], provider_only=[],
              updated_provider_only=[]):
-    '''
-    Wrap URL in decorators as appropriate.
-    '''
+    """Wrap URL in decorators as specified. Handles forcing login to
+    access pages.
+    """
+
+    logger.info('wrap_url intercepted attempt to access %s', url)
+
     if url.name in no_wrap:
         # do not wrap at all, fully public
         pass
