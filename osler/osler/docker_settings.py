@@ -5,7 +5,7 @@ CRISPY_FAIL_SILENTLY = not DEBUG
 
 ALLOWED_HOSTS = ['localhost']
 
-with open(os.path.join(BASE_DIR, 'secrets/secret_key.txt')) as f:
+with open(os.environ.get('DJANGO_SECRET_KEY_FILE')) as f:
     SECRET_KEY = f.read().strip()
 
 SENDFILE_BACKEND = os.environ.get('DJANGO_SENDFILE_BACKEND')
@@ -41,12 +41,15 @@ X_FRAME_OPTIONS = 'DENY'
 #     ('Benji Katz','benjamin.katz@wustl.edu')
 # )
 
+with open(os.environ.get('DATABASE_PASSWORD_FILE')) as f:
+    DATABASE_PASSWORD = f.read().strip()
+
 DATABASES = {
     'default': {
         'ENGINE': os.environ.get('DATABASE_BACKEND'),
         'NAME': os.environ.get('DATABASE_NAME'),
         'USER': os.environ.get('DATABASE_USER'),
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+        'PASSWORD': DATABASE_PASSWORD,
         'HOST': os.environ.get('DATABASE_HOST'),
         'PORT': os.environ.get('DATABASE_PORT'),
     }
