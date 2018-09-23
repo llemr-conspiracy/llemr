@@ -19,7 +19,7 @@ ssh-django-web:
 ssh-db:
 	docker exec -it osler_db bash
 
-build-dev:
+build:
 	docker-compose build
 
 rebuild:

@@ -2,15 +2,10 @@ FROM python:2.7-slim
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y git
 
-RUN useradd -ms /bin/bash -r -U  -d /home/gunicorn_user gunicorn_user
-RUN chown -R gunicorn_user /home/gunicorn_user
-USER gunicorn_user
-
 COPY . /home/gunicorn_user/osler
 WORKDIR /home/gunicorn_user/osler
-ENV PATH="${PATH}:/home/gunicorn_user/.local/bin"
 
-RUN pip install --user --trusted-host pypi.python.org -r requirements-prod.txt
+RUN pip install --trusted-host pypi.python.org -r requirements-prod.txt
 
 EXPOSE 8000
 
