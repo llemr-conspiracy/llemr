@@ -6,6 +6,11 @@ DEBUG = True
 CRISPY_FAIL_SILENTLY = not DEBUG
 ALLOWED_HOSTS = []
 
+INTERNAL_IPS = ('127.0.0.1',)  # used for debug toolbar
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
 SECRET_KEY = "^**4$36%t29#6+q4j9d3r$7da=i4*v398h%4k*mwc43pd1y#)u"
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -17,7 +22,8 @@ DATABASES = {
     }
 }
 
-MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + (
+    'debug_toolbar.middleware.DebugToolbarMiddleware',)
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.MD5PasswordHasher',

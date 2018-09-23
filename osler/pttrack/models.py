@@ -11,9 +11,9 @@ from . import validators
 
 # pylint: disable=I0011,missing-docstring,E1305
 
+
 def make_filepath(instance, filename):
-    '''
-        Produces a unique file path for the upload_to of a FileField. This is
+    """Produces a unique file path for the upload_to of a FileField. This is
         important because any URL is 1) transmitted unencrypted and 2)
         automatically referred to any libraries we include (i.e. Bootstrap,
         AngularJS).
@@ -22,8 +22,7 @@ def make_filepath(instance, filename):
         "[model name]/[field name]/[random name].[filename extension]".
 
         Copypasta from https://djangosnippets.org/snippets/2819/
-    '''
-
+    """
 
     field_name = 'image'
     carry_on = True
@@ -78,6 +77,9 @@ class Language(models.Model):
 
 
 class Ethnicity(models.Model):
+    class Meta:
+        verbose_name_plural = 'ethnicities'
+
     name = models.CharField(max_length=50, primary_key=True)
 
     def __unicode__(self):
@@ -102,7 +104,8 @@ class ProviderType(models.Model):
 
 
 class Gender(models.Model):
-    long_name = models.CharField(max_length=30, primary_key=True)
+    long_name = models.CharField(
+        max_length=30, primary_key=True, )
     short_name = models.CharField(max_length=1)
 
     def __unicode__(self):

@@ -2,7 +2,6 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponseServerError, \
     HttpResponse
 from django.core.urlresolvers import reverse
-from django.template import Context
 from django.template.loader import get_template
 from django.utils.timezone import now
 from django.views.generic.edit import FormView

@@ -10,7 +10,8 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - .:/osler
+      - ./osler/media:/opt/services/osler/media
+      - ./osler/static:/opt/services/osler/static  # only needed for collectstatic?
     networks:
       - nginx_network
       - database_network
@@ -18,7 +19,9 @@ services:
       - db
     environment:
       DJANGO_SETTINGS_MODULE: osler.docker_settings
-      DJANGO_SECRET_KEY: 7^9cf-1d#z2j#@t0-vo2=l7e7z=n@g8_na56c_(pwbx8dnk3)l
+      DJANGO_SENDFILE_BACKEND: sendfile.backends.nginx
+      DJANGO_SENDFILE_ROOT: /opt/services/osler/media
+      DJANGO_SENDFILE_URL: /media
       DATABASE_BACKEND: django.db.backends.postgresql_psycopg2
       DATABASE_PASSWORD: debug-password
       DATABASE_NAME: osler
@@ -45,10 +48,16 @@ services:
       - 8000:80
     volumes:
       - ./config/nginx.conf:/etc/nginx/nginx.conf
+      - ./osler/static:/opt/services/osler/static/
+      - ./osler/media:/opt/services/osler/media/
     depends_on:
       - web
     networks:
       - nginx_network
+
+# volumes:
+#   static_volume: ./osler/static # <-- declare the static volume
+#   media_volume:  ./osler/media # <-- declare the media volume
 
 networks:
   nginx_network:

@@ -3,7 +3,6 @@ from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.views.generic.edit import FormView, UpdateView
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Prefetch
 
 from . import models as mymodels
@@ -13,6 +12,7 @@ from appointment.models import Appointment
 import json
 import collections
 import datetime
+
 
 def get_current_provider_type(request):
     '''
@@ -398,7 +398,6 @@ def all_patients(request):
                   {'object_list': patient_list})
 
 
-
 def patient_activate_detail(request, pk):
     pt = get_object_or_404(mymodels.Patient, pk=pk)
 
@@ -407,6 +406,7 @@ def patient_activate_detail(request, pk):
     pt.save()
 
     return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+
 
 def patient_activate_home(request, pk):
     pt = get_object_or_404(mymodels.Patient, pk=pk)
@@ -417,6 +417,7 @@ def patient_activate_home(request, pk):
 
     return HttpResponseRedirect(reverse("home"))
 
+
 def done_action_item(request, ai_id):
     ai = get_object_or_404(mymodels.ActionItem, pk=ai_id)
     ai.mark_done(request.user.provider)
@@ -425,10 +426,10 @@ def done_action_item(request, ai_id):
     return HttpResponseRedirect(reverse("followup-choice",
                                         args=(ai.patient.pk,)))
 
+
 def reset_action_item(request, ai_id):
     ai = get_object_or_404(mymodels.ActionItem, pk=ai_id)
     ai.clear_done()
     ai.save()
     return HttpResponseRedirect(reverse("patient-detail",
                                         args=(ai.patient.id,)))
-

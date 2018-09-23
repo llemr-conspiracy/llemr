@@ -1,15 +1,22 @@
 from base_settings import *
 
-DEBUG = True
-# DEBUG = TEMPLATE_DEBUG = False
+DEBUG = TEMPLATE_DEBUG = False
 CRISPY_FAIL_SILENTLY = not DEBUG
 
-# ALLOWED_HOSTS = ['osler.wustl.edu']
+ALLOWED_HOSTS = ['localhost']
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+with open(os.path.join(BASE_DIR, 'secrets/secret_key.txt')) as f:
+    SECRET_KEY = f.read().strip()
 
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-# SECURE_BROWSER_XSS_FILTER = True
+SENDFILE_BACKEND = os.environ.get('DJANGO_SENDFILE_BACKEND')
+SENDFILE_URL = os.environ.get('DJANGO_SENDFILE_URL')
+SENDFILE_ROOT = os.environ.get('DJANGO_SENDFILE_ROOT')
+
+MEDIA_URL = '/media_auth/'
+MEDIA_ROOT = SENDFILE_ROOT
+
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
 
 # one day in seconds
 SESSION_COOKIE_AGE = 86400
@@ -18,10 +25,10 @@ SESSION_COOKIE_AGE = 86400
 # balancer, meaning infinite redirects if we enable this :(
 # SECURE_SSL_REDIRECT = True
 
-# SESSION_COOKIE_SECURE = True
-# CSRF_COOKIE_SECURE = True
-# CSRF_COOKIE_HTTPONLY = True
-# X_FRAME_OPTIONS = 'DENY'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
+X_FRAME_OPTIONS = 'DENY'
 
 # DEFAULT_FROM_EMAIL = "webmaster@osler.wustl.edu"
 # SERVER_EMAIL = "admin@osler.wustl.edu"

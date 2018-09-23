@@ -3,13 +3,13 @@ from decimal import Decimal, ROUND_HALF_UP
 from django.forms import (
     fields, ModelForm, CheckboxSelectMultiple, ModelChoiceField,
     ModelMultipleChoiceField, RadioSelect
-    )
+)
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Div, Field, Row, HTML
 from crispy_forms.bootstrap import (
     InlineCheckboxes, AppendedText, PrependedText
-    )
+)
 
 from pttrack.models import Provider, ProviderType
 from . import models

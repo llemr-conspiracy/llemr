@@ -22,5 +22,12 @@ ssh-db:
 build-dev:
 	docker-compose build
 
+rebuild:
+	docker-compose build --no-cache
+	docker-compose up
+
+test:
+	docker-compose run osler_app python osler/manage.py test
+
 clean:
 	docker system prune
