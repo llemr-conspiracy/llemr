@@ -1,4 +1,4 @@
-version: "3.1"
+version: "3.2"
 
 services:
   web:
@@ -9,8 +9,8 @@ services:
     image: osler
     stop_signal: SIGINT
     volumes:
-      - ./osler/media:/home/gunicorn_user/osler/osler/media
-      - ./osler/static:/home/gunicorn_user/osler/osler/static  # only needed for collectstatic?
+      - static:/home/gunicorn_user/osler/osler/static
+      - media:/home/gunicorn_user/osler/osler/media
       - ./logs:/home/gunicorn_user/logs
     networks:
       - nginx_network
@@ -55,12 +55,16 @@ services:
       - 8000:80
     volumes:
       - ./config/nginx.conf:/etc/nginx/nginx.conf
-      - ./osler/static:/opt/services/osler/static/
-      - ./osler/media:/opt/services/osler/media/
+      - static:/opt/services/osler/static/
+      - media:/opt/services/osler/media/
     depends_on:
       - web
     networks:
       - nginx_network
+
+volumes:
+  static:
+  media:
 
 secrets:
    database_password:
