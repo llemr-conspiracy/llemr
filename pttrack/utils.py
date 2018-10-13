@@ -18,17 +18,20 @@ from . import forms as myforms
 from appointment.models import Appointment
 
 
-
-
 def all_variations(name):
+    '''
+    all_variations is a function that is used to help search for all
+    variations of a string that have either added, removed, or changed
+    1 letter. Function returns a list of all variations of the input string.
+    '''
     all_vars = []
     if name is None or len(name) == 0:
         return all_vars
-    if len(name) < 2:
+    if len(name) == 1:
         all_vars.append(name)
         return all_vars
     else:
-        #try all variations of switching letters
+        #try all variations of switching letters, other than first letter
         for i in range(1,len(name)):
             #remove letter
             all_vars.append(name[:i] + name[i+1:])
@@ -40,11 +43,17 @@ def all_variations(name):
         all_vars.append(name)
         return all_vars
 
-
 def return_duplicates(first_name_str, last_name_str):
+    '''
+    search database for all variations of first and last name off by 1
+    letter (except for first letter must be correct) and return matching
+    results.  First name may also be abbreviated (to cover cases like
+    ben and benjamin)
+    '''
     first_name_var = all_variations(first_name_str.capitalize())
-
     last_name_var = all_variations(last_name_str.capitalize())
     if len(first_name_var) == 0 or len(last_name_var) == 0:
         return
-    return mymodels.Patient.objects.filter((Q(first_name__in=first_name_var) | Q(first_name__startswith=first_name_str)) & Q(last_name__in=last_name_var))
+    return mymodels.Patient.objects.filter((Q(first_name__in=first_name_var) |
+        Q(first_name__startswith=first_name_str)) &
+        Q(last_name__in=last_name_var))

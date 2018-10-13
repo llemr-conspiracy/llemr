@@ -116,8 +116,6 @@ Osler: {{ title | default:"All Patients"}}
                 }
 
                 // build "Next AI Due" column
-                console.log(patient)
-                console.log("hello")
                 $(patientRow).append(
                     $("<td>").text(patient.status)
                 );

@@ -4,7 +4,11 @@ from . import utils
 from . import models
 
 class AllVariationsTests(TestCase):
-
+    '''
+    all_variations is a function that is used to help search for all
+    variations of a string that have either added, removed, or changed
+    1 letter. Function returns a list of all variations of the input string.
+    '''
 
     def test_empty_string(self):
         '''empty string should return empty list'''
@@ -19,14 +23,16 @@ class AllVariationsTests(TestCase):
         self.assertEqual(return_val, [])
 
     def test_singleton_string(self):
-        '''string of length 1 should return a list consisting of just itself'''
+        '''string of length 1 should return a list consisting of just
+        itself'''
         name = 'b'
         return_val = utils.all_variations(name)
         self.assertEqual(return_val, [name])
 
     def test_first_letter_is_constant(self):
-        '''Every value created should start with the first letter of the input (You are less likely
-            to mess up the first letter'''
+        '''Every value created should start with the first letter of the
+         search input (You are less likely to mess up the first letter
+         and not realize it'''
         name = 'ben'
         return_val = utils.all_variations(name)
         all_good = True
@@ -60,9 +66,10 @@ class AllVariationsTests(TestCase):
         self.assertTrue(name in return_val)
 
     def test_number_vals_returned(self):
-        '''for each letter (other than the first letter) there should be 26 variations for
-            changes in a letter, 26 for adding a letter, and 1 for removing the lette,
-            and also add the original input giving a total of (len(input) - 1) * 53 + 1 changes '''
+        '''for each letter (other than the first letter) there should be
+        26 variations for changes in a letter, 26 for adding a letter,
+        and 1 for removing the letter, and also add the original input
+        giving a total of (len(input) - 1) * 53 + 1 changes '''
         name = 'ben'
         return_val = utils.all_variations(name)
         self.assertEqual(len(return_val), (len(name) - 1) * 53 + 1)
@@ -117,6 +124,12 @@ def create_pts():
 
 
 class return_duplicatesTests(TestCase):
+    '''
+    search database for all variations of first and last name off by 1
+    letter (except for first letter must be correct) and return matching
+    results.  First name may also be abbreviated (to cover cases like
+    ben and benjamin)
+    '''
 
     def test_empty_first_name(self):
         '''If first and last name is empty string should return None
@@ -143,7 +156,8 @@ class return_duplicatesTests(TestCase):
         self.assertEqual(result, None)
 
     def test_identical_first_last_name(self):
-        '''If first and last name exactly match database entry, it should be returned
+        '''If first and last name exactly match database entry, it
+        should be returned
         '''
         create_pts()
         self.assertEqual(len(models.Patient.objects.all()), 5)
@@ -151,7 +165,8 @@ class return_duplicatesTests(TestCase):
         self.assertEqual(len(result), 1)
 
     def test_wrong_last_name(self):
-        '''If first name matches but last name is completely different no results should be returned
+        '''If first name matches but last name is completely different
+        no results should be returned
         '''
         create_pts()
         self.assertEqual(len(models.Patient.objects.all()), 5)
@@ -159,7 +174,8 @@ class return_duplicatesTests(TestCase):
         self.assertEqual(len(result), 0)
 
     def test_wrong_first_name(self):
-        '''If last name matches but first name is completely different no results should be returned
+        '''If last name matches but first name is completely different
+        no results should be returned
         '''
         create_pts()
         self.assertEqual(len(models.Patient.objects.all()), 5)
@@ -167,8 +183,9 @@ class return_duplicatesTests(TestCase):
         self.assertEqual(len(result), 0)
 
     def test_first_last_off_by_1(self):
-        '''If first name and last name have 1 letter difference from true value (letter added or removed)
-            the database entry should still be returned
+        '''If first name and last name have 1 letter difference from
+        true value (letter added or removed) the database entry should
+        still be returned
         '''
         create_pts()
         self.assertEqual(len(models.Patient.objects.all()), 5)
@@ -176,7 +193,8 @@ class return_duplicatesTests(TestCase):
         self.assertEqual(len(result), 1)
 
     def test_start_with_first(self):
-        '''If first name given matches the start of the actual name, shoud return result
+        '''If first name given matches the start of the actual name,
+        shoud return result
         '''
         create_pts()
         self.assertEqual(len(models.Patient.objects.all()), 5)
@@ -184,24 +202,35 @@ class return_duplicatesTests(TestCase):
         self.assertEqual(len(result), 1)
 
     def test_start_with_first_wrong_last(self):
+        '''If first name given matches start of the actual name
+        but last name does not no results returned
+        '''
         create_pts()
         self.assertEqual(len(models.Patient.objects.all()), 5)
         result = utils.return_duplicates("ben", "katzington")
         self.assertEqual(len(result), 0)
 
     def test_start_with_last(self):
+        '''If last name given only matches the start of the actual name,
+        no results returned (last names are never abbreviated)
+        '''
         create_pts()
         self.assertEqual(len(models.Patient.objects.all()), 5)
         result = utils.return_duplicates("benjamin", "ka")
         self.assertEqual(len(result), 0)
 
     def test_return_multiple(self):
+        '''Ensure function will return all eligeble results
+        '''
         create_pts()
         self.assertEqual(len(models.Patient.objects.all()), 5)
         result = utils.return_duplicates("artur", "meller")
         self.assertEqual(len(result), 3)
 
     def test_return_multiple_starts_with(self):
+        '''Ensure function will return all eligeble results if first name
+        only matches start of the actual names
+        '''
         create_pts()
         self.assertEqual(len(models.Patient.objects.all()), 5)
         result = utils.return_duplicates("art", "meller")

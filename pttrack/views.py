@@ -136,7 +136,9 @@ class ProviderCreate(FormView):
 
 class ProviderUpdate(UpdateView):
     '''
-    For updating a provider, e.g. used during a new school year when preclinicals become clinicals. Set needs_update to false using require_providers_update() in pttrack.models
+    For updating a provider, e.g. used during a new school year when
+    preclinicals become clinicals. Set needs_update to false using
+    require_providers_update() in pttrack.models
     '''
     template_name = 'pttrack/provider-update.html'
     model = mymodels.Provider
@@ -229,67 +231,73 @@ class PreIntakeSelect(ListView):
         for param in ['first_name', 'last_name']:
             if param in self.request.GET:
                 initial[param] = self.request.GET[param]
-        m = utils.return_duplicates(initial.get('first_name', None),
-                              initial.get('last_name', None))
-        return m
+        if (initial.get('first_name', None) == None or
+            initial.get('last_name', None) == None):
+            return []
+        possible_duplicates = utils.return_duplicates(initial.get(
+            'first_name', None), initial.get('last_name', None))
+        return possible_duplicates
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(PreIntakeSelect, self).get_context_data(**kwargs)
-
         initial = {}
         for param in ['first_name', 'last_name',]:
             if param in self.request.GET:
                 initial[param] = self.request.GET[param]
         context['first_name'] = initial.get('first_name', None)
         context['last_name'] = initial.get('last_name', None)
-        context['new_pt_url'] = "%s?%s=%s&%s=%s" % (reverse("intake"), "first_name", initial.get('first_name', None), "last_name",initial.get('last_name', None))
+        context['new_pt_url'] = "%s?%s=%s&%s=%s" % (reverse("intake"),
+            "first_name", initial.get('first_name', None), "last_name",
+            initial.get('last_name', None))
         context['home'] = reverse("home")
         return context
 
 
 class PreIntake(FormView):
     '''A view for ensuring new patient is not already in the database.
-        Will search if there is a patient with same, or similar first and last name
-        If none similar directs to patient intake
-        If one or more similar directs to preintake-select
+        Will search if there is a patient with same, or similar first and
+        last name.
+        If none are similar, directs to patient intake
+        If one or more similar, directs to preintake-select
         url's are sent with first and last name in query string notation
     '''
     template_name = 'pttrack/intake.html'
     form_class = myforms.IsDuplicatePatient
 
-
     def form_valid(self, form):
         first_name_str = form.cleaned_data['first_name'].capitalize()
         last_name_str = form.cleaned_data['last_name'].capitalize()
-        matching_patients = utils.return_duplicates(first_name_str, last_name_str)
+        matching_patients = utils.return_duplicates(first_name_str,
+            last_name_str)
         if len(matching_patients) > 0:
-            intake_url = "%s?%s=%s&%s=%s" % (reverse("preintake-select"), "first_name", first_name_str, "last_name",last_name_str)
+            intake_url = "%s?%s=%s&%s=%s" % (reverse("preintake-select"),
+                "first_name", first_name_str, "last_name",last_name_str)
             return HttpResponseRedirect(intake_url)
-
-        intake_url = "%s?%s=%s&%s=%s" % (reverse("intake"), "first_name", first_name_str, "last_name",last_name_str)
+        intake_url = "%s?%s=%s&%s=%s" % (reverse("intake"), "first_name",
+            first_name_str, "last_name",last_name_str)
         return HttpResponseRedirect(intake_url)
 
 
 
 class PatientCreate(FormView):
-    '''A view for creating a new patient using PatientForm.'''
+    '''A view for creating a new patient using PatientForm.
+    '''
     template_name = 'pttrack/intake.html'
     form_class = myforms.PatientForm
 
     def form_valid(self, form):
         pt = form.save()
         pt.save()
-
         return HttpResponseRedirect(reverse("demographics-create",
                                             args=(pt.id,)))
+
     def get_initial(self):
         initial = super(PatientCreate, self).get_initial()
-        for param in ['date_of_birth', 'first_name', 'last_name',
-                      'middle_name']:
+        #get values that were given by url in query string notation
+        for param in ['first_name', 'last_name']:
             if param in self.request.GET:
                 initial[param] = self.request.GET[param]
-
         return initial
 
 
