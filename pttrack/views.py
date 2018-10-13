@@ -1,5 +1,4 @@
 import json
-import string
 import collections
 import datetime
 
@@ -9,14 +8,14 @@ from django.views.generic.edit import FormView, UpdateView
 from django.views.generic.list import ListView
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.db.models import Prefetch, Q
+from django.db.models import Prefetch
 
 from . import models as mymodels
 from workup import models as workupmodels
 from . import forms as myforms
 from appointment.models import Appointment
 from . import utils
+
 
 def get_current_provider_type(request):
     '''
