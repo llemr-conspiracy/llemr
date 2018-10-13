@@ -134,11 +134,10 @@ class ProviderCreate(FormView):
 
 
 class ProviderUpdate(UpdateView):
-    '''
-    For updating a provider, e.g. used during a new school year when
+    """For updating a provider, e.g. used during a new school year when
     preclinicals become clinicals. Set needs_update to false using
     require_providers_update() in pttrack.models
-    '''
+    """
     template_name = 'pttrack/provider-update.html'
     model = mymodels.Provider
     form_class = myforms.ProviderForm
@@ -285,8 +284,7 @@ class PreIntake(FormView):
 
 
 class PatientCreate(FormView):
-    '''A view for creating a new patient using PatientForm.
-    '''
+    """A view for creating a new patient using PatientForm."""
     template_name = 'pttrack/intake.html'
     form_class = myforms.PatientForm
 
@@ -298,7 +296,7 @@ class PatientCreate(FormView):
 
     def get_initial(self):
         initial = super(PatientCreate, self).get_initial()
-        #get values that were given by url in query string notation
+        # get values that were given by url in query string notation
         for param in ['first_name', 'last_name']:
             if param in self.request.GET:
                 initial[param] = self.request.GET[param]
