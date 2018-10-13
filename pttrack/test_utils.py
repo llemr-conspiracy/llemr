@@ -58,8 +58,8 @@ class AllVariationsTests(TestCase):
         return_val = utils.all_variations(name)
         self.assertTrue('bn' in return_val)
 
-    def test_remove_letter(self):
-        """innitial name should be returned"""
+    def test_initial_name_present(self):
+        """initial name should be returned"""
         name = 'ben'
         return_val = utils.all_variations(name)
         self.assertTrue(name in return_val)
