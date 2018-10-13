@@ -42,3 +42,13 @@ def return_duplicates(first_name_str, last_name_str):
         (Q(first_name__in=first_name_var) |
          Q(first_name__startswith=first_name_str)) &
         Q(last_name__in=last_name_var))
+
+def get_names_from_url_query_dict(request):
+    """Get first_name and last_name from a request object in a dict.
+    """
+
+    qs_dict = {param: request.GET[param] for param
+               in ['first_name', 'last_name']
+               if param in request.GET}
+
+    return qs_dict

@@ -226,16 +226,12 @@ class PreIntakeSelect(ListView):
 
     def parse_url_querystring(self):
 
-        initial = {param: self.request.GET[param] for param
-                   in ['first_name', 'last_name']
-                   if param in self.request.GET}
-
-        return initial
+        return utils.get_names_from_url_query_dict(self.request)
 
     def get_queryset(self):
         initial = self.parse_url_querystring()
-        if (initial.get('first_name', None) == None or
-            initial.get('last_name', None) == None):
+        if (initial.get('first_name', None) is None or
+            initial.get('last_name', None) is None):
             return []
         possible_duplicates = utils.return_duplicates(initial.get(
             'first_name', None), initial.get('last_name', None))
@@ -296,10 +292,9 @@ class PatientCreate(FormView):
 
     def get_initial(self):
         initial = super(PatientCreate, self).get_initial()
-        # get values that were given by url in query string notation
-        for param in ['first_name', 'last_name']:
-            if param in self.request.GET:
-                initial[param] = self.request.GET[param]
+
+
+        initial.update(utils.get_names_from_url_query_dict(self.request))
         return initial
 
 
