@@ -266,7 +266,7 @@ class PreIntake(FormView):
     query string notation
     """
 
-    template_name = 'pttrack/intake.html'
+    template_name = 'pttrack/preintake.html'
     form_class = myforms.DuplicatePatientForm
 
     def form_valid(self, form):
