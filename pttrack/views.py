@@ -226,11 +226,16 @@ class PreIntakeSelect(ListView):
     template_name = 'pttrack/preintake-select.html'
     new_pt_url = ""
 
+    def parse_url_querystring(self):
+
+        initial = {param: self.request.GET[param] for param
+                   in ['first_name', 'last_name']
+                   if param in self.request.GET}
+
+        return initial
+
     def get_queryset(self):
-        initial = {}
-        for param in ['first_name', 'last_name']:
-            if param in self.request.GET:
-                initial[param] = self.request.GET[param]
+        initial = self.parse_url_querystring()
         if (initial.get('first_name', None) == None or
             initial.get('last_name', None) == None):
             return []
@@ -241,43 +246,43 @@ class PreIntakeSelect(ListView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
         context = super(PreIntakeSelect, self).get_context_data(**kwargs)
-        initial = {}
-        for param in ['first_name', 'last_name',]:
-            if param in self.request.GET:
-                initial[param] = self.request.GET[param]
+        initial = self.parse_url_querystring()
         context['first_name'] = initial.get('first_name', None)
         context['last_name'] = initial.get('last_name', None)
-        context['new_pt_url'] = "%s?%s=%s&%s=%s" % (reverse("intake"),
-            "first_name", initial.get('first_name', None), "last_name",
-            initial.get('last_name', None))
+        context['new_pt_url'] = "%s?%s=%s&%s=%s" % (
+            reverse("intake"),
+            "first_name", initial.get('first_name', None),
+            "last_name", initial.get('last_name', None))
         context['home'] = reverse("home")
         return context
 
 
 class PreIntake(FormView):
-    '''A view for ensuring new patient is not already in the database.
-        Will search if there is a patient with same, or similar first and
-        last name.
-        If none are similar, directs to patient intake
-        If one or more similar, directs to preintake-select
-        url's are sent with first and last name in query string notation
-    '''
+    """A view for ensuring new patient is not already in the database.
+
+    Searches if there is a patient with same, or similar first and last
+    name. If none similar directs to patient intake;  If one or more similar
+    directs to preintake-select urls are sent with first and last name in
+    query string notation
+    """
+
     template_name = 'pttrack/intake.html'
-    form_class = myforms.IsDuplicatePatient
+    form_class = myforms.DuplicatePatientForm
 
     def form_valid(self, form):
         first_name_str = form.cleaned_data['first_name'].capitalize()
         last_name_str = form.cleaned_data['last_name'].capitalize()
         matching_patients = utils.return_duplicates(first_name_str,
-            last_name_str)
-        if len(matching_patients) > 0:
-            intake_url = "%s?%s=%s&%s=%s" % (reverse("preintake-select"),
-                "first_name", first_name_str, "last_name",last_name_str)
-            return HttpResponseRedirect(intake_url)
-        intake_url = "%s?%s=%s&%s=%s" % (reverse("intake"), "first_name",
-            first_name_str, "last_name",last_name_str)
-        return HttpResponseRedirect(intake_url)
+                                                    last_name_str)
 
+        querystr = '%s=%s&%s=%s' % ("first_name", first_name_str,
+                                    "last_name", last_name_str)
+        if len(matching_patients) > 0:
+            intake_url = "%s?%s" % (reverse("preintake-select"), querystr)
+            return HttpResponseRedirect(intake_url)
+
+        intake_url = "%s?%s" % (reverse("intake"), querystr)
+        return HttpResponseRedirect(intake_url)
 
 
 class PatientCreate(FormView):

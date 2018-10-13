@@ -1,21 +1,6 @@
-import json
 import string
-import collections
-import datetime
-
-from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponseServerError
-from django.views.generic.edit import FormView, UpdateView
-from django.views.generic.list import ListView
-from django.core.urlresolvers import reverse
-from django.core.exceptions import ImproperlyConfigured
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.db.models import Prefetch, Q
-
+from django.db.models import Q
 from . import models as mymodels
-from workup import models as workupmodels
-from . import forms as myforms
-from appointment.models import Appointment
 
 
 def all_variations(name):

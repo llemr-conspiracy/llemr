@@ -1,29 +1,28 @@
 '''Forms for the Oser core components.'''
 from bootstrap3_datetime.widgets import DateTimePicker
-from django.forms import Form, CharField,DateField, ModelForm, EmailField, CheckboxSelectMultiple, \
-    ModelChoiceField, ModelMultipleChoiceField
+from django.forms import (Form, CharField, ModelForm, EmailField,
+                          CheckboxSelectMultiple, ModelMultipleChoiceField)
 from django.contrib.auth.forms import AuthenticationForm
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from crispy_forms.bootstrap import InlineCheckboxes
 
-from . import validators
 from . import models
 
 # pylint: disable=I0011,E1305
 
 
-
-class IsDuplicatePatient(Form):
+class DuplicatePatientForm(Form):
     first_name = CharField(label='First Name')
     last_name = CharField(label='Last Name')
-    #date_of_birth = DateField(help_text='MM/DD/YYYY',validators=[validators.validate_birth_date])
+
     def __init__(self, *args, **kwargs):
-        super(IsDuplicatePatient, self).__init__(*args, **kwargs)
+        super(DuplicatePatientForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.fields['first_name'].widget.attrs['autofocus'] = True
         self.helper.add_input(Submit('submit', 'Submit'))
+
 
 class PatientForm(ModelForm):
     class Meta:
@@ -38,7 +37,7 @@ class PatientForm(ModelForm):
         queryset=models.Provider.objects.filter(
             clinical_roles__in=models.ProviderType.objects.filter(
                 staff_view=True)).distinct().order_by("last_name"),
-        )
+    )
 
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
@@ -52,7 +51,6 @@ class PatientForm(ModelForm):
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['ethnicities'].wrap(InlineCheckboxes)
         self.helper.add_input(Submit('submit', 'Submit'))
-
 
     def clean(self):
 
@@ -124,7 +122,6 @@ class DocumentForm(ModelForm):
         super(DocumentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
-
 
 
 class CrispyAuthenticationForm(AuthenticationForm):
