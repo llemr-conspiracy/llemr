@@ -37,6 +37,7 @@ jobs:
           command: |
             . venv/bin/activate
             coverage run --source='.' ./manage.py test
+            codecov -t 3255dabc-78eb-459a-a4c7-c43efcbb1718
       - store_artifacts:
           path: test-reports/
           destination: tr1

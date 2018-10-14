@@ -3,13 +3,13 @@ from decimal import Decimal, ROUND_HALF_UP
 from django.forms import (
     fields, ModelForm, CheckboxSelectMultiple, ModelChoiceField,
     ModelMultipleChoiceField, RadioSelect
-    )
+)
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Div, Field, Row, HTML
 from crispy_forms.bootstrap import (
     InlineCheckboxes, AppendedText, PrependedText
-    )
+)
 
 from pttrack.models import Provider, ProviderType
 from . import models
@@ -54,7 +54,7 @@ def fahrenheit2centigrade(f):
     centigrade. If None, returns None.
     """
     if f is not None:
-        return (f - 32) / Decimal(9.0/5.0)
+        return (f - 32) / Decimal(9.0 / 5.0)
     else:
         return None
 
@@ -108,7 +108,7 @@ class WorkupForm(ModelForm):
 
     class Meta:
         model = models.Workup
-        exclude = ['patient', 'clinic_day', 'author', 'signer', 'author_type',
+        exclude = ['patient', 'author', 'signer', 'author_type',
                    'signed_date']
         widgets = {'referral_location': CheckboxSelectMultiple,
                    'referral_type': CheckboxSelectMultiple}
@@ -121,14 +121,14 @@ class WorkupForm(ModelForm):
         queryset=Provider.objects.filter(
             clinical_roles__in=ProviderType.objects.filter(
                 signs_charts=True)).order_by("last_name")
-        )
+    )
 
     other_volunteer = ModelMultipleChoiceField(
         required=False,
         queryset=Provider.objects.filter(
             clinical_roles__in=ProviderType.objects.filter(
                 signs_charts=False)).distinct().order_by("last_name"),
-        )
+    )
 
     def __init__(self, *args, **kwargs):
         super(WorkupForm, self).__init__(*args, **kwargs)
@@ -139,7 +139,9 @@ class WorkupForm(ModelForm):
         self.helper.layout = Layout(
             Row(HTML('<h3>Clinical Team</h3>'),
                 Div('attending', css_class='col-sm-6'),
-                Div('other_volunteer',  css_class='col-sm-6')),
+                Div('other_volunteer', css_class='col-sm-6'),
+                Div('clinic_day', css_class='col-sm-12')
+                ),
 
             Row(HTML('<h3>History</h3>'),
                 Div('chief_complaint', css_class='col-sm-6'),
@@ -268,7 +270,6 @@ class ClinicDateForm(ModelForm):
     class Meta:
         model = models.ClinicDate
         exclude = ['clinic_date', 'gcal_id']
-
 
     def __init__(self, *args, **kwargs):
         super(ClinicDateForm, self).__init__(*args, **kwargs)

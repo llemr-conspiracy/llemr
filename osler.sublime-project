@@ -21,6 +21,9 @@
 	"folders":
 	[
 		{
+			"path": ".circleci"
+		},
+		{
 			"file_exclude_patterns":
 			[
 				"__init__.py"
