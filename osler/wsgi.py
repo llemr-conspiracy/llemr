@@ -11,8 +11,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
 sys.path.append(os.path.join(BASE_DIR, 'osler'))
 
-#os.environ['DJANGO_SETTINGS_MODULE'] = 'osler.debug_settings'
-os.environ['DJANGO_SETTINGS_MODULE'] = 'osler.deploy_settings'
+# os.environ['DJANGO_SETTINGS_MODULE'] = 'osler.debug_settings'
+# os.environ['DJANGO_SETTINGS_MODULE'] = 'osler.deploy_settings'
 
 os.environ['PYTHONHASHSEED'] = 'random'
 
