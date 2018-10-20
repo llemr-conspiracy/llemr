@@ -31,11 +31,11 @@ ADMINS = (
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'osler',
         'USER': 'django',
         'PASSWORD': DB_PASSWORD,
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'HOST': '134.193.138.85',
+        'PORT': '',
     }
 }
