@@ -2,6 +2,9 @@ from osler.base_settings import *
 
 INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
 DEBUG = True
 CRISPY_FAIL_SILENTLY = not DEBUG
 ALLOWED_HOSTS = []
@@ -17,7 +20,8 @@ DATABASES = {
     }
 }
 
-MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + ('debug_toolbar.middleware.DebugToolbarMiddleware',)
+MIDDLEWARE_CLASSES = MIDDLEWARE_CLASSES + (
+    'debug_toolbar.middleware.DebugToolbarMiddleware',)
 
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.MD5PasswordHasher',

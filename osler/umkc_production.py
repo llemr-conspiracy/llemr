@@ -1,8 +1,8 @@
 from production_base import *
 
-SENDFILE_BACKEND = os.environ.get('DJANGO_SENDFILE_BACKEND')
-SENDFILE_URL = os.environ.get('DJANGO_SENDFILE_URL')
-SENDFILE_ROOT = os.environ.get('DJANGO_SENDFILE_ROOT')
+SENDFILE_BACKEND = 'sendfile.backends.nginx'
+SENDFILE_URL = '/media'
+SENDFILE_ROOT = os.path.join(BASE_DIR, 'media/')
 
 MEDIA_URL = '/media_auth/'
 MEDIA_ROOT = SENDFILE_ROOT

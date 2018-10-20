@@ -1,4 +1,4 @@
-from production_base import *
+from osler.production_base import *
 
 ALLOWED_HOSTS = ['osler.wustl.edu']
 

@@ -1,4 +1,4 @@
-from production_base import *
+from osler.base_settings import *
 
 with open(os.path.join(BASE_DIR, 'secrets/secret_key.txt')) as f:
     SECRET_KEY = f.read().strip()
