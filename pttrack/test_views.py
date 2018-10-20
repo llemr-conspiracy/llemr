@@ -867,6 +867,48 @@ class IntakeTest(TestCase):
                 models.ContactMethod.objects.first().pk
         }
 
+    def preintake_patient_with_collision(self):
+
+        self.valid_pt_dict['gender'] = models.Gender.objects.first()
+        del self.valid_pt_dict['preferred_contact_method']
+        del self.valid_pt_dict['languages']
+        del self.valid_pt_dict['ethnicities']
+
+        pt = models.Patient.objects.create(**self.valid_pt_dict)
+
+        url = reverse('preintake')
+        response = self.client.post(
+            url,
+            {k: self.valid_pt_dict[k] for k
+             in ['first_name', 'last_name']},
+            follow=True)
+
+        self.assertTemplateUsed(response, 'pttrack/preintake-select.html')
+
+        print(dir(response))
+        print(response.context_data)
+
+        self.assertIn(pt, response.context_data['object_list'])
+
+    def preintake_patient_no_collision(self):
+
+        url = reverse('preintake')
+        response = self.client.post(
+            url,
+            {k: self.valid_pt_dict[k] for k
+             in ['first_name', 'last_name']},
+            follow=True)
+
+        self.assertTemplateUsed(response, 'pttrack/intake.html')
+
+        self.assertEquals(
+            response.context_data['form']['first_name'].value(),
+            self.valid_pt_dict['first_name'])
+
+        self.assertEquals(
+            response.context_data['form']['last_name'].value(),
+            self.valid_pt_dict['last_name'])
+
     def test_can_intake_pt(self):
 
         n_pt = len(models.Patient.objects.all())

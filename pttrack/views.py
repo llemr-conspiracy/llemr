@@ -1,18 +1,21 @@
+import json
+import collections
+import datetime
+
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.views.generic.edit import FormView, UpdateView
+from django.views.generic.list import ListView
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Prefetch
 
 from . import models as mymodels
 from workup import models as workupmodels
 from . import forms as myforms
 from appointment.models import Appointment
-import json
-import collections
-import datetime
+from . import utils
+
 
 def get_current_provider_type(request):
     '''
@@ -131,9 +134,10 @@ class ProviderCreate(FormView):
 
 
 class ProviderUpdate(UpdateView):
-    '''
-    For updating a provider, e.g. used during a new school year when preclinicals become clinicals. Set needs_update to false using require_providers_update() in pttrack.models
-    '''
+    """For updating a provider, e.g. used during a new school year when
+    preclinicals become clinicals. Set needs_update to false using
+    require_providers_update() in pttrack.models
+    """
     template_name = 'pttrack/provider-update.html'
     model = mymodels.Provider
     form_class = myforms.ProviderForm
@@ -212,17 +216,86 @@ class PatientUpdate(UpdateView):
                                             args=(pt.id,)))
 
 
+class PreIntakeSelect(ListView):
+    """Allows users to see all patients with similar name to a
+    particular patient first and last name. Allows user to open one of
+    the simmilarly named patients, or create a new patient
+    """
+    template_name = 'pttrack/preintake-select.html'
+    new_pt_url = ""
+
+    def parse_url_querystring(self):
+
+        return utils.get_names_from_url_query_dict(self.request)
+
+    def get_queryset(self):
+        initial = self.parse_url_querystring()
+        if (initial.get('first_name', None) is None or
+            initial.get('last_name', None) is None):
+            return []
+        possible_duplicates = utils.return_duplicates(initial.get(
+            'first_name', None), initial.get('last_name', None))
+        return possible_duplicates
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(PreIntakeSelect, self).get_context_data(**kwargs)
+        initial = self.parse_url_querystring()
+        context['first_name'] = initial.get('first_name', None)
+        context['last_name'] = initial.get('last_name', None)
+        context['new_pt_url'] = "%s?%s=%s&%s=%s" % (
+            reverse("intake"),
+            "first_name", initial.get('first_name', None),
+            "last_name", initial.get('last_name', None))
+        context['home'] = reverse("home")
+        return context
+
+
+class PreIntake(FormView):
+    """A view for ensuring new patient is not already in the database.
+
+    Searches if there is a patient with same, or similar first and last
+    name. If none similar directs to patient intake;  If one or more similar
+    directs to preintake-select urls are sent with first and last name in
+    query string notation
+    """
+
+    template_name = 'pttrack/preintake.html'
+    form_class = myforms.DuplicatePatientForm
+
+    def form_valid(self, form):
+        first_name_str = form.cleaned_data['first_name'].capitalize()
+        last_name_str = form.cleaned_data['last_name'].capitalize()
+        matching_patients = utils.return_duplicates(first_name_str,
+                                                    last_name_str)
+
+        querystr = '%s=%s&%s=%s' % ("first_name", first_name_str,
+                                    "last_name", last_name_str)
+        if len(matching_patients) > 0:
+            intake_url = "%s?%s" % (reverse("preintake-select"), querystr)
+            return HttpResponseRedirect(intake_url)
+
+        intake_url = "%s?%s" % (reverse("intake"), querystr)
+        return HttpResponseRedirect(intake_url)
+
+
 class PatientCreate(FormView):
-    '''A view for creating a new patient using PatientForm.'''
+    """A view for creating a new patient using PatientForm."""
     template_name = 'pttrack/intake.html'
     form_class = myforms.PatientForm
 
     def form_valid(self, form):
         pt = form.save()
         pt.save()
-
         return HttpResponseRedirect(reverse("demographics-create",
                                             args=(pt.id,)))
+
+    def get_initial(self):
+        initial = super(PatientCreate, self).get_initial()
+
+
+        initial.update(utils.get_names_from_url_query_dict(self.request))
+        return initial
 
 
 class DocumentUpdate(NoteUpdate):

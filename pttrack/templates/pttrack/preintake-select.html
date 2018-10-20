@@ -1,0 +1,47 @@
+{% extends "pttrack/base.html" %}
+
+{% block title %}
+Patient Intake
+{% endblock %}
+
+{% block header %}
+<h1>Patient Intake</h1>
+<p class="lead">There was one or more simmilar patients already in the database.<br/>Select one or create a new patient.</p>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2>For lookup {{last_name}}, {{first_name}} </h2>
+        <table class="table table-striped">
+            <tr>
+                <th>Status</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Birthdate</th>
+                <th>Address</th>
+                <th>Last Visit</th>
+                <th>Number of Visits</th>
+            </tr>
+            {% for patient in object_list %}
+                <tr>
+                    <td>
+                        {% if patient.needs_workup %}
+                            Patient already active
+                        {% endif %}
+                        {% if not patient.needs_workup %}
+                            <button class="btn btn-success" onclick="location.href ='{% url "patient-activate-detail" pk=patient.id %}'">Activate Patient</button>
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url 'patient-detail' pk=patient.id %}">{{ patient.last_name}}, {{patient.first_name}}</a></td>
+                    <td> {{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</td>
+                    <td>{{patient.date_of_birth}}</td>
+                    <td>{{patient.address}}, {{patient.city}}<br/>{{patient.state}}, {{patient.zip_code}}</td>
+                    <td> {{patient.history.last.history_date}}</td>
+                    <td> {{patient.workup_set | length}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <button class="btn btn-warning" onclick="location.href ='{{new_pt_url}}'">New Patient</button>
+        <button class="btn btn-default" onclick="location.href ='{{home}}'">Cancel</button>
+    </div>
+{% endblock %}
