@@ -2,6 +2,8 @@ import json
 import collections
 import datetime
 
+from django.conf import settings
+from django.apps import apps
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.views.generic.edit import FormView, UpdateView
@@ -10,10 +12,12 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Prefetch
 
-from . import models as mymodels
 from workup import models as workupmodels
-from . import forms as myforms
+from referral.models import Referral, FollowupRequest, PatientContact
 from appointment.models import Appointment
+
+from . import models as mymodels
+from . import forms as myforms
 from . import utils
 
 
@@ -413,8 +417,48 @@ def patient_detail(request, pk):
     #   List 3: Title labels for the action items
     #   List 4: True and False determines if the link should be for done_action_item or update_action_item
 
-    zipped_ai_list = zip(['collapse5', 'collapse6', 'collapse7'], [pt.active_action_items(), pt.inactive_action_items(), pt.done_action_items()],
-                            ['Active Action Items', 'Pending Action Items', 'Completed Action Items'], [True, True, False])
+    active_ais = []
+    inactive_ais = []
+    done_ais = []
+
+    # Add action items for apps that are turned on in Osler's base settings
+    # OSLER_TODO_LIST_MANAGERS contains app names like referral which contain
+    # tasks for clinical teams to carry out (e.g., followup with patient)
+    for app, model in settings.OSLER_TODO_LIST_MANAGERS:
+        ai = apps.get_model(app, model)
+
+        active_ais.extend(ai.objects.get_active(patient=pt))
+        inactive_ais.extend(ai.objects.get_inactive(patient=pt))
+        done_ais.extend(ai.objects.get_completed(patient=pt))
+
+    # Calculate the total number of action items for this patient,
+    # This total includes all apps that that have associated
+    # tasks requiring clinical followup (e.g., referral followup request)
+    total_ais = len(active_ais) + len(inactive_ais) + len(done_ais)
+
+    zipped_ai_list = zip(['collapse5', 'collapse6', 'collapse7'],
+                         [active_ais, inactive_ais, done_ais],
+                         ['Active Action Items', 'Pending Action Items',
+                         'Completed Action Items'],
+                         [True, True, False])
+
+    # Provide referral list for patient page (includes specialty referrals)
+    referrals = Referral.objects.filter(
+        patient=pt,
+        followuprequest__in=FollowupRequest.objects.all()
+    )
+
+    # Add FQHC referral status
+    # Note it is possible for a patient to have been referred multiple times
+    # This creates some strage cases (e.g., first referral was lost to followup
+    # but the second one was successful). In these cases, the last referral
+    # status becomes the current status
+    fqhc_referrals = Referral.objects.filter(patient=pt, kind__is_fqhc=True)
+    referral_status_output = Referral.aggregate_referral_status(fqhc_referrals)
+
+    # Pass referral follow up set to page
+    referral_followups = PatientContact.objects.filter(patient=pt)
+    total_followups = referral_followups.count() + len(pt.followup_set())
 
     appointments = Appointment.objects.filter(patient=pt).order_by('clindate','clintime')
     # d = collections.OrderedDict()
@@ -424,8 +468,10 @@ def patient_detail(request, pk):
     #     else:
     #         d[a.clindate] = [a]
 
-    future_date_appointments = appointments.filter(clindate__gte=datetime.date.today()).order_by('clindate', 'clintime')
-    previous_date_appointments = appointments.filter(clindate__lt=datetime.date.today()).order_by('-clindate', 'clintime')
+    future_date_appointments = appointments.filter(
+        clindate__gte=datetime.date.today()).order_by('clindate', 'clintime')
+    previous_date_appointments = appointments.filter(
+        clindate__lt=datetime.date.today()).order_by('-clindate', 'clintime')
 
     future_apt = collections.OrderedDict()
     for a in future_date_appointments:
@@ -441,11 +487,20 @@ def patient_detail(request, pk):
         else:
             previous_apt[a.clindate] = [a]
 
-    zipped_apt_list = zip(['collapse8', 'collapse9'], [future_date_appointments, previous_date_appointments],
-                            ['Future Appointments', 'Past Appointments'], [future_apt, previous_apt])
+    zipped_apt_list = zip(
+        ['collapse8', 'collapse9'],
+        [future_date_appointments, previous_date_appointments],
+        ['Future Appointments', 'Past Appointments'],
+        [future_apt, previous_apt])
+
     return render(request,
                   'pttrack/patient_detail.html',
                   {'zipped_ai_list': zipped_ai_list,
+                   'total_ais': total_ais,
+                   'referral_status': referral_status_output,
+                   'referrals': referrals,
+                   'referral_followups': referral_followups,
+                   'total_followups': total_followups,
                    'patient': pt,
                    'appointments_by_date': future_apt,
                    'zipped_apt_list': zipped_apt_list})
