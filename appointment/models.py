@@ -12,10 +12,12 @@ class Appointment(Note):
     PSYCH_NIGHT = 'PSYCH_NIGHT'
     ACUTE_FOLLOWUP = 'ACUTE_FOLLOWUP'
     CHRONIC_CARE = 'CHRONIC_CARE'
+    VACCINE = 'VACCINE'
     APPOINTMENT_TYPES = (
         (PSYCH_NIGHT, 'Psych Night'),
         (ACUTE_FOLLOWUP, 'Acute Followup'),
-        (CHRONIC_CARE, 'Chronic Care')
+        (CHRONIC_CARE, 'Chronic Care'),
+        (VACCINE, "Vaccine Followup")
     )
 
     clindate = models.DateField(verbose_name="Appointment Date")
