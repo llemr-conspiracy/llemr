@@ -415,7 +415,8 @@ def patient_detail(request, pk):
     #   List 1: Labels for the panel objects of the action items
     #   List 2: Action Item lists based on type (active, pending, completed)
     #   List 3: Title labels for the action items
-    #   List 4: True and False determines if the link should be for done_action_item or update_action_item
+    #   List 4: True and False determines if the link should be for
+    #           done_action_item or update_action_item
 
     active_ais = []
     inactive_ais = []
@@ -460,7 +461,9 @@ def patient_detail(request, pk):
     referral_followups = PatientContact.objects.filter(patient=pt)
     total_followups = referral_followups.count() + len(pt.followup_set())
 
-    appointments = Appointment.objects.filter(patient=pt).order_by('clindate','clintime')
+    appointments = Appointment.objects \
+        .filter(patient=pt) \
+        .order_by('clindate', 'clintime')
     # d = collections.OrderedDict()
     # for a in appointments:
     #     if a.clindate in d:

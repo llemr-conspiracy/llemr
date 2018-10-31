@@ -431,6 +431,7 @@ class CompletableManager(models.Manager):
                 .exclude(completion_author=None)\
                 .order_by('completion_date')
 
+
 class CompletableMixin(models.Model):
     """CompleteableMixin is for anything that goes in that list of
     stuff on the Patient detail page. They can be marked as
@@ -461,6 +462,26 @@ class CompletableMixin(models.Model):
         self.completion_author = None
         self.completion_date = None
 
+    def short_name(self):
+        """A short (one or two word) description of the action type that
+        this completable represents.
+
+        For example, ReferralFollowup has "Referral".
+        """
+        raise NotImplementedError(
+            "All Completables must have an 'short_name' property that "
+            "is indicates what one has to do of completable this is ")
+
+    def summary(self):
+        """Text that should be displayed on the patient-detail view to
+        describe what must be done to mark this Completable as done.
+
+        For example, this is the comments for of ActionItem.
+        """
+        raise NotImplementedError(
+            "All Completables must have an 'summary' method that provides "
+            "a summary of the action that must be undertaken.")
+
 
 class ActionItem(Note, CompletableMixin):
     instruction = models.ForeignKey(ActionInstruction)
@@ -470,6 +491,12 @@ class ActionItem(Note, CompletableMixin):
     comments = models.TextField()
 
     history = HistoricalRecords()
+
+    def short_name(self):
+        return str(self.instruction)
+
+    def summary(self):
+        return self.comments()
 
     def class_name(self):
         return self.__class__.__name__

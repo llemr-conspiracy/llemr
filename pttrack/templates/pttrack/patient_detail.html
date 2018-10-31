@@ -202,20 +202,28 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		  						<div class="panel-body">
 		  							{% if ai_type.3 %}
 		  								{% if action_item.class_name == "ActionItem" %}
-											<p><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span></a>
-											<strong><a href="{% url 'done-action-item' ai_id=action_item.pk %}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
+											<p>
+											  <a href="{% url 'done-action-item' ai_id=action_item.pk %}"/>
+											    <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+											  </a>
+											  <strong>
+											    <a href="{% url 'done-action-item' ai_id=action_item.pk %}">
 										{% else %}
-											<p><a href="{% url 'new-patient-contact' pt_id=patient.id referral_id=action_item.referral.pk followup_id=action_item.pk %}"/> <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span></a>
-											<strong><a href="{% url 'new-patient-contact' pt_id=patient.id referral_id=action_item.referral.pk followup_id=action_item.pk%}">Referral:</a></strong> {{ action_item.contact_instructions }}</p>
+											<p>
+											  <a href="{% url 'new-patient-contact' pt_id=patient.id referral_id=action_item.referral.pk followup_id=action_item.pk %}"/>
+											    <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+											  </a>
+											  <strong>
+											  	<a href="{% url 'new-patient-contact' pt_id=patient.id referral_id=action_item.referral.pk followup_id=action_item.pk%}">
 										{% endif %}
-
+											  	  {{ action_item.short_name }}:
+											  	</a>
+											  </strong> {{ action_item.summary }}
+											</p>
 									{% else %}
 										<p><span class="glyphicon glyphicon-check" aria-hidden="true"></span>
-										{% if action_item.class_name == "ActionItem" %}
-											<strong>{{ action_item.instruction }}:</strong> {{ action_item.comments }}</p>
-										{% else %}
-											<strong>Referral:</strong> {{ action_item.contact_instructions }}</p>
-										{% endif %}
+											<strong>{{ action_item.short_name }}:</strong> {{ action_item.summary }}
+										</p>
 									{% endif %}
 
 									{% if action_item.priority %}
