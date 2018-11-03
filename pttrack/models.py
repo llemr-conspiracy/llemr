@@ -496,7 +496,7 @@ class ActionItem(Note, CompletableMixin):
         return str(self.instruction)
 
     def summary(self):
-        return self.comments()
+        return self.comments
 
     def class_name(self):
         return self.__class__.__name__
