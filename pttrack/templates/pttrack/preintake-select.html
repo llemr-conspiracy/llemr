@@ -37,7 +37,7 @@ Patient Intake
                     <td>{{patient.date_of_birth}}</td>
                     <td>{{patient.address}}, {{patient.city}}<br/>{{patient.state}}, {{patient.zip_code}}</td>
                     <td> {{patient.history.last.history_date}}</td>
-                    <td> {{patient.workup_set | length}}</td>
+                    <td> {{patient.workup_set.all | length}}</td>
                 </tr>
             {% endfor %}
         </table>
