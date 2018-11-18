@@ -8,19 +8,25 @@ from pttrack import models as core_models
 
 class PageviewRecord(models.Model):
 
-    HTTP_VERBS = ['GET', 'POST', 'HEAD', 'PUT', 'PATCH', 'DELETE']
+    HTTP_METHODS = ['GET', 'POST', 'HEAD', 'PUT', 'PATCH', 'DELETE',
+                    'CONNECT', 'OPTIONS', 'TRACE']
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, blank=True, null=True)
     user_ip = models.GenericIPAddressField()
-    user_role = models.ForeignKey(core_models.ProviderType,
-                                  blank=True, null=True)
+    role = models.ForeignKey(core_models.ProviderType,
+                             blank=True, null=True)
 
-    verb = models.CharField(
-        max_length=max(len(v) for v in HTTP_VERBS),
-        choices=zip(*(HTTP_VERBS, HTTP_VERBS)))
+    method = models.CharField(
+        max_length=max(len(v) for v in HTTP_METHODS),
+        choices=[(v, v) for v in HTTP_METHODS])
+
     url = models.URLField(max_length=256)
-    referrer = models.URLField(max_length=256)
+    referrer = models.URLField(max_length=256, blank=True, null=True)
 
     status_code = models.PositiveSmallIntegerField()
 
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return '%s by %s to %s at %s' % (self.method, self.user, self.url,
+                                         self.timestamp)
