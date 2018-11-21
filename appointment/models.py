@@ -9,6 +9,9 @@ from simple_history.models import HistoricalRecords
 
 class Appointment(Note):
 
+    class Meta:
+        ordering = ["-clindate", "-clintime"]
+
     PSYCH_NIGHT = 'PSYCH_NIGHT'
     ACUTE_FOLLOWUP = 'ACUTE_FOLLOWUP'
     CHRONIC_CARE = 'CHRONIC_CARE'

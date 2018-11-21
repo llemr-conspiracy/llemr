@@ -3,8 +3,6 @@ from simple_history.models import HistoricalRecords
 
 from pttrack.models import Patient
 
-# Create your models here.
-
 
 class IncomeRange(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
@@ -23,11 +21,18 @@ class EducationLevel(models.Model):
 class WorkStatus(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
+    class Meta:
+        verbose_name_plural = "Work statuses"
+
     def __unicode__(self):
         return self.name
 
 
 class ResourceAccess(models.Model):
+
+    class Meta:
+        verbose_name_plural = "Resource accesses"
+
     name = models.CharField(max_length=50, primary_key=True)
 
     def __unicode__(self):
@@ -49,6 +54,9 @@ class TransportationOption(models.Model):
 
 
 class Demographics(models.Model):
+
+    class Meta:
+        verbose_name_plural = "demographics"
 
     NULL_BOOLEAN_CHOICES = (
         (None, "Not Answered"),

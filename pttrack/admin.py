@@ -2,10 +2,13 @@ from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 from . import models
 
+
 class NoteAdmin(SimpleHistoryAdmin):
     readonly_fields = ('written_datetime', 'last_modified')
+    list_display = ('__str__', 'written_datetime', 'patient', 'author',
+                    'last_modified')
 
-# Register your models here.
+
 for model in [models.Language, models.Patient, models.Provider,
               models.ActionInstruction, models.Ethnicity,
               models.ReferralType, models.ReferralLocation,

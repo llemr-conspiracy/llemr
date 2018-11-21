@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.utils.timezone import now
 
@@ -15,6 +17,9 @@ class DiagnosisType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
     diagnosis a pateint can recieve.'''
 
+    class Meta:
+        ordering = ["name"]
+
     name = models.CharField(max_length=100, primary_key=True)
 
     def __unicode__(self):
@@ -22,6 +27,10 @@ class DiagnosisType(models.Model):
 
 
 class ClinicType(models.Model):
+
+    class Meta:
+        ordering = ["name"]
+
     name = models.CharField(max_length=50)
 
     def __unicode__(self):
@@ -34,15 +43,18 @@ class ClinicDate(models.Model):
         ordering = ["-clinic_date"]
 
     clinic_type = models.ForeignKey(ClinicType)
-
     clinic_date = models.DateField()
-    gcal_id = models.CharField(max_length=50)
 
     def __unicode__(self):
-        return str(self.clinic_type)+" ("+str(self.clinic_date)+")"
+        return (str(self.clinic_type) + " on " +
+                datetime.datetime.strftime(self.clinic_date, '%A, %B %d, %Y'))
+
+    def number_of_notes(self):
+        return self.workup_set.count()
 
 
 class ProgressNote(Note):
+
     title = models.CharField(max_length=200)
     text = models.TextField()
 
@@ -50,6 +62,13 @@ class ProgressNote(Note):
 
     def short_text(self):
         return self.title
+
+    def __unicode__(self):
+        u = '{} on at {} by {}'.format(
+            self.title,
+            datetime.datetime.strftime(self.written_datetime, '%c'),
+            self.author)
+        return u
 
 
 class Workup(Note):
@@ -65,7 +84,8 @@ class Workup(Note):
         Provider, blank=True, related_name="other_volunteer",
         help_text="Which other volunteer(s) did you work with (if any)?")
 
-    clinic_day = models.ForeignKey(ClinicDate, help_text="When was the patient seen?")
+    clinic_day = models.ForeignKey(
+        ClinicDate, help_text="When was the patient seen?")
 
     chief_complaint = models.CharField(max_length=1000, verbose_name="CC")
     diagnosis = models.CharField(max_length=1000, verbose_name="Dx")

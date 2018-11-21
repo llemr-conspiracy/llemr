@@ -3,9 +3,8 @@ from simple_history.admin import SimpleHistoryAdmin
 
 from . import models
 
-# Register your models here.
-for model in [models.Appointment]:
-    if hasattr(model, "history"):
-        admin.site.register(model, SimpleHistoryAdmin)
-    else:
-        admin.site.register(model)
+
+@admin.register(models.Appointment)
+class ClinicDateAdmin(SimpleHistoryAdmin):
+    date_hierarchy = 'clindate'
+    list_display = ('__str__', 'clindate', 'clintime', 'appointment_type')
