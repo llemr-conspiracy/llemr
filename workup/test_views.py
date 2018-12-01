@@ -243,9 +243,6 @@ class ViewsExistTest(TestCase):
         self.assertFormError(r, 'form', 'diagnosis_categories',
                              'This field is required.')
 
-        with open('tmp.html', 'w') as f:
-            f.write(str(r))
-
         for unit in ['height_units', 'weight_units', 'temperature_units']:
             self.assertContains(r, '<input name="%s"' % (unit))
 

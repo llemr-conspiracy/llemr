@@ -4,7 +4,10 @@
 {% if field.is_hidden %}
     {{ field }}
 {% else %}
-    <div id="div_{{ field.auto_id }}" class="control-group{% if form_show_errors and field.errors %} error{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
+
+    <div id="div_{{ field.auto_id }}"
+         class="control-group {% if form_show_errors %}{% if field.errors or radio_field.errors %}has-error{% endif %}{% endif %}
+         {% if field.css_classes %}{{ field.css_classes }}{% endif %}">
 
         {% if field.label and form_show_labels %}
             <label for="{{ field.id_for_label }}" class="control-label{% if field.field.required %} requiredField{% endif %}">
@@ -24,8 +27,9 @@
 				    {% endfor %}
                 </span>
             </div>
-
-            {% include 'bootstrap/layout/help_text_and_errors.html' %}
+            {% for error in field.errors %}
+            <span id="error_{{ forloop.counter }}_{{ field.auto_id }}" class="help-block "><strong>{{ error }}</strong></span>
+            {% endfor %}
         </div>
     </div>
 {% endif %}
