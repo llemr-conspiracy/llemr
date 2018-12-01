@@ -711,7 +711,6 @@ class ViewsExistTest(TestCase):
 
         self.assertEqual(len(random_name), 48)
 
-
         url = reverse('document-detail', args=(1,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -749,6 +748,24 @@ class ViewsExistTest(TestCase):
             os.remove(p)
             self.assertFalse(os.path.isfile(p))
 
+    def test_inject_choose_clintype_malicious_next(self):
+
+        # First, check that we successfully redirect to all patients.
+        url = reverse('choose-clintype') + "?next=" + reverse('all-patients')
+
+        form_data = {'radio-roles': models.ProviderType.objects.first().pk}
+        response = self.client.post(url, form_data)
+
+        self.assertRedirects(response, reverse('all-patients'))
+
+        # Then, verfy that we will NOT redirect to google.com
+        url = reverse('choose-clintype') + "?next=http://www.google.com/"
+
+        form_data = {'radio-roles': models.ProviderType.objects.first().pk}
+        response = self.client.post(url, form_data)
+
+        self.assertRedirects(response, reverse('home'))
+
 
 class ProviderCreateTest(TestCase):
     fixtures = [BASIC_FIXTURE]
@@ -766,7 +783,8 @@ class ProviderCreateTest(TestCase):
         models.Provider.objects.all().delete()
         response = self.client.get(final_url)
         final_response_url = response.url
-        self.assertRedirects(response, reverse('new-provider')+'?next='+final_url)
+        self.assertRedirects(
+            response, reverse('new-provider') + '?next=' + final_url)
 
         n_provider = len(models.Provider.objects.all())
 
@@ -1023,6 +1041,7 @@ class ActionItemTest(TestCase):
 
         note_check(self, new_ai, self.client, 1)
 
+
 class ProviderUpdateTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
@@ -1085,6 +1104,7 @@ class ProviderUpdateTest(TestCase):
         # Verify that accessing final url no longer redirects
         response = self.client.get(final_url)
         self.assertEqual(response.status_code, 200)
+
 
 class TestReferralPatientDetailIntegration(TestCase):
     """ Tests integration of Action Items and Referral Followups in patient-detail."""

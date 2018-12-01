@@ -11,6 +11,7 @@ from django.views.generic.list import ListView
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Prefetch
+from django.utils.http import is_safe_url
 
 from workup import models as workupmodels
 from referral.models import Referral, FollowupRequest, PatientContact
@@ -335,12 +336,17 @@ class DocumentCreate(NoteFormView):
 def choose_clintype(request):
     RADIO_CHOICE_KEY = 'radio-roles'
 
+    redirect_to = request.GET['next']
+    if not is_safe_url(url=redirect_to, host=request.get_host()):
+        redirect_to = reverse("home")
+
     if request.POST:
         request.session['clintype_pk'] = request.POST[RADIO_CHOICE_KEY]
         active_provider_type = get_current_provider_type(request)
         request.session['signs_charts'] = active_provider_type.signs_charts
         request.session['staff_view'] = active_provider_type.staff_view
-        return HttpResponseRedirect(request.GET['next'])
+
+        return HttpResponseRedirect(redirect_to)
 
     if request.GET:
         role_options = request.user.provider.clinical_roles.all()
@@ -350,7 +356,7 @@ def choose_clintype(request):
             active_provider_type = get_current_provider_type(request)
             request.session['signs_charts'] = active_provider_type.signs_charts
             request.session['staff_view'] = active_provider_type.staff_view
-            return HttpResponseRedirect(request.GET['next'])
+            return HttpResponseRedirect(redirect_to)
         elif len(role_options) == 0:
             return HttpResponseServerError(
                 "Fatal: your Provider register is corrupted, and lacks " +

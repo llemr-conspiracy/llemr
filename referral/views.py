@@ -18,7 +18,7 @@ def select_referral_type(request, pt_id):
 
     extra_context = {
         'pt': pt,
-        'referral_types': ReferralType.objects.all()}
+        'referral_types': ReferralType.objects.filter(is_active=True)}
 
     return render(
         request,

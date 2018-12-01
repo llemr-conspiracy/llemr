@@ -346,6 +346,8 @@ class TestSelectReferralType(TestCase):
             name="Specialty", is_fqhc=False)
         reftype2 = ReferralType.objects.create(
             name="FQHC", is_fqhc=True)
+        reftype3 = ReferralType.objects.create(
+            name="Chiropractor", is_fqhc=False, is_active=False)
 
         # Check that select referral view
         url = reverse("select-referral-type",
@@ -356,6 +358,17 @@ class TestSelectReferralType(TestCase):
                             args=(self.pt.id, reftype1.slugify(),)))
         self.assertContains(response, 'href="%s"' % reverse("new-referral",
                             args=(self.pt.id, reftype2.slugify(),)))
+        self.assertNotContains(response, 'href="%s"' % reverse("new-referral",
+                               args=(self.pt.id, reftype3.slugify(),)))
+
+        # Changing is_active to True should add reftype3 to list of choices
+        reftype3.is_active = True
+        reftype3.save()
+        url = reverse("select-referral-type",
+                      args=(self.pt.id,))
+        response = self.client.get(url)
+        self.assertContains(response, 'href="%s"' % reverse("new-referral",
+                            args=(self.pt.id, reftype3.slugify(),)))
 
 
 class TestCreateReferral(TestCase):
