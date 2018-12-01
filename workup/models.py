@@ -135,6 +135,8 @@ class Workup(Note):
         max_digits=6, decimal_places=2, blank=True, null=True,
         validators=[MinValueValidator(0)])
 
+    # Please note that these are no longer shown on the form and will not
+    # be filled out because the referral app handles this functionality
     referral_type = models.ManyToManyField(ReferralType, blank=True)
     referral_location = models.ManyToManyField(ReferralLocation, blank=True)
 

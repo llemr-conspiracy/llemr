@@ -9,6 +9,7 @@ rebuild the database when debugging.
 from pttrack import models as core
 from followup import models as followup
 from workup import models as workup
+from referral import models as referral
 
 for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",
                   "Croatian", "Czech", "Danish", "Dutch", "Finnish", "French",
@@ -115,6 +116,12 @@ for refer_type in ["PCP: chronic condition management",
                    "PCP: other acute conditions", "Specialty care", "Other"]:
     s = core.ReferralType(name=refer_type)
     s.save()
+
+for (location, is_fqhc, is_specialty) in [("Affina", True, False),
+             ("Family Care Center", True, False),
+             ("COH", False, True)]:
+    r = referral.ReferralLocation(name=location, is_fqhc=is_fqhc, is_specialty=is_specialty)
+    r.save()
 
 core.DocumentType.objects.create(name="Silly picture")
 

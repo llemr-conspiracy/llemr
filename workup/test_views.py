@@ -217,7 +217,7 @@ class ViewsExistTest(TestCase):
                 reverse('new-workup', args=(pt_id,)),
                 data=wu_data)
 
-            self.assertRedirects(r, reverse("new-action-item", args=(pt_id,)))
+            self.assertRedirects(r, reverse("patient-detail", args=(pt_id,)))
             self.assertEqual(wu_count + 1, models.Workup.objects.all().count())
             self.assertEqual(
                 models.Workup.objects.last().signed(),

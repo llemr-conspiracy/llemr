@@ -27,12 +27,13 @@ INSTALLED_APPS = (
     'workup',
     'demographics',
     'appointment',
+    'referral',
     'api',
     'crispy_forms',
     'bootstrap3',
     'bootstrap3_datetime',
     'simple_history',
-    'rest_framework'
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -95,6 +96,11 @@ INTERNAL_IPS = ('127.0.0.1',) # used for debug toolbar
 # Medical Settings
 OSLER_MAX_SYSTOLIC = 400
 OSLER_MIN_DIASTOLIC = 40
+
+# Specifies which apps are displayed under action items on patient detail page
+OSLER_TODO_LIST_MANAGERS = [
+    ('pttrack', 'ActionItem'),
+    ('referral', 'FollowupRequest')]
 
 OSLER_MAX_APPOINTMENTS = 5
 OSLER_DEFAULT_APPOINTMENT_HOUR = 9

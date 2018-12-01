@@ -15,24 +15,22 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		</a></h2>
 		<p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
 		<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
+		<p class="lead"><strong>FQHC Referral Status:</strong> {{ referral_status }}</p>
+		<p class="lead"><strong>Referrals:</strong> {{ referrals.iterator | join:", " }}</p>
 		<p class="lead"><strong>Case Manager:</strong> {{patient.case_managers.iterator | join:"; "}}
-		</p>
 		{% if request.session.staff_view %}
-		<p class="lead"><strong>Outcome:</strong> {{ patient.outcome }} <a href="{% url 'patient-update' pk=patient.id %}"><small><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></small></a></p>
-	  {% if patient.needs_workup %}
-  	    <p class="lead"> Patient is Active <a href="{% url 'patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></p>
-      {% else %}
-    	  <p class="lead"> Patient is Inactive <a href="{% url 'patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a></p>
-      {% endif %}
-    {% else %}
-    <p class="lead"><strong>Outcome:</strong> {{ patient.outcome }}</p>
-      {% if patient.needs_workup %}
-	      <p class="lead"> Patient is Active </p>
-      {% endif %}
-      {% if not patient.needs_workup %}
-  	    <p class="lead"> Patient is Inactive </p>
-      {% endif %}
-    {% endif %}
+			{% if patient.needs_workup %}
+		  	    <p class="lead"> Patient is Active <a href="{% url 'patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></p>
+		    {% else %}
+    			<p class="lead"> Patient is Inactive <a href="{% url 'patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a></p>
+			{% endif %}
+		{% else %}
+			{% if patient.needs_workup %}
+	    		<p class="lead"> Patient is Active </p>
+		    {% else %}
+  	  			<p class="lead"> Patient is Inactive </p>
+		    {% endif %}
+	    {% endif %}
 	</div>
 </div>
 <div class="col-md-4 text-center pull-right" style="border: 2px  black">
@@ -43,7 +41,9 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
     <a class="btn btn-warning pull-left btn-block" href="{% url 'new-document' pt_id=patient.pk %}" role="button">Upload Document or Prescription</a>
     <a class="btn btn-primary pull-left btn-block" href="{% url 'followup-choice' pt_id=patient.pk %}" role="button">Create New Followup</a>
     <a class="btn btn-danger pull-left btn-block" href="{% url 'new-progress-note' pt_id=patient.pk %}" role="button">Create New Psych Progress Note</a>
-    <a class="btn btn-success pull-left btn-block" href="{% url 'appointment-new' %}?pt_id={{patient.pk}}" role="button">Create New Appointment</a>
+    <a class="btn btn-success pull-left btn-block" href="{% url 'select-referral-type' pt_id=patient.pk %}" role="button">Create New Referral</a>
+    <a class="btn btn-info pull-left btn-block" href="{% url 'select-referral' pt_id=patient.pk %}" role="button">New Referral Followup</a>
+    <a class="btn btn-warning pull-left btn-block" href="{% url 'appointment-new' %}?pt_id={{patient.pk}}" role="button">Create New Appointment</a>
 	</div>
 </div>
 {% endblock %}
@@ -136,7 +136,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
   			<div class="panel panel-default">
   				{# followup_set is a custom method in the patient object returns a list rather than a queryset, so no .all() #}
     			<div class="panel-heading">
-      				<h4 class="panel-title"><a data-toggle="collapse" href="#collapse3">Followups ({{ patient.followup_set | length }})</a></h4>
+      				<h4 class="panel-title"><a data-toggle="collapse" href="#collapse3">Followups ({{ total_followups}})</a></h4>
     			</div>
     			<div id="collapse3" class="panel-collapse collapse">
       				{% for note in patient.followup_set %}	
@@ -156,7 +156,16 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 									{% endif %}
 								{% endif %}
   							</div>
-      				{% endfor %}	
+      				{% endfor %}
+      				{% for note in referral_followups %}
+      						<div class="panel-body">
+      							<p><strong>Referral Followup:</strong> {{ note.short_text }}</p>
+      							<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+      							{% if request.session.staff_view %}
+      								<a href="{% url 'admin:referral_patientcontact_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+      							{% endif %}
+  							</div>
+      				{% endfor %}
     			</div>
   			</div>
   			<div class="panel panel-default">
@@ -179,7 +188,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		</div>
 	</div>
 	<div class="col-md-6">
-		<h3>Action Items ({{ patient.actionitem_set.all | length }} Total)</h3>
+		<h3>Action Items ({{ total_ais }} Total)</h3>
 		<div class="panel-group">
   			{% for ai_type in zipped_ai_list %}
 	  			<div class="panel panel-default">
@@ -192,17 +201,33 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		      				{% for action_item in ai_type.1 %}	
 		  						<div class="panel-body">
 		  							{% if ai_type.3 %}
-										<p><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span></a>
+		  								{% if action_item.class_name == "ActionItem" %}
+											<p><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span></a>
+											<strong><a href="{% url 'done-action-item' ai_id=action_item.pk %}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
+										{% else %}
+											<p><a href="{% url 'new-patient-contact' pt_id=patient.id referral_id=action_item.referral.pk followup_id=action_item.pk %}"/> <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span></a>
+											<strong><a href="{% url 'new-patient-contact' pt_id=patient.id referral_id=action_item.referral.pk followup_id=action_item.pk%}">Referral:</a></strong> {{ action_item.contact_instructions }}</p>
+										{% endif %}
+
 									{% else %}
-										<p><a href="{% url 'reset-action-item' ai_id=action_item.pk %}"/> <span class="glyphicon glyphicon-check" aria-hidden="true"></span></a>
+										<p><span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+										{% if action_item.class_name == "ActionItem" %}
+											<strong>{{ action_item.instruction }}:</strong> {{ action_item.comments }}</p>
+										{% else %}
+											<strong>Referral:</strong> {{ action_item.contact_instructions }}</p>
+										{% endif %}
 									{% endif %}
-									<strong><a href="{% url 'update-action-item' pk=action_item.pk%}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
+
 									{% if action_item.priority %}
 									<h4 class="text-left" style="color:red"><b>PRIORITY</b></h4>
 									{% endif %}
 									<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
 									{% if request.session.staff_view %}
-									<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
+										{% if action_item.class_name == "ActionItem" %}
+											<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
+										{% else %}
+											<p class="text-right"><a href="{% url 'admin:referral_followuprequest_change' action_item.pk %}" target="_blank"><i>Edit</i></a></p>
+										{% endif %}
 									{% endif %}
 									</p>
 		  						</div>

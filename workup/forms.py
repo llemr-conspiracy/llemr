@@ -109,9 +109,7 @@ class WorkupForm(ModelForm):
     class Meta:
         model = models.Workup
         exclude = ['patient', 'author', 'signer', 'author_type',
-                   'signed_date']
-        widgets = {'referral_location': CheckboxSelectMultiple,
-                   'referral_type': CheckboxSelectMultiple}
+                   'signed_date', 'referral_location', 'referral_type']
 
     # limit the options for the attending, other_volunteer field to
     # Providers with ProviderType with signs_charts=True, False
@@ -194,14 +192,6 @@ class WorkupForm(ModelForm):
                     css_class='col-xs-6')
                 ),
 
-            Row(HTML('<h3>Referral & Discharge</h3>'),
-                Div('will_return', css_class='col-xs-12'),
-                Div(Field('referral_location',
-                          style="background: #FAFAFA; padding: 10px;"),
-                    css_class='col-sm-6'),
-                Div(Field('referral_type',
-                          style="background: #FAFAFA; padding: 10px;"),
-                    css_class='col-sm-6')),
             Submit('submit', 'Save', css_class='btn btn-success')
         )
 

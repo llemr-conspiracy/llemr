@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^api/', include('api.urls')),
     url(r'^media_auth/(?P<filename>.*)$', send_media_file),
+    url(r'^referral/', include('referral.urls')),
     url(r'^$', RedirectView.as_view(pattern_name="home", permanent=False)),
 ]
 

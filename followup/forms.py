@@ -54,7 +54,7 @@ class ReferralFollowup(BaseFollowup):
 
                 if not cleaned_data.get("apt_location"):
                     self.add_error(
-                        "apt_location", "Appointment location is required " + 
+                        "apt_location", "Appointment location is required " +
                         "when the patient has an appointment.")
 
                 if not cleaned_data.get("pt_showed"):
@@ -98,7 +98,7 @@ class VaccineFollowup(BaseFollowup):
         model = models.VaccineFollowup
         exclude = ['patient', 'author', 'author_type']
         widgets = {'dose_date': DateTimePicker(options={"format": "YYYY-MM-DD",
- 
+
                                                         "pickTime": False})}
 
     def clean(self):

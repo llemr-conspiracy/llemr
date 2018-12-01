@@ -92,7 +92,7 @@ class WorkupCreate(NoteFormView):
 
         form.save_m2m()
 
-        return HttpResponseRedirect(reverse("new-action-item", args=(pt.id,)))
+        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
 
 class WorkupUpdate(NoteUpdate):

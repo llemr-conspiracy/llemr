@@ -3,11 +3,13 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.timezone import now
+from django.utils.text import slugify
 import os
 from django.core.urlresolvers import reverse
 
 from simple_history.models import HistoricalRecords
 from . import validators
+from itertools import chain
 
 # pylint: disable=I0011,missing-docstring,E1305
 
@@ -51,23 +53,30 @@ class ContactMethod(models.Model):
 
 
 class ReferralType(models.Model):
-    '''Simple text-contiaining class for storing the different kinds of
-    clinics a patient can be referred to (e.g. PCP, ortho, etc.)'''
+    """The different kind of care availiable at a referral center."""
 
     name = models.CharField(max_length=100, primary_key=True)
+    is_fqhc = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.name
+
+    def slugify(self):
+        return slugify(self.name)
 
 
 class ReferralLocation(models.Model):
-    '''Data model for a referral Location'''
+    """Location that we can refer to."""
 
     name = models.CharField(max_length=300)
     address = models.TextField()
+    care_availiable = models.ManyToManyField(ReferralType)
 
     def __unicode__(self):
-        return self.name
+        if self.address:
+            return self.name + " (" + self.address.splitlines()[0] + ")"
+        else:
+            return self.name
 
 
 class Language(models.Model):
@@ -272,7 +281,11 @@ class Patient(Person):
         # Here, we only hit the db once by asking the db for all action items
         # for a patient, then sorting them in memory.
 
+        # Combine action items with referral followup requests for status
         patient_action_items = self.actionitem_set.all()
+        referral_followup_requests = self.followuprequest_set.all()
+        patient_action_items = list(chain(patient_action_items,
+                                          referral_followup_requests))
 
         done = [ai for ai in patient_action_items if ai.completion_author is not None]
         overdue = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date <= now().date()]
@@ -359,7 +372,7 @@ def require_providers_update():
 
 
 class Note(models.Model):
-    class Meta:  # pylint: disable=W0232,R0903,C1001
+    class Meta:
         abstract = True
 
     author = models.ForeignKey(Provider)
@@ -392,18 +405,53 @@ class Document(Note):
         return self.title
 
 
-class ActionItem(Note):
-    instruction = models.ForeignKey(ActionInstruction)
-    due_date = models.DateField(help_text="MM/DD/YYYY or YYYY-MM-DD")
-    priority = models.BooleanField(default=False, help_text='Check this box if this action item is high priority')
-    comments = models.TextField()
+class CompletableManager(models.Manager):
+    """ Class that handles queryset filers for Completable classes."""
+
+    def get_active(self, patient):
+        """ Returns all active elements of Completable class."""
+        return self.get_queryset()\
+                .filter(patient=patient)\
+                .filter(completion_author=None)\
+                .filter(due_date__lte=now().date())\
+                .order_by('completion_date')
+
+    def get_inactive(self, patient):
+        """ Returns all inactive elements of Completable class."""
+        return self.get_queryset()\
+                .filter(patient=patient)\
+                .filter(completion_author=None)\
+                .filter(due_date__gt=now().date())\
+                .order_by('completion_date')
+
+    def get_completed(self, patient):
+        """ Returns all completed elements of Completable class."""
+        return self.get_queryset()\
+                .filter(patient=patient)\
+                .exclude(completion_author=None)\
+                .order_by('completion_date')
+
+class CompletableMixin(models.Model):
+    """CompleteableMixin is for anything that goes in that list of
+    stuff on the Patient detail page. They can be marked as
+    complete.
+    """
+
+    class Meta:
+        abstract = True
+
+    objects = CompletableManager()
+
     completion_date = models.DateTimeField(blank=True, null=True)
     completion_author = models.ForeignKey(
         Provider,
         blank=True, null=True,
-        related_name="action_items_completed")
+        related_name="%(app_label)s_%(class)s_completed")
+    due_date = models.DateField(help_text="MM/DD/YYYY or YYYY-MM-DD")
 
-    history = HistoricalRecords()
+    def done(self):
+        """Return true if this ActionItem has been marked as done."""
+        return self.completion_date is not None
 
     def mark_done(self, provider):
         self.completion_date = now()
@@ -413,9 +461,18 @@ class ActionItem(Note):
         self.completion_author = None
         self.completion_date = None
 
-    def done(self):
-        '''Returns true if this ActionItem has been marked as done'''
-        return self.completion_date is not None
+
+class ActionItem(Note, CompletableMixin):
+    instruction = models.ForeignKey(ActionInstruction)
+    priority = models.BooleanField(
+        default=False,
+        help_text='Check this box if this action item is high priority')
+    comments = models.TextField()
+
+    history = HistoricalRecords()
+
+    def class_name(self):
+        return self.__class__.__name__
 
     def attribution(self):
         if self.done():
@@ -427,4 +484,4 @@ class ActionItem(Note):
 
     def __unicode__(self):
         return " ".join(["AI for", str(self.patient)+":",
-                         str(self.instruction), "on", str(self.due_date)])
+                         str(self.instruction), "due on", str(self.due_date)])
