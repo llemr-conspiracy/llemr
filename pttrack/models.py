@@ -57,6 +57,7 @@ class ReferralType(models.Model):
 
     name = models.CharField(max_length=100, primary_key=True)
     is_fqhc = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.name
