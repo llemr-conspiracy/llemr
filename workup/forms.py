@@ -1,15 +1,15 @@
 from decimal import Decimal, ROUND_HALF_UP
 
 from django.forms import (
-    fields, ModelForm, CheckboxSelectMultiple, ModelChoiceField,
-    ModelMultipleChoiceField, RadioSelect
+    fields, ModelForm, ModelChoiceField, ModelMultipleChoiceField, RadioSelect
 )
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Div, Field, Row, HTML
+from crispy_forms.layout import Submit, Layout, Div, Row, HTML
+from crispy_forms.layout import Field as CrispyField
 from crispy_forms.bootstrap import (
-    InlineCheckboxes, AppendedText, PrependedText
-)
+    InlineCheckboxes, AppendedText, PrependedText)
+from crispy_forms.utils import TEMPLATE_PACK, render_field
 
 from pttrack.models import Provider, ProviderType
 from . import models
@@ -58,6 +58,7 @@ def fahrenheit2centigrade(f):
     else:
         return None
 
+
 def pounds2kilos(lbs):
     """Converts a weight in pounds to a weight in kilos. If None,
     returns None.
@@ -67,6 +68,7 @@ def pounds2kilos(lbs):
         return lbs * Decimal(0.453592)
     else:
         return None
+
 
 def inches2cm(inches):
     """Converts a length in inches to a length in centimeters. If None,
@@ -90,6 +92,42 @@ def unit_selector_html(unit_name, options):
             name=unit_name, option=option)
 
     return s
+
+
+class AppendedRadios(CrispyField):
+    template = "workup/appended_radios.html"
+
+    def __init__(self, field, radio_field, *args, **kwargs):
+        self.field = field
+        self.radio_field = radio_field
+
+        self.input_size = None
+        css_class = kwargs.get('css_class', '')
+        if 'input-lg' in css_class:
+            self.input_size = 'input-lg'
+        if 'input-sm' in css_class:
+            self.input_size = 'input-sm'
+
+        super(AppendedRadios, self).__init__(field, *args, **kwargs)
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK,
+               extra_context=None, **kwargs):
+        extra_context = (extra_context.copy() if extra_context is not None
+                         else {})
+        extra_context.update({
+            'radio_field': form[self.radio_field],
+            'input_size': self.input_size,
+            'active': getattr(self, "active", False)
+        })
+
+        if hasattr(self, 'wrapper_class'):
+            extra_context['wrapper_class'] = self.wrapper_class
+        template = self.get_template_name(template_pack)
+        return render_field(
+            self.field, form, form_style, context,
+            template=template, attrs=self.attrs,
+            template_pack=template_pack, extra_context=extra_context, **kwargs
+        )
 
 
 class WorkupForm(ModelForm):
@@ -160,18 +198,15 @@ class WorkupForm(ModelForm):
                     css_class='col-md-4 col-sm-6 col-xs-12'),
                 Div(AppendedText('rr', '/min'),
                     css_class='col-md-4 col-sm-6 col-xs-12'),
-                Div(AppendedText(
-                    't', unit_selector_html('temperature', ['C', 'F'])),
+                Div(AppendedRadios('t', 'temperature_units'),
                     css_class='col-md-4 col-sm-6 col-xs-12'),
                 Div(AppendedText('bp_sys', 'mmHg'),
                     css_class='col-md-4 col-sm-3 col-xs-6'),
                 Div(AppendedText('bp_dia', 'mmHg'),
                     css_class='col-md-4 col-sm-3 col-xs-6'),
-                Div(AppendedText(
-                    'height', unit_selector_html('height', ['in', 'cm'])),
+                Div(AppendedRadios('height', 'height_units'),
                     css_class='col-md-4 col-sm-6 col-xs-12'),
-                Div(AppendedText(
-                    'weight', unit_selector_html('weight', ['kg', 'lbs'])),
+                Div(AppendedRadios('weight', 'weight_units'),
                     css_class='col-md-4 col-sm-6 col-xs-12'),
                 Div('pe', css_class='col-xs-12')),
 
@@ -196,9 +231,9 @@ class WorkupForm(ModelForm):
         )
 
     def clean(self):
-        '''Use form's clean hook to verify that fields in Workup are
+        """Use form's clean hook to verify that fields in Workup are
         consistent with one another (e.g. if pt recieved a voucher, amount is
-        given).'''
+        given)."""
 
         cleaned_data = super(WorkupForm, self).clean()
 
