@@ -97,7 +97,9 @@ class VaccineFollowup(BaseFollowup):
     class Meta:
         model = models.VaccineFollowup
         exclude = ['patient', 'author', 'author_type']
-        widgets = {'dose_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
+        widgets = {'dose_date': DateTimePicker(options={"format": "YYYY-MM-DD",
+
+                                                        "pickTime": False})}
 
     def clean(self):
         '''VaccineFollowups require a next dose date iff there there is a next

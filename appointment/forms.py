@@ -12,7 +12,8 @@ class AppointmentForm(ModelForm):
     class Meta:
         model = Appointment
         exclude = ['author', 'author_type']
-        widgets = {'clindate': DateTimePicker(options={"format": "MM/DD/YYYY"}),
+        widgets = {'clindate': DateTimePicker(options={"format": "YYYY-MM-DD",
+                                                       "pickTime": False}),
                    'clintime': TimeInput(format='%H:%M')}
 
     def __init__(self, *args, **kwargs):

@@ -23,7 +23,8 @@ class FollowupRequestForm(ModelForm):
     class Meta:
         model = models.FollowupRequest
         fields = ['due_date', 'contact_instructions']
-        widgets = {'due_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
+        widgets = {'due_date': DateTimePicker(options={"format": "YYYY-MM-DD",
+                                                       "pickTime": False})}
 
     def __init__(self, *args, **kwargs):
         super(FollowupRequestForm, self).__init__(*args, **kwargs)

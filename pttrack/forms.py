@@ -81,7 +81,8 @@ class ActionItemForm(ModelForm):
         model = models.ActionItem
         exclude = ['completion_date', 'author', 'written_date', 'patient',
                    'completion_author', 'author_type']
-        widgets = {'due_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
+        widgets = {'due_date': DateTimePicker(options={"format": "YYYY-MM-DD",
+                                                       "pickTime": False})}
 
     def __init__(self, *args, **kwargs):
         super(ActionItemForm, self).__init__(*args, **kwargs)
