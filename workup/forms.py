@@ -134,7 +134,7 @@ class WorkupForm(ModelForm):
 
     temperature_units = fields.ChoiceField(
         label='', widget=RadioSelect,
-        choices=[('C', 'C'), ('F', 'F')], required=False)
+        choices=[('C', 'C',), ('F', 'F')], initial='C', required=False)
 
     weight_units = fields.ChoiceField(
         label='', widget=RadioSelect,
