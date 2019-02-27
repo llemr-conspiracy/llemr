@@ -6,8 +6,6 @@ from django.utils.timezone import now
 from pttrack.models import Patient
 from demographics.models import Demographics
 from workup.models import DiagnosisType
-import numpy
-import pandas
 
 numpy.warnings.filterwarnings('ignore')
 
