@@ -1,0 +1,35 @@
+{% load crispy_forms_field %}
+{% load crispy_forms_filters %}
+
+{% if field.is_hidden %}
+    {{ field }}
+{% else %}
+
+    <div id="div_{{ field.auto_id }}"
+         class="control-group {% if form_show_errors %}{% if field.errors or radio_field.errors %}has-error{% endif %}{% endif %}
+         {% if field.css_classes %}{{ field.css_classes }}{% endif %}">
+
+        {% if field.label and form_show_labels %}
+            <label for="{{ field.id_for_label }}" class="control-label{% if field.field.required %} requiredField{% endif %}">
+                {{ field.label|safe }}{% if field.field.required %}<span class="asteriskField">*</span>{% endif %}
+            </label>
+        {% endif %}
+
+        <div class="controls">
+            <div class="input-group">
+                {% crispy_field field %}
+			    <span class="input-group-addon">
+				    {% for choice in radio_field.field.choices %}
+			            <input name="{{ radio_field.html_name }}" type="radio"
+                               {% if choice.0|stringformat:"s" == radio_field.value|stringformat:"s" %} checked="checked" {% endif %}
+                               id="id_{{ radio_field.html_name }}_{{ forloop.counter }}"
+                               value="{{ choice.0 }}">&nbsp{{ choice.1 }}&nbsp
+				    {% endfor %}
+                </span>
+            </div>
+            {% for error in field.errors %}
+            <span id="error_{{ forloop.counter }}_{{ field.auto_id }}" class="help-block "><strong>{{ error }}</strong></span>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}

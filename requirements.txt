@@ -1,4 +1,4 @@
-Django==1.9
+Django==1.9.1
 django-bootstrap3==6.2.2
 git+https://github.com/inducer/django-bootstrap3-datetimepicker.git
 django-crispy-forms==1.6.0

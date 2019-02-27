@@ -21,6 +21,9 @@
 	"folders":
 	[
 		{
+			"path": ".circleci"
+		},
+		{
 			"file_exclude_patterns":
 			[
 				"__init__.py"
@@ -68,6 +71,17 @@
 				"__init__.py"
 			],
 			"path": "demographics"
+		},
+		{
+			"path": "referral",
+			"file_exclude_patterns":
+			["__init__.py"],
+
+		},
+		{
+			"file_exclude_patterns":
+			["__init__.py"],
+			"path": "appointment"
 		}
 	]
 }

@@ -4,7 +4,7 @@ from django.test import TestCase
 
 from pttrack.models import Provider, ProviderType, Gender
 
-from .models import DiagnosisType
+from .models import DiagnosisType, ClinicDate, ClinicType
 from .forms import WorkupForm
 
 from .tests import wu_dict
@@ -27,9 +27,13 @@ class TestWorkupFormUnitAwareFields(TestCase):
 
     def setUp(self):
         DiagnosisType.objects.create(name='Cardiovascular')
+        ClinicType.objects.create(name='Main Clinic')
+        ClinicDate.objects.create(
+            clinic_date='2018-08-26', clinic_type=ClinicType.objects.first())
 
         wu_data = wu_dict()
         wu_data['diagnosis_categories'] = [DiagnosisType.objects.first().pk]
+        wu_data['clinic_day'] = wu_data['clinic_day'].pk
         wu_data['got_imaging_voucher'] = False
         wu_data['got_voucher'] = False
 
@@ -58,9 +62,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
     def test_vitals_no_value_no_units_ok(self):
         """Units are required only when vitals are provided."""
 
-        wu_data = self.wu_data
-
-        form = WorkupForm(data=wu_data)
+        form = WorkupForm(data=self.wu_data)
         self.assertTrue(form.is_valid(), msg=form.errors)
 
     def test_note_temp_conversion(self):

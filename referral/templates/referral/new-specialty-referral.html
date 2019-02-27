@@ -1,0 +1,21 @@
+{% extends "pttrack/base.html" %}
+
+{% block title %}
+Create new specialty referral
+{% endblock %}
+
+{% block header %}
+<h1>New Specialty Referral</h1>
+{% if patient %}
+<p class="lead">Referral for <em><a href="{% url 'patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  {% load crispy_forms_tags %}
+  {% crispy form %}
+</div>
+
+{% endblock %}
