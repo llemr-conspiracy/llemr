@@ -1,0 +1,19 @@
+{% extends "pttrack/base.html" %}
+
+{% block title %}
+Select referral
+{% endblock %}
+
+{% block header %}
+<h1>Select Referral</h1>
+<p class="lead">Specify which referral you would like to update</p>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  {% load crispy_forms_tags %}
+  {% crispy form %}
+</div>
+
+{% endblock %}

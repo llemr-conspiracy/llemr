@@ -41,6 +41,7 @@ class ClinicDate(models.Model):
     def __unicode__(self):
         return str(self.clinic_type)+" ("+str(self.clinic_date)+")"
 
+
 class ProgressNote(Note):
     title = models.CharField(max_length=200)
     text = models.TextField()
@@ -49,6 +50,7 @@ class ProgressNote(Note):
 
     def short_text(self):
         return self.title
+
 
 class Workup(Note):
     '''Datamodel of a workup. Has fields specific to each part of an exam,
@@ -63,7 +65,7 @@ class Workup(Note):
         Provider, blank=True, related_name="other_volunteer",
         help_text="Which other volunteer(s) did you work with (if any)?")
 
-    clinic_day = models.ForeignKey(ClinicDate)
+    clinic_day = models.ForeignKey(ClinicDate, help_text="When was the patient seen?")
 
     chief_complaint = models.CharField(max_length=1000, verbose_name="CC")
     diagnosis = models.CharField(max_length=1000, verbose_name="Dx")
@@ -133,6 +135,8 @@ class Workup(Note):
         max_digits=6, decimal_places=2, blank=True, null=True,
         validators=[MinValueValidator(0)])
 
+    # Please note that these are no longer shown on the form and will not
+    # be filled out because the referral app handles this functionality
     referral_type = models.ManyToManyField(ReferralType, blank=True)
     referral_location = models.ManyToManyField(ReferralLocation, blank=True)
 

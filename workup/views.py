@@ -1,12 +1,12 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponseServerError, \
-    HttpResponse
+from django.http import (HttpResponseRedirect, HttpResponseServerError,
+                         HttpResponse)
 from django.core.urlresolvers import reverse
-from django.template import Context
 from django.template.loader import get_template
 from django.utils.timezone import now
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
+from django.conf import settings
 
 from pttrack.views import NoteFormView, NoteUpdate, get_current_provider_type
 from pttrack.models import Patient, ProviderType
@@ -60,17 +60,19 @@ class WorkupCreate(NoteFormView):
     def get_initial(self):
         initial = super(WorkupCreate, self).get_initial()
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+
+        # self.get() checks for >= 1 ClinicDay
+        initial['clinic_day'] = get_clindates().first()
+        initial['ros'] = "Default: reviewed and negative"
+
         wu_previous = pt.latest_workup()
         if wu_previous is not None:
             date_string = wu_previous.written_datetime.strftime("%B %d, %Y")
-            heading_text = "Migrated from previous workup on " + date_string + ". Please delete this heading and modify the following:\n\n"
-            initial['PMH_PSH'] = heading_text + wu_previous.PMH_PSH
-            initial['fam_hx'] = heading_text + wu_previous.fam_hx
-            initial['soc_hx'] = heading_text + wu_previous.soc_hx
-            initial['meds'] = heading_text + wu_previous.meds
-            initial['allergies'] = heading_text + wu_previous.allergies
+            for field in settings.OSLER_WORKUP_COPY_FORWARD_FIELDS:
+                initial[field] = settings.OSLER_WORKUP_COPY_FORWARD_MESSAGE.\
+                    format(date=date_string,
+                           contents=getattr(wu_previous, field))
 
-        initial['ros'] = "Default: reviewed and negative"
         return initial
 
     def form_valid(self, form):
@@ -83,7 +85,6 @@ class WorkupCreate(NoteFormView):
         wu.patient = pt
         wu.author = self.request.user.provider
         wu.author_type = get_current_provider_type(self.request)
-        wu.clinic_day = get_clindates()[0]
         if wu.author_type.signs_charts:
             wu.sign(self.request.user, active_provider_type)
 
@@ -91,7 +92,7 @@ class WorkupCreate(NoteFormView):
 
         form.save_m2m()
 
-        return HttpResponseRedirect(reverse("new-action-item", args=(pt.id,)))
+        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
 
 class WorkupUpdate(NoteUpdate):
@@ -203,8 +204,9 @@ def error_workup(request, pk):
 
     wu = get_object_or_404(models.Workup, pk=pk)
 
-    #TODO: clearly a template error here.
+    # TODO: clearly a template error here.
     return render(request, 'pttrack/workup_error.html', {'workup': wu})
+
 
 def pdf_workup(request, pk):
 
@@ -231,15 +233,9 @@ def pdf_workup(request, pk):
         filename = ''.join([initials, ' (', formatdate, ')'])
 
         response = HttpResponse(pdf, 'application/pdf')
-        response["Content-Disposition"]= "attachment; filename=%s.pdf" % (filename,)
+        response["Content-Disposition"] = "attachment; filename=%s.pdf" % (filename,)
         return response
 
     else:
         return HttpResponseRedirect(reverse('workup',
-                                        args=(wu.id,)))
-
-
-
-
-
-
+                                            args=(wu.id,)))

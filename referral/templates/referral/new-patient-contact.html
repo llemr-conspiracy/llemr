@@ -1,0 +1,33 @@
+{% extends "pttrack/base.html" %}
+
+{% block title %}
+New referral followup
+{% endblock %}
+
+{% block header %}
+<h1>New referral followup</h1>
+{% if patient %}
+<p class="lead">Referral for <em><a href="{% url 'patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
+{% endif %}
+<p class="lead">Referral to 
+{% for ref in referral.location.all %}
+	{{ref.name}}
+	{% if forloop.last %}
+	{% else %}
+	or
+	{% endif %}
+{% endfor %}
+</p>
+<p class="lead">Followup requested for {{followup.due_date}}</p>
+<p class="lead"><i>A referral is considered successful once a patient has not only made an appointment but also shown up for this appointment. Please continue following up with patients until they have completed an appointment. If you have exhausted followups, you may save as an unsuccessful referral. </i></p>
+
+{% endblock %}
+
+{% block content %}
+{% load crispy_forms_tags %}
+
+<div class="container">
+  {% crispy form %}
+</div>
+
+{% endblock %}

@@ -11,9 +11,11 @@ urlpatterns = [
     url(r'^followup/', include('followup.urls')),
     url(r'^workup/', include('workup.urls')),
     url(r'^demographics/', include('demographics.urls')),
+    url(r'^appointment/', include('appointment.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^api/', include('api.urls')),
+    url(r'^referral/', include('referral.urls')),
     url(r'^$', RedirectView.as_view(pattern_name="home", permanent=False)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

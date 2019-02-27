@@ -2,6 +2,7 @@ from django.forms import ModelForm
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Fieldset
+from bootstrap3_datetime.widgets import DateTimePicker
 
 from . import models
 
@@ -11,6 +12,7 @@ class DemographicsForm(ModelForm):
     class Meta:
         model = models.Demographics
         exclude = ['patient', 'creation_date']
+        widgets = {'last_date_physician_visit': DateTimePicker(options={"format": "MM/DD/YYYY"})}
 
     def __init__(self, *args, **kwargs):
         super(DemographicsForm, self).__init__(*args, **kwargs)
