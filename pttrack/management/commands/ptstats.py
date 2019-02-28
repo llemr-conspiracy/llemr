@@ -7,14 +7,14 @@ from pttrack.models import Patient
 from demographics.models import Demographics
 from workup.models import DiagnosisType
 
-numpy.warnings.filterwarnings('ignore')
+#numpy.warnings.filterwarnings('ignore')
 
 class Command(BaseCommand):
     help = '''Generates CSV statistics for current patient database.'''
 
     def handle(self, *args, **options):
         #Dictionary of the fields we want to pull for each patient:
-        meta = {'filename': 'ptstats.csv','classname': Patient,'fields': ['id', 'date_of_birth', 'gender', 'address', 'city', 'state', 'zip_code', 'country']}
+        meta = {'filename': 'ptstats.csv','classname': Patient,'fields': ['id','first_name','last_name', 'date_of_birth', 'gender', 'address', 'city', 'state', 'zip_code', 'country']}
         self._write_csv(**meta)
 #        self.genmap(meta['filename'])
 
@@ -57,12 +57,12 @@ class Command(BaseCommand):
                     row.extend(dx_v)
                 
                 try:
-                    dem = obj.demographics()
+                    dem = obj.demographics
                     if dem != None:
                         for demprop in demographicfields:
                             row.append(unicode(getattr(dem, demprop)))
                 except Demographics.DoesNotExist:
                     row.append(None)
-                writer.writerow(row)
+                writer.writerow([s.encode('utf-8') if hasattr(s, 'encode') else s for s in row])
 
         print 'Data written to %s' % filename
