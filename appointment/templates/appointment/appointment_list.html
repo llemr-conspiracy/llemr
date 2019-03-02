@@ -15,30 +15,63 @@ Appointment List
 
 {% block content %}
 <div class="container">
-{% for date, app_list in appointments_by_date.iteritems %}
-	<div class="row">
-		<div class="col-md-4">
-			<h3>{{ date  | date:"l F d, Y" }}
-				<a class="btn btn-success btn-xs" href="{% url 'appointment-new' %}?date={{date|date:"Y-m-d"}}" role="button">+</a>
-			</h3>
-		</div>	
-	</div>
-	{% for app in app_list %}
-	<div class="row">
-		<div class="col-md-2">{{ app.clintime }}</div>
-  		<div class="col-md-2"><b><a href="{% url 'patient-detail' pk=app.patient.id %}">{{ app.patient }}</a></b></div>
-  		<div class="col-md-2">{{ app.get_appointmentType_display }}</div>
-	</div>
-	<div class="row">
-		<div class="col-md-4"><i>{{ app.comment }}</i></div>
-		<div class="col-md-2"><a href="{% url 'appointment-update' pk=app.id %}">Edit</a></div>
-	</div>
-	<div class="row">
-		<div class="col-md-8"></br></div>
-	</div>
-	{% endfor %}
-{% endfor %}
-</div>	
+  {% for date, app_list in appointments_by_date.iteritems %}
+  	<div class="row">
+  		<div class="col-md-6 col-md-offset-3">
+        <div class="panel panel-default {% if forloop.first %} panel-primary {%else%} panel-info {%endif%}"
+             name="appointment-panel-{{forloop.counter0}}">
+          <div class="panel-heading">
+      			<h3 style="display: inline" class="panel-title">{{ date  | date:"l F d, Y" }}</h3>
+            (in {{ date | timeuntil }})
+          </div>
+          <table class="table" name="appointment-table-{{forloop.counter0}}">
+            <tr>
+              <th>Time</th><th>Patient</th><th>Type</th>
+            </tr>
+            {% with forloop.first as first_apt %}
+            	{% for app in app_list %}
+              <tr class="{% cycle 'active' '' as rowclass %}">
+            			<td>{{ app.clintime }}</td>
+              		<td><b><a href="{% url 'patient-detail' pk=app.patient.id %}">{{ app.patient }}</a></b></td>
+              		<td>{{ app.verbose_appointment_type }}</td>
+              </tr>
+              <tr>
+            			<td class="{% if app.pt_showed == False %}danger
+                             {% elif app.pt_showed == True %}success
+                             {% else %}{{ rowclass }}
+                             {% endif %}" colspan=3>
+                    <p  style="margin-left: 5%; margin-right: 5%"><i>{{ app.comment }}</i></p>
+                    <p style="margin-left: 5%; margin-right: 5%; text-align: right;">
+                      <a class="btn btn-xs btn-default"  href="{% url 'appointment-update' pk=app.id %}">
+                        <span class="glyphicon glyphicon-pencil"></span>&nbsp;edit
+                      </a>
+                      {% if app.pt_showed == None and first_apt %}
+                        <a class="btn btn-xs btn-danger" href="{% url 'appointment-mark-no-show' pk=app.id %}"
+                           onclick="return confirm('Mark this patient as a not coming?')">
+                          <span class="glyphicon glyphicon-ban-circle"></span>&nbsp;no show
+                        </a>
+                        <a class="btn btn-xs btn-success" href="{% url 'appointment-mark-arrived' pk=app.id %}"
+                           onclick="return confirm('Mark this patient as a here?')">
+                          <span class="glyphicon glyphicon glyphicon-ok"></span>&nbsp;arrived
+                        </a>
+                      {% endif %}
+                    </p>
+                  </td>
+              </tr>
+            	{% endfor %}
+            {% endwith %}
+            {% if not forloop.first %}
+            <tr>
+              <td colspan="3" style="text-align: center"><a class="btn btn-success btn-xs" href="{% url 'appointment-new' %}?date={{date|date:"Y-m-d"}} role="button"><span class="glyphicon glyphicon glyphicon-plus"></span>&nbsp;new appointment</a>
+              </td>
+            </tr>
+            {% endif %}
+          </table>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
 {% endblock %}
 
 

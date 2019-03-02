@@ -25,6 +25,28 @@ def list_view(request):
                   {'appointments_by_date': d})
 
 
+def mark_no_show(request, pk):
+    """Mark a patient as having not shown to an appointment
+    """
+
+    apt = get_object_or_404(Appointment, pk=pk)
+    apt.pt_showed = False
+    apt.save()
+
+    return HttpResponseRedirect(reverse("appointment-list"))
+
+
+def mark_arrived(request, pk):
+    """Mark a patient as having arrived to an appointment
+    """
+
+    apt = get_object_or_404(Appointment, pk=pk)
+    apt.pt_showed = True
+    apt.save()
+
+    return HttpResponseRedirect(reverse("appointment-list"))
+
+
 class AppointmentUpdate(NoteUpdate):
     template_name = "pttrack/form-update.html"
     model = Appointment
