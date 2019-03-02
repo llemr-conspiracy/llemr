@@ -306,10 +306,10 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
             password=self.provider_password,
             roles=["Preclinical"])
         self.providers = {
-            'attending' : attending,
-            'coordinator' : coordinator,
-            'clinical' : clinical,
-            'preclinical' : preclinical
+            'attending': attending,
+            'coordinator': coordinator,
+            'clinical': clinical,
+            'preclinical': preclinical
         }
 
         workupModels.ClinicType.objects.create(name="Basic Care Clinic")
@@ -322,16 +322,13 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
 
         tomorrow_clindate = workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=tomorrow,
-            gcal_id="tmp")
+            clinic_date=tomorrow)
         yesterday_clindate = workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=yesterday,
-            gcal_id="tmp")
+            clinic_date=yesterday)
         last_week_clindate = workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=earlier_this_week,
-            gcal_id="tmp")
+            clinic_date=earlier_this_week)
         # log_in_provider(self.client, build_provider(["Attending"]))
 
         pt1 = models.Patient.objects.get(pk=1)
