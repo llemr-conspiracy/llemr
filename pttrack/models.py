@@ -1,4 +1,6 @@
 '''The datamodels for the Osler core'''
+from itertools import chain
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -8,8 +10,8 @@ import os
 from django.core.urlresolvers import reverse
 
 from simple_history.models import HistoricalRecords
+
 from . import validators
-from itertools import chain
 
 # pylint: disable=I0011,missing-docstring,E1305
 
