@@ -41,8 +41,39 @@ class ClinicDate(models.Model):
     def __unicode__(self):
         return str(self.clinic_type)+" ("+str(self.clinic_date)+")"
 
+class AttestableNote(Note):
+    class Meta:
+        abstract = True
+    def sign(self, user, active_role=None):
+        """Signs this workup.
 
-class ProgressNote(Note):
+        The active_role parameter isn't necessary if the user has only one role.
+        """
+
+        if active_role is None:
+            if len(user.provider.clinical_roles.all()) != 1:
+                raise ValueError("For users with > role, it must be provided.")
+            else:
+                active_role = user.provider.clinical_roles.all()[0]
+        elif active_role not in user.provider.clinical_roles.all():
+            raise ValueError(
+                "Provider {p} doesn't have role {r}!".format(
+                    p=user.provider, r=active_role))
+
+        if active_role.signs_charts:
+            assert active_role in user.provider.clinical_roles.all()
+
+            self.signed_date = now()
+            self.signer = user.provider
+        else:
+            raise ValueError("You must be an attending to sign workups.")
+
+    def signed(self):
+        '''Has this workup been attested? Returns True if yes, False if no.'''
+        return self.signer is not None    
+     
+        
+class ProgressNote(AttestableNote):
     title = models.CharField(max_length=200)
     text = models.TextField()
 
@@ -52,7 +83,7 @@ class ProgressNote(Note):
         return self.title
 
 
-class Workup(Note):
+class Workup(AttestableNote):
     '''Datamodel of a workup. Has fields specific to each part of an exam,
     along with SNHC-specific info about where the patient has been referred for
     continuity care.'''
@@ -152,34 +183,6 @@ class Workup(Note):
     signed_date = models.DateTimeField(blank=True, null=True)
 
     history = HistoricalRecords()
-
-    def sign(self, user, active_role=None):
-        """Signs this workup.
-
-        The active_role parameter isn't necessary if the user has only one role.
-        """
-
-        if active_role is None:
-            if len(user.provider.clinical_roles.all()) != 1:
-                raise ValueError("For users with > role, it must be provided.")
-            else:
-                active_role = user.provider.clinical_roles.all()[0]
-        elif active_role not in user.provider.clinical_roles.all():
-            raise ValueError(
-                "Provider {p} doesn't have role {r}!".format(
-                    p=user.provider, r=active_role))
-
-        if active_role.signs_charts:
-            assert active_role in user.provider.clinical_roles.all()
-
-            self.signed_date = now()
-            self.signer = user.provider
-        else:
-            raise ValueError("You must be an attending to sign workups.")
-
-    def signed(self):
-        '''Has this workup been attested? Returns True if yes, False if no.'''
-        return self.signer is not None
 
     def short_text(self):
         '''
