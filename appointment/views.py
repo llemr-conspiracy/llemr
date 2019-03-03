@@ -1,20 +1,21 @@
+import collections
+
 from django.core.urlresolvers import reverse
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
+from django.utils.timezone import now
 
 from pttrack.views import NoteFormView, NoteUpdate, get_current_provider_type
 from pttrack.models import Patient
 
 from .models import Appointment
 from .forms import AppointmentForm
-import datetime
-import collections
 
 
 def list_view(request):
 
     # Want to sort the list so earliest dates are first
     appointments = Appointment.objects.filter(
-        clindate__gte=datetime.date.today()).order_by('clindate', 'clintime')
+        clindate__gte=now().date()).order_by('clindate', 'clintime')
     d = collections.OrderedDict()
     for a in appointments:
         if a.clindate in d:

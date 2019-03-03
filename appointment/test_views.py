@@ -1,12 +1,11 @@
 import re
-from datetime import timedelta
+from datetime import timedelta, time
 
 from django.test import TestCase
 from django.utils.timezone import now
 from django.core.urlresolvers import reverse
 from pttrack.models import Provider, ProviderType, Patient
 from pttrack.test_views import log_in_provider, build_provider
-from datetime import time
 from .test_forms import apt_dict
 
 from . import models
@@ -132,9 +131,6 @@ class TestAppointmentViews(TestCase):
 
         response = self.client.get(reverse("appointment-list"), follow=True)
         self.assertTemplateUsed('appointment/appointment_list.html')
-
-        with open('tmp.html', 'w') as f:
-            f.write(response.content)
 
         # only two panels should appear, since one apt is in the past and
         # two fall on the same day (today)
