@@ -1,1 +1,111 @@
-[{"fields": {}, "model": "followup.noshowreason", "pk": "Didn't have transportation to appointment"}, {"fields": {}, "model": "followup.noshowreason", "pk": "Felt better and decided didn't need appointment"}, {"fields": {}, "model": "followup.noshowreason", "pk": "Forgot about appointment"}, {"fields": {}, "model": "followup.noshowreason", "pk": "Schedule changed in conflict with appointment"}, {"fields": {}, "model": "followup.noshowreason", "pk": "Someone counseled patient against appointment"}, {"fields": {}, "model": "followup.noshowreason", "pk": "Too sick to go to appointment"}, {"fields": {}, "model": "followup.noshowreason", "pk": "Worried about cost of appointment"}, {"fields": {}, "model": "followup.noaptreason", "pk": "Appointment times do not work with patient's schedule"}, {"fields": {}, "model": "followup.noaptreason", "pk": "Appointment wait time is too long"}, {"fields": {}, "model": "followup.noaptreason", "pk": "Cannot afford appointment"}, {"fields": {}, "model": "followup.noaptreason", "pk": "Cannot reach provider"}, {"fields": {}, "model": "followup.noaptreason", "pk": "Contacted provider but did not successfully schedule appointment"}, {"fields": {}, "model": "followup.noaptreason", "pk": "Lost provider contact information"}, {"fields": {}, "model": "followup.noaptreason", "pk": "No transportation to get to appointment"}, {"fields": {}, "model": "followup.noaptreason", "pk": "Not interested in further medical care at this time"}, {"fields": {}, "model": "followup.noaptreason", "pk": "Other"}, {"fields": {}, "model": "followup.noaptreason", "pk": "Too busy/forgot to contact provider"}, {"fields": {"attempt_again": false, "patient_reached": true}, "model": "followup.contactresult", "pk": "Communicated health information to patient"}, {"fields": {"attempt_again": true, "patient_reached": false}, "model": "followup.contactresult", "pk": "No answer, reached voicemail and didn't leave voicemail"}, {"fields": {"attempt_again": false, "patient_reached": false}, "model": "followup.contactresult", "pk": "Phone number disconnected"}]
+[
+{
+    "model": "followup.noshowreason",
+    "pk": "Didn't have transportation to appointment",
+    "fields": {}
+},
+{
+    "model": "followup.noshowreason",
+    "pk": "Felt better and decided didn't need appointment",
+    "fields": {}
+},
+{
+    "model": "followup.noshowreason",
+    "pk": "Forgot about appointment",
+    "fields": {}
+},
+{
+    "model": "followup.noshowreason",
+    "pk": "Schedule changed in conflict with appointment",
+    "fields": {}
+},
+{
+    "model": "followup.noshowreason",
+    "pk": "Someone counseled patient against appointment",
+    "fields": {}
+},
+{
+    "model": "followup.noshowreason",
+    "pk": "Too sick to go to appointment",
+    "fields": {}
+},
+{
+    "model": "followup.noshowreason",
+    "pk": "Worried about cost of appointment",
+    "fields": {}
+},
+{
+    "model": "followup.noaptreason",
+    "pk": "Appointment times do not work with patient's schedule",
+    "fields": {}
+},
+{
+    "model": "followup.noaptreason",
+    "pk": "Appointment wait time is too long",
+    "fields": {}
+},
+{
+    "model": "followup.noaptreason",
+    "pk": "Cannot afford appointment",
+    "fields": {}
+},
+{
+    "model": "followup.noaptreason",
+    "pk": "Cannot reach provider",
+    "fields": {}
+},
+{
+    "model": "followup.noaptreason",
+    "pk": "Contacted provider but did not successfully schedule appointment",
+    "fields": {}
+},
+{
+    "model": "followup.noaptreason",
+    "pk": "Lost provider contact information",
+    "fields": {}
+},
+{
+    "model": "followup.noaptreason",
+    "pk": "No transportation to get to appointment",
+    "fields": {}
+},
+{
+    "model": "followup.noaptreason",
+    "pk": "Not interested in further medical care at this time",
+    "fields": {}
+},
+{
+    "model": "followup.noaptreason",
+    "pk": "Other",
+    "fields": {}
+},
+{
+    "model": "followup.noaptreason",
+    "pk": "Too busy/forgot to contact provider",
+    "fields": {}
+},
+{
+    "model": "followup.contactresult",
+    "pk": "Communicated health information to patient",
+    "fields": {
+        "attempt_again": false,
+        "patient_reached": true
+    }
+},
+{
+    "model": "followup.contactresult",
+    "pk": "No answer, reached voicemail and didn't leave voicemail",
+    "fields": {
+        "attempt_again": true,
+        "patient_reached": false
+    }
+},
+{
+    "model": "followup.contactresult",
+    "pk": "Phone number disconnected",
+    "fields": {
+        "attempt_again": false,
+        "patient_reached": false
+    }
+}
+]
