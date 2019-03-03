@@ -71,6 +71,10 @@ class AttestableNote(Note):
     def signed(self):
         '''Has this workup been attested? Returns True if yes, False if no.'''
         return self.signer is not None    
+        
+    def attribution(self):
+        '''Builds an attribution string of the form Doe, John on DATE'''
+        return " ".join([str(self.author), "on", str(self.written_date())])
      
         
 class ProgressNote(AttestableNote):
@@ -79,6 +83,12 @@ class ProgressNote(AttestableNote):
 
     history = HistoricalRecords()
 
+    signer = models.ForeignKey(Provider,
+                               blank=True, null=True,
+                               related_name="signed_progress_notes",
+                               validators=[validate_attending])
+    signed_date = models.DateTimeField(blank=True, null=True)
+    
     def short_text(self):
         return self.title
 
@@ -198,10 +208,6 @@ class Workup(AttestableNote):
         Returns the date (not datetime) this workup was written on.
         '''
         return self.clinic_day.clinic_date
-
-    def attribution(self):
-        '''Builds an attribution string of the form Doe, John on DATE'''
-        return " ".join([str(self.author), "on", str(self.written_date())])
 
     def url(self):
         return reverse('workup', args=(self.pk,))
