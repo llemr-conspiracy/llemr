@@ -92,24 +92,25 @@ def wrap_url(url, no_wrap=[], login_only=[], provider_only=[],
         pass
 
     elif url.name in login_only:
-        url._callback = login_required(url._callback)
+        url.callback = login_required(url.callback)
 
     elif url.name in provider_only:
-        url._callback = provider_required(url._callback)
-        url._callback = login_required(url._callback)
+        url.callback = provider_required(url.callback)
+        url.callback = login_required(url.callback)
 
     elif url.name in updated_provider_only:
-        url._callback = provider_update_required(url._callback)
-        url._callback = provider_required(url._callback)
-        url._callback = login_required(url._callback)
+        url.callback = provider_update_required(url.callback)
+        url.callback = provider_required(url.callback)
+        url.callback = login_required(url.callback)
 
     else:  # wrap in everything
-        url._callback = clintype_required(url._callback)
-        url._callback = provider_update_required(url._callback)
-        url._callback = provider_required(url._callback)
-        url._callback = login_required(url._callback)
+        url.callback = clintype_required(url.callback)
+        url.callback = provider_update_required(url.callback)
+        url.callback = provider_required(url.callback)
+        url.callback = login_required(url.callback)
 
     return url
+
 
 wrap_config = {'no_wrap': ['about'],
                'login_only': ['new-provider'],

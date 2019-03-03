@@ -1,1 +1,110 @@
-[{"fields": {}, "model": "workup.diagnosistype", "pk": "Cardiovascular"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "Dermatological"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "Endocrine"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "Eyes and ENT"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "GI"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "Infectious Disease (e.g. flu or HIV)"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "Mental Health"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "Musculoskeletal"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "Neurological"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "OB/GYN"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "Other"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "Physical Exam"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "Respiratory"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "Rx Refill"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "Urogenital"}, {"fields": {}, "model": "workup.diagnosistype", "pk": "Vaccination/PPD"}, {"fields": {"name": "Basic Care Clinic"}, "model": "workup.clinictype", "pk": 1}, {"fields": {"name": "Depression & Anxiety Clinic"}, "model": "workup.clinictype", "pk": 2}, {"fields": {"name": "Dermatology Clinic"}, "model": "workup.clinictype", "pk": 3}, {"fields": {"name": "Muscle and Joint Pain Clinic"}, "model": "workup.clinictype", "pk": 4}]
+[
+{
+    "model": "workup.diagnosistype",
+    "pk": "Cardiovascular",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "Dermatological",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "Endocrine",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "Eyes and ENT",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "GI",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "Infectious Disease (e.g. flu or HIV)",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "Mental Health",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "Musculoskeletal",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "Neurological",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "OB/GYN",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "Other",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "Physical Exam",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "Respiratory",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "Rx Refill",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "Urogenital",
+    "fields": {}
+},
+{
+    "model": "workup.diagnosistype",
+    "pk": "Vaccination/PPD",
+    "fields": {}
+},
+{
+    "model": "workup.clinictype",
+    "pk": 1,
+    "fields": {
+        "name": "Basic Care Clinic"
+    }
+},
+{
+    "model": "workup.clinictype",
+    "pk": 2,
+    "fields": {
+        "name": "Depression & Anxiety Clinic"
+    }
+},
+{
+    "model": "workup.clinictype",
+    "pk": 3,
+    "fields": {
+        "name": "Dermatology Clinic"
+    }
+},
+{
+    "model": "workup.clinictype",
+    "pk": 4,
+    "fields": {
+        "name": "Muscle and Joint Pain Clinic"
+    }
+}
+]
