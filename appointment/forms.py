@@ -11,10 +11,12 @@ class AppointmentForm(ModelForm):
 
     class Meta:
         model = Appointment
-        exclude = ['author', 'author_type']
-        widgets = {'clindate': DateTimePicker(options={"format": "YYYY-MM-DD",
-                                                       "pickTime": False}),
-                   'clintime': TimeInput(format='%H:%M')}
+        fields = ['clindate', 'clintime', 'appointment_type', 'comment',
+                  'patient']
+
+        widgets = {
+            'clindate': DateTimePicker(options={"format": "YYYY-MM-DD"}),
+            'clintime': TimeInput(format='%H:%M')}
 
     def __init__(self, *args, **kwargs):
         super(AppointmentForm, self).__init__(*args, **kwargs)

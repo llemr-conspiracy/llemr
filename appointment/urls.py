@@ -13,6 +13,12 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^list$',
         views.list_view,
         name='appointment-list'),
+    url(r'^(?P<pk>[0-9]+)/noshow$',
+        views.mark_no_show,
+        name='appointment-mark-no-show'),
+    url(r'^(?P<pk>[0-9]+)/arrived$',
+        views.mark_arrived,
+        name='appointment-mark-arrived'),
 ]
 
 wrap_config = {}
