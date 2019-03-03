@@ -5,7 +5,6 @@ from pttrack.models import (ReferralType, ReferralLocation, Note,
                             ContactMethod, CompletableMixin,)
 from followup.models import ContactResult, NoAptReason, NoShowReason
 
-# pylint: disable=I0011,E1305
 
 
 class Referral(Note):
