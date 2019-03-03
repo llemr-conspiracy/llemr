@@ -7,7 +7,6 @@ from pttrack.models import (
     CompletableManager)
 from followup.models import ContactResult, NoAptReason, NoShowReason
 
-# pylint: disable=I0011,E1305
 
 class Referral(Note):
     """A record of a particular patient's referral to a particular center."""
