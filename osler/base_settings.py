@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'bootstrap3_datetime',
     'simple_history',
     'rest_framework',
+    'audit',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -46,6 +47,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
+    'audit.middleware.AuditMiddleware'
 )
 
 ROOT_URLCONF = 'osler.urls'
