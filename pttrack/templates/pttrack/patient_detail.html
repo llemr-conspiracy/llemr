@@ -57,7 +57,6 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	<div class="container col-md-4">
 		<p><strong>&nbsp;&nbsp;Language:</strong> {{ patient.languages.iterator | join:", " }}</p>
 		<p><strong>&nbsp;&nbsp;DOB:</strong> {{patient.date_of_birth}}</p>
-		<p><strong>&nbsp;&nbsp;SSN:</strong> {{patient.ssn | default:"Not Provided"}}</p>
 		<p><strong>&nbsp;&nbsp;Email:</strong> {{patient.email | default:"Not Provided"}}</p>
 	</div>
 	<div class="container col-md-4">
@@ -140,31 +139,31 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
     			</div>
     			<div id="collapse3" class="panel-collapse collapse">
       				{% for note in patient.followup_set %}	
-  							<div class="panel-body">
-								{# here, the url takes an arugment to route it to the correct  #}
-								<p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
-								<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-								{% if request.session.staff_view %}
-									{% if note.CS_HELP %}
-									<a href="{% url 'admin:followup_labfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
-									{% elif note.SUBSQ_DOSE_HELP %}
-									<a href="{% url 'admin:followup_vaccinefollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
-									{% elif note.REFTYPE_HELP %}
-									<a href="{% url 'admin:followup_referralfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
-									{% else %}
-									<a href="{% url 'admin:followup_generalfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
-									{% endif %}
+						<div class="panel-body">
+							{# here, the url takes an arugment to route it to the correct  #}
+							<p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
+							<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+							{% if request.session.staff_view %}
+								{% if note.CS_HELP %}
+								<a href="{% url 'admin:followup_labfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+								{% elif note.SUBSQ_DOSE_HELP %}
+								<a href="{% url 'admin:followup_vaccinefollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+								{% elif note.REFTYPE_HELP %}
+								<a href="{% url 'admin:followup_referralfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+								{% else %}
+								<a href="{% url 'admin:followup_generalfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
 								{% endif %}
-  							</div>
+							{% endif %}
+						</div>
       				{% endfor %}
       				{% for note in referral_followups %}
-      						<div class="panel-body">
-      							<p><strong>Referral Followup:</strong> {{ note.short_text }}</p>
-      							<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-      							{% if request.session.staff_view %}
-      								<a href="{% url 'admin:referral_patientcontact_change' note.id %}" target="_blank"><i>Edit</i></a></p>
-      							{% endif %}
-  							</div>
+  						<div class="panel-body">
+  							<p><strong>Referral Followup:</strong> {{ note.short_text }}</p>
+  							<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+  							{% if request.session.staff_view %}
+  								<a href="{% url 'admin:referral_patientcontact_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+  							{% endif %}
+						</div>
       				{% endfor %}
     			</div>
   			</div>
@@ -191,49 +190,22 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		<h3>Action Items ({{ total_ais }} Total)</h3>
 		<div class="panel-group">
   			{% for ai_type in zipped_ai_list %}
-	  			<div class="panel panel-default">
-		    			<div class="panel-heading">
-		      				<h4 class="panel-title">
-		        			<a data-toggle="collapse" href="#{{ ai_type.0 }}">{{ ai_type.2 }} ({{ ai_type.1 | length }})</a>
-		      				</h4>
+  				{% with ai_list=ai_type.1 panel_id=ai_type.0 ai_group=ai_type.2 %}
+		  			<div class="panel panel-default">
+		    			<div class="panel-heading"><h4 class="panel-title">
+		        			<a data-toggle="collapse" href="#{{ panel_id }}">
+		        				{{ ai_group }} ({{ ai_list | length }})
+		        			</a>
+		    			</h4></div>
+		    			<div id="{{ panel_id }}" class="panel-collapse collapse">
+							<ul class="list-group">
+		      				{% for action_item in ai_list %}
+						        {% include "pttrack/blurbs/action-item-blurb-active.html" %}
+		      				{% endfor %}
+			      			</ul>
 		    			</div>
-		    			<div id="{{ ai_type.0 }}" class="panel-collapse collapse">
-		      				{% for action_item in ai_type.1 %}	
-		  						<div class="panel-body">
-		  							{% if ai_type.3 %}
-		  								{% if action_item.class_name == "ActionItem" %}
-											<p><a href="{% url 'done-action-item' ai_id=action_item.pk %}"/> <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span></a>
-											<strong><a href="{% url 'done-action-item' ai_id=action_item.pk %}">{{ action_item.instruction }}:</a></strong> {{ action_item.comments }}</p>
-										{% else %}
-											<p><a href="{% url 'new-patient-contact' pt_id=patient.id referral_id=action_item.referral.pk followup_id=action_item.pk %}"/> <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span></a>
-											<strong><a href="{% url 'new-patient-contact' pt_id=patient.id referral_id=action_item.referral.pk followup_id=action_item.pk%}">Referral:</a></strong> {{ action_item.contact_instructions }}</p>
-										{% endif %}
-
-									{% else %}
-										<p><span class="glyphicon glyphicon-check" aria-hidden="true"></span>
-										{% if action_item.class_name == "ActionItem" %}
-											<strong>{{ action_item.instruction }}:</strong> {{ action_item.comments }}</p>
-										{% else %}
-											<strong>Referral:</strong> {{ action_item.contact_instructions }}</p>
-										{% endif %}
-									{% endif %}
-
-									{% if action_item.priority %}
-									<h4 class="text-left" style="color:red"><b>PRIORITY</b></h4>
-									{% endif %}
-									<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
-									{% if request.session.staff_view %}
-										{% if action_item.class_name == "ActionItem" %}
-											<p class="text-right"><a href="{% url 'admin:pttrack_actionitem_change' action_item.id %}" target="_blank"><i>Edit</i></a></p>
-										{% else %}
-											<p class="text-right"><a href="{% url 'admin:referral_followuprequest_change' action_item.pk %}" target="_blank"><i>Edit</i></a></p>
-										{% endif %}
-									{% endif %}
-									</p>
-		  						</div>
-		      				{% endfor %}	
-		    			</div>
-	  			</div>
+		  			</div>
+	  			{% endwith %}
 	  		{% endfor %}
   		</div>
 	</div>

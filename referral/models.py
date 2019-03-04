@@ -1,11 +1,10 @@
 """Data models for referral system."""
 from django.db import models
-from django.core.exceptions import ValidationError
 
-from pttrack.models import (
-    ReferralType, ReferralLocation, Note, ContactMethod, CompletableMixin,
-    CompletableManager)
+from pttrack.models import (ReferralType, ReferralLocation, Note,
+                            ContactMethod, CompletableMixin,)
 from followup.models import ContactResult, NoAptReason, NoShowReason
+
 
 
 class Referral(Note):
@@ -75,6 +74,12 @@ class FollowupRequest(Note, CompletableMixin):
 
     def class_name(self):
         return self.__class__.__name__
+
+    def short_name(self):
+        return "Referral"
+
+    def summary(self):
+        return self.contact_instructions
 
     def __unicode__(self):
         formatted_date = self.due_date.strftime("%D")
