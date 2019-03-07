@@ -168,4 +168,3 @@ class TestAppointmentViews(TestCase):
             response.content)
 
         self.assertEqual(len(arrived_links), 1)
-

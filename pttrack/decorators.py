@@ -1,11 +1,10 @@
 from functools import wraps
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import resolve_url
 from django.utils.decorators import available_attrs
 from django.utils.six.moves.urllib.parse import urlparse
-from django.http import HttpResponseRedirect
 
 
 def provider_exists(user):
@@ -17,8 +16,10 @@ def clintype_set(session):
     # print "Checking clintype", 'clintype_pk' in session
     return 'clintype_pk' in session
 
+
 def provider_has_updated(user):
     return (not getattr(user, 'provider').needs_updating)
+
 
 def session_passes_test(test_func, fail_url,
                         redirect_field_name=REDIRECT_FIELD_NAME):
@@ -54,11 +55,14 @@ def session_passes_test(test_func, fail_url,
         return _wrapped_view
     return decorator
 
+
 def clintype_required(func):
     return session_passes_test(clintype_set, fail_url=reverse_lazy('choose-clintype'))(func)
 
+
 def provider_update_required(func):
     return user_passes_test(provider_has_updated, login_url=reverse_lazy('provider-update'))(func)
+
 
 def provider_required(func):
     return user_passes_test(provider_exists, login_url=reverse_lazy('new-provider'))(func)

@@ -59,7 +59,7 @@ def build_provider(roles=None, username=None, password='password', email=None):
                  for role in roles]
 
     if username is None:
-        username = 'user'+str(User.objects.all().count())
+        username = 'user' + str(User.objects.all().count())
 
     if email is None:
         email = 'tommyljones@gmail.com'
@@ -950,8 +950,9 @@ class IntakeTest(TestCase):
                 self.assertEquals(str(submitted_pt[param]),
                                   str(getattr(new_pt, param)))
             except AssertionError:
-                self.assertEquals(str(submitted_pt[param]),
-                                  str(getattr(new_pt, param).all()))
+                for x, y in zip(submitted_pt[param],
+                                getattr(new_pt, param).all()):
+                    self.assertEquals(x, y)
 
         # new patients should be marked as active by default
         self.assertTrue(new_pt.needs_workup)
