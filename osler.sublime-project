@@ -28,6 +28,41 @@
 			[
 				"__init__.py"
 			],
+			"path": "api"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "appointment"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "audit"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "demographics"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "followup"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
 			"path": "osler"
 		},
 		{
@@ -42,7 +77,7 @@
 			[
 				"__init__.py"
 			],
-			"path": "followup"
+			"path": "referral"
 		},
 		{
 			"file_exclude_patterns":
@@ -57,31 +92,6 @@
 				"__init__.py"
 			],
 			"path": "workup"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "api"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "demographics"
-		},
-		{
-			"path": "referral",
-			"file_exclude_patterns":
-			["__init__.py"],
-
-		},
-		{
-			"file_exclude_patterns":
-			["__init__.py"],
-			"path": "appointment"
 		}
 	]
 }
