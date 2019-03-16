@@ -1,3 +1,5 @@
+from __future__ import print_function, division
+
 import datetime
 import json
 
@@ -135,10 +137,10 @@ class SendEmailTest(TestCase):
         yesterday = now().date() - datetime.timedelta(days=1)
 
         ai_prototype = {
-        'instruction':ai_inst,
-        'comments':"",
-        'author_type':models.ProviderType.objects.first(),
-        'patient':pt
+            'instruction': ai_inst,
+            'comments': "",
+            'author_type': models.ProviderType.objects.first(),
+            'patient': pt
         }
 
         #action item due today
@@ -237,6 +239,66 @@ class LiveTesting(SeleniumLiveTestCase):
         self.assertEquals(self.selenium.current_url,
                           '%s%s' % (self.live_server_url,
                                     reverse('home')))
+
+    def test_pttrack_patient_detail_collapseable(self):
+        """Ensure that collapsable AI lists open and close with AIs inside
+        """
+
+        build_provider(username='timmy', password='password',
+                       roles=["Attending"])
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        self.submit_login('timmy', 'password')
+
+        ai_prototype = {
+            'instruction': models.ActionInstruction.objects.first(),
+            'comments': "",
+            'author_type': models.ProviderType.objects.first(),
+            'patient': models.Patient.objects.first()
+        }
+
+        models.ActionItem.objects.create(
+            due_date=now().today(),
+            author=models.Provider.objects.first(),
+            **ai_prototype
+        )
+
+        yesterday = now().date() - datetime.timedelta(days=1)
+        models.ActionItem.objects.create(
+            due_date=yesterday,
+            author=models.Provider.objects.first(),
+            **ai_prototype
+        )
+
+        self.selenium.get('%s%s' % (self.live_server_url,
+                                    reverse('patient-detail', args=(1,))))
+
+        WebDriverWait(self.selenium, 2).until(
+            EC.presence_of_element_located(
+                (By.ID, 'toggle-collapse5')))
+
+        self.assertFalse(self.selenium.find_element_by_id('collapse5')
+                                      .find_element_by_xpath('./ul/li')
+                                      .is_displayed())
+
+        self.assertEqual(
+            len(self.selenium.find_element_by_id('collapse5')
+                             .find_elements_by_xpath('./ul/li')),
+            2)
+
+        self.selenium.find_element_by_id('toggle-collapse5').click()
+
+        WebDriverWait(self.selenium, 2).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//div[@class="panel-collapse collapse in"]')))
+
+        self.assertEqual(
+            len(self.selenium.find_element_by_id('collapse5')
+                             .find_elements_by_xpath('./ul/li')),
+            2)
+
+        self.assertTrue(self.selenium.find_element_by_id('collapse5')
+                                     .find_element_by_xpath('./ul/li')
+                                     .is_displayed())
 
     def test_pttrack_view_rendering(self):
         '''

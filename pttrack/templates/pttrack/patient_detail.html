@@ -193,7 +193,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
   				{% with ai_list=ai_type.1 panel_id=ai_type.0 ai_group=ai_type.2 %}
 		  			<div class="panel panel-default">
 		    			<div class="panel-heading"><h4 class="panel-title">
-		        			<a data-toggle="collapse" href="#{{ panel_id }}">
+		        			<a id="toggle-{{ panel_id }}" data-toggle="collapse" href="#{{ panel_id }}">
 		        				{{ ai_group }} ({{ ai_list | length }})
 		        			</a>
 		    			</h4></div>
