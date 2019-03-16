@@ -7,8 +7,16 @@ from pttrack.models import ProviderType
 
 class AuditMiddleware(object):
 
-    def process_response(self, request, response):
+    def __init__(self, get_response):
+        self.get_response = get_response
+        # One-time configuration and initialization.
 
+    def __call__(self, request):
+
+        response = self.get_response(request)
+
+        # this header is used by nginx, etc to indicate which IP address
+        # the original request was from
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
         if x_forwarded_for:
             user_ip = x_forwarded_for.split(',')[0]

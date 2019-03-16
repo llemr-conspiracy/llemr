@@ -7,6 +7,7 @@ from pttrack.models import ProviderType
 from pttrack.test_views import build_provider, log_in_provider
 
 from .models import PageviewRecord
+from .middleware import AuditMiddleware
 
 
 class TestAudit(TestCase):
