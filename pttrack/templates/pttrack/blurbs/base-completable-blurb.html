@@ -1,11 +1,11 @@
 <li class="list-group-item">
 	{% if not action_item.done %}
 		<p>
-		  <a href="{{done_url}}"/>
+		  <a href="{{ clear_url }}"/>
 		    <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
 		  </a>
 		  <strong>
-		    <a href="{{done_url}}">{{ action_item.short_name }}:</a>
+		    <a href="{{ clear_url }}">{{ action_item.short_name }}:</a>
 		  </strong>
 		  {{ action_item.summary }}
 		</p>
@@ -21,6 +21,6 @@
 
 	<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
 	{% if request.session.staff_view %}
-		<p class="text-right"><a href="{{admin_url}}" target="_blank"><i>edit on admin panel</i></a></p>
+		<p class="text-right"><a href="{{ admin_url }}" target="_blank"><i>edit on admin panel</i></a></p>
 	{% endif %}
 </li>

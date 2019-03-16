@@ -1039,6 +1039,11 @@ class ActionItemTest(TestCase):
             author_type=models.ProviderType.objects.first(),
             patient=pt)
 
+        response = self.client.get(reverse('patient-detail', args=(pt.id,)))
+        self.assertTemplateUsed(response, 'pttrack/patient_detail.html')
+        self.assertContains(
+            response, reverse('done-action-item', args=(ai.id,)))
+
         # new action items should not be done
         self.assertFalse(ai.done())
 
@@ -1084,7 +1089,7 @@ class ActionItemTest(TestCase):
             "instruction": models.ActionInstruction.objects.first().pk,
             "due_date": str(datetime.date.today() + datetime.timedelta(10)),
             "comments": "models.CharField(max_length=300)" # arbitrary string
-            }
+        }
 
         url = reverse('new-action-item', kwargs={'pt_id': 1})
         response = self.client.post(url, submitted_ai)
