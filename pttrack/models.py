@@ -255,7 +255,7 @@ class Patient(Person):
             ActionItem.objects.filter(patient=self.pk)\
                 .filter(completion_author=None)\
                 .filter(due_date__lte=now().date()),
-            key=lambda(ai): ai.due_date)
+            key=lambda ai: ai.due_date)
 
     def done_action_items(self):
         '''return the set of action items that are done, sorted
@@ -264,7 +264,7 @@ class Patient(Person):
         return sorted(
             ActionItem.objects.filter(patient=self.pk)\
                 .exclude(completion_author=None),
-            key=lambda(ai): ai.completion_date)
+            key=lambda ai: ai.completion_date)
 
     def inactive_action_items(self):
         '''return a list of action items that aren't done, but aren't
@@ -274,7 +274,7 @@ class Patient(Person):
             ActionItem.objects.filter(patient=self.pk)\
                 .filter(completion_author=None)\
                 .filter(due_date__gt=now().date()),
-            key=lambda(ai): ai.due_date)
+            key=lambda ai: ai.due_date)
 
     def status(self):
         # The active_action_items, done_action_items, and inactive_action_items
@@ -335,7 +335,7 @@ class Patient(Person):
         note_list.extend(self.followup_set())
         note_list.extend(self.document_set.all())
 
-        return sorted(note_list, key=lambda(k): k.written_datetime)
+        return sorted(note_list, key=lambda k: k.written_datetime)
 
     def all_phones(self):
         '''Returns a list of tuples of the form (phone, owner) of all the
