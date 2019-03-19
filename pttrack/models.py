@@ -15,27 +15,23 @@ from . import validators
 
 # pylint: disable=I0011,missing-docstring,E1305
 
+
 def make_filepath(instance, filename):
-    '''
-        Produces a unique file path for the upload_to of a FileField. This is
-        important because any URL is 1) transmitted unencrypted and 2)
-        automatically referred to any libraries we include (i.e. Bootstrap,
-        AngularJS).
+    """Produces a unique file path for the upload_to of a FileField. This is
+    important because any URL is 1) transmitted unencrypted and 2)
+    automatically referred to any libraries we include (i.e. Bootstrap,
+    AngularJS).
 
-        The produced path is of the form:
-        "[model name]/[field name]/[random name].[filename extension]".
+    The produced path is of the form:
+    "[model name]/[field name]/[random name].[filename extension]".
 
-        Copypasta from https://djangosnippets.org/snippets/2819/
-    '''
+    Copypasta from https://djangosnippets.org/snippets/2819/
+    """
 
-
-    field_name = 'image'
     carry_on = True
     while carry_on:
         new_filename = "%s.%s" % (User.objects.make_random_password(48),
                                   filename.split('.')[-1])
-        #path = '/'.join([instance.__class__.__name__.lower(),field_name, new_filename])
-
         path = new_filename
 
         # if the file already exists, try again to generate a new filename
@@ -50,7 +46,7 @@ class ContactMethod(models.Model):
 
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -61,7 +57,7 @@ class ReferralType(models.Model):
     is_fqhc = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def slugify(self):
@@ -75,7 +71,7 @@ class ReferralLocation(models.Model):
     address = models.TextField()
     care_availiable = models.ManyToManyField(ReferralType)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.address:
             return self.name + " (" + self.address.splitlines()[0] + ")"
         else:
@@ -85,21 +81,21 @@ class ReferralLocation(models.Model):
 class Language(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class Ethnicity(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class ActionInstruction(models.Model):
     instruction = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.instruction
 
 
@@ -109,7 +105,7 @@ class ProviderType(models.Model):
     signs_charts = models.BooleanField(default=False)
     staff_view = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.short_name
 
 
@@ -117,13 +113,13 @@ class Gender(models.Model):
     long_name = models.CharField(max_length=30, primary_key=True)
     short_name = models.CharField(max_length=1)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.long_name
 
 class Outcome(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 class Person(models.Model):
@@ -178,7 +174,7 @@ class Provider(Person):
     def username(self):
         return self.associated_user.username
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name()
 
 
@@ -199,13 +195,13 @@ class Patient(Person):
     country = models.CharField(max_length=100,
                                default="USA")
 
-
     pcp_preferred_zip = models.CharField(max_length=5,
                                          validators=[validators.validate_zip],
                                          blank=True,
                                          null=True)
 
-    date_of_birth = models.DateField(help_text='MM/DD/YYYY',
+    date_of_birth = models.DateField(
+        help_text='MM/DD/YYYY',
         validators=[validators.validate_birth_date])
 
     patient_comfortable_with_english = models.BooleanField(default=True)
@@ -242,9 +238,9 @@ class Patient(Person):
     history = HistoricalRecords()
 
     def age(self):
-        return (now().date()-self.date_of_birth).days//365
+        return (now().date() - self.date_of_birth).days // 365
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name()
 
     def active_action_items(self):
@@ -389,7 +385,7 @@ class Note(models.Model):
 class DocumentType(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -512,6 +508,6 @@ class ActionItem(Note, CompletableMixin):
             return " ".join(["Added by", str(self.author), "on",
                              str(self.written_datetime.date())])
 
-    def __unicode__(self):
+    def __str__(self):
         return " ".join(["AI for", str(self.patient)+":",
                          str(self.instruction), "due on", str(self.due_date)])

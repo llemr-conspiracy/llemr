@@ -33,7 +33,7 @@ class Referral(Note):
         help_text="The kind of care the patient should recieve at the "
                   "referral location.")
 
-    def __unicode__(self):
+    def __str__(self):
         """Provides string to display on front end for referral.
 
            For FQHC referrals, returns referral kind and date.
@@ -81,7 +81,7 @@ class FollowupRequest(Note, CompletableMixin):
     def summary(self):
         return self.contact_instructions
 
-    def __unicode__(self):
+    def __str__(self):
         formatted_date = self.due_date.strftime("%D")
         return 'Followup with %s on %s about %s' % (self.patient,
                                                     formatted_date,

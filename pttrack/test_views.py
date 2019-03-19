@@ -1,5 +1,3 @@
-from __future__ import print_function, division
-
 import datetime
 import json
 
@@ -757,7 +755,7 @@ class ViewsExistTest(TestCase):
             title="who done it?",
             comments="Pictured: silliness",
             document_type=dtype,
-            image=File(open(self.test_img)),
+            image=File(file=open(self.test_img, 'rb')),
             patient=models.Patient.objects.get(id=1),
             author=models.Provider.objects.get(id=1),
             author_type=models.ProviderType.objects.first())
@@ -769,8 +767,8 @@ class ViewsExistTest(TestCase):
         self.assertEqual(doc.image.path, p)
         self.assertTrue(os.path.isfile(p))
 
-        # Checking to make sure the path is 48 characters (the length of the random password
-
+        # Checking to make sure the path is 48 characters (the length of
+        # the random password
         self.assertEqual(len(random_name), 48)
 
         url = reverse('document-detail', args=(1,))
@@ -780,10 +778,10 @@ class ViewsExistTest(TestCase):
         # test the creation of many documents, just in case.
         for i in range(101):
             doc = models.Document.objects.create(
-                title="who done it? "+str(i),
+                title="who done it? %s" % i,
                 comments="Pictured: silliness",
                 document_type=dtype,
-                image=File(open(self.test_img)),
+                image=File(open(self.test_img, 'rb')),
                 patient=models.Patient.objects.get(id=1),
                 author=models.Provider.objects.get(id=1),
                 author_type=models.ProviderType.objects.first())
@@ -795,7 +793,8 @@ class ViewsExistTest(TestCase):
             self.assertEqual(doc.image.path, p)
             self.assertTrue(os.path.isfile(p))
 
-            # Checking to make sure the path is 48 characters (the length of the random password
+            # Checking to make sure the path is 48 characters (the length
+            # of the random password
 
             self.assertEqual(len(random_name), 48)
 

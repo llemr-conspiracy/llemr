@@ -17,14 +17,14 @@ class DiagnosisType(models.Model):
 
     name = models.CharField(max_length=100, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class ClinicType(models.Model):
     name = models.CharField(max_length=50)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -38,7 +38,7 @@ class ClinicDate(models.Model):
     clinic_date = models.DateField()
     gcal_id = models.CharField(max_length=50)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.clinic_type)+" ("+str(self.clinic_date)+")"
 
 
@@ -203,5 +203,5 @@ class Workup(Note):
     def url(self):
         return reverse('workup', args=(self.pk,))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.patient.name()+" on "+str(self.clinic_day.clinic_date)

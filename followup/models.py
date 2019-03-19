@@ -12,7 +12,7 @@ class NoShowReason(models.Model):
 
     name = models.CharField(max_length=100, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -22,7 +22,7 @@ class NoAptReason(models.Model):
 
     name = models.CharField(max_length=100, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -38,7 +38,7 @@ class ContactResult(models.Model):
         default=True,
         help_text="True if outcome means they reached the patient")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -83,7 +83,7 @@ class Followup(Note):
         '''Returns a python date object for when this followup was written.'''
         return self.written_datetime.date()
 
-    def __unicode__(self):
+    def __str__(self):
         return " ".join(["Followup for ", self.patient.name(), " on ",
                          str(self.written_date())])
 
