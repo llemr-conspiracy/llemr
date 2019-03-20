@@ -157,7 +157,7 @@ class PatientContactForm(ModelForm):
                 "pt_showed": "patient showed",
                 "has_appointment": "has appointment"}
 
-            for param, param_verbose in detail_params.iteritems():
+            for param, param_verbose in detail_params.items():
                 if cleaned_data.get(param):
                     self.add_error(
                         param,
