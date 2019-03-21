@@ -26,6 +26,17 @@ def get_clindates():
     return clindates
 
 
+def new_note_dispatch(request, pt_id):
+
+    note_types = {
+        'Standard Note': reverse("new-workup", args=(pt_id,)),
+        'Psych Note': reverse("new-progress-note", args=(pt_id,)),
+    }
+
+    return render(request, 'workup/new-note-dispatch.html',
+                  {'note_types': note_types})
+
+
 class WorkupCreate(NoteFormView):
     '''A view for creating a new workup. Checks to see if today is a
     clinic date first, and prompts its creation if none exist.'''
