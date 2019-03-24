@@ -9,13 +9,15 @@ Recent Clinic Dates
 {% endblock %}
 
 
-
 {% block content %}
 
 <div class="container">
 
 	{% for clinic_date in object_list %}
 		<h3>{{clinic_date.clinic_type}} &mdash; {{clinic_date.clinic_date}}</h3>
+		<p><strong>Attending(s):</strong> {{clinic_date.infer_attendings | join:", " }}</p>
+		<p><strong>Coordinators(s):</strong> {{clinic_date.infer_coordinators | join:", " }}</p>
+		<p><strong>Volunteers(s):</strong> {{clinic_date.infer_volunteers | join:", " }}</p>
 		<table class="table table-striped">
 	    <tr>
 		    <th>Patient</th>
@@ -35,6 +37,25 @@ Recent Clinic Dates
 		{% endfor %}
 		</table>	
 	{% endfor %}
+
+	<nav aria-label="Page navigation" style="text-align: center;">
+		<ul class="pagination">
+		<li {% if not object_list.has_previous_page %} class="disabled" {% endif %}>
+			<a {% if object_list.has_previous_page %}  href="?page={{ object_list.previous_page_number }}" {% endif %} aria-label="Previous">
+				<span aria-hidden="true">&laquo;</span>
+			</a>
+		</li>
+		{% for pid in page_range %}
+		<li {% if pid == page.current_page %}class="active"{% endif %}><a href="?page={{ pid }}">{{ pid }}</a></li>
+		{% endfor %}
+		<li {% if not object_list.has_next_page %} class="disabled" {% endif %}>
+			<a {% if object_list.has_previous_page %} href="?page={{ object_list.next_page_number }}" {% endif %} aria-label="Next">
+				<span aria-hidden="true">&raquo;</span>
+			</a>
+		</li>
+		</ul>
+	</nav>
+
 </div>
 
 {% endblock %}
