@@ -86,7 +86,7 @@ class TestAppointmentViews(TestCase):
             re.escape('href="/appointment/') +
             r'[0-9]+' +
             re.escape('/noshow'),
-            response.content)
+            response.content.decode('utf-8'))
         self.assertEqual(len(noshow_links), 0)
 
     def test_mark_arrived(self):
@@ -104,9 +104,9 @@ class TestAppointmentViews(TestCase):
         # one 'mark as arrived' link should be gone now
         arrived_links = re.findall(
             re.escape('href="/appointment/') +
-            r'[0-9]+' +
+            '[0-9]+' +
             re.escape('/arrived'),
-            response.content)
+            response.content.decode('utf-8'))
 
         self.assertEqual(len(arrived_links), 0)
 
@@ -145,7 +145,7 @@ class TestAppointmentViews(TestCase):
         new_appointment_links = re.findall(
             re.escape('href="/appointment/new?date=') +
             r'[0-9]{4}-[0-9]{2}-[0-9]{2}',
-            response.content)
+            response.content.decode('utf-8'))
 
         self.assertEqual(len(new_appointment_links), 1)
 
@@ -155,7 +155,7 @@ class TestAppointmentViews(TestCase):
             re.escape('href="/appointment/') +
             r'[0-9]+' +
             re.escape('/noshow'),
-            response.content)
+            response.content.decode('utf-8'))
 
         self.assertEqual(len(noshow_links), 1)
 
@@ -165,6 +165,6 @@ class TestAppointmentViews(TestCase):
             re.escape('href="/appointment/') +
             r'[0-9]+' +
             re.escape('/arrived'),
-            response.content)
+            response.content.decode('utf-8'))
 
         self.assertEqual(len(arrived_links), 1)

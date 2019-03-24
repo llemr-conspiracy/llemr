@@ -83,7 +83,7 @@ def create_pts():
         'zip_code': '63108',
         'gender': models.Gender(long_name="Male", short_name="m"),
         'pcp_preferred_zip': '63018',
-        'date_of_birth': datetime.date(1990, 01, 01),
+        'date_of_birth': datetime.date(1990, 1, 1),
         'patient_comfortable_with_english': False,
         'preferred_contact_method': models.ContactMethod.objects.first(),
     }

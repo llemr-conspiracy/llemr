@@ -9,42 +9,42 @@ from pttrack.models import Patient
 class IncomeRange(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class EducationLevel(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class WorkStatus(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class ResourceAccess(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class ChronicCondition(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class TransportationOption(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
