@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^accounts/', include('pttrack.auth_urls')),
     url(r'^followup/', include('followup.urls')),
     url(r'^workup/', include('workup.urls')),
+    url(r'^dashboard/', include('dashboard.urls')),
     url(r'^demographics/', include('demographics.urls')),
     url(r'^appointment/', include('appointment.urls')),
     url(r'^admin/', include(admin.site.urls)),
