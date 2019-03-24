@@ -14,7 +14,7 @@ Recent Clinic Dates
 <div class="container">
 
 	{% for clinic_date in object_list %}
-		<h3>{{clinic_date.clinic_type}} &mdash; {{clinic_date.clinic_date}}</h3>
+		<h3>{{clinic_date.clinic_type}} &mdash; {{clinic_date.clinic_date | date:"l, F d, Y" }}</h3>
 		<p><strong>Attending(s):</strong> {{clinic_date.infer_attendings | join:", " }}</p>
 		{% comment %}<p><strong>Coordinators(s):</strong> {{clinic_date.infer_coordinators | join:", " }}</p> {% endcomment %}
 		<p><strong>Volunteers(s):</strong> {{clinic_date.infer_volunteers | join:", " }}</p>
