@@ -12,15 +12,15 @@ import django.core.validators
 class Migration(migrations.Migration):
 
     replaces = [
-        (b'workup', '0002_add_verbose_names'),
-        (b'workup', '0003_auto_20160122_1631'),
-        (b'workup', '0004_auto_20160328_1425'),
-        (b'workup', '0005_auto_20160826_0620'),
-        (b'workup', '0007_auto_20170502_1107'),
-        (b'workup', '0008_auto_20170623_1048'),
-        (b'workup', '0009_vitals_to_numeric_type'),
-        (b'workup', '0010_decimal_fields_and_validation'),
-        (b'workup', '0011_historicalprogressnote_progressnote')]
+        ('workup', '0002_add_verbose_names'),
+        ('workup', '0003_auto_20160122_1631'),
+        ('workup', '0004_auto_20160328_1425'),
+        ('workup', '0005_auto_20160826_0620'),
+        ('workup', '0007_auto_20170502_1107'),
+        ('workup', '0008_auto_20170623_1048'),
+        ('workup', '0009_vitals_to_numeric_type'),
+        ('workup', '0010_decimal_fields_and_validation'),
+        ('workup', '0011_historicalprogressnote_progressnote')]
 
     dependencies = [
         ('pttrack', '0001_squashed_0010_auto_20170623_1300'),

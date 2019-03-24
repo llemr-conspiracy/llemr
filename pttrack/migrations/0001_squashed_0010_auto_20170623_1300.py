@@ -10,7 +10,16 @@ from django.conf import settings
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'pttrack', '0001_initial'), (b'pttrack', '0002_providertype_is_staff'), (b'pttrack', '0003_auto_20160119_1459'), (b'pttrack', '0004_auto_20160328_1425'), (b'pttrack', '0005_auto_20160628_1852'), (b'pttrack', '0006_rm_ssn'), (b'pttrack', '0007_needs_workup_default_true'), (b'pttrack', '0008_add_case_manager'), (b'pttrack', '0009_auto_20170502_1103'), (b'pttrack', '0010_auto_20170623_1300')]
+    replaces = [('pttrack', '0001_initial'),
+                ('pttrack', '0002_providertype_is_staff'),
+                ('pttrack', '0003_auto_20160119_1459'),
+                ('pttrack', '0004_auto_20160328_1425'),
+                ('pttrack', '0005_auto_20160628_1852'),
+                ('pttrack', '0006_rm_ssn'),
+                ('pttrack', '0007_needs_workup_default_true'),
+                ('pttrack', '0008_add_case_manager'),
+                ('pttrack', '0009_auto_20170502_1103'),
+                ('pttrack', '0010_auto_20170623_1300')]
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
@@ -206,9 +215,9 @@ class Migration(migrations.Migration):
                 ('alternate_phone_4_owner', models.CharField(max_length=40, null=True, blank=True)),
                 ('alternate_phone_4', models.CharField(max_length=40, null=True, blank=True)),
                 ('needs_workup', models.BooleanField(default=True)),
-                ('ethnicities', models.ManyToManyField(to=b'pttrack.Ethnicity')),
+                ('ethnicities', models.ManyToManyField(to='pttrack.Ethnicity')),
                 ('gender', models.ForeignKey(to='pttrack.Gender')),
-                ('languages', models.ManyToManyField(help_text=b'Specify here languages that are spoken at a level sufficient to be used for medical communication.', to=b'pttrack.Language')),
+                ('languages', models.ManyToManyField(help_text=b'Specify here languages that are spoken at a level sufficient to be used for medical communication.', to='pttrack.Language')),
                 ('preferred_contact_method', models.ForeignKey(blank=True, to='pttrack.ContactMethod', null=True)),
                 ('email', models.EmailField(max_length=254, null=True, blank=True)),
             ],
@@ -256,7 +265,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='provider',
             name='clinical_roles',
-            field=models.ManyToManyField(to=b'pttrack.ProviderType'),
+            field=models.ManyToManyField(to='pttrack.ProviderType'),
         ),
         migrations.AddField(
             model_name='provider',
@@ -266,7 +275,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='provider',
             name='languages',
-            field=models.ManyToManyField(help_text=b'Specify here languages that are spoken at a level sufficient to be used for medical communication.', to=b'pttrack.Language'),
+            field=models.ManyToManyField(help_text=b'Specify here languages that are spoken at a level sufficient to be used for medical communication.', to='pttrack.Language'),
         ),
         migrations.AddField(
             model_name='historicaldocument',
