@@ -27,6 +27,6 @@ class PageviewRecord(models.Model):
 
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
+    def __unicode__(self):
         return '%s by %s to %s at %s' % (self.method, self.user, self.url,
                                          self.timestamp)

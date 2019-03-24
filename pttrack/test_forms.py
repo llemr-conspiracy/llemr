@@ -26,7 +26,7 @@ class TestPatientCreateForms(TestCase):
             'country': 'Germany',
             'zip_code': '63108',
             'pcp_preferred_zip': '63018',
-            'date_of_birth': datetime.date(1990, 1, 1),
+            'date_of_birth': datetime.date(1990, 01, 01),
             'patient_comfortable_with_english': False,
             'ethnicities': [Ethnicity.objects.create(name="Klingon")],
             'preferred_contact_method':

@@ -44,7 +44,7 @@ class Appointment(Note):
 
     history = HistoricalRecords()
 
-    def __str__(self):
+    def __unicode__(self):
         return "Appointment ({type}) for {name} on {date}".format(
             type=self.verbose_appointment_type(),
             name=self.patient.name(),
