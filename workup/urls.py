@@ -44,7 +44,7 @@ unwrapped_urlconf = [
         views.ClinicDateCreate.as_view(),
         name="new-clindate"),
     url(r'^clindates/$',
-        views.ClinicDateList.as_view(),
+        views.clinic_date_list,
         name="clindate-list")
 ]
 
