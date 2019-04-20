@@ -444,6 +444,28 @@ class TestCreateReferral(TestCase):
         self.assertContains(response, coh.name)
         self.assertContains(response, podiatrist.name)
 
+    def test_referral_create_view(self):
+
+        fqhc = ReferralType.objects.create(
+            name="FQHC", is_fqhc=True)
+        coh = ReferralLocation.objects.create(
+            name='COH', address='Euclid Ave.')
+        coh.care_availiable.add(fqhc)
+        coh.save()
+
+        response = self.client.get(
+            reverse('new-referral',
+                    args=(self.pt.id, fqhc.slugify(),)))
+
+        url = reverse('new-referral',
+                      args=(self.pt.id, fqhc.slugify(),))
+        response = self.client.post(
+            url, {'location': coh.pk, 'comments': "asdf"},
+            follow=True)
+
+        self.assertTemplateUsed(response, 'referral/new-followup-request.html')
+        self.assertEqual(models.Referral.objects.count(), 1)
+
 
 class TestSelectReferral(TestCase):
 
@@ -478,7 +500,6 @@ class TestSelectReferral(TestCase):
             name='COH', address='Euclid Ave.')
         self.refloc.care_availiable.add(self.reftype)
 
-
     def test_referral_list(self):
         """
         Creates referrals and verifies that only appropriate ones are available
@@ -495,7 +516,7 @@ class TestSelectReferral(TestCase):
         )
         referral1.location.add(self.refloc)
 
-        followup_request1 = models.FollowupRequest.objects.create(
+        models.FollowupRequest.objects.create(
             referral=referral1,
             contact_instructions="Call him",
             due_date=datetime.date(2018, 11, 01),
