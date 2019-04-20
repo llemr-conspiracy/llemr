@@ -453,9 +453,8 @@ class TestCreateReferral(TestCase):
         coh.care_availiable.add(fqhc)
         coh.save()
 
-        response = self.client.get(
-            reverse('new-referral',
-                    args=(self.pt.id, fqhc.slugify(),)))
+        no_care_location = ReferralLocation.objects.create(
+            name='COH', address='Euclid Ave.')
 
         url = reverse('new-referral',
                       args=(self.pt.id, fqhc.slugify(),))
@@ -465,6 +464,12 @@ class TestCreateReferral(TestCase):
 
         self.assertTemplateUsed(response, 'referral/new-followup-request.html')
         self.assertEqual(models.Referral.objects.count(), 1)
+
+        response = self.client.post(
+            url, {'location': no_care_location.pk, 'comments': "asdf"},
+            follow=True)
+        self.assertTemplateUsed(response, 'referral/new-referral.html')
+        self.assertEqual(models.Referral.objects.count(), 1)  # no change
 
 
 class TestSelectReferral(TestCase):
