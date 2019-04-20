@@ -1,18 +1,20 @@
+import datetime
+
 from django.test import TestCase
 from itertools import *
 
-from followup.models import (
-    ContactMethod, NoAptReason, NoShowReason, ContactResult)
 from django.core.urlresolvers import reverse
 from django.utils.timezone import now
+
+from followup.models import (
+    ContactMethod, NoAptReason, NoShowReason, ContactResult)
 from pttrack.models import (
-    Gender, Patient, Provider, ProviderType,
-    ReferralType, ReferralLocation, Note, ContactMethod, CompletableMixin,
-    CompletableManager)
-import datetime
+    Gender, Patient, Provider, ProviderType, ReferralType, ReferralLocation
+)
+
 from . import forms
 from . import models
-from . import urls
+
 
 class TestPatientContactForm(TestCase):
     """
@@ -148,7 +150,6 @@ class TestPatientContactForm(TestCase):
                                          zip(form_field_provided,
                                              proper_submission))
             self.assertEqual(len(form.errors), expected_number_errors)
-
 
     def test_has_appointment_and_pt_no_show(self):
         """Verify that a provider is selected and a reason is provided for
@@ -443,6 +444,7 @@ class TestCreateReferral(TestCase):
         self.assertContains(response, coh.name)
         self.assertContains(response, podiatrist.name)
 
+
 class TestSelectReferral(TestCase):
 
     fixtures = ['pttrack']
@@ -593,6 +595,38 @@ class TestSelectReferral(TestCase):
         self.assertNotContains(response, referral1)
         self.assertNotContains(response, referral2)
         self.assertNotContains(response, referral3)
+
+    def test_mark_done_link_on_patient_detail(self):
+        """Check that FollowupRequests are on the patient-detail view.
+        """
+
+        ref = models.Referral.objects.create(
+            patient=self.pt,
+            author=Provider.objects.first(),
+            author_type=ProviderType.objects.first(),
+            comments="",
+            status=models.Referral.STATUS_PENDING,
+            kind=ReferralType.objects.first())
+        ref.location.add(ReferralLocation.objects.first())
+        ref.save()
+
+        followup_request = models.FollowupRequest.objects.create(
+            referral=ref,
+            contact_instructions="Call him",
+            due_date=(datetime.datetime.now().date() +
+                      datetime.timedelta(days=2)),
+            author=Provider.objects.first(),
+            author_type=ProviderType.objects.first(),
+            patient=self.pt
+        )
+
+        # request patient detail after creating a referral and followup
+        # request, so that we should have the URL on patient-detail view.
+        response = self.client.get(reverse('patient-detail',
+                                           args=(ref.patient.pk,)))
+
+        self.assertContains(response, followup_request.mark_done_url())
+
 
 class TestPatientContactCreateView(TestCase):
     """Class for testing form_valid method in PatientContactCreate.

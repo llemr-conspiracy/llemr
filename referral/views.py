@@ -124,6 +124,9 @@ class FollowupRequestCreate(FormView):
 
 
 class PatientContactCreate(FormView):
+    """View that marks a FollowupRequest done.
+    """
+
     template_name = 'referral/new-patient-contact.html'
     form_class = PatientContactForm
 
@@ -138,7 +141,8 @@ class PatientContactCreate(FormView):
         context = super(PatientContactCreate, self).get_context_data(**kwargs)
 
         # Add patient to context data
-        context['patient'] = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        context['patient'] = get_object_or_404(Patient,
+                                               pk=self.kwargs['pt_id'])
 
         # Add referral information to context data
         context['referral'] = get_object_or_404(Referral,
@@ -190,6 +194,7 @@ class PatientContactCreate(FormView):
             return HttpResponseRedirect(reverse('patient-detail',
                                                 args=(pt.id,)))
 
+
 def select_referral(request, pt_id):
     """ Prompt user to select pending referral given patient ID."""
     if request.method == 'POST':
@@ -204,9 +209,10 @@ def select_referral(request, pt_id):
                 referral=referral.id
             )
             followup_request = followup_requests.latest('id')
-            return HttpResponseRedirect(reverse('new-patient-contact',
-                                                args=(pt_id, referral.id,
-                                                      followup_request.id)))
+            return HttpResponseRedirect(
+                reverse(FollowupRequest.MARK_DONE_URL_NAME,
+                        args=(pt_id, referral.id,
+                              followup_request.id)))
     else:
         form = ReferralSelectForm(pt_id)
         return render(request, 'referral/select-referral.html', {'form': form})

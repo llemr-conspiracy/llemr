@@ -19,16 +19,19 @@ class ReferralForm(ModelForm):
         self.fields['location'].queryset = referral_location_qs
         self.helper.add_input(Submit('submit', 'Create referral'))
 
+
 class FollowupRequestForm(ModelForm):
     class Meta:
         model = models.FollowupRequest
         fields = ['due_date', 'contact_instructions']
-        widgets = {'due_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
+        widgets = {'due_date': DateTimePicker(
+            options={"format": "MM/DD/YYYY"})}
 
     def __init__(self, *args, **kwargs):
         super(FollowupRequestForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
+
 
 class PatientContactForm(ModelForm):
 
@@ -57,12 +60,18 @@ class PatientContactForm(ModelForm):
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
-        self.helper.add_input(Submit(self.SUCCESSFUL_REFERRAL,
-                                     'Save successful referral'))
-        self.helper.add_input(Submit(self.REQUEST_FOLLOWUP,
-                                     'Save unsuccessful referral and request followup'))
-        self.helper.add_input(Submit(self.UNSUCCESSFUL_REFERRAL,
-                                     'Save unsuccessful referral'))
+        self.helper.add_input(Submit(
+            self.SUCCESSFUL_REFERRAL,
+            'Save & mark successful referral',
+            css_class='btn btn-success'))
+        self.helper.add_input(Submit(
+            self.REQUEST_FOLLOWUP,
+            'Save & request future followup',
+            css_class='btn btn-info'))
+        self.helper.add_input(Submit(
+            self.UNSUCCESSFUL_REFERRAL,
+            'Save & do not follow up again',
+            css_class='btn btn-danger btn-sm'))
 
     def clean(self):
         '''Form has some complicated logic around which parts of the form can
