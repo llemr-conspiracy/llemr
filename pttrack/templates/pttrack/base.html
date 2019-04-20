@@ -87,6 +87,14 @@
 	</div>
 	</div>
 
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}" role="alert">
+        <p>{{ message }}</p>
+      </div>
+    {% endfor %}
+  {% endif %}
+
 	{% block content %}{% endblock %}
 
   {% block extra_js %}

@@ -4,8 +4,9 @@ from django.forms import ModelForm
 from django import forms
 from . import models
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Fieldset
+from crispy_forms.layout import Submit
 from bootstrap3_datetime.widgets import DateTimePicker
+
 
 class ReferralForm(ModelForm):
     class Meta:
@@ -173,8 +174,9 @@ class PatientContactForm(ModelForm):
                         "You can't give a " + param_verbose +
                         " value if contact was unsuccessful")
 
-        # Each submission button has specific rules for which fields can be selected
-        # For example, for a referral to be successful, the pt_went must be true
+        # Each submission button has specific rules for which fields
+        # can be selected. For example, for a referral to be successful,
+        # the pt_went must be true.
         pt_went = cleaned_data.get("pt_showed")
         if self.SUCCESSFUL_REFERRAL in self.data:
             if pt_went != models.PatientContact.PTSHOW_YES:
@@ -206,8 +208,13 @@ class ReferralSelectForm(forms.Form):
     def __init__(self, pt_id, *args, **kwargs):
         super(ReferralSelectForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.fields['referrals'].queryset = models.Referral.objects.filter(
-            patient_id=pt_id,
-            status=models.Referral.STATUS_PENDING,
-            followuprequest__in=models.FollowupRequest.objects.all())
+
+        self.fields['referrals'].queryset = models.Referral.objects\
+            .filter(
+                patient_id=pt_id,
+                status=models.Referral.STATUS_PENDING,
+                followuprequest__isnull=False,
+                # followuprequest__patientcontact__isnull=True
+        )
+
         self.helper.add_input(Submit('submit', 'Submit'))

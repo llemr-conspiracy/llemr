@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, render
 from django.core.urlresolvers import reverse
 from django.views.generic.edit import FormView
 from django.http import HttpResponseRedirect
+from django.contrib import messages
 
 from pttrack.models import Patient, ProviderType, ReferralType
 
@@ -89,6 +90,7 @@ class ReferralCreate(FormView):
 
         return HttpResponseRedirect(reverse('new-followup-request',
                                             args=(pt.id, referral.id,)))
+
 
 class FollowupRequestCreate(FormView):
     """Create a followup request that will show up on pttrack homepage."""
@@ -202,12 +204,15 @@ def select_referral(request, pt_id):
         if form.is_valid():
             # Get referral ID from form
             referral = form.cleaned_data['referrals']
-            # Go to last followup request
-            # Note there should only ever be one open followup request)
+
+            # Hit the db for followup requests about this patient and referral
+            # and that don't already have a patient_contact
             followup_requests = FollowupRequest.objects.filter(
                 patient_id=pt_id,
-                referral=referral.id
-            )
+                referral=referral.id,
+            ).filter(patientcontact__isnull=True)
+
+            # Note there should only ever be one open followup request)
             followup_request = followup_requests.latest('id')
             return HttpResponseRedirect(
                 reverse(FollowupRequest.MARK_DONE_URL_NAME,
@@ -215,4 +220,8 @@ def select_referral(request, pt_id):
                               followup_request.id)))
     else:
         form = ReferralSelectForm(pt_id)
-        return render(request, 'referral/select-referral.html', {'form': form})
+
+        return render(
+            request,
+            'referral/select-referral.html',
+            {'form': form, 'pt_id': pt_id})
