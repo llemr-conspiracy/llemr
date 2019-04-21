@@ -2,10 +2,8 @@
 from __future__ import unicode_literals, print_function
 
 from django.shortcuts import render
-from django.db.models import Q, Max, DateField
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
-# from django.views.generic.list import ListView
+from django.conf import settings
 
 from workup.models import ClinicDate
 from pttrack.models import Patient
@@ -33,7 +31,8 @@ def attending_dashboard(request):
 
     clinic_list = ClinicDate.objects.filter(workup__attending=provider)
 
-    paginator = Paginator(clinic_list, 20, allow_empty_first_page=True)
+    paginator = Paginator(clinic_list, settings.OSLER_CLINIC_DAYS_PER_PAGE,
+                          allow_empty_first_page=True)
 
     page = request.GET.get('page')
     try:
@@ -46,13 +45,14 @@ def attending_dashboard(request):
         clinics = paginator.page(paginator.num_pages)
 
     no_note_patients = Patient.objects.filter(workup=None).order_by('pk')
-    id2creation_date = {
-        l['id']: l['history_date']
-        for l in Patient.history
-            .filter(id__in=no_note_patients)
-            .values('id', 'history_date')
-            .order_by('-history_date')
-    }
+
+    # id2creation_date = {
+    #     l['id']: l['history_date']
+    #     for l in Patient.history
+    #         .filter(id__in=no_note_patients)
+    #         .values('id', 'history_date')
+    #         .order_by('-history_date')
+    # }
 
     return render(request,
                   'dashboard/attending-dashboard.html',
