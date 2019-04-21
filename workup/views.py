@@ -1,11 +1,13 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import (HttpResponseRedirect, HttpResponseServerError,
                          HttpResponse)
+
 from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 from django.template.loader import get_template
 from django.utils.timezone import now
 from django.views.generic.edit import FormView
-from django.views.generic.list import ListView
 from django.conf import settings
 
 from pttrack.views import NoteFormView, NoteUpdate, get_current_provider_type
@@ -24,6 +26,17 @@ def get_clindates():
     clindates = models.ClinicDate.objects.filter(
         clinic_date=now().date())
     return clindates
+
+
+def new_note_dispatch(request, pt_id):
+
+    note_types = {
+        'Standard Note': reverse("new-workup", args=(pt_id,)),
+        'Psych Note': reverse("new-progress-note", args=(pt_id,)),
+    }
+
+    return render(request, 'workup/new-note-dispatch.html',
+                  {'note_types': note_types})
 
 
 class WorkupCreate(NoteFormView):
@@ -178,15 +191,31 @@ class ClinicDateCreate(FormView):
         return HttpResponseRedirect(reverse("new-workup", args=(pt.id,)))
 
 
-class ClinicDateList(ListView):
+def clinic_date_list(request):
 
-    model = models.ClinicDate
-    template_name = 'workup/clindate-list.html'
+    qs = models.ClinicDate.objects.prefetch_related(
+        'workup_set',
+        'clinic_type',
+        'workup_set__attending',
+        'workup_set__signer',
+    )
 
-    def get_queryset(self):
-        qs = super(ClinicDateList, self).get_queryset()
-        qs = qs.prefetch_related('workup_set', 'clinic_type')
-        return qs
+    paginator = Paginator(qs, per_page=10)
+    page = request.GET.get('page')
+
+    try:
+        clinic_days = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        clinic_days = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        clinic_days = paginator.page(paginator.num_pages)
+
+    return render(request, 'workup/clindate-list.html',
+                  {'object_list': clinic_days,
+                   'page_range': paginator.page_range})
+
 
 def sign_workup(request, pk):
 

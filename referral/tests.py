@@ -1,18 +1,20 @@
+import datetime
+
 from django.test import TestCase
 from itertools import *
 
-from followup.models import (
-    ContactMethod, NoAptReason, NoShowReason, ContactResult)
 from django.core.urlresolvers import reverse
 from django.utils.timezone import now
+
+from followup.models import (
+    ContactMethod, NoAptReason, NoShowReason, ContactResult)
 from pttrack.models import (
-    Gender, Patient, Provider, ProviderType,
-    ReferralType, ReferralLocation, Note, ContactMethod, CompletableMixin,
-    CompletableManager)
-import datetime
+    Gender, Patient, Provider, ProviderType, ReferralType, ReferralLocation
+)
+
 from . import forms
 from . import models
-from . import urls
+
 
 class TestPatientContactForm(TestCase):
     """
@@ -148,7 +150,6 @@ class TestPatientContactForm(TestCase):
                                          zip(form_field_provided,
                                              proper_submission))
             self.assertEqual(len(form.errors), expected_number_errors)
-
 
     def test_has_appointment_and_pt_no_show(self):
         """Verify that a provider is selected and a reason is provided for
@@ -443,6 +444,34 @@ class TestCreateReferral(TestCase):
         self.assertContains(response, coh.name)
         self.assertContains(response, podiatrist.name)
 
+    def test_referral_create_view(self):
+
+        fqhc = ReferralType.objects.create(
+            name="FQHC", is_fqhc=True)
+        coh = ReferralLocation.objects.create(
+            name='COH', address='Euclid Ave.')
+        coh.care_availiable.add(fqhc)
+        coh.save()
+
+        no_care_location = ReferralLocation.objects.create(
+            name='COH', address='Euclid Ave.')
+
+        url = reverse('new-referral',
+                      args=(self.pt.id, fqhc.slugify(),))
+        response = self.client.post(
+            url, {'location': coh.pk, 'comments': "asdf"},
+            follow=True)
+
+        self.assertTemplateUsed(response, 'referral/new-followup-request.html')
+        self.assertEqual(models.Referral.objects.count(), 1)
+
+        response = self.client.post(
+            url, {'location': no_care_location.pk, 'comments': "asdf"},
+            follow=True)
+        self.assertTemplateUsed(response, 'referral/new-referral.html')
+        self.assertEqual(models.Referral.objects.count(), 1)  # no change
+
+
 class TestSelectReferral(TestCase):
 
     fixtures = ['pttrack']
@@ -476,7 +505,6 @@ class TestSelectReferral(TestCase):
             name='COH', address='Euclid Ave.')
         self.refloc.care_availiable.add(self.reftype)
 
-
     def test_referral_list(self):
         """
         Creates referrals and verifies that only appropriate ones are available
@@ -493,7 +521,7 @@ class TestSelectReferral(TestCase):
         )
         referral1.location.add(self.refloc)
 
-        followup_request1 = models.FollowupRequest.objects.create(
+        models.FollowupRequest.objects.create(
             referral=referral1,
             contact_instructions="Call him",
             due_date=datetime.date(2018, 11, 01),
@@ -551,7 +579,7 @@ class TestSelectReferral(TestCase):
         )
         referral3.location.add(refloc2)
 
-        followup_request2 = models.FollowupRequest.objects.create(
+        models.FollowupRequest.objects.create(
             referral=referral3,
             contact_instructions="Call him",
             due_date=datetime.date(2018, 11, 01),
@@ -585,14 +613,59 @@ class TestSelectReferral(TestCase):
         referral1.status = models.Referral.STATUS_SUCCESSFUL
         referral1.save()
 
-        url = reverse('select-referral',
-                      args=(self.pt.id,))
+        url = reverse('select-referral', args=(self.pt.id,))
         response = self.client.get(url)
 
         self.assertEquals(response.status_code, 200)
         self.assertNotContains(response, referral1)
         self.assertNotContains(response, referral2)
         self.assertNotContains(response, referral3)
+        self.assertContains(
+            response,
+            '<a href="%s">create one?</a>' %
+            reverse('select-referral-type', args=(self.pt.id,)))
+
+        # submit the form and check that we redirect correctly if we
+        # select a live referral
+        response = self.client.post(
+            reverse('select-referral', args=(pt2.id,)),
+            {'referrals': referral3.pk},
+            follow=True)
+
+        self.assertTemplateUsed(response, 'referral/new-patient-contact.html')
+        self.assertContains(response, pt2.first_name)
+
+    def test_mark_done_link_on_patient_detail(self):
+        """Check that FollowupRequests are on the patient-detail view.
+        """
+
+        ref = models.Referral.objects.create(
+            patient=self.pt,
+            author=Provider.objects.first(),
+            author_type=ProviderType.objects.first(),
+            comments="",
+            status=models.Referral.STATUS_PENDING,
+            kind=ReferralType.objects.first())
+        ref.location.add(ReferralLocation.objects.first())
+        ref.save()
+
+        followup_request = models.FollowupRequest.objects.create(
+            referral=ref,
+            contact_instructions="Call him",
+            due_date=(datetime.datetime.now().date() +
+                      datetime.timedelta(days=2)),
+            author=Provider.objects.first(),
+            author_type=ProviderType.objects.first(),
+            patient=self.pt
+        )
+
+        # request patient detail after creating a referral and followup
+        # request, so that we should have the URL on patient-detail view.
+        response = self.client.get(reverse('patient-detail',
+                                           args=(ref.patient.pk,)))
+
+        self.assertContains(response, followup_request.mark_done_url())
+
 
 class TestPatientContactCreateView(TestCase):
     """Class for testing form_valid method in PatientContactCreate.
@@ -635,7 +708,8 @@ class TestPatientContactCreateView(TestCase):
         self.no_show_reason = NoShowReason.objects.create(name="Hella busy.")
 
     def test_valid_input(self):
-        """ Validate that the form_valid method properly handles valid form input"""
+        """ Validate that the form_valid method properly handles valid
+        form input"""
 
         referral1 = models.Referral.objects.create(
             comments="Needs his back checked",
@@ -681,7 +755,7 @@ class TestPatientContactCreateView(TestCase):
             if pt_show == models.PatientContact.PTSHOW_NO:
                 form_data['no_show_reason'] = self.no_show_reason
 
-            n_patient_contact = models.PatientContact.objects.all().count()
+            n_patient_contact = models.PatientContact.objects.count()
 
             # Check that form is valid
             form = forms.PatientContactForm(data=form_data)
@@ -694,10 +768,14 @@ class TestPatientContactCreateView(TestCase):
             response = self.client.post(url, form_data)
             self.assertEqual(response.status_code, 302)
             self.assertRedirects(response, correct_url)
-            self.assertEqual(models.PatientContact.objects.all().count(),
+            self.assertEqual(models.PatientContact.objects.count(),
                              n_patient_contact + 1)
 
             # Check that the followup request has been marked as complete
             followup_request1 = models.FollowupRequest.objects.first()
             self.assertEqual(followup_request1.completion_date.date(),
                              now().date())
+
+        url = reverse('select-referral', args=(referral1.patient.id,))
+        response = self.client.get(url)
+        self.assertContains(response, 'Oops!')

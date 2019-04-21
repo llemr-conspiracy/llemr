@@ -84,6 +84,15 @@ USE_L10N = True
 
 USE_TZ = True
 
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'bg-danger',
+    messages.WARNING: 'bg-warning',
+    messages.INFO: 'bg-info',
+    messages.SUCCESS: 'bg-success',
+    messages.DEBUG: 'bg-primary',
+}
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
