@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from django.db import models
+from django.db.models import Q
 from django.utils.timezone import now
 
 from simple_history.models import HistoricalRecords
@@ -40,6 +43,39 @@ class ClinicDate(models.Model):
 
     def __unicode__(self):
         return str(self.clinic_type)+" ("+str(self.clinic_date)+")"
+
+    def infer_attendings(self):
+        qs = Provider.objects.filter(
+            Q(attending_physician__clinic_day=self) |
+            Q(signed_workups__clinic_day=self)).distinct()
+
+        return qs
+
+    def infer_volunteers(self):
+        return Provider.objects.filter(Q(workup__clinic_day=self) |
+                                       Q(other_volunteer__clinic_day=self)) \
+                               .distinct()
+
+    def infer_coordinators(self):
+        cd = self.clinic_date
+
+        written_timeframe = (
+            Q(actionitem__written_datetime__lte=cd) &
+            Q(actionitem__written_datetime__gte=cd -
+              timedelta(days=1))
+        )
+
+        cleared_timeframe = (
+            Q(pttrack_actionitem_completed__completion_date__lte=cd) &
+            Q(pttrack_actionitem_completed__completion_date__gte=cd -
+              timedelta(days=1))
+        )
+
+        coordinator_set = Provider.objects \
+            .filter(written_timeframe | cleared_timeframe)\
+            .distinct()
+
+        return coordinator_set
 
 
 class ProgressNote(Note):

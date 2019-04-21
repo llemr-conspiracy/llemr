@@ -19,14 +19,18 @@ New referral followup
 {% endfor %}
 </p>
 <p class="lead">Followup requested for {{followup.due_date}}</p>
-<p class="lead"><i>A referral is considered successful once a patient has not only made an appointment but also shown up for this appointment. Please continue following up with patients until they have completed an appointment. If you have exhausted followups, you may save as an unsuccessful referral. </i></p>
 
 {% endblock %}
 
 {% block content %}
-{% load crispy_forms_tags %}
 
+{% load crispy_forms_tags %}
 <div class="container">
+	<div class="row">
+		<div class='col-md-offset-2 col-md-8' style='padding-bottom: 2em'>
+		  <p>A referral is considered <strong><span class='text-success'>successful</span> only once a patient has both made <i>and gone to</i> and appointment</strong>. Please <strong><span class='text-info'>continue following up</span></strong> with patients until they have completed an appointment. Only once you have exhausted followup should you save as an <strong><span class="text-danger">unsuccessful referral.</span></strong></p>
+		</div>
+	</div>
   {% crispy form %}
 </div>
 

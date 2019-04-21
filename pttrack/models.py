@@ -494,6 +494,8 @@ class ActionItem(Note, CompletableMixin):
         help_text='Check this box if this action item is high priority')
     comments = models.TextField()
 
+    MARK_DONE_URL_NAME = 'done-action-item'
+
     history = HistoricalRecords()
 
     def short_name(self):
@@ -512,6 +514,9 @@ class ActionItem(Note, CompletableMixin):
         else:
             return " ".join(["Added by", str(self.author), "on",
                              str(self.written_datetime.date())])
+
+    def mark_done_url(self):
+        return reverse(self.MARK_DONE_URL_NAME, args=(self.id,))
 
     def __unicode__(self):
         return " ".join(["AI for", str(self.patient)+":",
