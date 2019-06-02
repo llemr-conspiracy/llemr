@@ -1024,7 +1024,31 @@ class ActionItemTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        log_in_provider(self.client, build_provider(["Coordinator"]))
+        self.coordinator = build_provider(["Coordinator"])
+        log_in_provider(self.client, self.coordinator)
+
+    def test_action_item_completeable_functions(self):
+
+        ai_inst = models.ActionInstruction.objects.create(
+            instruction="Follow up on labs")
+        ai = models.ActionItem.objects.create(
+            instruction=ai_inst,
+            due_date=now().today(),
+            comments="",
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            patient=models.Patient.objects.first())
+
+        self.assertEqual(
+            ai.attribution(),
+            "Added by Jones, Tommy L. on %s" % now().today().date())
+
+        ai.mark_done(self.coordinator)
+        ai.save()
+
+        self.assertEqual(
+            ai.attribution(),
+            "Marked done by Jones, Tommy L. on %s" % now().today().date())
 
     def test_action_item_urls(self):
         pt = models.Patient.objects.first()
