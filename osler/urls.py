@@ -17,7 +17,10 @@ urlpatterns = [
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^api/', include('api.urls')),
     url(r'^referral/', include('referral.urls')),
-    url(r'^$', RedirectView.as_view(pattern_name="home", permanent=False)),
+    url(r'^$',
+        RedirectView.as_view(pattern_name="dashboard-dispatch",
+                             permanent=False),
+        name='root'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:

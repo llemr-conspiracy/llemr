@@ -415,25 +415,25 @@ class CompletableManager(models.Manager):
     def get_active(self, patient):
         """ Returns all active elements of Completable class."""
         return self.get_queryset()\
-                .filter(patient=patient)\
-                .filter(completion_author=None)\
-                .filter(due_date__lte=now().date())\
-                .order_by('completion_date')
+            .filter(patient=patient)\
+            .filter(completion_author=None)\
+            .filter(due_date__lte=now().date())\
+            .order_by('completion_date')
 
     def get_inactive(self, patient):
         """ Returns all inactive elements of Completable class."""
         return self.get_queryset()\
-                .filter(patient=patient)\
-                .filter(completion_author=None)\
-                .filter(due_date__gt=now().date())\
-                .order_by('completion_date')
+            .filter(patient=patient)\
+            .filter(completion_author=None)\
+            .filter(due_date__gt=now().date())\
+            .order_by('completion_date')
 
     def get_completed(self, patient):
         """ Returns all completed elements of Completable class."""
         return self.get_queryset()\
-                .filter(patient=patient)\
-                .exclude(completion_author=None)\
-                .order_by('completion_date')
+            .filter(patient=patient)\
+            .exclude(completion_author=None)\
+            .order_by('completion_date')
 
 
 class CompletableMixin(models.Model):

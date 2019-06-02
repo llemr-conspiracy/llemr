@@ -13,7 +13,23 @@ from pttrack.models import (Gender, Patient, ContactMethod)
 from workup.models import ClinicDate, ClinicType, Workup
 
 
-class TestDashboardViews(TestCase):
+class TestOtherDashboard(TestCase):
+
+    fixtures = ['pttrack', 'workup']
+
+    def setUp(self):
+
+        self.clinical_student = build_provider(
+            roles=["Clinical"], email='user2@gmail.com')
+        log_in_provider(self.client, self.clinical_student)
+
+    def test_root_redirect(self):
+
+        response = self.client.get(reverse('root'), follow=True)
+        self.assertTemplateUsed(response, 'pttrack/patient_list.html')
+
+
+class TestAttendingDashboard(TestCase):
 
     fixtures = ['pttrack', 'workup']
 
@@ -54,8 +70,13 @@ class TestDashboardViews(TestCase):
             patient=self.pt2,
             **self.wu_info)
 
+    def test_root_redirect(self):
+
+        response = self.client.get(reverse('root'), follow=True)
+        self.assertTemplateUsed(response, 'dashboard/dashboard-attending.html')
+
     def test_pt_without_note(self):
-        response = self.client.get(reverse('attending-dashboard'))
+        response = self.client.get(reverse('dashboard-attending'))
 
         self.assertEqual(
             len(response.context['no_note_patients']),
@@ -88,7 +109,7 @@ class TestDashboardViews(TestCase):
             patient=pt3,
             **self.wu_info)
 
-        response = self.client.get(reverse('attending-dashboard'))
+        response = self.client.get(reverse('dashboard-attending'))
 
         # we should have one no note patient
         self.assertEqual(
@@ -111,7 +132,7 @@ class TestDashboardViews(TestCase):
         wu3.sign(self.attending.associated_user)
         wu3.save()
 
-        response = self.client.get(reverse('attending-dashboard'))
+        response = self.client.get(reverse('dashboard-attending'))
 
         # still one clinic day
         self.assertEqual(len(response.context['clinics']), 1)
@@ -125,7 +146,7 @@ class TestDashboardViews(TestCase):
 
     @override_settings(OSLER_CLINIC_DAYS_PER_PAGE=3)
     def test_dashboard_pagination(self):
-        response = self.client.get(reverse('attending-dashboard'))
+        response = self.client.get(reverse('dashboard-attending'))
 
         def dewhitespace(s):
             return "".join(s.split())
@@ -173,7 +194,7 @@ class TestDashboardViews(TestCase):
                 patient=pt,
                 **self.wu_info)
 
-        response = self.client.get(reverse('attending-dashboard'))
+        response = self.client.get(reverse('dashboard-attending'))
 
         # now we should have two pages
         self.assertContains(

@@ -1,31 +1,33 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 
 from workup.models import ClinicDate
 from pttrack.models import Patient
 
-# class AttendingDashboard(ListView):
 
-#     model = ClinicDate
-#     template_name = 'dashboard/attending-dashboard.html'
+def dashboard_dispatch(request):
+    """Redirect an incoming user to the appropriate dashboard.
 
-#     def get_queryset(self):
+    Falls back to the 'home' url.
+    """
 
-#         provider = self.request.user.provider
+    if 'clintype_pk' not in request.session:
+        return redirect('choose-clintype')
 
-#         qs = super(AttendingDashboard, self)\
-#             .get_queryset()\
-#             .filter(workup__attending=provider)\
-#             .prefetch_related('workup_set', 'clinic_type')
+    provider_type = request.session['clintype_pk']
+    dashboard_dispatch = settings.OSLER_PROVIDERTYPE_DASHBOARDS
 
-#         return qs
+    if provider_type in dashboard_dispatch:
+        return redirect(dashboard_dispatch[provider_type])
+    else:
+        return redirect(settings.OSLER_DEFAULT_DASHBOARD)
 
 
-def attending_dashboard(request):
+def dashboard_attending(request):
 
     provider = request.user.provider
 
@@ -46,32 +48,8 @@ def attending_dashboard(request):
 
     no_note_patients = Patient.objects.filter(workup=None).order_by('pk')
 
-    # id2creation_date = {
-    #     l['id']: l['history_date']
-    #     for l in Patient.history
-    #         .filter(id__in=no_note_patients)
-    #         .values('id', 'history_date')
-    #         .order_by('-history_date')
-    # }
-
     return render(request,
-                  'dashboard/attending-dashboard.html',
+                  'dashboard/dashboard-attending.html',
                   {'clinics': clinics,
                    'no_note_patients': no_note_patients
                    })
-
-# class AttendingDashboard(ListView):
-
-#     model = Patient
-#     template_name = 'dashboard/attending-dashboard.html'
-
-#     def get_queryset(self):
-
-#         provider = self.request.user.provider
-
-#         qs = super(AttendingDashboard, self) \
-#             .get_queryset() \
-#             .filter(workup__signer=None) \
-#             .filter(workup__attending=provider)
-
-#         return qs

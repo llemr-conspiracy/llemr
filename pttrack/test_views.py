@@ -210,7 +210,8 @@ class LiveTesting(SeleniumLiveTestCase):
         self.assertEquals(self.selenium.current_url,
                           '%s%s%s' % (self.live_server_url,
                                       reverse('choose-clintype'),
-                                      '?next='+reverse('home')))
+                                      '?next=' +
+                                      reverse('dashboard-dispatch')))
 
         self.selenium.find_element_by_xpath(
             '//input[@value="Coordinator"]').click()
@@ -238,7 +239,7 @@ class LiveTesting(SeleniumLiveTestCase):
         # now we should be redirected directly to home.
         self.assertEquals(self.selenium.current_url,
                           '%s%s' % (self.live_server_url,
-                                    reverse('home')))
+                                    reverse('dashboard-attending')))
 
     def test_pttrack_patient_detail_collapseable(self):
         """Ensure that collapsable AI lists open and close with AIs inside
