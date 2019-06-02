@@ -5,7 +5,8 @@ Recent Clinic Dates
 {% endblock %}
 
 {% block header %}
-<h1>Recent Clinic Dates</h1>
+<h1>Attending Dashboard<span class="label label-primary" style='vertical-align: text-top; font-size: 0.3em'>BETA</span></h1>
+<small><a href="{% url 'home' %}">Take me back to the old home</a></small>
 {% endblock %}
 
 {% block content %}
@@ -48,6 +49,9 @@ Recent Clinic Dates
 			<td>{{ patient.history.last.history_date | date:"D d M Y" }}</td>
 		</tr>
 		{% endfor %}
+		<tr>
+			<td colspan="2" style="text-align:center;"><strong>&hellip;</strong></td>
+		</tr>
 	</table>
 
 	<nav aria-label="Page navigation" style='text-align: center;'>

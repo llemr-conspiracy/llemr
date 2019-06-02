@@ -43,7 +43,7 @@ def dashboard_attending(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         clinics = paginator.page(paginator.num_pages)
 
-    no_note_patients = Patient.objects.filter(workup=None).order_by('pk')
+    no_note_patients = Patient.objects.filter(workup=None).order_by('-pk')[:20]
 
     return render(request,
                   'dashboard/dashboard-attending.html',
