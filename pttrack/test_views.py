@@ -210,7 +210,8 @@ class LiveTesting(SeleniumLiveTestCase):
         self.assertEquals(self.selenium.current_url,
                           '%s%s%s' % (self.live_server_url,
                                       reverse('choose-clintype'),
-                                      '?next='+reverse('home')))
+                                      '?next=' +
+                                      reverse('dashboard-dispatch')))
 
         self.selenium.find_element_by_xpath(
             '//input[@value="Coordinator"]').click()
@@ -238,7 +239,7 @@ class LiveTesting(SeleniumLiveTestCase):
         # now we should be redirected directly to home.
         self.assertEquals(self.selenium.current_url,
                           '%s%s' % (self.live_server_url,
-                                    reverse('home')))
+                                    reverse('dashboard-attending')))
 
     def test_pttrack_patient_detail_collapseable(self):
         """Ensure that collapsable AI lists open and close with AIs inside
@@ -1024,7 +1025,31 @@ class ActionItemTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        log_in_provider(self.client, build_provider(["Coordinator"]))
+        self.coordinator = build_provider(["Coordinator"])
+        log_in_provider(self.client, self.coordinator)
+
+    def test_action_item_completeable_functions(self):
+
+        ai_inst = models.ActionInstruction.objects.create(
+            instruction="Follow up on labs")
+        ai = models.ActionItem.objects.create(
+            instruction=ai_inst,
+            due_date=now().today(),
+            comments="",
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            patient=models.Patient.objects.first())
+
+        self.assertEqual(
+            ai.attribution(),
+            "Added by Jones, Tommy L. on %s" % now().today().date())
+
+        ai.mark_done(self.coordinator)
+        ai.save()
+
+        self.assertEqual(
+            ai.attribution(),
+            "Marked done by Jones, Tommy L. on %s" % now().today().date())
 
     def test_action_item_urls(self):
         pt = models.Patient.objects.first()

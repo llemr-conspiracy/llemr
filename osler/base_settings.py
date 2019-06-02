@@ -26,6 +26,7 @@ INSTALLED_APPS = (
     'followup',
     'workup',
     'demographics',
+    'dashboard',
     'appointment',
     'referral',
     'api',
@@ -124,3 +125,11 @@ OSLER_WORKUP_COPY_FORWARD_FIELDS = ['PMH_PSH', 'fam_hx', 'soc_hx', 'meds',
 OSLER_WORKUP_COPY_FORWARD_MESSAGE = (u"Migrated from previous workup on {date}"
                                      u". Please delete this heading and modify"
                                      u" the following:\n\n{contents}")
+
+# Dashboard settings
+OSLER_CLINIC_DAYS_PER_PAGE = 20
+
+OSLER_DEFAULT_DASHBOARD = 'home'
+OSLER_PROVIDERTYPE_DASHBOARDS = {
+    'Attending': 'dashboard-attending'
+}
