@@ -15,9 +15,6 @@ def dashboard_dispatch(request):
     Falls back to the 'home' url.
     """
 
-    if 'clintype_pk' not in request.session:
-        return redirect('choose-clintype')
-
     provider_type = request.session['clintype_pk']
     dashboard_dispatch = settings.OSLER_PROVIDERTYPE_DASHBOARDS
 

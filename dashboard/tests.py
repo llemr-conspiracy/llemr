@@ -6,11 +6,16 @@ from django.utils.timezone import now
 
 from django.test import TestCase, override_settings
 from django.core.urlresolvers import reverse
+from django.conf import settings
 
 from pttrack.test_views import log_in_provider, build_provider
 from pttrack.models import (Gender, Patient, ContactMethod)
 
 from workup.models import ClinicDate, ClinicType, Workup
+
+
+def dewhitespace(s):
+    return "".join(s.split())
 
 
 class TestOtherDashboard(TestCase):
@@ -148,9 +153,6 @@ class TestAttendingDashboard(TestCase):
     def test_dashboard_pagination(self):
         response = self.client.get(reverse('dashboard-attending'))
 
-        def dewhitespace(s):
-            return "".join(s.split())
-
         # since we're on the first page, the "back" pagination button
         # should be disabled
         self.assertIn(
@@ -214,4 +216,52 @@ class TestAttendingDashboard(TestCase):
               <li><a href="?page=2" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
               </a></li>'''),
+            dewhitespace(response.content))
+
+    @override_settings(OSLER_CLINIC_DAYS_PER_PAGE=3)
+    def test_dashboard_page_out_of_range(self):
+
+        for i in range(10):
+            cd = ClinicDate.objects.create(
+                clinic_date=datetime.date(2001, i + 1, 1),
+                clinic_type=ClinicType.objects.first(),
+                gcal_id='')
+            pt = Patient.objects.create(
+                first_name="John", last_name="Doe", middle_name="",
+                phone='454545', gender=Gender.objects.first(),
+                address='A', city='B', state='C',
+                zip_code='12345', pcp_preferred_zip='12345',
+                date_of_birth=datetime.date(1992, i + 3, 22),
+                patient_comfortable_with_english=False,
+                preferred_contact_method=ContactMethod.objects.first(),
+            )
+            Workup.objects.create(
+                attending=self.attending,
+                clinic_day=cd,
+                author=self.clinical_student,
+                author_type=self.clinical_student.clinical_roles.first(),
+                patient=pt,
+                **self.wu_info)
+
+        response = self.client.get(reverse('dashboard-attending') +
+                                   '?page=999')
+
+        n_pages = (ClinicDate.objects.count() //
+                   settings.OSLER_CLINIC_DAYS_PER_PAGE)
+
+        # since we're on the last page, the "back" pagination button
+        # should be enabled (i.e. no 'class="disabled"')
+        self.assertIn(
+            dewhitespace('''
+                <a href="?page=%s" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;
+                ''' % n_pages),
+            dewhitespace(response.content))
+        # since there's only one page, the "forward" pagination button
+        # should be disabled
+        self.assertIn(
+            dewhitespace('''
+                <li class="disabled"> <a aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a> </li>'''),
             dewhitespace(response.content))
