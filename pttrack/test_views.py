@@ -1042,14 +1042,14 @@ class ActionItemTest(TestCase):
 
         self.assertEqual(
             ai.attribution(),
-            "Added by Jones, Tommy L. on %s" % now().today().date())
+            "Added by Jones, Tommy L. on %s" % now().date())
 
         ai.mark_done(self.coordinator)
         ai.save()
 
         self.assertEqual(
             ai.attribution(),
-            "Marked done by Jones, Tommy L. on %s" % now().today().date())
+            "Marked done by Jones, Tommy L. on %s" % now().date())
 
     def test_action_item_urls(self):
         pt = models.Patient.objects.first()
