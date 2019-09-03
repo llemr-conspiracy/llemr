@@ -13,7 +13,7 @@ from . import views
 unwrapped_urlpatterns = [  # pylint: disable=invalid-name
     url(r'^$',
         views.home_page,
-        name="home"),
+        name="old-home"),
     url(r'^all/$',
         views.all_patients,
         name="all-patients"),
