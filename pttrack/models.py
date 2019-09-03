@@ -101,6 +101,7 @@ class Ethnicity(models.Model):
 
 class ActionInstruction(models.Model):
     instruction = models.CharField(max_length=50, primary_key=True)
+    active = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.instruction
