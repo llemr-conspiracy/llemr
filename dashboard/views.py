@@ -4,8 +4,9 @@ from __future__ import unicode_literals, print_function
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
+from django.db.models import Q
 
-from workup.models import ClinicDate
+from workup.models import ClinicDate, Workup
 from pttrack.models import Patient
 
 
@@ -23,6 +24,36 @@ def dashboard_dispatch(request):
     else:
         return redirect(settings.OSLER_DEFAULT_DASHBOARD)
 
+def dashboard_volunteer(request):
+
+    provider = request.user.provider
+
+    clinic_list = ClinicDate.objects.filter(workup__attending=provider)
+
+    paginator = Paginator(clinic_list, settings.OSLER_CLINIC_DAYS_PER_PAGE,
+                          allow_empty_first_page=True)
+
+    page = request.GET.get('page')
+    try:
+        clinics = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        clinics = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        clinics = paginator.page(paginator.num_pages)
+
+    active_no_note_patients = Patient.objects.filter(needs_workup=True, workup=None).order_by('-pk')[:20]
+    active_with_note_patients = Patient.objects.filter(~Q(workup=None) & Q(needs_workup=True) & Q(workup__in=Workup.objects.filter(Q(author=provider) | Q(other_volunteer=provider)).distinct())).order_by('-pk')[:20]
+    all_your_patients = Patient.objects.filter(workup__in=Workup.objects.filter(Q(author=provider) | Q(other_volunteer=provider)).distinct()).order_by('-pk')[:20]
+
+    return render(request,
+                  'dashboard/dashboard-volunteer.html',
+                  {'clinics': clinics,
+                   'active_no_note_patients': active_no_note_patients,
+                   'active_with_note_patients': active_with_note_patients,
+                   'all_your_patients': all_your_patients
+                   })
 
 def dashboard_attending(request):
 
