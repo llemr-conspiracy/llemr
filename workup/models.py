@@ -1,4 +1,4 @@
-from datetime import timedelta
+import datetime
 
 from django.db import models
 from django.db.models import Q
@@ -18,6 +18,9 @@ class DiagnosisType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
     diagnosis a pateint can recieve.'''
 
+    class Meta:
+        ordering = ["name"]
+
     name = models.CharField(max_length=100, primary_key=True)
 
     def __unicode__(self):
@@ -25,6 +28,10 @@ class DiagnosisType(models.Model):
 
 
 class ClinicType(models.Model):
+
+    class Meta:
+        ordering = ["name"]
+
     name = models.CharField(max_length=50)
 
     def __unicode__(self):
@@ -42,7 +49,11 @@ class ClinicDate(models.Model):
     gcal_id = models.CharField(max_length=50)
 
     def __unicode__(self):
-        return "%s (%s)" % (self.clinic_type, self.clinic_date)
+        return (str(self.clinic_type) + " on " +
+                datetime.datetime.strftime(self.clinic_date, '%A, %B %d, %Y'))
+
+    def number_of_notes(self):
+            return self.workup_set.count()
 
     def infer_attendings(self):
         qs = Provider.objects.filter(
@@ -62,13 +73,13 @@ class ClinicDate(models.Model):
         written_timeframe = (
             Q(actionitem__written_datetime__lte=cd) &
             Q(actionitem__written_datetime__gte=cd -
-              timedelta(days=1))
+              datetime.timedelta(days=1))
         )
 
         cleared_timeframe = (
             Q(pttrack_actionitem_completed__completion_date__lte=cd) &
             Q(pttrack_actionitem_completed__completion_date__gte=cd -
-              timedelta(days=1))
+              datetime.timedelta(days=1))
         )
 
         coordinator_set = Provider.objects \
@@ -128,6 +139,13 @@ class ProgressNote(AttestableNote):
                                validators=[validate_attending])
     signed_date = models.DateTimeField(blank=True, null=True)
 
+    def __unicode__(self):
+        u = '{} on at {} by {}'.format(
+            self.title,
+            datetime.datetime.strftime(self.written_datetime, '%c'),
+            self.author)
+        return u
+
     def short_text(self):
         return self.title
 
@@ -145,7 +163,8 @@ class Workup(AttestableNote):
         Provider, blank=True, related_name="other_volunteer",
         help_text="Which other volunteer(s) did you work with (if any)?")
 
-    clinic_day = models.ForeignKey(ClinicDate, help_text="When was the patient seen?")
+    clinic_day = models.ForeignKey(
+        ClinicDate, help_text="When was the patient seen?")
 
     chief_complaint = models.CharField(max_length=1000, verbose_name="CC")
     diagnosis = models.CharField(max_length=1000, verbose_name="Dx")
@@ -252,4 +271,4 @@ class Workup(AttestableNote):
         return reverse('workup', args=(self.pk,))
 
     def __unicode__(self):
-        return self.patient.name()+" on "+str(self.clinic_day.clinic_date)
+        return self.patient.name() + " on " + str(self.clinic_day.clinic_date)

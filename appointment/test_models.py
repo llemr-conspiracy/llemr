@@ -25,7 +25,8 @@ class TestAppointments(TestCase):
             comment='test this stuff',
             clindate=now().date(),
             author=Provider.objects.first(),
-            author_type=ProviderType.objects.filter(signs_charts=False).first(),
+            author_type=ProviderType.objects.filter(
+                signs_charts=False).first(),
             patient=Patient.objects.first())
 
     # test editing appointment -- editing should in fact change comment

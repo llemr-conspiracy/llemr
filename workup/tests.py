@@ -28,7 +28,7 @@ def wu_dict(units=False):
           'author': Provider.objects.first(),
           'author_type': ProviderType.objects.first(),
           'patient': Patient.objects.first()
-        }
+          }
 
     if units:
         wu['temperature_units'] = 'F'
@@ -50,8 +50,7 @@ class TestEmailForUnsignedNotes(TestCase):
         models.ClinicType.objects.create(name="Basic Care Clinic")
         models.ClinicDate.objects.create(
             clinic_type=models.ClinicType.objects.first(),
-            clinic_date=now().date(),
-            gcal_id="tmp")
+            clinic_date=now().date())
 
 
     def test_unsigned_email(self):
@@ -200,8 +199,7 @@ class TestWorkupModel(TestCase):
         models.ClinicType.objects.create(name="Basic Care Clinic")
         models.ClinicDate.objects.create(
             clinic_type=models.ClinicType.objects.first(),
-            clinic_date=now().date(),
-            gcal_id="tmp")
+            clinic_date=now().date())
 
         self.valid_wu_dict = wu_dict()
 
