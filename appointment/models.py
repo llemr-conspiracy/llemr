@@ -17,6 +17,9 @@ def generate_default_appointment_time():
 
 class Appointment(Note):
 
+    class Meta:
+        ordering = ["-clindate", "-clintime"]
+
     PSYCH_NIGHT = 'PSYCH_NIGHT'
     ACUTE_FOLLOWUP = 'ACUTE_FOLLOWUP'
     CHRONIC_CARE = 'CHRONIC_CARE'

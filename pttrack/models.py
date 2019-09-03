@@ -90,6 +90,10 @@ class Language(models.Model):
 
 
 class Ethnicity(models.Model):
+
+    class Meta:
+        verbose_name_plural = "ethnicities"
+
     name = models.CharField(max_length=50, primary_key=True)
 
     def __unicode__(self):
@@ -379,6 +383,7 @@ def require_providers_update():
 class Note(models.Model):
     class Meta:
         abstract = True
+        ordering = ["-written_datetime", "-last_modified"]
 
     author = models.ForeignKey(Provider)
     author_type = models.ForeignKey(ProviderType)

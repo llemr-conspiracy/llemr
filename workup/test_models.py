@@ -15,10 +15,10 @@ class TestAttestations(TestCase):
 
         models.ClinicDate.objects.create(
             clinic_type=models.ClinicType.objects.first(),
-            clinic_date=now().date(),
-            gcal_id="tmp")
+            clinic_date=now().date())
 
-        self.all_roles_provider = build_provider()  # roles=["AP", "C", "PV", "CV"])
+        # roles=["AP", "C", "PV", "CV"])
+        self.all_roles_provider = build_provider()
 
         self.wu = models.Workup.objects.create(
             clinic_day=models.ClinicDate.objects.first(),
@@ -28,25 +28,32 @@ class TestAttestations(TestCase):
             fam_hx="E",
             author=Provider.objects.first(),
             soc_hx="F", ros="", pe="", A_and_P="",
-            author_type=ProviderType.objects.filter(signs_charts=False).first(),
+            author_type=ProviderType.objects.filter(
+                signs_charts=False).first(),
             patient=Patient.objects.first())
 
         self.pn = models.ProgressNote.objects.create(
             title='Good',
             text='very good',
             author=Provider.objects.first(),
-            author_type=ProviderType.objects.filter(signs_charts=False).first(),
+            author_type=ProviderType.objects.filter(
+                signs_charts=False).first(),
             patient=Patient.objects.first())
 
     # Workup Attestation Testing
     def test_all_roles_provider_wu_signing(self):
+        # roles=["AP", "C", "PV", "CV"], username=None,
+        # password='password', email=None)
+        all_roles_provider = build_provider()
 
-        all_roles_provider = build_provider()  # roles=["AP", "C", "PV", "CV"], username=None, password='password', email=None)
-
-        with self.assertRaises(ValueError):  # test that if a provider tries to sign a chart with a provider type they do not have, an error is thrown
+        # test that if a provider tries to sign a chart with a provider
+        # type they do not have, an error is thrown
+        with self.assertRaises(ValueError):
             self.wu.sign(
                 all_roles_provider.associated_user,
-                active_role=ProviderType(long_name="Test Provider", short_name="TP", signs_charts=False, staff_view=False))
+                active_role=ProviderType(
+                    long_name="Test Provider", short_name="TP",
+                    signs_charts=False, staff_view=False))
 
         self.assertFalse(self.wu.signed())
 
@@ -101,4 +108,3 @@ class TestAttestations(TestCase):
                 self.assertFalse(self.wu.signed())
 
             self.wu.signer = None  # reset chart's signed status
-    
