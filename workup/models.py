@@ -42,7 +42,7 @@ class ClinicDate(models.Model):
     gcal_id = models.CharField(max_length=50)
 
     def __unicode__(self):
-        return str(self.clinic_type)+" ("+str(self.clinic_date)+")"
+        return "%s (%s)" % (self.clinic_type, self.clinic_date)
 
     def infer_attendings(self):
         qs = Provider.objects.filter(
@@ -78,17 +78,61 @@ class ClinicDate(models.Model):
         return coordinator_set
 
 
-class ProgressNote(Note):
+class AttestableNote(Note):
+    class Meta:
+        abstract = True
+
+    def sign(self, user, active_role=None):
+        """Signs this workup.
+
+        The active_role parameter isn't necessary if the user has only
+        one role.
+        """
+
+        if active_role is None:
+            if len(user.provider.clinical_roles.all()) != 1:
+                raise ValueError("For users with > role, it must be provided.")
+            else:
+                active_role = user.provider.clinical_roles.all()[0]
+        elif active_role not in user.provider.clinical_roles.all():
+            raise ValueError(
+                "Provider {p} doesn't have role {r}!".format(
+                    p=user.provider, r=active_role))
+
+        if active_role.signs_charts:
+            assert active_role in user.provider.clinical_roles.all()
+
+            self.signed_date = now()
+            self.signer = user.provider
+        else:
+            raise ValueError("You must be an attending to sign workups.")
+
+    def signed(self):
+        '''Has this workup been attested? Returns True if yes, False if no.'''
+        return self.signer is not None
+
+    def attribution(self):
+        '''Builds an attribution string of the form Doe, John on DATE'''
+        return " ".join([str(self.author), "on", str(self.written_date())])
+
+
+class ProgressNote(AttestableNote):
     title = models.CharField(max_length=200)
     text = models.TextField()
 
     history = HistoricalRecords()
 
+    signer = models.ForeignKey(Provider,
+                               blank=True, null=True,
+                               related_name="signed_progress_notes",
+                               validators=[validate_attending])
+    signed_date = models.DateTimeField(blank=True, null=True)
+
     def short_text(self):
         return self.title
 
 
-class Workup(Note):
+class Workup(AttestableNote):
     '''Datamodel of a workup. Has fields specific to each part of an exam,
     along with SNHC-specific info about where the patient has been referred for
     continuity care.'''
@@ -189,34 +233,6 @@ class Workup(Note):
 
     history = HistoricalRecords()
 
-    def sign(self, user, active_role=None):
-        """Signs this workup.
-
-        The active_role parameter isn't necessary if the user has only one role.
-        """
-
-        if active_role is None:
-            if len(user.provider.clinical_roles.all()) != 1:
-                raise ValueError("For users with > role, it must be provided.")
-            else:
-                active_role = user.provider.clinical_roles.all()[0]
-        elif active_role not in user.provider.clinical_roles.all():
-            raise ValueError(
-                "Provider {p} doesn't have role {r}!".format(
-                    p=user.provider, r=active_role))
-
-        if active_role.signs_charts:
-            assert active_role in user.provider.clinical_roles.all()
-
-            self.signed_date = now()
-            self.signer = user.provider
-        else:
-            raise ValueError("You must be an attending to sign workups.")
-
-    def signed(self):
-        '''Has this workup been attested? Returns True if yes, False if no.'''
-        return self.signer is not None
-
     def short_text(self):
         '''
         Return the 'short text' representation of this Note. In this case, it's
@@ -231,10 +247,6 @@ class Workup(Note):
         Returns the date (not datetime) this workup was written on.
         '''
         return self.clinic_day.clinic_date
-
-    def attribution(self):
-        '''Builds an attribution string of the form Doe, John on DATE'''
-        return " ".join([str(self.author), "on", str(self.written_date())])
 
     def url(self):
         return reverse('workup', args=(self.pk,))
