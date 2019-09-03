@@ -1,6 +1,7 @@
 from functools import partial
 
 import django.utils.timezone
+from django.db.models.functions import Least
 
 from rest_framework import generics
 
@@ -35,7 +36,6 @@ def active_ai_patients_filter(qs):
         .filter(completion_date=None) \
         .select_related('patient')
 
-    print(referral_qs)
     pts_with_active_ais = coremodels.Patient.objects \
         .filter(actionitem__in=ai_qs) \
         .distinct()
@@ -58,9 +58,23 @@ def inactive_ai_patients_filter(qs):
             .filter(due_date__gt=django.utils.timezone.now().date())
             .filter(completion_date=None)
             .select_related('patient')
-        ).order_by('-actionitem__due_date')
+        )
 
-    return future_ai_pts
+    future_referral_pts = coremodels.Patient.objects.filter(
+        followuprequest__in=referrals.FollowupRequest.objects
+            .filter(due_date__gt=django.utils.timezone.now().date())
+            .filter(completion_date=None)
+            .select_related('patient')
+        )
+
+    output_pt_list = future_ai_pts.union(future_referral_pts)
+
+    # This code does not actually order the list properly
+    output_pt_list.annotate(
+        soonest_due_date=Least('actionitem__due_date', 'followuprequest__due_date')
+        ).order_by('-soonest_due_date')
+
+    return output_pt_list
 
 
 def unsigned_workup_patients_filter(qs):
