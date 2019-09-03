@@ -6,6 +6,7 @@ from rest_framework import generics
 
 from pttrack import models as coremodels
 from workup import models as workupmodels
+from referral import models as referrals
 
 from . import serializers
 
@@ -29,9 +30,21 @@ def active_ai_patients_filter(qs):
         .filter(completion_date=None) \
         .select_related('patient')
 
-    return coremodels.Patient.objects \
+    referral_qs = referrals.FollowupRequest.objects \
+        .filter(due_date__lte=django.utils.timezone.now().date()) \
+        .filter(completion_date=None) \
+        .select_related('patient')
+
+    print(referral_qs)
+    pts_with_active_ais = coremodels.Patient.objects \
         .filter(actionitem__in=ai_qs) \
         .distinct()
+
+    pts_with_active_referrals = coremodels.Patient.objects \
+        .filter(followuprequest__in=referral_qs) \
+        .distinct()
+
+    return pts_with_active_ais.union(pts_with_active_referrals)
         # .order_by('-actionitem__due_date')
 
 
