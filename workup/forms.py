@@ -282,7 +282,7 @@ class WorkupForm(ModelForm):
 class ProgressNoteForm(ModelForm):
     class Meta:
         model = models.ProgressNote
-        exclude = ['patient', 'author', 'author_type']
+        fields = ['title', 'text']
 
     def __init__(self, *args, **kwargs):
         super(ProgressNoteForm, self).__init__(*args, **kwargs)

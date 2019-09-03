@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, render
 from django.core.urlresolvers import reverse
 from django.views.generic.edit import FormView
 from django.http import HttpResponseRedirect
+from django.contrib import messages
 
 from pttrack.models import Patient, ProviderType, ReferralType
 
@@ -90,6 +91,7 @@ class ReferralCreate(FormView):
         return HttpResponseRedirect(reverse('new-followup-request',
                                             args=(pt.id, referral.id,)))
 
+
 class FollowupRequestCreate(FormView):
     """Create a followup request that will show up on pttrack homepage."""
 
@@ -124,6 +126,9 @@ class FollowupRequestCreate(FormView):
 
 
 class PatientContactCreate(FormView):
+    """View that marks a FollowupRequest done.
+    """
+
     template_name = 'referral/new-patient-contact.html'
     form_class = PatientContactForm
 
@@ -138,7 +143,8 @@ class PatientContactCreate(FormView):
         context = super(PatientContactCreate, self).get_context_data(**kwargs)
 
         # Add patient to context data
-        context['patient'] = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        context['patient'] = get_object_or_404(Patient,
+                                               pk=self.kwargs['pt_id'])
 
         # Add referral information to context data
         context['referral'] = get_object_or_404(Referral,
@@ -190,6 +196,7 @@ class PatientContactCreate(FormView):
             return HttpResponseRedirect(reverse('patient-detail',
                                                 args=(pt.id,)))
 
+
 def select_referral(request, pt_id):
     """ Prompt user to select pending referral given patient ID."""
     if request.method == 'POST':
@@ -197,16 +204,24 @@ def select_referral(request, pt_id):
         if form.is_valid():
             # Get referral ID from form
             referral = form.cleaned_data['referrals']
-            # Go to last followup request
-            # Note there should only ever be one open followup request)
+
+            # Hit the db for followup requests about this patient and referral
+            # and that don't already have a patient_contact
             followup_requests = FollowupRequest.objects.filter(
                 patient_id=pt_id,
-                referral=referral.id
-            )
+                referral=referral.id,
+            ).filter(patientcontact__isnull=True)
+
+            # Note there should only ever be one open followup request)
             followup_request = followup_requests.latest('id')
-            return HttpResponseRedirect(reverse('new-patient-contact',
-                                                args=(pt_id, referral.id,
-                                                      followup_request.id)))
+            return HttpResponseRedirect(
+                reverse(FollowupRequest.MARK_DONE_URL_NAME,
+                        args=(pt_id, referral.id,
+                              followup_request.id)))
     else:
         form = ReferralSelectForm(pt_id)
-        return render(request, 'referral/select-referral.html', {'form': form})
+
+        return render(
+            request,
+            'referral/select-referral.html',
+            {'form': form, 'pt_id': pt_id})

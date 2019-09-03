@@ -1,3 +1,5 @@
+from __future__ import print_function, division
+
 import datetime
 import json
 
@@ -135,10 +137,10 @@ class SendEmailTest(TestCase):
         yesterday = now().date() - datetime.timedelta(days=1)
 
         ai_prototype = {
-        'instruction':ai_inst,
-        'comments':"",
-        'author_type':models.ProviderType.objects.first(),
-        'patient':pt
+            'instruction': ai_inst,
+            'comments': "",
+            'author_type': models.ProviderType.objects.first(),
+            'patient': pt
         }
 
         #action item due today
@@ -208,7 +210,8 @@ class LiveTesting(SeleniumLiveTestCase):
         self.assertEquals(self.selenium.current_url,
                           '%s%s%s' % (self.live_server_url,
                                       reverse('choose-clintype'),
-                                      '?next='+reverse('home')))
+                                      '?next=' +
+                                      reverse('dashboard-dispatch')))
 
         self.selenium.find_element_by_xpath(
             '//input[@value="Coordinator"]').click()
@@ -236,7 +239,67 @@ class LiveTesting(SeleniumLiveTestCase):
         # now we should be redirected directly to home.
         self.assertEquals(self.selenium.current_url,
                           '%s%s' % (self.live_server_url,
-                                    reverse('home')))
+                                    reverse('dashboard-attending')))
+
+    def test_pttrack_patient_detail_collapseable(self):
+        """Ensure that collapsable AI lists open and close with AIs inside
+        """
+
+        build_provider(username='timmy', password='password',
+                       roles=["Attending"])
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        self.submit_login('timmy', 'password')
+
+        ai_prototype = {
+            'instruction': models.ActionInstruction.objects.first(),
+            'comments': "",
+            'author_type': models.ProviderType.objects.first(),
+            'patient': models.Patient.objects.first()
+        }
+
+        models.ActionItem.objects.create(
+            due_date=now().today(),
+            author=models.Provider.objects.first(),
+            **ai_prototype
+        )
+
+        yesterday = now().date() - datetime.timedelta(days=1)
+        models.ActionItem.objects.create(
+            due_date=yesterday,
+            author=models.Provider.objects.first(),
+            **ai_prototype
+        )
+
+        self.selenium.get('%s%s' % (self.live_server_url,
+                                    reverse('patient-detail', args=(1,))))
+
+        WebDriverWait(self.selenium, 2).until(
+            EC.presence_of_element_located(
+                (By.ID, 'toggle-collapse5')))
+
+        self.assertFalse(self.selenium.find_element_by_id('collapse5')
+                                      .find_element_by_xpath('./ul/li')
+                                      .is_displayed())
+
+        self.assertEqual(
+            len(self.selenium.find_element_by_id('collapse5')
+                             .find_elements_by_xpath('./ul/li')),
+            2)
+
+        self.selenium.find_element_by_id('toggle-collapse5').click()
+
+        WebDriverWait(self.selenium, 2).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//div[@class="panel-collapse collapse in"]')))
+
+        self.assertEqual(
+            len(self.selenium.find_element_by_id('collapse5')
+                             .find_elements_by_xpath('./ul/li')),
+            2)
+
+        self.assertTrue(self.selenium.find_element_by_id('collapse5')
+                                     .find_element_by_xpath('./ul/li')
+                                     .is_displayed())
 
     def test_pttrack_view_rendering(self):
         '''
@@ -941,7 +1004,31 @@ class ActionItemTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        log_in_provider(self.client, build_provider(["Coordinator"]))
+        self.coordinator = build_provider(["Coordinator"])
+        log_in_provider(self.client, self.coordinator)
+
+    def test_action_item_completeable_functions(self):
+
+        ai_inst = models.ActionInstruction.objects.create(
+            instruction="Follow up on labs")
+        ai = models.ActionItem.objects.create(
+            instruction=ai_inst,
+            due_date=now().today(),
+            comments="",
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            patient=models.Patient.objects.first())
+
+        self.assertEqual(
+            ai.attribution(),
+            "Added by Jones, Tommy L. on %s" % now().date())
+
+        ai.mark_done(self.coordinator)
+        ai.save()
+
+        self.assertEqual(
+            ai.attribution(),
+            "Marked done by Jones, Tommy L. on %s" % now().date())
 
     def test_action_item_urls(self):
         pt = models.Patient.objects.first()
@@ -955,6 +1042,11 @@ class ActionItemTest(TestCase):
             author=models.Provider.objects.first(),
             author_type=models.ProviderType.objects.first(),
             patient=pt)
+
+        response = self.client.get(reverse('patient-detail', args=(pt.id,)))
+        self.assertTemplateUsed(response, 'pttrack/patient_detail.html')
+        self.assertContains(
+            response, reverse('done-action-item', args=(ai.id,)))
 
         # new action items should not be done
         self.assertFalse(ai.done())
@@ -1001,7 +1093,7 @@ class ActionItemTest(TestCase):
             "instruction": models.ActionInstruction.objects.first().pk,
             "due_date": str(datetime.date.today() + datetime.timedelta(10)),
             "comments": "models.CharField(max_length=300)" # arbitrary string
-            }
+        }
 
         url = reverse('new-action-item', kwargs={'pt_id': 1})
         response = self.client.post(url, submitted_ai)

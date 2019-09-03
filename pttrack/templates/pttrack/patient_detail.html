@@ -5,13 +5,12 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 {% endblock %}
 
 {% block header %}
-<div class="col-md-5">
+<div class="col-lg-5 col-lg-offset-1 col-sm-6">
 	<div class="col-md-1">
 		<h2><br><a href="{% url 'all-patients' %}"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a></h2>
 	</div>
 	<div class="col-md-11">
 		<h2> <a href="{% url 'patient-update' pk=patient.id %}">{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
-<!-- 			<small><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></small> -->
 		</a></h2>
 		<p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
 		<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
@@ -33,17 +32,51 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	    {% endif %}
 	</div>
 </div>
-<div class="col-md-4 text-center pull-right" style="border: 2px  black">
+<div class="col-lg-offset-1 col-lg-4 col-sm-6 text-center" style="border: 2px  black">
 	<h3> Actions </h3>
-	<div class="btn-group-verticle">
-    <a class="btn btn-success pull-left btn-block" href="{% url 'new-workup' pt_id=patient.pk %}" role="button">Create New Workup</a>
-    <a class="btn btn-info pull-left btn-block" href="{% url 'new-action-item' pt_id=patient.pk %}" role="button">Create New Action Item</a>
-    <a class="btn btn-warning pull-left btn-block" href="{% url 'new-document' pt_id=patient.pk %}" role="button">Upload Document or Prescription</a>
-    <a class="btn btn-primary pull-left btn-block" href="{% url 'followup-choice' pt_id=patient.pk %}" role="button">Create New Followup</a>
-    <a class="btn btn-danger pull-left btn-block" href="{% url 'new-progress-note' pt_id=patient.pk %}" role="button">Create New Psych Progress Note</a>
-    <a class="btn btn-success pull-left btn-block" href="{% url 'select-referral-type' pt_id=patient.pk %}" role="button">Create New Referral</a>
-    <a class="btn btn-info pull-left btn-block" href="{% url 'select-referral' pt_id=patient.pk %}" role="button">New Referral Followup</a>
-    <a class="btn btn-warning pull-left btn-block" href="{% url 'appointment-new' %}?pt_id={{patient.pk}}" role="button">Create New Appointment</a>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">Clinic Day</h3>
+		</div>
+		<ul class="list-group">
+			<li class="list-group-item">
+				<span class="glyphicon glyphicon-search" aria-hidden="true"></span>&nbsp;
+				<a href="{% url 'new-note-dispatch' pt_id=patient.pk %}"><strong>Write Note</strong></a>
+			</li>
+			<li class="list-group-item">
+				<span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>&nbsp;
+				<a href="{% url 'select-referral-type' pt_id=patient.pk %}"><strong>Make Referral</strong></a>
+			</li>
+			<li class="list-group-item">
+				<span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>&nbsp;
+			    <a href="{% url 'appointment-new' %}?pt_id={{patient.pk}}"><strong>Make Appointment</strong></a>
+			</li>
+			<li class="list-group-item">
+				<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>&nbsp;
+			    <a href="{% url 'new-document' pt_id=patient.pk %}"><strong>Upload Document</strong></a>
+			</li>
+		</ul>
+	</div>
+
+	<div class="panel panel-success">
+		<div class="panel-heading">
+			<h3 class="panel-title">Followup</h3>
+		</div>
+		<ul class="list-group">
+			<li class="list-group-item">
+				<span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span>&nbsp;
+			    <a href="{% url 'select-referral' pt_id=patient.pk %}"><strong>Log follow up</strong> (referral)</a>
+			</li>
+			<li class="list-group-item">
+				<span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>&nbsp;
+			    <a href="{% url 'followup-choice' pt_id=patient.pk %}"><strong>Log follow up</strong> (other)</a>
+			</li>
+			<li class="list-group-item">
+				<span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>&nbsp;
+			    <a href="{% url 'new-action-item' pt_id=patient.pk %}"><strong>New Action Item</strong></a>
+			</li>
+		</ul>
 	</div>
 </div>
 {% endblock %}
@@ -80,15 +113,19 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 
 {% if request.session.staff_view %}
 <div class="container">
-	<div class="col-md-12">
+	<div class="col-md-8 col-md-offset-2">
 		{% if patient.demographics %}
 		<a href="{% url 'demographics-detail' patient.demographics.id %}" class="btn btn-default" role="button">See Patient Survey Data</a>
 		{% else %}
-		<div class="alert alert-danger" role="alert"><strong>Warning!</strong> There is no survey data for this patient. Please click on the following pencil to enter the data: <a href="{% url 'demographics-create' patient.id %}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a></div>
+		<div class="alert alert-danger" role="alert">
+			<span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+			<strong>Danger!</strong>
+			No survey data exists for this patient. Please <a  class="alert-link" href="{% url 'demographics-create' patient.id %}">click here <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a> add it.</div>
 		{% endif %}
 	</div>
 </div>
 {% endif %}
+
 
 <div class="container">
 	<div class="col-md-6">
@@ -193,7 +230,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
   				{% with ai_list=ai_type.1 panel_id=ai_type.0 ai_group=ai_type.2 %}
 		  			<div class="panel panel-default">
 		    			<div class="panel-heading"><h4 class="panel-title">
-		        			<a data-toggle="collapse" href="#{{ panel_id }}">
+		        			<a id="toggle-{{ panel_id }}" data-toggle="collapse" href="#{{ panel_id }}">
 		        				{{ ai_group }} ({{ ai_list | length }})
 		        			</a>
 		    			</h4></div>

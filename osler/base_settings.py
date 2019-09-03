@@ -26,6 +26,7 @@ INSTALLED_APPS = (
     'followup',
     'workup',
     'demographics',
+    'dashboard',
     'appointment',
     'referral',
     'api',
@@ -37,7 +38,7 @@ INSTALLED_APPS = (
     'audit',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -84,6 +85,15 @@ USE_L10N = True
 
 USE_TZ = True
 
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'bg-danger',
+    messages.WARNING: 'bg-warning',
+    messages.INFO: 'bg-info',
+    messages.SUCCESS: 'bg-success',
+    messages.DEBUG: 'bg-primary',
+}
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
@@ -115,3 +125,11 @@ OSLER_WORKUP_COPY_FORWARD_FIELDS = ['PMH_PSH', 'fam_hx', 'soc_hx', 'meds',
 OSLER_WORKUP_COPY_FORWARD_MESSAGE = (u"Migrated from previous workup on {date}"
                                      u". Please delete this heading and modify"
                                      u" the following:\n\n{contents}")
+
+# Dashboard settings
+OSLER_CLINIC_DAYS_PER_PAGE = 20
+
+OSLER_DEFAULT_DASHBOARD = 'home'
+OSLER_PROVIDERTYPE_DASHBOARDS = {
+    'Attending': 'dashboard-attending'
+}
