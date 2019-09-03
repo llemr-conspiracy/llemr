@@ -3,8 +3,51 @@ import datetime
 from django.test import TestCase
 
 from .models import Language, Gender, Ethnicity, ContactMethod, ProviderType, \
-    Provider
+    Provider, ActionInstruction, Patient
 from . import forms
+
+class TestActionItemCreateForms(TestCase):
+    '''Tests for form used to create new Action Items'''
+
+    def setUp(self):
+        ai_data = {
+        'author': Provider.objects.first(),
+        'author_type': ProviderType.objects.first(),
+        'patient': Patient.objects.first()
+        }
+        self.ai_data = ai_data
+
+    def test_instruction_inactive(self):
+        '''
+        Action Item Form only shows active instructions as options.
+        '''
+        ai_data = self.ai_data
+
+        PCP_followup = ActionInstruction.objects.create(
+            instruction='PCP Followup',active=False)
+        Lab_Followup = ActionInstruction.objects.create(
+            instruction='Lab Followup',active=True)
+        Vaccine_Followup = ActionInstruction.objects.create(
+            instruction='Vaccine Followup',active=True)
+
+        ai_qs = ActionInstruction.objects.filter(
+            active=True).values_list('instruction',flat=True)
+
+        form = forms.ActionItemForm(data=ai_data)
+
+        form_list = [c[0] for c in form['instruction'].field.choices][1:]
+
+        self.assertEqual(set(ai_qs), set(form_list))
+
+        #Accept active Action Instructions
+        ai_data['instruction'] = Lab_Followup.pk
+        form = forms.ActionItemForm(data=ai_data)
+        self.assertEqual(form['instruction'].errors, [])
+
+        #Reject inactive Action Instructions
+        ai_data['instruction'] = PCP_followup.pk
+        form = forms.ActionItemForm(data=ai_data)
+        self.assertNotEqual(form['instruction'].errors, [])
 
 
 class TestPatientCreateForms(TestCase):
