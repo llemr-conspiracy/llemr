@@ -41,11 +41,8 @@ class ProgressNoteAdmin(NoteAdmin):
         return url
 
 
-for model in [models.ClinicDate, models.ClinicType, models.DiagnosisType]:
+for model in [models.ClinicType, models.DiagnosisType]:
     if hasattr(model, "history"):
         admin.site.register(model, SimpleHistoryAdmin)
     else:
         admin.site.register(model)
-
-for model in [models.ClinicType, models.DiagnosisType]:
-    admin.site.register(model)
