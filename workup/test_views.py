@@ -242,8 +242,7 @@ class TestProgressNoteViews(TestCase):
 
         models.ClinicDate.objects.create(
             clinic_type=models.ClinicType.objects.first(),
-            clinic_date=now().date(),
-            gcal_id="tmp")
+            clinic_date=now().date())
 
         provider = build_provider()
         log_in_provider(self.client, provider)

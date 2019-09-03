@@ -46,7 +46,6 @@ class ClinicDate(models.Model):
     clinic_type = models.ForeignKey(ClinicType)
 
     clinic_date = models.DateField()
-    gcal_id = models.CharField(max_length=50)
 
     def __unicode__(self):
         return (str(self.clinic_type) + " on " +
