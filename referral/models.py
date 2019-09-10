@@ -73,6 +73,7 @@ class FollowupRequest(Note, CompletableMixin):
     contact_instructions = models.TextField()
 
     MARK_DONE_URL_NAME = 'new-patient-contact'
+    ADMIN_URL_NAME = ''
 
     def class_name(self):
         return self.__class__.__name__
@@ -88,6 +89,12 @@ class FollowupRequest(Note, CompletableMixin):
                        args=(self.referral.patient.id,
                              self.referral.id,
                              self.id))
+
+    def admin_url(self):
+        return reverse(
+            'admin:referral_followuprequest_change',
+            args=(self.id,)
+        )
 
     def __unicode__(self):
         formatted_date = self.due_date.strftime("%D")

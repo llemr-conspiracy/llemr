@@ -524,6 +524,10 @@ class ActionItem(Note, CompletableMixin):
     def mark_done_url(self):
         return reverse(self.MARK_DONE_URL_NAME, args=(self.id,))
 
+    def admin_url(self):
+        return reverse('admin:pttrack_actionitem_change',
+                       args=(self.id,))
+
     def __unicode__(self):
         return " ".join(["AI for", str(self.patient)+":",
                          str(self.instruction), "due on", str(self.due_date)])
