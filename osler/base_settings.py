@@ -48,7 +48,8 @@ MIDDLEWARE = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
-    'audit.middleware.AuditMiddleware'
+    'audit.middleware.AuditMiddleware',
+    'audit.middleware.ErrorEmailMiddleware',
 )
 
 ROOT_URLCONF = 'osler.urls'

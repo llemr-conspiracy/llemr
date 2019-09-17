@@ -22,3 +22,10 @@ MIDDLEWARE = MIDDLEWARE + ('debug_toolbar.middleware.DebugToolbarMiddleware',)
 PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.MD5PasswordHasher',
 )
+
+DEFAULT_FROM_EMAIL = "webmaster@osler.wustl.edu"
+SERVER_EMAIL = "admin@osler.wustl.edu"
+EMAIL_HOST = "irony.wusm.wustl.edu"
+ADMINS = (
+    ('Tech Tzar', 'techtzar@wustl.edu'),
+)

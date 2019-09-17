@@ -1,8 +1,32 @@
 from django.contrib.auth.models import AnonymousUser
+from django.http import HttpResponse, HttpRequest
 
 from .models import PageviewRecord
 
 from pttrack.models import ProviderType
+
+class ErrorEmailMiddleware(object):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        #it said I needed a call function
+        return self.get_response(request)
+
+    def process_exception(self, request, exception):
+        try:
+           logged_in_info = ''
+           if request.user and request.user.is_authenticated():
+               logged_in_info = "%s" % request.user
+               if request.user.email:
+                   logged_in_info += ' %s' % request.user.email
+               if request.user.first_name or request.user.last_name:
+                   logged_in_info += ' (%s %s)' % \
+                     (request.user.first_name, request.user.last_name)
+           if logged_in_info:
+               request.META['LOGGED-IN-USER'] = logged_in_info
+        except:
+           logging.debug("Unable to debug who was logged in", exc_info=True)
 
 
 class AuditMiddleware(object):
