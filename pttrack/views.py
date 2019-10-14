@@ -31,40 +31,6 @@ def get_current_provider_type(request):
                              pk=request.session['clintype_pk'])
 
 
-def get_cal():
-    '''Get the gcal_id of the google calendar clinic date today.
-    CURRENTLY BROKEN next_date must be produced correctly.'''
-    import requests
-
-    with open('google_secret.txt') as f:
-        # TODO ip-restrict access to this key for halstead only
-        GOOGLE_SECRET = f.read().strip()
-
-    cal_url = "https://www.googleapis.com/calendar/v3/calendars/"
-    calendar_id = "7eie7k06g255baksfshfhp0m28%40group.calendar.google.com"
-
-    payload = {"key": GOOGLE_SECRET,
-               "singleEvents": True,
-               "timeMin":
-               datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ'),
-               "orderBy": "startTime"}
-
-    r = requests.get("".join([cal_url,
-                              calendar_id,
-                              '/events']),
-                     params=payload)
-
-    # draw the first starting time out of the JSON-formatted gcal api output
-    javascript_datetime = r.json()["items"][0]["start"]["dateTime"]
-    next_date = javascript_datetime.split("T")[0].split("-")
-
-    next_date = datetime.datetime.date(year=next_date_str[0],
-                                       month=next_date_str[1],
-                                       day=next_date_str[2])
-
-    return next_date
-
-
 class NoteFormView(FormView):
     note_type = None
 

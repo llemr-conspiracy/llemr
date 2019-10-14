@@ -209,8 +209,7 @@ class TestAttendingDashboard(TestCase):
         # what comes in in the fixture
         self.clinic_today = ClinicDate.objects.create(
             clinic_type=ClinicType.objects.first(),
-            clinic_date=now().date(),
-            gcal_id="tmp")
+            clinic_date=now().date())
 
         self.pt2 = Patient.objects.create(
             first_name="Arthur", last_name="Miller", middle_name="",
@@ -330,8 +329,7 @@ class TestAttendingDashboard(TestCase):
         for i in range(5):
             cd = ClinicDate.objects.create(
                 clinic_date=datetime.date(2001, i + 1, 1),
-                clinic_type=ClinicType.objects.first(),
-                gcal_id='')
+                clinic_type=ClinicType.objects.first())
             pt = Patient.objects.create(
                 first_name="John", last_name="Doe", middle_name="",
                 phone='454545', gender=Gender.objects.first(),
@@ -377,8 +375,7 @@ class TestAttendingDashboard(TestCase):
         for i in range(10):
             cd = ClinicDate.objects.create(
                 clinic_date=datetime.date(2001, i + 1, 1),
-                clinic_type=ClinicType.objects.first(),
-                gcal_id='')
+                clinic_type=ClinicType.objects.first())
             pt = Patient.objects.create(
                 first_name="John", last_name="Doe", middle_name="",
                 phone='454545', gender=Gender.objects.first(),

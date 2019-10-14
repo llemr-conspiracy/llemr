@@ -64,3 +64,6 @@ target/
 
 # Database
 db.sqlite3
+
+# Exported csv
+ptstats.csv

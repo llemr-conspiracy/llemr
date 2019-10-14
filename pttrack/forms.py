@@ -86,6 +86,8 @@ class ActionItemForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ActionItemForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
+        self.fields['instruction'].queryset = models.ActionInstruction.objects.filter(
+            active=True)
         self.helper.add_input(Submit('submit', 'Submit'))
 
 

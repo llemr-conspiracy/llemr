@@ -21,6 +21,10 @@ class EducationLevel(models.Model):
 
 
 class WorkStatus(models.Model):
+
+    class Meta:
+        verbose_name_plural = "Work statuses"
+
     name = models.CharField(max_length=50, primary_key=True)
 
     def __unicode__(self):
@@ -28,6 +32,10 @@ class WorkStatus(models.Model):
 
 
 class ResourceAccess(models.Model):
+
+    class Meta:
+        verbose_name_plural = "Resource accesses"
+
     name = models.CharField(max_length=50, primary_key=True)
 
     def __unicode__(self):
