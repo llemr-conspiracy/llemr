@@ -1,10 +1,10 @@
 """Data models for referral system."""
 from django.db import models
+from django.core.urlresolvers import reverse
 
 from pttrack.models import (ReferralType, ReferralLocation, Note,
                             ContactMethod, CompletableMixin,)
 from followup.models import ContactResult, NoAptReason, NoShowReason
-
 
 
 class Referral(Note):
@@ -72,6 +72,9 @@ class FollowupRequest(Note, CompletableMixin):
     referral = models.ForeignKey(Referral)
     contact_instructions = models.TextField()
 
+    MARK_DONE_URL_NAME = 'new-patient-contact'
+    ADMIN_URL_NAME = ''
+
     def class_name(self):
         return self.__class__.__name__
 
@@ -80,6 +83,18 @@ class FollowupRequest(Note, CompletableMixin):
 
     def summary(self):
         return self.contact_instructions
+
+    def mark_done_url(self):
+        return reverse(self.MARK_DONE_URL_NAME,
+                       args=(self.referral.patient.id,
+                             self.referral.id,
+                             self.id))
+
+    def admin_url(self):
+        return reverse(
+            'admin:referral_followuprequest_change',
+            args=(self.id,)
+        )
 
     def __str__(self):
         formatted_date = self.due_date.strftime("%D")

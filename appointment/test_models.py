@@ -14,18 +14,14 @@ class TestAppointments(TestCase):
     fixtures = ['workup', 'pttrack']
 
     def setUp(self):
-        # ClinicDate.objects.create(
-        #     clinic_type=ClinicType.objects.first(),
-        #     clinic_date=now().date(),
-        #     gcal_id="tmp")
-
         self.all_roles_provider = build_provider()
 
         self.apt = models.Appointment.objects.create(
             comment='test this stuff',
             clindate=now().date(),
             author=Provider.objects.first(),
-            author_type=ProviderType.objects.filter(signs_charts=False).first(),
+            author_type=ProviderType.objects.filter(
+                signs_charts=False).first(),
             patient=Patient.objects.first())
 
     # test editing appointment -- editing should in fact change comment
@@ -36,8 +32,9 @@ class TestAppointments(TestCase):
         apt.clean()  # unsure if necessary for test
         apt.save()
 
-        self.assertEquals("test edit", models.Appointment.objects.\
-            filter(id=hold_id).first().comment)
+        self.assertEquals(
+            "test edit",
+            models.Appointment.objects.filter(id=hold_id).first().comment)
         self.assertEquals(
             now().replace(
                 hour=settings.OSLER_DEFAULT_APPOINTMENT_HOUR,

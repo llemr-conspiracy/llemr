@@ -5,7 +5,11 @@ from django.views.generic import DetailView
 from . import models
 from . import views
 
-unwrapped_urlconf = [  # pylint: disable=invalid-name
+unwrapped_urlconf = [
+    url(r'^new-note/(?P<pt_id>[0-9]+)/$',
+        views.new_note_dispatch,
+        name='new-note-dispatch'),
+
     url(r'^new/(?P<pt_id>[0-9]+)/$',
         views.WorkupCreate.as_view(),
         name='new-workup'),
@@ -32,6 +36,9 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     url(r'^psychnote/update/(?P<pk>[0-9]+)$',
         views.ProgressNoteUpdate.as_view(),
         name="progress-note-update"),
+    url(r'^psychnote/sign/(?P<pk>[0-9]+)$',
+        views.sign_progress_note,
+        name='progress-note-sign'),
     url(r'^psychnote/(?P<pk>[0-9]+)$',
         DetailView.as_view(model=models.ProgressNote),
         name="progress-note-detail"),
@@ -40,7 +47,7 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
         views.ClinicDateCreate.as_view(),
         name="new-clindate"),
     url(r'^clindates/$',
-        views.ClinicDateList.as_view(),
+        views.clinic_date_list,
         name="clindate-list")
 ]
 

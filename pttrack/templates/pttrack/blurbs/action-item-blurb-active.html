@@ -1,3 +1,3 @@
-{% url 'done-action-item' ai_id=action_item.pk as clear_url %}
-{% url 'admin:pttrack_actionitem_change' action_item.id as admin_url %}
-{% include 'pttrack/blurbs/base-completable-blurb.html' %}
+{% with admin_url=action_item.admin_url clear_url=action_item.mark_done_url %}
+	{% include 'pttrack/blurbs/base-completable-blurb.html' %}
+{% endwith %}

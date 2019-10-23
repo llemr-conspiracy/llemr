@@ -86,6 +86,10 @@ class Language(models.Model):
 
 
 class Ethnicity(models.Model):
+
+    class Meta:
+        verbose_name_plural = "ethnicities"
+
     name = models.CharField(max_length=50, primary_key=True)
 
     def __str__(self):
@@ -94,6 +98,7 @@ class Ethnicity(models.Model):
 
 class ActionInstruction(models.Model):
     instruction = models.CharField(max_length=50, primary_key=True)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.instruction
@@ -121,6 +126,7 @@ class Outcome(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Person(models.Model):
 
@@ -150,7 +156,7 @@ class Person(models.Model):
             middle = ""
 
         if reverse:
-            return " ".join([self.last_name+",",
+            return " ".join([self.last_name + ",",
                              self.first_name,
                              middle])
         else:
@@ -373,6 +379,7 @@ def require_providers_update():
 class Note(models.Model):
     class Meta:
         abstract = True
+        ordering = ["-written_datetime", "-last_modified"]
 
     author = models.ForeignKey(Provider)
     author_type = models.ForeignKey(ProviderType)
@@ -410,25 +417,25 @@ class CompletableManager(models.Manager):
     def get_active(self, patient):
         """ Returns all active elements of Completable class."""
         return self.get_queryset()\
-                .filter(patient=patient)\
-                .filter(completion_author=None)\
-                .filter(due_date__lte=now().date())\
-                .order_by('completion_date')
+            .filter(patient=patient)\
+            .filter(completion_author=None)\
+            .filter(due_date__lte=now().date())\
+            .order_by('completion_date')
 
     def get_inactive(self, patient):
         """ Returns all inactive elements of Completable class."""
         return self.get_queryset()\
-                .filter(patient=patient)\
-                .filter(completion_author=None)\
-                .filter(due_date__gt=now().date())\
-                .order_by('completion_date')
+            .filter(patient=patient)\
+            .filter(completion_author=None)\
+            .filter(due_date__gt=now().date())\
+            .order_by('completion_date')
 
     def get_completed(self, patient):
         """ Returns all completed elements of Completable class."""
         return self.get_queryset()\
-                .filter(patient=patient)\
-                .exclude(completion_author=None)\
-                .order_by('completion_date')
+            .filter(patient=patient)\
+            .exclude(completion_author=None)\
+            .order_by('completion_date')
 
 
 class CompletableMixin(models.Model):
@@ -489,6 +496,8 @@ class ActionItem(Note, CompletableMixin):
         help_text='Check this box if this action item is high priority')
     comments = models.TextField()
 
+    MARK_DONE_URL_NAME = 'done-action-item'
+
     history = HistoricalRecords()
 
     def short_name(self):
@@ -508,6 +517,17 @@ class ActionItem(Note, CompletableMixin):
             return " ".join(["Added by", str(self.author), "on",
                              str(self.written_datetime.date())])
 
+<<<<<<< HEAD
     def __str__(self):
+=======
+    def mark_done_url(self):
+        return reverse(self.MARK_DONE_URL_NAME, args=(self.id,))
+
+    def admin_url(self):
+        return reverse('admin:pttrack_actionitem_change',
+                       args=(self.id,))
+
+    def __unicode__(self):
+>>>>>>> master
         return " ".join(["AI for", str(self.patient)+":",
                          str(self.instruction), "due on", str(self.due_date)])

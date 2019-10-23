@@ -208,7 +208,8 @@ class LiveTesting(SeleniumLiveTestCase):
         self.assertEquals(self.selenium.current_url,
                           '%s%s%s' % (self.live_server_url,
                                       reverse('choose-clintype'),
-                                      '?next='+reverse('home')))
+                                      '?next=' +
+                                      reverse('dashboard-dispatch')))
 
         self.selenium.find_element_by_xpath(
             '//input[@value="Coordinator"]').click()
@@ -236,7 +237,7 @@ class LiveTesting(SeleniumLiveTestCase):
         # now we should be redirected directly to home.
         self.assertEquals(self.selenium.current_url,
                           '%s%s' % (self.live_server_url,
-                                    reverse('home')))
+                                    reverse('dashboard-attending')))
 
     def test_pttrack_patient_detail_collapseable(self):
         """Ensure that collapsable AI lists open and close with AIs inside
@@ -366,10 +367,10 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
             password=self.provider_password,
             roles=["Preclinical"])
         self.providers = {
-            'attending' : attending,
-            'coordinator' : coordinator,
-            'clinical' : clinical,
-            'preclinical' : preclinical
+            'attending': attending,
+            'coordinator': coordinator,
+            'clinical': clinical,
+            'preclinical': preclinical
         }
 
         workupModels.ClinicType.objects.create(name="Basic Care Clinic")
@@ -382,16 +383,13 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
 
         tomorrow_clindate = workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=tomorrow,
-            gcal_id="tmp")
+            clinic_date=tomorrow)
         yesterday_clindate = workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=yesterday,
-            gcal_id="tmp")
+            clinic_date=yesterday)
         last_week_clindate = workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=earlier_this_week,
-            gcal_id="tmp")
+            clinic_date=earlier_this_week)
         # log_in_provider(self.client, build_provider(["Attending"]))
 
         pt1 = models.Patient.objects.get(pk=1)
@@ -1023,7 +1021,31 @@ class ActionItemTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        log_in_provider(self.client, build_provider(["Coordinator"]))
+        self.coordinator = build_provider(["Coordinator"])
+        log_in_provider(self.client, self.coordinator)
+
+    def test_action_item_completeable_functions(self):
+
+        ai_inst = models.ActionInstruction.objects.create(
+            instruction="Follow up on labs")
+        ai = models.ActionItem.objects.create(
+            instruction=ai_inst,
+            due_date=now().today(),
+            comments="",
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            patient=models.Patient.objects.first())
+
+        self.assertEqual(
+            ai.attribution(),
+            "Added by Jones, Tommy L. on %s" % now().date())
+
+        ai.mark_done(self.coordinator)
+        ai.save()
+
+        self.assertEqual(
+            ai.attribution(),
+            "Marked done by Jones, Tommy L. on %s" % now().date())
 
     def test_action_item_urls(self):
         pt = models.Patient.objects.first()
@@ -1309,7 +1331,7 @@ class TestReferralPatientDetailIntegration(TestCase):
         # Check patient status -- there is one action item and followup
         # request 1 day past due and one action item and followup
         # request due today
-        expected_status = "Action items 0, 1, 1, 0 days past due"
+        expected_status = "Action items 1, 0, 0, 1 days past due"
         self.assertContains(response, expected_status)
 
         expected_fqhc_status = Referral.STATUS_PENDING
@@ -1356,7 +1378,10 @@ class TestReferralPatientDetailIntegration(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-        expected_status = "Action items 0, 1, 0 days past due"
+        with open('tmp.html', 'w') as f:
+            f.write(response.content)
+
+        expected_status = "Action items 1, 0, 0 days past due"
         self.assertContains(response, expected_status)
 
         # Verify that the correct amount of action items are present

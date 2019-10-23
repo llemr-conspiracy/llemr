@@ -59,7 +59,7 @@ unwrapped_urlpatterns = [  # pylint: disable=invalid-name
         name="update-action-item"),
     url(r'^action-item/(?P<ai_id>[0-9]+)/done$',
         views.done_action_item,
-        name='done-action-item'),
+        name=models.ActionItem.MARK_DONE_URL_NAME),
     url(r'^action-item/(?P<ai_id>[0-9]+)/reset$',
         views.reset_action_item,
         name='reset-action-item'),
