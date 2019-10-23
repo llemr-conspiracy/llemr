@@ -46,6 +46,3 @@ for model in [models.ClinicType, models.DiagnosisType]:
         admin.site.register(model, SimpleHistoryAdmin)
     else:
         admin.site.register(model)
-
-for model in [models.Workup, models.ProgressNote]:
-    admin.site.register(model, NoteAdmin)

@@ -1378,9 +1378,6 @@ class TestReferralPatientDetailIntegration(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-        with open('tmp.html', 'w') as f:
-            f.write(response.content)
-
         expected_status = "Action items 1, 0, 0 days past due"
         self.assertContains(response, expected_status)
 

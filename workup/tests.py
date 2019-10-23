@@ -104,9 +104,6 @@ class TestClinDateViews(TestCase):
             reverse('new-clindate', args=(pt.id,)),
             {'clinic_type': models.ClinicType.objects.first().pk})
 
-        with open('tmp.html', 'w') as f:
-            f.write(r.content)
-
         self.assertRedirects(r, reverse('new-workup', args=(pt.id,)))
         self.assertEqual(models.ClinicDate.objects.count(), 1)
 
