@@ -517,9 +517,6 @@ class ActionItem(Note, CompletableMixin):
             return " ".join(["Added by", str(self.author), "on",
                              str(self.written_datetime.date())])
 
-<<<<<<< HEAD
-    def __str__(self):
-=======
     def mark_done_url(self):
         return reverse(self.MARK_DONE_URL_NAME, args=(self.id,))
 
@@ -527,7 +524,6 @@ class ActionItem(Note, CompletableMixin):
         return reverse('admin:pttrack_actionitem_change',
                        args=(self.id,))
 
-    def __unicode__(self):
->>>>>>> master
-        return " ".join(["AI for", str(self.patient)+":",
+    def __str__(self):
+        return " ".join(["AI for", str(self.patient) + ":",
                          str(self.instruction), "due on", str(self.due_date)])
