@@ -9,7 +9,7 @@ jobs:
       - run:
           name: Install Chrome
           command: |
-            apt-get install -y google-chrome-stable
+            sudo apt-get install -y google-chrome-stable
       - run:
           name: Download Selenium
           command: |
