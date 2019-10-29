@@ -2,14 +2,10 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6.8-jessie
+      - image: circleci/python:3.6.8-jessie-browsers
     steps:
       - checkout
       - run: mkdir test-reports
-      - run:
-          name: Install Chrome
-          command: |
-            sudo apt-get install -y google-chrome-stable
       - run:
           name: Download Selenium
           command: |
