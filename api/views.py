@@ -2,6 +2,7 @@ from functools import partial
 
 import django.utils.timezone
 from django.db.models.functions import Least
+from django.db.models import Q, Min, Count
 
 from rest_framework import generics
 
@@ -38,14 +39,31 @@ def active_ai_patients_filter(qs):
 
     pts_with_active_ais = coremodels.Patient.objects \
         .filter(actionitem__in=ai_qs) \
-        .distinct()
+        .distinct().annotate(soonest_due_date=Min('actionitem__due_date'))
+
+    for pt in list(pts_with_active_ais):
+        print(pt.last_name)
+        print(pt.soonest_due_date)
 
     pts_with_active_referrals = coremodels.Patient.objects \
         .filter(followuprequest__in=referral_qs) \
-        .distinct()
+        .distinct().annotate(soonest_due_date=Min('followuprequest__due_date'))
 
-    return pts_with_active_ais.union(pts_with_active_referrals)
-        # .order_by('-actionitem__due_date')
+    patient_dict = {p: p.soonest_due_date for p in pts_with_active_ais}
+
+    for p in pts_with_active_referrals:
+        if p not in patient_dict:
+            patient_dict[p] = p.soonest_due_date
+        else:
+            patient_dict[p] = min(patient_dict[p], p.soonest_due_date)
+
+    out_list = [t[0] for t in sorted(
+        [(p, soonest_due_date) for p, soonest_due_date
+         in patient_dict.iteritems()],
+        key=lambda x: x[1])
+    ]
+
+    return out_list
 
 
 def inactive_ai_patients_filter(qs):
@@ -58,23 +76,85 @@ def inactive_ai_patients_filter(qs):
             .filter(due_date__gt=django.utils.timezone.now().date())
             .filter(completion_date=None)
             .select_related('patient')
-        )
+        ).annotate(soonest_due_date=Min('actionitem__due_date'))
 
     future_referral_pts = coremodels.Patient.objects.filter(
         followuprequest__in=referrals.FollowupRequest.objects
             .filter(due_date__gt=django.utils.timezone.now().date())
             .filter(completion_date=None)
             .select_related('patient')
-        )
+        ).annotate(soonest_due_date=Min('followuprequest__due_date'))
 
-    output_pt_list = future_ai_pts.union(future_referral_pts)
+    print([p.soonest_due_date for p in future_ai_pts])
+    print([p.soonest_due_date for p in future_referral_pts])
+    patient_dict = {p: p.soonest_due_date for p in future_ai_pts}
 
-    # This code does not actually order the list properly
-    output_pt_list.annotate(
-        soonest_due_date=Least('actionitem__due_date', 'followuprequest__due_date')
-        ).order_by('-soonest_due_date')
+    for p in future_referral_pts:
+        if p not in patient_dict:
+            patient_dict[p] = p.soonest_due_date
+        else:
+            patient_dict[p] = min(patient_dict[p], p.soonest_due_date)
+
+    print(patient_dict)
+
+    out_list = [t[0] for t in sorted(
+        [(p, soonest_due_date) for p, soonest_due_date
+         in patient_dict.iteritems()],
+        key=lambda x: x[1])
+    ]
+
+    return out_list
+    # print(output_pt_list[0].last_name)
+    # print(output_pt_list[0].soonest_due_date)
+
+    # print(output_pt_list[1].last_name)
+    # print(output_pt_list[1].soonest_due_date)
+
+    # print(output_pt_list[2].last_name)
+    # print(output_pt_list[2].soonest_due_date)
+   
+    # for pt in output_pt_list:
+    #     if coremodels.ActionItem.objects.filter(patient = pt):
+    #         action_due_date = coremodels.ActionItem.objects.filter(patient = pt).due_date
+    #     if referral thing exist 
 
     return output_pt_list
+
+
+
+    # This code does not actually order the list properly
+    # q = future_ai_pts.annotate(soonest_date=Least('actionitem__due_date',
+    #                                               'actionitem__written_datetime'))
+    # print(q)
+    # return q
+
+    # print(output_pt_list)
+    # # output_pt_list.annotate(
+    # #     soonest_due_date=Min('actionitem__due_date', filter=Q(followuprequest__isnull=True))
+    # # )
+    # # print("first annotation")
+
+    # # output_pt_list.annotate(
+    # #     soonest_due_date=Min('followuprequest__due_date', filter=Q(actionitem__isnull=True))
+    # # )
+
+    # output_pt_list = output_pt_list.annotate(
+    #     soonest_due_date=Least('followuprequest__due_date', 'actionitem__due_date',
+    #                            filter=Q(actionitem__isnull=False) & Q(followuprequest__isnull=False))
+    # )
+
+    # output_pt_list = output_pt_list.order_by('soonest_due_date')
+    # print("second annotation")
+    # print(output_pt_list)
+    # print(output_pt_list.first().count_case_managers)
+
+    return output_pt_list
+    
+    # print(output_pt_list)
+
+    # output_pt_list = output_pt_list.order_by('soonest_due_date')
+
+    # return output_pt_list
 
 
 def unsigned_workup_patients_filter(qs):

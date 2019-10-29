@@ -6,6 +6,9 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 
 from pttrack import models
+from referral.models import Referral, FollowupRequest, PatientContact
+from followup.models import ContactResult
+from referral.forms import PatientContactForm
 from workup import models as workupModels
 from pttrack.test_views import build_provider, log_in_provider
 
@@ -258,3 +261,130 @@ class APITest(APITestCase):
 
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['id'], pt1.id)
+
+    def test_api_list_patients_with_active_action_item_and_referral(self):
+
+        # Test if the active patients filter adds a referral
+        data = {'filter': 'ai_active'}
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        previous_length = len(response.data)
+
+        pt5 = models.Patient.objects.create(
+            first_name="Artur",
+            last_name="Meller",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=models.Gender.objects.all()[0],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=models.ContactMethod.objects.all()[0],
+        )
+
+        # Create a followup request for a referral for this new patient
+        reftype = models.ReferralType.objects.create(
+            name="Specialty", is_fqhc=False)
+        refloc = models.ReferralLocation.objects.create(
+            name='COH', address='Euclid Ave.')
+        refloc.care_availiable.add(reftype)
+
+        referral = Referral.objects.create(
+            comments="Needs his back checked",
+            status=Referral.STATUS_PENDING,
+            kind=reftype,
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            patient=pt5
+        )
+        referral.location.add(refloc)
+
+        followup_request = FollowupRequest.objects.create(
+            referral=referral,
+            contact_instructions="Call him",
+            due_date=now().date()-datetime.timedelta(days=30),
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            patient=pt5
+        )
+
+        data = {'filter': 'ai_active'}
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_length = len(response.data)
+        self.assertEqual(new_length, previous_length + 1)
+
+        print("PRINT THIS:")
+        print(FollowupRequest.objects.filter(patient=response.data[0]['pk']).first().due_date)
+        print(response.data[1]['pk'])
+
+        self.assertLessEqual(FollowupRequest.objects.filter(patient=response.data[0]['pk']).first().due_date,
+            models.ActionItem.objects.filter(patient=response.data[1]['pk']).first().due_date)
+
+        self.assertLessEqual(models.ActionItem.objects.filter(patient=response.data[1]['pk']).first().due_date,
+            models.ActionItem.objects.filter(patient=response.data[2]['pk']).first().due_date)
+
+        # Complete followup request for referral
+        # Now complete followup request and see if page is properly updated
+        successful_res = ContactResult.objects.create(
+            name="Communicated health data with patient", patient_reached=True)
+
+        form_data = {
+            'contact_method': models.ContactMethod.objects.create(name="Carrier Pidgeon"),
+            'contact_status': successful_res,
+            'has_appointment': PatientContact.PTSHOW_YES,
+            'appointment_location': [refloc.pk],
+            'pt_showed': PatientContact.PTSHOW_YES,
+            PatientContactForm.SUCCESSFUL_REFERRAL: True
+        }
+
+        # Check that form is valid
+        form = PatientContactForm(data=form_data)
+        self.assertEqual(form.is_valid(), True)
+
+        # Verify that PatientContactForm has been submitted
+        url = reverse('new-patient-contact', args=(pt5.id,
+                                                   referral.id,
+                                                   followup_request.id))
+        response = self.client.post(url, form_data)
+        self.assertEqual(response.status_code, 302)
+
+        # Now that we have successfully submitted PatientContactForm, check
+        # that the number of active AIs/ referral followup requests is back to
+        # the previous number
+        data = {'filter': 'ai_active'}
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_length = len(response.data)
+        self.assertEqual(new_length, previous_length)
+
+        # Now create a followup request so it is the least urgent due item
+        # (due date is most recent)
+        followup_request2 = FollowupRequest.objects.create(
+            referral=referral,
+            contact_instructions="Call him",
+            due_date=now().date()-datetime.timedelta(days=0.5),
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            patient=pt5
+        )
+
+        data = {'filter': 'ai_active'}
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # Verify that the new patient is now last in the order
+        self.assertLessEqual(models.ActionItem.objects.filter(patient=response.data[0]['pk']).first().due_date,
+            models.ActionItem.objects.filter(patient=response.data[1]['pk']).first().due_date)
+        self.assertLessEqual(models.ActionItem.objects.filter(patient=response.data[1]['pk']).first().due_date,
+            FollowupRequest.objects.filter(patient=response.data[2]['pk'], completion_date__isnull=True).first().due_date)
+
+
+
+
+
+
