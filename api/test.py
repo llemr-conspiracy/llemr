@@ -126,7 +126,7 @@ class APITest(APITestCase):
             author=models.Provider.objects.all()[0],
             author_type=models.ProviderType.objects.all()[0],
             instruction=models.ActionInstruction.objects.all()[0],
-            due_date=now().date()+datetime.timedelta(days=1),
+            due_date=now().date()+datetime.timedelta(days=2),
             comments="",
             priority=True,
             patient=pt1)
@@ -262,6 +262,93 @@ class APITest(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['id'], pt1.id)
 
+    def test_api_list_patients_with_pending_action_item_and_referral(self):
+        # Test if pending action items filter can add a referral followup
+        data = {'filter': 'ai_inactive'}
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        previous_length = len(response.data)
+
+        # Now create a pending referral action item
+        pt5 = models.Patient.objects.create(
+            first_name="Artur",
+            last_name="Meller",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=models.Gender.objects.all()[0],
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 01, 01),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=models.ContactMethod.objects.all()[0],
+        )
+
+        # Create a followup request for a referral for this new patient
+        reftype = models.ReferralType.objects.create(
+            name="Specialty", is_fqhc=False)
+        refloc = models.ReferralLocation.objects.create(
+            name='COH', address='Euclid Ave.')
+        refloc.care_availiable.add(reftype)
+
+        referral = Referral.objects.create(
+            comments="Needs his back checked",
+            status=Referral.STATUS_PENDING,
+            kind=reftype,
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            patient=pt5
+        )
+        referral.location.add(refloc)
+
+        followup_request = FollowupRequest.objects.create(
+            referral=referral,
+            contact_instructions="Call him",
+            due_date=now().date()+datetime.timedelta(days=30),
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            patient=pt5
+        )
+
+        data = {'filter': 'ai_inactive'}
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_length = len(response.data)
+        # Verify that there is additional entry in the inactive action item filter
+        self.assertEqual(new_length, previous_length + 1)
+        previous_length = new_length
+
+        self.assertLessEqual(models.ActionItem.objects.filter(
+            patient=response.data[0]['pk']).first().due_date,
+            FollowupRequest.objects.filter(
+            patient=response.data[1]['pk']).first().due_date)
+
+        # Add one more AI whose due date is even farther away than the 
+        # referral followup request
+        pt5_ai = models.ActionItem.objects.create(
+            author=models.Provider.objects.all()[0],
+            author_type=models.ProviderType.objects.all()[0],
+            instruction=models.ActionInstruction.objects.all()[0],
+            due_date=now().date()+datetime.timedelta(days=1),
+            comments="",
+            patient=pt5)
+
+        data = {'filter': 'ai_inactive'}
+        response = self.client.get(reverse("pt_list_api"), data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_length = len(response.data)
+
+        # Since we have only created an action item for patient 5
+        # the numebr of total patients returned by the query should not change
+        self.assertEqual(new_length, previous_length)
+
+        # However, the order should now change with patient 5 first
+        self.assertEqual(int(response.data[0]['pk']), 5)
+        self.assertEqual(int(response.data[1]['pk']), 1)
+
+
     def test_api_list_patients_with_active_action_item_and_referral(self):
 
         # Test if the active patients filter adds a referral
@@ -317,10 +404,6 @@ class APITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         new_length = len(response.data)
         self.assertEqual(new_length, previous_length + 1)
-
-        print("PRINT THIS:")
-        print(FollowupRequest.objects.filter(patient=response.data[0]['pk']).first().due_date)
-        print(response.data[1]['pk'])
 
         self.assertLessEqual(FollowupRequest.objects.filter(patient=response.data[0]['pk']).first().due_date,
             models.ActionItem.objects.filter(patient=response.data[1]['pk']).first().due_date)
@@ -382,9 +465,3 @@ class APITest(APITestCase):
             models.ActionItem.objects.filter(patient=response.data[1]['pk']).first().due_date)
         self.assertLessEqual(models.ActionItem.objects.filter(patient=response.data[1]['pk']).first().due_date,
             FollowupRequest.objects.filter(patient=response.data[2]['pk'], completion_date__isnull=True).first().due_date)
-
-
-
-
-
-
