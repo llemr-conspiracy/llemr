@@ -21,7 +21,7 @@ If you're going to run our project in a virtual env do th following:
 
 ```bash
 pip install virtualenv
-virtualenv venv
+virtualenv venv --python=python2.7
 source venv/bin/activate
 ```
 
