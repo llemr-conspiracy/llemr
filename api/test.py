@@ -220,6 +220,11 @@ class APITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2) #pt2, pt3 should be present since pt 1 is not past due and pt4 has no ai
 
+        # Check if pt3 is higher in priority list than pt2
+        self.assertEqual(response.data[0]['id'], 3)
+        self.assertEqual(response.data[1]['id'], 2)
+
+
     def test_api_list_patients_with_inactive_action_item(self):
         # Test displaying patients with inactive action items
         data = {'filter': 'ai_inactive'}

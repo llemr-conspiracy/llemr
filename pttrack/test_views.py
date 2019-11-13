@@ -570,7 +570,7 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         }
 
         tab_patients = {
-            'activeai': [self.pt2, self.pt3],
+            'activeai': [self.pt3, self.pt2],
             'pendingai': [self.pt1],
             'unsignedwu': [self.pt2, self.pt3],
             'activept': [self.pt4, self.pt2, self.pt3, self.pt5],
@@ -1042,14 +1042,14 @@ class ActionItemTest(TestCase):
 
         self.assertEqual(
             ai.attribution(),
-            "Added by Jones, Tommy L. on %s" % now().today().date())
+            "Added by Jones, Tommy L. on %s" % now().date())
 
         ai.mark_done(self.coordinator)
         ai.save()
 
         self.assertEqual(
             ai.attribution(),
-            "Marked done by Jones, Tommy L. on %s" % now().today().date())
+            "Marked done by Jones, Tommy L. on %s" % now().date())
 
     def test_action_item_urls(self):
         pt = models.Patient.objects.first()
