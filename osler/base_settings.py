@@ -133,3 +133,6 @@ OSLER_DEFAULT_DASHBOARD = 'home'
 OSLER_PROVIDERTYPE_DASHBOARDS = {
     'Attending': 'dashboard-attending'
 }
+
+# List of IP addresses to exclude from audit
+OSLER_AUDIT_BLACK_LIST = []
