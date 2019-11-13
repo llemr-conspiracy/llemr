@@ -19,6 +19,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from . import models
 from .test import SeleniumLiveTestCase
 from workup import models as workupModels
+from followup.models import ContactResult
+from referral.models import Referral, FollowupRequest, PatientContact
+from referral.forms import PatientContactForm
 
 # pylint: disable=invalid-name
 # Whatever, whatever. I name them what I want.
@@ -56,7 +59,7 @@ def build_provider(roles=None, username=None, password='password', email=None):
                  for role in roles]
 
     if username is None:
-        username = 'user'+str(User.objects.all().count())
+        username = 'user' + str(User.objects.all().count())
 
     if email is None:
         email = 'tommyljones@gmail.com'
@@ -132,15 +135,15 @@ class SendEmailTest(TestCase):
         yesterday = now().date() - datetime.timedelta(days=1)
 
         ai_prototype = {
-        'instruction':ai_inst,
-        'comments':"",
-        'author_type':models.ProviderType.objects.first(),
-        'patient':pt
+            'instruction': ai_inst,
+            'comments': "",
+            'author_type': models.ProviderType.objects.first(),
+            'patient': pt
         }
 
         #action item due today
         ai_today = models.ActionItem.objects.create(
-            due_date=datetime.datetime.today(),
+            due_date=now().today(),
             author=models.Provider.objects.first(),
             **ai_prototype
             )
@@ -205,7 +208,8 @@ class LiveTesting(SeleniumLiveTestCase):
         self.assertEquals(self.selenium.current_url,
                           '%s%s%s' % (self.live_server_url,
                                       reverse('choose-clintype'),
-                                      '?next='+reverse('home')))
+                                      '?next=' +
+                                      reverse('dashboard-dispatch')))
 
         self.selenium.find_element_by_xpath(
             '//input[@value="Coordinator"]').click()
@@ -233,7 +237,67 @@ class LiveTesting(SeleniumLiveTestCase):
         # now we should be redirected directly to home.
         self.assertEquals(self.selenium.current_url,
                           '%s%s' % (self.live_server_url,
-                                    reverse('home')))
+                                    reverse('dashboard-attending')))
+
+    def test_pttrack_patient_detail_collapseable(self):
+        """Ensure that collapsable AI lists open and close with AIs inside
+        """
+
+        build_provider(username='timmy', password='password',
+                       roles=["Attending"])
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))
+        self.submit_login('timmy', 'password')
+
+        ai_prototype = {
+            'instruction': models.ActionInstruction.objects.first(),
+            'comments': "",
+            'author_type': models.ProviderType.objects.first(),
+            'patient': models.Patient.objects.first()
+        }
+
+        models.ActionItem.objects.create(
+            due_date=now().today(),
+            author=models.Provider.objects.first(),
+            **ai_prototype
+        )
+
+        yesterday = now().date() - datetime.timedelta(days=1)
+        models.ActionItem.objects.create(
+            due_date=yesterday,
+            author=models.Provider.objects.first(),
+            **ai_prototype
+        )
+
+        self.selenium.get('%s%s' % (self.live_server_url,
+                                    reverse('patient-detail', args=(1,))))
+
+        WebDriverWait(self.selenium, 2).until(
+            EC.presence_of_element_located(
+                (By.ID, 'toggle-collapse5')))
+
+        self.assertFalse(self.selenium.find_element_by_id('collapse5')
+                                      .find_element_by_xpath('./ul/li')
+                                      .is_displayed())
+
+        self.assertEqual(
+            len(self.selenium.find_element_by_id('collapse5')
+                             .find_elements_by_xpath('./ul/li')),
+            2)
+
+        self.selenium.find_element_by_id('toggle-collapse5').click()
+
+        WebDriverWait(self.selenium, 2).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//div[@class="panel-collapse collapse in"]')))
+
+        self.assertEqual(
+            len(self.selenium.find_element_by_id('collapse5')
+                             .find_elements_by_xpath('./ul/li')),
+            2)
+
+        self.assertTrue(self.selenium.find_element_by_id('collapse5')
+                                     .find_element_by_xpath('./ul/li')
+                                     .is_displayed())
 
     def test_pttrack_view_rendering(self):
         '''
@@ -303,10 +367,10 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
             password=self.provider_password,
             roles=["Preclinical"])
         self.providers = {
-            'attending' : attending,
-            'coordinator' : coordinator,
-            'clinical' : clinical,
-            'preclinical' : preclinical
+            'attending': attending,
+            'coordinator': coordinator,
+            'clinical': clinical,
+            'preclinical': preclinical
         }
 
         workupModels.ClinicType.objects.create(name="Basic Care Clinic")
@@ -319,16 +383,13 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
 
         tomorrow_clindate = workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=tomorrow,
-            gcal_id="tmp")
+            clinic_date=tomorrow)
         yesterday_clindate = workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=yesterday,
-            gcal_id="tmp")
+            clinic_date=yesterday)
         last_week_clindate = workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=earlier_this_week,
-            gcal_id="tmp")
+            clinic_date=earlier_this_week)
         # log_in_provider(self.client, build_provider(["Attending"]))
 
         pt1 = models.Patient.objects.get(pk=1)
@@ -344,7 +405,7 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
             'state': 'BA',
             'zip_code': '63108',
             'pcp_preferred_zip': '63018',
-            'date_of_birth': datetime.date(1990, 01, 01),
+            'date_of_birth': datetime.date(1990, 1, 1),
             'patient_comfortable_with_english': False,
             'preferred_contact_method': models.ContactMethod.objects.first(),
         }
@@ -692,7 +753,7 @@ class ViewsExistTest(TestCase):
             title="who done it?",
             comments="Pictured: silliness",
             document_type=dtype,
-            image=File(open(self.test_img)),
+            image=File(file=open(self.test_img, 'rb')),
             patient=models.Patient.objects.get(id=1),
             author=models.Provider.objects.get(id=1),
             author_type=models.ProviderType.objects.first())
@@ -704,10 +765,9 @@ class ViewsExistTest(TestCase):
         self.assertEqual(doc.image.path, p)
         self.assertTrue(os.path.isfile(p))
 
-        # Checking to make sure the path is 48 characters (the length of the random password
-
+        # Checking to make sure the path is 48 characters (the length of
+        # the random password
         self.assertEqual(len(random_name), 48)
-
 
         url = reverse('document-detail', args=(1,))
         response = self.client.get(url)
@@ -716,10 +776,10 @@ class ViewsExistTest(TestCase):
         # test the creation of many documents, just in case.
         for i in range(101):
             doc = models.Document.objects.create(
-                title="who done it? "+str(i),
+                title="who done it? %s" % i,
                 comments="Pictured: silliness",
                 document_type=dtype,
-                image=File(open(self.test_img)),
+                image=File(open(self.test_img, 'rb')),
                 patient=models.Patient.objects.get(id=1),
                 author=models.Provider.objects.get(id=1),
                 author_type=models.ProviderType.objects.first())
@@ -731,7 +791,8 @@ class ViewsExistTest(TestCase):
             self.assertEqual(doc.image.path, p)
             self.assertTrue(os.path.isfile(p))
 
-            # Checking to make sure the path is 48 characters (the length of the random password
+            # Checking to make sure the path is 48 characters (the length
+            # of the random password
 
             self.assertEqual(len(random_name), 48)
 
@@ -745,6 +806,24 @@ class ViewsExistTest(TestCase):
 
             os.remove(p)
             self.assertFalse(os.path.isfile(p))
+
+    def test_inject_choose_clintype_malicious_next(self):
+
+        # First, check that we successfully redirect to all patients.
+        url = reverse('choose-clintype') + "?next=" + reverse('all-patients')
+
+        form_data = {'radio-roles': models.ProviderType.objects.first().pk}
+        response = self.client.post(url, form_data)
+
+        self.assertRedirects(response, reverse('all-patients'))
+
+        # Then, verfy that we will NOT redirect to google.com
+        url = reverse('choose-clintype') + "?next=http://www.google.com/"
+
+        form_data = {'radio-roles': models.ProviderType.objects.first().pk}
+        response = self.client.post(url, form_data)
+
+        self.assertRedirects(response, reverse('home'))
 
 
 class ProviderCreateTest(TestCase):
@@ -763,7 +842,8 @@ class ProviderCreateTest(TestCase):
         models.Provider.objects.all().delete()
         response = self.client.get(final_url)
         final_response_url = response.url
-        self.assertRedirects(response, reverse('new-provider')+'?next='+final_url)
+        self.assertRedirects(
+            response, reverse('new-provider') + '?next=' + final_url)
 
         n_provider = len(models.Provider.objects.all())
 
@@ -860,12 +940,54 @@ class IntakeTest(TestCase):
             'country': 'Germany',
             'zip_code': '63108',
             'pcp_preferred_zip': '63018',
-            'date_of_birth': datetime.date(1990, 01, 01),
+            'date_of_birth': datetime.date(1990, 1, 1),
             'patient_comfortable_with_english': False,
             'ethnicities': [models.Ethnicity.objects.first()],
             'preferred_contact_method':
                 models.ContactMethod.objects.first().pk
         }
+
+    def preintake_patient_with_collision(self):
+
+        self.valid_pt_dict['gender'] = models.Gender.objects.first()
+        del self.valid_pt_dict['preferred_contact_method']
+        del self.valid_pt_dict['languages']
+        del self.valid_pt_dict['ethnicities']
+
+        pt = models.Patient.objects.create(**self.valid_pt_dict)
+
+        url = reverse('preintake')
+        response = self.client.post(
+            url,
+            {k: self.valid_pt_dict[k] for k
+             in ['first_name', 'last_name']},
+            follow=True)
+
+        self.assertTemplateUsed(response, 'pttrack/preintake-select.html')
+
+        print(dir(response))
+        print(response.context_data)
+
+        self.assertIn(pt, response.context_data['object_list'])
+
+    def preintake_patient_no_collision(self):
+
+        url = reverse('preintake')
+        response = self.client.post(
+            url,
+            {k: self.valid_pt_dict[k] for k
+             in ['first_name', 'last_name']},
+            follow=True)
+
+        self.assertTemplateUsed(response, 'pttrack/intake.html')
+
+        self.assertEquals(
+            response.context_data['form']['first_name'].value(),
+            self.valid_pt_dict['first_name'])
+
+        self.assertEquals(
+            response.context_data['form']['last_name'].value(),
+            self.valid_pt_dict['last_name'])
 
     def test_can_intake_pt(self):
 
@@ -887,8 +1009,9 @@ class IntakeTest(TestCase):
                 self.assertEquals(str(submitted_pt[param]),
                                   str(getattr(new_pt, param)))
             except AssertionError:
-                self.assertEquals(str(submitted_pt[param]),
-                                  str(getattr(new_pt, param).all()))
+                for x, y in zip(submitted_pt[param],
+                                getattr(new_pt, param).all()):
+                    self.assertEquals(x, y)
 
         # new patients should be marked as active by default
         self.assertTrue(new_pt.needs_workup)
@@ -898,7 +1021,31 @@ class ActionItemTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        log_in_provider(self.client, build_provider(["Coordinator"]))
+        self.coordinator = build_provider(["Coordinator"])
+        log_in_provider(self.client, self.coordinator)
+
+    def test_action_item_completeable_functions(self):
+
+        ai_inst = models.ActionInstruction.objects.create(
+            instruction="Follow up on labs")
+        ai = models.ActionItem.objects.create(
+            instruction=ai_inst,
+            due_date=now().today(),
+            comments="",
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            patient=models.Patient.objects.first())
+
+        self.assertEqual(
+            ai.attribution(),
+            "Added by Jones, Tommy L. on %s" % now().date())
+
+        ai.mark_done(self.coordinator)
+        ai.save()
+
+        self.assertEqual(
+            ai.attribution(),
+            "Marked done by Jones, Tommy L. on %s" % now().date())
 
     def test_action_item_urls(self):
         pt = models.Patient.objects.first()
@@ -907,11 +1054,16 @@ class ActionItemTest(TestCase):
             instruction="Follow up on labs")
         ai = models.ActionItem.objects.create(
             instruction=ai_inst,
-            due_date=datetime.datetime.today(),
+            due_date=now().today(),
             comments="",
             author=models.Provider.objects.first(),
             author_type=models.ProviderType.objects.first(),
             patient=pt)
+
+        response = self.client.get(reverse('patient-detail', args=(pt.id,)))
+        self.assertTemplateUsed(response, 'pttrack/patient_detail.html')
+        self.assertContains(
+            response, reverse('done-action-item', args=(ai.id,)))
 
         # new action items should not be done
         self.assertFalse(ai.done())
@@ -958,7 +1110,7 @@ class ActionItemTest(TestCase):
             "instruction": models.ActionInstruction.objects.first().pk,
             "due_date": str(datetime.date.today() + datetime.timedelta(10)),
             "comments": "models.CharField(max_length=300)" # arbitrary string
-            }
+        }
 
         url = reverse('new-action-item', kwargs={'pt_id': 1})
         response = self.client.post(url, submitted_ai)
@@ -977,6 +1129,7 @@ class ActionItemTest(TestCase):
                               str(getattr(new_ai, param)))
 
         note_check(self, new_ai, self.client, 1)
+
 
 class ProviderUpdateTest(TestCase):
     fixtures = [BASIC_FIXTURE]
@@ -1040,3 +1193,206 @@ class ProviderUpdateTest(TestCase):
         # Verify that accessing final url no longer redirects
         response = self.client.get(final_url)
         self.assertEqual(response.status_code, 200)
+
+
+class TestReferralPatientDetailIntegration(TestCase):
+    """ Tests integration of Action Items and Referral Followups in patient-detail."""
+    fixtures = [BASIC_FIXTURE]
+
+    def setUp(self):
+        log_in_provider(self.client, build_provider())
+
+        self.contact_method = models.ContactMethod.objects.create(
+            name="Carrier Pidgeon")
+
+        self.pt = models.Patient.objects.create(
+            first_name="Juggie",
+            last_name="Brodeltein",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=models.Gender.objects.first(),
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 1, 1),
+            patient_comfortable_with_english=False,
+            preferred_contact_method=self.contact_method,
+        )
+
+        self.pt.case_managers.add(models.Provider.objects.first())
+
+        ai_inst = models.ActionInstruction.objects.create(
+            instruction="Follow up on labs")
+
+        self.tomorrow = now().date() + datetime.timedelta(days=1)
+        self.yesterday = now().date() - datetime.timedelta(days=1)
+
+        ai_prototype = {
+            'instruction': ai_inst,
+            'comments': "",
+            'author_type': models.ProviderType.objects.first(),
+            'patient': self.pt
+        }
+
+        # Action item due today
+        ai_today = models.ActionItem.objects.create(
+            due_date=now().date(),
+            author=models.Provider.objects.first(),
+            **ai_prototype
+        )
+
+        # Action item due yesterday
+        ai_yesterday = models.ActionItem.objects.create(
+            due_date=self.yesterday,
+            author=models.Provider.objects.first(),
+            **ai_prototype
+        )
+
+        # Action item due tomorrow
+        ai_tomorrow = models.ActionItem.objects.create(
+            due_date=self.tomorrow,
+            author=models.Provider.objects.first(),
+            **ai_prototype
+        )
+
+        # Complete action item from yesterday
+        ai_complete = models.ActionItem.objects.create(
+            due_date=self.yesterday,
+            author=models.Provider.objects.first(),
+            completion_date=now(),
+            completion_author=models.Provider.objects.first(),
+            **ai_prototype
+        )
+
+        self.reftype = models.ReferralType.objects.create(
+            name="Specialty", is_fqhc=False)
+        self.refloc = models.ReferralLocation.objects.create(
+            name='COH', address='Euclid Ave.')
+        self.refloc.care_availiable.add(self.reftype)
+
+    def test_patient_detail(self):
+        """ Creates several action items and referral followups to check if view
+            is properly supplying Status, FQHC Referral Status, Referrals,
+            Action Item totals, and Followup totals."""
+
+        # Create follow up request due yesterday
+        referral1 = Referral.objects.create(
+            comments="Needs his back checked",
+            status=Referral.STATUS_PENDING,
+            kind=self.reftype,
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            patient=self.pt
+        )
+        referral1.location.add(self.refloc)
+
+        followup_request1 = FollowupRequest.objects.create(
+            referral=referral1,
+            contact_instructions="Call him",
+            due_date=self.yesterday,
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            patient=self.pt
+        )
+
+        # Create a second referral followup request due today
+        fqhc_reftype = models.ReferralType.objects.create(
+            name="FQHC", is_fqhc=True)
+        fhc = models.ReferralLocation.objects.create(
+            name="Family Health Center", address="Manchester Ave.")
+        fhc.care_availiable.add(fqhc_reftype)
+
+        referral2 = Referral.objects.create(
+            comments="Connecting patient to FQHC",
+            status=Referral.STATUS_PENDING,
+            kind=fqhc_reftype,
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            patient=self.pt
+        )
+        referral2.location.add(fhc)
+
+        followup_request2 = FollowupRequest.objects.create(
+            referral=referral2,
+            contact_instructions="Call him",
+            due_date=now().date(),
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            patient=self.pt
+        )
+
+        # Check that patient detail properly renders
+        url = reverse('patient-detail', args=(self.pt.id,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        # Check patient status -- there is one action item and followup
+        # request 1 day past due and one action item and followup
+        # request due today
+        expected_status = "Action items 1, 0, 0, 1 days past due"
+        self.assertContains(response, expected_status)
+
+        expected_fqhc_status = Referral.STATUS_PENDING
+        self.assertContains(response, expected_fqhc_status)
+
+        # Check that referral list contains description of both referrals
+        self.assertContains(response, referral1)
+        self.assertContains(response, referral2)
+
+        # Verify that the correct amount of action items are present
+        total_action_items = "Action Items (6 Total)"
+        self.assertContains(response, total_action_items)
+        # Sanity check
+        incorrect_total_action_items = "Action Items (5 Total)"
+        self.assertNotContains(response, incorrect_total_action_items)
+
+        # Now complete followup request and see if page is properly updated
+        successful_res = ContactResult.objects.create(
+            name="Communicated health data with patient", patient_reached=True)
+
+        # Complete followup request for first referral
+        form_data = {
+            'contact_method': self.contact_method,
+            'contact_status': successful_res,
+            'has_appointment': PatientContact.PTSHOW_YES,
+            'appointment_location': [self.refloc.pk],
+            'pt_showed': PatientContact.PTSHOW_YES,
+            PatientContactForm.SUCCESSFUL_REFERRAL: True
+        }
+
+        # Check that form is valid
+        form = PatientContactForm(data=form_data)
+        self.assertEqual(form.is_valid(), True)
+
+        # Verify that PatientContactForm has been submitted
+        url = reverse('new-patient-contact', args=(self.pt.id,
+                                                   referral1.id,
+                                                   followup_request1.id))
+        response = self.client.post(url, form_data)
+        self.assertEqual(response.status_code, 302)
+
+        # Finally check if the new patient detail page is updated
+        url = reverse('patient-detail', args=(self.pt.id,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        expected_status = "Action items 1, 0, 0 days past due"
+        self.assertContains(response, expected_status)
+
+        # Verify that the correct amount of action items are present
+        total_action_items = "Action Items (6 Total)"
+        self.assertContains(response, total_action_items)
+
+        # Verify that the followup total has been updated
+        expected_followups = "Followups (1)"
+        self.assertContains(response, expected_followups)
+
+        # There should now be 2 completed action items
+        finished_action_items = "Completed Action Items (2)"
+        self.assertContains(response, finished_action_items)
+
+        # Verify that the template contains expected PatientContact description
+        self.assertContains(response,
+                            PatientContact.objects.first().short_text())

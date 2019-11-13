@@ -6,7 +6,9 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'demographics', '0001_initial'), (b'demographics', '0002_auto_20160328_1425'), (b'demographics', '0003_auto_20170623_1048')]
+    replaces = [('demographics', '0001_initial'),
+                ('demographics', '0002_auto_20160328_1425'),
+                ('demographics', '0003_auto_20170623_1048')]
 
     dependencies = [
         ('pttrack', '0001_squashed_0010_auto_20170623_1300'),
@@ -70,7 +72,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='demographics',
             name='chronic_condition',
-            field=models.ManyToManyField(to=b'demographics.ChronicCondition', blank=True),
+            field=models.ManyToManyField(to='demographics.ChronicCondition', blank=True),
         ),
         migrations.AddField(
             model_name='demographics',
@@ -85,7 +87,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='demographics',
             name='resource_access',
-            field=models.ManyToManyField(to=b'demographics.ResourceAccess', verbose_name=b'Access to Resources', blank=True),
+            field=models.ManyToManyField(to='demographics.ResourceAccess', verbose_name=b'Access to Resources', blank=True),
         ),
         migrations.AddField(
             model_name='demographics',

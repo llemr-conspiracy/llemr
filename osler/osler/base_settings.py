@@ -26,16 +26,19 @@ INSTALLED_APPS = (
     'followup',
     'workup',
     'demographics',
+    'dashboard',
     'appointment',
+    'referral',
     'api',
     'crispy_forms',
     'bootstrap3',
     'bootstrap3_datetime',
     'simple_history',
-    'rest_framework'
+    'rest_framework',
+    'audit',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -45,6 +48,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
+    'audit.middleware.AuditMiddleware'
 )
 
 ROOT_URLCONF = 'osler.urls'
@@ -81,6 +85,15 @@ USE_L10N = True
 
 USE_TZ = True
 
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'bg-danger',
+    messages.WARNING: 'bg-warning',
+    messages.INFO: 'bg-info',
+    messages.SUCCESS: 'bg-success',
+    messages.DEBUG: 'bg-primary',
+}
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
@@ -90,9 +103,31 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 # for crispy_forms
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
+INTERNAL_IPS = ('127.0.0.1',)  # used for debug toolbar
+
+
 # Medical Settings
 OSLER_MAX_SYSTOLIC = 400
 OSLER_MIN_DIASTOLIC = 40
 
+# Specifies which apps are displayed under action items on patient detail page
+OSLER_TODO_LIST_MANAGERS = [
+    ('pttrack', 'ActionItem'),
+    ('referral', 'FollowupRequest')]
+
 OSLER_MAX_APPOINTMENTS = 5
 OSLER_DEFAULT_APPOINTMENT_HOUR = 9
+
+OSLER_WORKUP_COPY_FORWARD_FIELDS = ['PMH_PSH', 'fam_hx', 'soc_hx', 'meds',
+                                    'allergies']
+OSLER_WORKUP_COPY_FORWARD_MESSAGE = (u"Migrated from previous workup on {date}"
+                                     u". Please delete this heading and modify"
+                                     u" the following:\n\n{contents}")
+
+# Dashboard settings
+OSLER_CLINIC_DAYS_PER_PAGE = 20
+
+OSLER_DEFAULT_DASHBOARD = 'home'
+OSLER_PROVIDERTYPE_DASHBOARDS = {
+    'Attending': 'dashboard-attending'
+}

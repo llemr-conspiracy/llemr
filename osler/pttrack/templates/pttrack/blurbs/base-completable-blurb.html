@@ -1,0 +1,26 @@
+<li class="list-group-item">
+	{% if not action_item.done %}
+		<p>
+		  <a href="{{ clear_url }}"/>
+		    <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
+		  </a>
+		  <strong>
+		    <a href="{{ clear_url }}">{{ action_item.short_name }}:</a>
+		  </strong>
+		  {{ action_item.summary }}
+		</p>
+	{% else %}  {# ai complete #}
+		<p><span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+			<strong>{{ action_item.short_name }}:</strong> {{ action_item.summary }}
+		</p>
+	{% endif %}
+
+	{% if action_item.priority %}
+		<h4 class="text-left" style="color:red"><b>PRIORITY</b></h4>
+	{% endif %}
+
+	<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
+	{% if request.session.staff_view %}
+		<p class="text-right"><a href="{{ admin_url }}" target="_blank"><i>edit on admin panel</i></a></p>
+	{% endif %}
+</li>

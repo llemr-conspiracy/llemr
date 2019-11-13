@@ -1,6 +1,6 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
-from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.chrome import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -13,7 +13,12 @@ class SeleniumLiveTestCase(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super(SeleniumLiveTestCase, cls).setUpClass()
-        cls.selenium = WebDriver()
+
+        opt = webdriver.ChromeOptions()
+        opt.add_experimental_option('w3c', False)
+        cls.selenium = webdriver.Chrome(chrome_options=opt)
+
+        # cls.selenium = WebDriver()
         cls.selenium.implicitly_wait(cls.DEFAULT_WAIT_TIME)
         cls.selenium.set_page_load_timeout(cls.DEFAULT_WAIT_TIME)
 

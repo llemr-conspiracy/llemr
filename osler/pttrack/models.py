@@ -1,12 +1,16 @@
 '''The datamodels for the Osler core'''
+from itertools import chain
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.timezone import now
+from django.utils.text import slugify
 import os
 from django.core.urlresolvers import reverse
 
 from simple_history.models import HistoricalRecords
+
 from . import validators
 
 # pylint: disable=I0011,missing-docstring,E1305
@@ -18,19 +22,18 @@ def make_filepath(instance, filename):
         automatically referred to any libraries we include (i.e. Bootstrap,
         AngularJS).
 
-        The produced path is of the form:
-        "[model name]/[field name]/[random name].[filename extension]".
-
         Copypasta from https://djangosnippets.org/snippets/2819/
+
+    The produced path is of the form:
+    "[model name]/[field name]/[random name].[filename extension]".
+
+    Copypasta from https://djangosnippets.org/snippets/2819/
     """
 
-    field_name = 'image'
     carry_on = True
     while carry_on:
         new_filename = "%s.%s" % (User.objects.make_random_password(48),
                                   filename.split('.')[-1])
-        #path = '/'.join([instance.__class__.__name__.lower(),field_name, new_filename])
-
         path = new_filename
 
         # if the file already exists, try again to generate a new filename
@@ -45,34 +48,42 @@ class ContactMethod(models.Model):
 
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class ReferralType(models.Model):
-    '''Simple text-contiaining class for storing the different kinds of
-    clinics a patient can be referred to (e.g. PCP, ortho, etc.)'''
+    """The different kind of care availiable at a referral center."""
 
     name = models.CharField(max_length=100, primary_key=True)
+    is_fqhc = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
+
+    def slugify(self):
+        return slugify(self.name)
 
 
 class ReferralLocation(models.Model):
-    '''Data model for a referral Location'''
+    """Location that we can refer to."""
 
     name = models.CharField(max_length=300)
     address = models.TextField()
+    care_availiable = models.ManyToManyField(ReferralType)
 
-    def __unicode__(self):
-        return self.name
+    def __str__(self):
+        if self.address:
+            return self.name + " (" + self.address.splitlines()[0] + ")"
+        else:
+            return self.name
 
 
 class Language(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -82,14 +93,15 @@ class Ethnicity(models.Model):
 
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class ActionInstruction(models.Model):
     instruction = models.CharField(max_length=50, primary_key=True)
+    active = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.instruction
 
 
@@ -99,7 +111,7 @@ class ProviderType(models.Model):
     signs_charts = models.BooleanField(default=False)
     staff_view = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.short_name
 
 
@@ -108,14 +120,15 @@ class Gender(models.Model):
         max_length=30, primary_key=True, )
     short_name = models.CharField(max_length=1)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.long_name
 
 class Outcome(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
+
 
 class Person(models.Model):
 
@@ -145,7 +158,7 @@ class Person(models.Model):
             middle = ""
 
         if reverse:
-            return " ".join([self.last_name+",",
+            return " ".join([self.last_name + ",",
                              self.first_name,
                              middle])
         else:
@@ -169,7 +182,7 @@ class Provider(Person):
     def username(self):
         return self.associated_user.username
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name()
 
 
@@ -190,13 +203,13 @@ class Patient(Person):
     country = models.CharField(max_length=100,
                                default="USA")
 
-
     pcp_preferred_zip = models.CharField(max_length=5,
                                          validators=[validators.validate_zip],
                                          blank=True,
                                          null=True)
 
-    date_of_birth = models.DateField(help_text='MM/DD/YYYY',
+    date_of_birth = models.DateField(
+        help_text='MM/DD/YYYY',
         validators=[validators.validate_birth_date])
 
     patient_comfortable_with_english = models.BooleanField(default=True)
@@ -233,9 +246,9 @@ class Patient(Person):
     history = HistoricalRecords()
 
     def age(self):
-        return (now().date()-self.date_of_birth).days//365
+        return (now().date() - self.date_of_birth).days // 365
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name()
 
     def active_action_items(self):
@@ -246,7 +259,7 @@ class Patient(Person):
             ActionItem.objects.filter(patient=self.pk)\
                 .filter(completion_author=None)\
                 .filter(due_date__lte=now().date()),
-            key=lambda(ai): ai.due_date)
+            key=lambda ai: ai.due_date)
 
     def done_action_items(self):
         '''return the set of action items that are done, sorted
@@ -255,7 +268,7 @@ class Patient(Person):
         return sorted(
             ActionItem.objects.filter(patient=self.pk)\
                 .exclude(completion_author=None),
-            key=lambda(ai): ai.completion_date)
+            key=lambda ai: ai.completion_date)
 
     def inactive_action_items(self):
         '''return a list of action items that aren't done, but aren't
@@ -265,7 +278,7 @@ class Patient(Person):
             ActionItem.objects.filter(patient=self.pk)\
                 .filter(completion_author=None)\
                 .filter(due_date__gt=now().date()),
-            key=lambda(ai): ai.due_date)
+            key=lambda ai: ai.due_date)
 
     def status(self):
         # The active_action_items, done_action_items, and inactive_action_items
@@ -275,7 +288,11 @@ class Patient(Person):
         # Here, we only hit the db once by asking the db for all action items
         # for a patient, then sorting them in memory.
 
+        # Combine action items with referral followup requests for status
         patient_action_items = self.actionitem_set.all()
+        referral_followup_requests = self.followuprequest_set.all()
+        patient_action_items = list(chain(patient_action_items,
+                                          referral_followup_requests))
 
         done = [ai for ai in patient_action_items if ai.completion_author is not None]
         overdue = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date <= now().date()]
@@ -322,7 +339,7 @@ class Patient(Person):
         note_list.extend(self.followup_set())
         note_list.extend(self.document_set.all())
 
-        return sorted(note_list, key=lambda(k): k.written_datetime)
+        return sorted(note_list, key=lambda k: k.written_datetime)
 
     def all_phones(self):
         '''Returns a list of tuples of the form (phone, owner) of all the
@@ -362,8 +379,9 @@ def require_providers_update():
 
 
 class Note(models.Model):
-    class Meta:  # pylint: disable=W0232,R0903,C1001
+    class Meta:
         abstract = True
+        ordering = ["-written_datetime", "-last_modified"]
 
     author = models.ForeignKey(Provider)
     author_type = models.ForeignKey(ProviderType)
@@ -376,7 +394,7 @@ class Note(models.Model):
 class DocumentType(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -395,18 +413,54 @@ class Document(Note):
         return self.title
 
 
-class ActionItem(Note):
-    instruction = models.ForeignKey(ActionInstruction)
-    due_date = models.DateField(help_text="MM/DD/YYYY or YYYY-MM-DD")
-    priority = models.BooleanField(default=False, help_text='Check this box if this action item is high priority')
-    comments = models.TextField()
+class CompletableManager(models.Manager):
+    """ Class that handles queryset filers for Completable classes."""
+
+    def get_active(self, patient):
+        """ Returns all active elements of Completable class."""
+        return self.get_queryset()\
+            .filter(patient=patient)\
+            .filter(completion_author=None)\
+            .filter(due_date__lte=now().date())\
+            .order_by('completion_date')
+
+    def get_inactive(self, patient):
+        """ Returns all inactive elements of Completable class."""
+        return self.get_queryset()\
+            .filter(patient=patient)\
+            .filter(completion_author=None)\
+            .filter(due_date__gt=now().date())\
+            .order_by('completion_date')
+
+    def get_completed(self, patient):
+        """ Returns all completed elements of Completable class."""
+        return self.get_queryset()\
+            .filter(patient=patient)\
+            .exclude(completion_author=None)\
+            .order_by('completion_date')
+
+
+class CompletableMixin(models.Model):
+    """CompleteableMixin is for anything that goes in that list of
+    stuff on the Patient detail page. They can be marked as
+    complete.
+    """
+
+    class Meta:
+        abstract = True
+
+    objects = CompletableManager()
+
     completion_date = models.DateTimeField(blank=True, null=True)
     completion_author = models.ForeignKey(
         Provider,
         blank=True, null=True,
-        related_name="action_items_completed")
+        related_name="%(app_label)s_%(class)s_completed")
+    due_date = models.DateField(help_text="MM/DD/YYYY or YYYY-MM-DD")
 
-    history = HistoricalRecords()
+    def done(self):
+        """Return true if this ActionItem has been marked as done."""
+        return self.completion_date is not None
 
     def mark_done(self, provider):
         self.completion_date = now()
@@ -416,9 +470,46 @@ class ActionItem(Note):
         self.completion_author = None
         self.completion_date = None
 
-    def done(self):
-        '''Returns true if this ActionItem has been marked as done'''
-        return self.completion_date is not None
+    def short_name(self):
+        """A short (one or two word) description of the action type that
+        this completable represents.
+
+        For example, ReferralFollowup has "Referral".
+        """
+        raise NotImplementedError(
+            "All Completables must have an 'short_name' property that "
+            "is indicates what one has to do of completable this is ")
+
+    def summary(self):
+        """Text that should be displayed on the patient-detail view to
+        describe what must be done to mark this Completable as done.
+
+        For example, this is the comments for of ActionItem.
+        """
+        raise NotImplementedError(
+            "All Completables must have an 'summary' method that provides "
+            "a summary of the action that must be undertaken.")
+
+
+class ActionItem(Note, CompletableMixin):
+    instruction = models.ForeignKey(ActionInstruction)
+    priority = models.BooleanField(
+        default=False,
+        help_text='Check this box if this action item is high priority')
+    comments = models.TextField()
+
+    MARK_DONE_URL_NAME = 'done-action-item'
+
+    history = HistoricalRecords()
+
+    def short_name(self):
+        return str(self.instruction)
+
+    def summary(self):
+        return self.comments
+
+    def class_name(self):
+        return self.__class__.__name__
 
     def attribution(self):
         if self.done():
@@ -428,6 +519,13 @@ class ActionItem(Note):
             return " ".join(["Added by", str(self.author), "on",
                              str(self.written_datetime.date())])
 
-    def __unicode__(self):
-        return " ".join(["AI for", str(self.patient)+":",
-                         str(self.instruction), "on", str(self.due_date)])
+    def mark_done_url(self):
+        return reverse(self.MARK_DONE_URL_NAME, args=(self.id,))
+
+    def admin_url(self):
+        return reverse('admin:pttrack_actionitem_change',
+                       args=(self.id,))
+
+    def __str__(self):
+        return " ".join(["AI for", str(self.patient) + ":",
+                         str(self.instruction), "due on", str(self.due_date)])

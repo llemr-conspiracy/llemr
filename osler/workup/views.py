@@ -1,11 +1,13 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponseServerError, \
-    HttpResponse
+from django.http import (HttpResponseRedirect, HttpResponseServerError,
+                         HttpResponse)
+
 from django.core.urlresolvers import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template.loader import get_template
 from django.utils.timezone import now
 from django.views.generic.edit import FormView
-from django.views.generic.list import ListView
+from django.conf import settings
 
 from pttrack.views import NoteFormView, NoteUpdate, get_current_provider_type
 from pttrack.models import Patient, ProviderType
@@ -23,6 +25,17 @@ def get_clindates():
     clindates = models.ClinicDate.objects.filter(
         clinic_date=now().date())
     return clindates
+
+
+def new_note_dispatch(request, pt_id):
+
+    note_types = {
+        'Standard Note': reverse("new-workup", args=(pt_id,)),
+        'Clinical Psychology Note': reverse("new-progress-note", args=(pt_id,)),
+    }
+
+    return render(request, 'workup/new-note-dispatch.html',
+                  {'note_types': note_types})
 
 
 class WorkupCreate(NoteFormView):
@@ -59,17 +72,19 @@ class WorkupCreate(NoteFormView):
     def get_initial(self):
         initial = super(WorkupCreate, self).get_initial()
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+
+        # self.get() checks for >= 1 ClinicDay
+        initial['clinic_day'] = get_clindates().first()
+        initial['ros'] = "Default: reviewed and negative"
+
         wu_previous = pt.latest_workup()
         if wu_previous is not None:
             date_string = wu_previous.written_datetime.strftime("%B %d, %Y")
-            heading_text = "Migrated from previous workup on " + date_string + ". Please delete this heading and modify the following:\n\n"
-            initial['PMH_PSH'] = heading_text + wu_previous.PMH_PSH
-            initial['fam_hx'] = heading_text + wu_previous.fam_hx
-            initial['soc_hx'] = heading_text + wu_previous.soc_hx
-            initial['meds'] = heading_text + wu_previous.meds
-            initial['allergies'] = heading_text + wu_previous.allergies
+            for field in settings.OSLER_WORKUP_COPY_FORWARD_FIELDS:
+                initial[field] = settings.OSLER_WORKUP_COPY_FORWARD_MESSAGE.\
+                    format(date=date_string,
+                           contents=getattr(wu_previous, field))
 
-        initial['ros'] = "Default: reviewed and negative"
         return initial
 
     def form_valid(self, form):
@@ -82,7 +97,6 @@ class WorkupCreate(NoteFormView):
         wu.patient = pt
         wu.author = self.request.user.provider
         wu.author_type = get_current_provider_type(self.request)
-        wu.clinic_day = get_clindates()[0]
         if wu.author_type.signs_charts:
             wu.sign(self.request.user, active_provider_type)
 
@@ -90,7 +104,7 @@ class WorkupCreate(NoteFormView):
 
         form.save_m2m()
 
-        return HttpResponseRedirect(reverse("new-action-item", args=(pt.id,)))
+        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
 
 class WorkupUpdate(NoteUpdate):
@@ -122,7 +136,7 @@ class ProgressNoteUpdate(NoteUpdate):
     template_name = "pttrack/form-update.html"
     model = models.ProgressNote
     form_class = forms.ProgressNoteForm
-    note_type = 'Psych Progress Note'
+    note_type = 'Clinical Psychology Note'
 
     def get_success_url(self):
         pnote = self.object
@@ -132,17 +146,22 @@ class ProgressNoteUpdate(NoteUpdate):
 class ProgressNoteCreate(NoteFormView):
     template_name = 'pttrack/form_submission.html'
     form_class = forms.ProgressNoteForm
-    note_type = 'Psych Progress Note'
+    note_type = 'Clinical Psychology Note'
 
     def form_valid(self, form):
         pnote = form.save(commit=False)
-
+        active_provider_type = get_object_or_404(
+             ProviderType,
+             pk=self.request.session['clintype_pk'])
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         pnote.patient = pt
         pnote.author = self.request.user.provider
         pnote.author_type = get_current_provider_type(self.request)
-
+        if pnote.author_type.signs_charts:
+            pnote.sign(self.request.user, active_provider_type)
         pnote.save()
+
+        form.save_m2m()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
@@ -171,15 +190,31 @@ class ClinicDateCreate(FormView):
         return HttpResponseRedirect(reverse("new-workup", args=(pt.id,)))
 
 
-class ClinicDateList(ListView):
+def clinic_date_list(request):
 
-    model = models.ClinicDate
-    template_name = 'workup/clindate-list.html'
+    qs = models.ClinicDate.objects.prefetch_related(
+        'workup_set',
+        'clinic_type',
+        'workup_set__attending',
+        'workup_set__signer',
+    )
 
-    def get_queryset(self):
-        qs = super(ClinicDateList, self).get_queryset()
-        qs = qs.prefetch_related('workup_set', 'clinic_type')
-        return qs
+    paginator = Paginator(qs, per_page=10)
+    page = request.GET.get('page')
+
+    try:
+        clinic_days = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        clinic_days = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        clinic_days = paginator.page(paginator.num_pages)
+
+    return render(request, 'workup/clindate-list.html',
+                  {'object_list': clinic_days,
+                   'page_range': paginator.page_range})
+
 
 def sign_workup(request, pk):
 
@@ -197,6 +232,19 @@ def sign_workup(request, pk):
 
     return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
 
+def sign_progress_note(request, pk):
+    wu = get_object_or_404(models.ProgressNote, pk=pk)
+    active_provider_type = get_object_or_404(ProviderType,
+                                             pk=request.session['clintype_pk'])
+    try:
+        wu.sign(request.user, active_provider_type)
+        wu.save()
+    except ValueError:
+        # thrown exception can be ignored since we just redirect back to the
+        # workup detail view anyway
+        pass
+
+    return HttpResponseRedirect(reverse("progress-note-detail", args=(wu.id,)))
 
 def error_workup(request, pk):
 

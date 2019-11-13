@@ -21,11 +21,83 @@
 	"folders":
 	[
 		{
+			"path": ".circleci"
+		},
+		{
 			"file_exclude_patterns":
 			[
 				"__init__.py"
 			],
-			"path": "."
+			"path": "osler"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "api"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "appointment"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "audit"
+		},		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "dashboard"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "demographics"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "followup"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "pttrack"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "referral"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "scripts"
+		},
+		{
+			"file_exclude_patterns":
+			[
+				"__init__.py"
+			],
+			"path": "workup"
 		}
 	]
 }

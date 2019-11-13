@@ -18,17 +18,15 @@ class APITest(APITestCase):
     def setUp(self):
         workupModels.ClinicType.objects.create(name="Basic Care Clinic")
         workupModels.ClinicDate.objects.create(
-            clinic_type=workupModels.ClinicType.objects.all()[0],
-            clinic_date=now().date()+datetime.timedelta(days=1),
-            gcal_id="tmp")
+            clinic_type=workupModels.ClinicType.objects.first(),
+            clinic_date=now().date() + datetime.timedelta(days=1))
         workupModels.ClinicDate.objects.create(
-            clinic_type=workupModels.ClinicType.objects.all()[0],
-            clinic_date=now().date()-datetime.timedelta(days=1),
-            gcal_id="tmp")
+            clinic_type=workupModels.ClinicType.objects.first(),
+            clinic_date=now().date() - datetime.timedelta(days=1))
         workupModels.ClinicDate.objects.create(
-            clinic_type=workupModels.ClinicType.objects.all()[0],
-            clinic_date=now().date()-datetime.timedelta(days=5),
-            gcal_id="tmp")
+            clinic_type=workupModels.ClinicType.objects.first(),
+            clinic_date=now().date() - datetime.timedelta(days=5))
+
         log_in_provider(self.client, build_provider(["Attending"]))
 
         pt1 = models.Patient.objects.get(pk=1)
@@ -44,9 +42,9 @@ class APITest(APITestCase):
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 01, 01),
+            date_of_birth=datetime.date(1990, 1, 1),
             patient_comfortable_with_english=False,
-            preferred_contact_method=models.ContactMethod.objects.all()[0],
+            preferred_contact_method=models.ContactMethod.objects.first(),
         )
 
         pt3 = models.Patient.objects.create(
@@ -54,15 +52,15 @@ class APITest(APITestCase):
             last_name="Lkjh",
             middle_name="Bayer",
             phone='+49 178 236 5288',
-            gender=models.Gender.objects.all()[0],
+            gender=models.Gender.objects.first(),
             address='Schulstrasse 9',
             city='Munich',
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 01, 01),
+            date_of_birth=datetime.date(1990, 1, 1),
             patient_comfortable_with_english=False,
-            preferred_contact_method=models.ContactMethod.objects.all()[0],
+            preferred_contact_method=models.ContactMethod.objects.first(),
         )
 
         pt4 = models.Patient.objects.create(
@@ -70,26 +68,26 @@ class APITest(APITestCase):
             last_name="Action",
             middle_name="Item",
             phone='+12 345 678 9000',
-            gender=models.Gender.objects.all()[0],
+            gender=models.Gender.objects.first(),
             address='Schulstrasse 9',
             city='Munich',
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 01, 01),
+            date_of_birth=datetime.date(1990, 1, 1),
             patient_comfortable_with_english=False,
-            preferred_contact_method=models.ContactMethod.objects.all()[0],
+            preferred_contact_method=models.ContactMethod.objects.first(),
         )
 
         # Give pt2 a workup one day later.
         workupModels.Workup.objects.create(
-            clinic_day=workupModels.ClinicDate.objects.all()[0], # one day later
+            clinic_day=workupModels.ClinicDate.objects.first(), # one day later
             chief_complaint="SOB",
             diagnosis="MI",
             HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
             ros="", pe="", A_and_P="",
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
             patient=pt2)
 
         # Give pt3 a workup one day ago.
@@ -99,8 +97,8 @@ class APITest(APITestCase):
             diagnosis="MI",
             HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
             ros="", pe="", A_and_P="",
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
             patient=pt3)
 
 
@@ -111,8 +109,8 @@ class APITest(APITestCase):
             diagnosis="MI",
             HPI="", PMH_PSH="", meds="", allergies="", fam_hx="", soc_hx="",
             ros="", pe="", A_and_P="",
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
             patient=pt1,
             signer=models.Provider.objects.all().filter(
             clinical_roles=models.ProviderType.objects.all().filter(
@@ -120,9 +118,9 @@ class APITest(APITestCase):
 
         # make pt1 have and AI due tomorrow
         pt1_ai = models.ActionItem.objects.create(
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            instruction=models.ActionInstruction.objects.all()[0],
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            instruction=models.ActionInstruction.objects.first(),
             due_date=now().date()+datetime.timedelta(days=1),
             comments="",
             priority=True,
@@ -130,9 +128,9 @@ class APITest(APITestCase):
 
         # make pt2 have an AI due yesterday
         pt2_ai = models.ActionItem.objects.create(
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            instruction=models.ActionInstruction.objects.all()[0],
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            instruction=models.ActionInstruction.objects.first(),
             due_date=now().date()-datetime.timedelta(days=1),
             comments="",
             priority=True,
@@ -140,9 +138,9 @@ class APITest(APITestCase):
 
         # make pt3 have an AI that during the test will be marked done
         pt3_ai = models.ActionItem.objects.create(
-            author=models.Provider.objects.all()[0],
-            author_type=models.ProviderType.objects.all()[0],
-            instruction=models.ActionInstruction.objects.all()[0],
+            author=models.Provider.objects.first(),
+            author_type=models.ProviderType.objects.first(),
+            instruction=models.ActionInstruction.objects.first(),
             due_date=now().date()-datetime.timedelta(days=15),
             comments="",
             patient=pt3)
@@ -152,16 +150,19 @@ class APITest(APITestCase):
         url = reverse("pt_list_api") # Way to have this here and not repeat this line? Reverse is called in every test now
 
         # Test last_name ordering
-        data = {'sort':'last_name'}
+        data = {'sort': 'last_name'}
         response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertLessEqual(response.data[0]['last_name'],response.data[1]['last_name'])
-        self.assertLessEqual(response.data[1]['last_name'],response.data[2]['last_name'])
-        self.assertLessEqual(response.data[2]['last_name'],response.data[3]['last_name'])
+        self.assertLessEqual(response.data[0]['last_name'],
+                             response.data[1]['last_name'])
+        self.assertLessEqual(response.data[1]['last_name'],
+                             response.data[2]['last_name'])
+        self.assertLessEqual(response.data[2]['last_name'],
+                             response.data[3]['last_name'])
 
     def test_api_list_patients_by_latest_activity(self):
         # Test workup/intake ordering.
-        data = {'sort':'latest_workup'}
+        data = {'sort': 'latest_workup'}
         response = self.client.get(reverse("pt_list_api"), data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertNotEqual(response.data[0]['latest_workup'], None) # pt2, workup date now()+1day
@@ -170,9 +171,15 @@ class APITest(APITestCase):
         self.assertNotEqual(response.data[3]['latest_workup'], None) # pt1, workup date now()-5days
 
         # Check that dates are correcly sorted
-        self.assertGreaterEqual(response.data[0]['latest_workup']['clinic_day']['clinic_date'],response.data[1]['history']['last']['history_date'])
-        self.assertGreaterEqual(response.data[1]['history']['last']['history_date'],response.data[2]['latest_workup']['clinic_day']['clinic_date'])
-        self.assertGreaterEqual(response.data[2]['latest_workup']['clinic_day']['clinic_date'],response.data[3]['latest_workup']['clinic_day']['clinic_date'])
+        self.assertGreaterEqual(
+            response.data[0]['latest_workup']['clinic_day']['clinic_date'],
+            response.data[1]['history']['last']['history_date'])
+        self.assertGreaterEqual(
+            response.data[1]['history']['last']['history_date'],
+            response.data[2]['latest_workup']['clinic_day']['clinic_date'])
+        self.assertGreaterEqual(
+            response.data[2]['latest_workup']['clinic_day']['clinic_date'],
+            response.data[3]['latest_workup']['clinic_day']['clinic_date'])
 
     def test_api_list_patients_with_unsigned_workup(self):
         # Test for unsigned_workup
@@ -228,7 +235,7 @@ class APITest(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['id'], pt1.id)
 
-        pt3_ai.mark_done(models.Provider.objects.all()[0])
+        pt3_ai.mark_done(models.Provider.objects.first())
         pt3_ai.save()
 
         # Test now only has pt2

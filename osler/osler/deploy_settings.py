@@ -28,9 +28,6 @@ EMAIL_HOST = "irony.wusm.wustl.edu"
 ADMINS = (
     ('Artur Meller', 'ameller@wustl.edu'),
     ('Justin Porter', 'jrporter@wustl.edu'),
-    ('Nicolas Ledru', 'nicolas.ledru@wustl.edu'),
-    ('Arjav Shah', 'arjav.shah@wustl.edu'),
-    ('Benji Katz','benjamin.katz@wustl.edu')
 )
 
 with open(os.path.join(BASE_DIR, 'secrets/database_password.txt')) as f:
@@ -44,5 +41,6 @@ DATABASES = {
         'PASSWORD': DB_PASSWORD,
         'HOST': '127.0.0.1',
         'PORT': '3306',
+        'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"}
     }
 }

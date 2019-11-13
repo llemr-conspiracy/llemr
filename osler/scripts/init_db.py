@@ -9,6 +9,7 @@ rebuild the database when debugging.
 from pttrack import models as core
 from followup import models as followup
 from workup import models as workup
+from referral import models as referral
 
 for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",
                   "Croatian", "Czech", "Danish", "Dutch", "Finnish", "French",
@@ -66,10 +67,10 @@ followup.ContactResult.objects.create(
     attempt_again=False,
     patient_reached=False)
 
-for dx_type in ["Cardiovascular", "Dermatological", "Endocrine", 
-                "Eyes and ENT", "GI", "Infectious Disease (e.g. flu or HIV)", 
-                "Mental Health", "Musculoskeletal", "Neurological", 
-                "OB/GYN", "Physical Exam", "Respiratory", "Rx Refill", 
+for dx_type in ["Cardiovascular", "Dermatological", "Endocrine",
+                "Eyes and ENT", "GI", "Infectious Disease (e.g. flu or HIV)",
+                "Mental Health", "Musculoskeletal", "Neurological",
+                "OB/GYN", "Physical Exam", "Respiratory", "Rx Refill",
                 "Urogenital", "Vaccination/PPD", "Other"]:
     d = workup.DiagnosisType(name=dx_type)
     d.save()
@@ -109,12 +110,21 @@ for noshow_reason in [
     s = followup.NoShowReason(name=noshow_reason)
     s.save()
 
-for refer_type in ["PCP: chronic condition management",
-                   "PCP: gateway to specialty care",
-                   "PCP: preventative care (following well check up)",
-                   "PCP: other acute conditions", "Specialty care", "Other"]:
-    s = core.ReferralType(name=refer_type)
+for refer_type, is_fqhc in [("PCP", True),
+                            ("Specialty care", False)]:
+    s = core.ReferralType(name=refer_type, is_fqhc=is_fqhc)
     s.save()
+
+spc_referral = core.ReferralType.objects.filter(is_fqhc=False).first()
+pcp_referral = core.ReferralType.objects.filter(is_fqhc=True).first()
+for (location, reftype) in [("Affina", pcp_referral),
+                            ("Family Care Center", spc_referral),
+                            ("COH", spc_referral)]:
+    r = referral.ReferralLocation(name=location)
+    r.save()
+    # we do this so we don't get an M2M error
+    r.care_availiable = refer_type
+    r.save()
 
 core.DocumentType.objects.create(name="Silly picture")
 

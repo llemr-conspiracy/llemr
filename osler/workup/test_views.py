@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from django.test import TestCase
 from django.utils.timezone import now
 from django.core.urlresolvers import reverse
@@ -6,7 +8,6 @@ from pttrack.models import Patient, ProviderType
 from pttrack.test_views import build_provider, log_in_provider
 
 from . import models
-from .forms import WorkupForm
 from .tests import wu_dict
 
 
@@ -20,10 +21,10 @@ class ViewsExistTest(TestCase):
 
         models.ClinicDate.objects.create(
             clinic_type=models.ClinicType.objects.first(),
-            clinic_date=now().date(),
-            gcal_id="tmp")
+            clinic_date=now().date())
 
-        log_in_provider(self.client, build_provider())
+        self.provider = build_provider()
+        log_in_provider(self.client, self.provider)
 
         self.wu = models.Workup.objects.create(
             clinic_day=models.ClinicDate.objects.first(),
@@ -48,31 +49,6 @@ class ViewsExistTest(TestCase):
         response = self.client.get(reverse(pt_url, args=(pt.id,)))
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('new-clindate', args=(pt.id,)))
-
-    def test_progressnote_urls(self):
-        url = reverse('new-progress-note', args=(1,))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        form_data={
-        'title':'Depression',
-        'text':'so sad does testing work???',
-        'patient':Patient.objects.get(id=1),
-        'author':models.Provider.objects.get(id=1),
-        'author_type':ProviderType.objects.first()
-        }
-
-        response = self.client.post(url, form_data)
-        self.assertRedirects(response, reverse('patient-detail', args=(1,)))
-
-        url=reverse('progress-note-update', args=(1,))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-
-        form_data['text']='actually not so bad'
-
-        response = self.client.post(url, form_data)
-        self.assertRedirects(response, reverse('progress-note-detail', args=(1,)))
 
     def test_new_workup_view(self):
 
@@ -103,6 +79,7 @@ class ViewsExistTest(TestCase):
         date_string = self.wu.written_datetime.strftime("%B %d, %Y")
         heading_text = "Migrated from previous workup on %s. Please delete this heading and modify the following:\n\n" % date_string
 
+        # TODO test use of settings.OSLER_WORKUP_COPY_FORWARD_FIELDS
         response = self.client.get(reverse('new-workup', args=(pt.id,)))
         self.assertEqual(response.context['form'].initial['PMH_PSH'],
                          heading_text + "B")
@@ -210,21 +187,119 @@ class ViewsExistTest(TestCase):
             wu_data = wu_dict(units=True)
             wu_data['diagnosis_categories'] = [
                 models.DiagnosisType.objects.first().pk]
+            wu_data['clinic_day'] = wu_data['clinic_day'].pk
 
             r = self.client.post(
                 reverse('new-workup', args=(pt_id,)),
                 data=wu_data)
+            self.assertRedirects(r, reverse("patient-detail", args=(pt_id,)))
 
-            # print(dir(r))
-            # # print(r.context)
-            # print(r.context['form'].errors)
-
-            # print(provider_type)
-            # with open('./tmp.html', 'wb') as f:
-            #     f.write(r.content)
-
-            self.assertRedirects(r, reverse("new-action-item", args=(pt_id,)))
             self.assertEqual(wu_count + 1, models.Workup.objects.all().count())
             self.assertEqual(
                 models.Workup.objects.last().signed(),
                 provider.clinical_roles.first().signs_charts)
+
+    def test_invalid_workup_submit_preserves_units(self):
+
+        # first, craft a workup that has units, but fail to set the
+        # diagnosis categories, so that it will fail to be accepted.
+        wu_data = wu_dict(units=True)
+        pt_id = Patient.objects.first().pk
+
+        r = self.client.post(
+            reverse('new-workup', args=(pt_id,)),
+            data=wu_data)
+
+        # verify we're bounced back to workup-create
+        self.assertEqual(r.status_code, 200)
+        self.assertTemplateUsed(r, 'workup/workup-create.html')
+        self.assertFormError(r, 'form', 'diagnosis_categories',
+                             'This field is required.')
+
+        for unit in ['height_units', 'weight_units', 'temperature_units']:
+            self.assertContains(r, '<input name="%s"' % (unit))
+
+            self.assertEqual(
+                r.context['form'][unit].value(),
+                wu_data[unit])
+
+
+class TestProgressNoteViews(TestCase):
+    '''
+    Verify that views involving the wokrup are functioning.
+    '''
+    fixtures = ['workup', 'pttrack']
+
+    def setUp(self):
+
+        self.formdata = {
+            'title': 'Depression',
+            'text': 'so sad does testing work???',
+            'patient': Patient.objects.first(),
+            'author': models.Provider.objects.first(),
+            'author_type': ProviderType.objects.first()
+        }
+
+        models.ClinicDate.objects.create(
+            clinic_type=models.ClinicType.objects.first(),
+            clinic_date=now().date())
+
+        provider = build_provider()
+        log_in_provider(self.client, provider)
+
+    def test_progressnote_urls(self):
+        url = reverse('new-progress-note', args=(1,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(url, self.formdata)
+        self.assertRedirects(response, reverse('patient-detail',
+                                               args=(1,)))
+
+        response = self.client.get(reverse('progress-note-update', args=(1,)))
+        self.assertEqual(response.status_code, 200)
+
+        self.formdata['text'] = 'actually not so bad'
+
+        response = self.client.post(url, self.formdata)
+        self.assertRedirects(
+            response, reverse('patient-detail', args=(1,)))
+
+    def test_progressnote_signing(self):
+        """Verify that singing is possible for attendings and not for others.
+        """
+
+        sign_url = "progress-note-sign"
+
+        pn = models.ProgressNote.objects.create(
+            title='Depression',
+            text='so sad does testing work???',
+            patient=Patient.objects.first(),
+            author=models.Provider.objects.first(),
+            author_type=ProviderType.objects.first()
+        )
+
+        # Fresh notes should be unsigned
+        self.assertFalse(pn.signed())
+
+        # Providers with can_attend == False should not be able to sign
+        for nonattesting_role in ["Preclinical", "Clinical", "Coordinator"]:
+            log_in_provider(self.client, build_provider([nonattesting_role]))
+
+            response = self.client.get(
+                reverse(sign_url, args=(pn.id,)))
+            self.assertRedirects(response,
+                                 reverse('progress-note-detail',
+                                         args=(pn.id,)))
+            self.assertFalse(models.ProgressNote.objects
+                             .get(pk=pn.id)
+                             .signed())
+
+        # Providers able to attend should be able to sign.
+        log_in_provider(self.client, build_provider(["Attending"]))
+
+        response = self.client.get(reverse(sign_url, args=(pn.id,)))
+        self.assertRedirects(response, reverse('progress-note-detail',
+                                               args=(pn.id,)),)
+        # the pn has been updated, so we have to hit the db again.
+        self.assertTrue(models.ProgressNote.objects.get(pk=pn.id).signed())
