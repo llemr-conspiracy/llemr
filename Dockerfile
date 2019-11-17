@@ -1,10 +1,7 @@
-FROM python:3.7-slim
+FROM python:3.7-buster
 
 RUN apt-get update && apt-get upgrade -y && \
 	apt-get install -y git
-
-RUN apt-get install -y python-dev python-setuptools
-
 
 COPY . /home/gunicorn_user/osler
 WORKDIR /home/gunicorn_user/osler

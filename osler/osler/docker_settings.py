@@ -1,4 +1,4 @@
-from base_settings import *
+from .base_settings import *
 
 DEBUG = TEMPLATE_DEBUG = os.environ.get('DJANGO_DEBUG', False)
 CRISPY_FAIL_SILENTLY = not DEBUG
