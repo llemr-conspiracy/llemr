@@ -30,7 +30,10 @@ urlpatterns = [
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^api/', include('api.urls')),
     url(r'^media_auth/(?P<filename>.*)$', send_media_file),
-    url(r'^$', RedirectView.as_view(pattern_name="home", permanent=False)),
+    url(r'^$',
+        RedirectView.as_view(pattern_name="dashboard-dispatch",
+                             permanent=False),
+        name='root'),
 ]
 
 if settings.DEBUG:

@@ -49,4 +49,4 @@ p.save()
 p.languages.add(models.Language.objects.all()[0])
 p.ethnicities.add(models.Ethnicity.objects.all()[0])
 
-print "Done!"
+print("Done!")

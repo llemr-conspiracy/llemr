@@ -76,37 +76,37 @@ for dx_type in ["Cardiovascular", "Dermatological", "Endocrine",
     d.save()
 
 for referral_location in [
-  "Back to SNHC", "SNHC Depression and Anxiety Specialty Night",
-  "SNHC Dermatology Specialty Night", "SNHC OB/GYN Specialty Night",
-  "Barnes Jewish Center for Outpatient Health (COH)",
-  "BJC Behavioral Health (for Psych)",
-  "St. Louis Dental Education and Oral Health Clinic",
-  "St. Louis County Department of Health: South County Health Center",
-  "Other"]:
+        "Back to SNHC", "SNHC Depression and Anxiety Specialty Night",
+        "SNHC Dermatology Specialty Night", "SNHC OB/GYN Specialty Night",
+        "Barnes Jewish Center for Outpatient Health (COH)",
+        "BJC Behavioral Health (for Psych)",
+        "St. Louis Dental Education and Oral Health Clinic",
+        "St. Louis County Department of Health: South County Health Center",
+        "Other"]:
     f = core.ReferralLocation(name=referral_location)
     f.save()
 
 for noapt_reason in [
-  "Not interested in further medical care at this time",
-  "Too busy/forgot to contact provider",
-  "Lost provider contact information",
-  "Cannot reach provider",
-  "Contacted provider but did not successfully schedule appointment",
-  "Appointment wait time is too long",
-  "No transportation to get to appointment",
-  "Appointment times do not work with patient's schedule",
-  "Cannot afford appointment", "Other"]:
+        "Not interested in further medical care at this time",
+        "Too busy/forgot to contact provider",
+        "Lost provider contact information",
+        "Cannot reach provider",
+        "Contacted provider but did not successfully schedule appointment",
+        "Appointment wait time is too long",
+        "No transportation to get to appointment",
+        "Appointment times do not work with patient's schedule",
+        "Cannot afford appointment", "Other"]:
     s = followup.NoAptReason(name=noapt_reason)
     s.save()
 
 for noshow_reason in [
-  "Schedule changed in conflict with appointment",
-  "Didn't have transportation to appointment",
-  "Worried about cost of appointment",
-  "Too sick to go to appointment",
-  "Felt better and decided didn't need appointment",
-  "Someone counseled patient against appointment",
-  "Forgot about appointment"]:
+        "Schedule changed in conflict with appointment",
+        "Didn't have transportation to appointment",
+        "Worried about cost of appointment",
+        "Too sick to go to appointment",
+        "Felt better and decided didn't need appointment",
+        "Someone counseled patient against appointment",
+        "Forgot about appointment"]:
     s = followup.NoShowReason(name=noshow_reason)
     s.save()
 
@@ -128,4 +128,4 @@ for (location, reftype) in [("Affina", pcp_referral),
 
 core.DocumentType.objects.create(name="Silly picture")
 
-print "done!"
+print("done!")
