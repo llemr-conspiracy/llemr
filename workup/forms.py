@@ -279,9 +279,20 @@ class WorkupForm(ModelForm):
                         'than diastolic blood pressure.')
 
 
+class PsychNoteForm(ModelForm):
+    class Meta:
+        model = models.PsychNote
+        fields = ['title', 'text']
+
+    def __init__(self, *args, **kwargs):
+        super(PsychNoteForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+
 class ProgressNoteForm(ModelForm):
     class Meta:
-        model = models.ProgressNote
+        model = models.ProgressNotes
         fields = ['title', 'text']
 
     def __init__(self, *args, **kwargs):

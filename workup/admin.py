@@ -33,7 +33,15 @@ class WorkupAdmin(NoteAdmin):
         return url
 
 
-@admin.register(models.ProgressNote)
+@admin.register(models.PsychNote)
+class PsychNoteAdmin(NoteAdmin):
+
+    def view_on_site(self, obj):
+        url = reverse('psych-note-detail', kwargs={'pk': obj.pk})
+        return url
+
+
+@admin.register(models.ProgressNotes)
 class ProgressNoteAdmin(NoteAdmin):
 
     def view_on_site(self, obj):

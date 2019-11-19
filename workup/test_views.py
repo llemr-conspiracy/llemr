@@ -224,7 +224,7 @@ class ViewsExistTest(TestCase):
                 wu_data[unit])
 
 
-class TestProgressNoteViews(TestCase):
+class TestPsychNoteViews(TestCase):
     '''
     Verify that views involving the wokrup are functioning.
     '''
@@ -247,8 +247,8 @@ class TestProgressNoteViews(TestCase):
         provider = build_provider()
         log_in_provider(self.client, provider)
 
-    def test_progressnote_urls(self):
-        url = reverse('new-progress-note', args=(1,))
+    def test_psychnote_urls(self):
+        url = reverse('new-psych-note', args=(1,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -256,7 +256,7 @@ class TestProgressNoteViews(TestCase):
         self.assertRedirects(response, reverse('patient-detail',
                                                args=(1,)))
 
-        response = self.client.get(reverse('progress-note-update', args=(1,)))
+        response = self.client.get(reverse('psych-note-update', args=(1,)))
         self.assertEqual(response.status_code, 200)
 
         self.formdata['text'] = 'actually not so bad'
@@ -265,13 +265,13 @@ class TestProgressNoteViews(TestCase):
         self.assertRedirects(
             response, reverse('patient-detail', args=(1,)))
 
-    def test_progressnote_signing(self):
+    def test_psychnote_signing(self):
         """Verify that singing is possible for attendings and not for others.
         """
 
-        sign_url = "progress-note-sign"
+        sign_url = "psych-note-sign"
 
-        pn = models.ProgressNote.objects.create(
+        pn = models.PsychNote.objects.create(
             title='Depression',
             text='so sad does testing work???',
             patient=Patient.objects.first(),
@@ -289,9 +289,9 @@ class TestProgressNoteViews(TestCase):
             response = self.client.get(
                 reverse(sign_url, args=(pn.id,)))
             self.assertRedirects(response,
-                                 reverse('progress-note-detail',
+                                 reverse('psych-note-detail',
                                          args=(pn.id,)))
-            self.assertFalse(models.ProgressNote.objects
+            self.assertFalse(models.PsychNote.objects
                              .get(pk=pn.id)
                              .signed())
 
@@ -299,7 +299,7 @@ class TestProgressNoteViews(TestCase):
         log_in_provider(self.client, build_provider(["Attending"]))
 
         response = self.client.get(reverse(sign_url, args=(pn.id,)))
-        self.assertRedirects(response, reverse('progress-note-detail',
+        self.assertRedirects(response, reverse('psych-note-detail',
                                                args=(pn.id,)),)
         # the pn has been updated, so we have to hit the db again.
-        self.assertTrue(models.ProgressNote.objects.get(pk=pn.id).signed())
+        self.assertTrue(models.PsychNote.objects.get(pk=pn.id).signed())

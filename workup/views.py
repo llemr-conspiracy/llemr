@@ -32,7 +32,8 @@ def new_note_dispatch(request, pt_id):
 
     note_types = {
         'Standard Note': reverse("new-workup", args=(pt_id,)),
-        'Clinical Psychology Note': reverse("new-progress-note", args=(pt_id,)),
+        'Progress Note': reverse("new-progress-note", args=(pt_id,)),
+        'Clinical Psychology Note': reverse("new-psych-note", args=(pt_id,)),
     }
 
     return render(request, 'workup/new-note-dispatch.html',
@@ -127,17 +128,51 @@ class WorkupUpdate(NoteUpdate):
             return super(WorkupUpdate, self).dispatch(*args, **kwargs)
         else:
             return HttpResponseRedirect(reverse('workup',
-                                        args=(kwargs['pk'],)))
+                                                args=(kwargs['pk'],)))
 
     def get_success_url(self):
         return reverse('workup', args=(self.object.id,))
 
 
+class PsychNoteUpdate(NoteUpdate):
+    template_name = "pttrack/form-update.html"
+    model = models.PsychNote
+    form_class = forms.PsychNoteForm
+    note_type = 'Clinical Psychology Note'
+
+    def get_success_url(self):
+        pnote = self.object
+        return reverse("psych-note-detail", args=(pnote.id, ))
+
+
+class PsychNoteCreate(NoteFormView):
+    template_name = 'pttrack/form_submission.html'
+    form_class = forms.PsychNoteForm
+    note_type = 'Clinical Psychology Note'
+
+    def form_valid(self, form):
+        pnote = form.save(commit=False)
+        active_provider_type = get_object_or_404(
+            ProviderType,
+            pk=self.request.session['clintype_pk'])
+        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        pnote.patient = pt
+        pnote.author = self.request.user.provider
+        pnote.author_type = get_current_provider_type(self.request)
+        if pnote.author_type.signs_charts:
+            pnote.sign(self.request.user, active_provider_type)
+        pnote.save()
+
+        form.save_m2m()
+
+        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+
+
 class ProgressNoteUpdate(NoteUpdate):
     template_name = "pttrack/form-update.html"
-    model = models.ProgressNote
+    model = models.ProgressNotes
     form_class = forms.ProgressNoteForm
-    note_type = 'Clinical Psychology Note'
+    note_type = 'Progress Note'
 
     def get_success_url(self):
         pnote = self.object
@@ -147,13 +182,13 @@ class ProgressNoteUpdate(NoteUpdate):
 class ProgressNoteCreate(NoteFormView):
     template_name = 'pttrack/form_submission.html'
     form_class = forms.ProgressNoteForm
-    note_type = 'Clinical Psychology Note'
+    note_type = 'Progress Note'
 
     def form_valid(self, form):
         pnote = form.save(commit=False)
         active_provider_type = get_object_or_404(
-             ProviderType,
-             pk=self.request.session['clintype_pk'])
+            ProviderType,
+            pk=self.request.session['clintype_pk'])
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         pnote.patient = pt
         pnote.author = self.request.user.provider
@@ -161,7 +196,7 @@ class ProgressNoteCreate(NoteFormView):
         if pnote.author_type.signs_charts:
             pnote.sign(self.request.user, active_provider_type)
         pnote.save()
-        
+
         form.save_m2m()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
@@ -233,8 +268,9 @@ def sign_workup(request, pk):
 
     return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
 
-def sign_progress_note(request, pk):
-    wu = get_object_or_404(models.ProgressNote, pk=pk)
+
+def sign_psych_note(request, pk):
+    wu = get_object_or_404(models.PsychNote, pk=pk)
     active_provider_type = get_object_or_404(ProviderType,
                                              pk=request.session['clintype_pk'])
     try:
@@ -245,8 +281,9 @@ def sign_progress_note(request, pk):
         # workup detail view anyway
         pass
 
-    return HttpResponseRedirect(reverse("progress-note-detail", args=(wu.id,)))
-    
+    return HttpResponseRedirect(reverse("psych-note-detail", args=(wu.id,)))
+
+
 def error_workup(request, pk):
 
     wu = get_object_or_404(models.Workup, pk=pk)
@@ -265,22 +302,25 @@ def pdf_workup(request, pk):
         data = {'workup': wu}
 
         template = get_template('workup/workup_body.html')
-        html  = template.render(data)
+        html = template.render(data)
 
         file = TemporaryFile(mode="w+b")
         pisa.CreatePDF(html.encode('utf-8'), dest=file,
-                encoding='utf-8')
+                       encoding='utf-8')
 
         file.seek(0)
         pdf = file.read()
         file.close()
 
-        initials = ''.join(name[0].upper() for name in wu.patient.name(reverse=False, middle_short=False).split())
-        formatdate = '.'.join([str(wu.clinic_day.clinic_date.month).zfill(2), str(wu.clinic_day.clinic_date.day).zfill(2), str(wu.clinic_day.clinic_date.year)])
+        initials = ''.join(name[0].upper() for name in wu.patient.name(
+            reverse=False, middle_short=False).split())
+        formatdate = '.'.join([str(wu.clinic_day.clinic_date.month).zfill(2), str(
+            wu.clinic_day.clinic_date.day).zfill(2), str(wu.clinic_day.clinic_date.year)])
         filename = ''.join([initials, ' (', formatdate, ')'])
 
         response = HttpResponse(pdf, 'application/pdf')
-        response["Content-Disposition"] = "attachment; filename=%s.pdf" % (filename,)
+        response["Content-Disposition"] = "attachment; filename=%s.pdf" % (
+            filename,)
         return response
 
     else:

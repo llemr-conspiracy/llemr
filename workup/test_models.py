@@ -32,7 +32,7 @@ class TestAttestations(TestCase):
                 signs_charts=False).first(),
             patient=Patient.objects.first())
 
-        self.pn = models.ProgressNote.objects.create(
+        self.pn = models.PsychNote.objects.create(
             title='Good',
             text='very good',
             author=Provider.objects.first(),
@@ -57,7 +57,8 @@ class TestAttestations(TestCase):
 
         self.assertFalse(self.wu.signed())
 
-        with self.assertRaises(ValueError):  # test that with active_role=None, an error is thrown
+        # test that with active_role=None, an error is thrown
+        with self.assertRaises(ValueError):
             self.wu.sign(
                 all_roles_provider.associated_user)
 
@@ -70,7 +71,8 @@ class TestAttestations(TestCase):
 
         self.assertTrue(self.wu.signed())
 
-    def test_non_signing_provider_wu_signing(self):  # test that provider with no roles that allow for signing the chart cannot sign chart
+    # test that provider with no roles that allow for signing the chart cannot sign chart
+    def test_non_signing_provider_wu_signing(self):
 
         all_roles_provider = build_provider()
 
@@ -83,9 +85,11 @@ class TestAttestations(TestCase):
 
         self.assertFalse(self.wu.signed())
 
-    def test_one_role_provider_wu_signing(self):  # test that provider given one role will use that roll, and can only sign chart if ProviderType allows for it
+    # test that provider given one role will use that roll, and can only sign chart if ProviderType allows for it
+    def test_one_role_provider_wu_signing(self):
 
-        for role in ["Preclinical", "Clinical", "Coordinator", "Attending"]:  # ProviderType is not Iterable, even though the QuerySet should be iterable?
+        # ProviderType is not Iterable, even though the QuerySet should be iterable?
+        for role in ["Preclinical", "Clinical", "Coordinator", "Attending"]:
             one_role_provider = build_provider(roles=[role])
             if one_role_provider.clinical_roles.first().signs_charts:
                 self.wu.sign(
@@ -100,7 +104,8 @@ class TestAttestations(TestCase):
 
                 self.assertFalse(self.wu.signed())
 
-                with self.assertRaises(ValueError):  # test that a non-Attending provider cannot use the Attending role to sign a chart
+                # test that a non-Attending provider cannot use the Attending role to sign a chart
+                with self.assertRaises(ValueError):
                     self.wu.sign(
                         one_role_provider.associated_user,
                         active_role=ProviderType.objects.filter(signs_charts=True).first())

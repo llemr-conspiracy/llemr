@@ -52,7 +52,7 @@ class ClinicDate(models.Model):
                 datetime.datetime.strftime(self.clinic_date, '%A, %B %d, %Y'))
 
     def number_of_notes(self):
-            return self.workup_set.count()
+        return self.workup_set.count()
 
     def infer_attendings(self):
         qs = Provider.objects.filter(
@@ -126,7 +126,30 @@ class AttestableNote(Note):
         return " ".join([str(self.author), "on", str(self.written_date())])
 
 
-class ProgressNote(AttestableNote):
+class PsychNote(AttestableNote):
+    title = models.CharField(max_length=200)
+    text = models.TextField()
+
+    history = HistoricalRecords()
+
+    signer = models.ForeignKey(Provider,
+                               blank=True, null=True,
+                               related_name="signed_psych_notes",
+                               validators=[validate_attending])
+    signed_date = models.DateTimeField(blank=True, null=True)
+
+    def __unicode__(self):
+        u = '{} on at {} by {}'.format(
+            self.title,
+            datetime.datetime.strftime(self.written_datetime, '%c'),
+            self.author)
+        return u
+
+    def short_text(self):
+        return self.title
+
+
+class ProgressNotes(AttestableNote):
     title = models.CharField(max_length=200)
     text = models.TextField()
 

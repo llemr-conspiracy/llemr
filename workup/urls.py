@@ -29,18 +29,29 @@ unwrapped_urlconf = [
         views.pdf_workup,
         name="workup-pdf"),
 
-    # PROGRESS NOTES
+    # Psych NOTES
     url(r'^(?P<pt_id>[0-9]+)/psychnote/$',
+        views.PsychNoteCreate.as_view(),
+        name="new-psych-note"),
+    url(r'^psychnote/update/(?P<pk>[0-9]+)$',
+        views.PsychNoteUpdate.as_view(),
+        name="psych-note-update"),
+    url(r'^psychnote/sign/(?P<pk>[0-9]+)$',
+        views.sign_psych_note,
+        name='psych-note-sign'),
+    url(r'^psychnote/(?P<pk>[0-9]+)$',
+        DetailView.as_view(model=models.PsychNote),
+        name="psych-note-detail"),
+
+    # Progress NOTES
+    url(r'^(?P<pt_id>[0-9]+)/progressnote/$',
         views.ProgressNoteCreate.as_view(),
         name="new-progress-note"),
-    url(r'^psychnote/update/(?P<pk>[0-9]+)$',
+    url(r'^progressnote/update/(?P<pk>[0-9]+)$',
         views.ProgressNoteUpdate.as_view(),
         name="progress-note-update"),
-    url(r'^psychnote/sign/(?P<pk>[0-9]+)$',
-        views.sign_progress_note,
-        name='progress-note-sign'),
-    url(r'^psychnote/(?P<pk>[0-9]+)$',
-        DetailView.as_view(model=models.ProgressNote),
+    url(r'^progressnote/(?P<pk>[0-9]+)$',
+        DetailView.as_view(model=models.ProgressNotes),
         name="progress-note-detail"),
 
     url(r'^(?P<pt_id>[0-9]+)/clindate/$',
