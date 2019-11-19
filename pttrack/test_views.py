@@ -369,10 +369,10 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
             password=self.provider_password,
             roles=["Preclinical"])
         self.providers = {
-            'attending' : attending,
-            'coordinator' : coordinator,
-            'clinical' : clinical,
-            'preclinical' : preclinical
+            'attending': attending,
+            'coordinator': coordinator,
+            'clinical': clinical,
+            'preclinical': preclinical
         }
 
         workupModels.ClinicType.objects.create(name="Basic Care Clinic")
@@ -385,16 +385,13 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
 
         tomorrow_clindate = workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=tomorrow,
-            gcal_id="tmp")
+            clinic_date=tomorrow)
         yesterday_clindate = workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=yesterday,
-            gcal_id="tmp")
+            clinic_date=yesterday)
         last_week_clindate = workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=earlier_this_week,
-            gcal_id="tmp")
+            clinic_date=earlier_this_week)
         # log_in_provider(self.client, build_provider(["Attending"]))
 
         pt1 = models.Patient.objects.get(pk=1)
@@ -1335,7 +1332,7 @@ class TestReferralPatientDetailIntegration(TestCase):
         # Check patient status -- there is one action item and followup
         # request 1 day past due and one action item and followup
         # request due today
-        expected_status = "Action items 0, 1, 1, 0 days past due"
+        expected_status = "Action items 1, 0, 0, 1 days past due"
         self.assertContains(response, expected_status)
 
         expected_fqhc_status = Referral.STATUS_PENDING
@@ -1382,7 +1379,10 @@ class TestReferralPatientDetailIntegration(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-        expected_status = "Action items 0, 1, 0 days past due"
+        with open('tmp.html', 'w') as f:
+            f.write(response.content)
+
+        expected_status = "Action items 1, 0, 0 days past due"
         self.assertContains(response, expected_status)
 
         # Verify that the correct amount of action items are present

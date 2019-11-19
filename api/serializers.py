@@ -24,6 +24,7 @@ class HistorySerializer(serializers.Serializer):
 class ClinicDateSerializer(serializers.ModelSerializer):
     class Meta:
         model = workupModels.ClinicDate
+        exclude = []
 
 
 class WorkupSerializer(serializers.ModelSerializer):
@@ -47,6 +48,7 @@ class CaseManagerSerializer(serializers.ModelSerializer):
 class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Patient
+        exclude = []
 
     history = HistorySerializer()
     latest_workup = WorkupSerializer()

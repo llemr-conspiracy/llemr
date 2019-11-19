@@ -90,6 +90,10 @@ class Language(models.Model):
 
 
 class Ethnicity(models.Model):
+
+    class Meta:
+        verbose_name_plural = "ethnicities"
+
     name = models.CharField(max_length=50, primary_key=True)
 
     def __unicode__(self):
@@ -98,6 +102,7 @@ class Ethnicity(models.Model):
 
 class ActionInstruction(models.Model):
     instruction = models.CharField(max_length=50, primary_key=True)
+    active = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.instruction
@@ -378,6 +383,7 @@ def require_providers_update():
 class Note(models.Model):
     class Meta:
         abstract = True
+        ordering = ["-written_datetime", "-last_modified"]
 
     author = models.ForeignKey(Provider)
     author_type = models.ForeignKey(ProviderType)
@@ -517,6 +523,10 @@ class ActionItem(Note, CompletableMixin):
 
     def mark_done_url(self):
         return reverse(self.MARK_DONE_URL_NAME, args=(self.id,))
+
+    def admin_url(self):
+        return reverse('admin:pttrack_actionitem_change',
+                       args=(self.id,))
 
     def __unicode__(self):
         return " ".join(["AI for", str(self.patient)+":",
