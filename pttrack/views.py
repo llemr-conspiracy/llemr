@@ -14,6 +14,7 @@ from django.db.models import Prefetch
 from django.utils.http import is_safe_url
 
 from workup import models as workupmodels
+from followup import models as followupmodels
 from referral.models import Referral, FollowupRequest, PatientContact
 from appointment.models import Appointment
 
@@ -158,7 +159,27 @@ class ActionItemCreate(NoteFormView):
         ai.author_type = get_current_provider_type(self.request)
         ai.patient = pt
 
+
+        #Using the session the action item can know which followup form just redirected to creating the
+        #action item so this is used to get the information. Could try to pass it in arg/kwargs as well
+        #if the session-based method leads to any issues. 
+        fu_id = self.request.session['followup']
+        ftype = self.request.session['followup_type']
+
+
+        #The followup types make it so that we have to do this ugly/,messy method of identiying the type
+        #to be able to search for the model and then update it with the link. 
+
+        #Maybe we should make a function that will find all the followup types and return them. 
+
+        futypes = {'Lab': followupmodels.LabFollowup,
+                   'Vaccine': followupmodels.VaccineFollowup,
+                   'General': followupmodels.GeneralFollowup,
+                   "Referral": followupmodels.ReferralFollowup}
+
         ai.save()
+
+        futypes[ftype].objects.filter(pk=fu_id).update(actionitem=ai)
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 

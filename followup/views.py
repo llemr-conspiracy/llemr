@@ -82,6 +82,8 @@ class FollowupCreate(NoteFormView):
         form.save_m2m()
 
         if 'followup_create' in self.request.POST:
+            self.request.session['followup'] = fu.id
+            self.request.session['followup_type'] = fu.type()
             return HttpResponseRedirect(reverse('new-action-item',
                                                 args=(pt.id,)))
         else:

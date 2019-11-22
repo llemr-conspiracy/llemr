@@ -27,7 +27,7 @@ class GeneralFollowup(BaseFollowup):
     '''The form instantiation of a general followup note.'''
     class Meta:
         model = models.GeneralFollowup
-        exclude = ['patient', 'author', 'author_type']
+        exclude = ['patient', 'author', 'author_type', 'actionitem']
 
 
 class ReferralFollowup(BaseFollowup):
@@ -35,7 +35,7 @@ class ReferralFollowup(BaseFollowup):
 
     class Meta:
         model = models.ReferralFollowup
-        exclude = ['patient', 'author', 'author_type']
+        exclude = ['patient', 'author', 'author_type', 'actionitem']
 
     def clean(self):
         '''ReferralFollowup has some pretty complicated behavior regarding
@@ -96,7 +96,7 @@ class VaccineFollowup(BaseFollowup):
     '''A form to process the handling of a vaccine followup.'''
     class Meta:
         model = models.VaccineFollowup
-        exclude = ['patient', 'author', 'author_type']
+        exclude = ['patient', 'author', 'author_type', 'actionitem']
         widgets = {'dose_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
 
     def clean(self):
@@ -116,4 +116,4 @@ class LabFollowup(BaseFollowup):
     '''The form instantiation of a followup to communicate lab results.'''
     class Meta:
         model = models.LabFollowup
-        exclude = ['patient', 'author', 'author_type']
+        exclude = ['patient', 'author', 'author_type', 'actionitem']

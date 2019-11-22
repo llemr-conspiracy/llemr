@@ -1,6 +1,6 @@
 '''The datamodels for various types required for followup tracking in Osler.'''
 from django.db import models
-from pttrack.models import Note, ContactMethod, ReferralType, ReferralLocation
+from pttrack.models import Note, ContactMethod, ReferralType, ReferralLocation, ActionItem
 
 from simple_history.models import HistoricalRecords
 
@@ -53,6 +53,8 @@ class Followup(Note):
     contact_resolution = models.ForeignKey(ContactResult)
 
     comments = models.TextField(blank=True, null=True)
+
+    actionitem = models.ForeignKey(ActionItem, blank=True, null=True)
 
     def type(self):
         '''Returns a short string value used as a key to determine which type
