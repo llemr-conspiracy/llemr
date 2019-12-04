@@ -969,9 +969,6 @@ class IntakeTest(TestCase):
 
         self.assertTemplateUsed(response, 'pttrack/preintake-select.html')
 
-        print(dir(response))
-        print(response.context_data)
-
         self.assertIn(pt, response.context_data['object_list'])
 
     def preintake_patient_no_collision(self):
