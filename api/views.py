@@ -19,7 +19,6 @@ def active_patients_filter(qs):
     pts).
     '''
 
-    print('hi')
     return qs.filter(needs_workup__exact=True).order_by('last_name')
 
 def merge_pt_querysets_by_soonest_date(qs1, qs2):
@@ -158,7 +157,7 @@ class PtList(generics.ListAPIView):  # read only
             'ai_priority': priority_ai_patients_filter
         }
 
-        def bylatestKey(pt): # This doesn't sort by latest time, just latest date
+        def bylatestKey(pt):  # This doesn't sort by latest time, just latest date
             latestwu = pt.latest_workup()
             if latestwu is None:
                 latestdate = pt.history.last().history_date.date()
