@@ -95,7 +95,7 @@ class TestAppointmentViews(TestCase):
 
         response = self.client.get(reverse("appointment-mark-arrived",
                                            args=(self.apt.pk,)))
-        self.assertRedirects(response, reverse('appointment-list'))
+        self.assertRedirects(response, reverse("patient-update", args=(self.apt.pk,)))
 
         self.assertEqual(models.Appointment.objects.count(), 1)
         self.assertEqual(models.Appointment.objects.first().pt_showed, True)

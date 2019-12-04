@@ -1,4 +1,3 @@
-{% url 'admin:pttrack_actionitem_change' action_item.id as admin_url %}
-{% with clear_url=action_item.mark_done_url %}
+{% with admin_url=action_item.admin_url clear_url=action_item.mark_done_url %}
 	{% include 'pttrack/blurbs/base-completable-blurb.html' %}
 {% endwith %}

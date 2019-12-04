@@ -32,7 +32,7 @@ def new_note_dispatch(request, pt_id):
 
     note_types = {
         'Standard Note': reverse("new-workup", args=(pt_id,)),
-        'Psych Note': reverse("new-progress-note", args=(pt_id,)),
+        'Clinical Psychology Note': reverse("new-progress-note", args=(pt_id,)),
     }
 
     return render(request, 'workup/new-note-dispatch.html',
@@ -137,7 +137,7 @@ class ProgressNoteUpdate(NoteUpdate):
     template_name = "pttrack/form-update.html"
     model = models.ProgressNote
     form_class = forms.ProgressNoteForm
-    note_type = 'Psych Progress Note'
+    note_type = 'Clinical Psychology Note'
 
     def get_success_url(self):
         pnote = self.object
@@ -147,17 +147,22 @@ class ProgressNoteUpdate(NoteUpdate):
 class ProgressNoteCreate(NoteFormView):
     template_name = 'pttrack/form_submission.html'
     form_class = forms.ProgressNoteForm
-    note_type = 'Psych Progress Note'
+    note_type = 'Clinical Psychology Note'
 
     def form_valid(self, form):
         pnote = form.save(commit=False)
-
+        active_provider_type = get_object_or_404(
+             ProviderType,
+             pk=self.request.session['clintype_pk'])
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         pnote.patient = pt
         pnote.author = self.request.user.provider
         pnote.author_type = get_current_provider_type(self.request)
-
+        if pnote.author_type.signs_charts:
+            pnote.sign(self.request.user, active_provider_type)
         pnote.save()
+        
+        form.save_m2m()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
@@ -228,7 +233,20 @@ def sign_workup(request, pk):
 
     return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
 
+def sign_progress_note(request, pk):
+    wu = get_object_or_404(models.ProgressNote, pk=pk)
+    active_provider_type = get_object_or_404(ProviderType,
+                                             pk=request.session['clintype_pk'])
+    try:
+        wu.sign(request.user, active_provider_type)
+        wu.save()
+    except ValueError:
+        # thrown exception can be ignored since we just redirect back to the
+        # workup detail view anyway
+        pass
 
+    return HttpResponseRedirect(reverse("progress-note-detail", args=(wu.id,)))
+    
 def error_workup(request, pk):
 
     wu = get_object_or_404(models.Workup, pk=pk)

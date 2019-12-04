@@ -22,16 +22,13 @@ class APITest(APITestCase):
         workupModels.ClinicType.objects.create(name="Basic Care Clinic")
         workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.all()[0],
-            clinic_date=now().date()+datetime.timedelta(days=1),
-            gcal_id="tmp")
+            clinic_date=now().date() + datetime.timedelta(days=1))
         workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.all()[0],
-            clinic_date=now().date()-datetime.timedelta(days=1),
-            gcal_id="tmp")
+            clinic_date=now().date() - datetime.timedelta(days=1))
         workupModels.ClinicDate.objects.create(
             clinic_type=workupModels.ClinicType.objects.all()[0],
-            clinic_date=now().date()-datetime.timedelta(days=5),
-            gcal_id="tmp")
+            clinic_date=now().date() - datetime.timedelta(days=5))
         log_in_provider(self.client, build_provider(["Attending"]))
 
         pt1 = models.Patient.objects.get(pk=1)
