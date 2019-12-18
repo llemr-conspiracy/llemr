@@ -494,6 +494,7 @@ class CompletableMixin(models.Model):
 
 
 class ActionItem(Note, CompletableMixin):
+    due_date = models.DateField(help_text='MM/DD/YYYY')
     instruction = models.ForeignKey(ActionInstruction)
     priority = models.BooleanField(
         default=False,
