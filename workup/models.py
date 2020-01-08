@@ -150,6 +150,9 @@ class PsychNote(AttestableNote):
 
 
 class ProgressNotes(AttestableNote):
+    class Meta:
+        verbose_name = "Progress note"
+        verbose_name_plural = "Progress notes"
     title = models.CharField(max_length=200)
     text = models.TextField()
 

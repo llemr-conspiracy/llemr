@@ -303,3 +303,44 @@ class TestPsychNoteViews(TestCase):
                                                args=(pn.id,)),)
         # the pn has been updated, so we have to hit the db again.
         self.assertTrue(models.PsychNote.objects.get(pk=pn.id).signed())
+
+class TestProgressNoteViews(TestCase):
+    '''
+    Verify that views involving the wokrup are functioning.
+    '''
+    fixtures = ['workup', 'pttrack']
+
+    def setUp(self):
+
+        self.formdata = {
+            'title': 'Depression',
+            'text': 'so sad does testing work???',
+            'patient': Patient.objects.first(),
+            'author': models.Provider.objects.first(),
+            'author_type': ProviderType.objects.first()
+        }
+
+        models.ClinicDate.objects.create(
+            clinic_type=models.ClinicType.objects.first(),
+            clinic_date=now().date())
+
+        provider = build_provider()
+        log_in_provider(self.client, provider)
+
+    def test_progressnote_urls(self):
+        url = reverse('new-progress-note', args=(1,))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post(url, self.formdata)
+        self.assertRedirects(response, reverse('patient-detail',
+                                               args=(1,)))
+
+        response = self.client.get(reverse('progress-note-update', args=(1,)))
+        self.assertEqual(response.status_code, 200)
+
+        self.formdata['text'] = 'actually not so bad'
+
+        response = self.client.post(url, self.formdata)
+        self.assertRedirects(
+            response, reverse('patient-detail', args=(1,)))
