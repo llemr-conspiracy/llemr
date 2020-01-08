@@ -458,7 +458,7 @@ class CompletableMixin(models.Model):
         Provider,
         blank=True, null=True,
         related_name="%(app_label)s_%(class)s_completed")
-    due_date = models.DateField(help_text="MM/DD/YYYY or YYYY-MM-DD")
+    due_date = models.DateField(help_text="MM/DD/YYYY")
 
     def done(self):
         """Return true if this ActionItem has been marked as done."""
