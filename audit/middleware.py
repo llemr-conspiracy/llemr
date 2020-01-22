@@ -4,6 +4,7 @@ from .models import PageviewRecord
 
 from pttrack.models import ProviderType
 
+from django.conf import settings
 
 class AuditMiddleware(object):
 
@@ -28,15 +29,17 @@ class AuditMiddleware(object):
         if role is not None:
             role = ProviderType.objects.get(pk=role)
 
-        PageviewRecord.objects.create(
-            user=(None if isinstance(request.user, AnonymousUser)
-                  else request.user),
-            role=role,
-            user_ip=user_ip,
-            method=request.method,
-            url=request.get_full_path(),
-            referrer=request.META.get('HTTP_REFERER', None),
-            status_code=response.status_code
-        )
+        if user_ip not in settings.OSLER_AUDIT_BLACK_LIST:
+            PageviewRecord.objects.create(
+                user=(None if isinstance(request.user, AnonymousUser)
+                      else request.user),
+                role=role,
+                #role=ProviderType.objects.get(pk=role),
+                user_ip=user_ip,
+                method=request.method,
+                url=request.get_full_path(),
+                referrer=request.META.get('HTTP_REFERER', None),
+                status_code=response.status_code
+            )
 
         return response
