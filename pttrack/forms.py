@@ -7,7 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from crispy_forms.bootstrap import InlineCheckboxes
-from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
+from crispy_forms.layout import ButtonHolder, Submit
 from . import models
 
 from crispy_forms.layout import Field
