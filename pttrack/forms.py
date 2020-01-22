@@ -97,17 +97,19 @@ class ActionItemForm(ModelForm):
         self.helper = FormHelper(self)
         self.helper.layout = Layout(
             Row(
-                Column('due_date', css_class='form-group col-md-6 mb-0'),
-                Column('instruction', css_class='form-group col-md-6 mb-0'),
+                 Column(css_class='form-group col-md-3 col-xs-4'),
+                Column('due_date', css_class='form-group col-md-3 col-xs-4'),
+                Column('instruction', css_class='form-group col-md-3 col-xs-4'),
                 css_class='form-row'
                 ),
-
-             CustomCheckbox('priority'),
+           
 
             Row(
-                Column('comments', css_class='form-group col-md-12 mb-0')
+                 Column(css_class='form-group col-md-3 col-xs-4'),
+                Column('comments', css_class='form-group col-md-6 col-xs-6')
             ),
 
+  CustomCheckbox('priority'),
             )
 
 
