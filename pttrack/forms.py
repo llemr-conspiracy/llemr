@@ -7,8 +7,17 @@ from django.contrib.auth.forms import AuthenticationForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from crispy_forms.bootstrap import InlineCheckboxes
-
+from crispy_forms.layout import Layout, Fieldset, ButtonHolder, Submit
 from . import models
+
+from crispy_forms.layout import Field
+from django import forms
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit, Row, Column
+
+
+class CustomCheckbox(Field):
+    template = 'pttrack/custom_checkbox.html'
 
 # pylint: disable=I0011,E1305
 
@@ -86,6 +95,23 @@ class ActionItemForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ActionItemForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
+        self.helper.layout = Layout(
+            Row(
+                Column('due_date', css_class='form-group col-md-6 mb-0'),
+                Column('instruction', css_class='form-group col-md-6 mb-0'),
+                css_class='form-row'
+                ),
+
+             CustomCheckbox('priority'),
+
+            Row(
+                Column('comments', css_class='form-group col-md-12 mb-0')
+            ),
+
+            )
+
+
+
         self.fields['instruction'].queryset = models.ActionInstruction.objects.filter(
             active=True)
         self.helper.add_input(Submit('submit', 'Submit'))
