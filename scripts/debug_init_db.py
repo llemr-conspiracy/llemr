@@ -25,6 +25,23 @@ user.first_name = "Radhika"
 user.last_name = "Jain"
 user.save()
 
+user = User.objects.create_user('newboldd', 'newbold@wustl.edu', 'password')
+user.first_name = "Dillan"
+user.last_name = "Newbold"
+user.save()
+
+p = models.Provider(first_name="Dillan",
+                     middle_name="Jacob",
+                     last_name="Newbold",
+                     phone="515-230-3513",
+                     gender=models.Gender.objects.all()[0],
+                     )
+p.save()
+role=models.ProviderType.objects.all()[0]
+p.clinical_roles.add(role)
+p.associated_user=user
+p.save()
+
 # p = models.Provider(first_name="Tommy",
 #                     middle_name="Lee",
 #                     last_name="Jones",
