@@ -110,13 +110,16 @@ class ActionItemForm(ModelForm):
             ),
 
   CustomCheckbox('priority'),
+
+Row(
+    Column(Submit('submit', 'Submit'), css_class='formgroup col-md-offset-3 col-xs-offset-4')
+   )
             )
 
 
-
-        self.fields['instruction'].queryset = models.ActionInstruction.objects.filter(
-            active=True)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        #self.fields['instruction'].queryset = models.ActionInstruction.objects.filter(
+        #    active=True)
+       # self.helper.add_input(Submit('submit', 'Submit'))
 
 
 class ProviderForm(ModelForm):
