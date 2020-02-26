@@ -1,10 +1,462 @@
 from django.contrib import admin
 from django.core.urlresolvers import reverse
 from simple_history.admin import SimpleHistoryAdmin
+from django.db.models import Count, Min, Max
+from django.db.models.functions import Trunc
+from django.db.models import DateField
 
 from pttrack.admin import NoteAdmin
 from . import models
 
+@admin.register(models.WorkupSummary)
+class WorkupSummaryAdmin(admin.ModelAdmin):
+    change_list_template = 'admin/workup_summary_change_list.html'
+
+    def get_drug_list(self):
+        # Lower case to facilitate matching
+        LIST_OF_VALID_MEDS = [
+            'lisinopril',
+            'atorvastatin',
+            'levothyroxine',
+            'metformin hydrochloride',
+            'amlodipine',
+            'metoprolol',
+            'omeprazole',
+            'simvastatin',
+            'losartan potassium',
+            'albuterol',
+            'gabapentin',
+            'hydrochlorothiazide',
+            'acetaminophen',
+            'hydrocodone bitartrate',
+            'sertraline hydrochloride',
+            'fluticasone',
+            'montelukast',
+            'furosemide',
+            'amoxicillin',
+            'pantoprazole sodium',
+            'escitalopram oxalate',
+            'alprazolam',
+            'prednisone',
+            'bupropion',
+            'pravastatin sodium',
+            'acetaminophen',
+            'citalopram',
+            'dextroamphetamine',
+            'dextroamphetamine saccharate',
+            'amphetamine',
+            'amphetamine aspartate',
+            'ibuprofen',
+            'carvedilol',
+            'trazodone hydrochloride',
+            'fluoxetine hydrochloride',
+            'tramadol hydrochloride',
+            'insulin glargine',
+            'glargine',
+            'clonazepam',
+            'tamsulosin hydrochloride',
+            'atenolol',
+            'potassium',
+            'meloxicam',
+            'rosuvastatin',
+            'clopidogrel bisulfate',
+            'propranolol hydrochloride',
+            'aspirin',
+            'cyclobenzaprine',
+            'hydrochlorothiazide',
+            'lisinopril',
+            'glipizide',
+            'duloxetine',
+            'methylphenidate',
+            'ranitidine',
+            'venlafaxine',
+            'zolpidem tartrate',
+            'warfarin',
+            'oxycodone',
+            'norethindrone',
+            'allopurinol',
+            'ergocalciferol',
+            'insulin aspart',
+            'aspart',
+            'azithromycin',
+            'metronidazole',
+            'loratadine',
+            'lorazepam',
+            'estradiol',
+            'ethinyl estradiol',
+            'norgestimate',
+            'lamotrigine',
+            'glimepiride',
+            'fluticasone propionate',
+            'salmeterol xinafoate',
+            'cetirizine',
+            'hydrochlorothiazide',
+            'losartan potassium',
+            'paroxetine',
+            'spironolactone',
+            'fenofibrate',
+            'naproxen',
+            'pregabalin',
+            'insulin human',
+            'budesonide',
+            'formoterol',
+            'diltiazem hydrochloride',
+            'quetiapine fumarate',
+            'topiramate',
+            'bacitracin',
+            'neomycin',
+            'polymyxin b',
+            'clonidine',
+            'buspirone hydrochloride',
+            'latanoprost',
+            'tiotropium',
+            'ondansetron',
+            'lovastatin',
+            'valsartan',
+            'finasteride',
+            'amitriptyline',
+            'esomeprazole',
+            'tizanidine',
+            'alendronate sodium',
+            'lisdexamfetamine dimesylate',
+            'ferrous sulfate',
+            'apixaban',
+            'diclofenac',
+            'sitagliptin phosphate',
+            'folic acid',
+            'sumatriptan',
+            'drospirenone',
+            'ethinyl estradiol',
+            'hydroxyzine',
+            'oxybutynin',
+            'hydrochlorothiazide',
+            'triamterene',
+            'cephalexin',
+            'triamcinolone',
+            'benazepril hydrochloride',
+            'hydralazine hydrochloride',
+            'celecoxib',
+            'ciprofloxacin',
+            'ropinirole hydrochloride',
+            'rivaroxaban',
+            'levetiracetam',
+            'isosorbide mononitrate',
+            'aripiprazole',
+            'doxycycline',
+            'insulin detemir',
+            'detemir',
+            'famotidine',
+            'amoxicillin',
+            'clavulanate potassium',
+            'methotrexate',
+            'hydrocodone bitartrate',
+            'mirtazapine',
+            'nifedipine',
+            'sulfamethoxazole',
+            'trimethoprim',
+            'enalapril maleate',
+            'docusate',
+            'insulin lispro',
+            'lispro',
+            'pioglitazone',
+            'divalproex sodium',
+            'donepezil hydrochloride',
+            'hydroxychloroquine sulfate',
+            'prednisolone',
+            'thyroid',
+            'guanfacine',
+            'testosterone',
+            'hydrochlorothiazide',
+            'valsartan',
+            'ramipril',
+            'diazepam',
+            'ethinyl estradiol',
+            'levonorgestrel',
+            'clindamycin',
+            'gemfibrozil',
+            'metformin hydrochloride',
+            'sitagliptin phosphate',
+            'baclofen',
+            'norethindrone',
+            'temazepam',
+            'nitroglycerin',
+            'nebivolol hydrochloride',
+            'verapamil hydrochloride',
+            'timolol',
+            'promethazine hydrochloride',
+            'benzonatate',
+            'memantine hydrochloride',
+            'doxazosin mesylate',
+            'ezetimibe',
+            'valacyclovir',
+            'beclomethasone',
+            'hydrocortisone',
+            'morphine',
+            'risperidone',
+            'methylprednisolone',
+            'oseltamivir phosphate',
+            'amlodipine besylate',
+            'benazepril hydrochloride',
+            'meclizine hydrochloride',
+            'polyethylene glycol 3350',
+            'liraglutide',
+            'desogestrel',
+            'ethinyl estradiol',
+            'levofloxacin',
+            'acyclovir',
+            'brimonidine tartrate',
+            'digoxin',
+            'adalimumab',
+            'cyanocobalamin',
+            'magnesium',
+            'albuterol sulfate',
+            'ipratropium bromide',
+            'chlorthalidone',
+            'glyburide',
+            'levocetirizine dihydrochloride',
+            'carbamazepine',
+            'ethinyl estradiol',
+            'etonogestrel',
+            'methocarbamol',
+            'pramipexole dihydrochloride',
+            'lithium',
+            'dicyclomine hydrochloride',
+            'fluconazole',
+            'nortriptyline hydrochloride',
+            'carbidopa',
+            'levodopa',
+            'nitrofurantoin',
+            'mupirocin',
+            'acetaminophen',
+            'butalbital',
+            'lansoprazole',
+            'dexmethylphenidate hydrochloride',
+            'budesonide',
+            'mirabegron',
+            'canagliflozin',
+            'menthol',
+            'terazosin',
+            'progesterone',
+            'amiodarone hydrochloride',
+            'mometasone',
+            'cefdinir',
+            'atomoxetine hydrochloride',
+            'linagliptin',
+            'colchicine',
+            'dexlansoprazole',
+            'naphazoline hydrochloride',
+            'pheniramine maleate',
+            'rizatriptan benzoate',
+            'hydromorphone hydrochloride',
+            'oxcarbazepine',
+            'lidocaine',
+            'clobetasol propionate',
+            'phentermine',
+            'labetalol',
+            'travoprost',
+            'guaifenesin',
+            'codeine phosphate',
+            'pseudoephedrine hydrochloride',
+            'eszopiclone',
+            'erythromycin',
+            'ipratropium',
+            'sildenafil',
+            'sucralfate',
+            'ketoconazole',
+            'irbesartan',
+            'phenytoin',
+            'medroxyprogesterone acetate',
+            'olmesartan medoxomil',
+            'emtricitabine',
+            'sodium',
+            'benztropine mesylate',
+            'prazosin hydrochloride',
+            'empagliflozin',
+            'tolterodine tartrate',
+            'nystatin',
+            'bimatoprost',
+            'dulaglutide',
+            'dorzolamide hydrochloride',
+            'timolol maleate',
+            'guaifenesin',
+            'desvenlafaxine',
+            'calcium',
+            'cholecalciferol',
+            'minocycline hydrochloride',
+            'primidone',
+            'olanzapine',
+            'doxepin hydrochloride',
+            'diphenhydramine hydrochloride',
+            'penicillin v',
+            'formoterol fumarate',
+            'mometasone furoate',
+            'methimazole',
+            'fexofenadine hydrochloride',
+            'mesalamine',
+            'sodium fluoride',
+            'cyclosporine',
+            'telmisartan',
+            'fentanyl',
+            'tamoxifen citrate',
+            'liothyronine sodium',
+            'metoclopramide hydrochloride',
+            'mycophenolate mofetil',
+            'carisoprodol',
+            'calcitriol',
+            'linaclotide',
+            'anastrozole',
+            'dapagliflozin',
+            'exenatide',
+            'ziprasidone',
+            'calcium',
+            'epinephrine',
+            'torsemide',
+            'insulin degludec',
+            'degludec',
+            'alfuzosin hydrochloride',
+            'sotalol hydrochloride',
+            'bisoprolol fumarate',
+            'quinapril',
+            'olopatadine',
+            'ketorolac tromethamine',
+            'ranolazine',
+            'lurasidone hydrochloride',
+            'pancrelipase lipase',
+            'pancrelipase protease',
+            'pancrelipase amylase',
+            'dutasteride',
+            'bumetanide',
+            'ofloxacin',
+            'rabeprazole sodium',
+            'triazolam',
+            'dorzolamide hydrochloride',
+            'tadalafil',
+            'solifenacin succinate',
+            'ethinyl estradiol',
+            'norgestrel',
+            'vilazodone hydrochloride',
+            'chlorhexidine',
+            'sennosides',
+            'buprenorphine',
+            'naloxone',
+            'flecainide acetate',
+            'niacin',
+            'indomethacin',
+            'hydrochlorothiazide',
+            'olmesartan medoxomil',
+            'tretinoin',
+            'conjugated estrogens',
+            'medroxyprogesterone',
+            'atenolol',
+            'chlorthalidone',
+            'haloperidol',
+            'azelastine hydrochloride',
+            'ezetimibe',
+            'simvastatin',
+            'enoxaparin sodium',
+            'betamethasone dipropionate',
+            'clotrimazole'
+        ]
+
+        output_list = []
+        for med in LIST_OF_VALID_MEDS:
+            # if med has two words, second is almost always chemical name
+            # add shortened name to list of meds as well
+            if len(med.split()) > 1:
+                output_list.append(med)
+                output_list.append(med.split()[0])
+            else:
+                output_list.append(med)
+        return output_list
+
+    def changelist_view(self, request, extra_content=None):
+        response = super(WorkupSummaryAdmin, self).changelist_view(
+            request, extra_content)
+
+        try:
+            qs = response.context_data['cl'].queryset
+        except (AttributeError, KeyError):
+            return response
+
+        # Add table for number of total workups per year
+        all_dates = [q['clinic_day__clinic_date']
+                     for q in qs.values('clinic_day__clinic_date')]
+
+        year2count = {}
+        for date in all_dates:
+            if date.year in year2count.keys():
+                year2count[date.year] += 1
+            else:
+                year2count[date.year] = 1
+
+        print(qs.values('clinic_day__clinic_date'))
+
+        response.context_data['workups_by_year'] = [
+            {'year': year,
+             'count': year2count[year]}
+            for year in year2count.keys()
+        ]
+
+        response.context_data['diagnosis_categories'] = list(
+            models.DiagnosisType.objects.all()
+            .annotate(count=Count('workup'))
+            .order_by('-count')
+        )
+
+
+        rx_split = [q['rx'].lower().replace('-', ' ').split()
+                    for q in qs.values('rx')]
+
+        med_count = {}
+
+        med_list = self.get_drug_list()
+        for rx in rx_split:
+            for keyword in rx:
+                if keyword in med_list:
+                    if keyword in med_count.keys():
+                        med_count[keyword] += 1
+                    else:
+                        med_count[keyword] = 1
+
+        from heapq import nlargest
+        # print(nlargest(2, med_count.items(), key=lambda i: i[1]))
+        number_of_meds_to_show = 10
+        response.context_data['med_list'] = [{
+            'name': key.capitalize(),
+            'count': v}
+            for (key, v) in nlargest(number_of_meds_to_show, med_count.items(), key=lambda i: i[1])]
+
+        print(med_count)
+
+
+        # Monthly?
+        workups_over_time = (qs.annotate(
+            period=Trunc('clinic_day__clinic_date',
+                         'day', output_field=DateField()))
+            .values('period')
+            .annotate(total=Count('id'))
+            .order_by('period'))
+
+        workups_range = workups_over_time.aggregate(
+            low=Min('total'),
+            high=Max('total')
+        )
+        high = workups_range.get('high', 0)
+        low = workups_range.get('low', 0)
+
+        response.context_data['workups_over_time'] = [
+            {'period': x['period'],
+             'total': x['total'],
+             'pct': (float(x['total']) / float(high) * 100
+                     if high > low else 0)
+             }
+            for x in workups_over_time
+        ]
+        print(response.context_data['workups_over_time'])
+
+        # print(workups_over_time)
+
+        return response
 
 @admin.register(models.ClinicDate)
 class ClinicDateAdmin(admin.ModelAdmin):

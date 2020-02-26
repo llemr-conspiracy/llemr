@@ -1,0 +1,118 @@
+{% extends 'admin/change_list.html' %}
+{% load dashboard_extras %}
+{% block content_title %}
+    <h1> Patient Summary </h1>
+{% endblock %}
+{% block result_list %}
+<h2> Most Common Languages Spoken </h2>
+<div class=”results”>
+  <table>  
+    <thead>
+      <tr>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Language</a>
+          </div>
+        </th>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Count</a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in languages %}
+      <tr>
+      	<td> {{ row }} </td>
+        <td> {{ row.count_spoken }} </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<h2> Ethnicity Breakdown </h2>
+<div class=”results”>
+  <table>  
+    <thead>
+      <tr>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Ethnicity</a>
+          </div>
+        </th>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Count</a>
+          </div>
+        </th>
+        <th>
+          <div class=”text”>
+            <a href=”#”>
+              <strong>% Of Total</strong>
+            </a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for row in ethnicities %}
+      <tr>
+        <td> {{ row }} </td>
+        <td> {{ row.count }} </td>
+        <td> 
+          <strong>
+            {{ row.count|as_percentage_of:ethnicities_total.count__sum }}
+          </strong>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<h2> Ethnicity Breakdown </h2>
+<style>
+body {
+  padding: 40px 0 0 0;
+  font-family: sans-serif;
+  background: #f2f2f2;
+}
+
+.bar {
+  height: 30px;
+  width: 80%;
+  margin: 0 auto;
+  display: flex;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.bar section {
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  color: white;
+}
+.bar section:last-of-type {
+  flex: auto;
+}
+#green {
+  background: #65d260;
+}
+#blue {
+  background: #45afd9;
+}
+#yellow {
+  background: #f6b50a;
+}
+#red {
+  background: #f54954;
+}
+</style>
+<div class="bar">
+  <section id="green" style="width: 11.701%">Green</section>
+  <section id="red">Red</section>
+</div>
+
+{% endblock %}
+{% block pagination %}{% endblock %}

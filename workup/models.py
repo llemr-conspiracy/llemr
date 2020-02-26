@@ -148,7 +148,6 @@ class ProgressNote(AttestableNote):
     def short_text(self):
         return self.title
 
-
 class Workup(AttestableNote):
     '''Datamodel of a workup. Has fields specific to each part of an exam,
     along with SNHC-specific info about where the patient has been referred for
@@ -271,3 +270,9 @@ class Workup(AttestableNote):
 
     def __unicode__(self):
         return self.patient.name() + " on " + str(self.clinic_day.clinic_date)
+
+class WorkupSummary(Workup):
+    class Meta:
+        proxy = True
+        verbose_name = 'Workup Summary'
+        verbose_name_plural = 'Workups Summary'

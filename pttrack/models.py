@@ -187,7 +187,6 @@ class Provider(Person):
     def __unicode__(self):
         return self.name()
 
-
 class Patient(Person):
 
     case_managers = models.ManyToManyField(Provider)
@@ -531,3 +530,9 @@ class ActionItem(Note, CompletableMixin):
     def __unicode__(self):
         return " ".join(["AI for", str(self.patient)+":",
                          str(self.instruction), "due on", str(self.due_date)])
+
+class PatientSummary(Patient):
+    class Meta:
+        proxy = True
+        verbose_name = 'Patient Summary'
+        verbose_name_plural = 'Patient Summary'
