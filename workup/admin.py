@@ -369,9 +369,9 @@ class WorkupSummaryAdmin(admin.ModelAdmin):
                 output_list.append(med)
         return output_list
 
-    def changelist_view(self, request, extra_content=None):
+    def changelist_view(self, request, extra_context=None):
         response = super(WorkupSummaryAdmin, self).changelist_view(
-            request, extra_content)
+            request, extra_context)
 
         try:
             qs = response.context_data['cl'].queryset
@@ -419,14 +419,11 @@ class WorkupSummaryAdmin(admin.ModelAdmin):
                         med_count[keyword] = 1
 
         from heapq import nlargest
-        # print(nlargest(2, med_count.items(), key=lambda i: i[1]))
         number_of_meds_to_show = 10
         response.context_data['med_list'] = [{
             'name': key.capitalize(),
             'count': v}
             for (key, v) in nlargest(number_of_meds_to_show, med_count.items(), key=lambda i: i[1])]
-
-        print(med_count)
 
 
         # Monthly?

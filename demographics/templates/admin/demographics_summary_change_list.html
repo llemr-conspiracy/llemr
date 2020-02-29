@@ -1,0 +1,63 @@
+{% extends 'admin/change_list.html' %}
+{% load dashboard_extras %}
+{% block content_title %}
+    <h1> Patient Demographics Summary </h1>
+{% endblock %}
+{% block result_list %}
+<h2>Insurance Status of Patient Population</h2>
+  <table>  
+    <thead>
+      <tr>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Status</a>
+          </div>
+        </th>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Total</a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+      	<td> Insured </td>
+        <td> {{ has_insurance.insured|as_percentage_of:insurance_responses_total }} </td>
+      </tr>
+      <tr>
+      	<td> Uninsured </td>
+        <td> {{ has_insurance.uninsured|as_percentage_of:insurance_responses_total }} </td>
+      </tr>
+    </tbody>
+  </table>
+<h2>Employment Status of Patient Population</h2>
+  <table>  
+    <thead>
+      <tr>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Status</a>
+          </div>
+        </th>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Total</a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+      	<td> Employed </td>
+        <td> {{ currently_employed.employed|as_percentage_of:employment_responses_total }} </td>
+      </tr>
+      <tr>
+      	<td> Unemployed </td>
+        <td> {{ currently_employed.unemployed|as_percentage_of:employment_responses_total }} </td>
+      </tr>
+    </tbody>
+  </table>
+{% endblock %}
+{% block pagination %}
+{% endblock %}

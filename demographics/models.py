@@ -101,3 +101,9 @@ class Demographics(models.Model):
         TransportationOption, blank=True, null=True)
 
     history = HistoricalRecords()
+
+class DemographicsSummary(Demographics):
+    class Meta:
+        proxy = True
+        verbose_name = 'Demographics Summary'
+        verbose_name_plural = 'Demographics Summary'
