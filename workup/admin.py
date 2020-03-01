@@ -8,11 +8,22 @@ from collections import Counter
 
 from pttrack.admin import NoteAdmin
 from . import models
-from pttrack.models import Provider 
+from pttrack.models import Provider
+
+
+def get_next_in_date_hierarchy(request, date_hierarchy):
+    if date_hierarchy + '__day' in request.GET:
+        return 'day'
+    if date_hierarchy + '__month' in request.GET:
+        return 'day'
+    if date_hierarchy + '__year' in request.GET:
+        return 'month'
+    return 'month'
 
 @admin.register(models.WorkupSummary)
 class WorkupSummaryAdmin(admin.ModelAdmin):
     change_list_template = 'admin/workup_summary_change_list.html'
+    date_hierarchy = 'written_datetime'
 
     def get_drug_list(self):
         # Lower case to facilitate matching
@@ -391,8 +402,6 @@ class WorkupSummaryAdmin(admin.ModelAdmin):
             else:
                 year2count[date.year] = 1
 
-        print(qs.values('clinic_day__clinic_date'))
-
         response.context_data['workups_by_year'] = [
             {'year': year,
              'count': year2count[year]}
@@ -428,10 +437,16 @@ class WorkupSummaryAdmin(admin.ModelAdmin):
             for (key, v) in nlargest(number_of_meds_to_show, med_count.items(), key=lambda i: i[1])]
 
 
-        # Monthly?
+        # Select time period for display
+        period = get_next_in_date_hierarchy(
+            request,
+            self.date_hierarchy,
+        )
+
+        # Note that week does not currently work
         workups_over_time = (qs.annotate(
             period=Trunc('clinic_day__clinic_date',
-                         'day', output_field=DateField()))
+                         period, output_field=DateField()))
             .values('period')
             .annotate(total=Count('id'))
             .order_by('period'))
@@ -451,13 +466,10 @@ class WorkupSummaryAdmin(admin.ModelAdmin):
              }
             for x in workups_over_time
         ]
-        print(response.context_data['workups_over_time'])
-
-        # print(workups_over_time)
 
         # Add attendings sorted by number of workups
 
-        # Note - annotation does not seem to work because of 
+        # Note - annotation does not seem to work because of
         # multiple ForeignKey relationships between Workup
         # and Provider
 
