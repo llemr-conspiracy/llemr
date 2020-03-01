@@ -4,9 +4,11 @@ from simple_history.admin import SimpleHistoryAdmin
 from django.db.models import Count, Min, Max
 from django.db.models.functions import Trunc
 from django.db.models import DateField
+from collections import Counter
 
 from pttrack.admin import NoteAdmin
 from . import models
+from pttrack.models import Provider 
 
 @admin.register(models.WorkupSummary)
 class WorkupSummaryAdmin(admin.ModelAdmin):
@@ -452,6 +454,39 @@ class WorkupSummaryAdmin(admin.ModelAdmin):
         print(response.context_data['workups_over_time'])
 
         # print(workups_over_time)
+
+        # Add attendings sorted by number of workups
+
+        # Note - annotation does not seem to work because of 
+        # multiple ForeignKey relationships between Workup
+        # and Provider
+
+        # attendings = (
+        #     Provider.objects.all()
+        #     .filter(clinical_roles__signs_charts=True)
+        #     .annotate(attending_count=Count('workup__attending'))
+        #     .order_by('-attending_count')
+        # )
+
+        attendings = Counter([q['attending'] for q in qs.values('attending')])
+        number_attendings_to_show = 20
+        response.context_data['attendings'] = [
+            {'name': Provider.objects.get(pk=k).name(),
+             'count': v}
+            for (k, v) in nlargest(number_attendings_to_show,
+                                   attendings.items(),
+                                   key=lambda i: i[1])
+        ]
+
+        authors = Counter([q['author'] for q in qs.values('author')])
+        number_authors_to_show = 20
+        response.context_data['authors'] = [
+            {'name': Provider.objects.get(pk=k).name(),
+             'count': v}
+            for (k, v) in nlargest(number_authors_to_show,
+                                   authors.items(),
+                                   key=lambda i: i[1])
+        ]
 
         return response
 

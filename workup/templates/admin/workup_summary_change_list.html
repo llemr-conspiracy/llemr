@@ -29,6 +29,7 @@
       {% endfor %}
     </tbody>
   </table>
+  <br></br>
   <h2>Most Common Diagnosis Categories</h2>
   <table>  
     <thead>
@@ -54,6 +55,7 @@
       {% endfor %}
     </tbody>
   </table>
+  <br></br>
   <h2>Most Commonly Prescribed Medications</h2>
   <table>  
     <thead>
@@ -79,6 +81,59 @@
       {% endfor %}
     </tbody>
   </table>
+  <br></br>
+  <h2>Attending Leaderboard</h2>
+  <table>  
+    <thead>
+      <tr>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Attending</a>
+          </div>
+        </th>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Patients Seen</a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in attendings %}
+      <tr>
+        <td> {{ row.name }} </td>
+        <td> {{ row.count }} </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br></br>
+  <h2>Volunteer Leaderboard</h2>
+  <table>  
+    <thead>
+      <tr>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Student</a>
+          </div>
+        </th>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Workups Written</a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in authors %}
+      <tr>
+        <td> {{ row.name }} </td>
+        <td> {{ row.count }} </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br></br>
   <h2> Workups over time </h2>
     <style>
     .bar-chart {
