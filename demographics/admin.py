@@ -92,6 +92,18 @@ class DemographicsSummaryAdmin(admin.ModelAdmin):
             for x in education_levels
         ]
 
+        chronic_conditions = (
+            models.ChronicCondition.objects.all()
+            .annotate(count=Count('demographics'))
+            .order_by('-count')
+        )
+
+        response.context_data['chronic_conditions'] = [
+            {'name': x.name,
+             'count': x.count}
+            for x in chronic_conditions
+        ]
+
         return response
 
 

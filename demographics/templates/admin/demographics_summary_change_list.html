@@ -31,6 +31,7 @@
       </tr>
     </tbody>
   </table>
+<br></br>
 <h2>Employment Status of Patient Population</h2>
   <table>  
     <thead>
@@ -58,6 +59,7 @@
       </tr>
     </tbody>
   </table>
+  <br></br>
   <h2> Income Range Distribution </h2>
     <style>
     .bar-chart {
@@ -121,6 +123,7 @@
     	text-align: center;
     	margin-right: 100px;
     	margin-left: 100px;
+    	padding-bottom: 20px;
     }
 	</style>
     <div class="container">
@@ -147,6 +150,31 @@
         <div>{{x.level}}</div>
     {% endfor %}
 	</div>
+	<h2>Most Common Chronic Conditions</h2>
+  	<table>  
+    <thead>
+      <tr>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Chronic Conditions</a>
+          </div>
+        </th>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Count</a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in chronic_conditions %}
+      <tr>
+        <td> {{ row.name }} </td>
+        <td> {{ row.count }} </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}
 {% block pagination %}
 {% endblock %}
