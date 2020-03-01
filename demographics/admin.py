@@ -1,6 +1,6 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
-from django.db.models import Count, Case, When, Value, Sum, IntegerField
+from django.db.models import Count, Case, When, Max, Sum, IntegerField
 from django.db.models.functions import Coalesce
 from . import models
 
@@ -48,6 +48,49 @@ class DemographicsSummaryAdmin(admin.ModelAdmin):
             response.context_data['currently_employed']['employed']
 
         )
+
+        income_ranges = (
+            models.IncomeRange.objects.all()
+            .annotate(count=Count('demographics'))
+        )
+
+        # total_income_responses = (
+        #     models.IncomeRange.objects.all()
+        #     .aggregate(count=Count('demographics'))
+        # )
+        # print(total_income_responses)
+
+        most_common_range = (
+            income_ranges.aggregate(
+                most_common=Max('count')
+            )
+        )
+
+        response.context_data['income_range_count'] = [
+            {'range': x.name,
+             'count': x.count,
+             'pct': (float(x.count) / float(most_common_range['most_common'])
+                     * 100)
+             }
+            for x in income_ranges
+        ]
+
+        education_levels = (
+            models.EducationLevel.objects.all()
+            .annotate(count=Count('demographics'))
+        )
+        most_common_level = (
+            education_levels.aggregate(
+                most_common=Max('count')
+            )
+        )
+
+        response.context_data['education_levels'] = [
+            {'level': x.name,
+             'count': x.count,
+             'pct': (float(x.count) / float(most_common_level['most_common']) * 100)}
+            for x in education_levels
+        ]
 
         return response
 
