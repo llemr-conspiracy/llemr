@@ -7,6 +7,11 @@ from django.utils.translation import gettext_lazy as _
 
 from . import models
 
+import json
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.forms.models import model_to_dict
+
 @admin.register(models.PatientSummary)
 class PatientSummaryAdmin(ModelAdmin):
     change_list_template = 'admin/patient_summary_change_list.html'
@@ -37,7 +42,7 @@ class PatientSummaryAdmin(ModelAdmin):
             .order_by('-count')
         )
 
-        # print(models.Ethnicity.objects.all().aggregate(Sum('count')))
+        ## print(models.Ethnicity.objects.all().aggregate(Sum('count')))
 
         print( models.Ethnicity.objects.all()
             .annotate(count=Count('patient'))
@@ -63,6 +68,13 @@ class PatientSummaryAdmin(ModelAdmin):
         # print(test[0:10])
         # print(test[0].count_spoken)
         # print(test[0])
+
+        dict_eth = {str(item.name):item.count for item in response.context_data['ethnicities']}
+
+        response.context_data['ethnicities_dict'] = json.dumps(dict_eth)
+
+        #print(JsonResponse(, safe=False))
+
         return response
 
 class CompletionFilter(SimpleListFilter):
