@@ -15,7 +15,12 @@
         </th>
         <th>
           <div class=”text”>
-            <a href=”#”>Total</a>
+            <a href=”#”>Total Patients</a>
+          </div>
+        </th>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Patients Seen Per Clinic Day (Average)</a>
           </div>
         </th>
       </tr>
@@ -25,6 +30,7 @@
       <tr>
       	<td> {{ row.year }} </td>
         <td> {{ row.count }} </td>
+        <td> {{ row.workups_per_clinic_day }}</td>
       </tr>
       {% endfor %}
     </tbody>

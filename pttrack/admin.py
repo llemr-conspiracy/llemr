@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from simple_history.admin import SimpleHistoryAdmin
 from django.contrib.admin import ModelAdmin
-from django.db.models import Count, Sum
+from django.db.models import Count, Sum, When, IntegerField, Case
+from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
 from . import models
@@ -15,7 +16,6 @@ from django.forms.models import model_to_dict
 @admin.register(models.PatientSummary)
 class PatientSummaryAdmin(ModelAdmin):
     change_list_template = 'admin/patient_summary_change_list.html'
-    date_hierarchy = 'date_of_birth'
 
     def changelist_view(self, request, extra_content=None):
         response = super(PatientSummaryAdmin, self).changelist_view(
@@ -25,10 +25,6 @@ class PatientSummaryAdmin(ModelAdmin):
             qs = response.context_data['cl'].queryset
         except (AttributeError, KeyError):
             return response
-
-        metrics = {
-            'total': Count('languages', distinct=True)
-        }
 
         response.context_data['languages'] = list(
             models.Language.objects.all()
@@ -42,38 +38,31 @@ class PatientSummaryAdmin(ModelAdmin):
             .order_by('-count')
         )
 
-        ## print(models.Ethnicity.objects.all().aggregate(Sum('count')))
-
-        print( models.Ethnicity.objects.all()
-            .annotate(count=Count('patient'))
-            .aggregate(Sum('count')))
         response.context_data['ethnicities_total'] = dict(
             models.Ethnicity.objects.all()
             .annotate(count=Count('patient'))
             .aggregate(Sum('count'))
         )
 
-        # list(
-        #     qs.values('languages').distinct().annotate(**metrics))
+        english_dict = (
+            qs.aggregate(
+                Comfortable=Coalesce(Sum(
+                    Case(When(patient_comfortable_with_english=False, then=1),
+                         output_field=IntegerField())), 0),
+                Uncomfortable=Coalesce(Sum(
+                    Case(When(patient_comfortable_with_english=True, then=1),
+                         output_field=IntegerField())), 0)
+            )
+        )
 
-        # print(qs.values('languages'))
-        # # Distinct does not work
-        # print(qs.values('languages').annotate(**metrics))
-        # print(models.Patient.objects.aggregate(**metrics))
+        response.context_data['english_speaking'] = json.dumps(english_dict)
 
-        # for language in models.Language.objects.all():
-        #     print(language, language.patient_set.count())
-
-        test = models.Language.objects.all().annotate(count_spoken=Count('patient')).order_by('-count_spoken') 
-        # print(test[0:10])
-        # print(test[0].count_spoken)
-        # print(test[0])
-
-        dict_eth = {str(item.name):item.count for item in response.context_data['ethnicities']}
+        dict_eth = {
+            str(item.name): item.count
+            for item in response.context_data['ethnicities']
+        }
 
         response.context_data['ethnicities_dict'] = json.dumps(dict_eth)
-
-        #print(JsonResponse(, safe=False))
 
         return response
 
