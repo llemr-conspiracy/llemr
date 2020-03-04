@@ -6,12 +6,9 @@ from django.db.models import Count, Sum, When, IntegerField, Case
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
+from .utils import binary_count_qs
 from . import models
 
-import json
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.forms.models import model_to_dict
 
 @admin.register(models.PatientSummary)
 class PatientSummaryAdmin(ModelAdmin):
@@ -44,18 +41,10 @@ class PatientSummaryAdmin(ModelAdmin):
             .aggregate(Sum('count'))
         )
 
-        english_dict = (
-            qs.aggregate(
-                Comfortable=Coalesce(Sum(
-                    Case(When(patient_comfortable_with_english=False, then=1),
-                         output_field=IntegerField())), 0),
-                Uncomfortable=Coalesce(Sum(
-                    Case(When(patient_comfortable_with_english=True, then=1),
-                         output_field=IntegerField())), 0)
-            )
+        response.context_data['english_speaking'] = binary_count_qs(
+            qs, 'patient_comfortable_with_english',
+            true_name='Comfortable', false_name='Uncomfortable'
         )
-
-        response.context_data['english_speaking'] = english_dict
 
         dict_eth = {
             str(item.name): item.count
@@ -65,6 +54,7 @@ class PatientSummaryAdmin(ModelAdmin):
         response.context_data['ethnicities_dict'] = dict_eth
 
         return response
+
 
 class CompletionFilter(SimpleListFilter):
     title = _('Completion')

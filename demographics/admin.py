@@ -1,8 +1,10 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
-from django.db.models import Count, Case, When, Max, Sum, IntegerField
-from django.db.models.functions import Coalesce
+from django.db.models import Count, Max
+
+from pttrack.utils import binary_count_qs
 from . import models
+
 
 @admin.register(models.DemographicsSummary)
 class DemographicsSummaryAdmin(admin.ModelAdmin):
@@ -17,14 +19,8 @@ class DemographicsSummaryAdmin(admin.ModelAdmin):
         except (AttributeError, KeyError):
             return response
 
-        response.context_data['has_insurance'] = (
-            qs.aggregate(
-                Uninsured=Coalesce(Sum(
-                    Case(When(has_insurance=False, then=1),
-                         output_field=IntegerField())), 0),
-                Insured=Coalesce(Sum(
-                    Case(When(has_insurance=True, then=1),
-                         output_field=IntegerField())), 0))
+        response.context_data['has_insurance'] = binary_count_qs(
+            qs, 'has_insurance', false_name='Uninsured', true_name='Insured'
         )
 
         # response.context_data['insurance_responses_total'] = (
@@ -32,15 +28,9 @@ class DemographicsSummaryAdmin(admin.ModelAdmin):
         #     response.context_data['has_insurance']['Insured']
         # )
 
-        response.context_data['currently_employed'] = (
-            qs.aggregate(
-                Unemployed=Coalesce(Sum(
-                    Case(When(currently_employed=False, then=1),
-                         output_field=IntegerField())), 0),
-                Employed=Coalesce(Sum(
-                    Case(When(currently_employed=True, then=1),
-                         output_field=IntegerField())), 0)
-            )
+        response.context_data['currently_employed'] = binary_count_qs(
+            qs, 'currently_employed',
+            false_name='Unemployed', true_name='Insured'
         )
 
         # response.context_data['employment_responses_total'] = (
@@ -86,7 +76,8 @@ class DemographicsSummaryAdmin(admin.ModelAdmin):
         response.context_data['education_levels'] = [
             {'level': x.name,
              'count': x.count,
-             'pct': (float(x.count) / float(most_common_level['most_common']) * 100)}
+             'pct': (float(x.count) / float(most_common_level['most_common'])
+                     * 100)}
             for x in education_levels
         ]
 
@@ -103,7 +94,6 @@ class DemographicsSummaryAdmin(admin.ModelAdmin):
         ]
 
         return response
-
 
 
 for model in [models.IncomeRange, models.EducationLevel, models.WorkStatus,

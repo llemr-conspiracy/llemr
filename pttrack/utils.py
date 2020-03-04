@@ -1,5 +1,8 @@
 import string
-from django.db.models import Q
+
+from django.db.models import Q, Case, When, Sum, IntegerField
+from django.db.models.functions import Coalesce
+
 from . import models
 
 
@@ -43,6 +46,7 @@ def return_duplicates(first_name_str, last_name_str):
          Q(first_name__startswith=first_name_str)) &
         Q(last_name__in=last_name_var))
 
+
 def get_names_from_url_query_dict(request):
     """Get first_name and last_name from a request object in a dict.
     """
@@ -52,3 +56,36 @@ def get_names_from_url_query_dict(request):
                if param in request.GET}
 
     return qs_dict
+
+
+def binary_count_qs(qs, fieldname, true_name=None, false_name=None):
+    """Count the number of true and false occurrences in fieldname, and
+    report the results as counts under "true_name" and "false_name".
+    """
+
+    if true_name is None:
+        true_name = 'true_count'
+    if false_name is None:
+        false_name = 'false_count'
+
+    kwargs_false = {
+        fieldname: False,
+        'then': 1
+    }
+
+    kwargs_true = {
+        fieldname: True,
+        'then': 0
+    }
+
+    result = qs.aggregate(
+        **{
+            true_name: Coalesce(
+                Sum(Case(When(**kwargs_false),
+                         output_field=IntegerField())), 0),
+            false_name: Coalesce(
+                Sum(Case(When(**kwargs_true),
+                         output_field=IntegerField())), 0)
+        })
+
+    return result
