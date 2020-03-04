@@ -4,6 +4,8 @@ DEBUG = TEMPLATE_DEBUG = False
 CRISPY_FAIL_SILENTLY = not DEBUG
 ALLOWED_HOSTS = ['osler.wustl.edu']
 
+REGISTRATION_OPEN = True
+
 with open(os.path.join(BASE_DIR, 'secrets/secret_key.txt')) as f:
     SECRET_KEY = f.read().strip()
 

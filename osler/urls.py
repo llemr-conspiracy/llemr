@@ -17,6 +17,8 @@ urlpatterns = [
     url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^api/', include('api.urls')),
     url(r'^referral/', include('referral.urls')),
+    url(r'^accounts/', include('django_registration.backends.one_step.urls')),
+    url(r'^accounts/', include('django.contrib.auth.urls')),
     url(r'^$',
         RedirectView.as_view(pattern_name="dashboard-dispatch",
                              permanent=False),

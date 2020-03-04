@@ -1,21 +1,23 @@
-{% extends "pttrack/base.html" %}
+{% extends "pttrack/base-form.html" %}
 
 {% block title %}
-New Provider: {{ request.user }}
+Register
 {% endblock %}
 
 {% block header %}
-<h1>Hi! I don't think we've met...</h1>
-<p class="lead">We're glad you're here. Before you get started, let us know a little bit about yourself!</p>
-
+<h1>Register a new account</h1>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-	{% load crispy_forms_tags %}
-	{% crispy form %}
-</div>
 
+<form action="" method="post" >
+    {% csrf_token %}
+	{{ form.as_p }}
+	<div class="controls">
+		<input type="submit" name="submit" value="Submit" class="btn btn-primary" id="submit-id-submit"> 
+	</div>
+</form>
 
 <div class="container">
   <!-- Modal -->
@@ -29,11 +31,12 @@ New Provider: {{ request.user }}
           <h4 class="modal-title">New Provider Page</h4>
         </div>
         <div class="modal-body">
-          <p>This page is one-time information that clinic staff fills out, giving us more information about themselves.</p>
+          <p>This is not normally part of the EHR; obviously we don't let just anybody in!</p>
 
-          <p>For now, <u>choose all clinical roles</u>, but in real life, you'd pick only those relevant to you.</p>
-
-          <p>Everything on this page, including the types of clinical roles, are customizable.</p>
+          <p>
+          	Normally, accounts for new staff are created by hand by existing staff.
+          	(It's good to keep a human in the loop sometimes.)
+          </p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -48,4 +51,6 @@ New Provider: {{ request.user }}
         $('#myModal').modal('show');
     });
 </script>
+
+</div>
 {% endblock %}

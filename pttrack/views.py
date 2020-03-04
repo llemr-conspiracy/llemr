@@ -13,6 +13,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Prefetch
 from django.utils.http import is_safe_url
 
+from django_registration.backends.one_step import views
+
 from workup import models as workupmodels
 from referral.models import Referral, FollowupRequest, PatientContact
 from appointment.models import Appointment
@@ -92,6 +94,7 @@ class ProviderCreate(FormView):
             user.email = form.cleaned_data['provider_email']
             user.first_name = provider.first_name
             user.last_name = provider.last_name
+            user.is_staff = True  # for a demo, all users are staff
             user.save()
             provider.save()
             form.save_m2m()

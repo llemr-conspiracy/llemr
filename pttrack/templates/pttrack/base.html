@@ -58,7 +58,7 @@
           <li><a href="{% url 'preintake' %}">New Patient</a></li>
           <li><a href="{% url 'all-patients' %}">All Patients</a></li>
           <li><a href="{% url 'appointment-list' %}">Appointments</a></li>
-          <li><a href="//snhc.wustl.edu/wiki" target="_blank">Wiki</a></li>
+          <!-- <li><a href="//snhc.wustl.edu/wiki" target="_blank">Wiki</a></li> -->
           <li><a href="{% url 'about' %}">About</a></li>
           {% if user.is_superuser or user.is_staff %}
           {% endif %}

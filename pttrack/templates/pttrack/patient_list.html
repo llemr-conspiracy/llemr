@@ -198,4 +198,35 @@ Osler: {{ title | default:"All Patients"}}
     document.addEventListener("DOMContentLoaded", doUponLoading, false);
 </script>
 
+
+<div class="container">
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Patient List</h4>
+        </div>
+        <div class="modal-body">
+          <p>This page lists all the patients that are currently "active." Think of it like the big board in an ED. Clinic staff collaborate to decide which patients are most relevant right now, and list them each as active.</p>
+          <p>Patient's activity status can be toggled on their chart (click their name).</p>
+          <p>There's also "action items," which are just little todos that clinic staff can leave to remind themselves or others that something remains to be done for a particular patient (like, say, a followup call).</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+    $(window).on('load',function(){
+        $('#myModal').modal('show');
+    });
+</script>
+
 {% endblock %}
