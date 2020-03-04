@@ -13,3 +13,4 @@ reportlab==3.4.0
 six==1.11.0
 webencodings==0.5.1
 xhtml2pdf==0.2.2
+django-registration==3.0
