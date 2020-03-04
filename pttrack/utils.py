@@ -75,7 +75,7 @@ def binary_count_qs(qs, fieldname, true_name=None, false_name=None):
 
     kwargs_true = {
         fieldname: True,
-        'then': 0
+        'then': 1
     }
 
     result = qs.aggregate(

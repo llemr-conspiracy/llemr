@@ -30,7 +30,7 @@ class DemographicsSummaryAdmin(admin.ModelAdmin):
 
         response.context_data['currently_employed'] = binary_count_qs(
             qs, 'currently_employed',
-            false_name='Unemployed', true_name='Insured'
+            false_name='Unemployed', true_name='Employed'
         )
 
         # response.context_data['employment_responses_total'] = (
