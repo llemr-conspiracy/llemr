@@ -7,8 +7,17 @@ from django.contrib.auth.forms import AuthenticationForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from crispy_forms.bootstrap import InlineCheckboxes
-
+from crispy_forms.layout import ButtonHolder, Submit
 from . import models
+
+from crispy_forms.layout import Field
+from django import forms
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit, Row, Column
+
+
+class CustomCheckbox(Field):
+    template = 'pttrack/custom_checkbox.html'
 
 # pylint: disable=I0011,E1305
 
@@ -84,11 +93,30 @@ class ActionItemForm(ModelForm):
         widgets = {'due_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
 
     def __init__(self, *args, **kwargs):
+
         super(ActionItemForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
+
+        self.helper.layout = Layout(
+            Row(
+                Column(css_class='form-group col-md-3 col-xs-4'),
+                Column('due_date', css_class='form-group col-md-3 col-xs-4'),
+                Column('instruction', css_class='form-group col-md-3 col-xs-4'),
+                css_class='form-row'
+            ),
+            Row(
+                Column(css_class='form-group col-md-3 col-xs-4'),
+                Column('comments', css_class='form-group col-md-6 col-xs-6')
+            ),
+            CustomCheckbox('priority'),
+            Row(
+                Column(Submit('submit', 'Submit'),
+                    css_class='formgroup col-md-offset-3 col-xs-offset-4')
+            )
+        )
+
         self.fields['instruction'].queryset = models.ActionInstruction.objects.filter(
             active=True)
-        self.helper.add_input(Submit('submit', 'Submit'))
 
 
 class ProviderForm(ModelForm):
