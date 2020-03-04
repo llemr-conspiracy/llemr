@@ -17,6 +17,7 @@
 <script src={% static "pttrack/js/d3.v4.js" %}></script>
 <script src={% static "pttrack/js/d3-scale-chromatic.v1.min.js" %}></script>
 <script src={% static "pttrack/js/drawpie.js" %}></script>
+<link rel="stylesheet" href={% static "pttrack/css/barchart.css" %}>
 
 <!-- Create a div where the graph will take place -->
 <div id="insurance_pie"></div>
@@ -40,49 +41,7 @@ drawpie(data, "#employed_pie")
 
   <br></br>
   <h2> Income Range Distribution </h2>
-    <style>
-    .bar-chart {
-      display: flex;
-      justify-content: space-around;
-      height: 160px;
-      padding-top: 60px;
-      overflow: hidden;
-    }
-    .bar-chart .bar {
-        flex: 100%;
-        align-self: flex-end;
-        margin-right: 2px;
-        position: relative;
-        background-color: #79aec8;
-    }
-    .bar-chart .bar:last-child {
-        margin: 0;
-    }
-    .bar-chart .bar:hover {
-        background-color: #417690;
-    }
-    .bar-chart .bar .bar-tooltip {
-        position: relative;
-        z-index: 999;
-    }
-    .bar-chart .bar .bar-tooltip {
-        position: absolute;
-        top: -60px;
-        left: 50%;
-        transform: translateX(-50%);
-        text-align: center;
-        font-weight: bold;
-        opacity: 0;
-    }
-    .bar-chart .bar:hover .bar-tooltip {
-        opacity: 1;
-    }
-    .bar-chart .axis {
-    	bottom: 20px;
-    	font-size: 16px;
-    	position: relative;
-  	}
-    </style>
+
     <div class="results">
         <div class="bar-chart">
         {% for x in income_range_count %}
