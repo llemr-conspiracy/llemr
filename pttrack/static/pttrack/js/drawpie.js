@@ -6,9 +6,9 @@ drawpie = function(data, div_name){
   var data_sum = sumValues(data)
 
   // set the dimensions and margins of the graph
-  var width = 2000
-      height = 500
-      margin = 40
+  var width = d3.select(div_name).node().getBoundingClientRect().width
+      height = window.innerHeight * 0.8
+      margin = window.innerHeight * 0.075
 
   // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
   var radius = Math.min(width, height) / 2 - margin
