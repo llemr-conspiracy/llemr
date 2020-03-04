@@ -164,6 +164,36 @@
         {% endfor %}
         </div>
     </div>
+    <br></br>
+    <h2> Workups per patient </h2>
+    <br></br>
+    <div class="results">
+        <div class="bar-chart">
+        {% for x in workups_per_patient %}
+          <div class="bar" style="height:{{x.pct}}%">
+                <div class="bar-tooltip">
+                    Count: {{x.count | default:0 }}
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+    <style>
+    .container {
+      display: flex;
+      justify-content: space-between;
+      text-align: center;
+      margin-right: 200px;
+      margin-left: 200px;
+      padding-bottom: 20px;
+      font-size: 20px;
+    }
+    </style>
+    <div class="container">
+    {% for x in workups_per_patient %}
+        <div>{{x.workups_per_pt}}</div>
+    {% endfor %}
+    </div>
 
 </div>
 
