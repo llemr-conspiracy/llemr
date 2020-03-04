@@ -55,14 +55,14 @@ class PatientSummaryAdmin(ModelAdmin):
             )
         )
 
-        response.context_data['english_speaking'] = json.dumps(english_dict)
+        response.context_data['english_speaking'] = english_dict
 
         dict_eth = {
             str(item.name): item.count
             for item in response.context_data['ethnicities']
         }
 
-        response.context_data['ethnicities_dict'] = json.dumps(dict_eth)
+        response.context_data['ethnicities_dict'] = dict_eth
 
         return response
 

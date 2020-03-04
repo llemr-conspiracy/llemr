@@ -4,35 +4,13 @@
     <h1> Patient Summary </h1>
 {% endblock %}
 {% block result_list %}
-<h2> Most Common Languages Spoken </h2>
-<div class=”results”>
-  <table>  
-    <thead>
-      <tr>
-        <th>
-          <div class=”text”>
-            <a href=”#”>Language</a>
-          </div>
-        </th>
-        <th>
-          <div class=”text”>
-            <a href=”#”>Count</a>
-          </div>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in languages %}
-      <tr>
-      	<td> {{ row }} </td>
-        <td> {{ row.count_spoken }} </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
-<br></br>
-<h2> Ethnicity Breakdown </h2>
+<style>
+.module h2 {
+  font-weight: bold;
+  font-size: 15px;
+}
+</style>
+<!-- <h2> Ethnicity Breakdown </h2>
 <div class=”results”>
   <table>  
     <thead>
@@ -72,7 +50,7 @@
     </tbody>
   </table>
 </div>
-<br></br>
+<br></br> -->
 <h2> Ethnicity Breakdown </h2>
 
 <!-- Load d3.js -->
@@ -173,6 +151,33 @@ var data = {{ english_speaking|safe }}
 drawpie(data, "#my_dataviz2")
 </script>
 
+<h2> Most Common Languages Spoken </h2>
+<div class=”results”>
+  <table>  
+    <thead>
+      <tr>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Language</a>
+          </div>
+        </th>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Count</a>
+          </div>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in languages %}
+      <tr>
+        <td> {{ row }} </td>
+        <td> {{ row.count_spoken }} </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
 {% endblock %}
 {% block pagination %}{% endblock %}

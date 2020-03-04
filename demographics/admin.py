@@ -19,35 +19,34 @@ class DemographicsSummaryAdmin(admin.ModelAdmin):
 
         response.context_data['has_insurance'] = (
             qs.aggregate(
-                uninsured=Coalesce(Sum(
+                Uninsured=Coalesce(Sum(
                     Case(When(has_insurance=False, then=1),
                          output_field=IntegerField())), 0),
-                insured=Coalesce(Sum(
+                Insured=Coalesce(Sum(
                     Case(When(has_insurance=True, then=1),
                          output_field=IntegerField())), 0))
         )
 
-        response.context_data['insurance_responses_total'] = (
-            response.context_data['has_insurance']['uninsured'] +
-            response.context_data['has_insurance']['insured']
-        )
+        # response.context_data['insurance_responses_total'] = (
+        #     response.context_data['has_insurance']['Uninsured'] +
+        #     response.context_data['has_insurance']['Insured']
+        # )
 
         response.context_data['currently_employed'] = (
             qs.aggregate(
-                unemployed=Coalesce(Sum(
+                Unemployed=Coalesce(Sum(
                     Case(When(currently_employed=False, then=1),
                          output_field=IntegerField())), 0),
-                employed=Coalesce(Sum(
+                Employed=Coalesce(Sum(
                     Case(When(currently_employed=True, then=1),
                          output_field=IntegerField())), 0)
             )
         )
 
-        response.context_data['employment_responses_total'] = (
-            response.context_data['currently_employed']['unemployed'] +
-            response.context_data['currently_employed']['employed']
-
-        )
+        # response.context_data['employment_responses_total'] = (
+        #     response.context_data['currently_employed']['Unemployed'] +
+        #     response.context_data['currently_employed']['Employed']
+        # )
 
         income_ranges = (
             models.IncomeRange.objects.all()
@@ -58,7 +57,6 @@ class DemographicsSummaryAdmin(admin.ModelAdmin):
         #     models.IncomeRange.objects.all()
         #     .aggregate(count=Count('demographics'))
         # )
-        # print(total_income_responses)
 
         most_common_range = (
             income_ranges.aggregate(

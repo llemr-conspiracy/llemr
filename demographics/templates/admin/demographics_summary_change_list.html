@@ -1,64 +1,116 @@
 {% extends 'admin/change_list.html' %}
 {% load dashboard_extras %}
+
 {% block content_title %}
-    <h1> Patient Demographics Summary </h1>
+<h1> Patient Demographics Summary </h1>
 {% endblock %}
 {% block result_list %}
+<style>
+.module h2 {
+  font-weight: bold;
+  font-size: 15px;
+}
+</style>
 <h2>Insurance Status of Patient Population</h2>
-  <table>  
-    <thead>
-      <tr>
-        <th>
-          <div class=”text”>
-            <a href=”#”>Status</a>
-          </div>
-        </th>
-        <th>
-          <div class=”text”>
-            <a href=”#”>Total</a>
-          </div>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-      	<td> Insured </td>
-        <td> {{ has_insurance.insured|as_percentage_of:insurance_responses_total }} </td>
-      </tr>
-      <tr>
-      	<td> Uninsured </td>
-        <td> {{ has_insurance.uninsured|as_percentage_of:insurance_responses_total }} </td>
-      </tr>
-    </tbody>
-  </table>
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz"></div>
+
+<!-- Color scale -->
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+<script>
+drawpie = function(data, div_name){
+  // sum of all values in dictionary data
+  const sumValues = obj => Object.values(obj).reduce((a, b) => a + b);
+
+  var data_sum = sumValues(data)
+
+  // set the dimensions and margins of the graph
+  var width = 2000
+      height = 500
+      margin = 40
+
+  // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+  var radius = Math.min(width, height) / 2 - margin
+
+  // append the svg object to the div called 'my_dataviz'
+  var svg = d3.select(div_name)
+    .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+    .append("g")
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+  // Create dummy data
+  //var data = {a: 9, b: 20, c:30, d:8, e:12}
+
+  // set the color scale
+  var color = d3.scaleOrdinal()
+    .domain(data)
+    .range(d3.schemeTableau10);
+
+  // Compute the position of each group on the pie:
+  var pie = d3.pie()
+    .value(function(d) {return d.value; })
+  var data_ready = pie(d3.entries(data))
+  // Now I know that group A goes from 0 degrees to x degrees and so on.
+
+  // shape helper to build arcs:
+  var arcGenerator = d3.arc()
+    .innerRadius(0)
+    .outerRadius(radius)
+
+  // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+  svg
+    .selectAll('mySlices')
+    .data(data_ready)
+    .enter()
+    .append('path')
+      .attr('d', arcGenerator)
+      .attr('fill', function(d){ return(color(d.data.key)) })
+      .attr("stroke", "black")
+      .style("stroke-width", "2px")
+      .style("opacity", 0.7)
+
+  // Now add the annotation. Use the centroid method to get the best coordinates
+  svg
+    .selectAll('mySlices')
+    .data(data_ready)
+    .enter()
+    .append('text')
+    .text(function(d){
+      if(d.data.value>0)
+        return d.data.key+': '+(d.data.value*100/data_sum).toFixed(1) + '%'
+      else
+        return ''})
+    .attr("transform", function(d) { return "translate(" + arcGenerator.centroid(d) + ")";  })
+    .style("text-anchor", "middle")
+    .style("font-size", 16)
+    .style("font-weight", 700)
+}
+</script>
+
+
+<!-- Draw the pie chart -->
+<script>
+var data = {{ has_insurance|safe }}
+drawpie(data, "#my_dataviz")
+</script>
+
 <br></br>
 <h2>Employment Status of Patient Population</h2>
-  <table>  
-    <thead>
-      <tr>
-        <th>
-          <div class=”text”>
-            <a href=”#”>Status</a>
-          </div>
-        </th>
-        <th>
-          <div class=”text”>
-            <a href=”#”>Total</a>
-          </div>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-      	<td> Employed </td>
-        <td> {{ currently_employed.employed|as_percentage_of:employment_responses_total }} </td>
-      </tr>
-      <tr>
-      	<td> Unemployed </td>
-        <td> {{ currently_employed.unemployed|as_percentage_of:employment_responses_total }} </td>
-      </tr>
-    </tbody>
-  </table>
+<!-- Create a div where the graph will take place -->
+<div id="my_dataviz2"></div>
+
+<!-- Draw the pie chart -->
+<script>
+var data = {{ currently_employed|safe }}
+drawpie(data, "#my_dataviz2")
+</script>
+
   <br></br>
   <h2> Income Range Distribution </h2>
     <style>
