@@ -398,7 +398,7 @@ class WorkupSummaryAdmin(admin.ModelAdmin):
 
         year2clinic_date_count = Counter(
             [q['clinic_date'].year
-             for q in models.ClinicDate.objects.values('clinic_date')]
+             for q in models.ClinicDate.objects.filter(workup__isnull=False).distinct().values('clinic_date')]
         )
 
         # year2count = {}
