@@ -488,7 +488,7 @@ class WorkupSummaryAdmin(admin.ModelAdmin):
         #     .order_by('-attending_count')
         # )
 
-        attendings = Counter([q['attending'] for q in qs.values('attending')])
+        attendings = Counter([q['signer'] for q in qs.filter(signer__isnull=False).values('signer')])
         number_attendings_to_show = 20
         response.context_data['attendings'] = [
             {'name': Provider.objects.get(pk=k).name(),

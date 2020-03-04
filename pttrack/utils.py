@@ -81,10 +81,10 @@ def binary_count_qs(qs, fieldname, true_name=None, false_name=None):
     result = qs.aggregate(
         **{
             true_name: Coalesce(
-                Sum(Case(When(**kwargs_false),
+                Sum(Case(When(**kwargs_true),
                          output_field=IntegerField())), 0),
             false_name: Coalesce(
-                Sum(Case(When(**kwargs_true),
+                Sum(Case(When(**kwargs_false),
                          output_field=IntegerField())), 0)
         })
 
