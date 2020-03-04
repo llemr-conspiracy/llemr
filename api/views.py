@@ -1,11 +1,13 @@
 from functools import partial
 
 import django.utils.timezone
+from django.db.models import Min
 
 from rest_framework import generics
 
 from pttrack import models as coremodels
 from workup import models as workupmodels
+from referral import models as referrals
 
 from . import serializers
 
@@ -17,9 +19,30 @@ def active_patients_filter(qs):
     pts).
     '''
 
-    print('hi')
     return qs.filter(needs_workup__exact=True).order_by('last_name')
 
+def merge_pt_querysets_by_soonest_date(qs1, qs2):
+    '''Utility function to merge two patient querysets by the
+    soonest due date. Called by active_ai_patients_filter and
+    inactive_ai_patients_filter. Requires that inputs both
+    have soonest_due_date annotated.
+    '''
+
+    patient_dict = {p: p.soonest_due_date for p in qs1}
+
+    for p in qs2:
+        if p not in patient_dict:
+            patient_dict[p] = p.soonest_due_date
+        else:
+            patient_dict[p] = min(patient_dict[p], p.soonest_due_date)
+
+    out_list = [t[0] for t in sorted(
+        [(p, soonest_due_date) for p, soonest_due_date
+         in patient_dict.iteritems()],
+        key=lambda x: x[1])
+    ]
+
+    return out_list
 
 def active_ai_patients_filter(qs):
     '''Filter a queryset of patients for those that have overdue action
@@ -31,10 +54,22 @@ def active_ai_patients_filter(qs):
         .filter(completion_date=None) \
         .select_related('patient')
 
-    return coremodels.Patient.objects \
+    pts_with_active_ais = coremodels.Patient.objects \
         .filter(actionitem__in=ai_qs) \
-        .distinct()
-        # .order_by('-actionitem__due_date')
+        .distinct().annotate(soonest_due_date=Min('actionitem__due_date'))
+
+    referral_qs = referrals.FollowupRequest.objects \
+        .filter(due_date__lte=django.utils.timezone.now().date()) \
+        .filter(completion_date=None) \
+        .select_related('patient')
+
+    pts_with_active_referrals = coremodels.Patient.objects \
+        .filter(followuprequest__in=referral_qs) \
+        .distinct().annotate(soonest_due_date=Min('followuprequest__due_date'))
+
+    out_list = merge_pt_querysets_by_soonest_date(pts_with_active_ais, pts_with_active_referrals)
+
+    return out_list
 
 
 def inactive_ai_patients_filter(qs):
@@ -47,9 +82,18 @@ def inactive_ai_patients_filter(qs):
             .filter(due_date__gt=django.utils.timezone.now().date())
             .filter(completion_date=None)
             .select_related('patient')
-        ).order_by('-actionitem__due_date')
+        ).annotate(soonest_due_date=Min('actionitem__due_date'))
 
-    return future_ai_pts
+    future_referral_pts = coremodels.Patient.objects.filter(
+        followuprequest__in=referrals.FollowupRequest.objects
+            .filter(due_date__gt=django.utils.timezone.now().date())
+            .filter(completion_date=None)
+            .select_related('patient')
+        ).annotate(soonest_due_date=Min('followuprequest__due_date'))
+
+    out_list = merge_pt_querysets_by_soonest_date(future_ai_pts, future_referral_pts)
+
+    return out_list
 
 
 def unsigned_workup_patients_filter(qs):
@@ -113,7 +157,7 @@ class PtList(generics.ListAPIView):  # read only
             'ai_priority': priority_ai_patients_filter
         }
 
-        def bylatestKey(pt): # This doesn't sort by latest time, just latest date
+        def bylatestKey(pt):  # This doesn't sort by latest time, just latest date
             latestwu = pt.latest_workup()
             if latestwu is None:
                 latestdate = pt.history.last().history_date.date()

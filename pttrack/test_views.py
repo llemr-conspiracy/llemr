@@ -567,7 +567,7 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         }
 
         tab_patients = {
-            'activeai': [self.pt2, self.pt3],
+            'activeai': [self.pt3, self.pt2],
             'pendingai': [self.pt1],
             'unsignedwu': [self.pt2, self.pt3],
             'activept': [self.pt4, self.pt2, self.pt3, self.pt5],
@@ -965,9 +965,6 @@ class IntakeTest(TestCase):
             follow=True)
 
         self.assertTemplateUsed(response, 'pttrack/preintake-select.html')
-
-        print(dir(response))
-        print(response.context_data)
 
         self.assertIn(pt, response.context_data['object_list'])
 
