@@ -417,7 +417,7 @@ class WorkupSummaryAdmin(admin.ModelAdmin):
         ]
 
         response.context_data['diagnosis_categories'] = list(
-            models.DiagnosisType.objects.all()
+            models.DiagnosisType.objects
             .annotate(count=Count('workup'))
             .order_by('-count')
         )
@@ -506,6 +506,17 @@ class WorkupSummaryAdmin(admin.ModelAdmin):
             for (k, v) in nlargest(number_authors_to_show,
                                    authors.items(),
                                    key=lambda i: i[1])
+        ]
+
+        # Count the number of workups per patient
+        pt_id2workup_count = Counter([q['patient'] for q in qs.values('patient')])
+        workups_per_patient = Counter([i for i in pt_id2workup_count.values()])
+        response.context_data['workups_per_patient'] = [
+            {'workups_per_pt': k,
+             'count': v,
+             'pct': (float(v) / float(max(workups_per_patient.values()))
+                     * 100)}
+            for (k, v) in workups_per_patient.items()
         ]
 
         return response
