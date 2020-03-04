@@ -1,8 +1,8 @@
 from base_settings import *
 
-DEBUG = TEMPLATE_DEBUG = False
+DEBUG = TEMPLATE_DEBUG = True
 CRISPY_FAIL_SILENTLY = not DEBUG
-ALLOWED_HOSTS = ['osler.wustl.edu']
+ALLOWED_HOSTS = ['*']
 
 REGISTRATION_OPEN = True
 
@@ -25,8 +25,17 @@ CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = 'DENY'
 
 DEFAULT_FROM_EMAIL = "webmaster@osler.wustl.edu"
-SERVER_EMAIL = "admin@osler.wustl.edu"
-EMAIL_HOST = "irony.wusm.wustl.edu"
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'justinrporter@gmail.com'
+
+with open(os.path.join(BASE_DIR, 'secrets/email_auth.txt')) as f:
+    EMAIL_KEY = f.read().strip()
+
+EMAIL_HOST_PASSWORD = EMAIL_KEY
+
 ADMINS = (
     ('Artur Meller', 'ameller@wustl.edu'),
     ('Justin Porter', 'jrporter@wustl.edu'),
@@ -37,12 +46,11 @@ with open(os.path.join(BASE_DIR, 'secrets/database_password.txt')) as f:
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'osler',
-        'USER': 'django',
+        'USER': 'postgres',
         'PASSWORD': DB_PASSWORD,
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'OPTIONS': {'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"}
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
