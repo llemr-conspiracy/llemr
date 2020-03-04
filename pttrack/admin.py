@@ -27,19 +27,19 @@ class PatientSummaryAdmin(ModelAdmin):
             return response
 
         response.context_data['languages'] = list(
-            models.Language.objects.all()
+            models.Language.objects
             .annotate(count_spoken=Count('patient'))
             .order_by('-count_spoken')[:10]
         )
 
         response.context_data['ethnicities'] = list(
-            models.Ethnicity.objects.all()
+            models.Ethnicity.objects
             .annotate(count=Count('patient'))
             .order_by('-count')
         )
 
         response.context_data['ethnicities_total'] = dict(
-            models.Ethnicity.objects.all()
+            models.Ethnicity.objects
             .annotate(count=Count('patient'))
             .aggregate(Sum('count'))
         )

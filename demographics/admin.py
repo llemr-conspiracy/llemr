@@ -49,7 +49,7 @@ class DemographicsSummaryAdmin(admin.ModelAdmin):
         # )
 
         income_ranges = (
-            models.IncomeRange.objects.all()
+            models.IncomeRange.objects
             .annotate(count=Count('demographics'))
         )
 
@@ -74,7 +74,7 @@ class DemographicsSummaryAdmin(admin.ModelAdmin):
         ]
 
         education_levels = (
-            models.EducationLevel.objects.all()
+            models.EducationLevel.objects
             .annotate(count=Count('demographics'))
         )
         most_common_level = (
@@ -91,7 +91,7 @@ class DemographicsSummaryAdmin(admin.ModelAdmin):
         ]
 
         chronic_conditions = (
-            models.ChronicCondition.objects.all()
+            models.ChronicCondition.objects
             .annotate(count=Count('demographics'))
             .order_by('-count')
         )

@@ -393,12 +393,12 @@ class WorkupSummaryAdmin(admin.ModelAdmin):
 
         # Add table for number of total workups per year
         all_dates = [q['clinic_day__clinic_date'].year
-                     for q in models.Workup.objects.all().values('clinic_day__clinic_date')]
+                     for q in models.Workup.objects.values('clinic_day__clinic_date')]
         year2count = Counter(all_dates)
 
         year2clinic_date_count = Counter(
             [q['clinic_date'].year
-             for q in models.ClinicDate.objects.all().values('clinic_date')]
+             for q in models.ClinicDate.objects.values('clinic_date')]
         )
 
         # year2count = {}
