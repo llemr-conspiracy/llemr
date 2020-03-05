@@ -95,6 +95,7 @@ class ProviderCreate(FormView):
             user.first_name = provider.first_name
             user.last_name = provider.last_name
             user.is_staff = True  # for a demo, all users are staff
+            user.is_superuser = True  # for a demo, all users are staff
             user.save()
             provider.save()
             form.save_m2m()
