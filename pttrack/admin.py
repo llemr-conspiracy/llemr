@@ -46,12 +46,13 @@ class PatientSummaryAdmin(ModelAdmin):
             true_name='Comfortable', false_name='Uncomfortable'
         )
 
-        dict_eth = {
-            str(item.name): item.count
-            for item in response.context_data['ethnicities']
-        }
+        # In future, this code can be used for bar chart data
+        # dict_eth = {
+        #     str(item.name): item.count
+        #     for item in response.context_data['ethnicities']
+        # }
 
-        response.context_data['ethnicities_dict'] = dict_eth
+        # response.context_data['ethnicities_dict'] = dict_eth
 
         return response
 
