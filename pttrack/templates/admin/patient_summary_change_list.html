@@ -54,22 +54,52 @@
 </div>
 <br></br> -->
 <h2> Ethnicity Breakdown </h2>
+<div class=”results”>
+  <table>  
+    <thead>
+      <tr>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Ethnicity</a>
+          </div>
+        </th>
+        <th>
+          <div class=”text”>
+            <a href=”#”>Count</a>
+          </div>
+        </th>
+        <th>
+          <div class=”text”>
+            <a href=”#”>
+              <strong>% Of Total</strong>
+            </a>
+          </div>
+        </th>
+      </tr>
+    </thead>
 
+    <tbody>
+      {% for row in ethnicities %}
+      <tr>
+        <td> {{ row }} </td>
+        <td> {{ row.count }} </td>
+        <td> 
+          <strong>
+            {{ row.count|as_percentage_of:ethnicities_total.count__sum }}
+          </strong>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<br></br>
 <!-- Load d3.js -->
 <script src={% static "pttrack/js/d3.v4.js" %}></script>
 <script src={% static "pttrack/js/d3-scale-chromatic.v1.min.js" %}></script>
 <script src={% static "pttrack/js/drawpie.js" %}></script>
 
-<!-- Create a div where the graph will take place -->
-<div id="ethnicities_pie"></div>
-
-<!-- Draw the pie chart -->
-<script>
-var data = {{ ethnicities_dict|safe }}
-drawpie(data, "#ethnicities_pie")
-</script>
-
-<h2>Patient Comfort with English</h2>
+<h2>English Proficiency</h2>
 <h3>Percent of Patients Comfortable with English</h3>
 <!-- Create a div where the graph will take place -->
 <div id="english_pie"></div>

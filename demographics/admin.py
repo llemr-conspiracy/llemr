@@ -54,8 +54,11 @@ class DemographicsSummaryAdmin(admin.ModelAdmin):
             )
         )
 
+        # We make each label the same string length for optimal viewing
+        max_length_income_level = max([len(x.name) for x in income_ranges])
+
         response.context_data['income_range_count'] = [
-            {'range': x.name,
+            {'range': x.name.center(max_length_income_level),
              'count': x.count,
              'pct': (float(x.count) / float(most_common_range['most_common'])
                      * 100)
@@ -73,8 +76,11 @@ class DemographicsSummaryAdmin(admin.ModelAdmin):
             )
         )
 
+        # We make each label the same string length for optimal viewing
+        max_length_ed_level = max([len(x.name) for x in education_levels])
+
         response.context_data['education_levels'] = [
-            {'level': x.name,
+            {'level': x.name.center(max_length_ed_level),
              'count': x.count,
              'pct': (float(x.count) / float(most_common_level['most_common'])
                      * 100)}
