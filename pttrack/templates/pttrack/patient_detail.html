@@ -24,7 +24,11 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		<ul class="list-group">
 			<li class="list-group-item">
 				<span class="glyphicon glyphicon-search" aria-hidden="true"></span>&nbsp;
-				<a href="{% url 'new-note-dispatch' pt_id=patient.pk %}"><strong>Write Note</strong></a>
+				<a href="{% url 'new-workup' pt_id=patient.pk %}"><strong>Write Note</strong> (new injury)</a>
+			</li>
+			<li class="list-group-item">
+				<span class="glyphicon glyphicon-search" aria-hidden="true"></span>&nbsp;
+				<a href="{% url 'new-progress-note' pt_id=patient.pk %}"><strong>Write Note</strong> (progress note)</a>
 			</li>
 			<li class="list-group-item">
 				<span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>&nbsp;
