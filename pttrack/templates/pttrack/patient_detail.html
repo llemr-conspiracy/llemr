@@ -16,19 +16,6 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		<p class="lead"><strong>Date of injury:</strong> {{ patient_injury_date }}</p>
 		<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
 		<p class="lead"><strong>Social Worker:</strong> {{patient.case_managers.iterator | join:"; "}}
-		{% if request.session.staff_view %}
-			{% if patient.needs_workup %}
-		  	    <p class="lead"> Patient is Active <a href="{% url 'patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></p>
-		    {% else %}
-    			<p class="lead"> Patient is Inactive <a href="{% url 'patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a></p>
-			{% endif %}
-		{% else %}
-			{% if patient.needs_workup %}
-	    		<p class="lead"> Patient is Active </p>
-		    {% else %}
-  	  			<p class="lead"> Patient is Inactive </p>
-		    {% endif %}
-	    {% endif %}
 	</div>
 </div>
 <div class="col-lg-offset-1 col-lg-4 col-sm-6 text-center" style="border: 2px  black">
