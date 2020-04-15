@@ -382,7 +382,15 @@ def home_page(request):
 def patient_detail(request, pk):
 
     pt = get_object_or_404(mymodels.Patient, pk=pk)
-    wu=workupmodels.Workup.objects.filter(patient=pt).latest('written_datetime')
+    try:
+        wu=workupmodels.Workup.objects.filter(patient=pt).latest('written_datetime')
+        injury_type=wu.injury_type
+        injury_date=wu.injury_date
+        injury_location=wu.injury_location
+    except:
+        injury_type=''
+        injury_date=''
+        injury_location=''
     #   Special zipped list of action item types so they can be looped over.
     #   List 1: Labels for the panel objects of the action items
     #   List 2: Action Item lists based on type (active, pending, completed)
@@ -470,9 +478,9 @@ def patient_detail(request, pk):
 
     return render(request,
                   'pttrack/patient_detail.html',
-                  {'injury_type': wu.injury_type,
-                   'injury_date': wu.injury_date,
-                   'injury_location': wu.injury_location,
+                  {'injury_type': injury_type,
+                   'injury_date': injury_date,
+                   'injury_location': injury_location,
                    'zipped_ai_list': zipped_ai_list,
                    'total_ais': total_ais,
                    'referral_status': referral_status_output,
