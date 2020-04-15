@@ -1,3 +1,4 @@
+from bootstrap3_datetime.widgets import DateTimePicker
 from decimal import Decimal, ROUND_HALF_UP
 
 from django.forms import (
@@ -148,7 +149,7 @@ class WorkupForm(ModelForm):
         model = models.Workup
         exclude = ['patient', 'author', 'signer', 'author_type',
                    'signed_date', 'referral_location', 'referral_type']
-
+        widgets = {'injury_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
     # limit the options for the attending, other_volunteer field to
     # Providers with ProviderType with signs_charts=True, False
     # (includes coordinators and volunteers)
@@ -182,7 +183,7 @@ class WorkupForm(ModelForm):
             Row(HTML('<h3>Injury</h3>'),
                 Div('injury_type', css_class='col-sm-4'),
                 Div('injury_location', css_class='col-sm-4'),
-                Div('injury_date', css_class='col-sm-4'),
+                Div('injury_date', css_class='form-group col-sm-4'),
                 Div('HPI', css_class='col-xs-8'),
                 Div('retained_bullet', css_class='col-xs-4')
                 #Div(InlineCheckboxes('diagnosis_categories'),

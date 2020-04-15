@@ -5,15 +5,13 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 {% endblock %}
 
 {% block header %}
-<div class="col-lg-5 col-lg-offset-1 col-sm-6">
-	<div class="col-md-1">
-		<h2><br><a href="{% url 'all-patients' %}"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a></h2>
-	</div>
+<div class="col-lg-5 col-sm-6">
 	<div class="col-md-11">
 		<h2> <a href="{% url 'patient-update' pk=patient.id %}">{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
 		</a></h2>
-		<p class="lead"><strong>Injury:</strong> {{ patient.injury_type }} {{ patient.injury_location }}</p>
-		<p class="lead"><strong>Date of injury:</strong> {{ patient_injury_date }}</p>
+		<p class="lead"><strong>Injury:</strong> {{ injury_type }}</p>
+		<p class="lead"><strong>Location:</strong> {{ injury_location }}</p>
+		<p class="lead"><strong>Date of injury:</strong> {{ injury_date }}</p>
 		<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
 		<p class="lead"><strong>Social Worker:</strong> {{patient.case_managers.iterator | join:"; "}}
 	</div>

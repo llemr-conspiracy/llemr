@@ -168,7 +168,7 @@ class Workup(AttestableNote):
     # new fields for BRIC
     injury_type = models.CharField(max_length=1000, verbose_name="Injury type", default='', null=True, blank=True)
     injury_location = models.CharField(max_length=1000, verbose_name="Anatomical location", default='', null=True, blank=True)
-    injury_date = models.CharField(max_length=1000, verbose_name="Date of injury", default='', null=True, blank=True)
+    injury_date = models.DateField(verbose_name="Date of injury", null=True, blank=True)
     retained_bullet = models.BooleanField(default=False)
 
     activity_level = models.TextField(verbose_name="Daily Activity Level", default='', null=True, blank=True)
