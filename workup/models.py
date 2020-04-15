@@ -194,10 +194,10 @@ class Workup(AttestableNote):
     ros = models.TextField(verbose_name="ROS", null=True, blank=True)
 
     # old filds not used by BRIC
-    chief_complaint = models.CharField(max_length=1000, verbose_name="CC")
-    diagnosis = models.CharField(max_length=1000, verbose_name="Dx")
-    diagnosis_categories = models.ManyToManyField(DiagnosisType)
-    soc_hx = models.TextField(verbose_name="Social History")
+    chief_complaint = models.CharField(max_length=1000, verbose_name="CC", blank=True)
+    diagnosis = models.CharField(max_length=1000, verbose_name="Dx", blank=True)
+    diagnosis_categories = models.ManyToManyField(DiagnosisType, blank=True)
+    soc_hx = models.TextField(verbose_name="Social History", null=True, blank=True)
 
 
     # represented internally in per min
@@ -264,7 +264,7 @@ class Workup(AttestableNote):
     will_return = models.BooleanField(default=False,
                                       help_text="Will the pt. return to SNHC?")
 
-    A_and_P = models.TextField()
+    A_and_P = models.TextField(null=True, blank=True)
 
     signer = models.ForeignKey(Provider,
                                blank=True, null=True,
