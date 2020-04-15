@@ -165,17 +165,40 @@ class Workup(AttestableNote):
     clinic_day = models.ForeignKey(
         ClinicDate, help_text="When was the patient seen?")
 
+    # new fields for BRIC
+    injury_type = models.CharField(max_length=1000, verbose_name="Injury type", default='', null=True, blank=True)
+    injury_location = models.CharField(max_length=1000, verbose_name="Anatomical location", default='', null=True, blank=True)
+    injury_date = models.CharField(max_length=1000, verbose_name="Date of injury", default='', null=True, blank=True)
+    retained_bullet = models.BooleanField(default=False)
+
+    activity_level = models.TextField(verbose_name="Daily Activity Level", default='', null=True, blank=True)
+    food_intake = models.TextField(verbose_name="Food Intake", default='', null=True, blank=True)
+    emotional_state = models.TextField(verbose_name="Emotional State/Substance Use", default='', null=True, blank=True)
+    sleep_pattern = models.TextField(verbose_name="Sleep Pattern", default='', null=True, blank=True)
+
+    living_situation = models.TextField(verbose_name="Living Situation", default='', null=True, blank=True)
+    legal_support = models.TextField(verbose_name="Legal Support", default='', null=True, blank=True)
+    occupational_plan = models.TextField(verbose_name="Work/Education Plan", default='', null=True, blank=True)
+
+    wound_care_regimen = models.TextField(verbose_name="Wound Care Regimen", default='', null=True, blank=True)
+    pain_control_regimen = models.TextField(verbose_name="Pain Control Regimen", default='', null=True, blank=True)
+
+    subspecialty_need = models.TextField(verbose_name="Subspecialty Need", default='', null=True, blank=True)
+
+    # old fields used by BRIC
+    HPI = models.TextField(verbose_name="HPI", null=True, blank=True)
+    PMH_PSH = models.TextField(verbose_name="PMH/PSH", null=True, blank=True)
+    meds = models.TextField(verbose_name="Medications", null=True, blank=True)
+    allergies = models.TextField(verbose_name="Allergies", null=True, blank=True)
+    fam_hx = models.TextField(verbose_name="Family History", null=True, blank=True)
+    ros = models.TextField(verbose_name="ROS", null=True, blank=True)
+
+    # old filds not used by BRIC
     chief_complaint = models.CharField(max_length=1000, verbose_name="CC")
     diagnosis = models.CharField(max_length=1000, verbose_name="Dx")
     diagnosis_categories = models.ManyToManyField(DiagnosisType)
-
-    HPI = models.TextField(verbose_name="HPI")
-    PMH_PSH = models.TextField(verbose_name="PMH/PSH")
-    meds = models.TextField(verbose_name="Medications")
-    allergies = models.TextField()
-    fam_hx = models.TextField(verbose_name="Family History")
     soc_hx = models.TextField(verbose_name="Social History")
-    ros = models.TextField(verbose_name="ROS")
+
 
     # represented internally in per min
     hr = models.PositiveSmallIntegerField(
@@ -207,7 +230,7 @@ class Workup(AttestableNote):
         max_digits=5, decimal_places=1,
         blank=True, null=True)
 
-    pe = models.TextField(verbose_name="Physical Examination")
+    pe = models.TextField(verbose_name="Physical Examination", null=True, blank=True)
 
     labs_ordered_quest = models.TextField(
         blank=True, null=True, verbose_name="Labs Ordered from Quest")

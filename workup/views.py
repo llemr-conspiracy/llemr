@@ -31,8 +31,8 @@ def get_clindates():
 def new_note_dispatch(request, pt_id):
 
     note_types = {
-        'Standard Note': reverse("new-workup", args=(pt_id,)),
-        'Clinical Psychology Note': reverse("new-progress-note", args=(pt_id,)),
+        'New Injury': reverse("new-workup", args=(pt_id,)),
+        'Progress Note': reverse("new-progress-note", args=(pt_id,)),
     }
 
     return render(request, 'workup/new-note-dispatch.html',
@@ -77,6 +77,7 @@ class WorkupCreate(NoteFormView):
         # self.get() checks for >= 1 ClinicDay
         initial['clinic_day'] = get_clindates().first()
         initial['ros'] = "Default: reviewed and negative"
+        initial['pe'] = "Wounds: \nMobility: \nTenderness: \nChest exam: \nAbdominal exam:"
 
         wu_previous = pt.latest_workup()
         if wu_previous is not None:

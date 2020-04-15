@@ -25,7 +25,7 @@ user.first_name = "Radhika"
 user.last_name = "Jain"
 user.save()
 
-user = User.objects.create_user('newboldd', 'newbold@wustl.edu', 'password')
+user = User.objects.create_superuser('newboldd', 'newbold@wustl.edu', 'password')
 user.first_name = "Dillan"
 user.last_name = "Newbold"
 user.save()
