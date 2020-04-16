@@ -2,7 +2,7 @@ from bootstrap3_datetime.widgets import DateTimePicker
 from decimal import Decimal, ROUND_HALF_UP
 
 from django.forms import (
-    fields, ModelForm, ModelChoiceField, ModelMultipleChoiceField, RadioSelect
+    fields, ModelForm, ModelChoiceField, ModelMultipleChoiceField, RadioSelect, CharField, Textarea
 )
 
 from crispy_forms.helper import FormHelper
@@ -149,7 +149,7 @@ class WorkupForm(ModelForm):
         model = models.Workup
         exclude = ['patient', 'author', 'signer', 'author_type',
                    'signed_date', 'referral_location', 'referral_type']
-        widgets = {'injury_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
+        widgets = {'injury_date': DateTimePicker(options={"format": "MM/DD/YYY"})}
     # limit the options for the attending, other_volunteer field to
     # Providers with ProviderType with signs_charts=True, False
     # (includes coordinators and volunteers)
@@ -166,6 +166,26 @@ class WorkupForm(ModelForm):
             clinical_roles__in=ProviderType.objects.filter(
                 signs_charts=False)).distinct().order_by("last_name"),
     )
+
+    HPI = CharField(label='HPI', required=False, widget=Textarea(attrs={'rows': 8}))
+    activity_level = CharField(required=False, widget=Textarea(attrs={'rows': 4}))
+    food_intake = CharField(required=False, widget=Textarea(attrs={'rows': 4}))
+    emotional_state = CharField(required=False, widget=Textarea(attrs={'rows': 4}))
+    sleep_pattern = CharField(required=False, widget=Textarea(attrs={'rows': 4}))
+    meds = CharField(required=False, widget=Textarea(attrs={'rows': 4}))
+    allergies = CharField(required=False, widget=Textarea(attrs={'rows': 4}))
+    PMH_PSH = CharField(label='PMH/PSH', required=False, widget=Textarea(attrs={'rows': 4}))
+    fam_hx = CharField(label='Family history', required=False, widget=Textarea(attrs={'rows': 4}))
+    ros = CharField(label='ROS', required=False, widget=Textarea(attrs={'rows': 4}))
+    living_situation = CharField(required=False, widget=Textarea(attrs={'rows': 6}))
+    legal_support = CharField(required=False, widget=Textarea(attrs={'rows': 6}))
+    occupational_plan = CharField(required=False, widget=Textarea(attrs={'rows': 6}))
+    labs_ordered_quest = CharField(required=False, widget=Textarea(attrs={'rows': 6}))
+    labs_ordered_internal = CharField(required=False, widget=Textarea(attrs={'rows': 6}))
+    rx = CharField(label='Prescriptions ordered', required=False, widget=Textarea(attrs={'rows': 6}))
+    wound_care_regimen = CharField(required=False, widget=Textarea(attrs={'rows': 6}))
+    pain_control_regimen = CharField(required=False, widget=Textarea(attrs={'rows': 6}))
+    pe = CharField(label='Physical Examination', required=False, widget=Textarea(attrs={'rows': 6}))
 
     def __init__(self, *args, **kwargs):
         super(WorkupForm, self).__init__(*args, **kwargs)
@@ -184,25 +204,25 @@ class WorkupForm(ModelForm):
                 Div('injury_type', css_class='col-sm-4'),
                 Div('injury_location', css_class='col-sm-4'),
                 Div('injury_date', css_class='form-group col-sm-4'),
-                Div('HPI', css_class='col-xs-8'),
+                Div('HPI', css_class='col-md-8'),
                 Div('retained_bullet', css_class='col-xs-4')
                 #Div(InlineCheckboxes('diagnosis_categories'),
                 #    css_class='col-xs-12'),
                 ),
 
             Row(HTML('<h3>General Health</h3>'),
-                Div('activity_level', css_class='col-xs-4'),
-                Div('food_intake', css_class='col-md-4'),
-                Div('emotional_state', css_class='col-md-4'),
-                Div('sleep_pattern', css_class='col-md-4'),
-                Div('meds', css_class='col-md-4'),
-                Div('allergies', css_class='col-md-4'),
-                Div('PMH_PSH', css_class='col-xs-4'),
-                Div('fam_hx', css_class='col-md-4'),
-                Div('ros', css_class='col-xs-4')),
+                Div('activity_level', css_class='col-sm-6'),
+                Div('food_intake', css_class='col-sm-6'),
+                Div('emotional_state', css_class='col-sm-6'),
+                Div('sleep_pattern', css_class='col-sm-6'),
+                Div('meds', css_class='col-sm-6'),
+                Div('allergies', css_class='col-sm-6'),
+                Div('PMH_PSH', css_class='col-sm-6'),
+                Div('fam_hx', css_class='col-sm-6'),
+                Div('ros', css_class='col-sm-6')),
 
             Row(HTML('<h3>Social History</h3>'),
-                Div('living_situation', css_class='col-xs-4'),
+                Div('living_situation', css_class='col-md-4'),
                 Div('legal_support', css_class='col-md-4'),
                 Div('occupational_plan', css_class='col-md-4')),
 
@@ -226,8 +246,8 @@ class WorkupForm(ModelForm):
                 Div('pe', css_class='col-xs-12')),
 
             Row(HTML('<h3>Assessment, Plan, & Orders</h3>'),
-                Div('wound_care_regimen', css_class='col-xs-12'),
-                Div('pain_control_regimen', css_class='col-xs-12'),
+                Div('wound_care_regimen', css_class='col-xs-6'),
+                Div('pain_control_regimen', css_class='col-xs-6'),
                 Div('rx', css_class='col-md-4'),
                 Div('labs_ordered_internal', css_class='col-md-4'),
                 Div('labs_ordered_quest', css_class='col-md-4'),
