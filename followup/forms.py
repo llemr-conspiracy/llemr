@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import object
 from django.forms import ModelForm
 
 from bootstrap3_datetime.widgets import DateTimePicker
@@ -9,7 +11,7 @@ from . import models
 
 class BaseFollowup(ModelForm):
     '''The base class for followup forms'''
-    class Meta:
+    class Meta(object):
         abstract = True
         model = models.Followup
         exclude = []
@@ -25,7 +27,7 @@ class BaseFollowup(ModelForm):
 
 class GeneralFollowup(BaseFollowup):
     '''The form instantiation of a general followup note.'''
-    class Meta:
+    class Meta(object):
         model = models.GeneralFollowup
         exclude = ['patient', 'author', 'author_type']
 
@@ -33,7 +35,7 @@ class GeneralFollowup(BaseFollowup):
 class ReferralFollowup(BaseFollowup):
     '''The form instantiation of a followup for PCP referral.'''
 
-    class Meta:
+    class Meta(object):
         model = models.ReferralFollowup
         exclude = ['patient', 'author', 'author_type']
 
@@ -94,7 +96,7 @@ class ReferralFollowup(BaseFollowup):
 
 class VaccineFollowup(BaseFollowup):
     '''A form to process the handling of a vaccine followup.'''
-    class Meta:
+    class Meta(object):
         model = models.VaccineFollowup
         exclude = ['patient', 'author', 'author_type']
         widgets = {'dose_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
@@ -114,6 +116,6 @@ class VaccineFollowup(BaseFollowup):
 
 class LabFollowup(BaseFollowup):
     '''The form instantiation of a followup to communicate lab results.'''
-    class Meta:
+    class Meta(object):
         model = models.LabFollowup
         exclude = ['patient', 'author', 'author_type']

@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import str
 from django.test import TestCase
 from django.core import mail
 from django.core.exceptions import ValidationError

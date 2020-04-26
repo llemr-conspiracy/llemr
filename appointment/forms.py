@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import object
 from django.forms import ModelForm, TimeInput
 
 from crispy_forms.helper import FormHelper
@@ -9,7 +11,7 @@ from .models import Appointment
 
 class AppointmentForm(ModelForm):
 
-    class Meta:
+    class Meta(object):
         model = Appointment
         fields = ['clindate', 'clintime', 'appointment_type', 'comment',
                   'patient']

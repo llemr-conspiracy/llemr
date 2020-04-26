@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+
 from django.db import migrations, models
 import pttrack.validators
 import pttrack.models
@@ -206,9 +207,9 @@ class Migration(migrations.Migration):
                 ('alternate_phone_4_owner', models.CharField(max_length=40, null=True, blank=True)),
                 ('alternate_phone_4', models.CharField(max_length=40, null=True, blank=True)),
                 ('needs_workup', models.BooleanField(default=True)),
-                ('ethnicities', models.ManyToManyField(to=b'pttrack.Ethnicity')),
+                ('ethnicities', models.ManyToManyField(to='pttrack.Ethnicity')),
                 ('gender', models.ForeignKey(to='pttrack.Gender')),
-                ('languages', models.ManyToManyField(help_text=b'Specify here languages that are spoken at a level sufficient to be used for medical communication.', to=b'pttrack.Language')),
+                ('languages', models.ManyToManyField(help_text=b'Specify here languages that are spoken at a level sufficient to be used for medical communication.', to='pttrack.Language')),
                 ('preferred_contact_method', models.ForeignKey(blank=True, to='pttrack.ContactMethod', null=True)),
                 ('email', models.EmailField(max_length=254, null=True, blank=True)),
             ],
@@ -256,7 +257,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='provider',
             name='clinical_roles',
-            field=models.ManyToManyField(to=b'pttrack.ProviderType'),
+            field=models.ManyToManyField(to='pttrack.ProviderType'),
         ),
         migrations.AddField(
             model_name='provider',
@@ -266,7 +267,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='provider',
             name='languages',
-            field=models.ManyToManyField(help_text=b'Specify here languages that are spoken at a level sufficient to be used for medical communication.', to=b'pttrack.Language'),
+            field=models.ManyToManyField(help_text=b'Specify here languages that are spoken at a level sufficient to be used for medical communication.', to='pttrack.Language'),
         ),
         migrations.AddField(
             model_name='historicaldocument',

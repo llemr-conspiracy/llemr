@@ -1,5 +1,7 @@
 '''Custom validators for Osler.'''
+from __future__ import unicode_literals
 
+from builtins import str
 import datetime
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now

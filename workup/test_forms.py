@@ -1,3 +1,8 @@
+from __future__ import division
+from __future__ import unicode_literals
+from builtins import str
+from builtins import range
+from past.utils import old_div
 import decimal
 
 from django.test import TestCase
@@ -139,7 +144,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         self.assertTrue(form.is_valid(), msg=form.errors)
         self.assertEquals(
             round(form.cleaned_data['weight']),
-            round(wu_data['weight'] / decimal.Decimal(2.2)))
+            round(old_div(wu_data['weight'], decimal.Decimal(2.2))))
 
 
 class TestWorkupFormValidators(TestCase):

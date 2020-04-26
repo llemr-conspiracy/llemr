@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import object
 from rest_framework import serializers
 from pttrack import models
 from workup import models as workupModels
@@ -5,7 +7,7 @@ from simple_history.models import HistoricalRecords
 # from django.core.urlresolvers import reverse
 
 
-class UrlReverser():
+class UrlReverser(object):
     def __init__(self, url_name):
         self.url_name = url_name
 
@@ -22,13 +24,13 @@ class HistorySerializer(serializers.Serializer):
 
 
 class ClinicDateSerializer(serializers.ModelSerializer):
-    class Meta:
+    class Meta(object):
         model = workupModels.ClinicDate
         exclude = []
 
 
 class WorkupSerializer(serializers.ModelSerializer):
-    class Meta:
+    class Meta(object):
         model = workupModels.Workup
         fields = ['chief_complaint', 'clinic_day', 'pk', 'url', 'signer']
 
@@ -38,7 +40,7 @@ class WorkupSerializer(serializers.ModelSerializer):
 
 
 class CaseManagerSerializer(serializers.ModelSerializer):
-    class Meta:
+    class Meta(object):
         model = models.Provider
         fields = ['name']
 
@@ -46,7 +48,7 @@ class CaseManagerSerializer(serializers.ModelSerializer):
 
 
 class PatientSerializer(serializers.ModelSerializer):
-    class Meta:
+    class Meta(object):
         model = models.Patient
         exclude = []
 

@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import str
 from functools import partial
 
 import django.utils.timezone
@@ -38,7 +40,7 @@ def merge_pt_querysets_by_soonest_date(qs1, qs2):
 
     out_list = [t[0] for t in sorted(
         [(p, soonest_due_date) for p, soonest_due_date
-         in patient_dict.iteritems()],
+         in list(patient_dict.items())],
         key=lambda x: x[1])
     ]
 

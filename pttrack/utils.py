@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import range
 import string
 from django.db.models import Q
 from . import models

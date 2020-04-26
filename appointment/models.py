@@ -1,3 +1,7 @@
+from __future__ import unicode_literals
+from builtins import zip
+from builtins import str
+from builtins import object
 from django.db import models
 from django.utils.timezone import now
 from django.core.exceptions import ValidationError
@@ -17,7 +21,7 @@ def generate_default_appointment_time():
 
 class Appointment(Note):
 
-    class Meta:
+    class Meta(object):
         ordering = ["-clindate", "-clintime"]
 
     PSYCH_NIGHT = 'PSYCH_NIGHT'

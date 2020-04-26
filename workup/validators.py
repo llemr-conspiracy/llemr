@@ -1,7 +1,9 @@
 '''
 Validators for the Workups subapp.
 '''
+from __future__ import unicode_literals
 
+from builtins import str
 from django.conf import settings
 from django.core.exceptions import ValidationError
 

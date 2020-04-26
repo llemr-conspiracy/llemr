@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from osler.base_settings import *
 
 INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)

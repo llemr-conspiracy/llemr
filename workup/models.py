@@ -1,3 +1,6 @@
+from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 import datetime
 
 from django.db import models
@@ -18,7 +21,7 @@ class DiagnosisType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
     diagnosis a pateint can recieve.'''
 
-    class Meta:
+    class Meta(object):
         ordering = ["name"]
 
     name = models.CharField(max_length=100, primary_key=True)
@@ -29,7 +32,7 @@ class DiagnosisType(models.Model):
 
 class ClinicType(models.Model):
 
-    class Meta:
+    class Meta(object):
         ordering = ["name"]
 
     name = models.CharField(max_length=50)
@@ -40,7 +43,7 @@ class ClinicType(models.Model):
 
 class ClinicDate(models.Model):
 
-    class Meta:
+    class Meta(object):
         ordering = ["-clinic_date"]
 
     clinic_type = models.ForeignKey(ClinicType)
@@ -89,7 +92,7 @@ class ClinicDate(models.Model):
 
 
 class AttestableNote(Note):
-    class Meta:
+    class Meta(object):
         abstract = True
 
     def sign(self, user, active_role=None):

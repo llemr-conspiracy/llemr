@@ -1,4 +1,6 @@
 """Data models for referral system."""
+from __future__ import unicode_literals
+from builtins import map
 from django.db import models
 from django.core.urlresolvers import reverse
 

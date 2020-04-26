@@ -1,4 +1,9 @@
 '''Forms for the Oser core components.'''
+from __future__ import unicode_literals
+from builtins import zip
+from builtins import str
+from builtins import range
+from builtins import object
 from bootstrap3_datetime.widgets import DateTimePicker
 from django.forms import (Form, CharField, ModelForm, EmailField,
                           CheckboxSelectMultiple, ModelMultipleChoiceField)
@@ -34,7 +39,7 @@ class DuplicatePatientForm(Form):
 
 
 class PatientForm(ModelForm):
-    class Meta:
+    class Meta(object):
         model = models.Patient
         exclude = ['needs_workup', 'demographics']
 
@@ -86,7 +91,7 @@ class PatientForm(ModelForm):
 
 
 class ActionItemForm(ModelForm):
-    class Meta:
+    class Meta(object):
         model = models.ActionItem
         exclude = ['completion_date', 'author', 'written_date', 'patient',
                    'completion_author', 'author_type']
@@ -123,7 +128,7 @@ class ProviderForm(ModelForm):
 
     provider_email = EmailField(label="Email")
 
-    class Meta:
+    class Meta(object):
         model = models.Provider
         exclude = ['associated_user', 'needs_updating']
         widgets = {'referral_location': CheckboxSelectMultiple,
@@ -143,7 +148,7 @@ class ProviderForm(ModelForm):
 
 
 class DocumentForm(ModelForm):
-    class Meta:
+    class Meta(object):
         model = models.Document
         exclude = ['patient', 'author', 'author_type']
 

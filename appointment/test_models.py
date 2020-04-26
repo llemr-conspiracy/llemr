@@ -1,3 +1,6 @@
+from __future__ import unicode_literals
+from builtins import str
+from builtins import range
 from django.test import TestCase, override_settings
 from django.utils.timezone import now
 from pttrack.models import Provider, ProviderType, Patient

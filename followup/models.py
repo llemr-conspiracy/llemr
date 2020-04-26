@@ -1,4 +1,7 @@
 '''The datamodels for various types required for followup tracking in Osler.'''
+from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 from django.db import models
 from pttrack.models import Note, ContactMethod, ReferralType, ReferralLocation
 
@@ -46,7 +49,7 @@ class Followup(Note):
     '''The base followup class used in all different types of patient followup
     notes. Can also be instantiated as a 'general follouwp' type.'''
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     contact_method = models.ForeignKey(ContactMethod)
