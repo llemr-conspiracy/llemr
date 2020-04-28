@@ -10,6 +10,7 @@ script.
 from django.contrib.auth.models import User
 from pttrack import models
 from datetime import date
+from workup.models import ClinicDate, ClinicType
 
 # pylint: disable=invalid-name
 
@@ -65,5 +66,15 @@ p = models.Patient(first_name="Frankie",
 p.save()
 p.languages.add(models.Language.objects.all()[0])
 p.ethnicities.add(models.Ethnicity.objects.all()[0])
+p = models.Provider(first_name="Dillan",
+                     middle_name="Jacob",
+                     last_name="Newbold",
+                     phone="515-230-3513",
+                     gender=models.Gender.objects.all()[0],
+                     )
+p.save()
+
+c = ClinicDate(clinic_type=ClinicType.objects.all()[0], clinic_date=date.today())
+c.save()
 
 print "Done!"

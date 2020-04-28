@@ -2,7 +2,7 @@ from bootstrap3_datetime.widgets import DateTimePicker
 from decimal import Decimal, ROUND_HALF_UP
 
 from django.forms import (
-    fields, ModelForm, ModelChoiceField, ModelMultipleChoiceField, RadioSelect, CharField, Textarea
+    fields, Form, ModelForm, ModelChoiceField, ModelMultipleChoiceField, RadioSelect, CharField, Textarea, formset_factory
 )
 
 from crispy_forms.helper import FormHelper
@@ -130,7 +130,6 @@ class AppendedRadios(CrispyField):
             template_pack=template_pack, extra_context=extra_context, **kwargs
         )
 
-
 class WorkupForm(ModelForm):
 
     temperature_units = fields.ChoiceField(
@@ -149,7 +148,7 @@ class WorkupForm(ModelForm):
         model = models.Workup
         exclude = ['patient', 'author', 'signer', 'author_type',
                    'signed_date', 'referral_location', 'referral_type']
-        widgets = {'injury_date': DateTimePicker(options={"format": "MM/DD/YYY"})}
+        widgets = {'injury_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
     # limit the options for the attending, other_volunteer field to
     # Providers with ProviderType with signs_charts=True, False
     # (includes coordinators and volunteers)
@@ -179,7 +178,7 @@ class WorkupForm(ModelForm):
     ros = CharField(label='ROS', required=False, widget=Textarea(attrs={'rows': 4}))
     living_situation = CharField(required=False, widget=Textarea(attrs={'rows': 6}))
     legal_support = CharField(required=False, widget=Textarea(attrs={'rows': 6}))
-    occupational_plan = CharField(required=False, widget=Textarea(attrs={'rows': 6}))
+    occupational_plan = CharField(label='Work/Education plan', required=False, widget=Textarea(attrs={'rows': 6}))
     labs_ordered_quest = CharField(required=False, widget=Textarea(attrs={'rows': 6}))
     labs_ordered_internal = CharField(required=False, widget=Textarea(attrs={'rows': 6}))
     rx = CharField(label='Prescriptions ordered', required=False, widget=Textarea(attrs={'rows': 6}))
