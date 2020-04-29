@@ -54,7 +54,7 @@ class ContactMethod(models.Model):
 
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -65,7 +65,7 @@ class ReferralType(models.Model):
     is_fqhc = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def slugify(self):
@@ -79,7 +79,7 @@ class ReferralLocation(models.Model):
     address = models.TextField()
     care_availiable = models.ManyToManyField(ReferralType)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.address:
             return self.name + " (" + self.address.splitlines()[0] + ")"
         else:
@@ -89,7 +89,7 @@ class ReferralLocation(models.Model):
 class Language(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -100,7 +100,7 @@ class Ethnicity(models.Model):
 
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -108,7 +108,7 @@ class ActionInstruction(models.Model):
     instruction = models.CharField(max_length=50, primary_key=True)
     active = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.instruction
 
 
@@ -118,7 +118,7 @@ class ProviderType(models.Model):
     signs_charts = models.BooleanField(default=False)
     staff_view = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.short_name
 
 
@@ -126,13 +126,13 @@ class Gender(models.Model):
     long_name = models.CharField(max_length=30, primary_key=True)
     short_name = models.CharField(max_length=1)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.long_name
 
 class Outcome(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -188,7 +188,7 @@ class Provider(Person):
     def username(self):
         return self.associated_user.username
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name()
 
 
@@ -254,7 +254,7 @@ class Patient(Person):
     def age(self):
         return (now().date() - self.date_of_birth).days//365
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name()
 
     def active_action_items(self):
@@ -400,7 +400,7 @@ class Note(models.Model):
 class DocumentType(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -532,6 +532,6 @@ class ActionItem(Note, CompletableMixin):
         return reverse('admin:pttrack_actionitem_change',
                        args=(self.id,))
 
-    def __unicode__(self):
-        return " ".join(["AI for", str(self.patient)+":",
+    def __str__(self):
+        return " ".join(["AI for", str(self.patient) + ":",
                          str(self.instruction), "due on", str(self.due_date)])

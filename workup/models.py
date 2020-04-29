@@ -26,7 +26,7 @@ class DiagnosisType(models.Model):
 
     name = models.CharField(max_length=100, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -37,7 +37,7 @@ class ClinicType(models.Model):
 
     name = models.CharField(max_length=50)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -50,7 +50,7 @@ class ClinicDate(models.Model):
 
     clinic_date = models.DateField()
 
-    def __unicode__(self):
+    def __str__(self):
         return (str(self.clinic_type) + " on " +
                 datetime.datetime.strftime(self.clinic_date, '%A, %B %d, %Y'))
 
@@ -141,7 +141,7 @@ class ProgressNote(AttestableNote):
                                validators=[validate_attending])
     signed_date = models.DateTimeField(blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         u = '{} on at {} by {}'.format(
             self.title,
             datetime.datetime.strftime(self.written_datetime, '%c'),
@@ -272,5 +272,5 @@ class Workup(AttestableNote):
     def url(self):
         return reverse('workup', args=(self.pk,))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.patient.name() + " on " + str(self.clinic_day.clinic_date)

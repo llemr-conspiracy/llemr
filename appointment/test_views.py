@@ -88,7 +88,7 @@ class TestAppointmentViews(TestCase):
             re.escape('href="/appointment/') +
             r'[0-9]+' +
             re.escape('/noshow'),
-            response.content)
+            response.content.decode('utf-8'))
         self.assertEqual(len(noshow_links), 0)
 
     def test_mark_arrived(self):
@@ -97,7 +97,8 @@ class TestAppointmentViews(TestCase):
 
         response = self.client.get(reverse("appointment-mark-arrived",
                                            args=(self.apt.pk,)))
-        self.assertRedirects(response, reverse("patient-update", args=(self.apt.pk,)))
+        self.assertRedirects(
+            response, reverse("patient-update", args=(self.apt.pk,)))
 
         self.assertEqual(models.Appointment.objects.count(), 1)
         self.assertEqual(models.Appointment.objects.first().pt_showed, True)
@@ -108,7 +109,7 @@ class TestAppointmentViews(TestCase):
             re.escape('href="/appointment/') +
             r'[0-9]+' +
             re.escape('/arrived'),
-            response.content)
+            response.content.decode('utf-8'))
 
         self.assertEqual(len(arrived_links), 0)
 
@@ -147,7 +148,7 @@ class TestAppointmentViews(TestCase):
         new_appointment_links = re.findall(
             re.escape('href="/appointment/new?date=') +
             r'[0-9]{4}-[0-9]{2}-[0-9]{2}',
-            response.content)
+            response.content.decode('utf-8'))
 
         self.assertEqual(len(new_appointment_links), 1)
 
@@ -157,7 +158,7 @@ class TestAppointmentViews(TestCase):
             re.escape('href="/appointment/') +
             r'[0-9]+' +
             re.escape('/noshow'),
-            response.content)
+            response.content.decode('utf-8'))
 
         self.assertEqual(len(noshow_links), 1)
 
@@ -167,6 +168,6 @@ class TestAppointmentViews(TestCase):
             re.escape('href="/appointment/') +
             r'[0-9]+' +
             re.escape('/arrived'),
-            response.content)
+            response.content.decode('utf-8'))
 
         self.assertEqual(len(arrived_links), 1)

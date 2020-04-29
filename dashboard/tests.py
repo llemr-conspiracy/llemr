@@ -160,7 +160,7 @@ class TestAttendingDashboard(TestCase):
                 <li class="disabled"><a aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a></li>'''),
-            dewhitespace(response.content))
+            dewhitespace(response.content.decode('utf-8')))
         # since there's only one page, the "forward" pagination button
         # should be disabled
         self.assertIn(
@@ -168,7 +168,7 @@ class TestAttendingDashboard(TestCase):
                 <li class="disabled"> <a aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a> </li>'''),
-            dewhitespace(response.content))
+            dewhitespace(response.content.decode('utf-8')))
 
         # since there's only one page, only one page marker should be shown
         self.assertContains(
@@ -207,7 +207,7 @@ class TestAttendingDashboard(TestCase):
                 <li class="disabled"><a aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a></li>'''),
-            dewhitespace(response.content))
+            dewhitespace(response.content.decode('utf-8')))
         # since there's only one page, the "forward" pagination button
         # should be disabled
         self.assertIn(
@@ -215,7 +215,7 @@ class TestAttendingDashboard(TestCase):
               <li><a href="?page=2" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
               </a></li>'''),
-            dewhitespace(response.content))
+            dewhitespace(response.content.decode('utf-8')))
 
     @override_settings(OSLER_CLINIC_DAYS_PER_PAGE=3)
     def test_dashboard_page_out_of_range(self):
@@ -254,7 +254,7 @@ class TestAttendingDashboard(TestCase):
                 <a href="?page=%s" aria-label="Previous">
                     <span aria-hidden="true">&laquo;
                 ''' % n_pages),
-            dewhitespace(response.content))
+            dewhitespace(response.content.decode('utf-8')))
         # since there's only one page, the "forward" pagination button
         # should be disabled
         self.assertIn(
@@ -262,4 +262,4 @@ class TestAttendingDashboard(TestCase):
                 <li class="disabled"> <a aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a> </li>'''),
-            dewhitespace(response.content))
+            dewhitespace(response.content.decode('utf-8')))

@@ -759,10 +759,11 @@ class ViewsExistTest(TestCase):
             title="who done it?",
             comments="Pictured: silliness",
             document_type=dtype,
-            image=File(open(self.test_img)),
+            image=File(open(self.test_img, 'rb')),
             patient=models.Patient.objects.get(id=1),
             author=models.Provider.objects.get(id=1),
-            author_type=models.ProviderType.objects.first())
+            author_type=models.ProviderType.objects.first()
+        )
 
         p = models.Document.objects.get(id=1).image.path
         random_name = p.split("/")[-1]
@@ -785,7 +786,7 @@ class ViewsExistTest(TestCase):
                 title="who done it? "+str(i),
                 comments="Pictured: silliness",
                 document_type=dtype,
-                image=File(open(self.test_img)),
+                image=File(open(self.test_img, 'rb')),
                 patient=models.Patient.objects.get(id=1),
                 author=models.Provider.objects.get(id=1),
                 author_type=models.ProviderType.objects.first())
@@ -1379,9 +1380,6 @@ class TestReferralPatientDetailIntegration(TestCase):
         url = reverse('patient-detail', args=(self.pt.id,))
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
-
-        with open('tmp.html', 'w') as f:
-            f.write(response.content)
 
         expected_status = "Action items 1, 0, 0 days past due"
         self.assertContains(response, expected_status)

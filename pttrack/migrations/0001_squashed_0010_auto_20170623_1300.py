@@ -11,7 +11,17 @@ from django.conf import settings
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'pttrack', '0001_initial'), (b'pttrack', '0002_providertype_is_staff'), (b'pttrack', '0003_auto_20160119_1459'), (b'pttrack', '0004_auto_20160328_1425'), (b'pttrack', '0005_auto_20160628_1852'), (b'pttrack', '0006_rm_ssn'), (b'pttrack', '0007_needs_workup_default_true'), (b'pttrack', '0008_add_case_manager'), (b'pttrack', '0009_auto_20170502_1103'), (b'pttrack', '0010_auto_20170623_1300')]
+    replaces = [
+        ('pttrack', '0001_initial'),
+        ('pttrack', '0002_providertype_is_staff'),
+        ('pttrack', '0003_auto_20160119_1459'),
+        ('pttrack', '0004_auto_20160328_1425'),
+        ('pttrack', '0005_auto_20160628_1852'),
+        ('pttrack', '0006_rm_ssn'),
+        ('pttrack', '0007_needs_workup_default_true'),
+        ('pttrack', '0008_add_case_manager'),
+        ('pttrack', '0009_auto_20170502_1103'),
+        ('pttrack', '0010_auto_20170623_1300')]
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
