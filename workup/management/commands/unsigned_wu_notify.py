@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from builtins import str
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.management.base import BaseCommand
 from django.core.mail import send_mail
 

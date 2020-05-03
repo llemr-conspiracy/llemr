@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-from django.conf.urls import url
+from django.urls import re_path
 from pttrack.urls import wrap_url
 from django.views.generic import DetailView
 
@@ -7,47 +7,60 @@ from . import models
 from . import views
 
 unwrapped_urlconf = [
-    url(r'^new-note/(?P<pt_id>[0-9]+)/$',
+    re_path(
+        r'^new-note/(?P<pt_id>[0-9]+)/$',
         views.new_note_dispatch,
         name='new-note-dispatch'),
 
-    url(r'^new/(?P<pt_id>[0-9]+)/$',
+    re_path(
+        r'^new/(?P<pt_id>[0-9]+)/$',
         views.WorkupCreate.as_view(),
         name='new-workup'),
-    url(r'^(?P<pk>[0-9]+)/$',
+    re_path(
+        r'^(?P<pk>[0-9]+)/$',
         DetailView.as_view(model=models.Workup),
         name='workup'),
-    url(r'^(?P<pk>[0-9]+)/update/$',
+    re_path(
+        r'^(?P<pk>[0-9]+)/update/$',
         views.WorkupUpdate.as_view(),
         name='workup-update'),
-    url(r'^(?P<pk>[0-9]+)/sign/$',
+    re_path(
+        r'^(?P<pk>[0-9]+)/sign/$',
         views.sign_workup,
         name='workup-sign'),
-    url(r'^(?P<pk>[0-9]+)/error/$',
+    re_path(
+        r'^(?P<pk>[0-9]+)/error/$',
         views.error_workup,
         name="workup-error"),
-    url(r'^(?P<pk>[0-9]+)/pdf/$',
+    re_path(
+        r'^(?P<pk>[0-9]+)/pdf/$',
         views.pdf_workup,
         name="workup-pdf"),
 
     # PROGRESS NOTES
-    url(r'^(?P<pt_id>[0-9]+)/psychnote/$',
+    re_path(
+        r'^(?P<pt_id>[0-9]+)/psychnote/$',
         views.ProgressNoteCreate.as_view(),
         name="new-progress-note"),
-    url(r'^psychnote/update/(?P<pk>[0-9]+)$',
+    re_path(
+        r'^psychnote/update/(?P<pk>[0-9]+)$',
         views.ProgressNoteUpdate.as_view(),
         name="progress-note-update"),
-    url(r'^psychnote/sign/(?P<pk>[0-9]+)$',
+    re_path(
+        r'^psychnote/sign/(?P<pk>[0-9]+)$',
         views.sign_progress_note,
         name='progress-note-sign'),
-    url(r'^psychnote/(?P<pk>[0-9]+)$',
+    re_path(
+        r'^psychnote/(?P<pk>[0-9]+)$',
         DetailView.as_view(model=models.ProgressNote),
         name="progress-note-detail"),
 
-    url(r'^(?P<pt_id>[0-9]+)/clindate/$',
+    re_path(
+        r'^(?P<pt_id>[0-9]+)/clindate/$',
         views.ClinicDateCreate.as_view(),
         name="new-clindate"),
-    url(r'^clindates/$',
+    re_path(
+        r'^clindates/$',
         views.clinic_date_list,
         name="clindate-list")
 ]

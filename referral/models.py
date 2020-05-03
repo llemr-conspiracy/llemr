@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 from builtins import map
 from django.db import models
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from pttrack.models import (ReferralType, ReferralLocation, Note,
                             ContactMethod, CompletableMixin,)
@@ -32,6 +32,7 @@ class Referral(Note):
         max_length=50, choices=REFERRAL_STATUSES, default=STATUS_PENDING)
     kind = models.ForeignKey(
         ReferralType,
+        on_delete=models.PROTECT,
         help_text="The kind of care the patient should recieve at the "
                   "referral location.")
 
@@ -71,7 +72,9 @@ class Referral(Note):
 
 class FollowupRequest(Note, CompletableMixin):
 
-    referral = models.ForeignKey(Referral)
+    referral = models.ForeignKey(
+        Referral,
+        on_delete=models.CASCADE)
     contact_instructions = models.TextField()
 
     MARK_DONE_URL_NAME = 'new-patient-contact'
@@ -107,19 +110,24 @@ class FollowupRequest(Note, CompletableMixin):
 
 class PatientContact(Note):
 
-    followup_request = models.ForeignKey(FollowupRequest)
-    referral = models.ForeignKey(Referral)
+    followup_request = models.ForeignKey(
+        FollowupRequest,
+        on_delete=models.CASCADE)
+    referral = models.ForeignKey(
+        Referral,
+        on_delete=models.PROTECT
+    )
 
     contact_method = models.ForeignKey(
         ContactMethod,
-        null=False,
-        blank=False,
+        null=False, blank=False,
+        on_delete=models.PROTECT,
         help_text="What was the method of contact?")
 
     contact_status = models.ForeignKey(
         ContactResult,
-        blank=False,
-        null=False,
+        blank=False, null=False,
+        on_delete=models.PROTECT,
         help_text="Did you make contact with the patient about this referral?")
 
     PTSHOW_YES = "Y"
@@ -135,8 +143,8 @@ class PatientContact(Note):
 
     no_apt_reason = models.ForeignKey(
         NoAptReason,
-        blank=True,
-        null=True,
+        blank=True, null=True,
+        on_delete=models.PROTECT,
         verbose_name="No appointment reason",
         help_text="If the patient didn't make an appointment, why not?")
 
@@ -155,8 +163,8 @@ class PatientContact(Note):
 
     no_show_reason = models.ForeignKey(
         NoShowReason,
-        blank=True,
-        null=True,
+        blank=True, null=True,
+        on_delete=models.PROTECT,
         help_text="If the patient didn't go to the appointment, why not?")
 
     def short_text(self):

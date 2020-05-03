@@ -1,25 +1,25 @@
 from __future__ import unicode_literals
-from django.conf.urls import url
+from django.urls import path
 from pttrack.urls import wrap_url
 
 from . import views
 
 unwrapped_urlconf = [  # pylint: disable=invalid-name
-    url(r'^new$',
-        views.AppointmentCreate.as_view(),
-        name='appointment-new'),
-    url(r'^(?P<pk>[0-9]+)/update$',
-        views.AppointmentUpdate.as_view(),
-        name='appointment-update'),
-    url(r'^list$',
-        views.list_view,
-        name='appointment-list'),
-    url(r'^(?P<pk>[0-9]+)/noshow$',
-        views.mark_no_show,
-        name='appointment-mark-no-show'),
-    url(r'^(?P<pk>[0-9]+)/arrived$',
-        views.mark_arrived,
-        name='appointment-mark-arrived'),
+    path(r'new',
+         views.AppointmentCreate.as_view(),
+         name='appointment-new'),
+    path(r'<int:pk>/update',
+         views.AppointmentUpdate.as_view(),
+         name='appointment-update'),
+    path(r'list',
+         views.list_view,
+         name='appointment-list'),
+    path(r'<int:pk>/noshow',
+         views.mark_no_show,
+         name='appointment-mark-no-show'),
+    path(r'<int:pk>/arrived',
+         views.mark_arrived,
+         name='appointment-mark-arrived'),
 ]
 
 wrap_config = {}

@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from builtins import str
 from django.test import TestCase, override_settings
 from django.test import Client
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.contrib.auth.models import User
 
 from pttrack.models import ProviderType

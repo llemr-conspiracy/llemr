@@ -66,7 +66,8 @@ class Demographics(models.Model):
         (False, "No")
     )
 
-    patient = models.OneToOneField(Patient, null=True)
+    patient = models.OneToOneField(
+        Patient, on_delete=models.CASCADE, null=True)
 
     creation_date = models.DateField(blank=True, null=True)
 
@@ -93,13 +94,25 @@ class Demographics(models.Model):
 
     currently_employed = models.NullBooleanField(choices=NULL_BOOLEAN_CHOICES)
 
-    work_status = models.ForeignKey(WorkStatus, blank=True, null=True)
+    work_status = models.ForeignKey(
+        WorkStatus,
+        on_delete=models.PROTECT,
+        blank=True, null=True
+    )
 
-    education_level = models.ForeignKey(EducationLevel, blank=True, null=True)
+    education_level = models.ForeignKey(
+        EducationLevel,
+        on_delete=models.PROTECT,
+        blank=True, null=True)
 
-    annual_income = models.ForeignKey(IncomeRange, blank=True, null=True)
+    annual_income = models.ForeignKey(
+        IncomeRange,
+        on_delete=models.PROTECT,
+        blank=True, null=True)
 
     transportation = models.ForeignKey(
-        TransportationOption, blank=True, null=True)
+        TransportationOption,
+        on_delete=models.PROTECT,
+        blank=True, null=True)
 
     history = HistoricalRecords()

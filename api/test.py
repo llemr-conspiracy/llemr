@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import datetime
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.timezone import now
 from rest_framework.test import APITestCase
 from rest_framework import status

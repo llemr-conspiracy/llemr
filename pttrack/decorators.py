@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from functools import wraps
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import REDIRECT_FIELD_NAME
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 from django.shortcuts import resolve_url
 from django.utils.decorators import available_attrs
 from django.utils.six.moves.urllib.parse import urlparse

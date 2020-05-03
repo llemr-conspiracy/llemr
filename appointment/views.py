@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 import collections
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.utils.timezone import now
 

@@ -3,7 +3,7 @@ from builtins import str
 from django.test import TestCase
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.management import call_command
 from django.utils.timezone import now
 

@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from builtins import range
 from django.test import TestCase
 from django.utils.timezone import now
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from pttrack.models import Patient, ProviderType
 from pttrack.test_views import build_provider, log_in_provider

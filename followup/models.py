@@ -7,7 +7,6 @@ from pttrack.models import Note, ContactMethod, ReferralType, ReferralLocation
 
 from simple_history.models import HistoricalRecords
 
-# pylint: disable=I0011,E1305
 
 class NoShowReason(models.Model):
     '''Simple text-contiaining class for storing the different reasons a
@@ -52,8 +51,10 @@ class Followup(Note):
     class Meta(object):
         abstract = True
 
-    contact_method = models.ForeignKey(ContactMethod)
-    contact_resolution = models.ForeignKey(ContactResult)
+    contact_method = models.ForeignKey(
+        ContactMethod, on_delete=models.PROTECT)
+    contact_resolution = models.ForeignKey(
+        ContactResult, on_delete=models.PROTECT)
 
     comments = models.TextField(blank=True, null=True)
 
@@ -148,21 +149,25 @@ class LabFollowup(Followup):
 class ReferralFollowup(Followup):
     '''Datamodel for a PCP referral followup.'''
 
-    # Template relies on following variable to render Admin Edit. If you change the variable here, you must edit patient_detail.html
+    # Template relies on following variable to render Admin Edit.
+    # If you change the variable here, you must edit patient_detail.html
     REFTYPE_HELP = "What kind of provider was the patient referred to?"
-    referral_type = models.ForeignKey(ReferralType,
-                                      help_text=REFTYPE_HELP,
-                                      blank=True,
-                                      null=True)
+    referral_type = models.ForeignKey(
+        ReferralType,
+        on_delete=models.PROTECT,
+        help_text=REFTYPE_HELP,
+        blank=True,
+        null=True)
 
     bREF_HELP = "Does the patient have an appointment?"
     has_appointment = models.BooleanField(help_text=bREF_HELP)
 
     APP_HELP = "Where is the appointment?"
-    apt_location = models.ForeignKey(ReferralLocation,
-                                     blank=True,
-                                     null=True,
-                                     help_text=APP_HELP)
+    apt_location = models.ForeignKey(
+        ReferralLocation,
+        blank=True, null=True,
+        on_delete=models.PROTECT,
+        help_text=APP_HELP)
 
     PTSHOW_OPTS = [("Yes", "Yes"),
                    ("No", "No"),
@@ -176,16 +181,20 @@ class ReferralFollowup(Followup):
                                  null=True)
 
     NOAPT_HELP = "If the patient didn't make an appointment, why not?"
-    noapt_reason = models.ForeignKey(NoAptReason,
-                                     help_text=NOAPT_HELP,
-                                     blank=True,
-                                     null=True)
+    noapt_reason = models.ForeignKey(
+        NoAptReason,
+        on_delete=models.PROTECT,
+        help_text=NOAPT_HELP,
+        blank=True,
+        null=True)
 
     NOSHOW_HELP = "If the patient didn't go to appointment, why not?"
-    noshow_reason = models.ForeignKey(NoShowReason,
-                                      help_text=NOSHOW_HELP,
-                                      blank=True,
-                                      null=True)
+    noshow_reason = models.ForeignKey(
+        NoShowReason,
+        help_text=NOSHOW_HELP,
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True)
 
     history = HistoricalRecords()
 
@@ -204,7 +213,7 @@ class ReferralFollowup(Followup):
                 out.append("but the patient didn't go because")
                 out.append(str(self.noshow_reason).lower())
         else:
-            out.append("No appointment made because")
+            out.append("No appointment made because ")
             out.append(str(self.noapt_reason).lower())
 
-        return " ".join(out)+"."
+        return " ".join(out) + "."

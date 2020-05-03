@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import (HttpResponseRedirect, HttpResponseServerError,
                          HttpResponse)
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from django.template.loader import get_template

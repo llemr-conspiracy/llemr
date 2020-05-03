@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.utils.timezone import now
 
 from simple_history.models import HistoricalRecords
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.validators import MinValueValidator
 
 from pttrack.models import Note, Provider, ReferralLocation, ReferralType
@@ -46,7 +46,8 @@ class ClinicDate(models.Model):
     class Meta(object):
         ordering = ["-clinic_date"]
 
-    clinic_type = models.ForeignKey(ClinicType)
+    clinic_type = models.ForeignKey(
+        ClinicType, on_delete=models.PROTECT)
 
     clinic_date = models.DateField()
 
@@ -135,10 +136,12 @@ class ProgressNote(AttestableNote):
 
     history = HistoricalRecords()
 
-    signer = models.ForeignKey(Provider,
-                               blank=True, null=True,
-                               related_name="signed_progress_notes",
-                               validators=[validate_attending])
+    signer = models.ForeignKey(
+        Provider,
+        blank=True, null=True,
+        on_delete=models.PROTECT,
+        related_name="signed_progress_notes",
+        validators=[validate_attending])
     signed_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
@@ -158,15 +161,23 @@ class Workup(AttestableNote):
     continuity care.'''
 
     attending = models.ForeignKey(
-        Provider, null=True, blank=True, related_name="attending_physician",
+        Provider,
+        null=True, blank=True,
+        related_name="attending_physician",
+        on_delete=models.PROTECT,
         validators=[validate_attending],
         help_text="Which attending saw the patient?")
+
     other_volunteer = models.ManyToManyField(
-        Provider, blank=True, related_name="other_volunteer",
+        Provider,
+        blank=True,
+        related_name="other_volunteer",
         help_text="Which other volunteer(s) did you work with (if any)?")
 
     clinic_day = models.ForeignKey(
-        ClinicDate, help_text="When was the patient seen?")
+        ClinicDate,
+        on_delete=models.PROTECT,
+        help_text="When was the patient seen?")
 
     chief_complaint = models.CharField(max_length=1000, verbose_name="CC")
     diagnosis = models.CharField(max_length=1000, verbose_name="Dx")
@@ -246,10 +257,12 @@ class Workup(AttestableNote):
 
     A_and_P = models.TextField()
 
-    signer = models.ForeignKey(Provider,
-                               blank=True, null=True,
-                               related_name="signed_workups",
-                               validators=[validate_attending])
+    signer = models.ForeignKey(
+        Provider,
+        blank=True, null=True,
+        on_delete=models.PROTECT,
+        related_name="signed_workups",
+        validators=[validate_attending])
     signed_date = models.DateTimeField(blank=True, null=True)
 
     history = HistoricalRecords()

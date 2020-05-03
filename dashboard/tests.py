@@ -6,7 +6,7 @@ import datetime
 from django.utils.timezone import now
 
 from django.test import TestCase, override_settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf import settings
 
 from pttrack.test_views import log_in_provider, build_provider

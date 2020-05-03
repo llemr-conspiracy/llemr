@@ -11,10 +11,16 @@ class PageviewRecord(models.Model):
     HTTP_METHODS = ['GET', 'POST', 'HEAD', 'PUT', 'PATCH', 'DELETE',
                     'CONNECT', 'OPTIONS', 'TRACE']
 
-    user = models.ForeignKey(User, blank=True, null=True)
+    user = models.ForeignKey(
+        User,
+        blank=True, null=True,
+        on_delete=models.DO_NOTHING
+    )
     user_ip = models.GenericIPAddressField()
-    role = models.ForeignKey(core_models.ProviderType,
-                             blank=True, null=True)
+    role = models.ForeignKey(
+        core_models.ProviderType,
+        on_delete=models.DO_NOTHING,
+        blank=True, null=True)
 
     method = models.CharField(
         max_length=max(len(v) for v in HTTP_METHODS),

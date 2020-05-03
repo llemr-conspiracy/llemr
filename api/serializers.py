@@ -4,7 +4,7 @@ from rest_framework import serializers
 from pttrack import models
 from workup import models as workupModels
 from simple_history.models import HistoricalRecords
-# from django.core.urlresolvers import reverse
+# from django.urls import reverse
 
 
 class UrlReverser(object):

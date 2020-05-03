@@ -1,5 +1,7 @@
 '''The datamodels for the Osler core'''
 from __future__ import unicode_literals
+import os
+
 from builtins import str
 from builtins import range
 from builtins import object
@@ -10,8 +12,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.timezone import now
 from django.utils.text import slugify
-import os
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from simple_history.models import HistoricalRecords
 
@@ -149,14 +150,17 @@ class Person(models.Model):
         max_length=100, blank=True, validators=[validators.validate_name])
 
     phone = models.CharField(max_length=40, null=True, blank=True)
-    languages = models.ManyToManyField(Language, help_text="Specify here languages that are spoken at a level sufficient to be used for medical communication.")
+    languages = models.ManyToManyField(
+        Language, help_text="Specify here languages that are spoken at a "
+                            "level sufficient to be used for medical "
+                            "communication.")
 
-    gender = models.ForeignKey(Gender)
+    gender = models.ForeignKey(Gender, on_delete=models.PROTECT)
 
     def name(self, reverse=True, middle_short=True):
         if self.middle_name:
             if middle_short:
-                middle = "".join([mname[0]+"." for mname
+                middle = "".join([mname[0] + "." for mname
                                   in self.middle_name.split()])
             else:
                 middle = self.middle_name
@@ -175,8 +179,10 @@ class Person(models.Model):
 
 class Provider(Person):
 
-    associated_user = models.OneToOneField(settings.AUTH_USER_MODEL,
-                                           blank=True, null=True)
+    associated_user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True,
+        on_delete=models.CASCADE)
 
     clinical_roles = models.ManyToManyField(ProviderType)
 
@@ -196,7 +202,8 @@ class Patient(Person):
 
     case_managers = models.ManyToManyField(Provider)
 
-    outcome = models.ForeignKey(Outcome, null=True, blank=True)
+    outcome = models.ForeignKey(Outcome, null=True, blank=True,
+                                on_delete=models.PROTECT)
 
     address = models.CharField(max_length=200)
 
@@ -209,13 +216,13 @@ class Patient(Person):
     country = models.CharField(max_length=100,
                                default="USA")
 
-
     pcp_preferred_zip = models.CharField(max_length=5,
                                          validators=[validators.validate_zip],
                                          blank=True,
                                          null=True)
 
-    date_of_birth = models.DateField(help_text='MM/DD/YYYY',
+    date_of_birth = models.DateField(
+        help_text='MM/DD/YYYY',
         validators=[validators.validate_birth_date])
 
     patient_comfortable_with_english = models.BooleanField(default=True)
@@ -240,7 +247,8 @@ class Patient(Person):
     alternate_phone_4_owner = models.CharField(max_length=40, blank=True, null=True)
     alternate_phone_4 = models.CharField(max_length=40, blank=True, null=True)
 
-    preferred_contact_method = models.ForeignKey(ContactMethod, blank=True, null=True)
+    preferred_contact_method = models.ForeignKey(
+        ContactMethod, blank=True, null=True, on_delete=models.PROTECT)
 
     email = models.EmailField(blank=True, null=True)
 
@@ -252,7 +260,7 @@ class Patient(Person):
     history = HistoricalRecords()
 
     def age(self):
-        return (now().date() - self.date_of_birth).days//365
+        return (now().date() - self.date_of_birth).days // 365
 
     def __str__(self):
         return self.name()
@@ -262,8 +270,8 @@ class Patient(Person):
         2) due today or before. The list is sorted by due_date'''
 
         return sorted(
-            ActionItem.objects.filter(patient=self.pk)\
-                .filter(completion_author=None)\
+            ActionItem.objects.filter(patient=self.pk) \
+                .filter(completion_author=None) \
                 .filter(due_date__lte=now().date()),
             key=lambda ai: ai.due_date)
 
@@ -389,9 +397,9 @@ class Note(models.Model):
         abstract = True
         ordering = ["-written_datetime", "-last_modified"]
 
-    author = models.ForeignKey(Provider)
-    author_type = models.ForeignKey(ProviderType)
-    patient = models.ForeignKey(Patient)
+    author = models.ForeignKey(Provider, on_delete=models.PROTECT)
+    author_type = models.ForeignKey(ProviderType, on_delete=models.PROTECT)
+    patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
 
     written_datetime = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
@@ -411,7 +419,7 @@ class Document(Note):
         upload_to=make_filepath,
         verbose_name="PDF File or Image Upload")
     comments = models.TextField()
-    document_type = models.ForeignKey(DocumentType)
+    document_type = models.ForeignKey(DocumentType, on_delete=models.PROTECT)
 
     history = HistoricalRecords()
 
@@ -461,7 +469,8 @@ class CompletableMixin(models.Model):
     completion_author = models.ForeignKey(
         Provider,
         blank=True, null=True,
-        related_name="%(app_label)s_%(class)s_completed")
+        related_name="%(app_label)s_%(class)s_completed",
+        on_delete=models.PROTECT)
     due_date = models.DateField(help_text="MM/DD/YYYY")
 
     def done(self):
@@ -498,7 +507,8 @@ class CompletableMixin(models.Model):
 
 
 class ActionItem(Note, CompletableMixin):
-    instruction = models.ForeignKey(ActionInstruction)
+    instruction = models.ForeignKey(ActionInstruction,
+                                    on_delete=models.PROTECT)
     priority = models.BooleanField(
         default=False,
         help_text='Check this box if this action item is high priority')

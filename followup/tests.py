@@ -6,7 +6,7 @@ from builtins import range
 import datetime
 
 from django.test import TestCase
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 # For live tests.
 from selenium.webdriver.support.ui import WebDriverWait

@@ -1,5 +1,5 @@
 from __future__ import unicode_literals
-from django.conf.urls import url
+from django.urls import re_path
 from django.views.generic import DetailView
 from django.views.generic.base import TemplateView
 
@@ -12,72 +12,92 @@ from . import views
 # pylint: disable=I0011
 
 unwrapped_urlpatterns = [  # pylint: disable=invalid-name
-    url(r'^$',
+    re_path(
+        r'^$',
         views.home_page,
         name="home"),
-    url(r'^all/$',
+    re_path(
+        r'^all/$',
         views.all_patients,
         name="all-patients"),
-    url(r'^preintake-select/$',
+    re_path(
+        r'^preintake-select/$',
         views.PreIntakeSelect.as_view(),
         name="preintake-select"),
-    url(r'^preintake/$',
+    re_path(
+        r'^preintake/$',
         views.PreIntake.as_view(),
         name="preintake"),
-    url(r'^intake/$',
+    re_path(
+        r'^intake/$',
         views.PatientCreate.as_view(),
         name="intake"),
-    url(r'^(?P<pk>[0-9]+)/$',
+    re_path(
+        r'^(?P<pk>[0-9]+)/$',
         views.patient_detail,
         name='patient-detail'),
-    url(r'^patient/update/(?P<pk>[0-9]+)$',
+    re_path(
+        r'^patient/update/(?P<pk>[0-9]+)$',
         views.PatientUpdate.as_view(),
         name='patient-update'),
-    url(r'^patient/activate_detail/(?P<pk>[0-9]+)$',
+    re_path(
+        r'^patient/activate_detail/(?P<pk>[0-9]+)$',
         views.patient_activate_detail,
         name='patient-activate-detail'),
-    url(r'^patient/activate_home/(?P<pk>[0-9]+)$',
+    re_path(
+        r'^patient/activate_home/(?P<pk>[0-9]+)$',
         views.patient_activate_home,
         name='patient-activate-home'),
 
     # PROVIDERS
-    url(r'^new-provider/$',
+    re_path(
+        r'^new-provider/$',
         views.ProviderCreate.as_view(),
         name='new-provider'),
-    url(r'^choose-role/$',
+    re_path(
+        r'^choose-role/$',
         views.choose_clintype,
         name='choose-clintype'),
-    url(r'^provider-update/$',
+    re_path(
+        r'^provider-update/$',
         views.ProviderUpdate.as_view(),
         name='provider-update'),
 
     # ACTION ITEMS
-    url(r'^(?P<pt_id>[0-9]+)/action-item/$',
+    re_path(
+        r'^(?P<pt_id>[0-9]+)/action-item/$',
         views.ActionItemCreate.as_view(),
         name='new-action-item'),
-    url(r'^action-item/(?P<pk>[0-9]+)/update$',
+    re_path(
+        r'^action-item/(?P<pk>[0-9]+)/update$',
         views.ActionItemUpdate.as_view(),
         name="update-action-item"),
-    url(r'^action-item/(?P<ai_id>[0-9]+)/done$',
+    re_path(
+        r'^action-item/(?P<ai_id>[0-9]+)/done$',
         views.done_action_item,
         name=models.ActionItem.MARK_DONE_URL_NAME),
-    url(r'^action-item/(?P<ai_id>[0-9]+)/reset$',
+    re_path(
+        r'^action-item/(?P<ai_id>[0-9]+)/reset$',
         views.reset_action_item,
         name='reset-action-item'),
 
     # DOCUMENTS
-    url(r'^(?P<pt_id>[0-9]+)/document/$',
+    re_path(
+        r'^(?P<pt_id>[0-9]+)/document/$',
         views.DocumentCreate.as_view(),
         name="new-document"),
-    url(r'^document/(?P<pk>[0-9]+)$',
+    re_path(
+        r'^document/(?P<pk>[0-9]+)$',
         DetailView.as_view(model=models.Document),
         name="document-detail"),
-    url(r'^document/update/(?P<pk>[0-9]+)$',
+    re_path(
+        r'^document/update/(?P<pk>[0-9]+)$',
         views.DocumentUpdate.as_view(),
         name="document-update"),
 
     # MISC
-    url(r'^about/',
+    re_path(
+        r'^about/',
         TemplateView.as_view(template_name='pttrack/about.html'),
         name='about'),
 ]
