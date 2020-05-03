@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import zip
 import json
 import collections
 import datetime
@@ -409,11 +411,11 @@ def patient_detail(request, pk):
     # tasks requiring clinical followup (e.g., referral followup request)
     total_ais = len(active_ais) + len(inactive_ais) + len(done_ais)
 
-    zipped_ai_list = zip(['collapse5', 'collapse6', 'collapse7'],
+    zipped_ai_list = list(zip(['collapse5', 'collapse6', 'collapse7'],
                          [active_ais, inactive_ais, done_ais],
                          ['Active Action Items', 'Pending Action Items',
                          'Completed Action Items'],
-                         [True, True, False])
+                         [True, True, False]))
 
     # Provide referral list for patient page (includes specialty referrals)
     referrals = Referral.objects.filter(
@@ -462,11 +464,11 @@ def patient_detail(request, pk):
         else:
             previous_apt[a.clindate] = [a]
 
-    zipped_apt_list = zip(
+    zipped_apt_list = list(zip(
         ['collapse8', 'collapse9'],
         [future_date_appointments, previous_date_appointments],
         ['Future Appointments', 'Past Appointments'],
-        [future_apt, previous_apt])
+        [future_apt, previous_apt]))
 
     return render(request,
                   'pttrack/patient_detail.html',

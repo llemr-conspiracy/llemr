@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from datetime import date
 
 from django.test import TestCase
@@ -103,7 +104,7 @@ class FormSubmissionTest(TestCase):
         Test submission of a demographics form
         '''
 
-        for i in dict(models.Demographics.NULL_BOOLEAN_CHOICES).keys():
+        for i in list(dict(models.Demographics.NULL_BOOLEAN_CHOICES).keys()):
 
             pt = self.make_patient()
 

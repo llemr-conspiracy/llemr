@@ -1,4 +1,8 @@
 '''The datamodels for the Osler core'''
+from __future__ import unicode_literals
+from builtins import str
+from builtins import range
+from builtins import object
 from itertools import chain
 
 from django.db import models
@@ -50,7 +54,7 @@ class ContactMethod(models.Model):
 
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -61,7 +65,7 @@ class ReferralType(models.Model):
     is_fqhc = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def slugify(self):
@@ -75,7 +79,7 @@ class ReferralLocation(models.Model):
     address = models.TextField()
     care_availiable = models.ManyToManyField(ReferralType)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.address:
             return self.name + " (" + self.address.splitlines()[0] + ")"
         else:
@@ -85,18 +89,18 @@ class ReferralLocation(models.Model):
 class Language(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class Ethnicity(models.Model):
 
-    class Meta:
+    class Meta(object):
         verbose_name_plural = "ethnicities"
 
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -104,7 +108,7 @@ class ActionInstruction(models.Model):
     instruction = models.CharField(max_length=50, primary_key=True)
     active = models.BooleanField(default=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.instruction
 
 
@@ -114,7 +118,7 @@ class ProviderType(models.Model):
     signs_charts = models.BooleanField(default=False)
     staff_view = models.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.short_name
 
 
@@ -122,19 +126,19 @@ class Gender(models.Model):
     long_name = models.CharField(max_length=30, primary_key=True)
     short_name = models.CharField(max_length=1)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.long_name
 
 class Outcome(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
 class Person(models.Model):
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     first_name = models.CharField(
@@ -184,7 +188,7 @@ class Provider(Person):
     def username(self):
         return self.associated_user.username
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name()
 
 
@@ -250,7 +254,7 @@ class Patient(Person):
     def age(self):
         return (now().date() - self.date_of_birth).days//365
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name()
 
     def active_action_items(self):
@@ -261,7 +265,7 @@ class Patient(Person):
             ActionItem.objects.filter(patient=self.pk)\
                 .filter(completion_author=None)\
                 .filter(due_date__lte=now().date()),
-            key=lambda(ai): ai.due_date)
+            key=lambda ai: ai.due_date)
 
     def done_action_items(self):
         '''return the set of action items that are done, sorted
@@ -270,7 +274,7 @@ class Patient(Person):
         return sorted(
             ActionItem.objects.filter(patient=self.pk)\
                 .exclude(completion_author=None),
-            key=lambda(ai): ai.completion_date)
+            key=lambda ai: ai.completion_date)
 
     def inactive_action_items(self):
         '''return a list of action items that aren't done, but aren't
@@ -280,7 +284,7 @@ class Patient(Person):
             ActionItem.objects.filter(patient=self.pk)\
                 .filter(completion_author=None)\
                 .filter(due_date__gt=now().date()),
-            key=lambda(ai): ai.due_date)
+            key=lambda ai: ai.due_date)
 
     def status(self):
         # The active_action_items, done_action_items, and inactive_action_items
@@ -341,7 +345,7 @@ class Patient(Person):
         note_list.extend(self.followup_set())
         note_list.extend(self.document_set.all())
 
-        return sorted(note_list, key=lambda(k): k.written_datetime)
+        return sorted(note_list, key=lambda k: k.written_datetime)
 
     def all_phones(self):
         '''Returns a list of tuples of the form (phone, owner) of all the
@@ -381,7 +385,7 @@ def require_providers_update():
 
 
 class Note(models.Model):
-    class Meta:
+    class Meta(object):
         abstract = True
         ordering = ["-written_datetime", "-last_modified"]
 
@@ -396,7 +400,7 @@ class Note(models.Model):
 class DocumentType(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -448,7 +452,7 @@ class CompletableMixin(models.Model):
     complete.
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     objects = CompletableManager()
@@ -528,6 +532,6 @@ class ActionItem(Note, CompletableMixin):
         return reverse('admin:pttrack_actionitem_change',
                        args=(self.id,))
 
-    def __unicode__(self):
-        return " ".join(["AI for", str(self.patient)+":",
+    def __str__(self):
+        return " ".join(["AI for", str(self.patient) + ":",
                          str(self.instruction), "due on", str(self.due_date)])

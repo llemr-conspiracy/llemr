@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import datetime
 
 from django.core.urlresolvers import reverse
@@ -44,7 +45,7 @@ class APITest(APITestCase):
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 01, 01),
+            date_of_birth=datetime.date(1990, 0o1, 0o1),
             patient_comfortable_with_english=False,
             preferred_contact_method=models.ContactMethod.objects.first(),
         )
@@ -60,7 +61,7 @@ class APITest(APITestCase):
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 01, 01),
+            date_of_birth=datetime.date(1990, 0o1, 0o1),
             patient_comfortable_with_english=False,
             preferred_contact_method=models.ContactMethod.objects.first(),
         )
@@ -76,7 +77,7 @@ class APITest(APITestCase):
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 01, 01),
+            date_of_birth=datetime.date(1990, 0o1, 0o1),
             patient_comfortable_with_english=False,
             preferred_contact_method=models.ContactMethod.objects.first(),
         )

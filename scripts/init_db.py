@@ -5,6 +5,8 @@ because workups depend on clinic type ForeignKeys. This can be run to seed a
 new database in production, or just as part of the reset_db.sh script used to
 rebuild the database when debugging.
 '''
+from __future__ import print_function
+from __future__ import unicode_literals
 
 from pttrack import models as core
 from followup import models as followup
@@ -128,4 +130,4 @@ for (location, reftype) in [("Affina", pcp_referral),
 
 core.DocumentType.objects.create(name="Silly picture")
 
-print "done!"
+print("done!")

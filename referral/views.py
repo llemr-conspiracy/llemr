@@ -1,4 +1,5 @@
 from __future__ import print_function
+from __future__ import unicode_literals
 from django.shortcuts import get_object_or_404, render
 from django.core.urlresolvers import reverse
 from django.views.generic.edit import FormView

@@ -6,6 +6,8 @@ scripts/init_db.py contains data that is real and should be used in a
 deployment environment. This script relies on model entries created by that
 script.
 '''
+from __future__ import print_function
+from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
 from pttrack import models
@@ -66,4 +68,4 @@ p.save()
 p.languages.add(models.Language.objects.all()[0])
 p.ethnicities.add(models.Ethnicity.objects.all()[0])
 
-print "Done!"
+print("Done!")

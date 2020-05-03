@@ -1,4 +1,7 @@
 '''The datamodels for various types required for followup tracking in Osler.'''
+from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 from django.db import models
 from pttrack.models import Note, ContactMethod, ReferralType, ReferralLocation
 
@@ -12,7 +15,7 @@ class NoShowReason(models.Model):
 
     name = models.CharField(max_length=100, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -22,7 +25,7 @@ class NoAptReason(models.Model):
 
     name = models.CharField(max_length=100, primary_key=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -38,7 +41,7 @@ class ContactResult(models.Model):
         default=True,
         help_text="True if outcome means they reached the patient")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -46,7 +49,7 @@ class Followup(Note):
     '''The base followup class used in all different types of patient followup
     notes. Can also be instantiated as a 'general follouwp' type.'''
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     contact_method = models.ForeignKey(ContactMethod)
@@ -83,7 +86,7 @@ class Followup(Note):
         '''Returns a python date object for when this followup was written.'''
         return self.written_datetime.date()
 
-    def __unicode__(self):
+    def __str__(self):
         return " ".join(["Followup for ", self.patient.name(), " on ",
                          str(self.written_date())])
 
@@ -98,7 +101,7 @@ class GeneralFollowup(Followup):
 class VaccineFollowup(Followup):
     '''Datamodel for a followup of a vaccine administration'''
 
-    # Template relies on following variable to render Admin Edit. If you 
+    # Template relies on following variable to render Admin Edit. If you
     # change the variable here, you must edit patient_detail.html
     SUBSQ_DOSE_HELP = "Has the patient committed to coming back for another dose?"
     subsq_dose = models.BooleanField(verbose_name=SUBSQ_DOSE_HELP)
@@ -148,7 +151,7 @@ class ReferralFollowup(Followup):
     # Template relies on following variable to render Admin Edit. If you change the variable here, you must edit patient_detail.html
     REFTYPE_HELP = "What kind of provider was the patient referred to?"
     referral_type = models.ForeignKey(ReferralType,
-                                      help_text=REFTYPE_HELP, 
+                                      help_text=REFTYPE_HELP,
                                       blank=True,
                                       null=True)
 

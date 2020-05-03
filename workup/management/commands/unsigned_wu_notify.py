@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import str
 from django.core.urlresolvers import reverse
 from django.core.management.base import BaseCommand
 from django.core.mail import send_mail
@@ -22,7 +24,7 @@ class Command(BaseCommand):
 
         provider2unsigned = {}
         uninferred = []
-        for unsigned_wu, provider in unsigned_wu2providers.items():
+        for unsigned_wu, provider in list(unsigned_wu2providers.items()):
             if provider is not None:
                 if provider in provider2unsigned:
                     provider2unsigned[provider].append(unsigned_wu)
@@ -33,7 +35,7 @@ class Command(BaseCommand):
 
         # print(provider2unsigned)
 
-        for provider, inferred_wus in provider2unsigned.items():
+        for provider, inferred_wus in list(provider2unsigned.items()):
 
             last_name = (provider.last_name if provider.last_name
                          else provider.associated_user.last_name)

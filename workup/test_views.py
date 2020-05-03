@@ -1,5 +1,7 @@
 from __future__ import print_function
+from __future__ import unicode_literals
 
+from builtins import range
 from django.test import TestCase
 from django.utils.timezone import now
 from django.core.urlresolvers import reverse

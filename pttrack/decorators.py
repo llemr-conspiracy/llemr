@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from functools import wraps
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import REDIRECT_FIELD_NAME

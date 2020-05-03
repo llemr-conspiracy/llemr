@@ -70,7 +70,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='demographics',
             name='chronic_condition',
-            field=models.ManyToManyField(to=b'demographics.ChronicCondition', blank=True),
+            field=models.ManyToManyField(to='demographics.ChronicCondition', blank=True),
         ),
         migrations.AddField(
             model_name='demographics',
@@ -85,7 +85,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='demographics',
             name='resource_access',
-            field=models.ManyToManyField(to=b'demographics.ResourceAccess', verbose_name=b'Access to Resources', blank=True),
+            field=models.ManyToManyField(to='demographics.ResourceAccess', verbose_name=b'Access to Resources', blank=True),
         ),
         migrations.AddField(
             model_name='demographics',

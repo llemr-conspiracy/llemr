@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from selenium.webdriver.chrome.webdriver import WebDriver

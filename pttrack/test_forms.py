@@ -1,3 +1,6 @@
+from __future__ import unicode_literals
+from builtins import str
+from builtins import range
 import datetime
 
 from django.test import TestCase
@@ -69,7 +72,7 @@ class TestPatientCreateForms(TestCase):
             'country': 'Germany',
             'zip_code': '63108',
             'pcp_preferred_zip': '63018',
-            'date_of_birth': datetime.date(1990, 01, 01),
+            'date_of_birth': datetime.date(1990, 0o1, 0o1),
             'patient_comfortable_with_english': False,
             'ethnicities': [Ethnicity.objects.create(name="Klingon")],
             'preferred_contact_method':

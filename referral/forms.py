@@ -1,5 +1,7 @@
 from __future__ import print_function
+from __future__ import unicode_literals
 
+from builtins import object
 from django.forms import ModelForm
 from django import forms
 from . import models
@@ -9,7 +11,7 @@ from bootstrap3_datetime.widgets import DateTimePicker
 
 
 class ReferralForm(ModelForm):
-    class Meta:
+    class Meta(object):
         model = models.Referral
         fields = ['location', 'comments']
 
@@ -22,7 +24,7 @@ class ReferralForm(ModelForm):
 
 
 class FollowupRequestForm(ModelForm):
-    class Meta:
+    class Meta(object):
         model = models.FollowupRequest
         fields = ['due_date', 'contact_instructions']
         widgets = {'due_date': DateTimePicker(
@@ -40,7 +42,7 @@ class PatientContactForm(ModelForm):
     REQUEST_FOLLOWUP = 'request-new-followup'
     UNSUCCESSFUL_REFERRAL = 'give-up'
 
-    class Meta:
+    class Meta(object):
         model = models.PatientContact
         fields = ['contact_method', 'contact_status',
                   'has_appointment', 'no_apt_reason',
@@ -167,7 +169,7 @@ class PatientContactForm(ModelForm):
                 "pt_showed": "patient showed",
                 "has_appointment": "has appointment"}
 
-            for param, param_verbose in detail_params.iteritems():
+            for param, param_verbose in list(detail_params.items()):
                 if cleaned_data.get(param):
                     self.add_error(
                         param,

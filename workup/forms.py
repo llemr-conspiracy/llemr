@@ -1,3 +1,7 @@
+from __future__ import division
+from __future__ import unicode_literals
+from builtins import object
+from past.utils import old_div
 from decimal import Decimal, ROUND_HALF_UP
 
 from django.forms import (
@@ -54,7 +58,7 @@ def fahrenheit2centigrade(f):
     centigrade. If None, returns None.
     """
     if f is not None:
-        return (f - 32) / Decimal(9.0 / 5.0)
+        return old_div((f - 32), Decimal(9.0 / 5.0))
     else:
         return None
 
@@ -144,7 +148,7 @@ class WorkupForm(ModelForm):
         label='', widget=RadioSelect,
         choices=[('cm', 'cm'), ('in', 'in')], required=False)
 
-    class Meta:
+    class Meta(object):
         model = models.Workup
         exclude = ['patient', 'author', 'signer', 'author_type',
                    'signed_date', 'referral_location', 'referral_type']
@@ -281,7 +285,7 @@ class WorkupForm(ModelForm):
 
 
 class ProgressNoteForm(ModelForm):
-    class Meta:
+    class Meta(object):
         model = models.ProgressNote
         fields = ['title', 'text']
 
@@ -293,7 +297,7 @@ class ProgressNoteForm(ModelForm):
 
 class ClinicDateForm(ModelForm):
     '''Form for the creation of a clinic date.'''
-    class Meta:
+    class Meta(object):
         model = models.ClinicDate
         exclude = ['clinic_date']
 

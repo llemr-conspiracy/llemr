@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from builtins import range
 import datetime
 from django.utils.timezone import now
 
@@ -63,7 +64,7 @@ class TestAttendingDashboard(TestCase):
             phone='+49 178 236 5288', gender=Gender.objects.first(),
             address='Schulstrasse 9', city='Munich', state='BA',
             zip_code='63108', pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1994, 01, 22),
+            date_of_birth=datetime.date(1994, 0o1, 22),
             patient_comfortable_with_english=False,
             preferred_contact_method=ContactMethod.objects.first(),
         )
@@ -102,7 +103,7 @@ class TestAttendingDashboard(TestCase):
             phone='454545', gender=Gender.objects.first(),
             address='A', city='B', state='C',
             zip_code='12345', pcp_preferred_zip='12345',
-            date_of_birth=datetime.date(1992, 04, 22),
+            date_of_birth=datetime.date(1992, 0o4, 22),
             patient_comfortable_with_english=False,
             preferred_contact_method=ContactMethod.objects.first(),
         )
@@ -159,7 +160,7 @@ class TestAttendingDashboard(TestCase):
                 <li class="disabled"><a aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a></li>'''),
-            dewhitespace(response.content))
+            dewhitespace(response.content.decode('utf-8')))
         # since there's only one page, the "forward" pagination button
         # should be disabled
         self.assertIn(
@@ -167,7 +168,7 @@ class TestAttendingDashboard(TestCase):
                 <li class="disabled"> <a aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a> </li>'''),
-            dewhitespace(response.content))
+            dewhitespace(response.content.decode('utf-8')))
 
         # since there's only one page, only one page marker should be shown
         self.assertContains(
@@ -206,7 +207,7 @@ class TestAttendingDashboard(TestCase):
                 <li class="disabled"><a aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a></li>'''),
-            dewhitespace(response.content))
+            dewhitespace(response.content.decode('utf-8')))
         # since there's only one page, the "forward" pagination button
         # should be disabled
         self.assertIn(
@@ -214,7 +215,7 @@ class TestAttendingDashboard(TestCase):
               <li><a href="?page=2" aria-label="Next">
                 <span aria-hidden="true">&raquo;</span>
               </a></li>'''),
-            dewhitespace(response.content))
+            dewhitespace(response.content.decode('utf-8')))
 
     @override_settings(OSLER_CLINIC_DAYS_PER_PAGE=3)
     def test_dashboard_page_out_of_range(self):
@@ -253,7 +254,7 @@ class TestAttendingDashboard(TestCase):
                 <a href="?page=%s" aria-label="Previous">
                     <span aria-hidden="true">&laquo;
                 ''' % n_pages),
-            dewhitespace(response.content))
+            dewhitespace(response.content.decode('utf-8')))
         # since there's only one page, the "forward" pagination button
         # should be disabled
         self.assertIn(
@@ -261,4 +262,4 @@ class TestAttendingDashboard(TestCase):
                 <li class="disabled"> <a aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a> </li>'''),
-            dewhitespace(response.content))
+            dewhitespace(response.content.decode('utf-8')))

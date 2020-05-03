@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+from builtins import str
 from django.test import TestCase
 from django.core import mail
 from django.core.exceptions import ValidationError
@@ -103,9 +105,6 @@ class TestClinDateViews(TestCase):
         r = self.client.post(
             reverse('new-clindate', args=(pt.id,)),
             {'clinic_type': models.ClinicType.objects.first().pk})
-
-        with open('tmp.html', 'w') as f:
-            f.write(r.content)
 
         self.assertRedirects(r, reverse('new-workup', args=(pt.id,)))
         self.assertEqual(models.ClinicDate.objects.count(), 1)

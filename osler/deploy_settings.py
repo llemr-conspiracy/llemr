@@ -1,4 +1,6 @@
-from base_settings import *
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from .base_settings import *
 
 DEBUG = TEMPLATE_DEBUG = False
 CRISPY_FAIL_SILENTLY = not DEBUG

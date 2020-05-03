@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import collections
 
 from django.core.urlresolvers import reverse
@@ -22,6 +23,7 @@ def list_view(request):
             d[a.clindate].append(a)
         else:
             d[a.clindate] = [a]
+
     return render(request, 'appointment/appointment_list.html',
                   {'appointments_by_date': d})
 
