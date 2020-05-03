@@ -8,11 +8,6 @@ import datetime
 from django.test import TestCase
 from django.urls import reverse
 
-# For live tests.
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-
 from pttrack.models import Gender, Patient, Provider, ProviderType
 from pttrack.test import SeleniumLiveTestCase
 
@@ -163,12 +158,11 @@ class FollowupLiveTesting(SeleniumLiveTestCase):
 
         # and the submission with this comment should be in the db
         self.assertGreater(
-            models.ReferralFollowup.objects.\
-                filter(comments=COMMENT).count(),
+            models.ReferralFollowup.objects.filter(comments=COMMENT).count(),
             0)
 
     def test_followup_view_rendering(self):
-        from django.core.urlresolvers import NoReverseMatch
+        from django.urls import NoReverseMatch
 
         for url in urls.urlpatterns:
             if url.name in ['new-followup', 'followup']:
@@ -211,7 +205,7 @@ class TestReferralFollowupForms(TestCase):
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 0o1, 0o1),
+            date_of_birth=datetime.date(1990, 1, 1),
             patient_comfortable_with_english=False,
             preferred_contact_method=self.contact_method,
         )

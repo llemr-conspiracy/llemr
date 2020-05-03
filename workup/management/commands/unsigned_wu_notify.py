@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
         unsigned_wu2providers = {
             wu: Provider.objects.filter(
-                signed_workups=wu.clinic_day.workup_set.all()).first()
+                signed_workups__in=wu.clinic_day.workup_set.all()).first()
             for wu in unsigned_wus}
 
         provider2unsigned = {}
@@ -41,10 +41,16 @@ class Command(BaseCommand):
                          else provider.associated_user.last_name)
 
             message_lines = [
-                ("Hi there Dr. %s," % last_name), '',
-                "We've noticed something of a backlog of unattested notes, and so we've cooked up something to try to identify--wherever possible--which unattested notes should have been attested by which physicians. From here, it looks like the following note(s) should have been signed by you:",
+                ("Hi there Dr. %s," % last_name),
+                '',
+                "We've noticed something of a backlog of unattested notes, "
+                "and so we've cooked up something to try to "
+                "identify--wherever possible--which unattested notes "
+                "should have been attested by which physicians. From here, "
+                "it looks like the following note(s) should have been "
+                "signed by you:",
                 ""
-                ]
+            ]
 
             for wu in inferred_wus:
                 message_lines.append(" ".join([

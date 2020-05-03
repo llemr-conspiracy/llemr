@@ -54,7 +54,6 @@ class TestEmailForUnsignedNotes(TestCase):
             clinic_type=models.ClinicType.objects.first(),
             clinic_date=now().date())
 
-
     def test_unsigned_email(self):
 
         pt = Patient.objects.first()

@@ -43,6 +43,7 @@ class ViewsExistTest(TestCase):
         clindate create page.'''
 
         # First delete clindate that's created in setUp.
+        models.Workup.objects.all().delete()
         models.ClinicDate.objects.all().delete()
 
         pt = Patient.objects.first()

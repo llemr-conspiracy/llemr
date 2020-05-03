@@ -45,7 +45,7 @@ class APITest(APITestCase):
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 0o1, 0o1),
+            date_of_birth=datetime.date(1990, 1, 1),
             patient_comfortable_with_english=False,
             preferred_contact_method=models.ContactMethod.objects.first(),
         )
@@ -61,7 +61,7 @@ class APITest(APITestCase):
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 0o1, 0o1),
+            date_of_birth=datetime.date(1990, 1, 1),
             patient_comfortable_with_english=False,
             preferred_contact_method=models.ContactMethod.objects.first(),
         )
@@ -77,7 +77,7 @@ class APITest(APITestCase):
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 0o1, 0o1),
+            date_of_birth=datetime.date(1990, 1, 1),
             patient_comfortable_with_english=False,
             preferred_contact_method=models.ContactMethod.objects.first(),
         )
@@ -326,7 +326,7 @@ class APITest(APITestCase):
             FollowupRequest.objects.filter(
             patient=response.data[1]['pk']).first().due_date)
 
-        # Add one more AI whose due date is even farther away than the 
+        # Add one more AI whose due date is even farther away than the
         # referral followup request
         pt5_ai = models.ActionItem.objects.create(
             due_date=now().date() + datetime.timedelta(days=1),

@@ -62,7 +62,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
             self.assertFalse(
                 form.is_valid(),
                 msg='Failed to raise error if only %s specified' % field)
-            self.assertNotEqual(form[field].errors, [])
+            self.assertNotEqual(len(form[field].errors), 0)
 
     def test_vitals_no_value_no_units_ok(self):
         """Units are required only when vitals are provided."""
@@ -174,24 +174,24 @@ class TestWorkupFormValidators(TestCase):
         form_data = self.valid_wu_dict
         form = WorkupForm(data=form_data)
 
-        self.assertEqual(form['bp_sys'].errors, [])
-        self.assertEqual(form['bp_dia'].errors, [])
+        self.assertEqual(len(form['bp_sys'].errors), 0)
+        self.assertEqual(len(form['bp_dia'].errors), 0)
 
         form_data['bp_sys'] = '800'
 
         form = WorkupForm(data=form_data)
-        self.assertNotEqual(form['bp_sys'].errors, [])
+        self.assertNotEqual(len(form['bp_sys'].errors), 0)
 
         form_data['bp_sys'] = '120'
         form_data['bp_dia'] = '30'
 
         form = WorkupForm(data=form_data)
-        self.assertNotEqual(form['bp_dia'].errors, [])
+        self.assertNotEqual(len(form['bp_dia'].errors), 0)
 
         # the systolic < diastolic error is a bp_sys error not bp_dia
         form_data['bp_dia'] = '130'
         form = WorkupForm(data=form_data)
-        self.assertNotEqual(form['bp_sys'].errors, [])
+        self.assertNotEqual(len(form['bp_sys'].errors), 0)
 
     def test_missing_voucher_amount(self):
 
@@ -201,25 +201,25 @@ class TestWorkupFormValidators(TestCase):
 
         form = WorkupForm(data=form_data)
 
-        self.assertNotEqual(form['voucher_amount'].errors, [])
-        self.assertNotEqual(form['patient_pays'].errors, [])
+        self.assertNotEqual(len(form['voucher_amount'].errors), 0)
+        self.assertNotEqual(len(form['patient_pays'].errors), 0)
 
         form_data['voucher_amount'] = '40'
         form_data['patient_pays'] = '40'
 
         form = WorkupForm(data=form_data)
-        self.assertEqual(form['voucher_amount'].errors, [])
-        self.assertEqual(form['patient_pays'].errors, [])
+        self.assertEqual(len(form['voucher_amount'].errors), 0)
+        self.assertEqual(len(form['patient_pays'].errors), 0)
 
-        self.assertNotEqual(form['imaging_voucher_amount'].errors, [])
-        self.assertNotEqual(form['patient_pays_imaging'].errors, [])
+        self.assertNotEqual(len(form['imaging_voucher_amount'].errors), 0)
+        self.assertNotEqual(len(form['patient_pays_imaging'].errors), 0)
 
         form_data['imaging_voucher_amount'] = '40'
         form_data['patient_pays_imaging'] = '40'
 
         form = WorkupForm(data=form_data)
-        self.assertEqual(form['imaging_voucher_amount'].errors, [])
-        self.assertEqual(form['patient_pays_imaging'].errors, [])
+        self.assertEqual(len(form['imaging_voucher_amount'].errors), 0)
+        self.assertEqual(len(form['patient_pays_imaging'].errors), 0)
 
 
 class TestWorkupFormProviderChoices(TestCase):
@@ -274,16 +274,16 @@ class TestWorkupFormProviderChoices(TestCase):
         form_data = wu_dict()
         form_data['attending'] = self.pvds[2].pk
         form = WorkupForm(data=form_data)
-        self.assertNotEqual(form['attending'].errors, [])
+        self.assertNotEqual(len(form['attending'].errors), 0)
 
         form_data['attending'] = self.pvds[3].pk
         form = WorkupForm(data=form_data)
-        self.assertNotEqual(form['attending'].errors, [])
+        self.assertNotEqual(len(form['attending'].errors), 0)
 
         # Make sure we accept attending providers
         form_data['attending'] = self.pvds[1].pk
         form = WorkupForm(data=form_data)
-        self.assertEqual(form['attending'].errors, [])
+        self.assertEqual(len(form['attending'].errors), 0)
 
     def test_form_other_volunteer_options(self):
         """WorkupForm offers only non-attendings for 'other volunteers'"""
@@ -299,13 +299,13 @@ class TestWorkupFormProviderChoices(TestCase):
         form_data = wu_dict()
         form_data['other_volunteer'] = self.pvds[1].pk
         form = WorkupForm(data=form_data)
-        self.assertNotEqual(form['other_volunteer'].errors, [])
+        self.assertNotEqual(len(form['other_volunteer'].errors), 0)
 
         # Accept non-attending providers
         form_data['other_volunteer'] = [self.pvds[2].pk]
         form = WorkupForm(data=form_data)
-        self.assertEqual(form['other_volunteer'].errors, [])
+        self.assertEqual(len(form['other_volunteer'].errors), 0)
 
         form_data['other_volunteer'] = [self.pvds[3].pk]
         form = WorkupForm(data=form_data)
-        self.assertEqual(form['other_volunteer'].errors, [])
+        self.assertEqual(len(form['other_volunteer'].errors), 0)

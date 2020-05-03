@@ -9,14 +9,15 @@ from .models import Language, Gender, Ethnicity, ContactMethod, ProviderType, \
     Provider, ActionInstruction, Patient
 from . import forms
 
+
 class TestActionItemCreateForms(TestCase):
     '''Tests for form used to create new Action Items'''
 
     def setUp(self):
         ai_data = {
-        'author': Provider.objects.first(),
-        'author_type': ProviderType.objects.first(),
-        'patient': Patient.objects.first()
+            'author': Provider.objects.first(),
+            'author_type': ProviderType.objects.first(),
+            'patient': Patient.objects.first()
         }
         self.ai_data = ai_data
 
@@ -27,14 +28,14 @@ class TestActionItemCreateForms(TestCase):
         ai_data = self.ai_data
 
         PCP_followup = ActionInstruction.objects.create(
-            instruction='PCP Followup',active=False)
+            instruction='PCP Followup', active=False)
         Lab_Followup = ActionInstruction.objects.create(
-            instruction='Lab Followup',active=True)
+            instruction='Lab Followup', active=True)
         Vaccine_Followup = ActionInstruction.objects.create(
-            instruction='Vaccine Followup',active=True)
+            instruction='Vaccine Followup', active=True)
 
         ai_qs = ActionInstruction.objects.filter(
-            active=True).values_list('instruction',flat=True)
+            active=True).values_list('instruction', flat=True)
 
         form = forms.ActionItemForm(data=ai_data)
 
@@ -42,15 +43,15 @@ class TestActionItemCreateForms(TestCase):
 
         self.assertEqual(set(ai_qs), set(form_list))
 
-        #Accept active Action Instructions
+        # Accept active Action Instructions
         ai_data['instruction'] = Lab_Followup.pk
         form = forms.ActionItemForm(data=ai_data)
-        self.assertEqual(form['instruction'].errors, [])
+        self.assertEqual(len(form['instruction'].errors), 0)
 
-        #Reject inactive Action Instructions
+        # Reject inactive Action Instructions
         ai_data['instruction'] = PCP_followup.pk
         form = forms.ActionItemForm(data=ai_data)
-        self.assertNotEqual(form['instruction'].errors, [])
+        self.assertNotEqual(len(form['instruction'].errors), 0)
 
 
 class TestPatientCreateForms(TestCase):
@@ -72,7 +73,7 @@ class TestPatientCreateForms(TestCase):
             'country': 'Germany',
             'zip_code': '63108',
             'pcp_preferred_zip': '63018',
-            'date_of_birth': datetime.date(1990, 0o1, 0o1),
+            'date_of_birth': datetime.date(1990, 1, 1),
             'patient_comfortable_with_english': False,
             'ethnicities': [Ethnicity.objects.create(name="Klingon")],
             'preferred_contact_method':
@@ -122,26 +123,26 @@ class TestPatientCreateForms(TestCase):
         # Make sure we reject non-case manager providers
 
         form_data = self.valid_pt_dict.copy()
-        form_data['case_managers'] = [pvds[0].pk]
+        form_data['case_managers'] = [pvds[0]]
         form = forms.PatientForm(data=form_data)
-        self.assertNotEqual(form['case_managers'].errors, [])
+        self.assertNotEqual(len(form['case_managers'].errors), 0)
 
         form_data = self.valid_pt_dict.copy()
         form_data['case_managers'] = [pvds[1].pk]
         form = forms.PatientForm(data=form_data)
-        self.assertNotEqual(form['case_managers'].errors, [])
+        self.assertNotEqual(len(form['case_managers'].errors), 0)
 
         # Make sure we accept case manager providers
 
         form_data = self.valid_pt_dict.copy()
         form_data['case_managers'] = [pvds[2].pk]
         form = forms.PatientForm(data=form_data)
-        self.assertEqual(form['case_managers'].errors, [])
+        self.assertEqual(len(form['case_managers'].errors), 0)
 
         form_data = self.valid_pt_dict.copy()
         form_data['case_managers'] = [pvds[3].pk]
         form = forms.PatientForm(data=form_data)
-        self.assertEqual(form['case_managers'].errors, [])
+        self.assertEqual(len(form['case_managers'].errors), 0)
 
     def test_missing_alt_phone(self):
         '''Missing the alternative phone w/o alt phone owner should fail.'''
@@ -153,7 +154,7 @@ class TestPatientCreateForms(TestCase):
         form = forms.PatientForm(data=form_data)
 
         # and expect an error to be on the empty altphone field
-        self.assertNotEqual(form['alternate_phone_1'].errors, [])
+        self.assertNotEqual(len(form['alternate_phone_1'].errors), 0)
 
     def test_missing_alt_phone_owner(self):
         '''Missing the alt phone owner w/o alt phone should fail.'''
@@ -164,4 +165,4 @@ class TestPatientCreateForms(TestCase):
 
         form = forms.PatientForm(data=form_data)
         # we expect errors on the empty alternate_phone_1_owner field
-        self.assertNotEqual(form['alternate_phone_1_owner'].errors, [])
+        self.assertNotEqual(len(form['alternate_phone_1_owner'].errors), 0)

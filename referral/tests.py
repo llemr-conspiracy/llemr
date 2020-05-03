@@ -44,7 +44,7 @@ class TestPatientContactForm(TestCase):
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 0o1, 0o1),
+            date_of_birth=datetime.date(1990, 1, 1),
             patient_comfortable_with_english=False,
             preferred_contact_method=self.contact_method,
         )
@@ -68,7 +68,7 @@ class TestPatientContactForm(TestCase):
         self.followup_request = models.FollowupRequest.objects.create(
             referral=self.referral,
             contact_instructions="Call him",
-            due_date=datetime.date(2018, 9, 0o1),
+            due_date=datetime.date(2018, 9, 1),
             author=Provider.objects.first(),
             author_type=ProviderType.objects.first(),
             patient=self.pt
@@ -335,7 +335,7 @@ class TestSelectReferralType(TestCase):
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 0o1, 0o1),
+            date_of_birth=datetime.date(1990, 1, 1),
             patient_comfortable_with_english=False,
             preferred_contact_method=self.contact_method,
         )
@@ -398,7 +398,7 @@ class TestCreateReferral(TestCase):
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 0o1, 0o1),
+            date_of_birth=datetime.date(1990, 1, 1),
             patient_comfortable_with_english=False,
             preferred_contact_method=self.contact_method,
         )
@@ -496,7 +496,7 @@ class TestSelectReferral(TestCase):
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 0o1, 0o1),
+            date_of_birth=datetime.date(1990, 1, 1),
             patient_comfortable_with_english=False,
             preferred_contact_method=self.contact_method,
         )
@@ -526,7 +526,7 @@ class TestSelectReferral(TestCase):
         models.FollowupRequest.objects.create(
             referral=referral1,
             contact_instructions="Call him",
-            due_date=datetime.date(2018, 11, 0o1),
+            due_date=datetime.date(2018, 11, 1),
             author=Provider.objects.first(),
             author_type=ProviderType.objects.first(),
             patient=self.pt
@@ -560,7 +560,7 @@ class TestSelectReferral(TestCase):
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1994, 0o1, 22),
+            date_of_birth=datetime.date(1994, 1, 22),
             patient_comfortable_with_english=False,
             preferred_contact_method=self.contact_method,
         )
@@ -584,7 +584,7 @@ class TestSelectReferral(TestCase):
         models.FollowupRequest.objects.create(
             referral=referral3,
             contact_instructions="Call him",
-            due_date=datetime.date(2018, 11, 0o1),
+            due_date=datetime.date(2018, 11, 1),
             author=Provider.objects.first(),
             author_type=ProviderType.objects.first(),
             patient=pt2
@@ -696,7 +696,7 @@ class TestPatientContactCreateView(TestCase):
             state='BA',
             zip_code='63108',
             pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 0o1, 0o1),
+            date_of_birth=datetime.date(1990, 1, 1),
             patient_comfortable_with_english=False,
             preferred_contact_method=self.contact_method,
         )
@@ -726,7 +726,7 @@ class TestPatientContactCreateView(TestCase):
         followup_request1 = models.FollowupRequest.objects.create(
             referral=referral1,
             contact_instructions="Call him",
-            due_date=datetime.date(2018, 11, 0o1),
+            due_date=datetime.date(2018, 11, 1),
             author=Provider.objects.first(),
             author_type=ProviderType.objects.first(),
             patient=self.pt
