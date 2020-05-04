@@ -3,7 +3,7 @@ chardet==3.0.4
 Django==2.0.13
 django-bootstrap3==11.0.0
 git+https://github.com/inducer/django-bootstrap3-datetimepicker.git
-django-crispy-forms==1.7.2
+django-crispy-forms==1.8.1
 django-debug-toolbar==1.9.1
 django-simple-history==2.7.0
 djangorestframework==3.8.2
