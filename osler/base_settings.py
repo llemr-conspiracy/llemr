@@ -33,7 +33,6 @@ INSTALLED_APPS = (
     'api',
     'crispy_forms',
     'bootstrap3',
-    'bootstrap3_datetime',
     'simple_history',
     'rest_framework',
     'audit',

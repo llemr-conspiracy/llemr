@@ -104,7 +104,7 @@ class FormSubmissionTest(TestCase):
         Test submission of a demographics form
         '''
 
-        for i in list(dict(models.Demographics.NULL_BOOLEAN_CHOICES).keys()):
+        for i in [True, False, None]:
 
             pt = self.make_patient()
 
@@ -178,11 +178,13 @@ class FormSubmissionTest(TestCase):
             response, 'pttrack/patient_detail.html')
         self.assertEqual(models.Demographics.objects.count(), 1)
 
-        # Send in submission with the same patient ID
-        response2 = self.client.post(dg_url, dg)
+        # Send in submission with the same patient ID; we should see no new
+        # Demographics objects, and a successful redirect to patient-detail
+        response2 = self.client.post(dg_url, dg, follow=True)
         self.assertEqual(response2.status_code, 200)
+        self.assertEqual(models.Demographics.objects.count(), 1)
         self.assertTemplateUsed(
-            response2, 'demographics/demographics-resolve.html')
+            response2, 'pttrack/patient_detail.html')
 
     def test_demographics_form_double_submission_errors(self):
         '''
@@ -207,9 +209,14 @@ class FormSubmissionTest(TestCase):
         }
 
         dg_url = reverse('demographics-create', args=(pt.pk,))
-        response = self.client.post(dg_url, dg)
+
+        response1 = self.client.post(dg_url, dg, follow=True)
+        self.assertTemplateUsed(response1, 'pttrack/patient_detail.html')
+
         response2 = self.client.post(dg_url, dg, follow=True)
+        #  success here means redirection to patient detail page
         self.assertNotContains(response2, 'Clash')
+        self.assertTemplateUsed(response2, 'pttrack/patient_detail.html')
 
         # Test case 2 - two different forms submitted
         # In this case, all fields should have errors
@@ -232,14 +239,18 @@ class FormSubmissionTest(TestCase):
 
         response3 = self.client.post(dg_url, dg2, follow=True)
 
-        self.assertFormError(response3, 'form_old', 'has_insurance',
-                             "Clash in this field. Database entry is 'Not Answered'")
-        self.assertFormError(response3, 'form_new', 'ER_visit_last_year',
-                             "Clash in this field. You entered 'No'")
-        self.assertFormError(response3, 'form_old', 'dependents',
-                             "Clash in this field. Database entry is '4'")
-        self.assertFormError(response3, 'form_new','dependents',
-                             "Clash in this field. You entered '6'")
+        self.assertFormError(
+            response3, 'form_old', 'has_insurance',
+            "Clash in this field. Database entry is 'None'")
+        self.assertFormError(
+            response3, 'form_new', 'ER_visit_last_year',
+            "Clash in this field. You entered 'False'")
+        self.assertFormError(
+            response3, 'form_old', 'dependents',
+            "Clash in this field. Database entry is '4'")
+        self.assertFormError(
+            response3, 'form_new', 'dependents',
+            "Clash in this field. You entered '6'")
 
         # Verify that there are 6 errors on page (3 fields x 2 messages)
         self.assertContains(response3, 'Clash', count=6)

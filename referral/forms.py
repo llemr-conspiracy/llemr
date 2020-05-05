@@ -7,7 +7,6 @@ from django import forms
 from . import models
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from bootstrap3_datetime.widgets import DateTimePicker
 
 
 class ReferralForm(ModelForm):
@@ -27,8 +26,8 @@ class FollowupRequestForm(ModelForm):
     class Meta(object):
         model = models.FollowupRequest
         fields = ['due_date', 'contact_instructions']
-        widgets = {'due_date': DateTimePicker(
-            options={"format": "MM/DD/YYYY"})}
+        # widgets = {'due_date': DateTimePicker(
+        #     options={"format": "MM/DD/YYYY"})}
 
     def __init__(self, *args, **kwargs):
         super(FollowupRequestForm, self).__init__(*args, **kwargs)

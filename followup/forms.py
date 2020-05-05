@@ -2,12 +2,11 @@ from __future__ import unicode_literals
 from builtins import object
 from django.forms import ModelForm
 
-from bootstrap3_datetime.widgets import DateTimePicker
-
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
 from . import models
+
 
 class BaseFollowup(ModelForm):
     '''The base class for followup forms'''
@@ -99,7 +98,6 @@ class VaccineFollowup(BaseFollowup):
     class Meta(object):
         model = models.VaccineFollowup
         exclude = ['patient', 'author', 'author_type']
-        widgets = {'dose_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
 
     def clean(self):
         '''VaccineFollowups require a next dose date iff there there is a next

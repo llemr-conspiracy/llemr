@@ -31,61 +31,66 @@ class DemographicsCreate(FormView):
 
         return context
 
-    def form_valid(self, form):
+    def form_valid(self, form_new):
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
 
-        dg = form.save(commit=False)
-        dg.creation_date = datetime.date.today()
-        dg.patient = pt
+        dg_new = form_new.save(commit=False)
+        dg_new.creation_date = datetime.date.today()
+        dg_new.patient = pt
 
         try:
             with transaction.atomic():
-                dg.save()
+                dg_new.save()
                 pt.save()
-                form.save_m2m()
-                form.save()
+                form_new.save_m2m()
+                form_new.save()
             return HttpResponseRedirect(reverse("patient-detail",
                                                 args=(pt.id,)))
         except IntegrityError:
+
             # Create form object containing data from current entry in database
             dg_old = Demographics.objects.get(patient=pt.id)
-            form_old = DemographicsForm(dg_old.__dict__)
 
-            # calling is_valid causes cleaned_data to be availiable
+            dgdict_new = model_to_dict(dg_new)
+            dgdict_old = model_to_dict(dg_old)
+
+            differences = [k for k, v in dgdict_old.items() if
+                           k not in ['_state', 'id'] and
+                           dgdict_new[k] != v]
+
+            # An integrity error will be thrown whether or not there is
+            # a difference between the models.
+            if not differences:
+                return HttpResponseRedirect(reverse("patient-detail",
+                                            args=(pt.id,)))
+
+            form_old = DemographicsForm(dg_old.__dict__)
             assert form_old.is_valid()
 
-            NULL_BOOLEAN_CHOICES = dict(Demographics.NULL_BOOLEAN_CHOICES)
+            for field in differences:
 
-            # Add errors to the forms to point user to fields to fix
-            dg_old_dict = model_to_dict(dg_old)
-            dg_new_dict = model_to_dict(dg)
+                new_val = form_new[field].value()
+                old_val = form_old[field].value()
 
-            for field in form_old.base_fields:
+                if new_val != old_val:
 
-                old_value = dg_old_dict.get(field)
-                new_value = dg_new_dict.get(field)
+                    form_old.add_error(
+                        field,
+                        "Clash in this field. Database entry is '%s'" %
+                        old_val
+                        # (old_val if old_val is not None else 'Not Answered')
+                    )
 
-                if new_value != old_value:
-
-                    new_err_msg = "Clash in this field. You entered '%s'"
-                    old_err_msg = "Clash in this field. Database entry is '%s'"
-
-                    value_msg_form_tuples = [
-                        (new_value, new_err_msg, form),
-                        (old_value, old_err_msg, form_old)
-                    ]
-
-                    for val, err_msg, f in value_msg_form_tuples:
-                        if val in NULL_BOOLEAN_CHOICES:
-                            err_msg = err_msg % NULL_BOOLEAN_CHOICES[val]
-                        else:
-                            err_msg = err_msg % val
-
-                        f.add_error(field, err_msg)
+                    form_new.add_error(
+                        field,
+                        "Clash in this field. You entered '%s'" %
+                        new_val
+                        # (new_val if new_val is not None else 'Not Answered')
+                    )
 
             # Create context variable containing new and old forms
             context = {"form_old": form_old,
-                       "form_new": form,
+                       "form_new": form_new,
                        "pt_id": pt.id,
                        "pt_name": pt.name}
             return render(self.request,

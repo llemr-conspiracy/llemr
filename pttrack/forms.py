@@ -4,7 +4,7 @@ from builtins import zip
 from builtins import str
 from builtins import range
 from builtins import object
-from bootstrap3_datetime.widgets import DateTimePicker
+
 from django.forms import (Form, CharField, ModelForm, EmailField,
                           CheckboxSelectMultiple, ModelMultipleChoiceField)
 from django.contrib.auth.forms import AuthenticationForm
@@ -95,7 +95,7 @@ class ActionItemForm(ModelForm):
         model = models.ActionItem
         exclude = ['completion_date', 'author', 'written_date', 'patient',
                    'completion_author', 'author_type']
-        widgets = {'due_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
+        # widgets = {'due_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
 
     def __init__(self, *args, **kwargs):
 

@@ -585,7 +585,7 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
             self.selenium.get('%s%s' % (self.live_server_url, reverse("home")))
 
             for tab_name in provider_tabs[provider_type]:
-                WebDriverWait(self.selenium, 60).until(
+                WebDriverWait(self.selenium, 30).until(
                     EC.presence_of_element_located((By.ID, tab_name)))
 
                 # examine each tab and get pk of expected and present patients.

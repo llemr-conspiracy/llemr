@@ -305,7 +305,7 @@ def choose_clintype(request):
     RADIO_CHOICE_KEY = 'radio-roles'
 
     redirect_to = request.GET['next']
-    if not is_safe_url(url=redirect_to, host=request.get_host()):
+    if not is_safe_url(url=redirect_to, allowed_hosts=request.get_host()):
         redirect_to = reverse("home")
 
     if request.POST:
