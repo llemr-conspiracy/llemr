@@ -235,20 +235,20 @@ class TestProgressNoteViews(TestCase):
 
     def setUp(self):
 
+        provider = build_provider()
+        log_in_provider(self.client, provider)
+
         self.formdata = {
             'title': 'Depression',
             'text': 'so sad does testing work???',
             'patient': Patient.objects.first(),
-            'author': models.Provider.objects.first(),
+            'author': provider,
             'author_type': ProviderType.objects.first()
         }
 
         models.ClinicDate.objects.create(
             clinic_type=models.ClinicType.objects.first(),
             clinic_date=now().date())
-
-        provider = build_provider()
-        log_in_provider(self.client, provider)
 
     def test_progressnote_urls(self):
         url = reverse('new-progress-note', args=(1,))

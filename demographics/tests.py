@@ -3,14 +3,12 @@ from datetime import date
 
 from django.test import TestCase
 from django.urls import reverse
-from django.db import transaction
 
 from pttrack.test_views import build_provider, log_in_provider
 from pttrack.models import Patient, Gender, ContactMethod
 
 from . import models
 from . import forms
-# Create your tests here.
 
 
 class ViewsExistTest(TestCase):
@@ -114,13 +112,15 @@ class FormSubmissionTest(TestCase):
                 'education_level': models.EducationLevel.objects.all()[0],
                 'transportation': models.TransportationOption.objects.all()[0],
                 'work_status': models.WorkStatus.objects.all()[0],
-                'has_insurance': i,
-                'ER_visit_last_year': i,
                 'last_date_physician_visit': date.today(),
-                'lives_alone': i,
                 'dependents': 4,
-                'currently_employed': i,
             }
+
+            if i is True or i is False:
+                valid_dg_dict['has_insurance'] = i
+                valid_dg_dict['ER_visit_last_year'] = i
+                valid_dg_dict['lives_alone'] = i
+                valid_dg_dict['currently_employed'] = i
 
             final_url = reverse('demographics-create', args=(pt.id,))
 
@@ -162,12 +162,10 @@ class FormSubmissionTest(TestCase):
             'education_level': models.EducationLevel.objects.all()[0],
             'transportation': models.TransportationOption.objects.all()[0],
             'work_status': models.WorkStatus.objects.all()[0],
-            'has_insurance': None,
             'ER_visit_last_year': True,
             'last_date_physician_visit': date.today(),
             'lives_alone': False,
             'dependents': 4,
-            'currently_employed': None,
         }
 
         # Submit demographics object twice
@@ -200,12 +198,10 @@ class FormSubmissionTest(TestCase):
             'education_level': models.EducationLevel.objects.first(),
             'transportation': models.TransportationOption.objects.first(),
             'work_status': models.WorkStatus.objects.first(),
-            'has_insurance': None,
             'ER_visit_last_year': True,
             'last_date_physician_visit': date.today(),
             'lives_alone': False,
             'dependents': 4,
-            'currently_employed': None,
         }
 
         dg_url = reverse('demographics-create', args=(pt.pk,))
@@ -234,7 +230,6 @@ class FormSubmissionTest(TestCase):
             'last_date_physician_visit': date.today(),
             'lives_alone': False,
             'dependents': 6,
-            'currently_employed': None,
         }
 
         response3 = self.client.post(dg_url, dg2, follow=True)

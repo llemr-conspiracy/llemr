@@ -132,6 +132,10 @@ class return_duplicatesTests(TestCase):
     ben and benjamin)
     """
 
+    def tearDown(self):
+        # necessary because of the ForeignKey on_delete=PROTECT directives
+        models.Patient.objects.all().delete()
+
     def test_empty_first_name(self):
         """If first and last name is empty string should return None
         """

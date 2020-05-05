@@ -223,21 +223,22 @@ class TestReferralFollowupForms(TestCase):
         self.noshow_reason = models.NoShowReason.objects.create(
             name="Hella busy.")
 
+    def build_form(self, contact_successful, has_appointment, apt_location,
+                   noapt_reason, noshow_reason, pt_showed=None):
+        """Construct a ReferralFollowup form to suit the needs of the
+        testing subroutines based upon what is provided and not provided.
+        """
 
-    def build_form(self, contact_successful, has_appointment, apt_location, noapt_reason, noshow_reason, pt_showed=None):
-        '''
-        Construct a ReferralFollowup form to suit the needs of the testing
-        subroutines based upon what is provided and not provided.
-        '''
-
-        contact_resolution = self.successful_res if contact_successful else self.unsuccessful_res
+        contact_resolution = (
+            self.successful_res if contact_successful
+            else self.unsuccessful_res)
 
         form_data = {
             'contact_method': self.contact_method,
             'contact_resolution': contact_resolution,
             'patient': self.pt,
             'referral_type': self.reftype,
-            }
+        }
 
         # Has appointment could (at least in principle) be True, False, or
         # unspecified.
@@ -383,6 +384,12 @@ class FollowupTest(TestCase):
     def setUp(self):
         from pttrack.test_views import log_in_provider, build_provider
         log_in_provider(self.client, build_provider())
+
+    def tearDown(self):
+        models.GeneralFollowup.objects.all().delete()
+        models.LabFollowup.objects.all().delete()
+        models.VaccineFollowup.objects.all().delete()
+        models.ReferralFollowup.objects.all().delete()
 
     def test_followup_view_urls(self):
 
