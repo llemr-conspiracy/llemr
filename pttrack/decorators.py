@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 from functools import wraps
+from urllib.parse import urlparse
+
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.urls import reverse_lazy
 from django.shortcuts import resolve_url
-from django.utils.decorators import available_attrs
-from django.utils.six.moves.urllib.parse import urlparse
 
 
 def provider_exists(user):
@@ -32,7 +32,7 @@ def session_passes_test(test_func, fail_url,
     """
 
     def decorator(view_func):
-        @wraps(view_func, assigned=available_attrs(view_func))
+        @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
             if test_func(request.session):
                 return view_func(request, *args, **kwargs)

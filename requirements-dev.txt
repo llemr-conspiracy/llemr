@@ -1,5 +1,5 @@
 -r requirements.txt
-django-debug-toolbar==1.9.1
+django-debug-toolbar==2.2
 codecov==2.0.15
 coverage==4.5.1
 selenium==3.12.0
