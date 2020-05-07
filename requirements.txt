@@ -14,7 +14,7 @@ idna==2.9
 Pillow==7.1.2
 PyPDF2==1.26.0
 pytz==2020.1
-reportlab==3.4.0
+reportlab==3.5.42
 requests==2.23.0
 six==1.11.0
 sqlparse==0.2.4
