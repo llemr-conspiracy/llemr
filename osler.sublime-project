@@ -2,16 +2,6 @@
 	"build_systems":
 	[
 		{
-			"name": "Django Test",
-			"shell_cmd": "source venv/bin/activate && python manage.py test",
-			"working_dir": "${project_path}"
-		},
-		{
-			"name": "Django Runserver",
-			"shell_cmd": "source venv/bin/activate && python manage.py runserver",
-			"working_dir": "${project_path}"
-		},
-		{
 			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
 			"name": "Anaconda Python Builder",
 			"selector": "source.python",
@@ -21,83 +11,10 @@
 	"folders":
 	[
 		{
-			"path": ".circleci"
+			"path": "."
 		},
 		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "osler"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "api"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "appointment"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "audit"
-		},		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "dashboard"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "demographics"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "followup"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "pttrack"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "referral"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "scripts"
-		},
-		{
-			"file_exclude_patterns":
-			[
-				"__init__.py"
-			],
-			"path": "workup"
+			"path": "../osler-cookiecutter-base/osler"
 		}
 	]
 }
