@@ -7,14 +7,11 @@ from django.views.generic.edit import FormView, UpdateView
 from django.urls import reverse
 from django.db import IntegrityError, transaction
 from django.forms.models import model_to_dict
-
 from django.shortcuts import render
 
-# Create your views here.
-from .models import Demographics
-from .forms import DemographicsForm
-
-from pttrack.models import Patient
+from osler.pttrack.models import Patient
+from osler.demographics.models import Demographics
+from osler.demographics.forms import DemographicsForm
 
 
 class DemographicsCreate(FormView):

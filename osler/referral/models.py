@@ -1,12 +1,10 @@
 """Data models for referral system."""
-from __future__ import unicode_literals
-from builtins import map
 from django.db import models
 from django.urls import reverse
 
-from pttrack.models import (ReferralType, ReferralLocation, Note,
-                            ContactMethod, CompletableMixin,)
-from followup.models import ContactResult, NoAptReason, NoShowReason
+from osler.pttrack.models import (ReferralType, ReferralLocation, Note,
+                                  ContactMethod, CompletableMixin,)
+from osler.followup.models import ContactResult, NoAptReason, NoShowReason
 
 
 class Referral(Note):

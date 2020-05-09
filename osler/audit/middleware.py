@@ -1,18 +1,15 @@
 from __future__ import unicode_literals
-from builtins import object
 from django.contrib.auth.models import AnonymousUser
-
-from .models import PageviewRecord
-
-from pttrack.models import ProviderType
-
 from django.conf import settings
 
-class AuditMiddleware(object):
+from osler.pttrack.models import ProviderType
+from osler.audit.models import PageviewRecord
+
+
+class AuditMiddleware:
 
     def __init__(self, get_response):
         self.get_response = get_response
-        # One-time configuration and initialization.
 
     def __call__(self, request):
 
@@ -36,7 +33,6 @@ class AuditMiddleware(object):
                 user=(None if isinstance(request.user, AnonymousUser)
                       else request.user),
                 role=role,
-                #role=ProviderType.objects.get(pk=role),
                 user_ip=user_ip,
                 method=request.method,
                 url=request.get_full_path(),

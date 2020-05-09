@@ -10,7 +10,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
-from pttrack import models
+from osler.pttrack import models
 from datetime import date
 
 # pylint: disable=invalid-name

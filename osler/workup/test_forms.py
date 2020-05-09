@@ -7,7 +7,7 @@ import decimal
 
 from django.test import TestCase
 
-from pttrack.models import Provider, ProviderType, Gender
+from osler.pttrack.models import Provider, ProviderType, Gender
 
 from .models import DiagnosisType, ClinicDate, ClinicType
 from .forms import WorkupForm

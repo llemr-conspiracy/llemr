@@ -3,8 +3,8 @@ from builtins import str
 from builtins import range
 from django.test import TestCase, override_settings
 from django.utils.timezone import now
-from pttrack.models import Provider, ProviderType, Patient
-from pttrack.test_views import build_provider
+from osler.pttrack.models import Provider, ProviderType, Patient
+from osler.pttrack.test_views import build_provider
 from django.conf import settings
 from django.core.exceptions import ValidationError
 

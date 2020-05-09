@@ -1,11 +1,7 @@
-from __future__ import unicode_literals
-from builtins import object
 from django.db import models
 from simple_history.models import HistoricalRecords
 
-from pttrack.models import Patient
-
-# Create your models here.
+from osler.pttrack.models import Patient
 
 
 class IncomeRange(models.Model):
@@ -24,7 +20,7 @@ class EducationLevel(models.Model):
 
 class WorkStatus(models.Model):
 
-    class Meta(object):
+    class Meta:
         verbose_name_plural = "Work statuses"
 
     name = models.CharField(max_length=50, primary_key=True)
@@ -35,7 +31,7 @@ class WorkStatus(models.Model):
 
 class ResourceAccess(models.Model):
 
-    class Meta(object):
+    class Meta:
         verbose_name_plural = "Resource accesses"
 
     name = models.CharField(max_length=50, primary_key=True)

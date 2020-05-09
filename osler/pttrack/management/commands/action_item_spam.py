@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from django.core.management.base import BaseCommand, CommandError
 from django.core.mail import EmailMessage
 import django.utils.timezone
-from pttrack import models
+from osler.pttrack import models
 
 class Command(BaseCommand):
 	help = '''Sends email to case managers or author of the action item 

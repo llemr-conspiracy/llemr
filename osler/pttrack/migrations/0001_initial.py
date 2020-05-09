@@ -3,9 +3,11 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import pttrack.models
-import pttrack.validators
+
 import simple_history.models
+
+from osler.pttrack import models as pttrack_models
+from osler.pttrack import validators
 
 
 class Migration(migrations.Migration):
@@ -94,9 +96,9 @@ class Migration(migrations.Migration):
             name='Provider',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('first_name', models.CharField(max_length=100, validators=[pttrack.validators.validate_name])),
-                ('last_name', models.CharField(max_length=100, validators=[pttrack.validators.validate_name])),
-                ('middle_name', models.CharField(blank=True, max_length=100, validators=[pttrack.validators.validate_name])),
+                ('first_name', models.CharField(max_length=100, validators=[validators.validate_name])),
+                ('last_name', models.CharField(max_length=100, validators=[validators.validate_name])),
+                ('middle_name', models.CharField(blank=True, max_length=100, validators=[validators.validate_name])),
                 ('phone', models.CharField(blank=True, max_length=40, null=True)),
                 ('needs_updating', models.BooleanField(default=False)),
                 ('associated_user', models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
@@ -112,17 +114,17 @@ class Migration(migrations.Migration):
             name='Patient',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('first_name', models.CharField(max_length=100, validators=[pttrack.validators.validate_name])),
-                ('last_name', models.CharField(max_length=100, validators=[pttrack.validators.validate_name])),
-                ('middle_name', models.CharField(blank=True, max_length=100, validators=[pttrack.validators.validate_name])),
+                ('first_name', models.CharField(max_length=100, validators=[validators.validate_name])),
+                ('last_name', models.CharField(max_length=100, validators=[validators.validate_name])),
+                ('middle_name', models.CharField(blank=True, max_length=100, validators=[validators.validate_name])),
                 ('phone', models.CharField(blank=True, max_length=40, null=True)),
                 ('address', models.CharField(max_length=200)),
                 ('city', models.CharField(default='St. Louis', max_length=50)),
                 ('state', models.CharField(default='MO', max_length=2)),
-                ('zip_code', models.CharField(max_length=5, validators=[pttrack.validators.validate_zip])),
+                ('zip_code', models.CharField(max_length=5, validators=[validators.validate_zip])),
                 ('country', models.CharField(default='USA', max_length=100)),
-                ('pcp_preferred_zip', models.CharField(blank=True, max_length=5, null=True, validators=[pttrack.validators.validate_zip])),
-                ('date_of_birth', models.DateField(help_text='MM/DD/YYYY', validators=[pttrack.validators.validate_birth_date])),
+                ('pcp_preferred_zip', models.CharField(blank=True, max_length=5, null=True, validators=[validators.validate_zip])),
+                ('date_of_birth', models.DateField(help_text='MM/DD/YYYY', validators=[validators.validate_birth_date])),
                 ('patient_comfortable_with_english', models.BooleanField(default=True)),
                 ('alternate_phone_1_owner', models.CharField(blank=True, max_length=40, null=True)),
                 ('alternate_phone_1', models.CharField(blank=True, max_length=40, null=True)),
@@ -149,9 +151,9 @@ class Migration(migrations.Migration):
             name='HistoricalProvider',
             fields=[
                 ('id', models.IntegerField(auto_created=True, blank=True, db_index=True, verbose_name='ID')),
-                ('first_name', models.CharField(max_length=100, validators=[pttrack.validators.validate_name])),
-                ('last_name', models.CharField(max_length=100, validators=[pttrack.validators.validate_name])),
-                ('middle_name', models.CharField(blank=True, max_length=100, validators=[pttrack.validators.validate_name])),
+                ('first_name', models.CharField(max_length=100, validators=[validators.validate_name])),
+                ('last_name', models.CharField(max_length=100, validators=[validators.validate_name])),
+                ('middle_name', models.CharField(blank=True, max_length=100, validators=[validators.validate_name])),
                 ('phone', models.CharField(blank=True, max_length=40, null=True)),
                 ('needs_updating', models.BooleanField(default=False)),
                 ('history_id', models.AutoField(primary_key=True, serialize=False)),
@@ -173,17 +175,17 @@ class Migration(migrations.Migration):
             name='HistoricalPatient',
             fields=[
                 ('id', models.IntegerField(auto_created=True, blank=True, db_index=True, verbose_name='ID')),
-                ('first_name', models.CharField(max_length=100, validators=[pttrack.validators.validate_name])),
-                ('last_name', models.CharField(max_length=100, validators=[pttrack.validators.validate_name])),
-                ('middle_name', models.CharField(blank=True, max_length=100, validators=[pttrack.validators.validate_name])),
+                ('first_name', models.CharField(max_length=100, validators=[validators.validate_name])),
+                ('last_name', models.CharField(max_length=100, validators=[validators.validate_name])),
+                ('middle_name', models.CharField(blank=True, max_length=100, validators=[validators.validate_name])),
                 ('phone', models.CharField(blank=True, max_length=40, null=True)),
                 ('address', models.CharField(max_length=200)),
                 ('city', models.CharField(default='St. Louis', max_length=50)),
                 ('state', models.CharField(default='MO', max_length=2)),
-                ('zip_code', models.CharField(max_length=5, validators=[pttrack.validators.validate_zip])),
+                ('zip_code', models.CharField(max_length=5, validators=[validators.validate_zip])),
                 ('country', models.CharField(default='USA', max_length=100)),
-                ('pcp_preferred_zip', models.CharField(blank=True, max_length=5, null=True, validators=[pttrack.validators.validate_zip])),
-                ('date_of_birth', models.DateField(help_text='MM/DD/YYYY', validators=[pttrack.validators.validate_birth_date])),
+                ('pcp_preferred_zip', models.CharField(blank=True, max_length=5, null=True, validators=[validators.validate_zip])),
+                ('date_of_birth', models.DateField(help_text='MM/DD/YYYY', validators=[validators.validate_birth_date])),
                 ('patient_comfortable_with_english', models.BooleanField(default=True)),
                 ('alternate_phone_1_owner', models.CharField(blank=True, max_length=40, null=True)),
                 ('alternate_phone_1', models.CharField(blank=True, max_length=40, null=True)),
@@ -272,7 +274,7 @@ class Migration(migrations.Migration):
                 ('written_datetime', models.DateTimeField(auto_now_add=True)),
                 ('last_modified', models.DateTimeField(auto_now=True)),
                 ('title', models.CharField(max_length=200)),
-                ('image', models.FileField(help_text='Please deidentify all file names before upload! Delete all files after upload!', upload_to=pttrack.models.make_filepath, verbose_name='PDF File or Image Upload')),
+                ('image', models.FileField(help_text='Please deidentify all file names before upload! Delete all files after upload!', upload_to=pttrack_models.make_filepath, verbose_name='PDF File or Image Upload')),
                 ('comments', models.TextField()),
                 ('author', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Provider')),
                 ('author_type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.ProviderType')),

@@ -15,7 +15,6 @@ django-allauth==0.41.0  # https://github.com/pennersr/django-allauth
 django-crispy-forms==1.9.0  # https://github.com/django-crispy-forms/django-crispy-forms
 django-redis==4.11.0  # https://github.com/jazzband/django-redis
 django-bootstrap3==12.1.0
-django-crispy-forms==1.8.1
 django-simple-history==2.9.0
 
 # Django REST Framework

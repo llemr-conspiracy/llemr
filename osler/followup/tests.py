@@ -8,8 +8,8 @@ import datetime
 from django.test import TestCase
 from django.urls import reverse
 
-from pttrack.models import Gender, Patient, Provider, ProviderType
-from pttrack.test import SeleniumLiveTestCase
+from osler.pttrack.models import Gender, Patient, Provider, ProviderType
+from osler.pttrack.test import SeleniumLiveTestCase
 
 from . import forms
 from . import models
@@ -22,7 +22,7 @@ class FollowupLiveTesting(SeleniumLiveTestCase):
     fixtures = ['followup', 'pttrack']
 
     def setUp(self):
-        from pttrack.test_views import build_provider
+        from osler.pttrack.test_views import build_provider
 
         build_provider(username='timmy', password='password',
                        roles=["Attending"])
@@ -382,7 +382,7 @@ class FollowupTest(TestCase):
     fixtures = ['followup', 'pttrack']
 
     def setUp(self):
-        from pttrack.test_views import log_in_provider, build_provider
+        from osler.pttrack.test_views import log_in_provider, build_provider
         log_in_provider(self.client, build_provider())
 
     def tearDown(self):

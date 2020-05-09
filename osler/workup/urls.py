@@ -1,10 +1,9 @@
-from __future__ import unicode_literals
 from django.urls import re_path
-from pttrack.urls import wrap_url
 from django.views.generic import DetailView
 
-from . import models
-from . import views
+from osler.pttrack.urls import wrap_url
+from osler.workup import models
+from osler.workup import views
 
 unwrapped_urlconf = [
     re_path(

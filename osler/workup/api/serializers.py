@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from workup import models
+from osler.workup import models
 
 
 class ClinicDateSerializer(serializers.ModelSerializer):

@@ -3,11 +3,12 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
-from pttrack.models import Patient
-from pttrack.views import NoteUpdate, NoteFormView, get_current_provider_type
+from osler.pttrack.models import Patient
+from osler.pttrack.views import (NoteUpdate, NoteFormView,
+                                 get_current_provider_type)
 
-from . import forms
-from . import models
+from osler.followup import forms
+from osler.followup import models
 
 
 def followup_choice(request, pt_id):

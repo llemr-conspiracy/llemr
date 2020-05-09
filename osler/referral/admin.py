@@ -1,12 +1,7 @@
-from __future__ import unicode_literals
 from django.contrib import admin
-from simple_history.admin import SimpleHistoryAdmin
+
+from osler.utils.admin import NoteAdmin
 from . import models
-
-
-class NoteAdmin(SimpleHistoryAdmin):
-    readonly_fields = ('written_datetime', 'last_modified')
-
 
 for model in [models.Referral, models.FollowupRequest, models.PatientContact]:
     admin.site.register(model, NoteAdmin)

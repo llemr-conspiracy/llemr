@@ -1,17 +1,14 @@
-from __future__ import unicode_literals
 from django.urls import re_path
 from django.views.generic import DetailView
 from django.views.generic.base import TemplateView
-
 from django.contrib.auth.decorators import login_required
-from .decorators import provider_required, clintype_required, \
-    provider_update_required
-from . import models
-from . import views
 
-# pylint: disable=I0011
+from osler.pttrack import models
+from osler.pttrack import views
+from osler.pttrack.decorators import (provider_required, clintype_required,
+                                      provider_update_required)
 
-unwrapped_urlpatterns = [  # pylint: disable=invalid-name
+unwrapped_urlpatterns = [
     re_path(
         r'^$',
         views.home_page,

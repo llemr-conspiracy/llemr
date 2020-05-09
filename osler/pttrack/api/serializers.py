@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from pttrack import models
-from workup.api.serializers import WorkupSerializer
+from osler.pttrack import models
+from osler.workup.api.serializers import WorkupSerializer
 
 
 class LastHistorySerializer(serializers.Serializer):

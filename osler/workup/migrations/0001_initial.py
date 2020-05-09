@@ -4,9 +4,10 @@ from django.conf import settings
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import pttrack.validators
 import simple_history.models
-import workup.validators
+
+from osler.pttrack import validators as pttrack_validators
+from osler.workup import validators as workup_validators
 
 
 class Migration(migrations.Migration):
@@ -64,8 +65,8 @@ class Migration(migrations.Migration):
                 ('soc_hx', models.TextField(verbose_name='Social History')),
                 ('ros', models.TextField(verbose_name='ROS')),
                 ('hr', models.PositiveSmallIntegerField(blank=True, null=True, verbose_name='Heart Rate')),
-                ('bp_sys', models.PositiveSmallIntegerField(blank=True, null=True, validators=[workup.validators.validate_bp_systolic], verbose_name='Systolic')),
-                ('bp_dia', models.PositiveSmallIntegerField(blank=True, null=True, validators=[workup.validators.validate_bp_diastolic], verbose_name='Diastolic')),
+                ('bp_sys', models.PositiveSmallIntegerField(blank=True, null=True, validators=[workup_validators.validate_bp_systolic], verbose_name='Systolic')),
+                ('bp_dia', models.PositiveSmallIntegerField(blank=True, null=True, validators=[workup_validators.validate_bp_diastolic], verbose_name='Diastolic')),
                 ('rr', models.PositiveSmallIntegerField(blank=True, null=True, verbose_name='Respiratory Rate')),
                 ('t', models.DecimalField(blank=True, decimal_places=1, max_digits=4, null=True, verbose_name='Temperature')),
                 ('height', models.PositiveSmallIntegerField(blank=True, null=True)),
@@ -83,7 +84,7 @@ class Migration(migrations.Migration):
                 ('will_return', models.BooleanField(default=False, help_text='Will the pt. return to SNHC?')),
                 ('A_and_P', models.TextField()),
                 ('signed_date', models.DateTimeField(blank=True, null=True)),
-                ('attending', models.ForeignKey(blank=True, help_text='Which attending saw the patient?', null=True, on_delete=django.db.models.deletion.PROTECT, related_name='attending_physician', to='pttrack.Provider', validators=[pttrack.validators.validate_attending])),
+                ('attending', models.ForeignKey(blank=True, help_text='Which attending saw the patient?', null=True, on_delete=django.db.models.deletion.PROTECT, related_name='attending_physician', to='pttrack.Provider', validators=[pttrack_validators.validate_attending])),
                 ('author', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Provider')),
                 ('author_type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.ProviderType')),
                 ('clinic_day', models.ForeignKey(help_text='When was the patient seen?', on_delete=django.db.models.deletion.PROTECT, to='workup.ClinicDate')),
@@ -92,7 +93,7 @@ class Migration(migrations.Migration):
                 ('patient', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Patient')),
                 ('referral_location', models.ManyToManyField(blank=True, to='pttrack.ReferralLocation')),
                 ('referral_type', models.ManyToManyField(blank=True, to='pttrack.ReferralType')),
-                ('signer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='signed_workups', to='pttrack.Provider', validators=[pttrack.validators.validate_attending])),
+                ('signer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='signed_workups', to='pttrack.Provider', validators=[pttrack_validators.validate_attending])),
             ],
             options={
                 'abstract': False,
@@ -110,7 +111,7 @@ class Migration(migrations.Migration):
                 ('author', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Provider')),
                 ('author_type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.ProviderType')),
                 ('patient', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Patient')),
-                ('signer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='signed_progress_notes', to='pttrack.Provider', validators=[pttrack.validators.validate_attending])),
+                ('signer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='signed_progress_notes', to='pttrack.Provider', validators=[pttrack_validators.validate_attending])),
             ],
             options={
                 'abstract': False,
@@ -132,8 +133,8 @@ class Migration(migrations.Migration):
                 ('soc_hx', models.TextField(verbose_name='Social History')),
                 ('ros', models.TextField(verbose_name='ROS')),
                 ('hr', models.PositiveSmallIntegerField(blank=True, null=True, verbose_name='Heart Rate')),
-                ('bp_sys', models.PositiveSmallIntegerField(blank=True, null=True, validators=[workup.validators.validate_bp_systolic], verbose_name='Systolic')),
-                ('bp_dia', models.PositiveSmallIntegerField(blank=True, null=True, validators=[workup.validators.validate_bp_diastolic], verbose_name='Diastolic')),
+                ('bp_sys', models.PositiveSmallIntegerField(blank=True, null=True, validators=[workup_validators.validate_bp_systolic], verbose_name='Systolic')),
+                ('bp_dia', models.PositiveSmallIntegerField(blank=True, null=True, validators=[workup_validators.validate_bp_diastolic], verbose_name='Diastolic')),
                 ('rr', models.PositiveSmallIntegerField(blank=True, null=True, verbose_name='Respiratory Rate')),
                 ('t', models.DecimalField(blank=True, decimal_places=1, max_digits=4, null=True, verbose_name='Temperature')),
                 ('height', models.PositiveSmallIntegerField(blank=True, null=True)),
@@ -155,13 +156,13 @@ class Migration(migrations.Migration):
                 ('history_date', models.DateTimeField()),
                 ('history_change_reason', models.CharField(max_length=100, null=True)),
                 ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('attending', models.ForeignKey(blank=True, db_constraint=False, help_text='Which attending saw the patient?', null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Provider', validators=[pttrack.validators.validate_attending])),
+                ('attending', models.ForeignKey(blank=True, db_constraint=False, help_text='Which attending saw the patient?', null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Provider', validators=[pttrack_validators.validate_attending])),
                 ('author', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Provider')),
                 ('author_type', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.ProviderType')),
                 ('clinic_day', models.ForeignKey(blank=True, db_constraint=False, help_text='When was the patient seen?', null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='workup.ClinicDate')),
                 ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
                 ('patient', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Patient')),
-                ('signer', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Provider', validators=[pttrack.validators.validate_attending])),
+                ('signer', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Provider', validators=[pttrack_validators.validate_attending])),
             ],
             options={
                 'verbose_name': 'historical workup',
@@ -187,7 +188,7 @@ class Migration(migrations.Migration):
                 ('author_type', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.ProviderType')),
                 ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
                 ('patient', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Patient')),
-                ('signer', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Provider', validators=[pttrack.validators.validate_attending])),
+                ('signer', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Provider', validators=[pttrack_validators.validate_attending])),
             ],
             options={
                 'verbose_name': 'historical progress note',

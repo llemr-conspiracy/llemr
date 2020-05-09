@@ -1,9 +1,8 @@
 from __future__ import unicode_literals
 from django.contrib import admin
 from django.urls import reverse
-from simple_history.admin import SimpleHistoryAdmin
 
-from pttrack.admin import NoteAdmin
+from osler.utils import admin as admin_utils
 from . import models
 
 
@@ -14,14 +13,14 @@ class ClinicDateAdmin(admin.ModelAdmin):
 
 
 @admin.register(models.Workup)
-class WorkupAdmin(NoteAdmin):
+class WorkupAdmin(admin_utils.NoteAdmin):
     date_hierarchy = 'written_datetime'
 
     list_display = ('chief_complaint', 'written_datetime', 'patient',
                     'author', 'clinic_day', 'attending', 'signed')
 
-    readonly_fields = NoteAdmin.readonly_fields + ('author', 'signed_date',
-                                                   'signer')
+    readonly_fields = admin_utils.NoteAdmin.readonly_fields + (
+        'author', 'signed_date', 'signer')
     list_filter = ('clinic_day', 'diagnosis_categories')
     search_fields = ('patient__first_name', 'patient__last_name',
                      'attending__first_name', 'attending__last_name',
@@ -35,7 +34,7 @@ class WorkupAdmin(NoteAdmin):
 
 
 @admin.register(models.ProgressNote)
-class ProgressNoteAdmin(NoteAdmin):
+class ProgressNoteAdmin(admin_utils.NoteAdmin):
 
     def view_on_site(self, obj):
         url = reverse('progress-note-detail', kwargs={'pk': obj.pk})
@@ -43,7 +42,4 @@ class ProgressNoteAdmin(NoteAdmin):
 
 
 for model in [models.ClinicType, models.DiagnosisType]:
-    if hasattr(model, "history"):
-        admin.site.register(model, SimpleHistoryAdmin)
-    else:
-        admin.site.register(model)
+    admin_utils.simplehistory_aware_register(model)

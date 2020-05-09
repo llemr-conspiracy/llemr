@@ -1,26 +1,22 @@
-from __future__ import unicode_literals
-from builtins import str
+from tempfile import TemporaryFile
+from xhtml2pdf import pisa
+
 from django.shortcuts import get_object_or_404, render
 from django.http import (HttpResponseRedirect, HttpResponseServerError,
                          HttpResponse)
-
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
 from django.template.loader import get_template
 from django.utils.timezone import now
 from django.views.generic.edit import FormView
 from django.conf import settings
 
-from pttrack.views import NoteFormView, NoteUpdate, get_current_provider_type
-from pttrack.models import Patient, ProviderType
+from osler.pttrack.views import (NoteFormView, NoteUpdate,
+                                 get_current_provider_type)
+from osler.pttrack.models import Patient, ProviderType
 
-from xhtml2pdf import pisa
-
-from . import models
-from . import forms
-
-from tempfile import TemporaryFile
+from osler.workup import models
+from osler.workup import forms
 
 
 def get_clindates():
@@ -34,7 +30,8 @@ def new_note_dispatch(request, pt_id):
 
     note_types = {
         'Standard Note': reverse("new-workup", args=(pt_id,)),
-        'Clinical Psychology Note': reverse("new-progress-note", args=(pt_id,)),
+        'Clinical Psychology Note': reverse("new-progress-note",
+                                            args=(pt_id,)),
     }
 
     return render(request, 'workup/new-note-dispatch.html',
@@ -154,8 +151,8 @@ class ProgressNoteCreate(NoteFormView):
     def form_valid(self, form):
         pnote = form.save(commit=False)
         active_provider_type = get_object_or_404(
-             ProviderType,
-             pk=self.request.session['clintype_pk'])
+            ProviderType,
+            pk=self.request.session['clintype_pk'])
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         pnote.patient = pt
         pnote.author = self.request.user.provider
@@ -163,7 +160,7 @@ class ProgressNoteCreate(NoteFormView):
         if pnote.author_type.signs_charts:
             pnote.sign(self.request.user, active_provider_type)
         pnote.save()
-        
+
         form.save_m2m()
 
         return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
@@ -235,6 +232,7 @@ def sign_workup(request, pk):
 
     return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
 
+
 def sign_progress_note(request, pk):
     wu = get_object_or_404(models.ProgressNote, pk=pk)
     active_provider_type = get_object_or_404(ProviderType,
@@ -248,7 +246,7 @@ def sign_progress_note(request, pk):
         pass
 
     return HttpResponseRedirect(reverse("progress-note-detail", args=(wu.id,)))
-    
+
 def error_workup(request, pk):
 
     wu = get_object_or_404(models.Workup, pk=pk)
@@ -267,22 +265,24 @@ def pdf_workup(request, pk):
         data = {'workup': wu}
 
         template = get_template('workup/workup_body.html')
-        html  = template.render(data)
+        html = template.render(data)
 
         file = TemporaryFile(mode="w+b")
         pisa.CreatePDF(html.encode('utf-8'), dest=file,
-                encoding='utf-8')
+                       encoding='utf-8')
 
         file.seek(0)
         pdf = file.read()
         file.close()
 
-        initials = ''.join(name[0].upper() for name in wu.patient.name(reverse=False, middle_short=False).split())
+        initials = ''.join(name[0].upper() for name in wu.patient.name(
+            reverse=False, middle_short=False).split())
         formatdate = '.'.join([str(wu.clinic_day.clinic_date.month).zfill(2), str(wu.clinic_day.clinic_date.day).zfill(2), str(wu.clinic_day.clinic_date.year)])
         filename = ''.join([initials, ' (', formatdate, ')'])
 
         response = HttpResponse(pdf, 'application/pdf')
-        response["Content-Disposition"] = "attachment; filename=%s.pdf" % (filename,)
+        response["Content-Disposition"] = (
+            "attachment; filename=%s.pdf" % (filename,))
         return response
 
     else:

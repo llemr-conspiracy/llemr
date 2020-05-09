@@ -4,13 +4,11 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.generic.edit import FormView
 from django.http import HttpResponseRedirect
-from django.contrib import messages
 
-from pttrack.models import Patient, ProviderType, ReferralType
-
-from .models import Referral, FollowupRequest, ReferralLocation
-from .forms import (FollowupRequestForm, ReferralForm, PatientContactForm,
-                    ReferralSelectForm)
+from osler.pttrack.models import Patient, ProviderType, ReferralType
+from osler.referral.models import Referral, FollowupRequest, ReferralLocation
+from osler.referral.forms import (FollowupRequestForm, ReferralForm,
+                                  PatientContactForm, ReferralSelectForm)
 
 
 def select_referral_type(request, pt_id):

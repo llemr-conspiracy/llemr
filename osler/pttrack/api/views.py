@@ -7,8 +7,8 @@ from django.db.models import Min
 
 from rest_framework import generics
 
-from pttrack import models as coremodels
-from workup import models as workupmodels
+from osler.pttrack import models as coremodels
+from osler.workup import models as workupmodels
 from referral import models as referrals
 
 from . import serializers

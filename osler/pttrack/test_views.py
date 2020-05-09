@@ -24,7 +24,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from . import models
 from .test import SeleniumLiveTestCase
-from workup import models as workupModels
+from osler.workup import models as workupModels
 from followup.models import ContactResult
 from referral.models import Referral, FollowupRequest, PatientContact
 from referral.forms import PatientContactForm

@@ -8,9 +8,9 @@ rebuild the database when debugging.
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from pttrack import models as core
+from osler.pttrack import models as core
 from followup import models as followup
-from workup import models as workup
+from osler.workup import models as workup
 from referral import models as referral
 
 for lang_name in ["English", "Arabic", "Armenian", "Bengali", "Chinese",

@@ -5,8 +5,8 @@ from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 
-from workup.models import ClinicDate
-from pttrack.models import Patient
+from osler.workup.models import ClinicDate
+from osler.pttrack.models import Patient
 
 
 def dashboard_dispatch(request):

@@ -4,8 +4,8 @@ from django.urls import reverse
 from django.core.management.base import BaseCommand
 from django.core.mail import send_mail
 
-from pttrack.models import Provider
-from workup.models import Workup
+from osler.pttrack.models import Provider
+from osler.workup.models import Workup
 
 
 class Command(BaseCommand):

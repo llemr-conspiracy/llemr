@@ -1,9 +1,7 @@
 '''The datamodels for various types required for followup tracking in Osler.'''
-from __future__ import unicode_literals
-from builtins import str
-from builtins import object
 from django.db import models
-from pttrack.models import Note, ContactMethod, ReferralType, ReferralLocation
+from osler.pttrack.models import (Note, ContactMethod,
+                                  ReferralType, ReferralLocation)
 
 from simple_history.models import HistoricalRecords
 

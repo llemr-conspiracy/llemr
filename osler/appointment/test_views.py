@@ -6,8 +6,8 @@ from datetime import timedelta, time
 from django.test import TestCase
 from django.utils.timezone import now
 from django.urls import reverse
-from pttrack.models import Provider, ProviderType, Patient
-from pttrack.test_views import log_in_provider, build_provider
+from osler.pttrack.models import Provider, ProviderType, Patient
+from osler.pttrack.test_views import log_in_provider, build_provider
 from .test_forms import apt_dict
 
 from . import models

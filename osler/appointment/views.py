@@ -5,11 +5,12 @@ from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.utils.timezone import now
 
-from pttrack.views import NoteFormView, NoteUpdate, get_current_provider_type
-from pttrack.models import Patient
+from osler.pttrack.views import (NoteFormView, NoteUpdate,
+                                 get_current_provider_type)
+from osler.pttrack.models import Patient
 
-from .models import Appointment
-from .forms import AppointmentForm
+from osler.appointment.models import Appointment
+from osler.appointment.forms import AppointmentForm
 
 
 def list_view(request):

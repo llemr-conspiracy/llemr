@@ -27,7 +27,6 @@ urlpatterns = [
     path('demographics/', include('demographics.urls')),
     path('appointment/', include('appointment.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('api/', include('api.urls')),
     path('referral/', include('referral.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

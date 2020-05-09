@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.test import TestCase
 from django.utils.timezone import now
-from pttrack.models import Provider, ProviderType, Patient
+from osler.pttrack.models import Provider, ProviderType, Patient
 from datetime import time
 from .forms import AppointmentForm
 

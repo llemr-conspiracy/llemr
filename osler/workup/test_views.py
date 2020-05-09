@@ -6,8 +6,8 @@ from django.test import TestCase
 from django.utils.timezone import now
 from django.urls import reverse
 
-from pttrack.models import Patient, ProviderType
-from pttrack.test_views import build_provider, log_in_provider
+from osler.pttrack.models import Patient, ProviderType
+from osler.pttrack.test_views import build_provider, log_in_provider
 
 from . import models
 from .tests import wu_dict

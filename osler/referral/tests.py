@@ -10,7 +10,7 @@ from django.utils.timezone import now
 
 from followup.models import (
     ContactMethod, NoAptReason, NoShowReason, ContactResult)
-from pttrack.models import (
+from osler.pttrack.models import (
     Gender, Patient, Provider, ProviderType, ReferralType, ReferralLocation
 )
 
@@ -28,7 +28,7 @@ class TestPatientContactForm(TestCase):
 
     def setUp(self):
         """ Provides the same context in all the tests """
-        from pttrack.test_views import log_in_provider, build_provider
+        from osler.pttrack.test_views import log_in_provider, build_provider
         log_in_provider(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(
@@ -318,7 +318,7 @@ class TestSelectReferralType(TestCase):
     fixtures = ['pttrack']
 
     def setUp(self):
-        from pttrack.test_views import log_in_provider, build_provider
+        from osler.pttrack.test_views import log_in_provider, build_provider
         log_in_provider(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(
@@ -381,7 +381,7 @@ class TestCreateReferral(TestCase):
     fixtures = ['pttrack']
 
     def setUp(self):
-        from pttrack.test_views import log_in_provider, build_provider
+        from osler.pttrack.test_views import log_in_provider, build_provider
         log_in_provider(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(
@@ -479,7 +479,7 @@ class TestSelectReferral(TestCase):
     fixtures = ['pttrack']
 
     def setUp(self):
-        from pttrack.test_views import log_in_provider, build_provider
+        from osler.pttrack.test_views import log_in_provider, build_provider
         log_in_provider(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(
@@ -676,7 +676,7 @@ class TestPatientContactCreateView(TestCase):
     fixtures = ['pttrack']
 
     def setUp(self):
-        from pttrack.test_views import log_in_provider, build_provider
+        from osler.pttrack.test_views import log_in_provider, build_provider
         log_in_provider(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(

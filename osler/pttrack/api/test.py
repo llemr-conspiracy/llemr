@@ -6,12 +6,12 @@ from django.utils.timezone import now
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-from pttrack import models
+from osler.pttrack import models
 from referral.models import Referral, FollowupRequest, PatientContact
 from followup.models import ContactResult
 from referral.forms import PatientContactForm
-from workup import models as workupModels
-from pttrack.test_views import build_provider, log_in_provider
+from osler.workup import models as workupModels
+from osler.pttrack.test_views import build_provider, log_in_provider
 
 BASIC_FIXTURE = 'api.json'
 

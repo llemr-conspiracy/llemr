@@ -16,9 +16,8 @@ from django.urls import reverse
 
 from simple_history.models import HistoricalRecords
 
-from . import validators
+from osler.pttrack import validators
 
-# pylint: disable=I0011,missing-docstring,E1305
 
 def make_filepath(instance, filename):
     '''

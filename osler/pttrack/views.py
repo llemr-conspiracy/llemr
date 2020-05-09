@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 from builtins import zip
 import json
 import collections
@@ -15,13 +14,13 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Prefetch
 from django.utils.http import is_safe_url
 
-from workup import models as workupmodels
-from referral.models import Referral, FollowupRequest, PatientContact
-from appointment.models import Appointment
+from osler.workup import models as workupmodels
+from osler.referral.models import Referral, FollowupRequest, PatientContact
+from osler.appointment.models import Appointment
 
-from . import models as mymodels
-from . import forms as myforms
-from . import utils
+from osler.pttrack import models as core_models
+from osler.pttrack import forms
+from osler.pttrack import utils
 
 
 def get_current_provider_type(request):
@@ -29,7 +28,7 @@ def get_current_provider_type(request):
     Given the request, produce the ProviderType of the logged in user. This is
     done using session data.
     '''
-    return get_object_or_404(mymodels.ProviderType,
+    return get_object_or_404(core_models.ProviderType,
                              pk=request.session['clintype_pk'])
 
 
@@ -40,14 +39,14 @@ class NoteFormView(FormView):
         '''Inject self.note_type and patient into the context.'''
 
         if self.note_type is None:
-            raise ImproperlyConfigured("NoteCreate view must have" +
+            raise ImproperlyConfigured("NoteCreate view must have"
                                        "'note_type' variable set.")
 
         context = super(NoteFormView, self).get_context_data(**kwargs)
         context['note_type'] = self.note_type
 
         if 'pt_id' in self.kwargs:
-            context['patient'] = mymodels.Patient.objects. \
+            context['patient'] = core_models.Patient.objects. \
                 get(pk=self.kwargs['pt_id'])
 
         return context
@@ -60,7 +59,7 @@ class NoteUpdate(UpdateView):
         '''Inject self.note_type as the note type.'''
 
         if self.note_type is None:
-            raise ImproperlyConfigured("NoteUpdate view must have" +
+            raise ImproperlyConfigured("NoteUpdate view must have"
                                        "'note_type' variable set.")
 
         context = super(NoteUpdate, self).get_context_data(**kwargs)
@@ -74,7 +73,7 @@ class NoteUpdate(UpdateView):
 class ProviderCreate(FormView):
     '''A view for creating a new Provider to match an existing User.'''
     template_name = 'pttrack/new-provider.html'
-    form_class = myforms.ProviderForm
+    form_class = forms.ProviderForm
 
     def get_initial(self):
         initial = super(ProviderCreate, self).get_initial()
@@ -89,7 +88,8 @@ class ProviderCreate(FormView):
         # check that user did not previously create a provider
         if not hasattr(self.request.user, 'provider'):
             provider.associated_user = self.request.user
-            # populate the User object with the email and name data from the Provider form
+            # populate the User object with the email and name data from
+            # the Provider form
             user = provider.associated_user
             user.email = form.cleaned_data['provider_email']
             user.first_name = provider.first_name
@@ -112,8 +112,8 @@ class ProviderUpdate(UpdateView):
     require_providers_update() in pttrack.models
     """
     template_name = 'pttrack/provider-update.html'
-    model = mymodels.Provider
-    form_class = myforms.ProviderForm
+    model = core_models.Provider
+    form_class = forms.ProviderForm
 
     def get_initial(self):
         '''
@@ -132,7 +132,8 @@ class ProviderUpdate(UpdateView):
     def form_valid(self, form):
         provider = form.save(commit=False)
         provider.needs_updating = False
-        # populate the User object with the email and name data from the Provider form
+        # populate the User object with the email and name data from
+        # the Provider form
         user = provider.associated_user
         user.email = form.cleaned_data['provider_email']
         user.first_name = provider.first_name
@@ -147,12 +148,12 @@ class ProviderUpdate(UpdateView):
 class ActionItemCreate(NoteFormView):
     '''A view for creating ActionItems using the ActionItemForm.'''
     template_name = 'pttrack/form_submission.html'
-    form_class = myforms.ActionItemForm
+    form_class = forms.ActionItemForm
     note_type = 'Action Item'
 
     def form_valid(self, form):
         '''Set the patient, provider, and written timestamp for the item.'''
-        pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
+        pt = get_object_or_404(core_models.Patient, pk=self.kwargs['pt_id'])
         ai = form.save(commit=False)
 
         ai.completion_date = None
@@ -167,8 +168,8 @@ class ActionItemCreate(NoteFormView):
 
 class ActionItemUpdate(NoteUpdate):
     template_name = "pttrack/form-update.html"
-    model = mymodels.ActionItem
-    form_class = myforms.ActionItemForm
+    model = core_models.ActionItem
+    form_class = forms.ActionItemForm
     note_type = "Action Item"
 
     def get_success_url(self):
@@ -178,8 +179,8 @@ class ActionItemUpdate(NoteUpdate):
 
 class PatientUpdate(UpdateView):
     template_name = 'pttrack/patient-update.html'
-    model = mymodels.Patient
-    form_class = myforms.PatientForm
+    model = core_models.Patient
+    form_class = forms.PatientForm
 
     def form_valid(self, form):
         pt = form.save()
@@ -234,7 +235,7 @@ class PreIntake(FormView):
     """
 
     template_name = 'pttrack/preintake.html'
-    form_class = myforms.DuplicatePatientForm
+    form_class = forms.DuplicatePatientForm
 
     def form_valid(self, form):
         first_name_str = form.cleaned_data['first_name'].capitalize()
@@ -255,7 +256,7 @@ class PreIntake(FormView):
 class PatientCreate(FormView):
     """A view for creating a new patient using PatientForm."""
     template_name = 'pttrack/intake.html'
-    form_class = myforms.PatientForm
+    form_class = forms.PatientForm
 
     def form_valid(self, form):
         pt = form.save()
@@ -266,15 +267,14 @@ class PatientCreate(FormView):
     def get_initial(self):
         initial = super(PatientCreate, self).get_initial()
 
-
         initial.update(utils.get_names_from_url_query_dict(self.request))
         return initial
 
 
 class DocumentUpdate(NoteUpdate):
     template_name = "pttrack/form-update.html"
-    model = mymodels.Document
-    form_class = myforms.DocumentForm
+    model = core_models.Document
+    form_class = forms.DocumentForm
     note_type = "Document"
 
     def get_success_url(self):
@@ -285,13 +285,13 @@ class DocumentUpdate(NoteUpdate):
 class DocumentCreate(NoteFormView):
     '''A view for uploading a document'''
     template_name = 'pttrack/form_submission.html'
-    form_class = myforms.DocumentForm
+    form_class = forms.DocumentForm
     note_type = 'Document'
 
     def form_valid(self, form):
         doc = form.save(commit=False)
 
-        pt = get_object_or_404(mymodels.Patient, pk=self.kwargs['pt_id'])
+        pt = get_object_or_404(core_models.Patient, pk=self.kwargs['pt_id'])
         doc.patient = pt
         doc.author = self.request.user.provider
         doc.author_type = get_current_provider_type(self.request)
@@ -327,7 +327,7 @@ def choose_clintype(request):
             return HttpResponseRedirect(redirect_to)
         elif len(role_options) == 0:
             return HttpResponseServerError(
-                "Fatal: your Provider register is corrupted, and lacks " +
+                "Fatal: your Provider register is corrupted, and lacks "
                 "ProviderTypes. Report this error!")
         else:
             return render(request, 'pttrack/role-choice.html',
@@ -337,7 +337,7 @@ def choose_clintype(request):
 
 def home_page(request):
 
-    active_provider_type = get_object_or_404(mymodels.ProviderType,
+    active_provider_type = get_object_or_404(core_models.ProviderType,
                                              pk=request.session['clintype_pk'])
 
     if active_provider_type.signs_charts:
@@ -353,8 +353,8 @@ def home_page(request):
         lists = [
             {'url': 'filter=active', 'title': "Active Patients",
              'identifier': 'activept', 'active': True},
-            {'url': 'filter=ai_priority', 'title':"Priority Action Items",
-            'identifier': 'priorityai', 'active': False},
+            {'url': 'filter=ai_priority', 'title': "Priority Action Items",
+             'identifier': 'priorityai', 'active': False},
             {'url': 'filter=ai_active', 'title': "Active Action Items",
              'identifier': 'activeai', 'active': False},
             {'url': 'filter=ai_inactive', 'title': "Pending Action Items",
@@ -373,7 +373,9 @@ def home_page(request):
              'identifier': 'activept',
              'active': True}]
 
-    api_url = reverse('pt_list_api')[:-1] + '.json/?' # remove last '/' before adding because there no '/' between /api/pt_list and .json, but reverse generates '/api/pt_list/'
+    # remove last '/' before adding because there no '/' between
+    # /api/pt_list and .json, but reverse generates '/api/pt_list/'
+    api_url = reverse('pt_list_api')[:-1] + '.json/?'
 
     return render(request, 'pttrack/patient_list.html',
                   {'lists': json.dumps(lists),
@@ -383,7 +385,7 @@ def home_page(request):
 
 def patient_detail(request, pk):
 
-    pt = get_object_or_404(mymodels.Patient, pk=pk)
+    pt = get_object_or_404(core_models.Patient, pk=pk)
 
     #   Special zipped list of action item types so they can be looped over.
     #   List 1: Labels for the panel objects of the action items
@@ -411,11 +413,12 @@ def patient_detail(request, pk):
     # tasks requiring clinical followup (e.g., referral followup request)
     total_ais = len(active_ais) + len(inactive_ais) + len(done_ais)
 
-    zipped_ai_list = list(zip(['collapse5', 'collapse6', 'collapse7'],
-                         [active_ais, inactive_ais, done_ais],
-                         ['Active Action Items', 'Pending Action Items',
-                         'Completed Action Items'],
-                         [True, True, False]))
+    zipped_ai_list = list(zip(
+        ['collapse5', 'collapse6', 'collapse7'],
+        [active_ais, inactive_ais, done_ais],
+        ['Active Action Items', 'Pending Action Items',
+         'Completed Action Items'],
+        [True, True, False]))
 
     # Provide referral list for patient page (includes specialty referrals)
     referrals = Referral.objects.filter(
@@ -488,14 +491,18 @@ def all_patients(request):
     Query is written to minimize hits to the database; number of db hits can be
         see on the django debug toolbar.
     """
-    patient_list = mymodels.Patient.objects.all() \
+    patient_list = core_models.Patient.objects.all() \
         .order_by('last_name') \
         .select_related('gender') \
         .prefetch_related('case_managers') \
-        .prefetch_related(Prefetch('workup_set', queryset=workupmodels.Workup.objects.order_by('clinic_day__clinic_date'))) \
+        .prefetch_related(Prefetch(
+            'workup_set',
+            queryset=workupmodels.Workup.objects.order_by(
+                'clinic_day__clinic_date'))) \
         .prefetch_related('actionitem_set')
 
-    # Don't know how to prefetch history https://stackoverflow.com/questions/45713517/use-prefetch-related-in-django-simple-history
+    # Don't know how to prefetch history
+    # https://stackoverflow.com/questions/45713517/use-prefetch-related-in-django-simple-history
     # Source code is https://github.com/treyhunner/django-simple-history/blob/master/simple_history/models.py if we want to try to figure out
 
     return render(request,
@@ -503,9 +510,8 @@ def all_patients(request):
                   {'object_list': patient_list})
 
 
-
 def patient_activate_detail(request, pk):
-    pt = get_object_or_404(mymodels.Patient, pk=pk)
+    pt = get_object_or_404(core_models.Patient, pk=pk)
 
     pt.toggle_active_status()
 
@@ -513,8 +519,9 @@ def patient_activate_detail(request, pk):
 
     return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
 
+
 def patient_activate_home(request, pk):
-    pt = get_object_or_404(mymodels.Patient, pk=pk)
+    pt = get_object_or_404(core_models.Patient, pk=pk)
 
     pt.toggle_active_status()
 
@@ -522,18 +529,19 @@ def patient_activate_home(request, pk):
 
     return HttpResponseRedirect(reverse("home"))
 
+
 def done_action_item(request, ai_id):
-    ai = get_object_or_404(mymodels.ActionItem, pk=ai_id)
+    ai = get_object_or_404(core_models.ActionItem, pk=ai_id)
     ai.mark_done(request.user.provider)
     ai.save()
 
     return HttpResponseRedirect(reverse("followup-choice",
                                         args=(ai.patient.pk,)))
 
+
 def reset_action_item(request, ai_id):
-    ai = get_object_or_404(mymodels.ActionItem, pk=ai_id)
+    ai = get_object_or_404(core_models.ActionItem, pk=ai_id)
     ai.clear_done()
     ai.save()
     return HttpResponseRedirect(reverse("patient-detail",
                                         args=(ai.patient.id,)))
-

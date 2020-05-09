@@ -2,8 +2,8 @@ from __future__ import unicode_literals
 from django.test import TestCase
 from django.utils.timezone import now
 
-from pttrack.models import Provider, ProviderType, Patient, Gender
-from pttrack.test_views import log_in_provider, build_provider
+from osler.pttrack.models import Provider, ProviderType, Patient, Gender
+from osler.pttrack.test_views import log_in_provider, build_provider
 
 from . import models
 

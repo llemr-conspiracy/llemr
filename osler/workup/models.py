@@ -6,15 +6,14 @@ import datetime
 from django.db import models
 from django.db.models import Q
 from django.utils.timezone import now
-
-from simple_history.models import HistoricalRecords
 from django.urls import reverse
 from django.core.validators import MinValueValidator
 
-from pttrack.models import Note, Provider, ReferralLocation, ReferralType
+from simple_history.models import HistoricalRecords
 
-from pttrack.validators import validate_attending
-from . import validators as workup_validators
+from osler.pttrack.models import Note, Provider, ReferralLocation, ReferralType
+from osler.pttrack.validators import validate_attending
+from osler.workup import validators as workup_validators
 
 
 class DiagnosisType(models.Model):
@@ -56,7 +55,7 @@ class ClinicDate(models.Model):
                 datetime.datetime.strftime(self.clinic_date, '%A, %B %d, %Y'))
 
     def number_of_notes(self):
-            return self.workup_set.count()
+        return self.workup_set.count()
 
     def infer_attendings(self):
         qs = Provider.objects.filter(

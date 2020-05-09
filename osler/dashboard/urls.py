@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
 from django.urls import path
 
-from pttrack.urls import wrap_url
-from . import views
+from osler.pttrack.urls import wrap_url
+from osler.dashboard import views
 
 unwrapped_urlconf = [
     path(r'dispatch/',

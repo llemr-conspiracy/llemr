@@ -1,11 +1,11 @@
 from __future__ import unicode_literals
 from django.urls import re_path
-from pttrack.urls import wrap_url
 
-from . import views
-from . import models
+from osler.pttrack.urls import wrap_url
+from osler.referral import views
+from osler.referral import models
 
-unwrapped_urlconf = [  # pylint: disable=invalid-name
+unwrapped_urlconf = [
     re_path(
         r'^new-referral/(?P<pt_id>[0-9]+)/(?P<rtype>[-a-z]+)$',
         views.ReferralCreate.as_view(),

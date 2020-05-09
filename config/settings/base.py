@@ -72,20 +72,18 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     'bootstrap3',
     'simple_history',
-    'crispy_forms',
 ]
 
 LOCAL_APPS = [
     "osler.users.apps.UsersConfig",
-    'osler.pttrack',
-    'osler.followup',
-    'osler.workup',
-    'osler.demographics',
-    'osler.dashboard',
-    'osler.appointment',
-    'osler.referral',
-    'osler.api',
-    'osler.audit',
+    'osler.pttrack.apps.PttrackConfig',
+    'osler.followup.apps.FollowupConfig',
+    'osler.workup.apps.WorkupConfig',
+    'osler.demographics.apps.DemographicsConfig',
+    # 'osler.dashboard.apps.DashboardConfig',
+    'osler.appointment.apps.AppointmentConfig',
+    'osler.referral.apps.ReferralConfig',
+    # 'osler.audit.apps.AuditConfig',
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -152,7 +150,7 @@ MIDDLEWARE = [
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'simple_history.middleware.HistoryRequestMiddleware',
-    'osler.audit.middleware.AuditMiddleware'
+    # 'osler.audit.middleware.AuditMiddleware'
 ]
 
 # STATIC

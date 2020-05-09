@@ -5,8 +5,8 @@ from django.test import Client
 from django.urls import reverse
 from django.contrib.auth.models import User
 
-from pttrack.models import ProviderType
-from pttrack.test_views import build_provider, log_in_provider
+from osler.pttrack.models import ProviderType
+from osler.pttrack.test_views import build_provider, log_in_provider
 
 from .models import PageviewRecord
 from .middleware import AuditMiddleware

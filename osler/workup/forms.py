@@ -15,8 +15,8 @@ from crispy_forms.bootstrap import (
     InlineCheckboxes, AppendedText, PrependedText)
 from crispy_forms.utils import TEMPLATE_PACK, render_field
 
-from pttrack.models import Provider, ProviderType
-from . import models
+from osler.pttrack.models import Provider, ProviderType
+from osler.workup import models
 
 
 def form_required_if(form, conditional, fields):

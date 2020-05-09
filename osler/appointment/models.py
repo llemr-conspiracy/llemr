@@ -1,14 +1,11 @@
-from __future__ import unicode_literals
-from builtins import zip
-from builtins import str
-from builtins import object
 from django.db import models
 from django.utils.timezone import now
 from django.core.exceptions import ValidationError
 from django.conf import settings
-from pttrack.models import Note
 
 from simple_history.models import HistoricalRecords
+
+from osler.pttrack.models import Note
 
 
 def generate_default_appointment_time():
@@ -21,7 +18,7 @@ def generate_default_appointment_time():
 
 class Appointment(Note):
 
-    class Meta(object):
+    class Meta:
         ordering = ["-clindate", "-clintime"]
 
     PSYCH_NIGHT = 'PSYCH_NIGHT'

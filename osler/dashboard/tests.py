@@ -9,10 +9,10 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.conf import settings
 
-from pttrack.test_views import log_in_provider, build_provider
-from pttrack.models import (Gender, Patient, ContactMethod)
+from osler.pttrack.test_views import log_in_provider, build_provider
+from osler.pttrack.models import (Gender, Patient, ContactMethod)
 
-from workup.models import ClinicDate, ClinicType, Workup
+from osler.workup.models import ClinicDate, ClinicType, Workup
 
 
 def dewhitespace(s):
