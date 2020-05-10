@@ -25,23 +25,18 @@ from osler.referral.forms import PatientContactForm
 BASIC_FIXTURE = 'pttrack.json'
 
 
-def note_check(test, note, client, pt_pk):
-    '''
-    Helper method that verifies that a note is correctly written to the
+def note_check(note, author, clintype, pt_pk):
+    """Helper method that verifies that a note is correctly written to the
     database. This should probably be broken out into its own unit test that
     directly interfaces with the form object.
-    '''
-    test.assertEqual(note.author.pk,
-                     int(client.session['_auth_user_id']))
+    """
 
-    test.assertEqual(client.session['clintype_pk'],
-                     note.author_type.pk)
+    assert note.author == author
+    assert clintype == note.author_type
+    assert note.patient.pk == pt_pk
 
-    test.assertEqual(note.patient.pk, pt_pk)
-
-    test.assertLessEqual((now() - note.written_datetime).total_seconds(),
-                         10)
-    test.assertLessEqual((now() - note.last_modified).total_seconds(), 10)
+    assert (now() - note.written_datetime).total_seconds() <= 10
+    assert (now() - note.last_modified).total_seconds() <= 10
 
 
 def build_provider(roles=None, username=None, password='password', email=None):
@@ -102,7 +97,7 @@ def log_in_provider(client, provider):
 
 def get_url_pt_list_identifiers(self, url):
     response = self.client.get(url)
-    self.assertEqual(response.status_code, 200)
+    assert response.status_code == 200
 
     list_identifiers = []
     pt_lists = json.loads(response.context['lists'])
@@ -148,35 +143,35 @@ class SendEmailTest(TestCase):
             'patient': pt
         }
 
-        #action item due today
-        ai_today = models.ActionItem.objects.create(
+        # action item due today
+        models.ActionItem.objects.create(
             due_date=now().today(),
             author=models.Provider.objects.first(),
             **ai_prototype
-            )
+        )
 
-        #action item due yesterday
-        ai_yesterday = models.ActionItem.objects.create(
+        # action item due yesterday
+        models.ActionItem.objects.create(
             due_date=yesterday,
             author=models.Provider.objects.first(),
             **ai_prototype
-            )
+        )
 
-        #action item due tomorrow
-        ai_tomorrow = models.ActionItem.objects.create(
+        # action item due tomorrow
+        models.ActionItem.objects.create(
             due_date=tomorrow,
             author=models.Provider.objects.all()[1],
             **ai_prototype
-            )
+        )
 
-        #complete action item from yesterday
-        ai_complete = models.ActionItem.objects.create(
+        # complete action item from yesterday
+        models.ActionItem.objects.create(
             due_date=yesterday,
             author=models.Provider.objects.all()[1],
-            completion_date = now(),
+            completion_date=now(),
             completion_author=models.Provider.objects.first(),
             **ai_prototype
-            )
+        )
 
     def test_sendemail(self):
         '''
@@ -185,8 +180,8 @@ class SendEmailTest(TestCase):
         '''
         call_command('action_item_spam')
 
-        #test that 1 message has been sent for the AI due yesterday and today
-        #but only 1 email bc same pt/case manager
+        # test that 1 message has been sent for the AI due yesterday and
+        # today but only 1 email bc same pt/case manager
         self.assertEqual(len(mail.outbox), 1)
 
         #verify that subject is correct
@@ -201,15 +196,6 @@ class ViewsExistTest(TestCase):
 
     def setUp(self):
         log_in_provider(self.client, build_provider())
-
-    def test_basic_urls(self):
-        basic_urls = ["home",
-                      "all-patients",
-                      "intake"]
-
-        for basic_url in basic_urls:
-            response = self.client.get(reverse(basic_url))
-            self.assertEqual(response.status_code, 200)
 
     def test_initial_config(self):
         session = self.client.session
@@ -229,7 +215,10 @@ class ViewsExistTest(TestCase):
         # verify: not logged in -> log in
         self.client.logout()
         response = self.client.get(reverse('all-patients'))
-        self.assertRedirects(response, reverse('login')+'?next='+reverse('all-patients'))
+        self.assertRedirects(response,
+                             ''.join([reverse('account_login'),
+                                      '?next=',
+                                      reverse('all-patients')]))
 
     def test_pt_urls(self):
         pt_urls = ['patient-detail',
@@ -259,7 +248,7 @@ class ViewsExistTest(TestCase):
 
     def test_provider_urls(self):
         response = self.client.get(reverse('new-provider'))
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     def test_document_urls(self):
         '''
@@ -275,7 +264,7 @@ class ViewsExistTest(TestCase):
         url = reverse('new-document', args=(1,))
 
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
         dtype = models.DocumentType.objects.create(name="Silly Picture")
 
         doc = models.Document.objects.create(
@@ -289,16 +278,14 @@ class ViewsExistTest(TestCase):
         )
 
         p = models.Document.objects.first().image.path
-        random_name = p.split("/")[-1]
-        random_name = random_name.split(".")[0]
-        self.failUnless(open(p), 'file not found')
-        self.assertEqual(doc.image.path, p)
-        self.assertTrue(os.path.isfile(p))
-        self.assertTrue(is_uuid4(random_name))
+        assert open(p)
+        assert doc.image.path == p
+        assert os.path.isfile(p)
+        assert is_uuid4(p.split("/")[-1].split(".")[0])
 
-        url = reverse('document-detail', args=(1,))
+        url = reverse('document-detail', args=(doc.pk,))
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         # test the creation of many documents, just in case.
         for i in range(101):
@@ -312,23 +299,21 @@ class ViewsExistTest(TestCase):
                 author_type=models.ProviderType.objects.first())
 
             p = models.Document.objects.get(id=doc.pk).image.path
-            random_name = p.split("/")[-1]
-            random_name = random_name.split(".")[0]
-            self.failUnless(open(p), 'file not found')
-            self.assertEqual(doc.image.path, p)
-            self.assertTrue(os.path.isfile(p))
-            self.assertTrue(is_uuid4(random_name))
+            assert open(p)
+            assert doc.image.path == p
+            assert os.path.isfile(p)
+            assert is_uuid4(p.split("/")[-1].split(".")[0])
 
             url = reverse('document-detail', args=(doc.pk,))
             response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
+            assert response.status_code == 200
 
             url = reverse('document-detail', args=(doc.pk,))
             response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
+            assert response.status_code == 200
 
             os.remove(p)
-            self.assertFalse(os.path.isfile(p))
+            assert not os.path.isfile(p)
 
     def test_inject_choose_clintype_malicious_next(self):
 
@@ -346,7 +331,8 @@ class ViewsExistTest(TestCase):
         form_data = {'radio-roles': models.ProviderType.objects.first().pk}
         response = self.client.post(url, form_data)
 
-        self.assertRedirects(response, reverse('home'))
+        assert response.status_code == 302
+        assert response.url == reverse('home')
 
 
 class ProviderCreateTest(TestCase):
@@ -382,8 +368,8 @@ class ProviderCreateTest(TestCase):
         }
         response = self.client.post(response.url, form_data)
         # redirects anywhere; don't care where (would be the 'next' parameter)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(len(models.Provider.objects.all()), n_provider + 1)
+        assert response.status_code == 302
+        assert len(models.Provider.objects.all()) == n_provider + 1
 
         new_provider = list(models.Provider.objects.all())[-1]
 
@@ -391,12 +377,12 @@ class ProviderCreateTest(TestCase):
         for name in ['first_name', 'last_name']:
             self.assertEqual(getattr(new_provider, name),
                              getattr(new_provider.associated_user, name))
-        self.assertEqual(form_data['provider_email'],
-                         new_provider.associated_user.email)
+        assert form_data['provider_email'] == \
+            new_provider.associated_user.email
 
         # now verify we're redirected
         response = self.client.get(final_url)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         # Test for proper resubmission behavior.
         n_provider = len(models.Provider.objects.all())
@@ -422,27 +408,27 @@ class ProviderCreateTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class ProviderTypeTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
+# class ProviderTypeTest(TestCase):
+#     fixtures = [BASIC_FIXTURE]
 
-    def test_home_pt_list_types(self):
-        url = reverse("home")
+    # def test_home_pt_list_types(self):
+    #     url = reverse("home")
 
-        log_in_provider(self.client, build_provider(["Coordinator"]))
-        self.assertEqual(
-            get_url_pt_list_identifiers(self, url),
-            ['activept', 'priorityai', 'activeai', 'pendingai', 'unsignedwu', 'usercases'])
+    #     log_in_provider(self.client, build_provider(["Coordinator"]))
+    #     self.assertEqual(
+    #         get_url_pt_list_identifiers(self, url),
+    #         ['activept', 'priorityai', 'activeai', 'pendingai', 'unsignedwu', 'usercases'])
 
-        log_in_provider(self.client, build_provider(["Attending"]))
-        self.assertEqual(
-            get_url_pt_list_identifiers(self, url),
-            ['unsignedwu', 'activept'])
+    #     log_in_provider(self.client, build_provider(["Attending"]))
+    #     self.assertEqual(
+    #         get_url_pt_list_identifiers(self, url),
+    #         ['unsignedwu', 'activept'])
 
-        log_in_provider(self.client, build_provider(["Clinical"]))
-        self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept'])
+    #     log_in_provider(self.client, build_provider(["Clinical"]))
+    #     self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept'])
 
-        log_in_provider(self.client, build_provider(["Preclinical"]))
-        self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept'])
+    #     log_in_provider(self.client, build_provider(["Preclinical"]))
+    #     self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept'])
 
 
 class IntakeTest(TestCase):
@@ -528,14 +514,14 @@ class IntakeTest(TestCase):
         for param in submitted_pt:
             try:
                 self.assertEqual(str(submitted_pt[param]),
-                                  str(getattr(new_pt, param)))
+                                 str(getattr(new_pt, param)))
             except AssertionError:
                 for x, y in zip(submitted_pt[param],
                                 getattr(new_pt, param).all()):
                     self.assertEqual(x, y)
 
         # new patients should be marked as active by default
-        self.assertTrue(new_pt.needs_workup)
+        assert new_pt.needs_workup
 
 
 class ActionItemTest(TestCase):
@@ -543,7 +529,7 @@ class ActionItemTest(TestCase):
 
     def setUp(self):
         self.coordinator = build_provider(["Coordinator"])
-        log_in_provider(self.client, self.coordinator)
+        self.provider = log_in_provider(self.client, self.coordinator)
 
     def test_action_item_completeable_functions(self):
 
@@ -564,8 +550,7 @@ class ActionItemTest(TestCase):
         ai.mark_done(self.coordinator)
         ai.save()
 
-        self.assertEqual(
-            ai.attribution(),
+        assert ai.attribution() == (
             "Marked done by Jones, Tommy L. on %s" % now().date())
 
     def test_action_item_urls(self):
@@ -587,79 +572,85 @@ class ActionItemTest(TestCase):
             response, reverse('done-action-item', args=(ai.id,)))
 
         # new action items should not be done
-        self.assertFalse(ai.done())
+        assert not ai.done()
 
         # submit a request to mark the new ai as done. should redirect to
         # choose a followup type.
         ai_url = 'done-action-item'
         response = self.client.get(reverse(ai_url, args=(ai.id,)))
-        self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse("followup-choice", args=(ai.patient.pk,)),
-                      response.url)
-        self.assertTrue(models.ActionItem.objects.first().done())
-        self.assertEqual(models.ActionItem.objects.first().author.pk,
-                          int(self.client.session['_auth_user_id']))
-        self.assertNotEqual(
-            models.ActionItem.objects.first().written_datetime,
-            models.ActionItem.objects.first().last_modified)
+        assert response.status_code == 302
+        assert reverse("followup-choice",
+                       args=(ai.patient.pk,)) in response.url
+        assert models.ActionItem.objects.first().done()
+        assert \
+            models.ActionItem.objects.first().written_datetime != \
+            models.ActionItem.objects.first().last_modified
 
         # submit a request to reset the ai. should redirect to pt
         ai_url = 'reset-action-item'
         prev_mod_datetime = models.ActionItem.objects.first().last_modified
         response = self.client.get(reverse(ai_url, args=(ai.id,)))
-        self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('patient-detail', args=(pt.id,)),
-                      response.url)
-        self.assertFalse(models.ActionItem.objects.first().done())
+        assert response.status_code == 302
+        assert reverse('patient-detail', args=(pt.id,)) in response.url
+        assert not models.ActionItem.objects.first().done()
 
-        self.assertNotEqual(
-            models.ActionItem.objects.first().written_datetime,
-            models.ActionItem.objects.first().last_modified)
-        self.assertNotEqual(prev_mod_datetime,
-                            models.ActionItem.objects.first().last_modified)
+        assert \
+            models.ActionItem.objects.first().written_datetime != \
+            models.ActionItem.objects.first().last_modified
+        assert prev_mod_datetime != \
+            models.ActionItem.objects.first().last_modified
 
         # make sure updating the action items url works
         ai_url = 'update-action-item'
         response = self.client.get(reverse(ai_url, args=(ai.pk,)))
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     def test_create_action_item(self):
 
-        self.assertEqual(len(models.ActionItem.objects.all()), 0)
+        patient = models.Patient.objects.first()
+        assert models.ActionItem.objects.count() == 0
 
         submitted_ai = {
             "instruction": models.ActionInstruction.objects.first().pk,
             "due_date": str(datetime.date.today() + datetime.timedelta(10)),
-            "comments": "models.CharField(max_length=300)" # arbitrary string
+            "comments": "an arbitrary string comment"
         }
 
-        url = reverse('new-action-item', kwargs={'pt_id': 1})
+        url = reverse('new-action-item', kwargs={'pt_id': patient.id})
         response = self.client.post(url, submitted_ai)
 
-        self.assertEqual(response.status_code, 302)
-        self.assertIn(reverse('patient-detail', args=(1,)), response.url)
+        assert response.status_code == 302
+        assert reverse('patient-detail', args=(1,)) in response.url
+        assert models.ActionItem.objects.count() == 1
 
-        self.assertEqual(len(models.ActionItem.objects.all()), 1)
         new_ai = models.ActionItem.objects.first()
 
         submitted_ai['due_date'] = datetime.date(
             *([int(i) for i in submitted_ai['due_date'].split('-')]))
 
         for param in submitted_ai:
-            self.assertEqual(str(submitted_ai[param]),
-                              str(getattr(new_ai, param)))
+            assert str(submitted_ai[param]) == str(getattr(new_ai, param))
 
-        note_check(self, new_ai, self.client, 1)
+        note_check(new_ai,
+                   self.provider,
+                   models.ProviderType.objects.get(long_name='Coordinator'),
+                   patient.id)
 
 
 class ProviderUpdateTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
     def test_require_providers_update(self):
-        '''
-        Test that the require_providers_update() method sets all needs_update to True
-        '''
-        provider = build_provider(username='jrporter', password='password', roles=['Preclinical']) # this line is repeated for every test instead of in a setUp def so that we can store the provider variable
+        """Test that the require_providers_update() method sets all
+        needs_update to True
+        """
+
+        # this line is repeated for every test instead of in a setUp
+        # def so that we can store the provider variable
+
+        provider = build_provider(
+            username='jrporter', password='password',
+            roles=['Preclinical'])
         log_in_provider(self.client, provider)
         for provider in models.Provider.objects.all():
             self.assertEqual(provider.needs_updating, False)
@@ -675,17 +666,23 @@ class ProviderUpdateTest(TestCase):
         '''
         final_url = reverse('home')
 
-        provider = build_provider(username='jrporter', password='password', roles=['Preclinical'])
+        provider = build_provider(username='jrporter', password='password',
+                                  roles=['Preclinical'])
         log_in_provider(self.client, provider)
         initial_num_providers = models.Provider.objects.count()
         provider_pk = provider.pk
 
         # Verify needs_update -> will redirect
         models.require_providers_update()
-        self.assertEqual(models.Provider.objects.get(pk=provider_pk).needs_updating, True)
+        assert \
+            models.Provider.objects.get(pk=provider_pk).needs_updating is True
+
         response = self.client.get(reverse('home'), follow=True)
-        self.assertEqual(response.context[0]['form'].initial['provider_email'], 'tommyljones@gmail.com')
-        self.assertRedirects(response, reverse('provider-update')+"?next="+final_url)
+        assert response.context[0]['form'].initial['provider_email'] == \
+            'tommyljones@gmail.com'
+        self.assertRedirects(
+            response, ''.join([reverse('provider-update'), "?next=",
+                               final_url]))
 
         form_data = {
             'first_name': "John",
@@ -699,25 +696,30 @@ class ProviderUpdateTest(TestCase):
         response = self.client.post(response.redirect_chain[0][0], form_data)
 
         # Redirects anywhere; don't care where (would be the 'next' parameter)
-        self.assertEqual(response.status_code, 302)
+        assert response.status_code == 302
 
         # Verify number of providers is still the same
-        self.assertEqual(models.Provider.objects.count(), initial_num_providers)
+        assert models.Provider.objects.count() == initial_num_providers
 
         # Verify write-through and no longer needs update
         provider = models.Provider.objects.get(pk=provider_pk)
-        roles = [role.short_name for role in getattr(provider,'clinical_roles').all()]
-        self.assertEqual(roles, ['Clinical'])
-        self.assertEqual(getattr(provider, 'phone'), '8888888888')
-        self.assertEqual(getattr(provider, 'needs_updating'), False)
+        roles = [role.short_name for role
+                 in getattr(provider, 'clinical_roles').all()]
+
+        assert roles == ['Clinical']
+        assert getattr(provider, 'phone') == '8888888888'
+        assert getattr(provider, 'needs_updating') is False
 
         # Verify that accessing final url no longer redirects
         response = self.client.get(final_url)
-        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(
+            response, reverse(settings.OSLER_DEFAULT_DASHBOARD))
 
 
 class TestReferralPatientDetailIntegration(TestCase):
-    """ Tests integration of Action Items and Referral Followups in patient-detail."""
+    """Tests integration of Action Items and Referral Followups in
+    patient-detail."""
+
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):

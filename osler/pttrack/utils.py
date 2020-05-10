@@ -40,9 +40,10 @@ def return_duplicates(first_name_str, last_name_str):
     last_name_var = all_variations(last_name_str.capitalize())
     if len(first_name_var) == 0 or len(last_name_var) == 0:
         return
+
     return models.Patient.objects.filter(
         (Q(first_name__in=first_name_var) |
-         Q(first_name__startswith=first_name_str)) &
+         Q(first_name__istartswith=first_name_str.capitalize())) &
         Q(last_name__in=last_name_var))
 
 def get_names_from_url_query_dict(request):

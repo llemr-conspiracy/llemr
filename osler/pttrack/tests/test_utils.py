@@ -237,6 +237,6 @@ class return_duplicatesTests(TestCase):
         only matches start of the actual names
         """
         create_pts()
-        self.assertEqual(len(models.Patient.objects.all()), 5)
+        assert models.Patient.objects.count() == 5
         result = utils.return_duplicates("art", "meller")
-        self.assertEqual(len(result), 4)
+        assert len(result) == 4

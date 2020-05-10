@@ -1,5 +1,4 @@
 from builtins import zip
-import json
 import collections
 import datetime
 
@@ -12,7 +11,7 @@ from django.views.generic.list import ListView
 from django.urls import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Prefetch
-from django.utils.http import is_safe_url
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from osler.workup import models as workupmodels
 from osler.referral.models import Referral, FollowupRequest, PatientContact
@@ -305,8 +304,9 @@ def choose_clintype(request):
     RADIO_CHOICE_KEY = 'radio-roles'
 
     redirect_to = request.GET['next']
-    if not is_safe_url(url=redirect_to, allowed_hosts=request.get_host()):
-        redirect_to = reverse("home")
+    if not url_has_allowed_host_and_scheme(url=redirect_to,
+                                           allowed_hosts=request.get_host()):
+        redirect_to = reverse('home')
 
     if request.POST:
         request.session['clintype_pk'] = request.POST[RADIO_CHOICE_KEY]
@@ -336,51 +336,52 @@ def choose_clintype(request):
 
 
 def home_page(request):
+    return HttpResponseRedirect(reverse(settings.OSLER_DEFAULT_DASHBOARD))
 
-    active_provider_type = get_object_or_404(core_models.ProviderType,
-                                             pk=request.session['clintype_pk'])
+#     active_provider_type = get_object_or_404(core_models.ProviderType,
+#                                              pk=request.session['clintype_pk'])
 
-    if active_provider_type.signs_charts:
-        title = "Attending Tasks"
-        lists = [
-            {'url': 'filter=unsigned_workup', 'title': "Unsigned Workups",
-             'identifier': 'unsignedwu', 'active': True},
-            {'url': 'filter=active', 'title': "Active Patients",
-             'identifier': 'activept', 'active': False}]
+#     if active_provider_type.signs_charts:
+#         title = "Attending Tasks"
+#         lists = [
+#             {'url': 'filter=unsigned_workup', 'title': "Unsigned Workups",
+#              'identifier': 'unsignedwu', 'active': True},
+#             {'url': 'filter=active', 'title': "Active Patients",
+#              'identifier': 'activept', 'active': False}]
 
-    elif active_provider_type.staff_view:
-        title = "Coordinator Tasks"
-        lists = [
-            {'url': 'filter=active', 'title': "Active Patients",
-             'identifier': 'activept', 'active': True},
-            {'url': 'filter=ai_priority', 'title': "Priority Action Items",
-             'identifier': 'priorityai', 'active': False},
-            {'url': 'filter=ai_active', 'title': "Active Action Items",
-             'identifier': 'activeai', 'active': False},
-            {'url': 'filter=ai_inactive', 'title': "Pending Action Items",
-             'identifier': 'pendingai', 'active': False},
-            {'url': 'filter=unsigned_workup', 'title': "Unsigned Workups",
-             'identifier': 'unsignedwu', 'active': False},
-            {'url': 'filter=user_cases', 'title': "My Cases",
-             'identifier': 'usercases', 'active': False}
-        ]
+#     elif active_provider_type.staff_view:
+#         title = "Coordinator Tasks"
+#         lists = [
+#             {'url': 'filter=active', 'title': "Active Patients",
+#              'identifier': 'activept', 'active': True},
+#             {'url': 'filter=ai_priority', 'title': "Priority Action Items",
+#              'identifier': 'priorityai', 'active': False},
+#             {'url': 'filter=ai_active', 'title': "Active Action Items",
+#              'identifier': 'activeai', 'active': False},
+#             {'url': 'filter=ai_inactive', 'title': "Pending Action Items",
+#              'identifier': 'pendingai', 'active': False},
+#             {'url': 'filter=unsigned_workup', 'title': "Unsigned Workups",
+#              'identifier': 'unsignedwu', 'active': False},
+#             {'url': 'filter=user_cases', 'title': "My Cases",
+#              'identifier': 'usercases', 'active': False}
+#         ]
 
-    else:
-        title = "Active Patients"
-        lists = [
-            {'url': 'filter=active',
-             'title': "Active Patients",
-             'identifier': 'activept',
-             'active': True}]
+#     else:
+#         title = "Active Patients"
+#         lists = [
+#             {'url': 'filter=active',
+#              'title': "Active Patients",
+#              'identifier': 'activept',
+#              'active': True}]
 
-    # remove last '/' before adding because there no '/' between
-    # /api/pt_list and .json, but reverse generates '/api/pt_list/'
-    api_url = reverse('pt_list_api')[:-1] + '.json/?'
+#     # remove last '/' before adding because there no '/' between
+#     # /api/pt_list and .json, but reverse generates '/api/pt_list/'
+#     api_url = reverse('pt_list_api')[:-1] + '.json/?'
 
-    return render(request, 'pttrack/patient_list.html',
-                  {'lists': json.dumps(lists),
-                   'title': title,
-                   'api_url': api_url})
+#     return render(request, 'pttrack/patient_list.html',
+#                   {'lists': json.dumps(lists),
+#                    'title': title,
+#                    'api_url': api_url})
 
 
 def patient_detail(request, pk):
