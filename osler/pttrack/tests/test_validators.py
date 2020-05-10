@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 
-from . import validators
+from osler.pttrack import validators
 
 
 class TestModelFieldValidators(TestCase):

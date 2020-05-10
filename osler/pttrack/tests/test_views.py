@@ -6,31 +6,21 @@ from builtins import str
 from builtins import range
 import datetime
 import json
+import os
 
 from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth.models import User
 from django.utils.timezone import now
-from django.core.files import File
-from django.core import mail
+from django.core import mail, files
 from django.core.management import call_command
+from django.contrib.auth import get_user_model
+from django.conf import settings
 
-# For live tests.
-from selenium.webdriver.chrome.webdriver import WebDriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from osler.pttrack import models
+from osler.followup.models import ContactResult
+from osler.referral.models import Referral, FollowupRequest, PatientContact
+from osler.referral.forms import PatientContactForm
 
-from . import models
-from .test import SeleniumLiveTestCase
-from osler.workup import models as workupModels
-from followup.models import ContactResult
-from referral.models import Referral, FollowupRequest, PatientContact
-from referral.forms import PatientContactForm
-
-# pylint: disable=invalid-name
-# Whatever, whatever. I name them what I want.
 
 BASIC_FIXTURE = 'pttrack.json'
 
@@ -41,13 +31,13 @@ def note_check(test, note, client, pt_pk):
     database. This should probably be broken out into its own unit test that
     directly interfaces with the form object.
     '''
-    test.assertEquals(note.author.pk,
-                      int(client.session['_auth_user_id']))
+    test.assertEqual(note.author.pk,
+                     int(client.session['_auth_user_id']))
 
-    test.assertEquals(client.session['clintype_pk'],
-                      note.author_type.pk)
+    test.assertEqual(client.session['clintype_pk'],
+                     note.author_type.pk)
 
-    test.assertEquals(note.patient.pk, pt_pk)
+    test.assertEqual(note.patient.pk, pt_pk)
 
     test.assertLessEqual((now() - note.written_datetime).total_seconds(),
                          10)
@@ -55,6 +45,8 @@ def note_check(test, note, client, pt_pk):
 
 
 def build_provider(roles=None, username=None, password='password', email=None):
+
+    User = get_user_model()
 
     # TODO this is not preferred. Should swap None for '__all__'
     # this will require hunting down all the places this is called, though.
@@ -119,16 +111,25 @@ def get_url_pt_list_identifiers(self, url):
     return list_identifiers
 
 
+def is_uuid4(uuid):
+    # TODO: this should be a regular expression probably.
+    return (len(uuid.split('-')) == 5) and (len(uuid) == 36)
+
+
 class SendEmailTest(TestCase):
     fixtures = [BASIC_FIXTURE]
-    '''
-    Test custom django management command sendemail
-    '''
+    """Test custom django management command sendemail
+    """
     def setUp(self):
-        #make 2 providers
-        log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user1@gmail.com'))
-        log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user2@gmail.com'))
-        log_in_provider(self.client, build_provider(roles=["Coordinator"], email='user3@gmail.com'))
+        log_in_provider(
+            self.client, build_provider(roles=["Coordinator"],
+                                        email='user1@gmail.com'))
+        log_in_provider(
+            self.client, build_provider(roles=["Coordinator"],
+                                        email='user2@gmail.com'))
+        log_in_provider(
+            self.client, build_provider(roles=["Coordinator"],
+                                        email='user3@gmail.com'))
 
         pt = models.Patient.objects.first()
         pt.case_managers.add(models.Provider.objects.first())
@@ -195,488 +196,6 @@ class SendEmailTest(TestCase):
         self.assertEqual(mail.outbox[0].to, ['user1@gmail.com', 'user3@gmail.com'])
 
 
-class LiveTesting(SeleniumLiveTestCase):
-    fixtures = [BASIC_FIXTURE]
-
-    def test_login(self):
-        '''
-        Test the login sequence for one clinical role and mulitiple clinical
-        roles.
-        '''
-
-        build_provider(username='jrporter', password='password')
-
-        # any valid URL should redirect to login at this point.
-        self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        self.submit_login('jrporter', 'password')
-
-        # now we should have to choose a clinical role
-        self.assertEquals(self.selenium.current_url,
-                          '%s%s%s' % (self.live_server_url,
-                                      reverse('choose-clintype'),
-                                      '?next=' +
-                                      reverse('dashboard-dispatch')))
-
-        self.selenium.find_element_by_xpath(
-            '//input[@value="Coordinator"]').click()
-        self.selenium.find_element_by_xpath(
-            '//button[@type="submit"]').click()
-
-        # import time
-        # time.sleep(10)
-        # self.selenium.get_screenshot_as_file('screencap.png')
-        WebDriverWait(self.selenium, 10).until(
-            EC.presence_of_element_located((By.ID, "id_pt_1_activept")))
-
-        self.assertEquals(self.selenium.current_url,
-                          '%s%s' % (self.live_server_url, reverse('home')))
-
-        self.selenium.get('%s%s' % (self.live_server_url, reverse('logout')))
-
-        # make a provider with only one role.
-        build_provider(username='timmy', password='password',
-                       roles=["Attending"])
-
-        self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        self.submit_login('timmy', 'password')
-
-        # now we should be redirected directly to home.
-        self.assertEquals(self.selenium.current_url,
-                          '%s%s' % (self.live_server_url,
-                                    reverse('dashboard-attending')))
-
-    def test_pttrack_patient_detail_collapseable(self):
-        """Ensure that collapsable AI lists open and close with AIs inside
-        """
-
-        build_provider(username='timmy', password='password',
-                       roles=["Attending"])
-        self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        self.submit_login('timmy', 'password')
-
-        ai_prototype = {
-            'instruction': models.ActionInstruction.objects.first(),
-            'comments': "",
-            'author_type': models.ProviderType.objects.first(),
-            'patient': models.Patient.objects.first()
-        }
-
-        models.ActionItem.objects.create(
-            due_date=now().today(),
-            author=models.Provider.objects.first(),
-            **ai_prototype
-        )
-
-        yesterday = now().date() - datetime.timedelta(days=1)
-        models.ActionItem.objects.create(
-            due_date=yesterday,
-            author=models.Provider.objects.first(),
-            **ai_prototype
-        )
-
-        self.selenium.get('%s%s' % (self.live_server_url,
-                                    reverse('patient-detail', args=(1,))))
-
-        WebDriverWait(self.selenium, 2).until(
-            EC.presence_of_element_located(
-                (By.ID, 'toggle-collapse5')))
-
-        self.assertFalse(self.selenium.find_element_by_id('collapse5')
-                                      .find_element_by_xpath('./ul/li')
-                                      .is_displayed())
-
-        self.assertEqual(
-            len(self.selenium.find_element_by_id('collapse5')
-                             .find_elements_by_xpath('./ul/li')),
-            2)
-
-        self.selenium.find_element_by_id('toggle-collapse5').click()
-
-        WebDriverWait(self.selenium, 2).until(
-            EC.presence_of_element_located(
-                (By.XPATH, '//div[@class="panel-collapse collapse in"]')))
-
-        self.assertEqual(
-            len(self.selenium.find_element_by_id('collapse5')
-                             .find_elements_by_xpath('./ul/li')),
-            2)
-
-        self.assertTrue(self.selenium.find_element_by_id('collapse5')
-                                     .find_element_by_xpath('./ul/li')
-                                     .is_displayed())
-
-    def test_pttrack_view_rendering(self):
-        '''
-        Test that pttrack urls render correctly, as determined by the
-        existance of a jumbotron at the top.
-        '''
-        from . import urls
-        from django.urls import NoReverseMatch
-
-        # build a provider and log in.
-        build_provider(username='timmy', password='password',
-                       roles=["Attending"])
-        self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        self.submit_login('timmy', 'password')
-
-        for url in urls.urlpatterns:
-            # except 'choose-clintype' and action item modifiers from test
-            # since they're redirects.
-            if url.name in ['choose-clintype', 'done-action-item',
-                            'reset-action-item', 'document-detail',
-                            'document-update', 'update-action-item']:
-                # TODO: add test data for documents so document-detail and
-                # document-update can be tested as well.
-                continue
-
-            # all the URLs have either one parameter or none. Try one
-            # parameter first; if that fails, try with none.
-            try:
-                self.selenium.get('%s%s' % (self.live_server_url,
-                                            reverse(url.name, args=(1,))))
-            except NoReverseMatch:
-                self.selenium.get('%s%s' % (self.live_server_url,
-                                            reverse(url.name)))
-
-            WebDriverWait(self.selenium, 10).until(
-                EC.presence_of_element_located(
-                    (By.XPATH, '//div[@class="jumbotron"]')))
-
-            jumbotron_elements = self.selenium.find_elements_by_xpath(
-                '//div[@class="jumbotron"]')
-            self.assertNotEqual(
-                len(jumbotron_elements), 0,
-                msg=" ".join(["Expected the URL ", url.name,
-                              " to have a jumbotron element."]))
-
-
-class LiveTestPatientLists(SeleniumLiveTestCase):
-    fixtures = [BASIC_FIXTURE]
-
-    def setUp(self):
-        # build a provider and log in
-        self.provider_password = 'password'
-        attending = build_provider(
-            username='timmy_attend',
-            password=self.provider_password,
-            roles=["Attending"])
-        coordinator = build_provider(
-            username='timmy_coord',
-            password=self.provider_password,
-            roles=["Coordinator"])
-        clinical = build_provider(
-            username='timmy_clinical',
-            password=self.provider_password,
-            roles=["Clinical"])
-        preclinical = build_provider(
-            username='timmy_preclin',
-            password=self.provider_password,
-            roles=["Preclinical"])
-        self.providers = {
-            'attending': attending,
-            'coordinator': coordinator,
-            'clinical': clinical,
-            'preclinical': preclinical
-        }
-
-        workupModels.ClinicType.objects.create(name="Basic Care Clinic")
-
-        # various time references used in object creation
-        tomorrow = now().date() + datetime.timedelta(days=1)
-        yesterday = now().date() - datetime.timedelta(days=1)
-        earlier_this_week = now().date() - datetime.timedelta(days=5)
-        last_week = now().date() - datetime.timedelta(days=15)
-
-        tomorrow_clindate = workupModels.ClinicDate.objects.create(
-            clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=tomorrow)
-        yesterday_clindate = workupModels.ClinicDate.objects.create(
-            clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=yesterday)
-        last_week_clindate = workupModels.ClinicDate.objects.create(
-            clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=earlier_this_week)
-        # log_in_provider(self.client, build_provider(["Attending"]))
-
-        pt1 = models.Patient.objects.get(pk=1)
-        pt1.toggle_active_status()
-        pt1.save()
-        self.pt1 = pt1
-
-        pt_prototype = {
-            'phone': '+49 178 236 5288',
-            'gender': models.Gender.objects.all()[1],
-            'address': 'Schulstrasse 9',
-            'city': 'Munich',
-            'state': 'BA',
-            'zip_code': '63108',
-            'pcp_preferred_zip': '63018',
-            'date_of_birth': datetime.date(1990, 1, 1),
-            'patient_comfortable_with_english': False,
-            'preferred_contact_method': models.ContactMethod.objects.first(),
-        }
-
-        self.pt2 = models.Patient.objects.create(
-            first_name="Juggie",
-            last_name="Brodeltein",
-            middle_name="Bayer",
-            **pt_prototype
-        )
-
-        self.pt3 = models.Patient.objects.create(
-            first_name="Asdf",
-            last_name="Lkjh",
-            middle_name="Bayer",
-            **pt_prototype
-        )
-
-        self.pt4 = models.Patient.objects.create(
-            first_name="No",
-            last_name="Action",
-            middle_name="Item",
-            **pt_prototype
-        )
-
-        self.pt5 = models.Patient.objects.create(
-            first_name="No",
-            last_name="Workup",
-            middle_name="Patient",
-            **pt_prototype
-        )
-        self.pt5.case_managers.add(coordinator)
-
-        wu_prototype = {
-            'chief_complaint': "SOB", 'diagnosis': "MI",
-            'HPI': "", 'PMH_PSH': "", 'meds': "", 'allergies': "",
-            'fam_hx': "", 'soc_hx': "",
-            'ros': "", 'pe': "", 'A_and_P': "",
-            'author': self.providers['coordinator'],
-            'author_type': self.providers['coordinator'].clinical_roles.first(),
-        }
-
-        # Give self.pt2 a workup one day later.
-        workupModels.Workup.objects.create(
-            clinic_day=tomorrow_clindate,
-            patient=self.pt2,
-            **wu_prototype)
-
-        # Give pt3 a workup one day ago.
-        workupModels.Workup.objects.create(
-            clinic_day=yesterday_clindate,
-            patient=self.pt3,
-            **wu_prototype)
-
-        # Give pt1 a signed workup five days ago.
-        workupModels.Workup.objects.create(
-            clinic_day=last_week_clindate,
-            patient=pt1,
-            signer=self.providers['attending'],
-            **wu_prototype)
-
-        ai_prototype = {
-            'author': self.providers['coordinator'],
-            'author_type': self.providers['coordinator'].clinical_roles.first(),
-            'instruction': models.ActionInstruction.objects.first(),
-            'comments': ""
-        }
-
-        # make pt1 have and AI due tomorrow
-        models.ActionItem.objects.create(
-            due_date=tomorrow,
-            patient=pt1,
-            **ai_prototype)
-
-        # make self.pt2 have an AI due yesterday
-        models.ActionItem.objects.create(
-            due_date=yesterday,
-            patient=self.pt2,
-            **ai_prototype)
-
-        # make pt3 have an AI that during the test will be marked done
-        models.ActionItem.objects.create(
-            due_date=last_week,
-            patient=self.pt3,
-            **ai_prototype)
-
-    def test_attestation_column(self):
-
-        self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        self.submit_login(self.providers['coordinator'].username,
-                          self.provider_password)
-
-        self.selenium.get(
-            '%s%s' % (self.live_server_url, reverse("all-patients")))
-
-        pt_tbody = self.selenium.find_element_by_xpath("//div[@class='container']/table/tbody")
-        pt1_attest_status = pt_tbody.find_element_by_xpath("//tr[5]/td[6]")
-            # attested note is marked as having been attested by the attending
-        self.assertEquals(pt1_attest_status.text, str(self.providers['attending']))
-
-            # now a patient with no workup should have 'no note'
-        pt4_attest_status = pt_tbody.find_element_by_xpath("//tr[2]/td[6]")
-        self.assertEquals(pt4_attest_status.text, 'No Note')
-
-            # now a patient with unattested workup should have 'unattested'
-        pt2_attest_status = pt_tbody.find_element_by_xpath("//tr[3]/td[6]")
-        self.assertEquals(pt2_attest_status.text, 'Unattested')
-
-    def test_all_patients_correct_order(self):
-
-        self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        self.submit_login(self.providers['coordinator'].username,
-                          self.provider_password)
-
-        self.selenium.get('%s%s' % (self.live_server_url,
-                                    reverse("all-patients")))
-
-        # causes a broken pipe error
-        self.selenium.get('%s%s' % (self.live_server_url,
-                                    reverse("all-patients")))
-
-        self.assertEquals(self.selenium.current_url,
-                          '%s%s' % (self.live_server_url,
-                                    reverse('all-patients')))
-
-        # unsure how to test for multiple elements/a certain number of elements
-        # WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlast")))
-        # WebDriverWait(self.selenium, 60).until(EC.presence_of_element_located((By.ID, "ptlatest")))
-
-        # test ordered by last name
-        pt_tbody = self.selenium.find_element_by_xpath("//div[@class='container']/table/tbody") # this line does throw an error if the id-ed element does not exist
-        first_patient_name = pt_tbody.find_element_by_xpath("//tr[2]/td[1]").text
-        second_patient_name = pt_tbody.find_element_by_xpath("//tr[3]/td[1]").text
-        self.assertLessEqual(first_patient_name, second_patient_name)
-        self.assertEqual(first_patient_name, "Action, No I.")
-
-        # # test order by latest activity
-        # # more difficult to test attributes, I'm just testing that the first
-        # # name is correct
-        # pt_last_tbody = self.selenium.find_element_by_xpath(
-        #     "//div[@id='ptlatest']/table/tbody")
-        # first_patient_name = pt_last_tbody.find_element_by_xpath(
-        #     ".//tr[2]/td[1]/a").get_attribute("text")
-        # self.assertEqual(first_patient_name, "Brodeltein, Juggie B.")
-
-    def test_provider_types_correct_home_order(self):
-        """Verify that for each provider type, on the home page the
-        expected tabs appear and the expected patients for in each tab
-        appear in the correct order.
-        """
-        provider_tabs = {
-            'attending': ['unsignedwu', 'activept'],
-            'coordinator': ['activept', 'activeai', 'pendingai', 'unsignedwu',
-                            'usercases'],
-            'clinical': ['activept'],
-            'preclinical': ['activept']
-        }
-
-        tab_patients = {
-            'activeai': [self.pt3, self.pt2],
-            'pendingai': [self.pt1],
-            'unsignedwu': [self.pt2, self.pt3],
-            'activept': [self.pt4, self.pt2, self.pt3, self.pt5],
-            'usercases': [self.pt5],
-        }
-
-        for provider_type in provider_tabs:
-            self.selenium.get('%s%s' % (self.live_server_url, '/'))
-            self.submit_login(self.providers[provider_type].username,
-                              self.provider_password)
-            self.selenium.get('%s%s' % (self.live_server_url, reverse("home")))
-
-            for tab_name in provider_tabs[provider_type]:
-                WebDriverWait(self.selenium, 30).until(
-                    EC.presence_of_element_located((By.ID, tab_name)))
-
-                # examine each tab and get pk of expected and present patients.
-                tbody = self.selenium.find_element_by_xpath(
-                    "//div[@id='%s']/table/tbody" % tab_name)
-
-                present_pt_names = [
-                    t.get_attribute('text') for t in
-                    tbody.find_elements_by_xpath(".//tr[*]/td[1]/a")
-                ]
-
-                expected_pt_names = [p.name() for p in tab_patients[tab_name]]
-
-                self.assertEqual(present_pt_names, expected_pt_names)
-
-            self.selenium.get(
-                '%s%s' % (self.live_server_url, reverse('logout')))
-
-
-    def test_all_patients_filter(self):
-        """Test the All Patients view's filter box.
-
-        We test the following:
-            - Searching for a a patient's entire name
-            = Clearing the search box
-            - Searching for an upper case fragment of a patient's name
-            - Searching for a coordinator's name
-        """
-
-        self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        self.submit_login(self.providers['coordinator'].username,
-                          self.provider_password)
-        self.selenium.get(
-            '%s%s' % (self.live_server_url, reverse("all-patients")))
-
-        # filter on the first patient's entire name
-        filter_box = self.selenium.find_element_by_id('all-patients-filter-input')
-        filter_box.send_keys(self.pt1.first_name)
-
-        def get_present_pt_names():
-            """Grab all the present & displayed names from the table
-            """
-            tbody = self.selenium.find_element_by_id('all-patients-table')
-            return [
-                t.get_attribute('text') for t in
-                tbody.find_elements_by_xpath(".//tr[*]/td[1]/a")
-                if t.is_displayed()
-            ]
-
-        # only patient 1 should be present
-        present_pt_names = get_present_pt_names()
-        self.assertIn(str(self.pt1), present_pt_names)
-        self.assertNotIn(str(self.pt2), present_pt_names)
-        self.assertNotIn(str(self.pt3), present_pt_names)
-
-        def clear_and_check(input_element):
-            # clear the box
-            for i in range(100):
-                input_element.send_keys(Keys.BACK_SPACE)
-            # input_element.send_keys(Keys.DELETE)
-
-            # import time
-            # time.sleep(600)
-
-            # now all patients should be present
-            present_pt_names = get_present_pt_names()
-            for pt in [self.pt1, self.pt2, self.pt3, self.pt4, self.pt5]:
-                self.assertIn(str(pt), present_pt_names)
-
-        clear_and_check(filter_box)
-
-        # fill the box with an upper case fragment
-        filter_box.send_keys(self.pt2.first_name.upper()[0:3])
-
-        # only pt2 should be there now
-        present_pt_names = get_present_pt_names()
-        self.assertNotIn(str(self.pt1), present_pt_names)
-        self.assertIn(str(self.pt2), present_pt_names)
-        self.assertNotIn(str(self.pt3), present_pt_names)
-
-        clear_and_check(filter_box)
-        filter_box.send_keys(self.providers['coordinator'].first_name)
-
-        # check for pt with coordinator
-        present_pt_names = get_present_pt_names()
-        self.assertNotIn(str(self.pt1), present_pt_names)
-        self.assertNotIn(str(self.pt2), present_pt_names)
-        self.assertNotIn(str(self.pt3), present_pt_names)
-        self.assertIn(str(self.pt5), present_pt_names)
-
-
 class ViewsExistTest(TestCase):
     fixtures = [BASIC_FIXTURE]
 
@@ -700,7 +219,9 @@ class ViewsExistTest(TestCase):
         # verify: no clinic date -> create clinic date
         response = self.client.get(reverse('all-patients'))
         self.assertRedirects(response,
-                             reverse('choose-clintype')+"?next="+reverse('all-patients'))
+                             ''.join([reverse('choose-clintype'),
+                                      "?next=",
+                                      reverse('all-patients')]))
 
         # verify: no provider -> provider creation
         # (now done in ProviderCreateTest)
@@ -745,9 +266,11 @@ class ViewsExistTest(TestCase):
         Test the views showing documents, as well as the integrity of path
         saving in document creation (probably superfluous).
         '''
-        import os
 
-        self.test_img = 'media/test.jpg'
+        self.test_img = os.path.join(settings.FIXTURE_DIRS[0], 'media',
+                                     'test.jpg')
+        print(self.test_img)
+        assert os.path.isfile(self.test_img)
 
         url = reverse('new-document', args=(1,))
 
@@ -759,22 +282,19 @@ class ViewsExistTest(TestCase):
             title="who done it?",
             comments="Pictured: silliness",
             document_type=dtype,
-            image=File(open(self.test_img, 'rb')),
-            patient=models.Patient.objects.get(id=1),
-            author=models.Provider.objects.get(id=1),
+            image=files.File(open(self.test_img, 'rb')),
+            patient=models.Patient.objects.first(),
+            author=models.Provider.objects.first(),
             author_type=models.ProviderType.objects.first()
         )
 
-        p = models.Document.objects.get(id=1).image.path
+        p = models.Document.objects.first().image.path
         random_name = p.split("/")[-1]
         random_name = random_name.split(".")[0]
         self.failUnless(open(p), 'file not found')
         self.assertEqual(doc.image.path, p)
         self.assertTrue(os.path.isfile(p))
-
-        # Checking to make sure the path is 48 characters (the length of the random password
-
-        self.assertEqual(len(random_name), 48)
+        self.assertTrue(is_uuid4(random_name))
 
         url = reverse('document-detail', args=(1,))
         response = self.client.get(url)
@@ -783,12 +303,12 @@ class ViewsExistTest(TestCase):
         # test the creation of many documents, just in case.
         for i in range(101):
             doc = models.Document.objects.create(
-                title="who done it? "+str(i),
+                title="who done it? " + str(i),
                 comments="Pictured: silliness",
                 document_type=dtype,
-                image=File(open(self.test_img, 'rb')),
-                patient=models.Patient.objects.get(id=1),
-                author=models.Provider.objects.get(id=1),
+                image=files.File(open(self.test_img, 'rb')),
+                patient=models.Patient.objects.first(),
+                author=models.Provider.objects.first(),
                 author_type=models.ProviderType.objects.first())
 
             p = models.Document.objects.get(id=doc.pk).image.path
@@ -797,10 +317,7 @@ class ViewsExistTest(TestCase):
             self.failUnless(open(p), 'file not found')
             self.assertEqual(doc.image.path, p)
             self.assertTrue(os.path.isfile(p))
-
-            # Checking to make sure the path is 48 characters (the length of the random password
-
-            self.assertEqual(len(random_name), 48)
+            self.assertTrue(is_uuid4(random_name))
 
             url = reverse('document-detail', args=(doc.pk,))
             response = self.client.get(url)
@@ -866,42 +383,43 @@ class ProviderCreateTest(TestCase):
         response = self.client.post(response.url, form_data)
         # redirects anywhere; don't care where (would be the 'next' parameter)
         self.assertEqual(response.status_code, 302)
-        self.assertEquals(len(models.Provider.objects.all()), n_provider + 1)
+        self.assertEqual(len(models.Provider.objects.all()), n_provider + 1)
 
         new_provider = list(models.Provider.objects.all())[-1]
 
         # verify the writethrough
         for name in ['first_name', 'last_name']:
-            self.assertEquals(getattr(new_provider, name),
-                              getattr(new_provider.associated_user, name))
-        self.assertEquals(form_data['provider_email'],
-                          new_provider.associated_user.email)
+            self.assertEqual(getattr(new_provider, name),
+                             getattr(new_provider.associated_user, name))
+        self.assertEqual(form_data['provider_email'],
+                         new_provider.associated_user.email)
 
         # now verify we're redirected
         response = self.client.get(final_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         # Test for proper resubmission behavior.
         n_provider = len(models.Provider.objects.all())
-        WebDriver().back()
+        # WebDriver().back()
 
         # POST a form with new names
         form_data['first_name'] = 'Janet'
         form_data['last_name'] = 'Jane'
         response = self.client.post(final_response_url, form_data)
 
-        # Verify redirect anywhere; don't care where (would be the 'next' parameter)
+        # Verify redirect anywhere; don't care where (would be 'next=')
         self.assertEqual(response.status_code, 302)
 
-        # Verify that number of providers has not changed, and user's names is still the original new_provider's names
-        self.assertEquals(len(models.Provider.objects.all()), n_provider)
+        # Verify that number of providers has not changed, and user's
+        # names is still the original new_provider's names
+        self.assertEqual(len(models.Provider.objects.all()), n_provider)
         for name in ['first_name', 'last_name']:
-            self.assertEquals(getattr(new_provider, name),
-                              getattr(new_provider.associated_user, name))
+            self.assertEqual(getattr(new_provider, name),
+                             getattr(new_provider.associated_user, name))
 
         # now verify we're redirected
         response = self.client.get(final_url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
 
 class ProviderTypeTest(TestCase):
@@ -984,11 +502,11 @@ class IntakeTest(TestCase):
 
         self.assertTemplateUsed(response, 'pttrack/intake.html')
 
-        self.assertEquals(
+        self.assertEqual(
             response.context_data['form']['first_name'].value(),
             self.valid_pt_dict['first_name'])
 
-        self.assertEquals(
+        self.assertEqual(
             response.context_data['form']['last_name'].value(),
             self.valid_pt_dict['last_name'])
 
@@ -1003,18 +521,18 @@ class IntakeTest(TestCase):
         response = self.client.post(url, submitted_pt)
 
         self.assertEqual(response.status_code, 302)
-        self.assertEquals(models.Patient.objects.count(), n_pt + 1)
+        self.assertEqual(models.Patient.objects.count(), n_pt + 1)
 
         new_pt = models.Patient.objects.last()
 
         for param in submitted_pt:
             try:
-                self.assertEquals(str(submitted_pt[param]),
+                self.assertEqual(str(submitted_pt[param]),
                                   str(getattr(new_pt, param)))
             except AssertionError:
                 for x, y in zip(submitted_pt[param],
                                 getattr(new_pt, param).all()):
-                    self.assertEquals(x, y)
+                    self.assertEqual(x, y)
 
         # new patients should be marked as active by default
         self.assertTrue(new_pt.needs_workup)
@@ -1079,7 +597,7 @@ class ActionItemTest(TestCase):
         self.assertIn(reverse("followup-choice", args=(ai.patient.pk,)),
                       response.url)
         self.assertTrue(models.ActionItem.objects.first().done())
-        self.assertEquals(models.ActionItem.objects.first().author.pk,
+        self.assertEqual(models.ActionItem.objects.first().author.pk,
                           int(self.client.session['_auth_user_id']))
         self.assertNotEqual(
             models.ActionItem.objects.first().written_datetime,
@@ -1107,7 +625,7 @@ class ActionItemTest(TestCase):
 
     def test_create_action_item(self):
 
-        self.assertEquals(len(models.ActionItem.objects.all()), 0)
+        self.assertEqual(len(models.ActionItem.objects.all()), 0)
 
         submitted_ai = {
             "instruction": models.ActionInstruction.objects.first().pk,
@@ -1118,17 +636,17 @@ class ActionItemTest(TestCase):
         url = reverse('new-action-item', kwargs={'pt_id': 1})
         response = self.client.post(url, submitted_ai)
 
-        self.assertEquals(response.status_code, 302)
+        self.assertEqual(response.status_code, 302)
         self.assertIn(reverse('patient-detail', args=(1,)), response.url)
 
-        self.assertEquals(len(models.ActionItem.objects.all()), 1)
+        self.assertEqual(len(models.ActionItem.objects.all()), 1)
         new_ai = models.ActionItem.objects.first()
 
         submitted_ai['due_date'] = datetime.date(
             *([int(i) for i in submitted_ai['due_date'].split('-')]))
 
         for param in submitted_ai:
-            self.assertEquals(str(submitted_ai[param]),
+            self.assertEqual(str(submitted_ai[param]),
                               str(getattr(new_ai, param)))
 
         note_check(self, new_ai, self.client, 1)

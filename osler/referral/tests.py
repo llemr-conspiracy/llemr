@@ -3,12 +3,12 @@ from builtins import zip
 import datetime
 
 from django.test import TestCase
-from itertools import *
+from itertools import product
 
 from django.urls import reverse
 from django.utils.timezone import now
 
-from followup.models import (
+from osler.followup.models import (
     ContactMethod, NoAptReason, NoShowReason, ContactResult)
 from osler.pttrack.models import (
     Gender, Patient, Provider, ProviderType, ReferralType, ReferralLocation
@@ -356,7 +356,7 @@ class TestSelectReferralType(TestCase):
         url = reverse("select-referral-type",
                       args=(self.pt.id,))
         response = self.client.get(url)
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'href="%s"' % reverse("new-referral",
                             args=(self.pt.id, reftype1.slugify(),)))
         self.assertContains(response, 'href="%s"' % reverse("new-referral",
@@ -433,7 +433,7 @@ class TestCreateReferral(TestCase):
                       args=(self.pt.id, fqhc.slugify(),))
         response = self.client.get(url)
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, fqhc1.name)
         self.assertContains(response, fqhc2.name)
 
@@ -442,7 +442,7 @@ class TestCreateReferral(TestCase):
                       args=(self.pt.id, specialty.slugify(),))
         response = self.client.get(url)
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, coh.name)
         self.assertContains(response, podiatrist.name)
 
@@ -595,7 +595,7 @@ class TestSelectReferral(TestCase):
                       args=(self.pt.id,))
         response = self.client.get(url)
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertContains(response, referral1)
         self.assertNotContains(response, referral2)
         self.assertNotContains(response, referral3)
@@ -605,7 +605,7 @@ class TestSelectReferral(TestCase):
                       args=(pt2.id,))
         response = self.client.get(url)
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, referral1)
         self.assertNotContains(response, referral2)
         self.assertContains(response, referral3)
@@ -618,7 +618,7 @@ class TestSelectReferral(TestCase):
         url = reverse('select-referral', args=(self.pt.id,))
         response = self.client.get(url)
 
-        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, referral1)
         self.assertNotContains(response, referral2)
         self.assertNotContains(response, referral3)

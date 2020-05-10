@@ -5,9 +5,10 @@ import datetime
 
 from django.test import TestCase
 
-from .models import Language, Gender, Ethnicity, ContactMethod, ProviderType, \
-    Provider, ActionInstruction, Patient
-from . import forms
+from osler.pttrack.models import (
+    Language, Gender, Ethnicity, ContactMethod, ProviderType,
+    Provider, ActionInstruction, Patient)
+from osler.pttrack import forms
 
 
 class TestActionItemCreateForms(TestCase):

@@ -81,7 +81,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         form = WorkupForm(data=wu_data)
 
         self.assertTrue(form.is_valid(), msg=form.errors)
-        self.assertEquals(
+        self.assertEqual(
             form.cleaned_data['t'],
             wu_data['t'])
 
@@ -91,7 +91,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         form = WorkupForm(data=wu_data)
 
         self.assertTrue(form.is_valid(), msg=form.errors)
-        self.assertEquals(
+        self.assertEqual(
             round((wu_data['t'] - 32) * decimal.Decimal(5 / 9.0)),
             round(decimal.Decimal(form.cleaned_data['t'])))
 
@@ -106,7 +106,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         form = WorkupForm(data=wu_data)
 
         self.assertTrue(form.is_valid(), msg=form.errors)
-        self.assertEquals(
+        self.assertEqual(
             form.cleaned_data['height'],
             wu_data['height'])
 
@@ -117,7 +117,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         form = WorkupForm(data=wu_data)
 
         self.assertTrue(form.is_valid(), msg=form.errors)
-        self.assertEquals(
+        self.assertEqual(
             form.cleaned_data['height'],
             round(wu_data['height'] * decimal.Decimal(2.54), 0))
 
@@ -132,7 +132,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         form = WorkupForm(data=wu_data)
 
         self.assertTrue(form.is_valid(), msg=form.errors)
-        self.assertEquals(
+        self.assertEqual(
             form.cleaned_data['weight'],
             wu_data['weight'])
 
@@ -142,7 +142,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         form = WorkupForm(data=wu_data)
 
         self.assertTrue(form.is_valid(), msg=form.errors)
-        self.assertEquals(
+        self.assertEqual(
             round(form.cleaned_data['weight']),
             round(old_div(wu_data['weight'], decimal.Decimal(2.2))))
 

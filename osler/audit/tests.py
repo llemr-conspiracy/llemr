@@ -31,7 +31,7 @@ class TestAudit(TestCase):
             status_code=200,
         )
 
-        self.assertEquals(
+        self.assertEqual(
             str(p),
             "GET by None to /pttrack/ at %s" % p.timestamp)
 
@@ -47,13 +47,13 @@ class TestAudit(TestCase):
             HTTP_X_FORWARDED_FOR=USER_IP + ',,')
 
         n_records = PageviewRecord.objects.count()
-        self.assertEquals(n_records, 1)
+        self.assertEqual(n_records, 1)
 
         record = PageviewRecord.objects.first()
-        self.assertEquals(record.user, expected_user)
-        self.assertEquals(record.user_ip, USER_IP)
-        self.assertEquals(record.role.short_name, 'Attending')
-        self.assertEquals(record.method, 'GET')
+        self.assertEqual(record.user, expected_user)
+        self.assertEqual(record.user_ip, USER_IP)
+        self.assertEqual(record.role.short_name, 'Attending')
+        self.assertEqual(record.method, 'GET')
 
     def test_audit_admin(self):
         p = log_in_provider(self.client, build_provider(["Coordinator"]))
@@ -62,7 +62,7 @@ class TestAudit(TestCase):
         p.associated_user.save()
 
         r = self.client.get(reverse('admin:audit_pageviewrecord_changelist'))
-        self.assertEquals(r.status_code, 200)
+        self.assertEqual(r.status_code, 200)
 
     @override_settings(OSLER_AUDIT_BLACK_LIST=['0.0.0.1'])
     def test_create_on_view_if_USER_IP_is_not_in_BLACKLIST(self):
@@ -77,13 +77,13 @@ class TestAudit(TestCase):
             HTTP_X_FORWARDED_FOR=USER_IP + ',,')
 
         n_records = PageviewRecord.objects.count()
-        self.assertEquals(n_records, 1)
+        self.assertEqual(n_records, 1)
 
         record = PageviewRecord.objects.first()
-        self.assertEquals(record.user, expected_user)
-        self.assertEquals(record.user_ip, USER_IP)
-        self.assertEquals(record.role.short_name, 'Attending')
-        self.assertEquals(record.method, 'GET')
+        self.assertEqual(record.user, expected_user)
+        self.assertEqual(record.user_ip, USER_IP)
+        self.assertEqual(record.role.short_name, 'Attending')
+        self.assertEqual(record.method, 'GET')
 
     @override_settings(OSLER_AUDIT_BLACK_LIST=['0.0.0.1'])
     def test_no_create_on_view_if_USER_IP_is_in_BLACKLIST(self):
@@ -98,4 +98,4 @@ class TestAudit(TestCase):
             HTTP_X_FORWARDED_FOR=USER_IP + ',,')
 
         n_records = PageviewRecord.objects.count()
-        self.assertEquals(n_records, 0)
+        self.assertEqual(n_records, 0)

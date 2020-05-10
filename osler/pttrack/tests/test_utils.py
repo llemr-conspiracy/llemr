@@ -1,8 +1,8 @@
 from __future__ import unicode_literals
 from django.test import TestCase
 import datetime
-from . import utils
-from . import models
+from osler.pttrack import utils
+from osler.pttrack import models
 
 
 class AllVariationsTests(TestCase):

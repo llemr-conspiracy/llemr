@@ -229,7 +229,7 @@ class ViewsExistTest(TestCase):
 
 class TestProgressNoteViews(TestCase):
     '''
-    Verify that views involving the wokrup are functioning.
+    Verify that views involving the workup are functioning.
     '''
     fixtures = ['workup', 'pttrack']
 

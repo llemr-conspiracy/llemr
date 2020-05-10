@@ -1,6 +1,7 @@
 '''The datamodels for the Osler core'''
 from __future__ import unicode_literals
 import os
+import uuid
 
 from builtins import str
 from builtins import range
@@ -8,7 +9,6 @@ from builtins import object
 from itertools import chain
 
 from django.db import models
-from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils.timezone import now
 from django.utils.text import slugify
@@ -20,25 +20,21 @@ from osler.pttrack import validators
 
 
 def make_filepath(instance, filename):
-    '''
-        Produces a unique file path for the upload_to of a FileField. This is
-        important because any URL is 1) transmitted unencrypted and 2)
-        automatically referred to any libraries we include (i.e. Bootstrap,
-        AngularJS).
+    """Produces a unique file path for the upload_to of a FileField.
 
-        The produced path is of the form:
-        "[model name]/[field name]/[random name].[filename extension]".
+    This is important because any URL is 1) transmitted unencrypted and
+    2) automatically referred to any libraries we include (i.e. Bootstrap).
 
-        Copypasta from https://djangosnippets.org/snippets/2819/
-    '''
+    The produced path is of the form:
+    "[model name]/[field name]/[random name].[filename extension]".
 
+    Inspired by https://djangosnippets.org/snippets/2819/, modified over
+    the years.
+    """
 
-    field_name = 'image'
     carry_on = True
     while carry_on:
-        new_filename = "%s.%s" % (User.objects.make_random_password(48),
-                                  filename.split('.')[-1])
-        #path = '/'.join([instance.__class__.__name__.lower(),field_name, new_filename])
+        new_filename = "%s.%s" % (uuid.uuid4(), filename.split('.')[-1])
 
         path = new_filename
 

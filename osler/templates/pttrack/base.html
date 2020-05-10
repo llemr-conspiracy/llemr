@@ -68,7 +68,7 @@
             {% if user.is_superuser or user.is_staff %}
             <li><a href="{% url 'admin:index' %}">Admin</a></li>
             {% endif %}
-            <li><a href="{% url 'logout' %}">Logout 
+            <li><a href="{% url 'account_logout' %}">Logout 
               {{ request.user.provider.first_name }} ({{ request.session.clintype_pk | default:"[no role]" }})
             </a></li>
         </ul>

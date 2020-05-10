@@ -1,16 +1,16 @@
 from __future__ import unicode_literals
-from builtins import range
 import re
 from datetime import timedelta, time
 
 from django.test import TestCase
 from django.utils.timezone import now
 from django.urls import reverse
+
 from osler.pttrack.models import Provider, ProviderType, Patient
 from osler.pttrack.test_views import log_in_provider, build_provider
-from .test_forms import apt_dict
 
-from . import models
+from osler.appointment import models
+from osler.appointment.test_forms import apt_dict
 
 
 class TestAppointmentViews(TestCase):
@@ -29,7 +29,8 @@ class TestAppointmentViews(TestCase):
             clintime=time(9, 0),
             appointment_type='PSYCH_NIGHT',
             author=Provider.objects.first(),
-            author_type=ProviderType.objects.filter(signs_charts=False).first(),
+            author_type=ProviderType.objects.filter(
+                signs_charts=False).first(),
             patient=Patient.objects.first())
 
     def test_new_appointment_view(self):
@@ -38,7 +39,8 @@ class TestAppointmentViews(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Posting new appointment
-        response = self.client.post(reverse("appointment-new"), data=apt_dict())
+        response = self.client.post(reverse("appointment-new"),
+                                    data=apt_dict())
         self.assertEqual(response.status_code, 302)
 
     def test_update_appointment_view(self):
@@ -59,8 +61,9 @@ class TestAppointmentViews(TestCase):
         self.assertEqual(apt_test.comment, 'stuff')
 
     def test_new_appointment_with_patient_name(self):
-        response = self.client.get("%s?pt_id=%s" %
-                                   (reverse("appointment-new"), Patient.objects.filter(pk=1).first().pk))
+        response = self.client.get(
+            "%s?pt_id=%s" % (reverse("appointment-new"),
+                             Patient.objects.filter(pk=1).first().pk))
         self.assertEqual(response.context['form'].initial['patient'],
                          Patient.objects.filter(pk=1).first())
 

@@ -35,10 +35,10 @@ class TestAppointments(TestCase):
         apt.clean()  # unsure if necessary for test
         apt.save()
 
-        self.assertEquals(
+        self.assertEqual(
             "test edit",
             models.Appointment.objects.filter(id=hold_id).first().comment)
-        self.assertEquals(
+        self.assertEqual(
             now().replace(
                 hour=settings.OSLER_DEFAULT_APPOINTMENT_HOUR,
                 minute=0,
@@ -85,4 +85,4 @@ class TestMaxAppointments(TestCase):
         self.apt.comment = "test edit"
         self.apt.clean()
         self.apt.save()
-        self.assertEquals("test edit", models.Appointment.objects.filter(id=hold_id).first().comment)
+        self.assertEqual("test edit", models.Appointment.objects.filter(id=hold_id).first().comment)

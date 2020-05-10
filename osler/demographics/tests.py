@@ -132,15 +132,15 @@ class FormSubmissionTest(TestCase):
             response = self.client.post(final_url, valid_dg_dict)
 
             self.assertEqual(response.status_code, 302)
-            self.assertEquals(len(models.Demographics.objects.all()),
+            self.assertEqual(len(models.Demographics.objects.all()),
                               dg_number + 1)
 
             dg = models.Demographics.objects.last()
 
-            self.assertEquals(dg.has_insurance, i)
-            self.assertEquals(dg.ER_visit_last_year, i)
-            self.assertEquals(dg.lives_alone, i)
-            self.assertEquals(dg.currently_employed, i)
+            self.assertEqual(dg.has_insurance, i)
+            self.assertEqual(dg.ER_visit_last_year, i)
+            self.assertEqual(dg.lives_alone, i)
+            self.assertEqual(dg.currently_employed, i)
 
             final_url = reverse('demographics-update', args=(dg.pk,))
             response = self.client.get(final_url)

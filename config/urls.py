@@ -20,15 +20,13 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
 
     # Osler apps here:
-    path('pttrack/', include('pttrack.urls')),
-    path('followup/', include('followup.urls')),
-    path('workup/', include('workup.urls')),
-    path('dashboard/', include('dashboard.urls')),
-    path('demographics/', include('demographics.urls')),
-    path('appointment/', include('appointment.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('referral/', include('referral.urls')),
-
+    path('pttrack/', include('osler.pttrack.urls')),
+    path('followup/', include('osler.followup.urls')),
+    path('workup/', include('osler.workup.urls')),
+    path('dashboard/', include('osler.dashboard.urls')),
+    path('demographics/', include('osler.demographics.urls')),
+    path('appointment/', include('osler.appointment.urls')),
+    path('referral/', include('osler.referral.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
