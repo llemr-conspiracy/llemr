@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 from django.contrib.auth.models import AnonymousUser
 from django.conf import settings
+from django.apps import apps
 
 from osler.pttrack.models import ProviderType
-from osler.audit.models import PageviewRecord
 
 
 class AuditMiddleware:
@@ -29,6 +29,9 @@ class AuditMiddleware:
             role = ProviderType.objects.get(pk=role)
 
         if user_ip not in settings.OSLER_AUDIT_BLACK_LIST:
+            PageviewRecord = apps.get_app_config('audit').get_model(
+                model_name='PageviewRecord')
+
             PageviewRecord.objects.create(
                 user=(None if isinstance(request.user, AnonymousUser)
                       else request.user),

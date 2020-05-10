@@ -129,6 +129,7 @@ class Gender(models.Model):
     def __str__(self):
         return self.long_name
 
+
 class Outcome(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
