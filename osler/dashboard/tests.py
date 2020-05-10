@@ -9,7 +9,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.conf import settings
 
-from osler.pttrack.test_views import log_in_provider, build_provider
+from osler.pttrack.tests.test_views import log_in_provider, build_provider
 from osler.pttrack.models import (Gender, Patient, ContactMethod)
 
 from osler.workup.models import ClinicDate, ClinicType, Workup
@@ -17,22 +17,6 @@ from osler.workup.models import ClinicDate, ClinicType, Workup
 
 def dewhitespace(s):
     return "".join(s.split())
-
-
-class TestOtherDashboard(TestCase):
-
-    fixtures = ['pttrack', 'workup']
-
-    def setUp(self):
-
-        self.clinical_student = build_provider(
-            roles=["Clinical"], email='user2@gmail.com')
-        log_in_provider(self.client, self.clinical_student)
-
-    def test_root_redirect(self):
-
-        response = self.client.get(reverse('root'), follow=True)
-        self.assertTemplateUsed(response, 'pttrack/patient_list.html')
 
 
 class TestAttendingDashboard(TestCase):
@@ -74,11 +58,6 @@ class TestAttendingDashboard(TestCase):
             author_type=self.clinical_student.clinical_roles.first(),
             patient=self.pt2,
             **self.wu_info)
-
-    def test_root_redirect(self):
-
-        response = self.client.get(reverse('root'), follow=True)
-        self.assertTemplateUsed(response, 'dashboard/dashboard-attending.html')
 
     def test_pt_without_note(self):
         response = self.client.get(reverse('dashboard-attending'))

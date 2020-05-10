@@ -3,10 +3,11 @@ from builtins import str
 from builtins import range
 from django.test import TestCase, override_settings
 from django.utils.timezone import now
-from osler.pttrack.models import Provider, ProviderType, Patient
-from osler.pttrack.test_views import build_provider
 from django.conf import settings
 from django.core.exceptions import ValidationError
+
+from osler.pttrack.models import Provider, ProviderType, Patient
+from osler.pttrack.tests.test_views import build_provider
 
 from . import models
 

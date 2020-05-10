@@ -9,6 +9,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from osler.pttrack.models import Gender, Patient, Provider, ProviderType
+from osler.pttrack.tests.test_views import log_in_provider, build_provider
 
 from . import forms
 from . import models
@@ -214,7 +215,6 @@ class FollowupTest(TestCase):
     fixtures = ['followup', 'pttrack']
 
     def setUp(self):
-        from osler.pttrack.test_views import log_in_provider, build_provider
         log_in_provider(self.client, build_provider())
 
     def tearDown(self):

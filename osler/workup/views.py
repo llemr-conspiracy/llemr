@@ -267,24 +267,26 @@ def pdf_workup(request, pk):
         template = get_template('workup/workup_body.html')
         html = template.render(data)
 
-        file = TemporaryFile(mode="w+b")
-        pisa.CreatePDF(html.encode('utf-8'), dest=file,
-                       encoding='utf-8')
+        with TemporaryFile(mode="w+b") as file:
+            pisa.CreatePDF(html.encode('utf-8'), dest=file,
+                           encoding='utf-8')
 
-        file.seek(0)
-        pdf = file.read()
-        file.close()
+            file.seek(0)
+            pdf = file.read()
 
         initials = ''.join(name[0].upper() for name in wu.patient.name(
             reverse=False, middle_short=False).split())
-        formatdate = '.'.join([str(wu.clinic_day.clinic_date.month).zfill(2), str(wu.clinic_day.clinic_date.day).zfill(2), str(wu.clinic_day.clinic_date.year)])
+        formatdate = '.'.join(
+            [str(wu.clinic_day.clinic_date.month).zfill(2),
+             str(wu.clinic_day.clinic_date.day).zfill(2),
+             str(wu.clinic_day.clinic_date.year)])
         filename = ''.join([initials, ' (', formatdate, ')'])
 
         response = HttpResponse(pdf, 'application/pdf')
         response["Content-Disposition"] = (
             "attachment; filename=%s.pdf" % (filename,))
-        return response
 
+        return response
     else:
         return HttpResponseRedirect(reverse('workup',
                                             args=(wu.id,)))

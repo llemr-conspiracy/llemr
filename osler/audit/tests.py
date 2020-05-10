@@ -1,15 +1,14 @@
 from __future__ import unicode_literals
 from builtins import str
-from django.test import TestCase, override_settings
-from django.test import Client
+from django.test import TestCase, override_settings, Client
 from django.urls import reverse
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 
 from osler.pttrack.models import ProviderType
-from osler.pttrack.test_views import build_provider, log_in_provider
+from osler.pttrack.tests.test_views import build_provider, log_in_provider
 
 from .models import PageviewRecord
-from .middleware import AuditMiddleware
+
 
 class TestAudit(TestCase):
 
@@ -22,7 +21,7 @@ class TestAudit(TestCase):
         """Check that unicode works for TestAudit
         """
         p = PageviewRecord.objects.create(
-            user=User.objects.first(),
+            user=get_user_model().objects.first(),
             user_ip='128.0.0.1',
             role=ProviderType.objects.first(),
             method=PageviewRecord.HTTP_METHODS[0],

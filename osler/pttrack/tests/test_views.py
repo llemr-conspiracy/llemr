@@ -66,7 +66,7 @@ def build_provider(roles=None, username=None, password='password', email=None):
         first_name="Tommy", middle_name="Lee", last_name="Jones",
         phone="425-243-9115", gender=g, associated_user=user)
 
-    coordinator_provider = models.ProviderType.objects.all()[2]
+    coordinator_provider = models.ProviderType.objects.get(pk="Coordinator")
     coordinator_provider.staff_view = True
     coordinator_provider.save()
 

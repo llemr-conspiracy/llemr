@@ -4,7 +4,7 @@ from datetime import date
 from django.test import TestCase
 from django.urls import reverse
 
-from osler.pttrack.test_views import build_provider, log_in_provider
+from osler.pttrack.tests.test_views import build_provider, log_in_provider
 from osler.pttrack.models import Patient, Gender, ContactMethod
 
 from . import models

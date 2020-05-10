@@ -1,4 +1,3 @@
-from __future__ import print_function
 from __future__ import unicode_literals
 
 from builtins import range
@@ -7,7 +6,7 @@ from django.utils.timezone import now
 from django.urls import reverse
 
 from osler.pttrack.models import Patient, ProviderType
-from osler.pttrack.test_views import build_provider, log_in_provider
+from osler.pttrack.tests.test_views import build_provider, log_in_provider
 
 from . import models
 from .tests import wu_dict
@@ -157,10 +156,8 @@ class ViewsExistTest(TestCase):
         self.assertTrue(models.Workup.objects.get(pk=self.wu.id).signed())
 
     def test_workup_pdf(self):
-        '''
-        Verify that pdf download with the correct naming protocol is working
-        '''
-
+        """Verify that pdf download with the correct name
+        """
         wu_url = "workup-pdf"
 
         self.wu.diagnosis_categories.add(models.DiagnosisType.objects.first())
@@ -170,13 +167,14 @@ class ViewsExistTest(TestCase):
             log_in_provider(self.client, build_provider([nonstaff_role]))
 
             response = self.client.get(reverse(wu_url, args=(self.wu.id,)))
+
             self.assertRedirects(response,
                                  reverse('workup', args=(self.wu.id,)))
 
         for staff_role in ProviderType.objects.filter(staff_view=True):
             log_in_provider(self.client, build_provider([staff_role.pk]))
             response = self.client.get(reverse(wu_url, args=(self.wu.id,)))
-            self.assertEqual(response.status_code, 200)
+            assert response.status_code == 200
 
     def test_workup_submit(self):
         """verify we can submit a valid workup as a signer and nonsigner"""
@@ -251,22 +249,29 @@ class TestProgressNoteViews(TestCase):
             clinic_date=now().date())
 
     def test_progressnote_urls(self):
-        url = reverse('new-progress-note', args=(1,))
+        pt = Patient.objects.first()
+
+        n_notes = models.ProgressNote.objects.count()
+
+        url = reverse('new-progress-note', args=(pt.id,))
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         response = self.client.post(url, self.formdata)
-        self.assertRedirects(response, reverse('patient-detail',
-                                               args=(1,)))
+        self.assertRedirects(response,
+                             reverse('patient-detail', args=(pt.id,)))
+        assert models.ProgressNote.objects.count() == n_notes + 1
 
-        response = self.client.get(reverse('progress-note-update', args=(1,)))
-        self.assertEqual(response.status_code, 200)
+        response = self.client.get(
+            reverse('progress-note-update',
+                    args=(models.ProgressNote.objects.last().pk,)))
+        assert response.status_code == 200
 
         self.formdata['text'] = 'actually not so bad'
 
         response = self.client.post(url, self.formdata)
-        self.assertRedirects(
-            response, reverse('patient-detail', args=(1,)))
+        self.assertRedirects(response,
+                             reverse('patient-detail', args=(pt.id,)))
 
     def test_progressnote_signing(self):
         """Verify that singing is possible for attendings and not for others.

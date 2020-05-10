@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.core.management import call_command
 from django.utils.timezone import now
 
-from osler.pttrack.test_views import build_provider, log_in_provider
+from osler.pttrack.tests.test_views import build_provider, log_in_provider
 from osler.pttrack.models import Patient, ProviderType, Provider
 
 from osler.workup import validators

@@ -7,7 +7,7 @@ from django.utils.timezone import now
 from django.urls import reverse
 
 from osler.pttrack.models import Provider, ProviderType, Patient
-from osler.pttrack.test_views import log_in_provider, build_provider
+from osler.pttrack.tests.test_views import log_in_provider, build_provider
 
 from osler.appointment import models
 from osler.appointment.test_forms import apt_dict
@@ -95,16 +95,18 @@ class TestAppointmentViews(TestCase):
         self.assertEqual(len(noshow_links), 0)
 
     def test_mark_arrived(self):
-        self.assertEqual(self.apt.pt_showed, None)
-        self.assertEqual(models.Appointment.objects.count(), 1)
+        assert self.apt.pt_showed is None
+        assert models.Appointment.objects.count() == 1
 
         response = self.client.get(reverse("appointment-mark-arrived",
                                            args=(self.apt.pk,)))
         self.assertRedirects(
-            response, reverse("patient-update", args=(self.apt.pk,)))
+            response,
+            reverse("patient-update", args=(self.apt.patient.pk,))
+        )
 
-        self.assertEqual(models.Appointment.objects.count(), 1)
-        self.assertEqual(models.Appointment.objects.first().pt_showed, True)
+        assert models.Appointment.objects.count() == 1
+        assert models.Appointment.objects.first().pt_showed is True
 
         response = self.client.get('appointment-list')
         # one 'mark as arrived' link should be gone now
@@ -114,7 +116,7 @@ class TestAppointmentViews(TestCase):
             re.escape('/arrived'),
             response.content.decode('utf-8'))
 
-        self.assertEqual(len(arrived_links), 0)
+        assert len(arrived_links) == 0
 
     def test_first_apt_is_today(self):
 

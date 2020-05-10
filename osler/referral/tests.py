@@ -13,6 +13,7 @@ from osler.followup.models import (
 from osler.pttrack.models import (
     Gender, Patient, Provider, ProviderType, ReferralType, ReferralLocation
 )
+from osler.pttrack.tests.test_views import log_in_provider, build_provider
 
 from . import forms
 from . import models
@@ -28,7 +29,6 @@ class TestPatientContactForm(TestCase):
 
     def setUp(self):
         """ Provides the same context in all the tests """
-        from osler.pttrack.test_views import log_in_provider, build_provider
         log_in_provider(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(
@@ -318,7 +318,6 @@ class TestSelectReferralType(TestCase):
     fixtures = ['pttrack']
 
     def setUp(self):
-        from osler.pttrack.test_views import log_in_provider, build_provider
         log_in_provider(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(
@@ -381,7 +380,6 @@ class TestCreateReferral(TestCase):
     fixtures = ['pttrack']
 
     def setUp(self):
-        from osler.pttrack.test_views import log_in_provider, build_provider
         log_in_provider(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(
@@ -479,7 +477,6 @@ class TestSelectReferral(TestCase):
     fixtures = ['pttrack']
 
     def setUp(self):
-        from osler.pttrack.test_views import log_in_provider, build_provider
         log_in_provider(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(
@@ -676,7 +673,6 @@ class TestPatientContactCreateView(TestCase):
     fixtures = ['pttrack']
 
     def setUp(self):
-        from osler.pttrack.test_views import log_in_provider, build_provider
         log_in_provider(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(
