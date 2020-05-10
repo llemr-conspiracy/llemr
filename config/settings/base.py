@@ -80,10 +80,10 @@ LOCAL_APPS = [
     'osler.followup.apps.FollowupConfig',
     'osler.workup.apps.WorkupConfig',
     'osler.demographics.apps.DemographicsConfig',
-    # 'osler.dashboard.apps.DashboardConfig',
+    'osler.dashboard.apps.DashboardConfig',
     'osler.appointment.apps.AppointmentConfig',
     'osler.referral.apps.ReferralConfig',
-    # 'osler.audit.apps.AuditConfig',
+    'osler.audit.apps.AuditConfig',
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 from osler.pttrack import models as core_models
 
@@ -12,7 +12,7 @@ class PageviewRecord(models.Model):
                     'CONNECT', 'OPTIONS', 'TRACE']
 
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         blank=True, null=True,
         on_delete=models.DO_NOTHING
     )
