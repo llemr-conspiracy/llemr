@@ -3,8 +3,8 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
-from osler.pttrack.models import Patient
-from osler.pttrack.views import (NoteUpdate, NoteFormView,
+from osler.core.models import Patient
+from osler.core.views import (NoteUpdate, NoteFormView,
                                  get_current_provider_type)
 
 from osler.followup import forms
@@ -14,11 +14,11 @@ from osler.followup import models
 def followup_choice(request, pt_id):
     '''Prompt the user to choose a follow up type.'''
     pt = get_object_or_404(Patient, pk=pt_id)
-    return render(request, 'pttrack/followup-choice.html', {'patient': pt})
+    return render(request, 'core/followup-choice.html', {'patient': pt})
 
 
 class FollowupUpdate(NoteUpdate):
-    template_name = "pttrack/form-update.html"
+    template_name = "core/form-update.html"
 
     def get_success_url(self):
         pt = self.object.patient
@@ -51,7 +51,7 @@ class GeneralFollowupUpdate(FollowupUpdate):
 
 class FollowupCreate(NoteFormView):
     '''A view for creating a new Followup'''
-    template_name = 'pttrack/form_submission.html'
+    template_name = 'core/form_submission.html'
     note_type = "Followup"
 
     def get_form_class(self, **kwargs):

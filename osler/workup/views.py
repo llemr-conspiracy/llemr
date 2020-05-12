@@ -11,9 +11,9 @@ from django.utils.timezone import now
 from django.views.generic.edit import FormView
 from django.conf import settings
 
-from osler.pttrack.views import (NoteFormView, NoteUpdate,
+from osler.core.views import (NoteFormView, NoteUpdate,
                                  get_current_provider_type)
-from osler.pttrack.models import Patient, ProviderType
+from osler.core.models import Patient, ProviderType
 
 from osler.workup import models
 from osler.workup import forms
@@ -108,7 +108,7 @@ class WorkupCreate(NoteFormView):
 
 
 class WorkupUpdate(NoteUpdate):
-    template_name = "pttrack/form-update.html"
+    template_name = "core/form-update.html"
     model = models.Workup
     form_class = forms.WorkupForm
     note_type = "Workup"
@@ -133,7 +133,7 @@ class WorkupUpdate(NoteUpdate):
 
 
 class ProgressNoteUpdate(NoteUpdate):
-    template_name = "pttrack/form-update.html"
+    template_name = "core/form-update.html"
     model = models.ProgressNote
     form_class = forms.ProgressNoteForm
     note_type = 'Clinical Psychology Note'
@@ -144,7 +144,7 @@ class ProgressNoteUpdate(NoteUpdate):
 
 
 class ProgressNoteCreate(NoteFormView):
-    template_name = 'pttrack/form_submission.html'
+    template_name = 'core/form_submission.html'
     form_class = forms.ProgressNoteForm
     note_type = 'Clinical Psychology Note'
 
@@ -169,7 +169,7 @@ class ProgressNoteCreate(NoteFormView):
 class ClinicDateCreate(FormView):
     '''A view for creating a new ClinicDate. On submission, it redirects to
     the new-workup view.'''
-    template_name = 'pttrack/clindate.html'
+    template_name = 'core/clindate.html'
     form_class = forms.ClinicDateForm
 
     def form_valid(self, form):
@@ -252,7 +252,7 @@ def error_workup(request, pk):
     wu = get_object_or_404(models.Workup, pk=pk)
 
     # TODO: clearly a template error here.
-    return render(request, 'pttrack/workup_error.html', {'workup': wu})
+    return render(request, 'core/workup_error.html', {'workup': wu})
 
 
 def pdf_workup(request, pk):

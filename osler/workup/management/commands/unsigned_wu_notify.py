@@ -4,7 +4,7 @@ from django.urls import reverse
 from django.core.management.base import BaseCommand
 from django.core.mail import send_mail
 
-from osler.pttrack.models import Provider
+from osler.core.models import Provider
 from osler.workup.models import Workup
 
 

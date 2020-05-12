@@ -1,0 +1,38 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Choose Clinical Role
+{% endblock %}
+
+{% block header %}
+<h2>How are you volunteering?</h2>
+<p class="lead">It looks to us like you wear a couple of different hats around here. What are you doing today?</p>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+<div class="container text-center">
+  <form action="" method="post" class="form-inline">
+    {% csrf_token %}
+
+    <div class="row">
+    {% for role in roles %}
+    <label class="radio-inline">
+      <input type="radio" name="{{choice_key}}" value="{{role}}" required>
+      {{ role }}
+    </label>
+    {% endfor %}
+    </div>
+
+    <div class="row">
+    <br>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+
+  </form>
+</div>
+
+</div>
+
+{% endblock %}

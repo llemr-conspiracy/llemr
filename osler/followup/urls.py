@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 from django.urls import path
-from osler.pttrack.urls import wrap_url
+from osler.core.urls import wrap_url
 
 from . import views
 

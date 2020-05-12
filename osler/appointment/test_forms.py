@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.test import TestCase
 from django.utils.timezone import now
-from osler.pttrack.models import Provider, ProviderType, Patient
+from osler.core.models import Provider, ProviderType, Patient
 from datetime import time
 from .forms import AppointmentForm
 
@@ -20,7 +20,7 @@ def apt_dict():
 
 class TestAppointmentForm(TestCase):
 
-    fixtures = ['pttrack.json']
+    fixtures = ['core.json']
 
     def setUp(self):
         apt = apt_dict()

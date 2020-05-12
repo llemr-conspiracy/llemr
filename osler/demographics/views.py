@@ -9,7 +9,7 @@ from django.db import IntegrityError, transaction
 from django.forms.models import model_to_dict
 from django.shortcuts import render
 
-from osler.pttrack.models import Patient
+from osler.core.models import Patient
 from osler.demographics.models import Demographics
 from osler.demographics.forms import DemographicsForm
 

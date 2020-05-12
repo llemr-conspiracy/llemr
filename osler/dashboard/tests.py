@@ -9,8 +9,8 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.conf import settings
 
-from osler.pttrack.tests.test_views import log_in_provider, build_provider
-from osler.pttrack.models import (Gender, Patient, ContactMethod)
+from osler.core.tests.test_views import log_in_provider, build_provider
+from osler.core.models import (Gender, Patient, ContactMethod)
 
 from osler.workup.models import ClinicDate, ClinicType, Workup
 
@@ -21,7 +21,7 @@ def dewhitespace(s):
 
 class TestAttendingDashboard(TestCase):
 
-    fixtures = ['pttrack', 'workup']
+    fixtures = ['core', 'workup']
 
     def setUp(self):
 

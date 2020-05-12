@@ -2,15 +2,15 @@ from __future__ import unicode_literals
 from django.test import TestCase
 from django.utils.timezone import now
 
-from osler.pttrack.models import Provider, ProviderType, Patient
-from osler.pttrack.tests.test_views import build_provider
+from osler.core.models import Provider, ProviderType, Patient
+from osler.core.tests.test_views import build_provider
 
 from . import models
 
 
 class TestAttestations(TestCase):
 
-    fixtures = ['workup', 'pttrack']
+    fixtures = ['workup', 'core']
 
     def setUp(self):
 

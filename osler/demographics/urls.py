@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 from django.urls import path
 from django.views.generic import DetailView
 
-from osler.pttrack.urls import wrap_url
+from osler.core.urls import wrap_url
 
 from osler.demographics import views
 from osler.demographics import models

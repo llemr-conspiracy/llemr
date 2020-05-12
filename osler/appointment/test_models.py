@@ -6,8 +6,8 @@ from django.utils.timezone import now
 from django.conf import settings
 from django.core.exceptions import ValidationError
 
-from osler.pttrack.models import Provider, ProviderType, Patient
-from osler.pttrack.tests.test_views import build_provider
+from osler.core.models import Provider, ProviderType, Patient
+from osler.core.tests.test_views import build_provider
 
 from . import models
 
@@ -15,7 +15,7 @@ from . import models
 @override_settings(OSLER_DEFAULT_APPOINTMENT_TIME=(10, 0))
 class TestAppointments(TestCase):
 
-    fixtures = ['workup', 'pttrack']
+    fixtures = ['workup', 'core']
 
     def setUp(self):
         self.all_roles_provider = build_provider()
@@ -51,7 +51,7 @@ class TestAppointments(TestCase):
 @override_settings(OSLER_MAX_APPOINTMENTS=3)
 class TestMaxAppointments(TestCase):
 
-    fixtures = ['workup', 'pttrack']
+    fixtures = ['workup', 'core']
 
     def setUp(self):
 

@@ -1,7 +1,7 @@
 from django.urls import re_path
 from django.views.generic import DetailView
 
-from osler.pttrack.urls import wrap_url
+from osler.core.urls import wrap_url
 from osler.workup import models
 from osler.workup import views
 

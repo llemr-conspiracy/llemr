@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Choose a follow up type
+{% endblock %}
+
+{% block header %}
+<h1>Choose a Follow-up Type</h1>
+{% endblock %}
+
+{% block content %}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<div class="container text-center">
+  <div class="btn-group">
+    <a class="btn btn-primary" href="{% url 'new-followup' ftype='referral' pt_id=patient.pk %}" role="button">Referral</a>
+    <a class="btn btn-success" href="{% url 'new-followup' ftype='labs' pt_id=patient.pk %}" role="button">Labs</a>
+    <a class="btn btn-info" href="{% url 'new-followup' ftype='vaccine' pt_id=patient.pk %}" role="button">Vaccine</a>
+    <a class="btn btn-warning" href="{% url 'new-followup' ftype='general' pt_id=patient.pk %}" role="button">General</a>
+  </div>
+</div>
+
+{% endblock %}

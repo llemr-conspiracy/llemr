@@ -8,7 +8,7 @@ rebuild the database when debugging.
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from osler.pttrack import models as core
+from osler.core import models as core
 from followup import models as followup
 from osler.workup import models as workup
 from referral import models as referral

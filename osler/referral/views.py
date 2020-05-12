@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.views.generic.edit import FormView
 from django.http import HttpResponseRedirect
 
-from osler.pttrack.models import Patient, ProviderType, ReferralType
+from osler.core.models import Patient, ProviderType, ReferralType
 from osler.referral.models import Referral, FollowupRequest, ReferralLocation
 from osler.referral.forms import (FollowupRequestForm, ReferralForm,
                                   PatientContactForm, ReferralSelectForm)
@@ -92,7 +92,7 @@ class ReferralCreate(FormView):
 
 
 class FollowupRequestCreate(FormView):
-    """Create a followup request that will show up on pttrack homepage."""
+    """Create a followup request that will show up on core homepage."""
 
     template_name = 'referral/new-followup-request.html'
     form_class = FollowupRequestForm

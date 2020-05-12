@@ -1,7 +1,7 @@
 from django.db import models
 from simple_history.models import HistoricalRecords
 
-from osler.pttrack.models import Patient
+from osler.core.models import Patient
 
 
 class IncomeRange(models.Model):

@@ -23,7 +23,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'pttrack',
+    'core',
     'followup',
     'workup',
     'demographics',
@@ -55,7 +55,7 @@ ROOT_URLCONF = 'osler.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'pttrack/templates'),
+        'DIRS': [os.path.join(BASE_DIR, 'core/templates'),
                  ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -113,7 +113,7 @@ OSLER_MIN_DIASTOLIC = 40
 
 # Specifies which apps are displayed under action items on patient detail page
 OSLER_TODO_LIST_MANAGERS = [
-    ('pttrack', 'ActionItem'),
+    ('core', 'ActionItem'),
     ('referral', 'FollowupRequest')]
 
 OSLER_MAX_APPOINTMENTS = 5

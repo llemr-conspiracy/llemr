@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('pttrack', '0001_initial'),
+        ('core', '0001_initial'),
         ('followup', '0001_initial'),
     ]
 
@@ -17,17 +17,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='vaccinefollowup',
             name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Provider'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Provider'),
         ),
         migrations.AddField(
             model_name='vaccinefollowup',
             name='author_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.ProviderType'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ProviderType'),
         ),
         migrations.AddField(
             model_name='vaccinefollowup',
             name='contact_method',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.ContactMethod'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ContactMethod'),
         ),
         migrations.AddField(
             model_name='vaccinefollowup',
@@ -37,27 +37,27 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='vaccinefollowup',
             name='patient',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Patient'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Patient'),
         ),
         migrations.AddField(
             model_name='referralfollowup',
             name='apt_location',
-            field=models.ForeignKey(blank=True, help_text='Where is the appointment?', null=True, on_delete=django.db.models.deletion.PROTECT, to='pttrack.ReferralLocation'),
+            field=models.ForeignKey(blank=True, help_text='Where is the appointment?', null=True, on_delete=django.db.models.deletion.PROTECT, to='core.ReferralLocation'),
         ),
         migrations.AddField(
             model_name='referralfollowup',
             name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Provider'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Provider'),
         ),
         migrations.AddField(
             model_name='referralfollowup',
             name='author_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.ProviderType'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ProviderType'),
         ),
         migrations.AddField(
             model_name='referralfollowup',
             name='contact_method',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.ContactMethod'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ContactMethod'),
         ),
         migrations.AddField(
             model_name='referralfollowup',
@@ -77,27 +77,27 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='referralfollowup',
             name='patient',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Patient'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Patient'),
         ),
         migrations.AddField(
             model_name='referralfollowup',
             name='referral_type',
-            field=models.ForeignKey(blank=True, help_text='What kind of provider was the patient referred to?', null=True, on_delete=django.db.models.deletion.PROTECT, to='pttrack.ReferralType'),
+            field=models.ForeignKey(blank=True, help_text='What kind of provider was the patient referred to?', null=True, on_delete=django.db.models.deletion.PROTECT, to='core.ReferralType'),
         ),
         migrations.AddField(
             model_name='labfollowup',
             name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Provider'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Provider'),
         ),
         migrations.AddField(
             model_name='labfollowup',
             name='author_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.ProviderType'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ProviderType'),
         ),
         migrations.AddField(
             model_name='labfollowup',
             name='contact_method',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.ContactMethod'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ContactMethod'),
         ),
         migrations.AddField(
             model_name='labfollowup',
@@ -107,22 +107,22 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='labfollowup',
             name='patient',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Patient'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Patient'),
         ),
         migrations.AddField(
             model_name='historicalvaccinefollowup',
             name='author',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Provider'),
+            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Provider'),
         ),
         migrations.AddField(
             model_name='historicalvaccinefollowup',
             name='author_type',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.ProviderType'),
+            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.ProviderType'),
         ),
         migrations.AddField(
             model_name='historicalvaccinefollowup',
             name='contact_method',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.ContactMethod'),
+            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.ContactMethod'),
         ),
         migrations.AddField(
             model_name='historicalvaccinefollowup',

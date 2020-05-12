@@ -76,7 +76,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "osler.users.apps.UsersConfig",
-    'osler.pttrack.apps.PttrackConfig',
+    'osler.core.apps.PttrackConfig',
     'osler.followup.apps.FollowupConfig',
     'osler.workup.apps.WorkupConfig',
     'osler.demographics.apps.DemographicsConfig',
@@ -322,7 +322,7 @@ OSLER_MIN_DIASTOLIC = 40
 
 # Specifies which apps are displayed under action items on patient detail page
 OSLER_TODO_LIST_MANAGERS = [
-    ('pttrack', 'ActionItem'),
+    ('core', 'ActionItem'),
     ('referral', 'FollowupRequest')]
 
 OSLER_MAX_APPOINTMENTS = 5

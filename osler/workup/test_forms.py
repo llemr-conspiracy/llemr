@@ -7,7 +7,7 @@ import decimal
 
 from django.test import TestCase
 
-from osler.pttrack.models import Provider, ProviderType, Gender
+from osler.core.models import Provider, ProviderType, Gender
 
 from .models import DiagnosisType, ClinicDate, ClinicType
 from .forms import WorkupForm
@@ -149,7 +149,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
 
 class TestWorkupFormValidators(TestCase):
 
-    fixtures = ['workup', 'pttrack']
+    fixtures = ['workup', 'core']
 
     def setUp(self):
         self.valid_wu_dict = wu_dict()

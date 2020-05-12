@@ -11,8 +11,8 @@ from django.core.validators import MinValueValidator
 
 from simple_history.models import HistoricalRecords
 
-from osler.pttrack.models import Note, Provider, ReferralLocation, ReferralType
-from osler.pttrack.validators import validate_attending
+from osler.core.models import Note, Provider, ReferralLocation, ReferralType
+from osler.core.validators import validate_attending
 from osler.workup import validators as workup_validators
 
 
@@ -79,8 +79,8 @@ class ClinicDate(models.Model):
         )
 
         cleared_timeframe = (
-            Q(pttrack_actionitem_completed__completion_date__lte=cd) &
-            Q(pttrack_actionitem_completed__completion_date__gte=cd -
+            Q(core_actionitem_completed__completion_date__lte=cd) &
+            Q(core_actionitem_completed__completion_date__gte=cd -
               datetime.timedelta(days=1))
         )
 

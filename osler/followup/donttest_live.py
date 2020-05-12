@@ -1,15 +1,15 @@
 from django.urls import reverse
 
-from osler.pttrack.test import SeleniumLiveTestCase
+from osler.core.test import SeleniumLiveTestCase
 from osler.followup import urls, models
 from osler.followup.tests import FU_TYPES
 
 
 class FollowupLiveTesting(SeleniumLiveTestCase):
-    fixtures = ['followup', 'pttrack']
+    fixtures = ['followup', 'core']
 
     def setUp(self):
-        from osler.pttrack.test_views import build_provider
+        from osler.core.test_views import build_provider
 
         build_provider(username='timmy', password='password',
                        roles=["Attending"])

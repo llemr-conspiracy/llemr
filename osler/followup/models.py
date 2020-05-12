@@ -1,6 +1,6 @@
 '''The datamodels for various types required for followup tracking in Osler.'''
 from django.db import models
-from osler.pttrack.models import (Note, ContactMethod,
+from osler.core.models import (Note, ContactMethod,
                                   ReferralType, ReferralLocation)
 
 from simple_history.models import HistoricalRecords

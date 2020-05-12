@@ -5,9 +5,9 @@ from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.utils.timezone import now
 
-from osler.pttrack.views import (NoteFormView, NoteUpdate,
+from osler.core.views import (NoteFormView, NoteUpdate,
                                  get_current_provider_type)
-from osler.pttrack.models import Patient
+from osler.core.models import Patient
 
 from osler.appointment.models import Appointment
 from osler.appointment.forms import AppointmentForm
@@ -53,7 +53,7 @@ def mark_arrived(request, pk):
 
 
 class AppointmentUpdate(NoteUpdate):
-    template_name = "pttrack/form-update.html"
+    template_name = "core/form-update.html"
     model = Appointment
     form_class = AppointmentForm
     note_type = "Appointment"

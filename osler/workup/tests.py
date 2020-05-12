@@ -7,8 +7,8 @@ from django.urls import reverse
 from django.core.management import call_command
 from django.utils.timezone import now
 
-from osler.pttrack.tests.test_views import build_provider, log_in_provider
-from osler.pttrack.models import Patient, ProviderType, Provider
+from osler.core.tests.test_views import build_provider, log_in_provider
+from osler.core.models import Patient, ProviderType, Provider
 
 from osler.workup import validators
 from osler.workup import models
@@ -41,7 +41,7 @@ def wu_dict(units=False):
 
 class TestEmailForUnsignedNotes(TestCase):
 
-    fixtures = ['workup', 'pttrack']
+    fixtures = ['workup', 'core']
 
     def setUp(self):
         self.provider = log_in_provider(
@@ -82,7 +82,7 @@ class TestEmailForUnsignedNotes(TestCase):
 
 class TestClinDateViews(TestCase):
 
-    fixtures = ['workup', 'pttrack']
+    fixtures = ['workup', 'core']
 
     def setUp(self):
         self.provider = log_in_provider(
@@ -189,7 +189,7 @@ class TestWorkupFieldValidators(TestCase):
 
 class TestWorkupModel(TestCase):
 
-    fixtures = ['workup', 'pttrack']
+    fixtures = ['workup', 'core']
 
     def setUp(self):
         self.provider = log_in_provider(

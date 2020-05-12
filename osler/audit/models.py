@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.conf import settings
 
-from osler.pttrack import models as core_models
+from osler.core import models as core_models
 
 
 class PageviewRecord(models.Model):

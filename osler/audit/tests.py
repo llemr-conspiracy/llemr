@@ -4,15 +4,15 @@ from django.test import TestCase, override_settings, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
-from osler.pttrack.models import ProviderType
-from osler.pttrack.tests.test_views import build_provider, log_in_provider
+from osler.core.models import ProviderType
+from osler.core.tests.test_views import build_provider, log_in_provider
 
 from .models import PageviewRecord
 
 
 class TestAudit(TestCase):
 
-    fixtures = ['pttrack.json']
+    fixtures = ['core.json']
 
     def setUp(self):
         self.client = Client()
@@ -32,7 +32,7 @@ class TestAudit(TestCase):
 
         self.assertEqual(
             str(p),
-            "GET by None to /pttrack/ at %s" % p.timestamp)
+            "GET by None to /core/ at %s" % p.timestamp)
 
     def test_create_on_view(self):
 

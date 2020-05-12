@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.urls import re_path
 
-from osler.pttrack.urls import wrap_url
+from osler.core.urls import wrap_url
 from osler.referral import views
 from osler.referral import models
 

@@ -3,7 +3,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.conf import settings
 from django.apps import apps
 
-from osler.pttrack.models import ProviderType
+from osler.core.models import ProviderType
 
 
 class AuditMiddleware:

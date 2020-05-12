@@ -5,8 +5,8 @@ from django.test import TestCase
 from django.utils.timezone import now
 from django.urls import reverse
 
-from osler.pttrack.models import Patient, ProviderType
-from osler.pttrack.tests.test_views import build_provider, log_in_provider
+from osler.core.models import Patient, ProviderType
+from osler.core.tests.test_views import build_provider, log_in_provider
 
 from . import models
 from .tests import wu_dict
@@ -16,7 +16,7 @@ class ViewsExistTest(TestCase):
     '''
     Verify that views involving the wokrup are functioning.
     '''
-    fixtures = ['workup', 'pttrack']
+    fixtures = ['workup', 'core']
 
     def setUp(self):
 
@@ -229,7 +229,7 @@ class TestProgressNoteViews(TestCase):
     '''
     Verify that views involving the workup are functioning.
     '''
-    fixtures = ['workup', 'pttrack']
+    fixtures = ['workup', 'core']
 
     def setUp(self):
 

@@ -6,7 +6,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 
 from osler.workup.models import ClinicDate
-from osler.pttrack.models import Patient
+from osler.core.models import Patient
 
 
 def dashboard_dispatch(request):

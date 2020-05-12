@@ -15,7 +15,7 @@ from crispy_forms.bootstrap import (
     InlineCheckboxes, AppendedText, PrependedText)
 from crispy_forms.utils import TEMPLATE_PACK, render_field
 
-from osler.pttrack.models import Provider, ProviderType
+from osler.core.models import Provider, ProviderType
 from osler.workup import models
 
 

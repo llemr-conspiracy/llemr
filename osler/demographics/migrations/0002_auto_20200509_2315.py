@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('pttrack', '0001_initial'),
+        ('core', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('demographics', '0001_initial'),
     ]
@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='historicaldemographics',
             name='patient',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Patient'),
+            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Patient'),
         ),
         migrations.AddField(
             model_name='historicaldemographics',
@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='demographics',
             name='patient',
-            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, to='pttrack.Patient'),
+            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.CASCADE, to='core.Patient'),
         ),
         migrations.AddField(
             model_name='demographics',

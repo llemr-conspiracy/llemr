@@ -10,10 +10,10 @@ from django.utils.timezone import now
 
 from osler.followup.models import (
     ContactMethod, NoAptReason, NoShowReason, ContactResult)
-from osler.pttrack.models import (
+from osler.core.models import (
     Gender, Patient, Provider, ProviderType, ReferralType, ReferralLocation
 )
-from osler.pttrack.tests.test_views import log_in_provider, build_provider
+from osler.core.tests.test_views import log_in_provider, build_provider
 
 from . import forms
 from . import models
@@ -25,7 +25,7 @@ class TestPatientContactForm(TestCase):
     complicated logic around valid form submission
     """
 
-    fixtures = ['pttrack']
+    fixtures = ['core']
 
     def setUp(self):
         """ Provides the same context in all the tests """
@@ -315,7 +315,7 @@ class TestSelectReferralType(TestCase):
     """Tests the select referral type page
     """
 
-    fixtures = ['pttrack']
+    fixtures = ['core']
 
     def setUp(self):
         log_in_provider(self.client, build_provider())
@@ -377,7 +377,7 @@ class TestCreateReferral(TestCase):
     """
     Tests the create referral page
     """
-    fixtures = ['pttrack']
+    fixtures = ['core']
 
     def setUp(self):
         log_in_provider(self.client, build_provider())
@@ -474,7 +474,7 @@ class TestCreateReferral(TestCase):
 
 class TestSelectReferral(TestCase):
 
-    fixtures = ['pttrack']
+    fixtures = ['core']
 
     def setUp(self):
         log_in_provider(self.client, build_provider())
@@ -670,7 +670,7 @@ class TestPatientContactCreateView(TestCase):
     """Class for testing form_valid method in PatientContactCreate.
     """
 
-    fixtures = ['pttrack']
+    fixtures = ['core']
 
     def setUp(self):
         log_in_provider(self.client, build_provider())

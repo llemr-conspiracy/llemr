@@ -6,8 +6,8 @@ from django.test import TestCase
 from django.utils.timezone import now
 from django.urls import reverse
 
-from osler.pttrack.models import Provider, ProviderType, Patient
-from osler.pttrack.tests.test_views import log_in_provider, build_provider
+from osler.core.models import Provider, ProviderType, Patient
+from osler.core.tests.test_views import log_in_provider, build_provider
 
 from osler.appointment import models
 from osler.appointment.test_forms import apt_dict
@@ -15,7 +15,7 @@ from osler.appointment.test_forms import apt_dict
 
 class TestAppointmentViews(TestCase):
 
-    fixtures = ['pttrack', 'workup']
+    fixtures = ['core', 'workup']
 
     def setUp(self):
 

@@ -8,8 +8,8 @@ import datetime
 from django.test import TestCase
 from django.urls import reverse
 
-from osler.pttrack.models import Gender, Patient, Provider, ProviderType
-from osler.pttrack.tests.test_views import log_in_provider, build_provider
+from osler.core.models import Gender, Patient, Provider, ProviderType
+from osler.core.tests.test_views import log_in_provider, build_provider
 
 from . import forms
 from . import models
@@ -212,7 +212,7 @@ class TestReferralFollowupForms(TestCase):
 
 
 class FollowupTest(TestCase):
-    fixtures = ['followup', 'pttrack']
+    fixtures = ['followup', 'core']
 
     def setUp(self):
         log_in_provider(self.client, build_provider())

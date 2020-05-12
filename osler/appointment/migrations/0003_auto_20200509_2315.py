@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('pttrack', '0001_initial'),
+        ('core', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('appointment', '0002_auto_20200509_2315'),
     ]
@@ -24,21 +24,21 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='historicalappointment',
             name='patient',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Patient'),
+            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Patient'),
         ),
         migrations.AddField(
             model_name='appointment',
             name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Provider'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Provider'),
         ),
         migrations.AddField(
             model_name='appointment',
             name='author_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.ProviderType'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ProviderType'),
         ),
         migrations.AddField(
             model_name='appointment',
             name='patient',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Patient'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Patient'),
         ),
     ]

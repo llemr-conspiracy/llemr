@@ -4,7 +4,7 @@ from django.conf import settings
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import osler.pttrack.validators
+import osler.core.validators
 import osler.workup.validators
 import simple_history.models
 
@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('pttrack', '0001_initial'),
+        ('core', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -83,16 +83,16 @@ class Migration(migrations.Migration):
                 ('will_return', models.BooleanField(default=False, help_text='Will the pt. return to SNHC?')),
                 ('A_and_P', models.TextField()),
                 ('signed_date', models.DateTimeField(blank=True, null=True)),
-                ('attending', models.ForeignKey(blank=True, help_text='Which attending saw the patient?', null=True, on_delete=django.db.models.deletion.PROTECT, related_name='attending_physician', to='pttrack.Provider', validators=[osler.pttrack.validators.validate_attending])),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Provider')),
-                ('author_type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.ProviderType')),
+                ('attending', models.ForeignKey(blank=True, help_text='Which attending saw the patient?', null=True, on_delete=django.db.models.deletion.PROTECT, related_name='attending_physician', to='core.Provider', validators=[osler.core.validators.validate_attending])),
+                ('author', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Provider')),
+                ('author_type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ProviderType')),
                 ('clinic_day', models.ForeignKey(help_text='When was the patient seen?', on_delete=django.db.models.deletion.PROTECT, to='workup.ClinicDate')),
                 ('diagnosis_categories', models.ManyToManyField(to='workup.DiagnosisType')),
-                ('other_volunteer', models.ManyToManyField(blank=True, help_text='Which other volunteer(s) did you work with (if any)?', related_name='other_volunteer', to='pttrack.Provider')),
-                ('patient', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Patient')),
-                ('referral_location', models.ManyToManyField(blank=True, to='pttrack.ReferralLocation')),
-                ('referral_type', models.ManyToManyField(blank=True, to='pttrack.ReferralType')),
-                ('signer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='signed_workups', to='pttrack.Provider', validators=[osler.pttrack.validators.validate_attending])),
+                ('other_volunteer', models.ManyToManyField(blank=True, help_text='Which other volunteer(s) did you work with (if any)?', related_name='other_volunteer', to='core.Provider')),
+                ('patient', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Patient')),
+                ('referral_location', models.ManyToManyField(blank=True, to='core.ReferralLocation')),
+                ('referral_type', models.ManyToManyField(blank=True, to='core.ReferralType')),
+                ('signer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='signed_workups', to='core.Provider', validators=[osler.core.validators.validate_attending])),
             ],
             options={
                 'abstract': False,
@@ -107,10 +107,10 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=200)),
                 ('text', models.TextField()),
                 ('signed_date', models.DateTimeField(blank=True, null=True)),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Provider')),
-                ('author_type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.ProviderType')),
-                ('patient', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='pttrack.Patient')),
-                ('signer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='signed_progress_notes', to='pttrack.Provider', validators=[osler.pttrack.validators.validate_attending])),
+                ('author', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Provider')),
+                ('author_type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ProviderType')),
+                ('patient', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Patient')),
+                ('signer', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='signed_progress_notes', to='core.Provider', validators=[osler.core.validators.validate_attending])),
             ],
             options={
                 'abstract': False,
@@ -155,13 +155,13 @@ class Migration(migrations.Migration):
                 ('history_date', models.DateTimeField()),
                 ('history_change_reason', models.CharField(max_length=100, null=True)),
                 ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('attending', models.ForeignKey(blank=True, db_constraint=False, help_text='Which attending saw the patient?', null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Provider', validators=[osler.pttrack.validators.validate_attending])),
-                ('author', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Provider')),
-                ('author_type', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.ProviderType')),
+                ('attending', models.ForeignKey(blank=True, db_constraint=False, help_text='Which attending saw the patient?', null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Provider', validators=[osler.core.validators.validate_attending])),
+                ('author', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Provider')),
+                ('author_type', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.ProviderType')),
                 ('clinic_day', models.ForeignKey(blank=True, db_constraint=False, help_text='When was the patient seen?', null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='workup.ClinicDate')),
                 ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('patient', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Patient')),
-                ('signer', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Provider', validators=[osler.pttrack.validators.validate_attending])),
+                ('patient', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Patient')),
+                ('signer', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Provider', validators=[osler.core.validators.validate_attending])),
             ],
             options={
                 'verbose_name': 'historical workup',
@@ -183,11 +183,11 @@ class Migration(migrations.Migration):
                 ('history_date', models.DateTimeField()),
                 ('history_change_reason', models.CharField(max_length=100, null=True)),
                 ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-                ('author', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Provider')),
-                ('author_type', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.ProviderType')),
+                ('author', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Provider')),
+                ('author_type', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.ProviderType')),
                 ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
-                ('patient', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Patient')),
-                ('signer', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='pttrack.Provider', validators=[osler.pttrack.validators.validate_attending])),
+                ('patient', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Patient')),
+                ('signer', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Provider', validators=[osler.core.validators.validate_attending])),
             ],
             options={
                 'verbose_name': 'historical progress note',

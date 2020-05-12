@@ -2,7 +2,7 @@
 from django.db import models
 from django.urls import reverse
 
-from osler.pttrack.models import (ReferralType, ReferralLocation, Note,
+from osler.core.models import (ReferralType, ReferralLocation, Note,
                                   ContactMethod, CompletableMixin,)
 from osler.followup.models import ContactResult, NoAptReason, NoShowReason
 

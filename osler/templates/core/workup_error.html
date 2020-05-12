@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+
+{% block header %}
+    <h1>Error in Submitting Workup</h1>
+    <p>Workup on {{ workup.patient.name }} is already signed and cannot be edited</p>
+    {% if workup.signed %}
+    <p class="lead">Signed by {{workup.signer}} </p>
+    {% else %}
+    <p class="lead">Workup unsigned.</p>
+    {% endif%}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row text-center">
+        <h4>Actions</h4>
+        <div class="btn-group">
+            <a class="btn btn-primary" href="{% url 'workup' pk=workup.pk %}" role="button">Return to Workup</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

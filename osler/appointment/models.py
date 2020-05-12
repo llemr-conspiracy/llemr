@@ -5,7 +5,7 @@ from django.conf import settings
 
 from simple_history.models import HistoricalRecords
 
-from osler.pttrack.models import Note
+from osler.core.models import Note
 
 
 def generate_default_appointment_time():

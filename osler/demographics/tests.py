@@ -4,8 +4,8 @@ from datetime import date
 from django.test import TestCase
 from django.urls import reverse
 
-from osler.pttrack.tests.test_views import build_provider, log_in_provider
-from osler.pttrack.models import Patient, Gender, ContactMethod
+from osler.core.tests.test_views import build_provider, log_in_provider
+from osler.core.models import Patient, Gender, ContactMethod
 
 from . import models
 from . import forms
@@ -15,7 +15,7 @@ class ViewsExistTest(TestCase):
     '''
     Verify that views involving the wokrup are functioning.
     '''
-    fixtures = ['pttrack']
+    fixtures = ['core']
 
     def setUp(self):
 
@@ -68,7 +68,7 @@ class FormSubmissionTest(TestCase):
     '''
     Verify that views involving the wokrup are functioning.
     '''
-    fixtures = ['pttrack']
+    fixtures = ['core']
 
     def setUp(self):
 
@@ -173,7 +173,7 @@ class FormSubmissionTest(TestCase):
         response = self.client.post(dg_url, dg, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(
-            response, 'pttrack/patient_detail.html')
+            response, 'core/patient_detail.html')
         self.assertEqual(models.Demographics.objects.count(), 1)
 
         # Send in submission with the same patient ID; we should see no new
@@ -182,7 +182,7 @@ class FormSubmissionTest(TestCase):
         self.assertEqual(response2.status_code, 200)
         self.assertEqual(models.Demographics.objects.count(), 1)
         self.assertTemplateUsed(
-            response2, 'pttrack/patient_detail.html')
+            response2, 'core/patient_detail.html')
 
     def test_demographics_form_double_submission_errors(self):
         '''
@@ -207,12 +207,12 @@ class FormSubmissionTest(TestCase):
         dg_url = reverse('demographics-create', args=(pt.pk,))
 
         response1 = self.client.post(dg_url, dg, follow=True)
-        self.assertTemplateUsed(response1, 'pttrack/patient_detail.html')
+        self.assertTemplateUsed(response1, 'core/patient_detail.html')
 
         response2 = self.client.post(dg_url, dg, follow=True)
         #  success here means redirection to patient detail page
         self.assertNotContains(response2, 'Clash')
-        self.assertTemplateUsed(response2, 'pttrack/patient_detail.html')
+        self.assertTemplateUsed(response2, 'core/patient_detail.html')
 
         # Test case 2 - two different forms submitted
         # In this case, all fields should have errors

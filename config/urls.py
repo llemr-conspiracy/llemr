@@ -20,7 +20,7 @@ urlpatterns = [
     path("accounts/", include("allauth.urls")),
 
     # Osler apps here:
-    path('pttrack/', include('osler.pttrack.urls')),
+    path('core/', include('osler.core.urls')),
     path('followup/', include('osler.followup.urls')),
     path('workup/', include('osler.workup.urls')),
     path('dashboard/', include('osler.dashboard.urls')),
