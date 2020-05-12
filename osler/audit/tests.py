@@ -32,7 +32,7 @@ class TestAudit(TestCase):
 
         self.assertEqual(
             str(p),
-            "GET by None to /core/ at %s" % p.timestamp)
+            "GET by None to %s at %s" % (reverse('home'), p.timestamp))
 
     def test_create_on_view(self):
 

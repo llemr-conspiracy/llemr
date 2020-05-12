@@ -193,7 +193,7 @@ class ViewsExistTest(TestCase):
             r = self.client.post(
                 reverse('new-workup', args=(pt_id,)),
                 data=wu_data)
-            self.assertRedirects(r, reverse("patient-detail", args=(pt_id,)))
+            self.assertRedirects(r, reverse("core:patient-detail", args=(pt_id,)))
 
             self.assertEqual(wu_count + 1, models.Workup.objects.all().count())
             self.assertEqual(
@@ -259,7 +259,7 @@ class TestProgressNoteViews(TestCase):
 
         response = self.client.post(url, self.formdata)
         self.assertRedirects(response,
-                             reverse('patient-detail', args=(pt.id,)))
+                             reverse('core:patient-detail', args=(pt.id,)))
         assert models.ProgressNote.objects.count() == n_notes + 1
 
         response = self.client.get(
@@ -271,7 +271,7 @@ class TestProgressNoteViews(TestCase):
 
         response = self.client.post(url, self.formdata)
         self.assertRedirects(response,
-                             reverse('patient-detail', args=(pt.id,)))
+                             reverse('core:patient-detail', args=(pt.id,)))
 
     def test_progressnote_signing(self):
         """Verify that singing is possible for attendings and not for others.

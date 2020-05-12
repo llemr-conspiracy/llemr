@@ -120,8 +120,8 @@ class ActionItemForm(ModelForm):
             )
         )
 
-        self.fields['instruction'].queryset = models.ActionInstruction.objects.filter(
-            active=True)
+        self.fields['instruction'].queryset = models.ActionInstruction\
+            .objects.filter(active=True)
 
 
 class ProviderForm(ModelForm):

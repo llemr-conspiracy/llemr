@@ -121,7 +121,7 @@ class FollowupRequestCreate(FormView):
             Referral, pk=self.kwargs['referral_id'])
         followup_request.patient = pt
         followup_request.save()
-        return HttpResponseRedirect(reverse('patient-detail', args=(pt.id,)))
+        return HttpResponseRedirect(reverse('core:patient-detail', args=(pt.id,)))
 
 
 class PatientContactCreate(FormView):
@@ -181,7 +181,7 @@ class PatientContactCreate(FormView):
         if PatientContactForm.SUCCESSFUL_REFERRAL in self.request.POST:
             referral.status = Referral.STATUS_SUCCESSFUL
             referral.save()
-            return HttpResponseRedirect(reverse('patient-detail',
+            return HttpResponseRedirect(reverse('core:patient-detail',
                                                 args=(pt.id,)))
 
         elif PatientContactForm.REQUEST_FOLLOWUP in self.request.POST:
@@ -192,7 +192,7 @@ class PatientContactCreate(FormView):
         elif PatientContactForm.UNSUCCESSFUL_REFERRAL in self.request.POST:
             referral.status = Referral.STATUS_UNSUCCESSFUL
             referral.save()
-            return HttpResponseRedirect(reverse('patient-detail',
+            return HttpResponseRedirect(reverse('core:patient-detail',
                                                 args=(pt.id,)))
 
 

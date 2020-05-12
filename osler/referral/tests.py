@@ -635,7 +635,7 @@ class TestSelectReferral(TestCase):
         self.assertContains(response, pt2.first_name)
 
     def test_mark_done_link_on_patient_detail(self):
-        """Check that FollowupRequests are on the patient-detail view.
+        """Check that FollowupRequests are on the core:patient-detail view.
         """
 
         ref = models.Referral.objects.create(
@@ -659,8 +659,8 @@ class TestSelectReferral(TestCase):
         )
 
         # request patient detail after creating a referral and followup
-        # request, so that we should have the URL on patient-detail view.
-        response = self.client.get(reverse('patient-detail',
+        # request, so that we should have the URL on core:patient-detail view.
+        response = self.client.get(reverse('core:patient-detail',
                                            args=(ref.patient.pk,)))
 
         self.assertContains(response, followup_request.mark_done_url())
@@ -731,10 +731,10 @@ class TestPatientContactCreateView(TestCase):
         buttons = [forms.PatientContactForm.SUCCESSFUL_REFERRAL,
                    forms.PatientContactForm.REQUEST_FOLLOWUP,
                    forms.PatientContactForm.UNSUCCESSFUL_REFERRAL]
-        return_urls = [reverse('patient-detail', args=(self.pt.id,)),
+        return_urls = [reverse('core:patient-detail', args=(self.pt.id,)),
                        reverse('new-followup-request', args=(self.pt.id,
                                                              referral1.id,)),
-                       reverse('patient-detail', args=(self.pt.id,))]
+                       reverse('core:patient-detail', args=(self.pt.id,))]
         pt_showed = [models.PatientContact.PTSHOW_YES,
                      models.PatientContact.PTSHOW_NO,
                      models.PatientContact.PTSHOW_NO]

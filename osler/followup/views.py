@@ -22,7 +22,7 @@ class FollowupUpdate(NoteUpdate):
 
     def get_success_url(self):
         pt = self.object.patient
-        return reverse("patient-detail", args=(pt.id, ))
+        return reverse("core:patient-detail", args=(pt.id, ))
 
 
 class ReferralFollowupUpdate(FollowupUpdate):
@@ -84,10 +84,10 @@ class FollowupCreate(NoteFormView):
         form.save_m2m()
 
         if 'followup_create' in self.request.POST:
-            return HttpResponseRedirect(reverse('new-action-item',
+            return HttpResponseRedirect(reverse('core:new-action-item',
                                                 args=(pt.id,)))
         else:
-            return HttpResponseRedirect(reverse("patient-detail",
+            return HttpResponseRedirect(reverse("core:patient-detail",
                                                 args=(pt.id,)))
 
 

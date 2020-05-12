@@ -368,10 +368,10 @@ class FollowupTest(TestCase):
 
         if 'followup_create' in submitted_fu:
             self.assertRedirects(response,
-                                 reverse("new-action-item", args=(pt.id,)))
+                                 reverse("core:new-action-item", args=(pt.id,)))
         elif 'followup_close' in submitted_fu:
             self.assertRedirects(response,
-                                 reverse('patient-detail', args=(pt.id,)))
+                                 reverse('core:patient-detail', args=(pt.id,)))
 
 
         self.assertEqual(len(fu_type.objects.all()), n_followup + 1)

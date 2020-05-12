@@ -102,7 +102,7 @@ class TestAppointmentViews(TestCase):
                                            args=(self.apt.pk,)))
         self.assertRedirects(
             response,
-            reverse("patient-update", args=(self.apt.patient.pk,))
+            reverse("core:patient-update", args=(self.apt.patient.pk,))
         )
 
         assert models.Appointment.objects.count() == 1

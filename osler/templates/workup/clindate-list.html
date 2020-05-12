@@ -27,7 +27,7 @@ Recent Clinic Dates
 		</tr>
 		{% for wu in clinic_date.workup_set.all %}
 			<tr {% if wu.signer == None %} class="warning" {% endif %}>
-				<td><a href="{% url 'patient-detail' pk=wu.patient.id %}">{{wu.patient}}</a></td>
+				<td><a href="{% url 'core:patient-detail' pk=wu.patient.id %}">{{wu.patient}}</a></td>
 				<td><a href="{% url 'workup' pk=wu.id %}">{{wu.chief_complaint}}</a></td>
 				<td>{{wu.patient.case_manager}}</td>
 				<td>{{wu.author}}</td>

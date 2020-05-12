@@ -36,7 +36,7 @@ class LiveTesting(SeleniumLiveTestCase):
         # now we should have to choose a clinical role
         self.assertEqual(self.selenium.current_url,
                           '%s%s%s' % (self.live_server_url,
-                                      reverse('choose-clintype'),
+                                      reverse('core:choose-clintype'),
                                       '?next=' +
                                       reverse('dashboard-dispatch')))
 
@@ -98,7 +98,7 @@ class LiveTesting(SeleniumLiveTestCase):
         )
 
         self.selenium.get('%s%s' % (self.live_server_url,
-                                    reverse('patient-detail', args=(1,))))
+                                    reverse('core:patient-detail', args=(1,))))
 
         WebDriverWait(self.selenium, 2).until(
             EC.presence_of_element_located(
@@ -328,7 +328,7 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
                           self.provider_password)
 
         self.selenium.get(
-            '%s%s' % (self.live_server_url, reverse("all-patients")))
+            '%s%s' % (self.live_server_url, reverse("core:all-patients")))
 
         pt_tbody = self.selenium.find_element_by_xpath(
             "//div[@class='container']/table/tbody")
@@ -352,15 +352,15 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
                           self.provider_password)
 
         self.selenium.get('%s%s' % (self.live_server_url,
-                                    reverse("all-patients")))
+                                    reverse("core:all-patients")))
 
         # causes a broken pipe error
         self.selenium.get('%s%s' % (self.live_server_url,
-                                    reverse("all-patients")))
+                                    reverse("core:all-patients")))
 
         self.assertEqual(self.selenium.current_url,
                           '%s%s' % (self.live_server_url,
-                                    reverse('all-patients')))
+                                    reverse('core:all-patients')))
 
         # unsure how to test for multiple elements/a certain number of elements
         # WebDriverWait(self.selenium, 60).until(
@@ -449,7 +449,7 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         self.submit_login(self.providers['coordinator'].username,
                           self.provider_password)
         self.selenium.get(
-            '%s%s' % (self.live_server_url, reverse("all-patients")))
+            '%s%s' % (self.live_server_url, reverse("core:all-patients")))
 
         # filter on the first patient's entire name
         filter_box = self.selenium.find_element_by_id(

@@ -7,10 +7,10 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 {% block header %}
 <div class="col-lg-5 col-lg-offset-1 col-sm-6">
 	<div class="col-md-1">
-		<h2><br><a href="{% url 'all-patients' %}"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a></h2>
+		<h2><br><a href="{% url 'core:all-patients' %}"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a></h2>
 	</div>
 	<div class="col-md-11">
-		<h2> <a href="{% url 'patient-update' pk=patient.id %}">{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
+		<h2> <a href="{% url 'core:patient-update' pk=patient.id %}">{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
 		</a></h2>
 		<p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
 		<p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
@@ -19,9 +19,9 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 		<p class="lead"><strong>Case Manager:</strong> {{patient.case_managers.iterator | join:"; "}}
 		{% if request.session.staff_view %}
 			{% if patient.needs_workup %}
-		  	    <p class="lead"> Patient is Active <a href="{% url 'patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></p>
+		  	    <p class="lead"> Patient is Active <a href="{% url 'core:patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></p>
 		    {% else %}
-    			<p class="lead"> Patient is Inactive <a href="{% url 'patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a></p>
+    			<p class="lead"> Patient is Inactive <a href="{% url 'core:patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a></p>
 			{% endif %}
 		{% else %}
 			{% if patient.needs_workup %}
@@ -54,7 +54,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 			</li>
 			<li class="list-group-item">
 				<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>&nbsp;
-			    <a href="{% url 'new-document' pt_id=patient.pk %}"><strong>Upload Document</strong></a>
+			    <a href="{% url 'core:new-document' pt_id=patient.pk %}"><strong>Upload Document</strong></a>
 			</li>
 		</ul>
 	</div>
@@ -74,7 +74,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 			</li>
 			<li class="list-group-item">
 				<span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>&nbsp;
-			    <a href="{% url 'new-action-item' pt_id=patient.pk %}"><strong>New Action Item</strong></a>
+			    <a href="{% url 'core:new-action-item' pt_id=patient.pk %}"><strong>New Action Item</strong></a>
 			</li>
 		</ul>
 	</div>
@@ -159,7 +159,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 	    			<div id="collapse2" class="panel-collapse collapse">
 	      				{% for note in patient.document_set.all %}	
 	  						<div class="panel-body">
-								<p><a href="{% url 'document-detail' pk=note.pk %}"><strong>{{ note.document_type | title }}:</strong></a> {{ note.short_text }}</p>
+								<p><a href="{% url 'core:document-detail' pk=note.pk %}"><strong>{{ note.document_type | title }}:</strong></a> {{ note.short_text }}</p>
 								<p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
 								{% if request.session.staff_view %}
 								<p class="text-right"><a href="{% url 'admin:core_document_change' note.id %}" target="_blank"><i>Edit</i></a></p>

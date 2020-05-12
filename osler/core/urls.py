@@ -6,13 +6,11 @@ from django.contrib.auth.decorators import login_required
 from osler.core import models
 from osler.core import views
 from osler.core.decorators import (provider_required, clintype_required,
-                                      provider_update_required)
+                                   provider_update_required)
 
+
+app_name = 'core'
 unwrapped_urlpatterns = [
-    re_path(
-        r'^$',
-        views.home_page,
-        name="home"),
     re_path(
         r'^all/$',
         views.all_patients,
@@ -91,12 +89,6 @@ unwrapped_urlpatterns = [
         r'^document/update/(?P<pk>[0-9]+)$',
         views.DocumentUpdate.as_view(),
         name="document-update"),
-
-    # MISC
-    re_path(
-        r'^about/',
-        TemplateView.as_view(template_name='core/about.html'),
-        name='about'),
 ]
 
 
@@ -130,8 +122,7 @@ def wrap_url(url, no_wrap=[], login_only=[], provider_only=[],
     return url
 
 
-wrap_config = {'no_wrap': ['about'],
-               'login_only': ['new-provider'],
+wrap_config = {'login_only': ['new-provider'],
                'provider_only': ['provider-update'],
                'updated_provider_only': ['choose-clintype']}
 

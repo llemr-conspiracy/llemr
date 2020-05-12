@@ -177,7 +177,7 @@ class FormSubmissionTest(TestCase):
         self.assertEqual(models.Demographics.objects.count(), 1)
 
         # Send in submission with the same patient ID; we should see no new
-        # Demographics objects, and a successful redirect to patient-detail
+        # Demographics objects, and a successful redirect to core:patient-detail
         response2 = self.client.post(dg_url, dg, follow=True)
         self.assertEqual(response2.status_code, 200)
         self.assertEqual(models.Demographics.objects.count(), 1)

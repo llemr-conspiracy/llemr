@@ -8,7 +8,7 @@ Demographic Data: {{ demographics.patient.name }}
   <div class="row">
     <div class="col-md-4">
       <h1>Demographic Survey Data</h1>
-      <p class="lead">For <a href="{% url 'patient-detail' pk=demographics.patient.id %}">{{ demographics.patient.name }}</a></p>
+      <p class="lead">For <a href="{% url 'core:patient-detail' pk=demographics.patient.id %}">{{ demographics.patient.name }}</a></p>
     </div>
     <div class="col-md-1 pull-right">
       <h1><a href="{% url 'demographics-update' pk=demographics.id %}">

@@ -140,7 +140,7 @@ class FollowupLiveTesting(SeleniumLiveTestCase):
         # we should redirect
         self.assertEqual(
             ''.join([self.live_server_url,
-                     reverse('patient-detail', args=(1,))]),
+                     reverse('core:patient-detail', args=(1,))]),
             self.selenium.current_url)
 
         # and the submission with this comment should be in the db

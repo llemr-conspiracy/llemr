@@ -58,12 +58,18 @@ def session_passes_test(test_func, fail_url,
 
 
 def clintype_required(func):
-    return session_passes_test(clintype_set, fail_url=reverse_lazy('choose-clintype'))(func)
+    return session_passes_test(
+        clintype_set,
+        fail_url=reverse_lazy('core:choose-clintype'))(func)
 
 
 def provider_update_required(func):
-    return user_passes_test(provider_has_updated, login_url=reverse_lazy('provider-update'))(func)
+    return user_passes_test(
+        provider_has_updated,
+        login_url=reverse_lazy('core:provider-update'))(func)
 
 
 def provider_required(func):
-    return user_passes_test(provider_exists, login_url=reverse_lazy('new-provider'))(func)
+    return user_passes_test(
+        provider_exists,
+        login_url=reverse_lazy('core:new-provider'))(func)

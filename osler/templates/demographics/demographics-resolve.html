@@ -2,7 +2,7 @@
 
 {% block header %}
 <h1>Warning: Patient already has Demographics information</h1>
-<p class="lead">Please review differences and submit a single form for <em><a href="{% url 'patient-detail' pk=pt_id %}">{{ pt_name }}</a></em></p>
+<p class="lead">Please review differences and submit a single form for <em><a href="{% url 'core:patient-detail' pk=pt_id %}">{{ pt_name }}</a></em></p>
 {% endblock %}
 
 

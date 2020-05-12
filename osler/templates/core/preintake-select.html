@@ -29,10 +29,10 @@ Patient Intake
                             Patient already active
                         {% endif %}
                         {% if not patient.needs_workup %}
-                            <button class="btn btn-success" onclick="location.href ='{% url "patient-activate-detail" pk=patient.id %}'">Activate Patient</button>
+                            <button class="btn btn-success" onclick="location.href ='{% url "core:patient-activate-detail" pk=patient.id %}'">Activate Patient</button>
                         {% endif %}
                     </td>
-                    <td><a href="{% url 'patient-detail' pk=patient.id %}">{{ patient.last_name}}, {{patient.first_name}}</a></td>
+                    <td><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.last_name}}, {{patient.first_name}}</a></td>
                     <td> {{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</td>
                     <td>{{patient.date_of_birth}}</td>
                     <td>{{patient.address}}, {{patient.city}}<br/>{{patient.state}}, {{patient.zip_code}}</td>

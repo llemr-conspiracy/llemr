@@ -104,7 +104,7 @@ class WorkupCreate(NoteFormView):
 
         form.save_m2m()
 
-        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+        return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
 
 
 class WorkupUpdate(NoteUpdate):
@@ -163,7 +163,7 @@ class ProgressNoteCreate(NoteFormView):
 
         form.save_m2m()
 
-        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+        return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
 
 
 class ClinicDateCreate(FormView):

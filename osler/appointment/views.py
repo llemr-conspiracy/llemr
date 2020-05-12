@@ -48,7 +48,7 @@ def mark_arrived(request, pk):
     apt.pt_showed = True
     apt.save()
 
-    return HttpResponseRedirect(reverse("patient-update", args=(apt.patient.pk,)))
+    return HttpResponseRedirect(reverse("core:patient-update", args=(apt.patient.pk,)))
 
 
 

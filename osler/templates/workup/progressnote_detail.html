@@ -8,7 +8,7 @@ Psych Progress Note: {{ progressnote.patient.name }}
   <div class="row">
     <div class="col-md-10">
       <h2>{{ progressnote.title }}</h2>
-      <p class="lead">For <a href="{% url 'patient-detail' pk=progressnote.patient.id %}">{{ progressnote.patient.name }}</a></p>
+      <p class="lead">For <a href="{% url 'core:patient-detail' pk=progressnote.patient.id %}">{{ progressnote.patient.name }}</a></p>
     </div>
     <div class="col-md-1 pull-right">
     <h1><a href="{% url 'progress-note-update' pk=progressnote.id %}">

@@ -106,9 +106,9 @@ class TestAttendingDashboard(TestCase):
         # and one clinic day
         self.assertEqual(len(response.context['clinics']), 1)
         # with two patients
-        self.assertContains(response, reverse('patient-detail',
+        self.assertContains(response, reverse('core:patient-detail',
                                               args=(self.pt2.pk,)))
-        self.assertContains(response, reverse('patient-detail',
+        self.assertContains(response, reverse('core:patient-detail',
                                               args=(pt3.pk,)))
         # both of which are marked as unattested
         self.assertContains(response, '<tr  class="warning" >', count=2)
@@ -121,9 +121,9 @@ class TestAttendingDashboard(TestCase):
         # still one clinic day
         self.assertEqual(len(response.context['clinics']), 1)
         # with two patients
-        self.assertContains(response, reverse('patient-detail',
+        self.assertContains(response, reverse('core:patient-detail',
                                               args=(self.pt2.pk,)))
-        self.assertContains(response, reverse('patient-detail',
+        self.assertContains(response, reverse('core:patient-detail',
                                               args=(pt3.pk,)))
         # ONE of which are marked as unattested
         self.assertContains(response, '<tr  class="warning" >', count=1)

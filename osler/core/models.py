@@ -367,13 +367,13 @@ class Patient(Person):
         self.needs_workup = not self.needs_workup
 
     def detail_url(self):
-        return reverse('patient-detail', args=(self.pk,))
+        return reverse('core:patient-detail', args=(self.pk,))
 
     def update_url(self):
-        return reverse('patient-update', args=(self.pk,))
+        return reverse('core:patient-update', args=(self.pk,))
 
     def activate_url(self):
-        return reverse('patient-activate-home', args=(self.pk,))
+        return reverse('core:patient-activate-home', args=(self.pk,))
 
 
 def require_providers_update():
@@ -492,7 +492,7 @@ class CompletableMixin(models.Model):
             "is indicates what one has to do of completable this is ")
 
     def summary(self):
-        """Text that should be displayed on the patient-detail view to
+        """Text that should be displayed on the core:patient-detail view to
         describe what must be done to mark this Completable as done.
 
         For example, this is the comments for of ActionItem.
@@ -532,7 +532,7 @@ class ActionItem(Note, CompletableMixin):
                              str(self.written_datetime.date())])
 
     def mark_done_url(self):
-        return reverse(self.MARK_DONE_URL_NAME, args=(self.id,))
+        return reverse('core:%s' % self.MARK_DONE_URL_NAME, args=(self.id,))
 
     def admin_url(self):
         return reverse('admin:core_actionitem_change',

@@ -97,7 +97,12 @@ class ProviderCreate(FormView):
             provider.save()
             form.save_m2m()
 
-        return HttpResponseRedirect(self.request.GET['next'])
+        if 'next' in self.request.GET:
+            next_url = self.request.GET['next']
+        else:
+            next_url = reverse('home')
+
+        return HttpResponseRedirect(next_url)
 
     def get_context_data(self, **kwargs):
         context = super(ProviderCreate, self).get_context_data(**kwargs)
@@ -115,17 +120,15 @@ class ProviderUpdate(UpdateView):
     form_class = forms.ProviderForm
 
     def get_initial(self):
-        '''
-        Pre-populates email, which is a property of the User
-        '''
+        """Pre-populates email, which is a property of the User
+        """
         initial = super(ProviderUpdate, self).get_initial()
         initial['provider_email'] = self.request.user.email
         return initial
 
     def get_object(self):
-        '''
-        Returns the request's provider
-        '''
+        """Returns the request's provider
+        """
         return self.request.user.provider
 
     def form_valid(self, form):
@@ -141,11 +144,12 @@ class ProviderUpdate(UpdateView):
         provider.save()
         form.save_m2m()
 
-        return HttpResponseRedirect(self.request.GET['next'])
+        return HttpResponseRedirect(
+            self.request.GET.get('next', reverse('home')))
 
 
 class ActionItemCreate(NoteFormView):
-    '''A view for creating ActionItems using the ActionItemForm.'''
+    """A view for creating ActionItems using the ActionItemForm."""
     template_name = 'core/form_submission.html'
     form_class = forms.ActionItemForm
     note_type = 'Action Item'
@@ -162,7 +166,8 @@ class ActionItemCreate(NoteFormView):
 
         ai.save()
 
-        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+        return HttpResponseRedirect(reverse("core:patient-detail",
+                                            args=(pt.id,)))
 
 
 class ActionItemUpdate(NoteUpdate):
@@ -173,7 +178,7 @@ class ActionItemUpdate(NoteUpdate):
 
     def get_success_url(self):
         pt = self.object.patient
-        return reverse("patient-detail", args=(pt.id, ))
+        return reverse("core:patient-detail", args=(pt.id, ))
 
 
 class PatientUpdate(UpdateView):
@@ -185,7 +190,7 @@ class PatientUpdate(UpdateView):
         pt = form.save()
         pt.save()
 
-        return HttpResponseRedirect(reverse("patient-detail",
+        return HttpResponseRedirect(reverse("core:patient-detail",
                                             args=(pt.id,)))
 
 
@@ -217,7 +222,7 @@ class PreIntakeSelect(ListView):
         context['first_name'] = initial.get('first_name', None)
         context['last_name'] = initial.get('last_name', None)
         context['new_pt_url'] = "%s?%s=%s&%s=%s" % (
-            reverse("intake"),
+            reverse("core:intake"),
             "first_name", initial.get('first_name', None),
             "last_name", initial.get('last_name', None))
         context['home'] = reverse("home")
@@ -245,10 +250,10 @@ class PreIntake(FormView):
         querystr = '%s=%s&%s=%s' % ("first_name", first_name_str,
                                     "last_name", last_name_str)
         if len(matching_patients) > 0:
-            intake_url = "%s?%s" % (reverse("preintake-select"), querystr)
+            intake_url = "%s?%s" % (reverse("core:preintake-select"), querystr)
             return HttpResponseRedirect(intake_url)
 
-        intake_url = "%s?%s" % (reverse("intake"), querystr)
+        intake_url = "%s?%s" % (reverse("core:intake"), querystr)
         return HttpResponseRedirect(intake_url)
 
 
@@ -278,7 +283,7 @@ class DocumentUpdate(NoteUpdate):
 
     def get_success_url(self):
         doc = self.object
-        return reverse("document-detail", args=(doc.id, ))
+        return reverse("core:document-detail", args=(doc.id, ))
 
 
 class DocumentCreate(NoteFormView):
@@ -297,7 +302,7 @@ class DocumentCreate(NoteFormView):
 
         doc.save()
 
-        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+        return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
 
 
 def choose_clintype(request):
@@ -518,7 +523,7 @@ def patient_activate_detail(request, pk):
 
     pt.save()
 
-    return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+    return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
 
 
 def patient_activate_home(request, pk):
@@ -544,5 +549,5 @@ def reset_action_item(request, ai_id):
     ai = get_object_or_404(core_models.ActionItem, pk=ai_id)
     ai.clear_done()
     ai.save()
-    return HttpResponseRedirect(reverse("patient-detail",
+    return HttpResponseRedirect(reverse("core:patient-detail",
                                         args=(ai.patient.id,)))

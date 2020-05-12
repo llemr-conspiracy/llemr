@@ -32,7 +32,7 @@ Appointment List
             	{% for app in app_list %}
               <tr class="{% cycle 'active' '' as rowclass %}">
             			<td>{{ app.clintime }}</td>
-              		<td><b><a href="{% url 'patient-detail' pk=app.patient.id %}">{{ app.patient }}</a></b></td>
+              		<td><b><a href="{% url 'core:patient-detail' pk=app.patient.id %}">{{ app.patient }}</a></b></td>
               		<td>{{ app.verbose_appointment_type }}</td>
               </tr>
               <tr>

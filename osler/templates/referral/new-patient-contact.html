@@ -7,7 +7,7 @@ New referral followup
 {% block header %}
 <h1>New referral followup</h1>
 {% if patient %}
-<p class="lead">Referral for <em><a href="{% url 'patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
+<p class="lead">Referral for <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
 {% endif %}
 <p class="lead">Referral to 
 {% for ref in referral.location.all %}

@@ -5,10 +5,10 @@ Edit Patient ({{ object.name }})
 {% endblock %}
 
 {% block header %}
-<h1><a href="{% url 'patient-detail' pk=object.id %}"><small><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></small></a>
+<h1><a href="{% url 'core:patient-detail' pk=object.id %}"><small><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></small></a>
   Edit Patient
 </h1>
-<p class="lead">Edit <em><a href="{% url 'patient-detail' pk=object.id %}">{{ object.name }}</a></em></p>
+<p class="lead">Edit <em><a href="{% url 'core:patient-detail' pk=object.id %}">{{ object.name }}</a></em></p>
 {% endblock %}
 
 {% block content %}

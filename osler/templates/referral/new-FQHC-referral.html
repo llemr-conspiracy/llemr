@@ -7,7 +7,7 @@ Create new FQHC referral
 {% block header %}
 <h1>New FQHC Referral</h1>
 {% if patient %}
-<p class="lead">Referral for <em><a href="{% url 'patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
+<p class="lead">Referral for <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
 {% endif %}
 {% endblock %}
 

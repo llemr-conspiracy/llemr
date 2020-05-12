@@ -41,7 +41,7 @@ class DemographicsCreate(FormView):
                 pt.save()
                 form_new.save_m2m()
                 form_new.save()
-            return HttpResponseRedirect(reverse("patient-detail",
+            return HttpResponseRedirect(reverse("core:patient-detail",
                                                 args=(pt.id,)))
         except IntegrityError:
 
@@ -58,7 +58,7 @@ class DemographicsCreate(FormView):
             # An integrity error will be thrown whether or not there is
             # a difference between the models.
             if not differences:
-                return HttpResponseRedirect(reverse("patient-detail",
+                return HttpResponseRedirect(reverse("core:patient-detail",
                                             args=(pt.id,)))
 
             form_old = DemographicsForm(dg_old.__dict__)
@@ -115,4 +115,4 @@ class DemographicsUpdate(UpdateView):
         form.save_m2m()
         form.save()
 
-        return HttpResponseRedirect(reverse("patient-detail", args=(pt.id,)))
+        return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))

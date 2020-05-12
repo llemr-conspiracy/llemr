@@ -55,8 +55,8 @@
       </div>
       <div class="collapse navbar-collapse" id="myNavbar">
         <ul class="nav navbar-nav">
-          <li><a href="{% url 'preintake' %}">New Patient</a></li>
-          <li><a href="{% url 'all-patients' %}">All Patients</a></li>
+          <li><a href="{% url 'core:preintake' %}">New Patient</a></li>
+          <li><a href="{% url 'core:all-patients' %}">All Patients</a></li>
           <li><a href="{% url 'appointment-list' %}">Appointments</a></li>
           <li><a href="//snhc.wustl.edu/wiki" target="_blank">Wiki</a></li>
           <li><a href="{% url 'about' %}">About</a></li>
@@ -102,7 +102,7 @@
   {% endblock %}
 
   <footer class="container" style="padding-top: 5%">
-    <p class="text-muted">Osler is free and open source software built by and for WashU students. To learn more or contribute, find us on <a src="https://github.com/SaturdayNeighborhoodHealthClinic/osler">GitHub</a>.</p>
+    <p class="text-muted">Osler is free and open source software built by WashU students. To learn more or contribute, find us on <a src="https://github.com/SaturdayNeighborhoodHealthClinic/osler">GitHub</a>.</p>
   </footer>
 
   </body>

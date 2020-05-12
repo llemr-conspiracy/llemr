@@ -26,7 +26,7 @@ Workup: {{ workup.patient.name }}
             {% if not workup.signed and request.session.signs_charts %}
             <a class="btn btn-success" href="{% url 'workup-sign' pk=workup.pk %}" role="button">Attest</a>
             {% endif %}
-            <a class="btn btn-info" href="{% url 'new-action-item' pt_id=workup.patient.pk %}" role="button">Add Action Item</a>
+            <a class="btn btn-info" href="{% url 'core:new-action-item' pt_id=workup.patient.pk %}" role="button">Add Action Item</a>
             {% if request.session.staff_view %}
             <a class="btn btn-warning" href="{% url 'workup-pdf' pk=workup.pk %}" target="_blank" role="button">PDF</a>
             {% endif %}
