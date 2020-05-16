@@ -5,9 +5,9 @@ from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect
 from django.utils.timezone import now
 
-from osler.core.views import (NoteFormView, NoteUpdate,
-                                 get_current_provider_type)
+from osler.core.views import NoteFormView, NoteUpdate
 from osler.core.models import Patient
+from osler.core.utils import get_active_user_group
 
 from osler.appointment.models import Appointment
 from osler.appointment.forms import AppointmentForm
@@ -48,8 +48,8 @@ def mark_arrived(request, pk):
     apt.pt_showed = True
     apt.save()
 
-    return HttpResponseRedirect(reverse("core:patient-update", args=(apt.patient.pk,)))
-
+    return HttpResponseRedirect(reverse("core:patient-update",
+                                        args=(apt.patient.pk,)))
 
 
 class AppointmentUpdate(NoteUpdate):
@@ -68,8 +68,8 @@ class AppointmentCreate(NoteFormView):
 
     def form_valid(self, form):
         appointment = form.save(commit=False)
-        appointment.author = self.request.user.provider
-        appointment.author_type = get_current_provider_type(self.request)
+        appointment.author = self.request.user
+        appointment.author_type = get_active_user_group(self.request)
 
         appointment.save()
 
@@ -86,7 +86,8 @@ class AppointmentCreate(NoteFormView):
         if date is not None:
             # If appointment attribute clindate = workup.models.ClinicDate,
             # default date could be next clindate.
-            # For now, the default value will be the next Saturday (including day of)
+            # For now, the default value will be the next Saturday
+            # (including day of)
             initial['clindate'] = date
 
         return initial

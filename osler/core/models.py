@@ -4,6 +4,7 @@ from itertools import chain
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import Group
+from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from django.utils.text import slugify
 from django.urls import reverse
@@ -324,24 +325,12 @@ class Patient(Person):
         return reverse('core:patient-activate-home', args=(self.pk,))
 
 
-def require_providers_update():
-    '''
-    Sets needs_update to True for all providers
-    Not sure where this should go
-    Is an independent function that sets all providers so the setter doesn't
-    have to figure out what to type.
-    '''
-    for provider in Provider.objects.all():
-        provider.needs_updating = True
-        provider.save()
-
-
 class Note(models.Model):
     class Meta:
         abstract = True
         ordering = ["-written_datetime", "-last_modified"]
 
-    author = models.ForeignKey(Provider, on_delete=models.PROTECT)
+    author = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     author_type = models.ForeignKey(Group, on_delete=models.PROTECT)
     patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
 
@@ -412,7 +401,7 @@ class CompletableMixin(models.Model):
 
     completion_date = models.DateTimeField(blank=True, null=True)
     completion_author = models.ForeignKey(
-        Provider,
+        get_user_model(),
         blank=True, null=True,
         related_name="%(app_label)s_%(class)s_completed",
         on_delete=models.PROTECT)
@@ -422,9 +411,9 @@ class CompletableMixin(models.Model):
         """Return true if this ActionItem has been marked as done."""
         return self.completion_date is not None
 
-    def mark_done(self, provider):
+    def mark_done(self, user):
         self.completion_date = now()
-        self.completion_author = provider
+        self.completion_author = user
 
     def clear_done(self):
         self.completion_author = None

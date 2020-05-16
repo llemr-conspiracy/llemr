@@ -1,8 +1,6 @@
-from __future__ import unicode_literals
-from builtins import str
-from builtins import object
 import datetime
 
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Q
 from django.utils.timezone import now
@@ -11,7 +9,7 @@ from django.core.validators import MinValueValidator
 
 from simple_history.models import HistoricalRecords
 
-from osler.core.models import Note, Provider, ReferralLocation, ReferralType
+from osler.core.models import Note, ReferralLocation, ReferralType
 from osler.core.validators import validate_attending
 from osler.workup import validators as workup_validators
 
@@ -58,14 +56,14 @@ class ClinicDate(models.Model):
         return self.workup_set.count()
 
     def infer_attendings(self):
-        qs = Provider.objects.filter(
+        qs = get_user_model().objects.filter(
             Q(attending_physician__clinic_day=self) |
             Q(signed_workups_workup__clinic_day=self)).distinct()
 
         return qs
 
     def infer_volunteers(self):
-        return Provider.objects.filter(Q(workup__clinic_day=self) |
+        return get_user_model().objects.filter(Q(workup__clinic_day=self) |
                                        Q(other_volunteer__clinic_day=self)) \
                                .distinct()
 
@@ -84,7 +82,7 @@ class ClinicDate(models.Model):
               datetime.timedelta(days=1))
         )
 
-        coordinator_set = Provider.objects \
+        coordinator_set = get_user_model().objects \
             .filter(written_timeframe | cleared_timeframe)\
             .distinct()
 
@@ -97,7 +95,7 @@ class AttestableNote(Note):
         permissions = [('can_sign', "Can sign note")]
 
     signer = models.ForeignKey(
-        Provider,
+        get_user_model(),
         blank=True, null=True,
         on_delete=models.PROTECT,
         related_name="signed_%(app_label)s_%(class)s",
@@ -167,11 +165,11 @@ class Workup(AttestableNote):
     """
 
     class Meta(AttestableNote.Meta):
-        permissions = AttestableNote.Meta + [
+        permissions = AttestableNote.Meta.permissions + [
             ('can_export_pdf', 'Can export note PDF')]
 
     attending = models.ForeignKey(
-        Provider,
+        get_user_model(),
         null=True, blank=True,
         related_name="attending_physician",
         on_delete=models.PROTECT,
@@ -179,7 +177,7 @@ class Workup(AttestableNote):
         help_text="Which attending saw the patient?")
 
     other_volunteer = models.ManyToManyField(
-        Provider,
+        get_user_model(),
         blank=True,
         related_name="other_volunteer",
         help_text="Which other volunteer(s) did you work with (if any)?")
