@@ -5,6 +5,7 @@ from osler.core import models
 
 
 for model in [models.Language, models.Patient, models.Provider,
+              models.Gender, models.ProviderType,
               models.ActionInstruction, models.Ethnicity,
               models.ReferralType, models.ReferralLocation,
               models.ContactMethod, models.DocumentType, models.Outcome]:

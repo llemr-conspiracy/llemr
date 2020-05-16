@@ -76,7 +76,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "osler.users.apps.UsersConfig",
-    'osler.core.apps.PttrackConfig',
+    'osler.core.apps.CoreConfig',
     'osler.followup.apps.FollowupConfig',
     'osler.workup.apps.WorkupConfig',
     'osler.demographics.apps.DemographicsConfig',

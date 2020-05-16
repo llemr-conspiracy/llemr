@@ -3,11 +3,12 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
-    path("", TemplateView.as_view(template_name="pages/home.html"),
+    path('', RedirectView.as_view(pattern_name="dashboard-dispatch",
+                                  permanent=False),
          name="home"),
     path(
         "about/", TemplateView.as_view(template_name="pages/about.html"),
