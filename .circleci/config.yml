@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:2.7.15-jessie-browsers
+      - image: circleci/python:3.7.7-buster-browsers
     steps:
       - checkout
       - run: mkdir test-reports

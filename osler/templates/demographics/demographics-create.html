@@ -1,0 +1,30 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+{% if patient %}
+{{ patient.name }}
+{% else %}
+{{ demographics.patient.name }}
+{% endif %}
+{% endblock %}
+
+{% block header %}
+<h1>New Survey </h1>
+{% if patient %}
+<p class="lead">Demographics for <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
+{% else %}
+<p class="lead">Demographics for <em><a href="{% url 'core:patient-detail' pk=demographics.patient.id %}">{{ demographics.patient.name }}</a></em></p>
+{% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+{% include 'bootstrap3/layout/help_text_and_errors.html' %}
+
+<div class="container">
+  {% load crispy_forms_tags %}
+  {% crispy form %}
+</div>
+
+{% endblock %}

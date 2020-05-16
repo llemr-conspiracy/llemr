@@ -1,0 +1,22 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Instantiate New Clindate
+{% endblock %}
+
+{% block header %}
+<h1>Good Morning!</h1>
+<p class="lead">It looks like you're the first one here...</p>
+{% endblock %}
+
+{% block content %}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<div class="container">
+	<p class="lead">We've identified today as a SNHC clinic day, but we need you to tell us what type of clinic is happening today!</p> 
+	{% load crispy_forms_tags %}
+	{% crispy form %}
+</div>
+
+{% endblock %}

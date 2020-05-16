@@ -1,0 +1,21 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+{{ note_type }} {{ patient.name }}
+{% endblock %}
+
+{% block header %}
+<h1>New {{ note_type }} </h1>
+<p class="lead">Add a new {{ note_type | lower }} for <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+<p><strong>Please write this in a word document, then paste into the appropriate fields. Poor internet connection may cause work to be lost.</strong></p>
+  {% load crispy_forms_tags %}
+  {% crispy form %}
+</div>
+
+{% endblock %}

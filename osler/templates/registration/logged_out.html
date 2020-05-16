@@ -1,0 +1,16 @@
+{% extends "core/base.html" %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'home' %}">Home</a></div>{% endblock %}
+
+{% block header %}
+<h1>Success!</h1>
+<p class="lead">See you next time...</p>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h4>Thanks for spending some quality time with the Web site today.</strong></h4>
+  <a class="btn btn-default" href="{% url 'home' %}" role="button">Log in again</a>
+
+</div>
+{% endblock %}

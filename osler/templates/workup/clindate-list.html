@@ -1,0 +1,60 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Recent Clinic Dates
+{% endblock %}
+
+{% block header %}
+<h1>Recent Clinic Dates</h1>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+	{% for clinic_date in object_list %}
+		<h3>{{clinic_date.clinic_type}} &mdash; {{clinic_date.clinic_date | date:"l, F d, Y" }}</h3>
+		<p><strong>Attending(s):</strong> {{clinic_date.infer_attendings | join:", " }}</p>
+		{% comment %}<p><strong>Coordinators(s):</strong> {{clinic_date.infer_coordinators | join:", " }}</p> {% endcomment %}
+		<p><strong>Volunteers(s):</strong> {{clinic_date.infer_volunteers | join:", " }}</p>
+		<table class="table table-striped">
+	    <tr>
+		    <th>Patient</th>
+		    <th>Chief Complaint</th>
+		    <th>Case Manager</th> 
+		    <th>Note Author</th>
+		    <th>Attestation</th>
+		</tr>
+		{% for wu in clinic_date.workup_set.all %}
+			<tr {% if wu.signer == None %} class="warning" {% endif %}>
+				<td><a href="{% url 'core:patient-detail' pk=wu.patient.id %}">{{wu.patient}}</a></td>
+				<td><a href="{% url 'workup' pk=wu.id %}">{{wu.chief_complaint}}</a></td>
+				<td>{{wu.patient.case_manager}}</td>
+				<td>{{wu.author}}</td>
+				<td>{{wu.signer | default_if_none:"unattested"}}</td>
+			</tr>
+		{% endfor %}
+		</table>	
+	{% endfor %}
+
+	<nav aria-label="Page navigation" style="text-align: center;">
+		<ul class="pagination">
+		<li {% if not object_list.has_previous %} class="disabled" {% endif %}>
+			<a {% if object_list.has_previous %}  href="?page={{ object_list.previous_page_number }}" {% endif %} aria-label="Previous">
+				<span aria-hidden="true">&laquo;</span>
+			</a>
+		</li>
+		{% for pid in page_range %}
+		<li {% if pid == object_list.number %} class="active"{% endif %}><a href="?page={{ pid }}">{{ pid }}</a></li>
+		{% endfor %}
+		<li {% if not object_list.has_next %} class="disabled" {% endif %}>
+			<a {% if object_list.has_next %} href="?page={{ object_list.next_page_number }}" {% endif %} aria-label="Next">
+				<span aria-hidden="true">&raquo;</span>
+			</a>
+		</li>
+		</ul>
+	</nav>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "core/base-form.html" %}
+
+{% block title %}
+{{ note_type }} {{ patient.name }}
+{% endblock %}
+
+{% block header %}
+  <h2>New Referral Followup</h2>
+  <p class="lead">
+    Add a new referral followup for <em>
+    <a href="{% url 'core:patient-detail' pk=patient.pk %}">{{ patient.name }}</a></em>
+  </p>
+{% endblock %}
+
+{% block content %}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<div class="container">
+  {% load crispy_forms_tags %}
+  {% crispy form %}
+</div>
+
+<script>
+  $( document ).ready(function() {
+    $('#div_id_noapt_reason').show();
+    $('#div_id_pt_showed').hide();
+    $('#div_id_apt_location').hide();
+    $('#div_id_noshow_reason').hide();
+  });
+
+  $("#id_has_appointment").change(function(){
+    var has_apt = $("#id_has_appointment").is(":checked");
+
+    if (has_apt){
+      // has_apt => supply if pt showed
+      // 
+      $('#div_id_noapt_reason').hide();    $("#id_noapt_reason").val("");
+      $('#div_id_pt_showed').show();
+      $('#div_id_apt_location').show();
+    } else {
+      // no apt => explain why not
+      $('#div_id_noapt_reason').show();
+      $('#div_id_pt_showed').hide();       $("#id_pt_showed").val('');
+      $('#div_id_apt_location').hide();    $('#id_apt_location').val('');
+
+      // no apt => never show noshow
+      $('#div_id_noshow_reason').hide();   $("#id_noshow_reason").val('');
+    }
+  })
+
+  $("#id_pt_showed").change(function(){
+    // Get the value of the option
+    var showed_val = $("#id_pt_showed").val();
+
+    if(showed_val === "Yes"){
+      $('#div_id_noshow_reason').hide();  $("#id_noshow_reason").val('');
+    } else {
+      $('#div_id_noshow_reason').show();
+    }
+  })
+</script>
+
+{% endblock %}

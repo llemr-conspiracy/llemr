@@ -1,0 +1,25 @@
+{% extends "core/base.html" %}
+
+{% load bootstrap3 %}
+
+{% block title %}
+Choose a referral type
+{% endblock %}
+
+{% block header %}
+<h1>Choose a Referral Type</h1>
+<p><i>Each patient should be provided referrals for ongoing care to several FQHCs from a pre-screened list of FQHCs. Specialty referral refers to any non-FQHC referral (e.g., the COH).</i></p>
+{% endblock %}
+
+{% block content %}
+
+<div class="container text-center">
+	<div class="btn-group-vertical">
+  	{% for referral_type in referral_types %}
+	    <a class="btn btn-{% cycle 'info' 'success' 'warning' 'danger' %}" href="{% url 'new-referral' rtype=referral_type.slugify pt_id=pt.pk %}" role="button">Create {{referral_type}} referral</a>
+	{% endfor %}
+  
+	</div>
+</div>
+
+{% endblock %}

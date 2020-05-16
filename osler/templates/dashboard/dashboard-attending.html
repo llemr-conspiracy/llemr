@@ -1,0 +1,84 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Recent Clinic Dates
+{% endblock %}
+
+{% block header %}
+<h1>Attending Dashboard<span class="label label-primary" style='vertical-align: text-top; font-size: 0.3em'>BETA</span></h1>
+<small><a href="{% url 'home' %}">Take me back to the old home</a></small>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+	{% for clinic_date in clinics %}
+		<h3>{{clinic_date.clinic_type}} &mdash; {{clinic_date.clinic_date}}</h3>
+		<table class="table table-striped">
+	    <tr>
+		    <th>Patient</th>
+		    <th>Chief Complaint</th>
+		    <th>First Seen</th>
+		    <th>Attending</th> 
+		    <th>Note Author</th>
+		    <th>Attestation</th>
+		</tr>
+		{% for wu in clinic_date.workup_set.all %}
+			<tr {% if wu.signer == None %} class="warning" {% endif %}>
+				<td><a href="{% url 'core:patient-detail' pk=wu.patient.id %}">{{ wu.patient }}</a></td>
+				<td><a href="{% url 'workup' pk=wu.id %}">{{ wu.chief_complaint }}</a></td>
+				<td>{{ wu.patient.history.last.history_date | date:"D d M Y" }}</td>
+				<td>{{ wu.attending }}</td>
+				<td>{{ wu.author }}</td>
+				<td>{{ wu.signer | default_if_none:"unattested" }}</td>
+			</tr>
+		{% endfor %}
+		</table>	
+	{% endfor %}
+
+	<h3>Patients without Notes</h3>
+	<table class="table table-striped">
+		<tr>
+		    <th>Patient</th>
+		    <th>First Seen</th>
+		</tr>
+		{% for patient in no_note_patients.all %}
+		<tr>
+			<td><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient }}</a></td>
+			<td>{{ patient.history.last.history_date | date:"D d M Y" }}</td>
+		</tr>
+		{% endfor %}
+		<tr>
+			<td colspan="2" style="text-align:center;"><strong>&hellip;</strong></td>
+		</tr>
+	</table>
+
+	<nav aria-label="Page navigation" style='text-align: center;'>
+	  <ul class="pagination">
+	    <li {% if not clinics.has_previous %}class="disabled"{% endif %}>
+	      <a {% if clinics.has_previous %} href="?page={{ clinics.previous_page_number }}" {% endif %} aria-label="Previous">
+	        <span aria-hidden="true">&laquo;</span>
+	      </a>
+	    </li>
+
+	    {% for i in clinics.paginator.page_range %}
+		    <li {% if i == clinics.number %}class="active"{% endif %} ><a href="?page={{ i }}">{{ i }}</a></li>
+	    {% endfor %}
+
+	    <li {% if not clinics.has_next %}class="disabled"{% endif %}>
+	      <a {% if clinics.has_next %} href="?page={{ clinics.next_page_number }}" {% endif %} aria-label="Next">
+	        <span aria-hidden="true">&raquo;</span>
+	      </a>
+	    </li>
+	  </ul>
+	</nav>
+	<div>
+		<p style='text-align:center'>Page {{ clinics.number }} of {{ clinics.paginator.num_pages }}</p>
+	</div>
+
+</div>
+
+
+
+{% endblock %}

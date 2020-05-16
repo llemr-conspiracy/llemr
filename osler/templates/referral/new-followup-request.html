@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+New followup request
+{% endblock %}
+
+{% block header %}
+<h1>Request referral followup</h1>
+<p class="lead">Referral to 
+{% for ref in referral.location.all %}
+	{{ref.name}}
+	{% if forloop.last %}
+	{% else %}
+	or
+	{% endif %}
+{% endfor %}
+</p>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  {% load crispy_forms_tags %}
+  {% crispy form %}
+</div>
+
+{% endblock %}

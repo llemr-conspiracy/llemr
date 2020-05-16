@@ -1,0 +1,3 @@
+{% url 'new-patient-contact' pt_id=patient.id referral_id=action_item.referral.pk followup_id=action_item.pk as done_url %}
+{% url 'admin:referral_followuprequest_change' action_item.pk as admin_url %}
+{% include 'core/blurbs/base-blurb.html' %}

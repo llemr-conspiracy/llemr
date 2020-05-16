@@ -1,0 +1,28 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Create a New Note
+{% endblock %}
+
+{% block header %}
+<h2>Create a New Note</h2>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+	<div  class="col-md-4 col-md-offset-4">
+		<table class="table table-striped" style="text-align: center">
+			<tr><th style="text-align: center"><h4>Note Type</h4></th></tr>
+
+			{% for note_name, note_url in note_types.iteritems %}
+			<tr><td>
+				<a href="{{note_url}}" role="button">{{ note_name }}</a>
+			</td></tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
+
+{% endblock %}

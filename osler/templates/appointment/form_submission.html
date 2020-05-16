@@ -1,0 +1,18 @@
+{% extends "core/base-form.html" %}
+
+{% load bootstrap3 %}
+
+{% block title %}
+{{ note_type }} {{ patient.name }}
+{% endblock %}
+
+{% block header %}
+<h1>New {{ note_type }} </h1>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% load crispy_forms_tags %}
+  {% crispy form %}
+</div>
+{% endblock %}

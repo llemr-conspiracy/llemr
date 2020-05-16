@@ -1,0 +1,517 @@
+[
+{
+    "model": "core.contactmethod",
+    "pk": "Email",
+    "fields": {}
+},
+{
+    "model": "core.contactmethod",
+    "pk": "Phone",
+    "fields": {}
+},
+{
+    "model": "core.contactmethod",
+    "pk": "Snail Mail",
+    "fields": {}
+},
+{
+    "model": "core.referraltype",
+    "pk": "PCP",
+    "fields": {
+        "is_fqhc": true,
+        "is_active": true
+    }
+},
+{
+    "model": "core.referraltype",
+    "pk": "Specialty care",
+    "fields": {
+        "is_fqhc": false,
+        "is_active": true
+    }
+},
+{
+    "model": "core.referrallocation",
+    "pk": 1,
+    "fields": {
+        "name": "Back to SNHC",
+        "address": "",
+        "care_availiable": []
+    }
+},
+{
+    "model": "core.referrallocation",
+    "pk": 2,
+    "fields": {
+        "name": "SNHC Depression and Anxiety Specialty Night",
+        "address": "",
+        "care_availiable": []
+    }
+},
+{
+    "model": "core.referrallocation",
+    "pk": 3,
+    "fields": {
+        "name": "SNHC Dermatology Specialty Night",
+        "address": "",
+        "care_availiable": []
+    }
+},
+{
+    "model": "core.referrallocation",
+    "pk": 4,
+    "fields": {
+        "name": "SNHC OB/GYN Specialty Night",
+        "address": "",
+        "care_availiable": []
+    }
+},
+{
+    "model": "core.referrallocation",
+    "pk": 5,
+    "fields": {
+        "name": "Barnes Jewish Center for Outpatient Health (COH)",
+        "address": "",
+        "care_availiable": []
+    }
+},
+{
+    "model": "core.referrallocation",
+    "pk": 6,
+    "fields": {
+        "name": "BJC Behavioral Health (for Psych)",
+        "address": "",
+        "care_availiable": []
+    }
+},
+{
+    "model": "core.referrallocation",
+    "pk": 7,
+    "fields": {
+        "name": "St. Louis Dental Education and Oral Health Clinic",
+        "address": "",
+        "care_availiable": []
+    }
+},
+{
+    "model": "core.referrallocation",
+    "pk": 8,
+    "fields": {
+        "name": "St. Louis County Department of Health: South County Health Center",
+        "address": "",
+        "care_availiable": []
+    }
+},
+{
+    "model": "core.referrallocation",
+    "pk": 9,
+    "fields": {
+        "name": "Other",
+        "address": "",
+        "care_availiable": []
+    }
+},
+{
+    "model": "core.referrallocation",
+    "pk": 10,
+    "fields": {
+        "name": "Affina",
+        "address": "",
+        "care_availiable": []
+    }
+},
+{
+    "model": "core.referrallocation",
+    "pk": 11,
+    "fields": {
+        "name": "Family Care Center",
+        "address": "",
+        "care_availiable": []
+    }
+},
+{
+    "model": "core.referrallocation",
+    "pk": 12,
+    "fields": {
+        "name": "COH",
+        "address": "",
+        "care_availiable": []
+    }
+},
+{
+    "model": "core.language",
+    "pk": "Arabic",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Armenian",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Bengali",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Chinese",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Croatian",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Czech",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Danish",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Dutch",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "English",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Finnish",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "French",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "French Creole",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "German",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Greek",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Hebrew",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Hindi/Urdu",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Hungarian",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Italian",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Japanese",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Korean",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Lithuanian",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Persian",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Polish",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Portuguese",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Romanian",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Russian",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Samoan",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Serbocroatian",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Slovak",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Spanish",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Swedish",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Tagalog",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Thai/Laotian",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Turkish",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Ukrainian",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Vietnamese",
+    "fields": {}
+},
+{
+    "model": "core.language",
+    "pk": "Yiddish",
+    "fields": {}
+},
+{
+    "model": "core.ethnicity",
+    "pk": "American Indian or Alaska Native",
+    "fields": {}
+},
+{
+    "model": "core.ethnicity",
+    "pk": "Asian",
+    "fields": {}
+},
+{
+    "model": "core.ethnicity",
+    "pk": "Black or African American",
+    "fields": {}
+},
+{
+    "model": "core.ethnicity",
+    "pk": "Hispanic or Latino",
+    "fields": {}
+},
+{
+    "model": "core.ethnicity",
+    "pk": "Native Hawaiian or Other Pacific Islander",
+    "fields": {}
+},
+{
+    "model": "core.ethnicity",
+    "pk": "Other",
+    "fields": {}
+},
+{
+    "model": "core.ethnicity",
+    "pk": "White",
+    "fields": {}
+},
+{
+    "model": "core.actioninstruction",
+    "pk": "Lab Follow-Up",
+    "fields": {}
+},
+{
+    "model": "core.actioninstruction",
+    "pk": "Other",
+    "fields": {}
+},
+{
+    "model": "core.actioninstruction",
+    "pk": "PCP Follow-Up",
+    "fields": {}
+},
+{
+    "model": "core.actioninstruction",
+    "pk": "Vaccine Reminder",
+    "fields": {}
+},
+{
+    "model": "core.providertype",
+    "pk": "Attending",
+    "fields": {
+        "long_name": "Attending Physician",
+        "signs_charts": true,
+        "staff_view": false
+    }
+},
+{
+    "model": "core.providertype",
+    "pk": "Clinical",
+    "fields": {
+        "long_name": "Clinical Medical Student",
+        "signs_charts": false,
+        "staff_view": false
+    }
+},
+{
+    "model": "core.providertype",
+    "pk": "Coordinator",
+    "fields": {
+        "long_name": "Coordinator",
+        "signs_charts": false,
+        "staff_view": true
+    }
+},
+{
+    "model": "core.providertype",
+    "pk": "Preclinical",
+    "fields": {
+        "long_name": "Preclinical Medical Student",
+        "signs_charts": false,
+        "staff_view": false
+    }
+},
+{
+    "model": "core.gender",
+    "pk": "Female",
+    "fields": {
+        "short_name": "F"
+    }
+},
+{
+    "model": "core.gender",
+    "pk": "Male",
+    "fields": {
+        "short_name": "M"
+    }
+},
+{
+    "model": "core.gender",
+    "pk": "Other",
+    "fields": {
+        "short_name": "O"
+    }
+},
+{
+    "model": "core.historicalpatient",
+    "pk": 1,
+    "fields": {
+        "id": 1,
+        "first_name": "Frankie",
+        "last_name": "McNath",
+        "middle_name": "Lane",
+        "phone": "501-233-1234",
+        "address": "6310 Scott Ave.",
+        "city": "St. Louis",
+        "state": "MO",
+        "zip_code": "",
+        "country": "USA",
+        "pcp_preferred_zip": null,
+        "date_of_birth": "1989-08-09",
+        "patient_comfortable_with_english": true,
+        "alternate_phone_1_owner": null,
+        "alternate_phone_1": null,
+        "alternate_phone_2_owner": null,
+        "alternate_phone_2": null,
+        "alternate_phone_3_owner": null,
+        "alternate_phone_3": null,
+        "alternate_phone_4_owner": null,
+        "alternate_phone_4": null,
+        "email": null,
+        "needs_workup": true,
+        "gender": "Male",
+        "outcome": null,
+        "preferred_contact_method": null,
+        "history_date": "2019-03-03T01:40:53.814Z",
+        "history_change_reason": null,
+        "history_user": null,
+        "history_type": "+"
+    }
+},
+{
+    "model": "core.patient",
+    "pk": 1,
+    "fields": {
+        "first_name": "Frankie",
+        "last_name": "McNath",
+        "middle_name": "Lane",
+        "phone": "501-233-1234",
+        "gender": "Male",
+        "outcome": null,
+        "address": "6310 Scott Ave.",
+        "city": "St. Louis",
+        "state": "MO",
+        "zip_code": "",
+        "country": "USA",
+        "pcp_preferred_zip": null,
+        "date_of_birth": "1989-08-09",
+        "patient_comfortable_with_english": true,
+        "alternate_phone_1_owner": null,
+        "alternate_phone_1": null,
+        "alternate_phone_2_owner": null,
+        "alternate_phone_2": null,
+        "alternate_phone_3_owner": null,
+        "alternate_phone_3": null,
+        "alternate_phone_4_owner": null,
+        "alternate_phone_4": null,
+        "preferred_contact_method": null,
+        "email": null,
+        "needs_workup": true,
+        "languages": [
+            "English"
+        ],
+        "case_managers": [],
+        "ethnicities": [
+            "White"
+        ]
+    }
+},
+{
+    "model": "core.documenttype",
+    "pk": "Silly picture",
+    "fields": {}
+}
+]

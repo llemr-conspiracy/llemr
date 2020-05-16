@@ -1,0 +1,39 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Document: {{ document.patient.name }}
+{% endblock %}
+
+{% block header %}
+  <div class="row">
+    <div class="col-md-1" style="">
+      <h3><br><a href="{% url 'core:patient-detail' pk=document.patient.id %}"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a></h3>
+    </div>
+    <div class="col-md-4">
+      <h2>{{ document.document_type | title }}</h2>
+      <p class="lead">For <a href="{% url 'core:patient-detail' pk=document.patient.id %}">{{ document.patient.name }}</a></p>
+    </div>
+    <div class="col-md-1 pull-right">
+    <h1><a href="{% url 'core:document-update' pk=document.id %}"><small><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></small></a></h1>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <h3>{{ document.title}}</h3>
+    <small class="text-muted">uploaded by {{ document.author }} on {{ document.written_datetime }}</small>
+    {% if document.last_modified != document.written_datetime %}
+    <br><small class="text-muted">last modified {{document.last_modified}}</small>
+    {% endif %}
+  <div class="row ">
+    <embed src="{{ document.image.url }}" width="750" height="750"></embed>
+  </div>
+  <div class="row" style="padding: 20px">
+    <div class="container" style="border-radius: 10px; position: relative; padding: 15px 15px 15px; margin: 0 -10px 15px; border-color: #A4A4A4 #eee #eee; border-style: solid; border-width: 1px 0; -webkit-box-shadow: inset 0 3px 6px rgba(0, 0, 0, .05); box-shadow: inset 0 3px 6px rgba(0, 0, 0, .05);"
+    <p><strong>Comments:</strong> {{ document.comments }}</p>
+    </div>
+  </div>
+</div>  
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "core/base.html" %}
+
+{% block header %}
+<h2>Who goes there?</h2>
+{% if next %}
+{% if user.is_authenticated %}
+<p class="lead">Whoops! Looks like you don't have access to this page... sorry!</p>
+{% else %}
+<p class="lead">You'll need to log in to see this page.</p>
+{% endif %}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+ 
+{% if form.errors %}
+<p class="has-error">Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+<div class="container">
+
+  {% load crispy_forms_tags %}
+  {% crispy form %}
+
+  {# Assumes you setup the password_reset view in your URLconf #}
+  <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+</div>
+{% endblock %}

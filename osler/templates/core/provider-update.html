@@ -1,0 +1,18 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Update Provider: {{ object.name }}
+{% endblock %}
+
+{% block header %}
+<h2>We're seeing a lot of new faces in the hospital...</h2>
+<p class="lead">Are you one of them? Take this opportunity to let us know if anything has changed, especially if you're now a clinical student!</p>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	{% load crispy_forms_tags %}
+	{% crispy form %}
+</div>
+{% endblock %}

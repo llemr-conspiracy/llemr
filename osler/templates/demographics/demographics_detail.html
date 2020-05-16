@@ -1,0 +1,103 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Demographic Data: {{ demographics.patient.name }}
+{% endblock %}
+
+{% block header %}
+  <div class="row">
+    <div class="col-md-4">
+      <h1>Demographic Survey Data</h1>
+      <p class="lead">For <a href="{% url 'core:patient-detail' pk=demographics.patient.id %}">{{ demographics.patient.name }}</a></p>
+    </div>
+    <div class="col-md-1 pull-right">
+      <h1><a href="{% url 'demographics-update' pk=demographics.id %}">
+        <small><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></small></a>
+      </h1>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <h4>Medical</h4>
+        <div class="col-md-12">
+            <strong>Has Insurance: </strong>
+              {% if demographics.has_insurance %}
+              Yes
+              {% elif demographics.has_insurance != None %}
+              No
+              {% elif demographics.has_insurance == None %}
+              Not Answered
+              {% endif %}
+        </div>
+        <div class="col-md-12">
+            <strong>ER Visit in Last Year: </strong>
+              {% if demographics.ER_visit_last_year %}
+              Yes
+              {% elif demographics.ER_visit_last_year != None %}
+              No
+              {% elif demographics.ER_visit_last_year == None %}
+              Not Answered
+              {% endif %}
+        </div>
+        <div class="col-md-12">
+            <strong>Last Date Visited Physician:</strong> {{ demographics.last_date_physician_visit }}
+        </div>
+        <div class="col-md-12">
+            <strong>Chronic Conditions: </strong>
+            {% for condition in demographics.chronic_condition.all %}
+              {{ condition }}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="row">
+        <h4>Social</h4>
+        <div class="col-md-12">
+            <strong>Lives Alone: </strong>
+              {% if demographics.lives_alone %}
+              Yes
+              {% elif demographics.lives_alone != None %}
+              No
+              {% elif demographics.lives_alone == None %}
+              Not Answered
+              {% endif %}
+        </div>
+        <div class="col-md-12">
+            <strong>Number of Dependents: </strong> {{ dependents }}
+        </div>
+        <div class="col-md-12">
+            <strong>Transportation: </strong> {{ demographics.transportation }}
+        </div>
+        <div class="col-md-12">
+            <strong>Resource Access:</strong> 
+            {% for resource in demographics.resource_access.all %}
+              {{ resource }}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="row">
+        <h4>Employment</h4>
+        <div class="col-md-12">
+            <strong>Education Level:</strong> {{ demographics.education_level }}
+        </div>
+        <div class="col-md-12">
+            <strong>Currently Employed: </strong>
+            {% if demographics.currently_employed %}
+              Yes
+              {% elif demographics.currently_employed != None %}
+              No
+              {% elif demographics.currently_employed == None %}
+              Not Answered
+              {% endif %}
+        </div>
+        <div class="col-md-12">
+            <strong>Work Status:</strong> {{ demographics.work_status }}
+        </div>
+        <div class="col-md-12">
+            <strong>Annual Income:</strong> {{ demographics.annual_income }}
+        </div>
+    </div>
+</div>  
+{% endblock %}
