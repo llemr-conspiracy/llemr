@@ -1,24 +1,15 @@
 '''Forms for the Oser core components.'''
-from __future__ import unicode_literals
-from builtins import zip
-from builtins import str
-from builtins import range
-from builtins import object
 
 from django.forms import (Form, CharField, ModelForm, EmailField,
                           CheckboxSelectMultiple, ModelMultipleChoiceField)
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import get_user_model
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import Submit, Field, Layout, Row, Column
 from crispy_forms.bootstrap import InlineCheckboxes
-from crispy_forms.layout import ButtonHolder, Submit
-from . import models
 
-from crispy_forms.layout import Field
-from django import forms
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Row, Column
+from . import models
 
 
 class CustomCheckbox(Field):
@@ -43,14 +34,13 @@ class PatientForm(ModelForm):
         model = models.Patient
         exclude = ['needs_workup', 'demographics']
 
-    # limit the options for the case_managers field to Providers with
-    # ProviderType with staff_view=True
-
+    # limit the options for the case_managers
     case_managers = ModelMultipleChoiceField(
         required=False,
-        queryset=models.Provider.objects.filter(
-            clinical_roles__in=models.ProviderType.objects.filter(
-                staff_view=True)).distinct().order_by("last_name"),
+        queryset=get_user_model().objects
+        .filter(user_permissions__contains='osler.core.can_case_manage')
+        .distinct()
+        .order_by("last_name"),
     )
 
     def __init__(self, *args, **kwargs):

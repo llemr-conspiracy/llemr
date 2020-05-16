@@ -1,15 +1,9 @@
 '''The datamodels for the Osler core'''
-from __future__ import unicode_literals
-import os
-import uuid
-
-from builtins import str
-from builtins import range
-from builtins import object
 from itertools import chain
 
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import Group
 from django.utils.timezone import now
 from django.utils.text import slugify
 from django.urls import reverse
@@ -17,31 +11,7 @@ from django.urls import reverse
 from simple_history.models import HistoricalRecords
 
 from osler.core import validators
-
-
-def make_filepath(instance, filename):
-    """Produces a unique file path for the upload_to of a FileField.
-
-    This is important because any URL is 1) transmitted unencrypted and
-    2) automatically referred to any libraries we include (i.e. Bootstrap).
-
-    The produced path is of the form:
-    "[model name]/[field name]/[random name].[filename extension]".
-
-    Inspired by https://djangosnippets.org/snippets/2819/, modified over
-    the years.
-    """
-
-    carry_on = True
-    while carry_on:
-        new_filename = "%s.%s" % (uuid.uuid4(), filename.split('.')[-1])
-
-        path = new_filename
-
-        # if the file already exists, try again to generate a new filename
-        carry_on = os.path.isfile(os.path.join(settings.MEDIA_ROOT, path))
-
-    return path
+from osler.core import utils
 
 
 class ContactMethod(models.Model):
@@ -83,6 +53,8 @@ class ReferralLocation(models.Model):
 
 
 class Language(models.Model):
+    """A natural language, spoken by a provider or patient.
+    """
     name = models.CharField(max_length=50, primary_key=True)
 
     def __str__(self):
@@ -90,8 +62,10 @@ class Language(models.Model):
 
 
 class Ethnicity(models.Model):
+    """An ethnicity, of a patient.
+    """
 
-    class Meta(object):
+    class Meta:
         verbose_name_plural = "ethnicities"
 
     name = models.CharField(max_length=50, primary_key=True)
@@ -108,22 +82,14 @@ class ActionInstruction(models.Model):
         return self.instruction
 
 
-class ProviderType(models.Model):
-    long_name = models.CharField(max_length=100)
-    short_name = models.CharField(max_length=30, primary_key=True)
-    signs_charts = models.BooleanField(default=False)
-    staff_view = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.short_name
-
-
 class Gender(models.Model):
-    long_name = models.CharField(max_length=30, primary_key=True)
-    short_name = models.CharField(max_length=1)
+    name = models.CharField(max_length=30, primary_key=True)
 
     def __str__(self):
-        return self.long_name
+        return self.name
+
+    def short_name(self):
+        return self.name[0]
 
 
 class Outcome(models.Model):
@@ -135,7 +101,7 @@ class Outcome(models.Model):
 
 class Person(models.Model):
 
-    class Meta(object):
+    class Meta:
         abstract = True
 
     first_name = models.CharField(
@@ -173,30 +139,12 @@ class Person(models.Model):
                              self.last_name])
 
 
-class Provider(Person):
-
-    associated_user = models.OneToOneField(
-        settings.AUTH_USER_MODEL,
-        blank=True, null=True,
-        on_delete=models.CASCADE)
-
-    clinical_roles = models.ManyToManyField(ProviderType)
-
-    needs_updating = models.BooleanField(default=False)
-
-    history = HistoricalRecords()
-
-    @property
-    def username(self):
-        return self.associated_user.username
-
-    def __str__(self):
-        return self.name()
-
-
 class Patient(Person):
 
-    case_managers = models.ManyToManyField(Provider)
+    class Meta:
+        permissions = [('can_case_manage', "Can act as a case manager.")]
+
+    case_managers = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
     outcome = models.ForeignKey(Outcome, null=True, blank=True,
                                 on_delete=models.PROTECT)
@@ -204,13 +152,13 @@ class Patient(Person):
     address = models.CharField(max_length=200)
 
     city = models.CharField(max_length=50,
-                            default="St. Louis")
-    state = models.CharField(max_length=2,
-                             default="MO")
+                            default=settings.OSLER_DEFAULT_CITY)
+    state = models.CharField(max_length=3,
+                             default=settings.OSLER_DEFAULT_STATE)
     zip_code = models.CharField(max_length=5,
                                 validators=[validators.validate_zip])
     country = models.CharField(max_length=100,
-                               default="USA")
+                               default=settings.OSLER_DEFAULT_COUNTRY)
 
     pcp_preferred_zip = models.CharField(max_length=5,
                                          validators=[validators.validate_zip],
@@ -389,12 +337,12 @@ def require_providers_update():
 
 
 class Note(models.Model):
-    class Meta(object):
+    class Meta:
         abstract = True
         ordering = ["-written_datetime", "-last_modified"]
 
     author = models.ForeignKey(Provider, on_delete=models.PROTECT)
-    author_type = models.ForeignKey(ProviderType, on_delete=models.PROTECT)
+    author_type = models.ForeignKey(Group, on_delete=models.PROTECT)
     patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
 
     written_datetime = models.DateTimeField(auto_now_add=True)
@@ -413,7 +361,7 @@ class Document(Note):
     image = models.FileField(
         help_text="Please deidentify all file names before upload! "
                   "Delete all files after upload!",
-        upload_to=make_filepath,
+        upload_to=utils.make_filepath,
         verbose_name="PDF File or Image Upload")
     comments = models.TextField()
     document_type = models.ForeignKey(DocumentType, on_delete=models.PROTECT)
@@ -457,7 +405,7 @@ class CompletableMixin(models.Model):
     complete.
     """
 
-    class Meta(object):
+    class Meta:
         abstract = True
 
     objects = CompletableManager()

@@ -1,9 +1,6 @@
-from __future__ import division
-from __future__ import unicode_literals
-from builtins import object
-from past.utils import old_div
 from decimal import Decimal, ROUND_HALF_UP
 
+from django.contrib.auth import get_user_model
 from django.forms import (
     fields, ModelForm, ModelChoiceField, ModelMultipleChoiceField, RadioSelect
 )
@@ -15,7 +12,7 @@ from crispy_forms.bootstrap import (
     InlineCheckboxes, AppendedText, PrependedText)
 from crispy_forms.utils import TEMPLATE_PACK, render_field
 
-from osler.core.models import Provider, ProviderType
+from osler.core.models import Provider
 from osler.workup import models
 
 
@@ -153,21 +150,18 @@ class WorkupForm(ModelForm):
         exclude = ['patient', 'author', 'signer', 'author_type',
                    'signed_date', 'referral_location', 'referral_type']
 
-    # limit the options for the attending, other_volunteer field to
-    # Providers with ProviderType with signs_charts=True, False
-    # (includes coordinators and volunteers)
+    # limit the options for the attending, other_volunteer field by
+    # checking the signs charts permission.
     attending = ModelChoiceField(
         required=False,
-        queryset=Provider.objects.filter(
-            clinical_roles__in=ProviderType.objects.filter(
-                signs_charts=True)).order_by("last_name")
+        queryset=get_user_model().objects.filter(
+            user_permissions__contains='osler.workup.Workup.signs_charts')
     )
 
     other_volunteer = ModelMultipleChoiceField(
         required=False,
-        queryset=Provider.objects.filter(
-            clinical_roles__in=ProviderType.objects.filter(
-                signs_charts=False)).distinct().order_by("last_name"),
+        queryset=get_user_model().objects.exclude(
+            user_permissions__contains='osler.workup.Workup.signs_charts')
     )
 
     def __init__(self, *args, **kwargs):
