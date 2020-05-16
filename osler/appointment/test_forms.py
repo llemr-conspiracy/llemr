@@ -1,19 +1,27 @@
-from __future__ import unicode_literals
+from datetime import time
+
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils.timezone import now
-from osler.core.models import Provider, ProviderType, Patient
-from datetime import time
+
+from osler.core.models import Patient
+
 from .forms import AppointmentForm
 
 
+User = get_user_model()
+
+
 def apt_dict():
-    apt = {'clindate': now().date(),
-           'clintime': time(9, 0),
-           'appointment_type': 'PSYCH_NIGHT',
-           'comment': 'stuff',
-           'author': Provider.objects.first(),
-           'author_type': ProviderType.objects.first(),
-           'patient': Patient.objects.first().id}
+    apt = {
+        'clindate': now().date(),
+        'clintime': time(9, 0),
+        'appointment_type': 'PSYCH_NIGHT',
+        'comment': 'stuff',
+        'author': User.objects.first(),
+        'author_type': User.objects.first().groups.first(),
+        'patient': Patient.objects.first().id
+    }
 
     return(apt)
 

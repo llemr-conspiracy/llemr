@@ -140,6 +140,22 @@ class Person(models.Model):
                              self.last_name])
 
 
+class Provider(Person):
+    """Data additional to the User model to track about each provider.
+
+    Primarily combines Person and User.
+    """
+
+    # Users should be made inactive rather than deleted in almost all cases
+    user = models.OneToOneField(get_user_model(), on_delete=models.PROTECT)
+
+    def first_name(self):
+        return self.user.first_name
+
+    def last_name(self):
+        return self.user.last_name
+
+
 class Patient(Person):
 
     class Meta:

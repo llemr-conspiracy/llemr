@@ -1,21 +1,27 @@
+import factory
+
 from typing import Any, Sequence
 
 from django.contrib.auth import get_user_model
-from factory import DjangoModelFactory, Faker, post_generation
+from django.contrib.auth.models import Group, Permission
 
 
-class UserFactory(DjangoModelFactory):
+class UserFactory(factory.django.DjangoModelFactory):
 
-    username = Faker("user_name")
-    email = Faker("email")
-    name = Faker("name")
+    class Meta:
+        model = get_user_model()
+        django_get_or_create = ["username"]
 
-    @post_generation
+    username = factory.Faker("user_name")
+    email = factory.Faker("email")
+    name = factory.Faker("name")
+
+    @factory.post_generation
     def password(self, create: bool, extracted: Sequence[Any], **kwargs):
         password = (
             extracted
             if extracted
-            else Faker(
+            else factory.Faker(
                 "password",
                 length=42,
                 special_chars=True,
@@ -26,6 +32,14 @@ class UserFactory(DjangoModelFactory):
         )
         self.set_password(password)
 
-    class Meta:
-        model = get_user_model()
-        django_get_or_create = ["username"]
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        if not create:
+            # Simple build, do nothing.
+            return
+
+        # triggered with: UserFactory.create(groups=(group1, group2, group3))
+        if extracted:
+            # A list of groups were passed in, use them
+            for group in extracted:
+                self.groups.add(group)

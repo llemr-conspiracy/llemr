@@ -2,8 +2,10 @@
 
 from django.forms import (Form, CharField, ModelForm, EmailField,
                           CheckboxSelectMultiple, ModelMultipleChoiceField)
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import Group, Permission
+
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Field, Layout, Row, Column
@@ -37,8 +39,10 @@ class PatientForm(ModelForm):
     # limit the options for the case_managers
     case_managers = ModelMultipleChoiceField(
         required=False,
-        queryset=get_user_model().objects
-        .filter(groups__permissions__codename='can_case_manage')
+        queryset=get_user_model().objects.filter(
+            groups__in=Group.objects.filter(
+                permissions__in=Permission.objects.filter(
+                    codename='can_case_manage')))
         .distinct()
         .order_by("last_name"),
     )
