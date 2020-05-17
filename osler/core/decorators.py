@@ -9,17 +9,15 @@ from django.shortcuts import resolve_url
 
 
 def provider_exists(user):
-    # print "Chekcing provider", hasattr(user, 'provider')
     return hasattr(user, 'provider')
 
 
 def clintype_set(session):
-    # print "Checking clintype", 'clintype_pk' in session
     return 'clintype_pk' in session
 
 
 def provider_has_updated(user):
-    return (not getattr(user, 'provider').needs_updating)
+    return not user.needs_updating
 
 
 def session_passes_test(test_func, fail_url,

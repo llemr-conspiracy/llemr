@@ -155,6 +155,9 @@ class Provider(Person):
     def last_name(self):
         return self.user.last_name
 
+    def __str__(self):
+        return "Provider Object on %s." % self.user
+
 
 class Patient(Person):
 

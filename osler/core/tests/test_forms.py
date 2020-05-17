@@ -3,13 +3,12 @@ import factory
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from django.test import TestCase
-from django.shortcuts import get_object_or_404
 
 from osler.core.models import ActionInstruction
 from osler.core import forms
 
 from osler.core.tests import factories
-from osler.users.tests.factories import UserFactory
+from osler.users.tests import factories as user_factories
 
 User = get_user_model()
 
@@ -18,7 +17,7 @@ class TestActionItemCreateForms(TestCase):
     '''Tests for form used to create new Action Items'''
 
     def setUp(self):
-        self.user = UserFactory()
+        self.user = user_factories.UserFactory()
         self.ai_data = factory.build(
             dict, FACTORY_CLASS=factories.ActionItemFactory)
 
@@ -57,53 +56,18 @@ class TestPatientCreateForms(TestCase):
 
         self.valid_pt_dict = factory.build(
             dict, FACTORY_CLASS=factories.PatientFactory)
-        # self.valid_pt_dict = {
-        #     'first_name': "Juggie",
-        #     'last_name': "Brodeltein",
-        #     'middle_name': "Bayer",
-        #     'phone': '+49 178 236 5288',
-        #     'languages': [Language.objects.create(name="Klingon")],
-        #     'gender': Gender.objects.create(
-        #         long_name="Male", short_name="M").pk,
-        #     'address': 'Schulstrasse 9',
-        #     'city': 'Munich',
-        #     'state': 'BA',
-        #     'country': 'Germany',
-        #     'zip_code': '63108',
-        #     'pcp_preferred_zip': '63018',
-        #     'date_of_birth': datetime.date(1990, 1, 1),
-        #     'patient_comfortable_with_english': False,
-        #     'ethnicities': [Ethnicity.objects.create(name="Klingon")],
-        #     'preferred_contact_method':
-        #         ContactMethod.objects.create(
-        #             name="Tin Cans + String").pk,
-        # }
 
     def test_form_casemanager_options(self):
         """PatientForm only offers valid case managers as options.
         """
 
-        pvds = UserFactory.create_batch(3)
+        pvds = user_factories.UserFactory.create_batch(3)
 
-        pvds[0].is_staff = True
-        pvds[1].is_staff = True
-
-        casemanager = Group.objects.create(name='Case Manager')
-        not_casemanager = Group.objects.create(name='Not Case Manager')
-
-        casemanager.save()
-        not_casemanager.save()
+        casemanager = user_factories.CaseManagerGroupFactory()
+        not_casemanager = user_factories.VolunteerGroupFactory()
 
         assert Permission.objects.filter(
             codename='can_case_manage').count() == 1
-
-        casemanager.permissions.add(
-            *Permission.objects.all())
-        not_casemanager.permissions.add(
-            *Permission.objects.exclude(codename='can_case_manage'))
-
-        casemanager.save()
-        not_casemanager.save()
 
         pvds[0].groups.add(not_casemanager)
         pvds[1].groups.add(casemanager)

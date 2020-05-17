@@ -1,9 +1,3 @@
-from __future__ import print_function, division
-from __future__ import unicode_literals
-
-from builtins import zip
-from builtins import str
-from builtins import range
 import datetime
 import json
 import os
@@ -11,7 +5,7 @@ import os
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.timezone import now
-from django.core import mail, files
+from django.core import mail
 from django.core.management import call_command
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -21,8 +15,10 @@ from osler.followup.models import ContactResult
 from osler.referral.models import Referral, FollowupRequest, PatientContact
 from osler.referral.forms import PatientContactForm
 
+from osler.core.tests import factories
+from osler.users.tests import factories as user_factories
 
-BASIC_FIXTURE = 'core.json'
+# BASIC_FIXTURE = 'core.json'
 
 
 def note_check(note, author, clintype, pt_pk):
@@ -39,45 +35,45 @@ def note_check(note, author, clintype, pt_pk):
     assert (now() - note.last_modified).total_seconds() <= 10
 
 
-def build_provider(roles=None, username=None, password='password', email=None):
+# def build_provider(roles=None, username=None, password='password', email=None):
 
-    User = get_user_model()
+#     User = get_user_model()
 
-    # TODO this is not preferred. Should swap None for '__all__'
-    # this will require hunting down all the places this is called, though.
-    if roles is None:
-        roles = ["Coordinator", "Attending", "Clinical", "Preclinical"]
+#     # TODO this is not preferred. Should swap None for '__all__'
+#     # this will require hunting down all the places this is called, though.
+#     if roles is None:
+#         roles = ["Coordinator", "Attending", "Clinical", "Preclinical"]
 
-    provtypes = [models.ProviderType.objects.get(short_name=role)
-                 for role in roles]
+#     provtypes = [models.ProviderType.objects.get(short_name=role)
+#                  for role in roles]
 
-    if username is None:
-        username = 'user' + str(User.objects.all().count())
+#     if username is None:
+#         username = 'user' + str(User.objects.all().count())
 
-    if email is None:
-        email = 'tommyljones@gmail.com'
-    user = User.objects.create_user(
-        username,
-        email, password)
-    user.save()
+#     if email is None:
+#         email = 'tommyljones@gmail.com'
+#     user = User.objects.create_user(
+#         username,
+#         email, password)
+#     user.save()
 
-    g = models.Gender.objects.first()
-    prov = models.Provider.objects.create(
-        first_name="Tommy", middle_name="Lee", last_name="Jones",
-        phone="425-243-9115", gender=g, associated_user=user)
+#     g = models.Gender.objects.first()
+#     prov = models.Provider.objects.create(
+#         first_name="Tommy", middle_name="Lee", last_name="Jones",
+#         phone="425-243-9115", gender=g, associated_user=user)
 
-    coordinator_provider = models.ProviderType.objects.get(pk="Coordinator")
-    coordinator_provider.staff_view = True
-    coordinator_provider.save()
+#     coordinator_provider = models.ProviderType.objects.get(pk="Coordinator")
+#     coordinator_provider.staff_view = True
+#     coordinator_provider.save()
 
-    prov.clinical_roles.add(*provtypes)
-    prov.save()
-    user.save()
+#     prov.clinical_roles.add(*provtypes)
+#     prov.save()
+#     user.save()
 
-    assert len(roles) == prov.clinical_roles.count()
-    assert user.provider is not None
+#     assert len(roles) == prov.clinical_roles.count()
+#     assert user.provider is not None
 
-    return user.provider
+#     return user.provider
 
 
 def log_in_provider(client, provider):
@@ -112,90 +108,97 @@ def is_uuid4(uuid):
 
 
 class SendEmailTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
+    # fixtures = [BASIC_FIXTURE]
     """Test custom django management command sendemail
     """
     def setUp(self):
-        log_in_provider(
-            self.client, build_provider(roles=["Coordinator"],
-                                        email='user1@gmail.com'))
-        log_in_provider(
-            self.client, build_provider(roles=["Coordinator"],
-                                        email='user2@gmail.com'))
-        log_in_provider(
-            self.client, build_provider(roles=["Coordinator"],
-                                        email='user3@gmail.com'))
+        self.users = user_factories.UserFactory.create_batch(
+            4,
+            groups=[user_factories.CaseManagerGroupFactory()],
+            provider=factories.ProviderFactory())
 
-        pt = models.Patient.objects.first()
-        pt.case_managers.add(models.Provider.objects.first())
-        pt.case_managers.add(models.Provider.objects.all()[2])
-
-        ai_inst = models.ActionInstruction.objects.create(
-            instruction="Follow up on labs")
+        pt = factories.PatientFactory(
+            case_managers=[self.users[0], self.users[2]]
+        )
 
         tomorrow = now().date() + datetime.timedelta(days=1)
         yesterday = now().date() - datetime.timedelta(days=1)
 
-        ai_prototype = {
-            'instruction': ai_inst,
-            'comments': "",
-            'author_type': models.ProviderType.objects.first(),
-            'patient': pt
-        }
+#         ai_prototype = {
+#             'instruction': ai_inst,
+#             'comments': "",
+#             'author_type': models.ProviderType.objects.first(),
+#             'patient': pt
+#         }
 
         # action item due today
-        models.ActionItem.objects.create(
+        factories.ActionItemFactory(
+            patient=pt,
             due_date=now().today(),
-            author=models.Provider.objects.first(),
-            **ai_prototype
+            author=self.users[0]
         )
 
         # action item due yesterday
-        models.ActionItem.objects.create(
+        factories.ActionItemFactory(
+            patient=pt,
             due_date=yesterday,
-            author=models.Provider.objects.first(),
-            **ai_prototype
+            author=self.users[0]
         )
 
         # action item due tomorrow
-        models.ActionItem.objects.create(
+        factories.ActionItemFactory(
+            patient=pt,
             due_date=tomorrow,
-            author=models.Provider.objects.all()[1],
-            **ai_prototype
+            author=self.users[1]
         )
 
         # complete action item from yesterday
-        models.ActionItem.objects.create(
+        factories.ActionItemFactory(
+            patient=pt,
             due_date=yesterday,
-            author=models.Provider.objects.all()[1],
+            author=self.users[1],
             completion_date=now(),
-            completion_author=models.Provider.objects.first(),
-            **ai_prototype
+            completion_author=self.users[1],
         )
 
     def test_sendemail(self):
-        '''
-        Verifies that email is correctly being sent for incomplete,
+        """Verifies that email is correctly being sent for incomplete,
         overdue action items
-        '''
+        """
+
+        print([(i, u.email) for i, u in enumerate(self.users)])
+
         call_command('action_item_spam')
 
         # test that 1 message has been sent for the AI due yesterday and
         # today but only 1 email bc same pt/case manager
-        self.assertEqual(len(mail.outbox), 1)
+        assert len(mail.outbox) == 1
 
-        #verify that subject is correct
-        self.assertEqual(mail.outbox[0].subject, 'SNHC: Action Item Due')
+        # verify that subject is correct
+        assert mail.outbox[0].subject == 'SNHC: Action Item Due'
 
-        #verify that the 1 message is to user1 and user3 (second case manager)
-        self.assertEqual(mail.outbox[0].to, ['user1@gmail.com', 'user3@gmail.com'])
+        # verify that the 1 message is to user[0] and user[2] (second
+        # case manager) and NOT user[1] and user[3]
+        print(mail.outbox[0].to)
+        assert set(mail.outbox[0].to) == set([self.users[0].email,
+                                              self.users[2].email])
 
 
 class ViewsExistTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
+    # fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        log_in_provider(self.client, build_provider())
+        self.user = user_factories.UserFactory(
+            groups=[user_factories.VolunteerGroupFactory()],
+            provider=factories.ProviderFactory())
+        self.user.provider.save()
+
+        self.client.force_login(self.user)
+        s = self.client.session
+        s['clintype_pk'] = self.user.groups.first().pk
+        s.save()
+
+        self.patient = factories.PatientFactory()
 
     def test_initial_config(self):
         session = self.client.session
@@ -204,13 +207,13 @@ class ViewsExistTest(TestCase):
 
         # verify: no clinic date -> create clinic date
         response = self.client.get(reverse('core:all-patients'))
-        self.assertRedirects(response,
-                             ''.join([reverse('core:choose-clintype'),
-                                      "?next=",
-                                      reverse('core:all-patients')]))
 
         # verify: no provider -> provider creation
         # (now done in ProviderCreateTest)
+        assert response.status_code == 302
+        assert response.url == ''.join([reverse('core:choose-clintype'),
+                                        "?next=",
+                                        reverse('core:all-patients')])
 
         # verify: not logged in -> log in
         self.client.logout()
@@ -252,30 +255,20 @@ class ViewsExistTest(TestCase):
         assert response.status_code == 200
 
     def test_document_urls(self):
-        '''
-        Test the views showing documents, as well as the integrity of path
-        saving in document creation (probably superfluous).
-        '''
+        """Test the views showing documents
 
-        self.test_img = os.path.join(settings.FIXTURE_DIRS[0], 'media',
-                                     'test.jpg')
-        assert os.path.isfile(self.test_img)
+        Check the integrity of path saving in document creation (probably
+        superfluous) and the UUID file naming.
+        """
 
-        url = reverse('core:new-document', args=(1,))
+        url = reverse('core:new-document', args=(self.patient.pk,))
 
         response = self.client.get(url)
         assert response.status_code == 200
-        dtype = models.DocumentType.objects.create(name="Silly Picture")
 
-        doc = models.Document.objects.create(
-            title="who done it?",
-            comments="Pictured: silliness",
-            document_type=dtype,
-            image=files.File(open(self.test_img, 'rb')),
-            patient=models.Patient.objects.first(),
-            author=models.Provider.objects.first(),
-            author_type=models.ProviderType.objects.first()
-        )
+        doc = factories.DocumentFactory(
+            author=self.user,
+            author_type=self.user.groups.first())
 
         p = models.Document.objects.first().image.path
         assert open(p)
@@ -287,34 +280,6 @@ class ViewsExistTest(TestCase):
         response = self.client.get(url)
         assert response.status_code == 200
 
-        # test the creation of many documents, just in case.
-        for i in range(101):
-            doc = models.Document.objects.create(
-                title="who done it? " + str(i),
-                comments="Pictured: silliness",
-                document_type=dtype,
-                image=files.File(open(self.test_img, 'rb')),
-                patient=models.Patient.objects.first(),
-                author=models.Provider.objects.first(),
-                author_type=models.ProviderType.objects.first())
-
-            p = models.Document.objects.get(id=doc.pk).image.path
-            assert open(p)
-            assert doc.image.path == p
-            assert os.path.isfile(p)
-            assert is_uuid4(p.split("/")[-1].split(".")[0])
-
-            url = reverse('core:document-detail', args=(doc.pk,))
-            response = self.client.get(url)
-            assert response.status_code == 200
-
-            url = reverse('core:document-detail', args=(doc.pk,))
-            response = self.client.get(url)
-            assert response.status_code == 200
-
-            os.remove(p)
-            assert not os.path.isfile(p)
-
     def test_inject_choose_clintype_malicious_next(self):
 
         # First, check that we successfully redirect to all patients.
@@ -324,7 +289,7 @@ class ViewsExistTest(TestCase):
             reverse('core:all-patients')
         ])
 
-        form_data = {'radio-roles': models.ProviderType.objects.first().pk}
+        form_data = {'radio-roles': self.user.groups.first().pk}
         response = self.client.post(url, form_data)
 
         self.assertRedirects(response, reverse('core:all-patients'))
@@ -332,7 +297,7 @@ class ViewsExistTest(TestCase):
         # Then, verfy that we will NOT redirect to google.com
         url = reverse('core:choose-clintype') + "?next=http://www.google.com/"
 
-        form_data = {'radio-roles': models.ProviderType.objects.first().pk}
+        form_data = {'radio-roles': self.user.groups.first().pk}
         response = self.client.post(url, form_data)
 
         assert response.status_code == 302
@@ -340,7 +305,7 @@ class ViewsExistTest(TestCase):
 
 
 class ProviderCreateTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
+    # fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
         log_in_provider(self.client, build_provider())
@@ -436,7 +401,7 @@ class ProviderCreateTest(TestCase):
 
 
 class IntakeTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
+    # fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
         log_in_provider(self.client, build_provider())
@@ -529,7 +494,7 @@ class IntakeTest(TestCase):
 
 
 class ActionItemTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
+    # fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
         self.coordinator = build_provider(["Coordinator"])
@@ -643,7 +608,8 @@ class ActionItemTest(TestCase):
 
 
 class ProviderUpdateTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
+    # fixtures = [BASIC_FIXTURE]
+
 
     def test_require_providers_update(self):
         """Test that the require_providers_update() method sets all
@@ -736,7 +702,7 @@ class TestReferralPatientDetailIntegration(TestCase):
     """Tests integration of Action Items and Referral Followups in
     core:patient-detail."""
 
-    fixtures = [BASIC_FIXTURE]
+    # fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
         log_in_provider(self.client, build_provider())

@@ -40,6 +40,31 @@ def new_note_dispatch(request, pt_id):
                   {'note_types': note_types})
 
 
+class AttestableNoteCreate(NoteFormView):
+
+    def form_valid(self, form):
+        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        active_group = get_object_or_404(
+            Group, pk=self.request.session['clintype_pk'])
+
+        note = form.save(commit=False)
+        note.patient = pt
+        note.author = self.request.user
+
+        can_sign = active_group.permissions.filter(
+            'can_sign_%s' % str(self.form_class.Meta.object).lower()
+        ).count() > 0
+
+        if can_sign:
+            note.sign(self.request.user, active_group)
+
+        note.save()
+        form.save_m2m()
+
+        return HttpResponseRedirect(reverse("core:patient-detail",
+                                            args=(pt.id,)))
+
+
 class WorkupCreate(NoteFormView):
     '''A view for creating a new workup. Checks to see if today is a
     clinic date first, and prompts its creation if none exist.'''
@@ -89,23 +114,6 @@ class WorkupCreate(NoteFormView):
 
         return initial
 
-    def form_valid(self, form):
-        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
-        active_user_group = get_object_or_404(
-            Group, pk=self.request.session['clintype_pk'])
-
-        wu = form.save(commit=False)
-        wu.patient = pt
-        wu.author = self.request.user
-        if wu.author.has_perm('osler.workup.Workup.can_sign'):
-            wu.sign(self.request.user, active_user_group)
-
-        wu.save()
-
-        form.save_m2m()
-
-        return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
-
 
 class WorkupUpdate(NoteUpdate):
     template_name = "core/form-update.html"
@@ -143,28 +151,10 @@ class ProgressNoteUpdate(NoteUpdate):
         return reverse("progress-note-detail", args=(pnote.id, ))
 
 
-class ProgressNoteCreate(NoteFormView):
+class ProgressNoteCreate(AttestableNoteCreate):
     template_name = 'core/form_submission.html'
     form_class = forms.ProgressNoteForm
     note_type = 'Clinical Psychology Note'
-
-    def form_valid(self, form):
-        pnote = form.save(commit=False)
-
-        pnote.patient = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
-        pnote.author = self.request.user
-
-        active_user_group = get_active_user_group(self.request)
-        pnote.author_type = active_user_group
-
-        if pnote.author.has_perm('osler.core.ProgressNote.can_sign'):
-            pnote.sign(pnote.author, active_user_group)
-
-        pnote.save()
-        form.save_m2m()
-
-        return HttpResponseRedirect(reverse("core:patient-detail",
-                                            args=(pnote.patient.id,)))
 
 
 class ClinicDateCreate(FormView):

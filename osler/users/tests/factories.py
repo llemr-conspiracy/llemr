@@ -4,6 +4,58 @@ from typing import Any, Sequence
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
+from django.db.models import Q
+
+
+class GroupFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = Group
+
+    name = factory.Sequence(lambda n: "Generic Group #%s" % n)
+
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        self.permissions.add(
+            *Permission.objects.all()
+        )
+
+
+class VolunteerGroupFactory(GroupFactory):
+
+    name = factory.Sequence(lambda n: "Volunteer Group #%s" % n)
+
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        self.permissions.add(
+            *Permission.objects.exclude(
+                Q(codename__startswith='sign_') | Q(codename='can_case_manage')
+            )
+        )
+
+
+class CaseManagerGroupFactory(GroupFactory):
+
+    name = factory.Sequence(lambda n: "Case Manager Group #%s" % n)
+
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        self.permissions.add(
+            *Permission.objects.exclude(codename__startswith='sign_')
+        )
+
+
+class AttendingGroupFactory(GroupFactory):
+
+    name = factory.Sequence(lambda n: "Volunteer Group #%s" % n)
+
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        self.permissions.add(
+            *Permission.objects.exclude(
+                Q(codename='can_case_manage')
+            )
+        )
 
 
 class UserFactory(factory.django.DjangoModelFactory):
