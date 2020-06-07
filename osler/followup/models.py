@@ -1,7 +1,7 @@
 '''The datamodels for various types required for followup tracking in Osler.'''
 from django.db import models
 from osler.core.models import (Note, ContactMethod,
-                                  ReferralType, ReferralLocation)
+                                  ReferralType, ReferralLocation, ActionItem)
 
 from simple_history.models import HistoricalRecords
 
@@ -62,7 +62,7 @@ class Followup(Note):
 
         # in a brutally ugly turn of events, there doesn't appear to be a good
         # way to overridde this method in subclasses. Behold the hacky result:
-        for child in ["labfollowup", "generalfollowup", "vaccinefollowup"]:
+        for child in ["labfollowup", "generalfollowup", "vaccinefollowup","actionitemfollowup"]:
             # you may ask "where did those strings come from?" or "how do you
             # know that it's all lower case?"... MYSTERIES FOR THE AGES.
             if hasattr(self, child):
@@ -95,6 +95,20 @@ class GeneralFollowup(Followup):
     abstract (and hence history is included in this object).'''
 
     history = HistoricalRecords()
+
+
+class ActionItemFollowup(Followup):
+    '''Datamodel for a action item followup. '''
+    history = HistoricalRecords()
+
+    FOR_TEMP = "Just for admin edit more or less"
+    action_item = models.ForeignKey(
+        ActionItem,
+        on_delete=models.CASCADE)
+
+    def type(self):
+        return "Action Item"
+
 
 
 class VaccineFollowup(Followup):

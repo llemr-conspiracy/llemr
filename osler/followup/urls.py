@@ -8,6 +8,9 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     path('<int:pt_id>/referral/',
          views.ReferralFollowupCreate.as_view(),
          name='new-referral-followup'),
+    path('<int:pt_id>/actionitem/<int:ai_id>/',
+         views.ActionItemFollowupCreate.as_view(),
+         name='new-actionitem-followup'),
     path('<int:pt_id>/<str:ftype>/',
          views.FollowupCreate.as_view(),
          name='new-followup'),
@@ -29,6 +32,10 @@ unwrapped_urlconf = [  # pylint: disable=invalid-name
     path('general/<int:pk>/',
          views.GeneralFollowupUpdate.as_view(),
          {"model": "General"},
+         name="followup"),
+    path('actionitemfu/<int:pk>/',
+         views.ActionItemFollowupUpdate.as_view(),
+         {"model": "Action Item"},
          name="followup"),
 ]
 

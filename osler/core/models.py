@@ -326,6 +326,7 @@ class Patient(Person):
         followups.extend(self.vaccinefollowup_set.all())
         followups.extend(self.referralfollowup_set.all())
         followups.extend(self.generalfollowup_set.all())
+        followups.extend(self.actionitemfollowup_set.all())
 
         return followups
 
