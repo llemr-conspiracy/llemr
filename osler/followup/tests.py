@@ -8,7 +8,7 @@ import datetime
 from django.test import TestCase
 from django.urls import reverse
 
-from osler.core.models import Gender, Patient, Provider, ProviderType
+from osler.core.models import Gender, Patient, Provider, ProviderType, ActionItem, ActionInstruction
 from osler.core.tests.test_views import log_in_provider, build_provider
 
 from . import forms
@@ -55,6 +55,7 @@ class TestReferralFollowupForms(TestCase):
             name="better things to do")
         self.noshow_reason = models.NoShowReason.objects.create(
             name="Hella busy.")
+
 
     def build_form(self, contact_successful, has_appointment, apt_location,
                    noapt_reason, noshow_reason, pt_showed=None):
@@ -217,16 +218,26 @@ class FollowupTest(TestCase):
     def setUp(self):
         log_in_provider(self.client, build_provider())
 
+        self.ai = ActionItem.objects.create(
+            due_date=datetime.date(2020, 1, 1),
+            author=Provider.objects.first(),
+            instruction=ActionInstruction.objects.create(
+                instruction="Follow up on labs"),
+            comments="I hate tests",
+            author_type=ProviderType.objects.all()[0],
+            patient=Patient.objects.all()[0])
+
     def tearDown(self):
         models.GeneralFollowup.objects.all().delete()
         models.LabFollowup.objects.all().delete()
         models.VaccineFollowup.objects.all().delete()
         models.ReferralFollowup.objects.all().delete()
+        models.ActionItemFollowup.objects.all().delete()
 
     def test_followup_view_urls(self):
 
         pt = Patient.objects.all()[0]
-
+        ai = ActionItem.objects.all()[0]
         method = models.ContactMethod.objects.create(name="Carrier Pidgeon")
         res = models.ContactResult(name="Fisticuffs")
         reftype = models.ReferralType.objects.create(name="Chiropracter")
@@ -292,11 +303,24 @@ class FollowupTest(TestCase):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
 
+            aif = models.ActionItemFollowup.objects.create(
+                contact_method=method,
+                contact_resolution=res,
+                author=Provider.objects.all()[0],
+                author_type=ProviderType.objects.all()[0],
+                patient=pt,
+                action_item=ai)
+
+            url = reverse('followup',kwargs={"pk": aif.id, "model": 'Action Item'})
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+
     def test_followup_create_urls(self):
         '''
         Verify that all the followup creation URLs are accessible.
         '''
         pt = Patient.objects.all()[0]
+        ai = ActionItem.objects.all()[0]
 
         for fu_type in FU_TYPES:
             url = reverse("new-followup",
@@ -309,7 +333,9 @@ class FollowupTest(TestCase):
                                            args=(pt.id,)))
         self.assertEqual(response.status_code, 200)
 
-        url = reverse("followup", kwargs={"pk": pt.id, "model": "Lab"})
+        response = self.client.get(reverse("new-actionitem-followup",
+            kwargs={'pt_id': pt.id, 'ai_id': ai.id}))
+        self.assertEqual(response.status_code, 200)
 
     def test_create_followups(self):
 
@@ -354,14 +380,26 @@ class FollowupTest(TestCase):
             self.verify_fu(models.ReferralFollowup, 'referral',
                            submitted_ref_fu)
 
+            ai = ActionItem.objects.all()[0]
+            submitted_ai_fu = dict(submitted_gen_fu)
+            submitted_ai_fu.update(
+                {"action_item": ActionItem.objects.all()[0].pk,})
+            
+            self.verify_fu(models.ActionItemFollowup,'actionitem', submitted_ai_fu)
+
     def verify_fu(self, fu_type, ftype, submitted_fu):
 
         pt = Patient.objects.all()[0]
 
         n_followup = len(fu_type.objects.all())
 
-        url = reverse('new-followup', kwargs={"pt_id": pt.id,
+        if ftype=='actionitem':
+            url = reverse('new-actionitem-followup', kwargs={"pt_id": pt.id,
+                "ai_id": ActionItem.objects.all()[0].id})
+        else:
+            url = reverse('new-followup', kwargs={"pt_id": pt.id,
                                               "ftype": ftype})
+        
         response = self.client.post(url, submitted_fu)
 
         self.assertEqual(response.status_code, 302)

@@ -110,7 +110,6 @@ class ActionItemFollowup(Followup):
         return "Action Item"
 
 
-
 class VaccineFollowup(Followup):
     '''Datamodel for a followup of a vaccine administration'''
 
