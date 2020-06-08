@@ -1,7 +1,7 @@
 '''The datamodels for various types required for followup tracking in Osler.'''
 from django.db import models
 from osler.core.models import (Note, ContactMethod,
-                                  ReferralType, ReferralLocation)
+                                  ReferralType, ReferralLocation, ActionItem)
 
 from simple_history.models import HistoricalRecords
 
@@ -62,7 +62,7 @@ class Followup(Note):
 
         # in a brutally ugly turn of events, there doesn't appear to be a good
         # way to overridde this method in subclasses. Behold the hacky result:
-        for child in ["labfollowup", "generalfollowup", "vaccinefollowup"]:
+        for child in ["labfollowup","vaccinefollowup","actionitemfollowup"]:
             # you may ask "where did those strings come from?" or "how do you
             # know that it's all lower case?"... MYSTERIES FOR THE AGES.
             if hasattr(self, child):
@@ -90,11 +90,16 @@ class Followup(Note):
                          str(self.written_date())])
 
 
-class GeneralFollowup(Followup):
-    '''Datamodel for a general followup. Exists only so Folloup can be
-    abstract (and hence history is included in this object).'''
-
+class ActionItemFollowup(Followup):
+    '''Datamodel for a action item followup. '''
     history = HistoricalRecords()
+
+    action_item = models.ForeignKey(
+        ActionItem,
+        on_delete=models.CASCADE)
+
+    def type(self):
+        return "Action Item"
 
 
 class VaccineFollowup(Followup):
@@ -142,76 +147,3 @@ class LabFollowup(Followup):
     def short_text(self):
         return ("successfully reached" if self.communication_success else
                 "failed to reach") + " patient regarding lab results."
-
-
-class ReferralFollowup(Followup):
-    '''Datamodel for a PCP referral followup.'''
-
-    # Template relies on following variable to render Admin Edit.
-    # If you change the variable here, you must edit patient_detail.html
-    REFTYPE_HELP = "What kind of provider was the patient referred to?"
-    referral_type = models.ForeignKey(
-        ReferralType,
-        on_delete=models.PROTECT,
-        help_text=REFTYPE_HELP,
-        blank=True,
-        null=True)
-
-    bREF_HELP = "Does the patient have an appointment?"
-    has_appointment = models.BooleanField(help_text=bREF_HELP)
-
-    APP_HELP = "Where is the appointment?"
-    apt_location = models.ForeignKey(
-        ReferralLocation,
-        blank=True, null=True,
-        on_delete=models.PROTECT,
-        help_text=APP_HELP)
-
-    PTSHOW_OPTS = [("Yes", "Yes"),
-                   ("No", "No"),
-                   ("Not yet", "Not yet")]
-
-    PTSHOW_HELP = "Did the patient show up to the appointment?"
-    pt_showed = models.CharField(help_text=PTSHOW_HELP,
-                                 max_length=7,
-                                 choices=PTSHOW_OPTS,
-                                 blank=True,
-                                 null=True)
-
-    NOAPT_HELP = "If the patient didn't make an appointment, why not?"
-    noapt_reason = models.ForeignKey(
-        NoAptReason,
-        on_delete=models.PROTECT,
-        help_text=NOAPT_HELP,
-        blank=True,
-        null=True)
-
-    NOSHOW_HELP = "If the patient didn't go to appointment, why not?"
-    noshow_reason = models.ForeignKey(
-        NoShowReason,
-        help_text=NOSHOW_HELP,
-        on_delete=models.PROTECT,
-        blank=True,
-        null=True)
-
-    history = HistoricalRecords()
-
-    def type(self):
-        return "Referral"
-
-    def short_text(self):
-        out = []
-        if self.has_appointment:
-            out.append("Patient made an appointment,")
-            if self.pt_showed == self.PTSHOW_OPTS[0][0]:
-                out.append("and the patient attended")
-            elif self.pt_showed == self.PTSHOW_OPTS[2][0]:
-                out.append("and the patient will be attending")
-            else:
-                out.append("but the patient didn't go because")
-                out.append(str(self.noshow_reason).lower())
-        else:
-            out.append("No appointment made because ")
-            out.append(str(self.noapt_reason).lower())
-
-        return " ".join(out) + "."

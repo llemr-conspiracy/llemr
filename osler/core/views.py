@@ -541,8 +541,9 @@ def done_action_item(request, ai_id):
     ai.mark_done(request.user.provider)
     ai.save()
 
-    return HttpResponseRedirect(reverse("followup-choice",
-                                        args=(ai.patient.pk,)))
+    return HttpResponseRedirect(reverse("new-actionitem-followup",
+                                        kwargs={'pt_id':ai.patient.pk,
+                                        'ai_id':ai.pk}))
 
 
 def reset_action_item(request, ai_id):

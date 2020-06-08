@@ -40,51 +40,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Patient'),
         ),
         migrations.AddField(
-            model_name='referralfollowup',
-            name='apt_location',
-            field=models.ForeignKey(blank=True, help_text='Where is the appointment?', null=True, on_delete=django.db.models.deletion.PROTECT, to='core.ReferralLocation'),
-        ),
-        migrations.AddField(
-            model_name='referralfollowup',
-            name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Provider'),
-        ),
-        migrations.AddField(
-            model_name='referralfollowup',
-            name='author_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ProviderType'),
-        ),
-        migrations.AddField(
-            model_name='referralfollowup',
-            name='contact_method',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ContactMethod'),
-        ),
-        migrations.AddField(
-            model_name='referralfollowup',
-            name='contact_resolution',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='followup.ContactResult'),
-        ),
-        migrations.AddField(
-            model_name='referralfollowup',
-            name='noapt_reason',
-            field=models.ForeignKey(blank=True, help_text="If the patient didn't make an appointment, why not?", null=True, on_delete=django.db.models.deletion.PROTECT, to='followup.NoAptReason'),
-        ),
-        migrations.AddField(
-            model_name='referralfollowup',
-            name='noshow_reason',
-            field=models.ForeignKey(blank=True, help_text="If the patient didn't go to appointment, why not?", null=True, on_delete=django.db.models.deletion.PROTECT, to='followup.NoShowReason'),
-        ),
-        migrations.AddField(
-            model_name='referralfollowup',
-            name='patient',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Patient'),
-        ),
-        migrations.AddField(
-            model_name='referralfollowup',
-            name='referral_type',
-            field=models.ForeignKey(blank=True, help_text='What kind of provider was the patient referred to?', null=True, on_delete=django.db.models.deletion.PROTECT, to='core.ReferralType'),
-        ),
-        migrations.AddField(
             model_name='labfollowup',
             name='author',
             field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Provider'),
