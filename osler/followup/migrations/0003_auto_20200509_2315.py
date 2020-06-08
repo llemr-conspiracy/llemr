@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
+import simple_history.models
 
 
 class Migration(migrations.Migration):
@@ -27,56 +28,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Patient'),
         ),
         migrations.AddField(
-            model_name='historicalreferralfollowup',
-            name='apt_location',
-            field=models.ForeignKey(blank=True, db_constraint=False, help_text='Where is the appointment?', null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.ReferralLocation'),
-        ),
-        migrations.AddField(
-            model_name='historicalreferralfollowup',
-            name='author',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Provider'),
-        ),
-        migrations.AddField(
-            model_name='historicalreferralfollowup',
-            name='author_type',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.ProviderType'),
-        ),
-        migrations.AddField(
-            model_name='historicalreferralfollowup',
-            name='contact_method',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.ContactMethod'),
-        ),
-        migrations.AddField(
-            model_name='historicalreferralfollowup',
-            name='contact_resolution',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='followup.ContactResult'),
-        ),
-        migrations.AddField(
-            model_name='historicalreferralfollowup',
-            name='history_user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AddField(
-            model_name='historicalreferralfollowup',
-            name='noapt_reason',
-            field=models.ForeignKey(blank=True, db_constraint=False, help_text="If the patient didn't make an appointment, why not?", null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='followup.NoAptReason'),
-        ),
-        migrations.AddField(
-            model_name='historicalreferralfollowup',
-            name='noshow_reason',
-            field=models.ForeignKey(blank=True, db_constraint=False, help_text="If the patient didn't go to appointment, why not?", null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='followup.NoShowReason'),
-        ),
-        migrations.AddField(
-            model_name='historicalreferralfollowup',
-            name='patient',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Patient'),
-        ),
-        migrations.AddField(
-            model_name='historicalreferralfollowup',
-            name='referral_type',
-            field=models.ForeignKey(blank=True, db_constraint=False, help_text='What kind of provider was the patient referred to?', null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.ReferralType'),
-        ),
-        migrations.AddField(
             model_name='historicallabfollowup',
             name='author',
             field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Provider'),
@@ -106,59 +57,48 @@ class Migration(migrations.Migration):
             name='patient',
             field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Patient'),
         ),
-        migrations.AddField(
-            model_name='historicalgeneralfollowup',
-            name='author',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Provider'),
+        migrations.CreateModel(
+            name='HistoricalActionItemFollowup',
+            fields=[
+                ('id', models.IntegerField(auto_created=True, blank=True, db_index=True, verbose_name='ID')),
+                ('written_datetime', models.DateTimeField(blank=True, editable=False)),
+                ('last_modified', models.DateTimeField(blank=True, editable=False)),
+                ('comments', models.TextField(blank=True, null=True)),
+                ('history_id', models.AutoField(primary_key=True, serialize=False)),
+                ('history_date', models.DateTimeField()),
+                ('history_change_reason', models.CharField(max_length=100, null=True)),
+                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
+                ('action_item', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.ActionItem')),
+                ('author', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Provider')),
+                ('author_type', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.ProviderType')),
+                ('contact_method', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.ContactMethod')),
+                ('contact_resolution', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='followup.ContactResult')),
+                ('history_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL)),
+                ('patient', models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Patient')),
+            ],
+            options={
+                'verbose_name': 'historical action item followup',
+                'ordering': ('-history_date', '-history_id'),
+                'get_latest_by': 'history_date',
+            },
+            bases=(simple_history.models.HistoricalChanges, models.Model),
         ),
-        migrations.AddField(
-            model_name='historicalgeneralfollowup',
-            name='author_type',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.ProviderType'),
-        ),
-        migrations.AddField(
-            model_name='historicalgeneralfollowup',
-            name='contact_method',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.ContactMethod'),
-        ),
-        migrations.AddField(
-            model_name='historicalgeneralfollowup',
-            name='contact_resolution',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='followup.ContactResult'),
-        ),
-        migrations.AddField(
-            model_name='historicalgeneralfollowup',
-            name='history_user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AddField(
-            model_name='historicalgeneralfollowup',
-            name='patient',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Patient'),
-        ),
-        migrations.AddField(
-            model_name='generalfollowup',
-            name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Provider'),
-        ),
-        migrations.AddField(
-            model_name='generalfollowup',
-            name='author_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ProviderType'),
-        ),
-        migrations.AddField(
-            model_name='generalfollowup',
-            name='contact_method',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ContactMethod'),
-        ),
-        migrations.AddField(
-            model_name='generalfollowup',
-            name='contact_resolution',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='followup.ContactResult'),
-        ),
-        migrations.AddField(
-            model_name='generalfollowup',
-            name='patient',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Patient'),
+        migrations.CreateModel(
+            name='ActionItemFollowup',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('written_datetime', models.DateTimeField(auto_now_add=True)),
+                ('last_modified', models.DateTimeField(auto_now=True)),
+                ('comments', models.TextField(blank=True, null=True)),
+                ('action_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.ActionItem')),
+                ('author', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Provider')),
+                ('author_type', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ProviderType')),
+                ('contact_method', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.ContactMethod')),
+                ('contact_resolution', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='followup.ContactResult')),
+                ('patient', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.Patient')),
+            ],
+            options={
+                'abstract': False,
+            },
         ),
     ]

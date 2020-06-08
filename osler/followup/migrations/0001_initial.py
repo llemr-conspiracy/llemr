@@ -21,37 +21,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='GeneralFollowup',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('written_datetime', models.DateTimeField(auto_now_add=True)),
-                ('last_modified', models.DateTimeField(auto_now=True)),
-                ('comments', models.TextField(blank=True, null=True)),
-            ],
-            options={
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='HistoricalGeneralFollowup',
-            fields=[
-                ('id', models.IntegerField(auto_created=True, blank=True, db_index=True, verbose_name='ID')),
-                ('written_datetime', models.DateTimeField(blank=True, editable=False)),
-                ('last_modified', models.DateTimeField(blank=True, editable=False)),
-                ('comments', models.TextField(blank=True, null=True)),
-                ('history_id', models.AutoField(primary_key=True, serialize=False)),
-                ('history_date', models.DateTimeField()),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-            ],
-            options={
-                'verbose_name': 'historical general followup',
-                'ordering': ('-history_date', '-history_id'),
-                'get_latest_by': 'history_date',
-            },
-            bases=(simple_history.models.HistoricalChanges, models.Model),
-        ),
-        migrations.CreateModel(
             name='HistoricalLabFollowup',
             fields=[
                 ('id', models.IntegerField(auto_created=True, blank=True, db_index=True, verbose_name='ID')),
@@ -66,27 +35,6 @@ class Migration(migrations.Migration):
             ],
             options={
                 'verbose_name': 'historical lab followup',
-                'ordering': ('-history_date', '-history_id'),
-                'get_latest_by': 'history_date',
-            },
-            bases=(simple_history.models.HistoricalChanges, models.Model),
-        ),
-        migrations.CreateModel(
-            name='HistoricalReferralFollowup',
-            fields=[
-                ('id', models.IntegerField(auto_created=True, blank=True, db_index=True, verbose_name='ID')),
-                ('written_datetime', models.DateTimeField(blank=True, editable=False)),
-                ('last_modified', models.DateTimeField(blank=True, editable=False)),
-                ('comments', models.TextField(blank=True, null=True)),
-                ('has_appointment', models.BooleanField(help_text='Does the patient have an appointment?')),
-                ('pt_showed', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), ('Not yet', 'Not yet')], help_text='Did the patient show up to the appointment?', max_length=7, null=True)),
-                ('history_id', models.AutoField(primary_key=True, serialize=False)),
-                ('history_date', models.DateTimeField()),
-                ('history_change_reason', models.CharField(max_length=100, null=True)),
-                ('history_type', models.CharField(choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')], max_length=1)),
-            ],
-            options={
-                'verbose_name': 'historical referral followup',
                 'ordering': ('-history_date', '-history_id'),
                 'get_latest_by': 'history_date',
             },
@@ -137,20 +85,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('name', models.CharField(max_length=100, primary_key=True, serialize=False)),
             ],
-        ),
-        migrations.CreateModel(
-            name='ReferralFollowup',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('written_datetime', models.DateTimeField(auto_now_add=True)),
-                ('last_modified', models.DateTimeField(auto_now=True)),
-                ('comments', models.TextField(blank=True, null=True)),
-                ('has_appointment', models.BooleanField(help_text='Does the patient have an appointment?')),
-                ('pt_showed', models.CharField(blank=True, choices=[('Yes', 'Yes'), ('No', 'No'), ('Not yet', 'Not yet')], help_text='Did the patient show up to the appointment?', max_length=7, null=True)),
-            ],
-            options={
-                'abstract': False,
-            },
         ),
         migrations.CreateModel(
             name='VaccineFollowup',

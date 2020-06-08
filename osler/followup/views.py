@@ -25,12 +25,6 @@ class FollowupUpdate(NoteUpdate):
         return reverse("core:patient-detail", args=(pt.id, ))
 
 
-class ReferralFollowupUpdate(FollowupUpdate):
-    model = models.ReferralFollowup
-    form_class = forms.ReferralFollowup
-    note_type = "Referral Followup"
-
-
 class ActionItemFollowupUpdate(FollowupUpdate):
     model = models.ActionItemFollowup
     form_class = forms.ActionItemFollowup
@@ -49,12 +43,6 @@ class VaccineFollowupUpdate(FollowupUpdate):
     note_type = "Vaccine Followup"
 
 
-class GeneralFollowupUpdate(FollowupUpdate):
-    model = models.GeneralFollowup
-    form_class = forms.GeneralFollowup
-    note_type = "General Followup"
-
-
 class FollowupCreate(NoteFormView):
     '''A view for creating a new Followup'''
     template_name = 'core/form_submission.html'
@@ -65,8 +53,7 @@ class FollowupCreate(NoteFormView):
         ftype = self.kwargs['ftype']
 
         futypes = {'labs': forms.LabFollowup,
-                   'vaccine': forms.VaccineFollowup,
-                   'general': forms.GeneralFollowup}
+                   'vaccine': forms.VaccineFollowup}
 
         return futypes[ftype]
 
@@ -122,12 +109,3 @@ class ActionItemFollowupCreate(FollowupCreate):
         else:
             return HttpResponseRedirect(reverse("core:patient-detail",
                                                 args=(pt.id,)))
-
-
-class ReferralFollowupCreate(FollowupCreate):
-    '''A view for creating a new ReferralFollowup'''
-    template_name = 'followup/referral-followup-create.html'
-    form_class = forms.ReferralFollowup
-
-    def get_form_class(self, **kwargs):
-        return self.form_class

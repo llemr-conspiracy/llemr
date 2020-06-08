@@ -185,12 +185,8 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 								<a href="{% url 'admin:followup_labfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
 								{% elif note.SUBSQ_DOSE_HELP %}
 								<a href="{% url 'admin:followup_vaccinefollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
-								{% elif note.REFTYPE_HELP %}
-								<a href="{% url 'admin:followup_referralfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
-								{% elif note.FOR_TEMP %}
-								<a href="{% url 'admin:followup_actionitemfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
 								{% else %}
-								<a href="{% url 'admin:followup_generalfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+								<a href="{% url 'admin:followup_actionitemfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
 								{% endif %}
 							{% endif %}
 						</div>
