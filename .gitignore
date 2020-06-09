@@ -276,3 +276,6 @@ osler/media/
 .env
 .envs/*
 !.envs/.local/
+
+# VS Code
+.vscode/*
