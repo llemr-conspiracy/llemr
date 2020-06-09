@@ -15,3 +15,8 @@
   {% crispy form %}
 </div>
 {% endblock %}
+
+{% block extra_js %}
+{% load static %}
+<script src="{% static "js/check-connection.js" %}"></script>
+{% endblock %}

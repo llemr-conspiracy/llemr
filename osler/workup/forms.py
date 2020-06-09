@@ -136,6 +136,9 @@ class AppendedRadios(CrispyField):
 
 class WorkupForm(ModelForm):
 
+    submit_button_name = 'submit-button'
+    check_connection_class = 'check-connection'
+
     temperature_units = fields.ChoiceField(
         label='', widget=RadioSelect,
         choices=[('C', 'C',), ('F', 'F')], initial='C', required=False)
@@ -175,6 +178,7 @@ class WorkupForm(ModelForm):
 
         self.helper = FormHelper()
         self.helper.form_method = 'post'
+        self.helper.form_class = self.check_connection_class
 
         self.helper.layout = Layout(
             Row(HTML('<h3>Clinical Team</h3>'),
@@ -232,7 +236,7 @@ class WorkupForm(ModelForm):
                     css_class='col-xs-6')
                 ),
 
-            Submit('submit', 'Save', css_class='btn btn-success')
+            Submit(self.submit_button_name, 'Save', css_class='btn btn-success')
         )
 
     def clean(self):
@@ -292,7 +296,8 @@ class ProgressNoteForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProgressNoteForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit(WorkupForm.submit_button_name, 'Submit'))
+        self.helper.form_class = WorkupForm.check_connection_class
 
 
 class ClinicDateForm(ModelForm):
@@ -310,4 +315,5 @@ class ClinicDateForm(ModelForm):
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit(WorkupForm.submit_button_name, 'Submit'))
+        self.helper.form_class = WorkupForm.check_connection_class

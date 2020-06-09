@@ -13,9 +13,14 @@
 {% block content %}
 
 <div class="container">
-<p><strong>Please write this in a word document, then paste into the appropriate fields. Poor internet connection may cause work to be lost.</strong></p>
   {% load crispy_forms_tags %}
   {% crispy form %}
 </div>
 
+{% endblock %}
+
+
+{% block extra_js %}
+{% load static %}
+<script src="{% static "js/check-connection.js" %}"></script>
 {% endblock %}

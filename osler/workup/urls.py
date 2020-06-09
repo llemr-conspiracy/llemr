@@ -35,6 +35,10 @@ unwrapped_urlconf = [
         r'^(?P<pk>[0-9]+)/pdf/$',
         views.pdf_workup,
         name="workup-pdf"),
+    re_path(
+        r'^check-connection/$',
+        views.check_connection,
+        name='check-connection'),
 
     # PROGRESS NOTES
     re_path(

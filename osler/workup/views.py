@@ -290,3 +290,15 @@ def pdf_workup(request, pk):
     else:
         return HttpResponseRedirect(reverse('workup',
                                             args=(wu.id,)))
+
+def check_connection(request):
+    '''Returns blank page to verify server connection.'''
+
+    # Used in tests to simulate a lost VPN connection 
+    # by overriding the OSLER_TEST_CHECK_CONNECTION_RUNNING setting.
+    # In production, this endpoint should never deliberately fail.
+    if settings.OSLER_TEST_CHECK_CONNECTION_RUNNING:
+        request_timeout_error = 408
+        return HttpResponse(status = request_timeout_error)
+
+    return HttpResponse()
