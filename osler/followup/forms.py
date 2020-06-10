@@ -25,70 +25,6 @@ class BaseFollowup(ModelForm):
         super(BaseFollowup, self).__init__(*args, **kwargs)
 
 
-class GeneralFollowup(BaseFollowup):
-    '''The form instantiation of a general followup note.'''
-    class Meta(object):
-        model = models.GeneralFollowup
-        exclude = ['patient', 'author', 'author_type']
-
-
-class ReferralFollowup(BaseFollowup):
-    '''The form instantiation of a followup for PCP referral.'''
-
-    class Meta(object):
-        model = models.ReferralFollowup
-        exclude = ['patient', 'author', 'author_type']
-
-    def clean(self):
-        '''ReferralFollowup has some pretty complicated behavior regarding
-        which combinations of blank and filled fields are acceptable. We
-        implement checks for this here.'''
-        cleaned_data = super(ReferralFollowup, self).clean()
-
-        has_appointment = cleaned_data.get("has_appointment")
-        contact_resolution = cleaned_data.get("contact_resolution")
-        patient_reached = contact_resolution.patient_reached
-
-        if patient_reached:
-            if has_appointment:
-                # If the patient has an appointment, we require a location and
-                # information as to whether or not they showed up.
-
-                if not cleaned_data.get("apt_location"):
-                    self.add_error(
-                        "apt_location", _("Appointment location is required when the patient has an appointment."))
-
-                if not cleaned_data.get("pt_showed"):
-                    self.add_error(
-                        "pt_showed", _("Please specify whether the patient has gone to their appointment."))
-
-                pt_went = cleaned_data.get("pt_showed")
-                if pt_went == "No":
-                    if not cleaned_data.get("noshow_reason"):
-                        self.add_error(
-                            "noshow_reason", _("Why didn't the patient go to the appointment?"))
-
-                if pt_went == "Yes":
-                    if cleaned_data.get('noshow_reason'):
-                        self.add_error(
-                            "noshow_reason",
-                            _("If the patient showed, a noshow reason should not be given."))
-
-            else:  # not has_appointment
-                if not cleaned_data.get("noapt_reason"):
-                    self.add_error(
-                        "noapt_reason", _("Why didn't the patient make an appointment?"))
-        else:
-            detail_params = ["noshow_reason", "noapt_reason", "pt_showed"]
-
-            for param in detail_params:
-                if cleaned_data.get(param):
-                    self.add_error(
-                        param,
-                        _("You can't give a ") + param.replace("_", " ") +
-                        _(" value if contact was unsuccessful"))
-
-
 class VaccineFollowup(BaseFollowup):
     '''A form to process the handling of a vaccine followup.'''
     class Meta(object):
@@ -105,6 +41,12 @@ class VaccineFollowup(BaseFollowup):
            not cleaned_data.get('dose_date'):
 
             self.add_error('dose_date', _('A next dosage date is required if the patient is returning for another dose.'))
+
+
+class ActionItemFollowup(BaseFollowup):
+    class Meta(object):
+        model = models.ActionItemFollowup
+        exclude = ['patient', 'author', 'author_type','action_item']
 
 
 class LabFollowup(BaseFollowup):
