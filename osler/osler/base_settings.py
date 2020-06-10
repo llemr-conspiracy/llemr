@@ -135,7 +135,3 @@ OSLER_PROVIDERTYPE_DASHBOARDS = {
 
 # List of IP addresses to exclude from audit
 OSLER_AUDIT_BLACK_LIST = []
-
-# hooks to enable overriding in tests
-# these values should never change in development or production
-OSLER_TEST_CHECK_CONNECTION_RUNNING = False

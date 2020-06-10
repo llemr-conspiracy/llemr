@@ -279,10 +279,3 @@ osler/media/
 
 # VS Code
 .vscode/*
-
-# Track Osler-specific Javascript files
-!staticfiles/
-staticfiles/*
-!staticfiles/js
-staticfiles/js/*
-!staticfiles/js/check-connection.js
