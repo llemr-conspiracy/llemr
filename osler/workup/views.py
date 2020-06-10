@@ -18,6 +18,7 @@ from osler.core.models import Patient, ProviderType
 from osler.workup import models
 from osler.workup import forms
 
+from django.utils.translation import gettext_lazy as _
 
 def get_clindates():
     '''Get the clinic dates associated with today.'''
@@ -43,7 +44,7 @@ class WorkupCreate(NoteFormView):
     clinic date first, and prompts its creation if none exist.'''
     template_name = 'workup/workup-create.html'
     form_class = forms.WorkupForm
-    note_type = 'Workup'
+    note_type = _('Workup')
 
     def get(self, *args, **kwargs):
         """Check that we have an instantiated ClinicDate today,
@@ -63,11 +64,11 @@ class WorkupCreate(NoteFormView):
                          self).get(self, *args, **kwargs)
         else:  # we have >1 clindate today.
             return HttpResponseServerError(
-                'There are two or more "clinic day" entries in the database '
+                _('There are two or more "clinic day" entries in the database '
                 'for today. Since notes are associated with one and only one '
                 'clinic day, one clinic day has to be deleted. This can be '
                 'done in the admin panel by a user with sufficient ',
-                'privileges (e.g. coordinator).')
+                'privileges (e.g. coordinator).'))
 
     def get_initial(self):
         initial = super(WorkupCreate, self).get_initial()
@@ -75,7 +76,7 @@ class WorkupCreate(NoteFormView):
 
         # self.get() checks for >= 1 ClinicDay
         initial['clinic_day'] = get_clindates().first()
-        initial['ros'] = "Default: reviewed and negative"
+        initial['ros'] = _("Default: reviewed and negative")
 
         wu_previous = pt.latest_workup()
         if wu_previous is not None:
@@ -136,7 +137,7 @@ class ProgressNoteUpdate(NoteUpdate):
     template_name = "core/form-update.html"
     model = models.ProgressNote
     form_class = forms.ProgressNoteForm
-    note_type = 'Clinical Psychology Note'
+    note_type = _('Clinical Psychology Note')
 
     def get_success_url(self):
         pnote = self.object
@@ -146,7 +147,7 @@ class ProgressNoteUpdate(NoteUpdate):
 class ProgressNoteCreate(NoteFormView):
     template_name = 'core/form_submission.html'
     form_class = forms.ProgressNoteForm
-    note_type = 'Clinical Psychology Note'
+    note_type = _('Clinical Psychology Note')
 
     def form_valid(self, form):
         pnote = form.save(commit=False)

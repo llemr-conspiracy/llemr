@@ -1,10 +1,11 @@
 '''The datamodels for various types required for followup tracking in Osler.'''
 from django.db import models
 from osler.core.models import (Note, ContactMethod,
-                                  ReferralType, ReferralLocation, ActionItem)
+                                  ReferralType, ReferralLocation)
 
 from simple_history.models import HistoricalRecords
 
+from django.utils.translation import gettext_lazy as _
 
 class NoShowReason(models.Model):
     '''Simple text-contiaining class for storing the different reasons a
@@ -32,11 +33,11 @@ class ContactResult(models.Model):
 
     name = models.CharField(max_length=100, primary_key=True)
     attempt_again = models.BooleanField(
-        default=False,
-        help_text="True if outcome means the pt should be contacted again.")
+        default=False,verbose_name=_("Attempt again"),
+        help_text=_("True if outcome means the pt should be contacted again."))
     patient_reached = models.BooleanField(
-        default=True,
-        help_text="True if outcome means they reached the patient")
+        default=True, verbose_name=_("Patient reached"),
+        help_text=_("True if outcome means they reached the patient"))
 
     def __str__(self):
         return self.name
@@ -50,9 +51,9 @@ class Followup(Note):
         abstract = True
 
     contact_method = models.ForeignKey(
-        ContactMethod, on_delete=models.PROTECT)
+        ContactMethod, on_delete=models.PROTECT, verbose_name=_("Contact method"))
     contact_resolution = models.ForeignKey(
-        ContactResult, on_delete=models.PROTECT)
+        ContactResult, on_delete=models.PROTECT, verbose_name=_("Contact resolution"))
 
     comments = models.TextField(blank=True, null=True)
 
@@ -62,13 +63,13 @@ class Followup(Note):
 
         # in a brutally ugly turn of events, there doesn't appear to be a good
         # way to overridde this method in subclasses. Behold the hacky result:
-        for child in ["labfollowup","vaccinefollowup","actionitemfollowup"]:
+        for child in ["labfollowup", "generalfollowup", "vaccinefollowup"]:
             # you may ask "where did those strings come from?" or "how do you
             # know that it's all lower case?"... MYSTERIES FOR THE AGES.
             if hasattr(self, child):
                 return getattr(self, child).type()
 
-        return "General"
+        return _("General")
 
     def short_text(self):
         '''Return a short text description of this followup and what happened.
@@ -79,27 +80,22 @@ class Followup(Note):
     def attribution(self):
         '''Returns a string that is used as the attribution (i.e. "John at
         4pm") for this note.'''
-        return " ".join([self.author.name(), "on", str(self.written_date())])
+        return " ".join([self.author.name(), _("on"), str(self.written_date())])
 
     def written_date(self):
         '''Returns a python date object for when this followup was written.'''
         return self.written_datetime.date()
 
     def __str__(self):
-        return " ".join(["Followup for ", self.patient.name(), " on ",
+        return " ".join([_("Followup for "), self.patient.name(), _(" on "),
                          str(self.written_date())])
 
 
-class ActionItemFollowup(Followup):
-    '''Datamodel for a action item followup. '''
+class GeneralFollowup(Followup):
+    '''Datamodel for a general followup. Exists only so Folloup can be
+    abstract (and hence history is included in this object).'''
+
     history = HistoricalRecords()
-
-    action_item = models.ForeignKey(
-        ActionItem,
-        on_delete=models.CASCADE)
-
-    def type(self):
-        return "Action Item"
 
 
 class VaccineFollowup(Followup):
@@ -107,27 +103,27 @@ class VaccineFollowup(Followup):
 
     # Template relies on following variable to render Admin Edit. If you
     # change the variable here, you must edit patient_detail.html
-    SUBSQ_DOSE_HELP = "Has the patient committed to coming back for another dose?"
+    SUBSQ_DOSE_HELP = _("Has the patient committed to coming back for another dose?")
     subsq_dose = models.BooleanField(verbose_name=SUBSQ_DOSE_HELP)
 
-    DOSE_DATE_HELP = "When does the patient want to get their next dose (if applicable)?"
+    DOSE_DATE_HELP = _("When does the patient want to get their next dose (if applicable)?")
     dose_date = models.DateField(blank=True,
                                  null=True,
-                                 help_text=DOSE_DATE_HELP)
+                                 help_text=DOSE_DATE_HELP, verbose_name=_("Dose date"))
 
     history = HistoricalRecords()
 
     def type(self):
-        return "Vaccine"
+        return _("Vaccine")
 
     def short_text(self):
         out = []
         if self.subsq_dose:
-            out.append("Patient should return on")
+            out.append(_("Patient should return on"))
             out.append(str(self.dose_date))
-            out.append("for the next dose.")
+            out.append(_("for the next dose."))
         else:
-            out.append("Patient does not return for another dose.")
+            out.append(_("Patient does not return for another dose."))
 
         return " ".join(out)
 
@@ -136,14 +132,91 @@ class LabFollowup(Followup):
     '''Datamodel for a follow up for lab results.'''
 
     # Template relies on following variable to render Admin Edit. If you change the variable here, you must edit patient_detail.html
-    CS_HELP = "Were you able to communicate the results?"
-    communication_success = models.BooleanField(help_text=CS_HELP)
+    CS_HELP = _("Were you able to communicate the results?")
+    communication_success = models.BooleanField(verbose_name=_("Communication success"), help_text=CS_HELP)
 
     history = HistoricalRecords()
 
     def type(self):
-        return "Lab"
+        return _("Lab")
 
     def short_text(self):
-        return ("successfully reached" if self.communication_success else
-                "failed to reach") + " patient regarding lab results."
+        return (_("successfully reached") if self.communication_success else
+                _("failed to reach")) + _(" patient regarding lab results.")
+
+
+class ReferralFollowup(Followup):
+    '''Datamodel for a PCP referral followup.'''
+
+    # Template relies on following variable to render Admin Edit.
+    # If you change the variable here, you must edit patient_detail.html
+    REFTYPE_HELP = _("What kind of provider was the patient referred to?")
+    referral_type = models.ForeignKey(
+        ReferralType,
+        verbose_name=_("Referral type"),
+        on_delete=models.PROTECT,
+        help_text=REFTYPE_HELP,
+        blank=True,
+        null=True)
+
+    bREF_HELP = _("Does the patient have an appointment?")
+    has_appointment = models.BooleanField(verbose_name=_("Has appointment"), help_text=bREF_HELP)
+
+    APP_HELP = _("Where is the appointment?")
+    apt_location = models.ForeignKey(
+        ReferralLocation,
+        verbose_name=_("Appointment location"),
+        blank=True, null=True,
+        on_delete=models.PROTECT,
+        help_text=APP_HELP)
+
+    PTSHOW_OPTS = [("Yes", _("Yes")),
+                   ("No", _("No")),
+                   ("Not yet", _("Not yet"))]
+
+    PTSHOW_HELP = _("Did the patient show up to the appointment?")
+    pt_showed = models.CharField(verbose_name=_("Patient showed"), help_text=PTSHOW_HELP,
+                                 max_length=7,
+                                 choices=PTSHOW_OPTS,
+                                 blank=True,
+                                 null=True)
+
+    NOAPT_HELP = _("If the patient didn't make an appointment, why not?")
+    noapt_reason = models.ForeignKey(
+        NoAptReason,
+        verbose_name=_("No appointment reason"),
+        on_delete=models.PROTECT,
+        help_text=NOAPT_HELP,
+        blank=True,
+        null=True)
+
+    NOSHOW_HELP = _("If the patient didn't go to appointment, why not?")
+    noshow_reason = models.ForeignKey(
+        NoShowReason,
+        verbose_name=_("No show reason"),
+        help_text=NOSHOW_HELP,
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True)
+
+    history = HistoricalRecords()
+
+    def type(self):
+        return _("Referral")
+
+    def short_text(self):
+        out = []
+        if self.has_appointment:
+            out.append(_("Patient made an appointment,"))
+            if self.pt_showed == self.PTSHOW_OPTS[0][0]:
+                out.append(_("and the patient attended"))
+            elif self.pt_showed == self.PTSHOW_OPTS[2][0]:
+                out.append(_("and the patient will be attending"))
+            else:
+                out.append(_("but the patient didn't go because"))
+                out.append(str(self.noshow_reason).lower())
+        else:
+            out.append(_("No appointment made because "))
+            out.append(str(self.noapt_reason).lower())
+
+        return " ".join(out) + "."

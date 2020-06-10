@@ -5,6 +5,7 @@ from django.conf import settings
 
 from osler.core import models as core_models
 
+from django.utils.translation import gettext_lazy as _
 
 class PageviewRecord(models.Model):
 

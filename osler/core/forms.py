@@ -20,6 +20,8 @@ from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Row, Column
 
+from django.utils.translation import gettext_lazy as _
+
 
 class CustomCheckbox(Field):
     template = 'core/custom_checkbox.html'
@@ -28,14 +30,14 @@ class CustomCheckbox(Field):
 
 
 class DuplicatePatientForm(Form):
-    first_name = CharField(label='First Name')
-    last_name = CharField(label='Last Name')
+    first_name = CharField(label=_('First Name'))
+    last_name = CharField(label=_('Last Name'))
 
     def __init__(self, *args, **kwargs):
         super(DuplicatePatientForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.fields['first_name'].widget.attrs['autofocus'] = True
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
 
 class PatientForm(ModelForm):
@@ -47,7 +49,7 @@ class PatientForm(ModelForm):
     # ProviderType with staff_view=True
 
     case_managers = ModelMultipleChoiceField(
-        required=False,
+        required=False, 
         queryset=models.Provider.objects.filter(
             clinical_roles__in=models.ProviderType.objects.filter(
                 staff_view=True)).distinct().order_by("last_name"),
@@ -64,7 +66,7 @@ class PatientForm(ModelForm):
         self.fields['phone'].widget.attrs['autofocus'] = True
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['ethnicities'].wrap(InlineCheckboxes)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
     def clean(self):
 
@@ -80,14 +82,12 @@ class PatientForm(ModelForm):
             if cleaned_data.get(alt_owner) and not cleaned_data.get(alt_phone):
                 self.add_error(
                     alt_phone,
-                    "An Alternate Phone is required" +
-                    " if a Alternate Phone Owner is specified")
+                    _("An Alternate Phone is required if a Alternate Phone Owner is specified"))
 
             if cleaned_data.get(alt_phone) and not cleaned_data.get(alt_owner):
                 self.add_error(
                     alt_owner,
-                    "An Alternate Phone Owner is required" +
-                    " if a Alternate Phone is specified")
+                    _("An Alternate Phone Owner is required if a Alternate Phone is specified"))
 
 
 class ActionItemForm(ModelForm):
@@ -115,7 +115,7 @@ class ActionItemForm(ModelForm):
             ),
             CustomCheckbox('priority'),
             Row(
-                Column(Submit('submit', 'Submit'),
+                Column(Submit('submit', _('Submit')),
                     css_class='formgroup col-md-offset-3 col-xs-offset-4')
             )
         )
@@ -126,7 +126,7 @@ class ActionItemForm(ModelForm):
 
 class ProviderForm(ModelForm):
 
-    provider_email = EmailField(label="Email")
+    provider_email = EmailField(label=_("Email"))
 
     class Meta(object):
         model = models.Provider
@@ -144,7 +144,7 @@ class ProviderForm(ModelForm):
         self.helper.field_class = 'col-lg-8'
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['clinical_roles'].wrap(InlineCheckboxes)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
 
 class DocumentForm(ModelForm):
@@ -155,7 +155,7 @@ class DocumentForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(DocumentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
 
 class CrispyAuthenticationForm(AuthenticationForm):
@@ -164,4 +164,4 @@ class CrispyAuthenticationForm(AuthenticationForm):
         super(CrispyAuthenticationForm, self).__init__(*args, **kwargs)
 
         self.helper = FormHelper(self)
-        self.helper.add_input(Submit('submit', 'Login'))
+        self.helper.add_input(Submit('submit', _('Login')))

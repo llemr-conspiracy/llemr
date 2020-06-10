@@ -21,6 +21,7 @@ from osler.core import models as core_models
 from osler.core import forms
 from osler.core import utils
 
+from django.utils.translation import gettext_lazy as _
 
 def get_current_provider_type(request):
     '''
@@ -38,8 +39,7 @@ class NoteFormView(FormView):
         '''Inject self.note_type and patient into the context.'''
 
         if self.note_type is None:
-            raise ImproperlyConfigured("NoteCreate view must have"
-                                       "'note_type' variable set.")
+            raise ImproperlyConfigured(_("NoteCreate view must have 'note_type' variable set."))
 
         context = super(NoteFormView, self).get_context_data(**kwargs)
         context['note_type'] = self.note_type
@@ -58,8 +58,7 @@ class NoteUpdate(UpdateView):
         '''Inject self.note_type as the note type.'''
 
         if self.note_type is None:
-            raise ImproperlyConfigured("NoteUpdate view must have"
-                                       "'note_type' variable set.")
+            raise ImproperlyConfigured(_("NoteUpdate view must have 'note_type' variable set."))
 
         context = super(NoteUpdate, self).get_context_data(**kwargs)
         context['note_type'] = self.note_type
@@ -152,7 +151,7 @@ class ActionItemCreate(NoteFormView):
     """A view for creating ActionItems using the ActionItemForm."""
     template_name = 'core/form_submission.html'
     form_class = forms.ActionItemForm
-    note_type = 'Action Item'
+    note_type = _('Action Item')
 
     def form_valid(self, form):
         '''Set the patient, provider, and written timestamp for the item.'''
@@ -174,7 +173,7 @@ class ActionItemUpdate(NoteUpdate):
     template_name = "core/form-update.html"
     model = core_models.ActionItem
     form_class = forms.ActionItemForm
-    note_type = "Action Item"
+    note_type = _("Action Item")
 
     def get_success_url(self):
         pt = self.object.patient
@@ -279,7 +278,7 @@ class DocumentUpdate(NoteUpdate):
     template_name = "core/form-update.html"
     model = core_models.Document
     form_class = forms.DocumentForm
-    note_type = "Document"
+    note_type = _("Document")
 
     def get_success_url(self):
         doc = self.object
@@ -290,7 +289,7 @@ class DocumentCreate(NoteFormView):
     '''A view for uploading a document'''
     template_name = 'core/form_submission.html'
     form_class = forms.DocumentForm
-    note_type = 'Document'
+    note_type = _('Document')
 
     def form_valid(self, form):
         doc = form.save(commit=False)
@@ -332,8 +331,7 @@ def choose_clintype(request):
             return HttpResponseRedirect(redirect_to)
         elif len(role_options) == 0:
             return HttpResponseServerError(
-                "Fatal: your Provider register is corrupted, and lacks "
-                "ProviderTypes. Report this error!")
+                _("Fatal: your Provider register is corrupted, and lacks ProviderTypes. Report this error!"))
         else:
             return render(request, 'core/role-choice.html',
                           {'roles': role_options,
@@ -541,9 +539,8 @@ def done_action_item(request, ai_id):
     ai.mark_done(request.user.provider)
     ai.save()
 
-    return HttpResponseRedirect(reverse("new-actionitem-followup",
-                                        kwargs={'pt_id':ai.patient.pk,
-                                        'ai_id':ai.pk}))
+    return HttpResponseRedirect(reverse("followup-choice",
+                                        args=(ai.patient.pk,)))
 
 
 def reset_action_item(request, ai_id):

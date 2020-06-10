@@ -1,12 +1,14 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block title %}
-New Provider: {{ request.user }}
+{% trans 'New Provider:' %} {{ request.user }}
 {% endblock %}
 
 {% block header %}
-<h1>Hi! I don't think we've met...</h1>
-<p class="lead">We're glad you're here. Before you get started, let us know a little bit about yourself!</p>
+<h1>{% blocktrans %}Hi! I don't think we've met...{% endblocktrans %}</h1>
+<p class="lead">{% blocktrans %}We're glad you're here. Before you get started, let us know a little bit about yourself!{% endblocktrans %}</p>
 
 {% endblock %}
 

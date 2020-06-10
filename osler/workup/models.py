@@ -15,6 +15,7 @@ from osler.core.models import Note, Provider, ReferralLocation, ReferralType
 from osler.core.validators import validate_attending
 from osler.workup import validators as workup_validators
 
+from django.utils.translation import gettext_lazy as _
 
 class DiagnosisType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
@@ -104,12 +105,12 @@ class AttestableNote(Note):
 
         if active_role is None:
             if len(user.provider.clinical_roles.all()) != 1:
-                raise ValueError("For users with > role, it must be provided.")
+                raise ValueError(_("For users with > role, it must be provided."))
             else:
                 active_role = user.provider.clinical_roles.all()[0]
         elif active_role not in user.provider.clinical_roles.all():
             raise ValueError(
-                "Provider {p} doesn't have role {r}!".format(
+                _("Provider {p} doesn't have role {r}!").format(
                     p=user.provider, r=active_role))
 
         if active_role.signs_charts:
@@ -118,7 +119,7 @@ class AttestableNote(Note):
             self.signed_date = now()
             self.signer = user.provider
         else:
-            raise ValueError("You must be an attending to sign workups.")
+            raise ValueError(_("You must be an attending to sign workups."))
 
     def signed(self):
         '''Has this workup been attested? Returns True if yes, False if no.'''
@@ -126,7 +127,7 @@ class AttestableNote(Note):
 
     def attribution(self):
         '''Builds an attribution string of the form Doe, John on DATE'''
-        return " ".join([str(self.author), "on", str(self.written_date())])
+        return " ".join([str(self.author), _("on"), str(self.written_date())])
 
 
 class ProgressNote(AttestableNote):
@@ -144,7 +145,7 @@ class ProgressNote(AttestableNote):
     signed_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        u = '{} on at {} by {}'.format(
+        u = _('{} on at {} by {}').format(
             self.title,
             datetime.datetime.strftime(self.written_datetime, '%c'),
             self.author)
@@ -165,7 +166,8 @@ class Workup(AttestableNote):
         related_name="attending_physician",
         on_delete=models.PROTECT,
         validators=[validate_attending],
-        help_text="Which attending saw the patient?")
+        verbose_name=_("Attending"),
+        help_text=_("Which attending saw the patient?"))
 
     other_volunteer = models.ManyToManyField(
         Provider,
@@ -176,93 +178,96 @@ class Workup(AttestableNote):
     clinic_day = models.ForeignKey(
         ClinicDate,
         on_delete=models.PROTECT,
-        help_text="When was the patient seen?")
+        verbose_name=_("Clinc day"),
+        help_text=_("When was the patient seen?"))
 
-    chief_complaint = models.CharField(max_length=1000, verbose_name="CC")
-    diagnosis = models.CharField(max_length=1000, verbose_name="Dx")
-    diagnosis_categories = models.ManyToManyField(DiagnosisType)
+    chief_complaint = models.CharField(max_length=1000, verbose_name=_("CC"))
+    diagnosis = models.CharField(max_length=1000, verbose_name=_("Dx"))
+    diagnosis_categories = models.ManyToManyField(DiagnosisType, verbose_name=_("Diagnosis categories"))
 
-    HPI = models.TextField(verbose_name="HPI")
-    PMH_PSH = models.TextField(verbose_name="PMH/PSH")
-    meds = models.TextField(verbose_name="Medications")
-    allergies = models.TextField()
-    fam_hx = models.TextField(verbose_name="Family History")
-    soc_hx = models.TextField(verbose_name="Social History")
-    ros = models.TextField(verbose_name="ROS")
+    HPI = models.TextField(verbose_name=_("HPI"))
+    PMH_PSH = models.TextField(verbose_name=_("PMH/PSH"))
+    meds = models.TextField(verbose_name=_("Medications"))
+    allergies = models.TextField(verbose_name=_("Allergies"))
+    fam_hx = models.TextField(verbose_name=_("Family History"))
+    soc_hx = models.TextField(verbose_name=_("Social History"))
+    ros = models.TextField(verbose_name=_("ROS"))
 
     # represented internally in per min
     hr = models.PositiveSmallIntegerField(
-        blank=True, null=True, verbose_name="Heart Rate")
+        blank=True, null=True, verbose_name=_("Heart Rate"))
 
     # represented internally as mmHg
     bp_sys = models.PositiveSmallIntegerField(
-        blank=True, null=True, verbose_name="Systolic",
+        blank=True, null=True, verbose_name=_("Systolic"),
         validators=[workup_validators.validate_bp_systolic])
     bp_dia = models.PositiveSmallIntegerField(
-        blank=True, null=True, verbose_name="Diastolic",
+        blank=True, null=True, verbose_name=_("Diastolic"),
         validators=[workup_validators.validate_bp_diastolic])
 
     # represented internally in per min
     rr = models.PositiveSmallIntegerField(
-        blank=True, null=True, verbose_name="Respiratory Rate")
+        blank=True, null=True, verbose_name=_("Respiratory Rate"))
 
     # represented internally in Fahrenheit
     t = models.DecimalField(
         max_digits=4, decimal_places=1,
         blank=True, null=True,
-        verbose_name="Temperature")
+        verbose_name=_("Temperature"))
 
     # represented internally as inches
-    height = models.PositiveSmallIntegerField(
+    height = models.PositiveSmallIntegerField(verbose_name=_("Height"),
         blank=True, null=True)
     # represented internally as kg
-    weight = models.DecimalField(
+    weight = models.DecimalField(verbose_name=_("Weight"),
         max_digits=5, decimal_places=1,
         blank=True, null=True)
 
-    pe = models.TextField(verbose_name="Physical Examination")
+    pe = models.TextField(verbose_name=_("Physical Examination"))
 
     labs_ordered_quest = models.TextField(
-        blank=True, null=True, verbose_name="Labs Ordered from Quest")
+        blank=True, null=True, verbose_name=_("Labs Ordered from Quest"))
     labs_ordered_internal = models.TextField(
-        blank=True, null=True, verbose_name="Labs Ordered Internally")
+        blank=True, null=True, verbose_name=_("Labs Ordered Internally"))
 
     rx = models.TextField(blank=True, null=True,
-                          verbose_name="Prescription Orders")
+                          verbose_name=_("Prescription Orders"))
 
-    got_voucher = models.BooleanField(default=False)
+    got_voucher = models.BooleanField(default=False, verbose_name=_("Got voucher"))
     voucher_amount = models.DecimalField(
+    verbose_name=_("Voucher amount"),
         max_digits=6, decimal_places=2, blank=True, null=True,
         validators=[MinValueValidator(0)])
-    patient_pays = models.DecimalField(
+    patient_pays = models.DecimalField(verbose_name=_("Patient pays"),
         max_digits=6, decimal_places=2, blank=True, null=True,
         validators=[MinValueValidator(0)])
 
     got_imaging_voucher = models.BooleanField(default=False)
-    imaging_voucher_amount = models.DecimalField(
+    imaging_voucher_amount = models.DecimalField(verbose_name=_("Imaging voucher"),
         max_digits=6, decimal_places=2, blank=True, null=True,
         validators=[MinValueValidator(0)])
-    patient_pays_imaging = models.DecimalField(
+    patient_pays_imaging = models.DecimalField(verbose_name=_("Patient pays imaging"),
         max_digits=6, decimal_places=2, blank=True, null=True,
         validators=[MinValueValidator(0)])
 
     # Please note that these are no longer shown on the form and will not
     # be filled out because the referral app handles this functionality
-    referral_type = models.ManyToManyField(ReferralType, blank=True)
-    referral_location = models.ManyToManyField(ReferralLocation, blank=True)
+    referral_type = models.ManyToManyField(ReferralType, verbose_name=_("Referral type"),blank=True)
+    referral_location = models.ManyToManyField(ReferralLocation, verbose_name=_("Rererral location"),blank=True)
 
-    will_return = models.BooleanField(default=False,
-                                      help_text="Will the pt. return to SNHC?")
+    will_return = models.BooleanField(default=False, verbose_name=_("Will return"),
+                                      help_text=_("Will the pt. return to SNHC?"))
 
-    A_and_P = models.TextField()
+    A_and_P = models.TextField(verbose_name=_("A and P"))
 
     signer = models.ForeignKey(
         Provider,
+        verbose_name=_("Signer"),
         blank=True, null=True,
         on_delete=models.PROTECT,
         related_name="signed_workups",
         validators=[validate_attending])
-    signed_date = models.DateTimeField(blank=True, null=True)
+    signed_date = models.DateTimeField(blank=True, verbose_name=_("Signed date"),null=True)
 
     history = HistoricalRecords()
 
@@ -285,4 +290,4 @@ class Workup(AttestableNote):
         return reverse('workup', args=(self.pk,))
 
     def __str__(self):
-        return self.patient.name() + " on " + str(self.clinic_day.clinic_date)
+        return self.patient.name() + _(" on ") + str(self.clinic_day.clinic_date)

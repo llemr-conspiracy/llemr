@@ -1,20 +1,22 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block header %}
-<h2>Who goes there?</h2>
+<h2>{% trans 'Who goes there?' %}</h2>
 {% if next %}
 {% if user.is_authenticated %}
-<p class="lead">Whoops! Looks like you don't have access to this page... sorry!</p>
+<p class="lead">{% blocktrans %}Whoops! Looks like you don't have access to this page... sorry!{% endblocktrans %}</p>
 {% else %}
-<p class="lead">You'll need to log in to see this page.</p>
+<p class="lead">{% blocktrans %}You'll need to log in to see this page.{% endblocktrans %}</p>
 {% endif %}
 {% endif %}
 {% endblock %}
 
 {% block content %}
- 
+
 {% if form.errors %}
-<p class="has-error">Your username and password didn't match. Please try again.</p>
+<p class="has-error">{% blocktrans %}Your username and password didn't match. Please try again.{% endblocktrans %}</p>
 {% endif %}
 
 <div class="container">
@@ -23,6 +25,6 @@
   {% crispy form %}
 
   {# Assumes you setup the password_reset view in your URLconf #}
-  <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+  <p><a href="{% url 'password_reset' %}">{% trans 'Lost password?' %}</a></p>
 </div>
 {% endblock %}

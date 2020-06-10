@@ -18,6 +18,7 @@ from crispy_forms.utils import TEMPLATE_PACK, render_field
 from osler.core.models import Provider, ProviderType
 from osler.workup import models
 
+from django.utils.translation import gettext_lazy as _
 
 def form_required_if(form, conditional, fields):
     """Adds an error to the form if conditional is truthy-false and any
@@ -29,9 +30,9 @@ def form_required_if(form, conditional, fields):
         for f in fields:
             val = data.get(f)
             if val is None or val == '':
-                err_str = ("When %s is specified, %s must also be specified" %
+                err_str = (_("When %s is specified, %s must also be specified") %
                            (conditional, ", ".join(fields)))
-                err_str += (" (%s wasn't)." % f) if len(fields) > 1 else "."
+                err_str += (_(" (%s wasn't).") % f) if len(fields) > 1 else "."
 
                 form.add_error(conditional, err_str)
                 [form.add_error(err_fld, err_str) for err_fld in fields]
@@ -49,8 +50,7 @@ def form_require_together(form, fields):
             if data.get(field) is None:
                 form.add_error(
                     field,
-                    "The fields %s are required together, and %s was "
-                    "not provided." % (fields, field))
+                    _("The fields %s are required together, and %s was not provided.") % (fields, field))
 
 
 def fahrenheit2centigrade(f):
@@ -177,15 +177,16 @@ class WorkupForm(ModelForm):
         self.helper.form_method = 'post'
 
         self.helper.layout = Layout(
-            Row(HTML('<h3>Clinical Team</h3>'),
+            Row(HTML("<h3>%s</h3>" % _('Clinical Team')),
                 Div('attending', css_class='col-sm-6'),
                 Div('other_volunteer', css_class='col-sm-6'),
                 Div('clinic_day', css_class='col-sm-12')
                 ),
 
-            Row(HTML('<h3>History</h3>'),
+            Row(HTML("<h3>%s</h3>" % ('History')),
                 Div('chief_complaint', css_class='col-sm-6'),
                 Div('diagnosis', css_class='col-sm-6'),
+                Div('diagnosis_icd10', css_class='col-xs-12', onkeyup="searchStates(search)"),
                 Div(InlineCheckboxes('diagnosis_categories'),
                     css_class='col-xs-12'),
                 Div('HPI', css_class='col-xs-12'),
@@ -196,8 +197,8 @@ class WorkupForm(ModelForm):
                 Div('allergies', css_class='col-md-6'),
                 Div('ros', css_class='col-xs-12')),
 
-            Row(HTML('<h3>Physical Exam</h3>'),
-                HTML('<h4>Vital Signs</h4>'),
+            Row(HTML("<h3>%s</h3>" % _('Physical Exam')),
+                HTML("<h4>%s</h4>" % _('Vital Signs')),
                 Div(AppendedText('bp_sys', 'mmHg'),
                     css_class='col-md-3 col-sm-3 col-xs-6'),
                 Div(AppendedText('bp_dia', 'mmHg'),
@@ -215,24 +216,24 @@ class WorkupForm(ModelForm):
                     css_class='col-md-3 col-sm-4 col-xs-6'),
                 Div('pe', css_class='col-xs-12')),
 
-            Row(HTML('<h3>Assessment, Plan, & Orders</h3>'),
+            Row(HTML("<h3>%s</h3>" % _("Assessment, Plan, & Orders")),
                 Div('A_and_P', css_class='col-xs-12'),
                 Div('rx', css_class='col-md-4'),
                 Div('labs_ordered_internal', css_class='col-md-4'),
                 Div('labs_ordered_quest', css_class='col-md-4'),
-                Div(HTML('<h4>Medication Voucher</h4>'),
+                Div(HTML("<h4>%s</h4>" % _('Medication Voucher')),
                     'got_voucher',
-                    PrependedText('voucher_amount', '$'),
-                    PrependedText('patient_pays', '$'),
+                    PrependedText('voucher_amount', _('$')),
+                    PrependedText('patient_pays', _('$')),
                     css_class='col-xs-6',),
-                Div(HTML('<h4>Imaging Voucher</h4>'),
+                Div(HTML("<h4>%s</h4>" % _('Imaging Voucher')),
                     'got_imaging_voucher',
-                    PrependedText('imaging_voucher_amount', '$'),
-                    PrependedText('patient_pays_imaging', '$'),
+                    PrependedText('imaging_voucher_amount', _('$')),
+                    PrependedText('patient_pays_imaging', _('$')),
                     css_class='col-xs-6')
                 ),
 
-            Submit('submit', 'Save', css_class='btn btn-success')
+            Submit('submit', _('Save'), css_class='btn btn-success')
         )
 
     def clean(self):
@@ -280,8 +281,7 @@ class WorkupForm(ModelForm):
                 for field in ['bp_sys', 'bp_dia']:
                     self.add_error(
                         field,
-                        'Systolic blood pressure must be strictly greater '
-                        'than diastolic blood pressure.')
+                        _('Systolic blood pressure must be strictly greater than diastolic blood pressure.'))
 
 
 class ProgressNoteForm(ModelForm):
@@ -292,7 +292,7 @@ class ProgressNoteForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProgressNoteForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
 
 class ClinicDateForm(ModelForm):
@@ -310,4 +310,4 @@ class ClinicDateForm(ModelForm):
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
 
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
