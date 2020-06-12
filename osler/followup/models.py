@@ -62,7 +62,7 @@ class Followup(Note):
 
         # in a brutally ugly turn of events, there doesn't appear to be a good
         # way to overridde this method in subclasses. Behold the hacky result:
-        for child in ["labfollowup","vaccinefollowup","actionitemfollowup"]:
+        for child in ["labfollowup","actionitemfollowup"]:
             # you may ask "where did those strings come from?" or "how do you
             # know that it's all lower case?"... MYSTERIES FOR THE AGES.
             if hasattr(self, child):
@@ -100,36 +100,6 @@ class ActionItemFollowup(Followup):
 
     def type(self):
         return "Action Item"
-
-
-class VaccineFollowup(Followup):
-    '''Datamodel for a followup of a vaccine administration'''
-
-    # Template relies on following variable to render Admin Edit. If you
-    # change the variable here, you must edit patient_detail.html
-    SUBSQ_DOSE_HELP = "Has the patient committed to coming back for another dose?"
-    subsq_dose = models.BooleanField(verbose_name=SUBSQ_DOSE_HELP)
-
-    DOSE_DATE_HELP = "When does the patient want to get their next dose (if applicable)?"
-    dose_date = models.DateField(blank=True,
-                                 null=True,
-                                 help_text=DOSE_DATE_HELP)
-
-    history = HistoricalRecords()
-
-    def type(self):
-        return "Vaccine"
-
-    def short_text(self):
-        out = []
-        if self.subsq_dose:
-            out.append("Patient should return on")
-            out.append(str(self.dose_date))
-            out.append("for the next dose.")
-        else:
-            out.append("Patient does not return for another dose.")
-
-        return " ".join(out)
 
 
 class LabFollowup(Followup):

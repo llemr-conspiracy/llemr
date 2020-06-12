@@ -14,7 +14,7 @@ from osler.core.tests.test_views import log_in_provider, build_provider
 from . import forms
 from . import models
 
-FU_TYPES = ["labs", "vaccine"]
+FU_TYPES = ["labs"]
 
      
 class FollowupTest(TestCase):
@@ -64,19 +64,6 @@ class FollowupTest(TestCase):
             response = self.client.get(url)
             self.assertEqual(response.status_code, 200)
 
-            # Vaccine Followup
-            vf = models.VaccineFollowup.objects.create(
-                contact_method=method,
-                contact_resolution=res,
-                author=Provider.objects.all()[0],
-                author_type=ProviderType.objects.all()[0],
-                patient=pt,
-                subsq_dose=False)
-
-            url = reverse('followup', kwargs={"pk": vf.id, "model": 'Vaccine'})
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
-
             aif = models.ActionItemFollowup.objects.create(
                 contact_method=method,
                 contact_resolution=res,
@@ -120,13 +107,6 @@ class FollowupTest(TestCase):
                 "comments": "",
                 button_clicked: True
                 }
-
-            submitted_vacc_fu = dict(submitted_gen_fu)
-            submitted_vacc_fu['subsq_dose'] = True
-            submitted_vacc_fu['dose_date'] = str(datetime.date.today())
-
-            self.verify_fu(models.VaccineFollowup, 'vaccine',
-                           submitted_vacc_fu)
 
             submitted_lab_fu = dict(submitted_gen_fu)
             submitted_lab_fu["communication_success"] = True

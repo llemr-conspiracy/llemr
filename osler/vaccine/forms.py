@@ -5,8 +5,8 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
 from osler.vaccine import models
-# from osler.core.forms import ActionItemForm
-# from osler.followup.forms import BaseFollowup
+from osler.core.forms import AbstractActionItemForm
+from osler.followup.forms import BaseFollowup
 
 
 class VaccineSeriesForm(ModelForm):
@@ -46,28 +46,28 @@ class VaccineSeriesSelectForm(forms.Form):
         self.helper.add_input(Submit('submit', 'Submit'))
 
 
-# class VaccineActionItemForm(ActionItemForm):
-# 	class Meta(object):
-#         model = models.VaccineActionItem
-#         exclude = ['completion_date', 'author', 'written_date', 'patient',
-#                    'completion_author', 'author_type','vaccine']
+class VaccineActionItemForm(AbstractActionItemForm):
+    class Meta(object):
+        model = models.VaccineActionItem
+        exclude = ['completion_date', 'author', 'written_date', 'patient',
+                   'completion_author', 'author_type','vaccine']
 
 
-# class VaccineFollowup(BaseFollowup):
-#     '''A form to process the handling of a vaccine followup.'''
-#     class Meta(object):
-#         model = models.VaccineFollowup
-#         exclude = ['patient', 'author', 'author_type']
+class VaccineFollowup(BaseFollowup):
+    '''A form to process the handling of a vaccine followup.'''
+    class Meta(object):
+        model = models.VaccineFollowup
+        exclude = ['patient', 'author', 'author_type','action_item']
 
-#     def clean(self):
-#         '''VaccineFollowups require a next dose date iff there there is a next
-#         dose.'''
+    def clean(self):
+        '''VaccineFollowups require a next dose date iff there there is a next
+        dose.'''
 
-#         cleaned_data = super(VaccineFollowup, self).clean()
+        cleaned_data = super(VaccineFollowup, self).clean()
 
-#         if cleaned_data.get('subsq_dose') and \
-#            not cleaned_data.get('dose_date'):
+        if cleaned_data.get('subsq_dose') and \
+           not cleaned_data.get('dose_date'):
 
-#             self.add_error('dose_date', 'A next dosage date is required if ' +
-#                            'the patient is returning for another dose.')
+            self.add_error('dose_date', 'A next dosage date is required if ' +
+                           'the patient is returning for another dose.')
         

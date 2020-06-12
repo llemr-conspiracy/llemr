@@ -8,5 +8,5 @@ from . import models
 for model in [models.VaccineSeriesType, models.VaccineDoseType]:
     simplehistory_aware_register(model)
 
-for model in [models.VaccineSeries, models.VaccineDose]:
+for model in [models.VaccineSeries, models.VaccineDose, models.VaccineActionItem, models. VaccineFollowup]:
     admin.site.register(model, NoteAdmin)

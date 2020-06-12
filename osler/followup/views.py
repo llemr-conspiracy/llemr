@@ -37,12 +37,6 @@ class LabFollowupUpdate(FollowupUpdate):
     note_type = "Lab Followup"
 
 
-class VaccineFollowupUpdate(FollowupUpdate):
-    model = models.VaccineFollowup
-    form_class = forms.VaccineFollowup
-    note_type = "Vaccine Followup"
-
-
 class FollowupCreate(NoteFormView):
     '''A view for creating a new Followup'''
     template_name = 'core/form_submission.html'
@@ -52,8 +46,7 @@ class FollowupCreate(NoteFormView):
 
         ftype = self.kwargs['ftype']
 
-        futypes = {'labs': forms.LabFollowup,
-                   'vaccine': forms.VaccineFollowup}
+        futypes = {'labs': forms.LabFollowup}
 
         return futypes[ftype]
 
@@ -86,6 +79,7 @@ class FollowupCreate(NoteFormView):
 
 class ActionItemFollowupCreate(FollowupCreate):
     '''A view for creating a new ActionItemFollowup'''
+    #Once Lab Followup replaced, make this the new base FollowupCreate
     form_class = forms.ActionItemFollowup
 
     def get_form_class(self,**kwargs):

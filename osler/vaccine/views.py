@@ -4,8 +4,10 @@ from django.http import HttpResponseRedirect
 
 from osler.core.models import Patient, ProviderType
 from osler.core.views import NoteFormView
-from osler.vaccine.models import VaccineSeries
-from osler.vaccine.forms import (VaccineSeriesForm, VaccineDoseForm, VaccineSeriesSelectForm)
+from osler.followup.views import FollowupCreate
+from osler.vaccine.models import VaccineSeries, VaccineActionItem
+from osler.vaccine.forms import (VaccineSeriesForm, VaccineDoseForm, 
+    VaccineSeriesSelectForm, VaccineFollowup, VaccineActionItemForm)
 
 def select_vaccine_series(request,pt_id):
     """ Prompt user to select vaccine series given patient ID or create new."""
@@ -75,13 +77,59 @@ class VaccineDoseCreate(NoteFormView):
         dose.save()
         form.save_m2m()
 
+        return HttpResponseRedirect(reverse('new-vaccine-ai', 
+            kwargs={'pt_id': pt.id, 'series_id': series.id}))
+
+
+class VaccineActionItemCreate(NoteFormView):
+    '''Create a vaccine action item that will appear on patient homepage'''
+    template_name = 'core/form_submission.html'
+    form_class = VaccineActionItemForm
+    note_type = 'Vaccine Action Item'
+
+    def form_valid(self, form):
+        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        vai = form.save(commit=False)
+
+        vai.completion_date = None
+        vai.author = self.request.user.provider
+        vai.author_type = get_object_or_404(
+            ProviderType, pk=self.request.session['clintype_pk'])
+        vai.vaccine = get_object_or_404(
+            VaccineSeries, pk=self.kwargs['series_id'])
+        vai.patient = pt
+        vai.save()
+        form.save_m2m()
+
         return HttpResponseRedirect(reverse('core:patient-detail', args=(pt.id,)))
 
 
-# class VaccineActionItemCreate(FormView):
-# 	'''Create a vaccine action item that will appear on patient homepage'''
-# 	template_name = ''
-#     form_class = VaccineActionItemForm
+class VaccineFollowupCreate(FollowupCreate):
+    '''A view for creating a new VaccineFollowup'''
+    form_class = VaccineFollowup
 
+    def get_form_class(self,**kwargs):
+        return self.form_class
 
-# class VaccineFollowupCreate()
+    def form_valid(self, form):
+        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        vai = get_object_or_404(VaccineActionItem, pk=self.kwargs['ai_id'])
+
+        vai.mark_done(self.request.user.provider)
+        vai.save()
+
+        vai_fu = form.save(commit=False)
+        vai_fu.author = self.request.user.provider
+        vai_fu.author_type = get_object_or_404(
+            ProviderType, pk=self.request.session['clintype_pk'])
+        vai_fu.action_item = vai
+        vai_fu.patient = pt
+        vai_fu.save()
+        form.save_m2m()
+
+        if 'followup_create' in self.request.POST:
+            return HttpResponseRedirect(reverse('new-vaccine-ai',
+                kwargs={'pt_id': pt.id, 'series_id': series.id}))
+        else:
+            return HttpResponseRedirect(reverse("core:patient-detail",
+                                                args=(pt.id,)))
