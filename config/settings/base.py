@@ -84,6 +84,7 @@ LOCAL_APPS = [
     'osler.appointment.apps.AppointmentConfig',
     'osler.referral.apps.ReferralConfig',
     'osler.audit.apps.AuditConfig',
+    'osler.vaccine.apps.VaccineConfig',
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

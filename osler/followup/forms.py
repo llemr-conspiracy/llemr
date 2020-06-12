@@ -24,6 +24,19 @@ class BaseFollowup(ModelForm):
         super(BaseFollowup, self).__init__(*args, **kwargs)
 
 
+class ActionItemFollowup(BaseFollowup):
+    class Meta(object):
+        model = models.ActionItemFollowup
+        exclude = ['patient', 'author', 'author_type','action_item']
+
+
+class LabFollowup(BaseFollowup):
+    '''The form instantiation of a followup to communicate lab results.'''
+    class Meta(object):
+        model = models.LabFollowup
+        exclude = ['patient', 'author', 'author_type']
+
+
 class VaccineFollowup(BaseFollowup):
     '''A form to process the handling of a vaccine followup.'''
     class Meta(object):
@@ -41,16 +54,3 @@ class VaccineFollowup(BaseFollowup):
 
             self.add_error('dose_date', 'A next dosage date is required if ' +
                            'the patient is returning for another dose.')
-
-
-class ActionItemFollowup(BaseFollowup):
-    class Meta(object):
-        model = models.ActionItemFollowup
-        exclude = ['patient', 'author', 'author_type','action_item']
-
-
-class LabFollowup(BaseFollowup):
-    '''The form instantiation of a followup to communicate lab results.'''
-    class Meta(object):
-        model = models.LabFollowup
-        exclude = ['patient', 'author', 'author_type']
