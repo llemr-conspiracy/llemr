@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 
 from osler.core.models import Patient, ProviderType
 from osler.core.views import NoteFormView
+from osler.core import utils
 from osler.followup.views import FollowupCreate
 from osler.vaccine.models import VaccineSeries, VaccineActionItem
 from osler.vaccine.forms import (VaccineSeriesForm, VaccineDoseForm, 
@@ -77,19 +78,42 @@ class VaccineDoseCreate(NoteFormView):
 
         dose.save()
         form.save_m2m()
+        
+        # if formatted_date==None:
+        #     return HttpResponseRedirect(reverse('core:patient-detail', args=(pt.id,)))
+        # else:
+        #     querystr = '%s=%s' % ("due_date", formatted_date)
+        #     vai_url = "%s?%s" % (reverse('new-vaccine-ai', 
+        #         kwargs={'pt_id': pt.id, 'series_id': series.id}), querystr)
+        #     return HttpResponseRedirect(vai_url)
 
-        if dose.is_last:
+        if dose.is_last():
             return HttpResponseRedirect(reverse('core:patient-detail', args=(pt.id,)))
         else:
-            return HttpResponseRedirect(reverse('new-vaccine-ai', 
-                kwargs={'pt_id': pt.id, 'series_id': series.id}))
+            formatted_date = dose.next_due_date().strftime("%D")
+            querystr = '%s=%s' % ("due_date", formatted_date)
+            vai_url = "%s?%s" % (reverse('new-vaccine-ai', 
+                kwargs={'pt_id': pt.id, 'series_id': series.id}), querystr)
+            return HttpResponseRedirect(vai_url)
+            
+        
+        # return HttpResponseRedirect(reverse('new-vaccine-ai', 
+        #     kwargs={'pt_id': pt.id, 'series_id': series.id}))
 
-
+        #     #Pass on due date for next dose into vaccine action item
+            
+            
 class VaccineActionItemCreate(NoteFormView):
     '''Create a vaccine action item that will appear on patient homepage'''
     template_name = 'core/form_submission.html'
     form_class = VaccineActionItemForm
     note_type = 'Vaccine Action Item'
+
+    def get_initial(self):
+        initial = super(VaccineActionItemCreate, self).get_initial()
+
+        initial.update(utils.get_due_date_from_url_query_dict(self.request))
+        return initial
 
     def form_valid(self, form):
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])

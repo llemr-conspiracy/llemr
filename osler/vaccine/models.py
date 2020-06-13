@@ -12,10 +12,24 @@ class VaccineSeriesType(models.Model):
 
     name = models.CharField(max_length=100, primary_key=True)
 
+    def doses(self):
+        '''Return queryset of all VaccineDoseTypes for this VaccineSeriesType'''
+        return VaccineDoseType.objects.filter(kind=self).order_by('time_from_first')
+
     def last_dose(self):
         '''Return VaccineDoseType object that is last dose in this VaccineSeriesType'''
-        doses = VaccineDoseType.objects.filter(kind=self).order_by('time_from_first')
-        return doses[-1]
+        return self.doses().reverse()[0]
+
+    def next_dose(self, dose):
+        '''Takes VaccineDoseType and returns next in this VaccineSeriesType or None if last'''
+        if dose==self.last_dose():
+            return None
+        else:
+            #Please change if you have a more elegant way of doing
+            #Hypothetically shouldn't take forever to query db since shouldn't be too many doses
+            for index, item in enumerate(self.doses()):
+                if dose==item:
+                    return self.doses()[index+1]
 
     def __str__(self):
         return self.name
@@ -45,6 +59,16 @@ class VaccineSeries(Note):
     kind = models.ForeignKey(VaccineSeriesType, on_delete=models.PROTECT,
         help_text='What kind of vaccine are you administering?')
 
+    def doses(self):
+        '''Return queryset of all VaccineDose for this VaccineSeries'''
+        return VaccineDose.objects.filter(series=self).order_by('written_datetime')
+
+    def first_dose(self):
+        if not self.doses():
+            return None
+        else:
+            return self.doses()[0]
+
     def __str__(self):
         return str(self.kind)
 
@@ -58,7 +82,18 @@ class VaccineDose(Note):
 
     def is_last(self):
         '''Return True if this dose is last dose in the series'''
-        return self.which_dose==series.kind.last_dose
+        return self.which_dose==self.series.kind.last_dose()
+
+    def next_due_date(self):
+        '''Return DateTime object of next dose due date or None is last dose'''
+        if self.is_last():
+            return None
+        else:
+            #Please change if you have a more elegant way of doing
+            first = self.series.first_dose() #First VaccineDose in this series
+            next = self.series.kind.next_dose(self.which_dose) #Next VaccineDoseType
+            next_due=first.written_datetime+next.time_from_first
+            return next_due
 
     def __str__(self):
         return str(self.which_dose)
