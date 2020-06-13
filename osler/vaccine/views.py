@@ -78,14 +78,6 @@ class VaccineDoseCreate(NoteFormView):
 
         dose.save()
         form.save_m2m()
-        
-        # if formatted_date==None:
-        #     return HttpResponseRedirect(reverse('core:patient-detail', args=(pt.id,)))
-        # else:
-        #     querystr = '%s=%s' % ("due_date", formatted_date)
-        #     vai_url = "%s?%s" % (reverse('new-vaccine-ai', 
-        #         kwargs={'pt_id': pt.id, 'series_id': series.id}), querystr)
-        #     return HttpResponseRedirect(vai_url)
 
         if dose.is_last():
             return HttpResponseRedirect(reverse('core:patient-detail', args=(pt.id,)))
@@ -95,12 +87,6 @@ class VaccineDoseCreate(NoteFormView):
             vai_url = "%s?%s" % (reverse('new-vaccine-ai', 
                 kwargs={'pt_id': pt.id, 'series_id': series.id}), querystr)
             return HttpResponseRedirect(vai_url)
-            
-        
-        # return HttpResponseRedirect(reverse('new-vaccine-ai', 
-        #     kwargs={'pt_id': pt.id, 'series_id': series.id}))
-
-        #     #Pass on due date for next dose into vaccine action item
             
             
 class VaccineActionItemCreate(NoteFormView):

@@ -34,7 +34,6 @@ class FollowupTest(TestCase):
 
     def tearDown(self):
         models.LabFollowup.objects.all().delete()
-        models.VaccineFollowup.objects.all().delete()
         models.ActionItemFollowup.objects.all().delete()
 
     def test_followup_view_urls(self):
