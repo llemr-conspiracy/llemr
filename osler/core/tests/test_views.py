@@ -584,8 +584,8 @@ class ActionItemTest(TestCase):
         response = self.client.get(
             reverse('core:done-action-item', args=(ai.id,)))
         assert response.status_code == 302
-        assert reverse("followup-choice",
-                       args=(ai.patient.pk,)) in response.url
+        assert reverse("new-actionitem-followup",
+            kwargs={'pt_id':ai.patient.pk,'ai_id':ai.pk}) in response.url
         assert models.ActionItem.objects.first().done()
         assert \
             models.ActionItem.objects.first().written_datetime != \
