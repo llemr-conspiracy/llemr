@@ -3,6 +3,7 @@ from django.urls import path
 
 from osler.core.urls import wrap_url
 from . import views
+from . import models
 
 unwrapped_urlconf = [
     path('<int:pt_id>/actionitem/<int:series_id>/',
@@ -10,7 +11,7 @@ unwrapped_urlconf = [
          name='new-vaccine-ai'),
     path('<int:pt_id>/followup/<int:ai_id>/',
          views.VaccineFollowupCreate.as_view(),
-         name='new-vaccine-followup'),
+         name=models.VaccineActionItem.MARK_DONE_URL_NAME),
     path('<int:pt_id>/select/',
          views.select_vaccine_series,
          name='select-vaccine-series'),

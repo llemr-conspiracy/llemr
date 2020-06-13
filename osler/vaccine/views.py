@@ -143,7 +143,7 @@ class VaccineFollowupCreate(FollowupCreate):
 
         if 'followup_create' in self.request.POST:
             return HttpResponseRedirect(reverse('new-vaccine-ai',
-                kwargs={'pt_id': pt.id, 'series_id': series.id}))
+                kwargs={'pt_id': pt.id, 'series_id': vai.vaccine.id}))
         else:
             return HttpResponseRedirect(reverse("core:patient-detail",
                                                 args=(pt.id,)))

@@ -1,12 +1,15 @@
 from __future__ import unicode_literals
+from builtins import str
 import datetime
 
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.timezone import now
 
 from osler.core.tests.test_views import log_in_provider, build_provider
 from osler.core.models import (
-    Gender, Patient, Provider, ProviderType)
+    Gender, Patient, Provider, ProviderType, ActionInstruction)
+from osler.followup.models import (ContactMethod, ContactResult)
 
 from . import forms
 from . import models
@@ -146,66 +149,218 @@ class TestVaccineSeriesSelect(TestCase):
         self.assertContains(response, series3)
 
         #Submit form and redirect correctly
-        response = self.client.post(
-            reverse('select-vaccine-series', args=(pt2.id,)),
+        response = self.client.post(url,
             {'series': series3.pk})
         self.assertRedirects(response,reverse('new-vaccine-dose',
             kwargs={'pt_id': pt2.id,'series_id': series3.id}))
 
 
-# class TestVaccineDoseCreate(TestCase):
-#   def setUp(self):
-#         log_in_provider(self.client, build_provider())
+class TestVaccineDoseCreate(TestCase):
 
-#         self.pt = Patient.objects.create(
-#             first_name="Juggie",
-#             last_name="Brodeltein",
-#             middle_name="Bayer",
-#             phone='+49 178 236 5288',
-#             gender=Gender.objects.first(),
-#             address='Schulstrasse 9',
-#             city='Munich',
-#             state='BA',
-#             zip_code='63108',
-#             pcp_preferred_zip='63018',
-#             date_of_birth=datetime.date(1990, 1, 1),
-#             patient_comfortable_with_english=False,
-#         )
-#         self.series_type = models.VaccineSeriesType.objects.create(
-#           name="Hepatitis A")
-#         self.series = models.VaccineSeries.objects.create(
-#           author=Provider.objects.first(),
-#           author_type=ProviderType.objects.first(),
-#           patient=self.pt,
-#           kind=self.series_type)
+    fixtures = ['core']
 
-#     def test_vaccine_dose_create_view(self):
-#       dosetype1 = models.VaccineDoseType.objects.create(
-#           kind=self.series_type,
-#           time_from_first=datetime.timedelta(0))
-#       dosetype2 = models.VaccineDoseType.objects.create(
-#           kind=self.series_type,
-#           time_from_first=datetime.timedelta(days=30))
+    def setUp(self):
+        log_in_provider(self.client, build_provider())
 
-#       #Create another series type and subsequent dose type
-#       series_type2 = models.VaccineSeriesType.objects.create(
-#           name="Flu")
-#       dosetype3 = models.VaccineDoseType.objects.create(
-#           kind=series_type2,
-#           time_from_first=datetime.timedelta(0))
+        self.pt = Patient.objects.create(
+            first_name="Juggie",
+            last_name="Brodeltein",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=Gender.objects.first(),
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 1, 1),
+            patient_comfortable_with_english=False,
+        )
+        self.series_type = models.VaccineSeriesType.objects.create(
+          name="Hepatitis A")
+        self.series = models.VaccineSeries.objects.create(
+          author=Provider.objects.first(),
+          author_type=ProviderType.objects.first(),
+          patient=self.pt,
+          kind=self.series_type)
 
-#       url = reverse('new-vaccine-dose',
-#           kwargs={'pt_id': self.pt.id,'series_id': self.series.id})
-#       response = self.client.get(url)
+    def test_vaccine_dose_create_view(self):
+        dosetype1 = models.VaccineDoseType.objects.create(
+            kind=self.series_type,
+            time_from_first=datetime.timedelta(0))
+        dosetype2 = models.VaccineDoseType.objects.create(
+            kind=self.series_type,
+            time_from_first=datetime.timedelta(days=30))
 
-#       #Two dose types for this series type
-#       self.assertEqual(response.status_code, 200)
-#         self.assertContains(response, dosetype1)
-#         self.assertContains(response, dosetype2)
-#         self.assertNotContains(response, dosetype3)
+        #Create another series type and subsequent dose type
+        series_type2 = models.VaccineSeriesType.objects.create(
+            name="Flu")
+        dosetype3 = models.VaccineDoseType.objects.create(
+            kind=series_type2,
+            time_from_first=datetime.timedelta(0))
 
-#         #Submit form for first dose, redirect to action item
+        url = reverse('new-vaccine-dose',
+            kwargs={'pt_id': self.pt.id,'series_id': self.series.id})
+        response = self.client.get(url)
 
-#         #Submit form for last dose, redirect to patient detail
+        #Two dose types for this series type
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, dosetype1)
+        self.assertContains(response, dosetype2)
+        self.assertNotContains(response, dosetype3)
+
+        #Submit form for last dose, redirect to patient detail
+        response = self.client.post(url,
+            {'which_dose': dosetype2.pk})
+        self.assertRedirects(response,
+            reverse('core:patient-detail',args=(self.pt.id,)))
+
+        #Submit form for first dose, redirect to action item with correct due date url
+        response = self.client.post(url,
+            {'which_dose': dosetype1.pk})
+
+        new_dose = models.VaccineDose.objects.all()[0]
+        formatted_date = new_dose.next_due_date().strftime("%D")
+        querystr = '%s=%s' % ("due_date", formatted_date)
+        new_url = "%s?%s" % (reverse('new-vaccine-ai', 
+            kwargs={'pt_id': self.pt.id, 'series_id': self.series.id}), querystr)
         
+        self.assertRedirects(response,new_url)
 
+
+class TestVaccineActionItemCreate(TestCase):
+
+    fixtures = ['core']
+
+    def setUp(self):
+        log_in_provider(self.client, build_provider())
+
+        self.pt = Patient.objects.create(
+            first_name="Juggie",
+            last_name="Brodeltein",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=Gender.objects.first(),
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 1, 1),
+            patient_comfortable_with_english=False,
+        )
+        self.series_type = models.VaccineSeriesType.objects.create(
+          name="Hepatitis A")
+        self.series = models.VaccineSeries.objects.create(
+          author=Provider.objects.first(),
+          author_type=ProviderType.objects.first(),
+          patient=self.pt,
+          kind=self.series_type)
+
+    def test_vaccine_ai_create(self):
+
+        self.assertEqual(models.VaccineActionItem.objects.count(), 0)
+
+        url = reverse('new-vaccine-ai', kwargs={'pt_id': self.pt.id, 'series_id': self.series.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        submitted_ai = {
+            "instruction": ActionInstruction.objects.create(instruction="Call"),
+            "due_date": str(datetime.date.today()),
+            "comments": "an arbitrary string comment"
+        }
+
+        response = self.client.post(url, submitted_ai)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('core:patient-detail', args=(self.pt.id,)))
+        self.assertEqual(models.VaccineActionItem.objects.count(), 1)
+
+    def test_vaccine_ai_mark_done_url(self):
+
+        vai = models.VaccineActionItem.objects.create(
+            instruction=ActionInstruction.objects.create(instruction="Please call"),
+            due_date=datetime.date.today(),
+            comments="",
+            author=Provider.objects.first(),
+            author_type=ProviderType.objects.first(),
+            patient=self.pt,
+            vaccine=self.series)
+
+        #vmark_done_url on patient detail
+        response = self.client.get(
+            reverse('core:patient-detail', args=(self.pt.id,)))
+        self.assertContains(response, vai.mark_done_url())
+
+        #vaccine ai is not done yet
+        self.assertEqual(vai.done(), False)
+
+
+class TestVaccineFollowupCreate(TestCase):
+
+    fixtures = ['core']
+
+    def setUp(self):
+        log_in_provider(self.client, build_provider())
+
+        self.pt = Patient.objects.create(
+            first_name="Juggie",
+            last_name="Brodeltein",
+            middle_name="Bayer",
+            phone='+49 178 236 5288',
+            gender=Gender.objects.first(),
+            address='Schulstrasse 9',
+            city='Munich',
+            state='BA',
+            zip_code='63108',
+            pcp_preferred_zip='63018',
+            date_of_birth=datetime.date(1990, 1, 1),
+            patient_comfortable_with_english=False,
+        )
+        self.series_type = models.VaccineSeriesType.objects.create(
+            name="Hepatitis A")
+        self.series = models.VaccineSeries.objects.create(
+            author=Provider.objects.first(),
+            author_type=ProviderType.objects.first(),
+            patient=self.pt,
+            kind=self.series_type)
+        self.vai = models.VaccineActionItem.objects.create(
+            instruction=ActionInstruction.objects.create(instruction="Please call"),
+            due_date=datetime.date.today(),
+            comments="",
+            author=Provider.objects.first(),
+            author_type=ProviderType.objects.first(),
+            patient=self.pt,
+            vaccine=self.series)
+
+    def test_vaccine_fu_create(self):
+
+        url = reverse('new-vaccine-followup',
+            kwargs={'pt_id':self.pt.id,'ai_id':self.vai.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+        contact_method = ContactMethod.objects.create(name="Ritual")
+        contact_resolution = ContactResult.objects.create(name="Eureka")
+
+        for button_clicked in ['followup_create', 'followup_close']:
+            submitted_fu = {
+                "contact_method": contact_method,
+                "contact_resolution": contact_resolution,
+                "comments": "",
+                "action_item": self.vai,
+                button_clicked: True}
+
+            response = self.client.post(url,submitted_fu)
+            self.assertEqual(response.status_code, 302)
+
+            #Action Item marked done after subsmission
+            vai = models.VaccineActionItem.objects.first()
+            self.assertEqual(vai.completion_date.date(), now().date())
+
+            if 'followup_create' in submitted_fu:
+                self.assertRedirects(response,reverse('new-vaccine-ai', 
+                    kwargs={'pt_id': self.pt.id, 'series_id': self.series.id}))
+            elif 'followup_close' in submitted_fu:
+                self.assertRedirects(response,reverse('core:patient-detail', 
+                    args=(self.pt.id,)))
