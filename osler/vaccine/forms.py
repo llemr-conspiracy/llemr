@@ -29,7 +29,8 @@ class VaccineDoseForm(ModelForm):
     def __init__(self, series_type, *args, **kwargs):
         super(VaccineDoseForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        self.fields['which_dose'].queryset = models.VaccineDoseType.objects.filter(kind=series_type)
+        self.fields['which_dose'].queryset = models.VaccineDoseType.objects\
+            .filter(kind=series_type).order_by('time_from_first')
         self.helper.add_input(Submit('submit', 'Log vaccine dose'))
 
 

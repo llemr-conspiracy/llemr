@@ -12,6 +12,11 @@ class VaccineSeriesType(models.Model):
 
     name = models.CharField(max_length=100, primary_key=True)
 
+    def last_dose(self):
+        '''Return VaccineDoseType object that is last dose in this VaccineSeriesType'''
+        doses = VaccineDoseType.objects.filter(kind=self).order_by('time_from_first')
+        return doses[-1]
+
     def __str__(self):
         return self.name
 
@@ -24,11 +29,6 @@ class VaccineDoseType(models.Model):
         on_delete=models.CASCADE)
     time_from_first = models.DurationField(default=0, 
         help_text='Example: 60 days for 2 months, input minimum required interval')
-
-    def time_in_months(self):
-        '''Returns time_from_first, a timedelta object, in integer months'''
-        #The greatest duration stored is days
-        return self.time_from_first.days/30
 
     def __str__(self):
         '''Provides string to display on front end for vaccine doses'''
@@ -55,6 +55,10 @@ class VaccineDose(Note):
     series = models.ForeignKey(VaccineSeries, on_delete=models.CASCADE,
         help_text='Which vaccine is this?')
     which_dose = models.ForeignKey(VaccineDoseType, on_delete=models.PROTECT)
+
+    def is_last(self):
+        '''Return True if this dose is last dose in the series'''
+        return self.which_dose==series.kind.last_dose
 
     def __str__(self):
         return str(self.which_dose)

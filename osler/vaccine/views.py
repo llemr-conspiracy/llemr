@@ -26,6 +26,7 @@ def select_vaccine_series(request,pt_id):
 
 
 class VaccineSeriesCreate(NoteFormView):
+    '''Create a vaccine series for a patient'''
     template_name = 'core/form_submission.html'
     note_type = "Vaccine Series"
     form_class = VaccineSeriesForm
@@ -49,6 +50,7 @@ class VaccineSeriesCreate(NoteFormView):
 
 
 class VaccineDoseCreate(NoteFormView):
+    '''Create individual doses for a given vaccine series for a patient'''
     template_name = 'core/form_submission.html'
     note_type = "Vaccine Dose"
     form_class = VaccineDoseForm
@@ -62,7 +64,6 @@ class VaccineDoseCreate(NoteFormView):
         return kwargs
 
     def form_valid(self, form):
-        """Set the patient, provider, and written timestamp, and status."""
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         series = get_object_or_404(VaccineSeries, pk=self.kwargs['series_id'])
         dose = form.save(commit=False)
@@ -77,8 +78,11 @@ class VaccineDoseCreate(NoteFormView):
         dose.save()
         form.save_m2m()
 
-        return HttpResponseRedirect(reverse('new-vaccine-ai', 
-            kwargs={'pt_id': pt.id, 'series_id': series.id}))
+        if dose.is_last:
+            return HttpResponseRedirect(reverse('core:patient-detail', args=(pt.id,)))
+        else:
+            return HttpResponseRedirect(reverse('new-vaccine-ai', 
+                kwargs={'pt_id': pt.id, 'series_id': series.id}))
 
 
 class VaccineActionItemCreate(NoteFormView):
