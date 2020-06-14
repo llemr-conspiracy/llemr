@@ -146,7 +146,7 @@ class Person(models.Model):
     middle_name = models.CharField(
         max_length=100, blank=True, validators=[validators.validate_name], verbose_name=_('middle name'))
 
-    phone = models.CharField(max_length=40, null=True, blank=True,verbose_name=_('phone'))
+    phone = models.CharField(max_length=40, null=True, blank=True, verbose_name=_('phone'))
     languages = models.ManyToManyField(
         Language, verbose_name=_('languages'), help_text=_("Specify here languages that are spoken at a "
                             "level sufficient to be used for medical "
