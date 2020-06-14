@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-09 11:02-0500\n"
+"POT-Creation-Date: 2020-06-14 12:21-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -204,7 +204,7 @@ msgstr "Land"
 msgid "pcp preferred zip"
 msgstr "PLZ des Hausarztes"
 
-#: osler/core/models.py:222 osler/core/models.py:472
+#: osler/core/models.py:222 osler/core/models.py:471
 msgid "MM/DD/YYYY"
 msgstr "Format: DD.MM.YYYY"
 
@@ -288,11 +288,11 @@ msgstr "alle Aufgaben erfüllt"
 msgid "no pending actions"
 msgstr "keine ausstehende Aufgaben"
 
-#: osler/core/models.py:413
+#: osler/core/models.py:412
 msgid "title"
 msgstr "Titel"
 
-#: osler/core/models.py:415
+#: osler/core/models.py:414
 msgid ""
 "Please deidentify all file names before upload! Delete all files after "
 "upload!"
@@ -300,70 +300,70 @@ msgstr ""
 "Bitte alle Dateien vor dem Upload anonymisieren! Nach dem Upload alle "
 "Dateien löschen!"
 
-#: osler/core/models.py:418
+#: osler/core/models.py:417
 msgid "PDF File or Image Upload"
 msgstr "PDF-Datei- oder Bilder-Upload"
 
-#: osler/core/models.py:419 osler/core/models.py:511
+#: osler/core/models.py:418 osler/core/models.py:510
 msgid "comments"
 msgstr "Kommentare"
 
-#: osler/core/models.py:420
+#: osler/core/models.py:419
 msgid "document type"
 msgstr "Dokumenten-Typ"
 
-#: osler/core/models.py:466
+#: osler/core/models.py:465
 msgid "completion date"
 msgstr "Abschluss-Datum"
 
-#: osler/core/models.py:471
+#: osler/core/models.py:470
 msgid "completion author"
 msgstr "Autor"
 
-#: osler/core/models.py:493
+#: osler/core/models.py:492
 msgid ""
 "All Completables must have an 'short_name' property that is indicates what "
 "one has to do of completable this is "
 msgstr ""
 
-#: osler/core/models.py:502
+#: osler/core/models.py:501
 msgid ""
 "All Completables must have an 'summary' method that provides a summary of "
 "the action that must be undertaken."
 msgstr ""
 
-#: osler/core/models.py:507
+#: osler/core/models.py:506
 msgid "instruction"
 msgstr "Instruktion"
 
-#: osler/core/models.py:510
+#: osler/core/models.py:509
 msgid "Check this box if this action item is high priority"
 msgstr ""
 "Bitte aktiviere dieses Kontrollkästchen, wenn die Aufgabe eine hohe "
 "Priorität hat. "
 
-#: osler/core/models.py:510
+#: osler/core/models.py:509
 msgid "priority"
 msgstr "Priorität"
 
-#: osler/core/models.py:528
+#: osler/core/models.py:527
 msgid "Marked done by"
 msgstr "Als erledigt markiert von"
 
-#: osler/core/models.py:529 osler/core/models.py:531
-#: osler/followup/models.py:83 osler/workup/models.py:130
+#: osler/core/models.py:528 osler/core/models.py:530
+#: osler/followup/models.py:85 osler/workup/models.py:130
 msgid "on"
 msgstr "am"
 
-#: osler/core/models.py:531
+#: osler/core/models.py:530
 msgid "Added by"
 msgstr "Hinzugefügt von"
 
-#: osler/core/models.py:542
+#: osler/core/models.py:541
 msgid "AI for"
 msgstr "Aufgabe für"
 
-#: osler/core/models.py:543
+#: osler/core/models.py:542
 msgid "due on"
 msgstr "fällig am"
 
@@ -393,29 +393,6 @@ msgstr "Namen dürfen nicht mit einem Leerzeichen starten oder enden"
 #: osler/core/validators.py:58
 msgid "This provider is not allowed to sign charts."
 msgstr "Dieser Mitarbeiter darf keine Untersuchungen unterschreiben"
-
-#: osler/core/views.py:42
-msgid "NoteCreate view must have 'note_type' variable set."
-msgstr ""
-
-#: osler/core/views.py:61
-msgid "NoteUpdate view must have 'note_type' variable set."
-msgstr ""
-
-#: osler/core/views.py:154 osler/core/views.py:176
-msgid "Action Item"
-msgstr "Aufgabe"
-
-#: osler/core/views.py:281 osler/core/views.py:292
-#: osler/templates/core/document_detail.html:6
-msgid "Document"
-msgstr "Dokument"
-
-#: osler/core/views.py:334
-msgid ""
-"Fatal: your Provider register is corrupted, and lacks ProviderTypes. Report "
-"this error!"
-msgstr ""
 
 #: osler/dashboard/apps.py:7
 msgid "Dashboard"
@@ -512,9 +489,9 @@ msgstr ""
 msgid "Clash in this field. You entered '%s'"
 msgstr ""
 
-#: osler/followup/apps.py:7 osler/followup/views.py:56
+#: osler/followup/apps.py:7 osler/followup/views.py:50
 #: osler/templates/core/patient_detail.html:66
-#: osler/templates/core/patient_detail.html:190
+#: osler/templates/core/patient_detail.html:189
 msgid "Followup"
 msgstr "Folgeuntersuchung"
 
@@ -526,242 +503,116 @@ msgstr "Speichern und Aufgabe schließen"
 msgid "Submit and Create Action"
 msgstr "Speichern und Aufgabe erstellen"
 
-#: osler/followup/forms.py:59
-msgid "Appointment location is required when the patient has an appointment."
-msgstr ""
-"Ein Ortsangabe für den Termin wird benötigt, wenn der Patient einen Termin "
-"hat."
-
-#: osler/followup/forms.py:63 osler/referral/forms.py:103
-msgid "Please specify whether the patient has gone to their appointment."
-msgstr "Bitte angeben, ob der Patient zum Termin erschienen ist."
-
-#: osler/followup/forms.py:69 osler/referral/forms.py:118
-msgid "Why didn't the patient go to the appointment?"
-msgstr "Warum ist der Patient nicht zum Termin erschienen?"
-
-#: osler/followup/forms.py:75
-msgid "If the patient showed, a noshow reason should not be given."
-msgstr ""
-"Wenn der Patient den Termin wahrgenommen hat, sollte kein Grund für ein "
-"Nicht-Erscheinen angegeben werden."
-
-#: osler/followup/forms.py:80 osler/referral/forms.py:131
-msgid "Why didn't the patient make an appointment?"
-msgstr "Warum hat der Patient keinen Termin gemacht?"
-
-#: osler/followup/forms.py:88 osler/referral/forms.py:166
-msgid "You can't give a "
-msgstr "Du kannst keinen"
-
-#: osler/followup/forms.py:89 osler/referral/forms.py:167
-msgid " value if contact was unsuccessful"
-msgstr "Wert eingeben, wenn der Patient nicht erreicht wurde."
-
-#: osler/followup/forms.py:107
+#: osler/followup/forms.py:43
 msgid ""
 "A next dosage date is required if the patient is returning for another dose."
 msgstr ""
 "Ein Termin für die nächste Rezeptierung ist erforderlich, wenn der Patient "
 "für sein nächstes Rezept kommt."
 
-#: osler/followup/models.py:36
+#: osler/followup/models.py:37
 msgid "Attempt again"
 msgstr "Erneut versuchen"
 
-#: osler/followup/models.py:37
+#: osler/followup/models.py:38
 msgid "True if outcome means the pt should be contacted again."
 msgstr "Trifft zu, wenn der Patient erneut kontakiert werden soll."
 
-#: osler/followup/models.py:39
+#: osler/followup/models.py:41
 msgid "Patient reached"
 msgstr "Patient erreicht"
 
-#: osler/followup/models.py:40
+#: osler/followup/models.py:42
 msgid "True if outcome means they reached the patient"
 msgstr "Trifft zu, wenn der Patient erreicht wurde"
 
-#: osler/followup/models.py:54 osler/referral/models.py:121
+#: osler/followup/models.py:56 osler/referral/models.py:121
 msgid "Contact method"
 msgstr "Kontaktmethode"
 
-#: osler/followup/models.py:56
+#: osler/followup/models.py:58
 msgid "Contact resolution"
 msgstr "Kontakt-Ergebnis"
 
-#: osler/followup/models.py:72 osler/templates/core/followup-choice.html:21
-#: osler/templates/core/workup-choice.html:22
+#: osler/followup/models.py:74 osler/templates/core/workup-choice.html:22
 msgid "General"
 msgstr "Allgemein"
 
-#: osler/followup/models.py:90
+#: osler/followup/models.py:92
 msgid "Followup for "
 msgstr "Folgeuntersuchung für"
 
-#: osler/followup/models.py:90 osler/workup/models.py:293
+#: osler/followup/models.py:92 osler/workup/models.py:293
 msgid " on "
 msgstr " am "
 
-#: osler/followup/models.py:106
+#: osler/followup/models.py:105
+msgid "Action Item"
+msgstr "Aufgabe"
+
+#: osler/followup/models.py:113
 msgid "Has the patient committed to coming back for another dose?"
 msgstr "Kommt der Patient für ein neues Rezept?"
 
-#: osler/followup/models.py:109
-msgid "When does the patient want to get their next dose (if applicable)?"
-msgstr ""
-"Wann möchte der Patient sein nächstes Rezept abholen (nur wenn zutreffend)?"
-
-#: osler/followup/models.py:112
+#: osler/followup/models.py:120
 msgid "Dose date"
 msgstr "Rezept-Datum"
 
-#: osler/followup/models.py:117 osler/templates/core/followup-choice.html:20
+#: osler/followup/models.py:125 osler/templates/core/followup-choice.html:20
 #: osler/templates/core/workup-choice.html:21
 msgid "Vaccine"
 msgstr "Impfung"
 
-#: osler/followup/models.py:122
+#: osler/followup/models.py:130
 msgid "Patient should return on"
 msgstr "Patient soll erneut vorstellig werden am"
 
-#: osler/followup/models.py:124
+#: osler/followup/models.py:132
 msgid "for the next dose."
 msgstr "für das nächste Rezept"
 
-#: osler/followup/models.py:126
+#: osler/followup/models.py:134
 msgid "Patient does not return for another dose."
 msgstr "Patient kommt nicht für ein neues Rezept"
 
-#: osler/followup/models.py:135
+#: osler/followup/models.py:143
 msgid "Were you able to communicate the results?"
 msgstr "Konnten die Ergebnisse mit dem Patienten besprochen werden?"
 
-#: osler/followup/models.py:136
+#: osler/followup/models.py:144
 msgid "Communication success"
 msgstr "Kommunikation erfolgreich"
 
-#: osler/followup/models.py:141
+#: osler/followup/models.py:150
 msgid "Lab"
 msgstr "Labor"
 
-#: osler/followup/models.py:144
+#: osler/followup/models.py:153
 msgid "successfully reached"
 msgstr "erfolgreich erreicht"
 
-#: osler/followup/models.py:145
+#: osler/followup/models.py:154
 msgid "failed to reach"
 msgstr "nicht erreicht"
 
-#: osler/followup/models.py:145
+#: osler/followup/models.py:154
 msgid " patient regarding lab results."
 msgstr " bezüglich der Laborergebnisse"
 
-#: osler/followup/models.py:153
-msgid "What kind of provider was the patient referred to?"
-msgstr "Zu was für einer Art von Arzt wurde der Patient überwiesen"
-
-#: osler/followup/models.py:156 osler/workup/models.py:255
-msgid "Referral type"
-msgstr "Überweisungsart"
-
-#: osler/followup/models.py:162
-msgid "Does the patient have an appointment?"
-msgstr "Hat der Patient einen Termin?"
-
-#: osler/followup/models.py:163
-msgid "Has appointment"
-msgstr "Hat Termin"
-
-#: osler/followup/models.py:165
+#: osler/followup/views.py:32
 #, fuzzy
-#| msgid "Edit Appointment"
-msgid "Where is the appointment?"
-msgstr "Wo ist der Termin?"
-
-#: osler/followup/models.py:168 osler/referral/models.py:153
-msgid "Appointment location"
-msgstr "Ort des Termins"
-
-#: osler/followup/models.py:173 osler/referral/models.py:134
-#: osler/templates/demographics/demographics_detail.html:30
-#: osler/templates/demographics/demographics_detail.html:40
-#: osler/templates/demographics/demographics_detail.html:62
-#: osler/templates/demographics/demographics_detail.html:90
-msgid "Yes"
-msgstr "Ja"
-
-#: osler/followup/models.py:174 osler/referral/models.py:135
-#: osler/templates/demographics/demographics_detail.html:32
-#: osler/templates/demographics/demographics_detail.html:42
-#: osler/templates/demographics/demographics_detail.html:64
-#: osler/templates/demographics/demographics_detail.html:92
-msgid "No"
-msgstr "Nein"
-
-#: osler/followup/models.py:175
-msgid "Not yet"
-msgstr "Noch nicht"
-
-#: osler/followup/models.py:177 osler/referral/models.py:162
-msgid "Did the patient show up to the appointment?"
-msgstr "Kam der Patient zum Termin"
-
-#: osler/followup/models.py:178
-msgid "Patient showed"
-msgstr "Patient ist erschienen"
-
-#: osler/followup/models.py:184 osler/referral/models.py:148
-msgid "If the patient didn't make an appointment, why not?"
-msgstr "Wenn der Patient keinen Termin vereinbart hat, warum nicht?"
-
-#: osler/followup/models.py:187 osler/referral/models.py:147
-msgid "No appointment reason"
-msgstr "Kein Grund für einen Termin"
-
-#: osler/followup/models.py:193
-msgid "If the patient didn't go to appointment, why not?"
-msgstr "Wenn der Patient nicht zum Termin erschienen ist, warum?"
-
-#: osler/followup/models.py:196 osler/referral/models.py:168
-msgid "No show reason"
-msgstr "Grund für Nicht-Erscheinen"
-
-#: osler/followup/models.py:205 osler/referral/apps.py:7
-#: osler/referral/models.py:85 osler/templates/core/workup-choice.html:19
-msgid "Referral"
-msgstr "Überweisung"
-
-#: osler/followup/models.py:210
-msgid "Patient made an appointment,"
-msgstr "Patient hat einen Termin vereinbart,"
-
-#: osler/followup/models.py:212
-msgid "and the patient attended"
-msgstr "und der Patient kam auch"
-
-#: osler/followup/models.py:214
-msgid "and the patient will be attending"
-msgstr "und der Patient wird kommen"
-
-#: osler/followup/models.py:216
-msgid "but the patient didn't go because"
-msgstr "aber der Patient kam nicht, weil"
-
-#: osler/followup/models.py:219
-msgid "No appointment made because "
-msgstr "Kein Termin ausgemacht, weil"
-
-#: osler/followup/views.py:32 osler/templates/core/patient_detail.html:207
-msgid "Referral Followup"
-msgstr "Folgeuntersuchung bei Überweisung"
+#| msgid "Acute Followup"
+msgid "Action Item Followup"
+msgstr "Akute Folgeuntersuchung"
 
 #: osler/followup/views.py:38
 msgid "Lab Followup"
 msgstr "Labor-Folgeuntersuchung"
 
-#: osler/followup/views.py:50
-msgid "General Followup"
-msgstr "Allgemeine Folgeuntersuchung"
+#: osler/referral/apps.py:7 osler/referral/models.py:85
+#: osler/templates/core/workup-choice.html:19
+msgid "Referral"
+msgstr "Überweisung"
 
 #: osler/referral/forms.py:23
 msgid "Create referral"
@@ -779,6 +630,10 @@ msgstr "Speichern und Folgeuntersuchung in der Zukunft anfragen"
 msgid "Save & do not follow up again"
 msgstr "Speichern und keine Folgeuntersuchung anfordern"
 
+#: osler/referral/forms.py:103
+msgid "Please specify whether the patient has gone to their appointment."
+msgstr "Bitte angeben, ob der Patient zum Termin erschienen ist."
+
 #: osler/referral/forms.py:107
 msgid "Please specify which provider the patient contacted."
 msgstr "Bitte angeben, welchen Versorger der Patient kontaktiert hat."
@@ -791,24 +646,35 @@ msgstr ""
 "Wenn der Patient einen Termin hat, sollte nicht ein Grund für 'Keinen "
 "Termin' angebgen werden"
 
+#: osler/referral/forms.py:118
+msgid "Why didn't the patient go to the appointment?"
+msgstr "Warum ist der Patient nicht zum Termin erschienen?"
+
 #: osler/referral/forms.py:124
 msgid "If the patient showed, a no show reason should not be given."
 msgstr ""
 "Wenn der Patient zum Termin erschienen ist, sollte kein Grund für das Nicht-"
 "Erscheinen gegeben werden"
 
-#: osler/referral/forms.py:135
+#: osler/referral/forms.py:131
+msgid "Why didn't the patient make an appointment?"
+msgstr "Warum hat der Patient keinen Termin gemacht?"
 
+#: osler/referral/forms.py:135
 msgid "Cannot specify a location if patient has not made appointment."
 msgstr "Es darf kein Ort angegeben werden, wenn der Patient keinen Termin hat."
 
 #: osler/referral/forms.py:140
 msgid "Patient could not have attended appointment without scheduling one."
-msgstr "Patient hätte Termin nicht besuchen können, wenn er keinen Termin ausgemacht hat."
+msgstr ""
+"Patient hätte Termin nicht besuchen können, wenn er keinen Termin ausgemacht "
+"hat."
 
 #: osler/referral/forms.py:144
 msgid "Cannot specify no show reason if patient has not made appointment."
-msgstr "Es darf kein Grund für ein Nicht-Erscheinen angegeben werden, wenn der Patient keinen Termin ausgemacht hat."
+msgstr ""
+"Es darf kein Grund für ein Nicht-Erscheinen angegeben werden, wenn der "
+"Patient keinen Termin ausgemacht hat."
 
 #: osler/referral/forms.py:149
 msgid "Need to specify if patient has appointment"
@@ -834,11 +700,21 @@ msgstr "Patient ist erschienen"
 msgid "has appointment"
 msgstr "Termin vorhanden"
 
+#: osler/referral/forms.py:166
+msgid "You can't give a "
+msgstr "Du kannst keinen"
+
+#: osler/referral/forms.py:167
+msgid " value if contact was unsuccessful"
+msgstr "Wert eingeben, wenn der Patient nicht erreicht wurde."
+
 #: osler/referral/forms.py:176
 msgid ""
 "Cannot submit a successful referral if the patient did not show up for an "
 "appointment"
-msgstr "Es darf keine erfolgreiche Überweisung angelegt werden, wenn der Patient nicht zum Termin erschienen ist."
+msgstr ""
+"Es darf keine erfolgreiche Überweisung angelegt werden, wenn der Patient "
+"nicht zum Termin erschienen ist."
 
 #: osler/referral/forms.py:183
 msgid "Cannot give up on a successful referral"
@@ -846,19 +722,9 @@ msgstr ""
 
 #: osler/referral/forms.py:190
 msgid "Cannot request a new referral follow up on a successful referral"
-msgstr "Es darf keine neue Überweisung angelegt werden, wenn bereits eine erfolgreiche Überweisung vorliegt."
-
-#: osler/referral/models.py:14
-msgid "S"
 msgstr ""
-
-#: osler/referral/models.py:15
-msgid "P"
-msgstr ""
-
-#: osler/referral/models.py:16
-msgid "U"
-msgstr ""
+"Es darf keine neue Überweisung angelegt werden, wenn bereits eine "
+"erfolgreiche Überweisung vorliegt."
 
 #: osler/referral/models.py:20
 msgid "No referrals currently"
@@ -878,7 +744,8 @@ msgstr "nicht erfolgreich"
 
 #: osler/referral/models.py:35
 msgid "The kind of care the patient should recieve at the referral location."
-msgstr "Die Art der Behandlung, die der Patient bei der Überweisung erhalten soll."
+msgstr ""
+"Die Art der Behandlung, die der Patient bei der Überweisung erhalten soll."
 
 #: osler/referral/models.py:46
 #, python-format
@@ -907,13 +774,21 @@ msgstr "Kontakt-Status"
 msgid "Did you make contact with the patient about this referral?"
 msgstr "Wurde der Patient über die Überweisung informiert?"
 
-#: osler/referral/models.py:132
-msgid "Y"
-msgstr ""
+#: osler/referral/models.py:134
+#: osler/templates/demographics/demographics_detail.html:30
+#: osler/templates/demographics/demographics_detail.html:40
+#: osler/templates/demographics/demographics_detail.html:62
+#: osler/templates/demographics/demographics_detail.html:90
+msgid "Yes"
+msgstr "Ja"
 
-#: osler/referral/models.py:133
-msgid "N"
-msgstr ""
+#: osler/referral/models.py:135
+#: osler/templates/demographics/demographics_detail.html:32
+#: osler/templates/demographics/demographics_detail.html:42
+#: osler/templates/demographics/demographics_detail.html:64
+#: osler/templates/demographics/demographics_detail.html:92
+msgid "No"
+msgstr "Nein"
 
 #: osler/referral/models.py:140
 msgid "Appointment scheduled?"
@@ -923,6 +798,18 @@ msgstr "Termin vereinbart?"
 msgid "Did the patient make an appointment?"
 msgstr "Hat der Patient einen Termin vereinbart?"
 
+#: osler/referral/models.py:147
+msgid "No appointment reason"
+msgstr "Kein Grund für einen Termin"
+
+#: osler/referral/models.py:148
+msgid "If the patient didn't make an appointment, why not?"
+msgstr "Wenn der Patient keinen Termin vereinbart hat, warum nicht?"
+
+#: osler/referral/models.py:153
+msgid "Appointment location"
+msgstr "Ort des Termins"
+
 #: osler/referral/models.py:154
 msgid "Where did the patient make an appointment?"
 msgstr "Wo hat der Patient einen Termin vereinbart?"
@@ -930,6 +817,14 @@ msgstr "Wo hat der Patient einen Termin vereinbart?"
 #: osler/referral/models.py:161
 msgid "Appointment attended?"
 msgstr "Termin wahrgenommen?"
+
+#: osler/referral/models.py:162
+msgid "Did the patient show up to the appointment?"
+msgstr "Kam der Patient zum Termin"
+
+#: osler/referral/models.py:168
+msgid "No show reason"
+msgstr "Grund für Nicht-Erscheinen"
 
 #: osler/referral/models.py:169
 msgid "If the patient didn't go to the appointment, why not?"
@@ -951,7 +846,9 @@ msgstr "aber ist bisher nicht gegangen."
 msgid ""
 "Successfully contacted patient but the patient has not made an appointment "
 "yet."
-msgstr "Patient erfolgreich erreicht, aber bisher hat dieser noch keinen Termin ausgemacht."
+msgstr ""
+"Patient erfolgreich erreicht, aber bisher hat dieser noch keinen Termin "
+"ausgemacht."
 
 #: osler/referral/models.py:189
 msgid "Did not successfully contact patient"
@@ -1469,6 +1366,10 @@ msgid ""
 "type of clinic is happening today!"
 msgstr "Welche Art von Untersuchungen wird heute stattfinden? (muss raus)"
 
+#: osler/templates/core/document_detail.html:6
+msgid "Document"
+msgstr "Dokument"
+
 #: osler/templates/core/document_detail.html:28
 #, python-format
 msgid "uploaded by %(document.author)s on %(document.written_datetime)s"
@@ -1501,14 +1402,12 @@ msgstr "Labor"
 #: osler/templates/core/form-update.html:6
 #: osler/templates/core/form-update.html:11
 #: osler/templates/core/patient-update.html:13
-#: osler/templates/core/patient_detail.html:156
-#: osler/templates/core/patient_detail.html:174
-#: osler/templates/core/patient_detail.html:194
-#: osler/templates/core/patient_detail.html:196
-#: osler/templates/core/patient_detail.html:198
-#: osler/templates/core/patient_detail.html:200
-#: osler/templates/core/patient_detail.html:210
-#: osler/templates/core/patient_detail.html:226
+#: osler/templates/core/patient_detail.html:155
+#: osler/templates/core/patient_detail.html:173
+#: osler/templates/core/patient_detail.html:193
+#: osler/templates/core/patient_detail.html:195
+#: osler/templates/core/patient_detail.html:207
+#: osler/templates/core/patient_detail.html:223
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -1668,64 +1567,68 @@ msgstr "Statistische Angaben des Patienten ansehen"
 msgid "Danger!"
 msgstr "Achtung!"
 
-#: osler/templates/core/patient_detail.html:132
+#: osler/templates/core/patient_detail.html:131
 msgid "No survey data exists for this patient. Please"
 msgstr "Für diesen Patienten existieren keine statistischen Angaben. Bitte"
 
-#: osler/templates/core/patient_detail.html:141
+#: osler/templates/core/patient_detail.html:140
 #, python-format
 msgid "Submitted Notes (%(patient.notes | length)s Total)"
 msgstr "Anlegte Untersuchungen (%(patient.notes | length)s insgesamt)"
 
-#: osler/templates/core/patient_detail.html:145
+#: osler/templates/core/patient_detail.html:144
 #, python-format
 msgid "Workups (%(patient.workup_set.all | length)s)"
 msgstr "Untersuchungen (%(patient.workup_set.all | length)s)"
 
-#: osler/templates/core/patient_detail.html:150
+#: osler/templates/core/patient_detail.html:149
 #: osler/templates/workup/workup_detail.html:6 osler/workup/apps.py:7
 #: osler/workup/views.py:47
 msgid "Workup"
 msgstr "Untersuchung"
 
-#: osler/templates/core/patient_detail.html:151
-#: osler/templates/core/patient_detail.html:172
-#: osler/templates/core/patient_detail.html:191
-#: osler/templates/core/patient_detail.html:208
-#: osler/templates/core/patient_detail.html:224
+#: osler/templates/core/patient_detail.html:150
+#: osler/templates/core/patient_detail.html:171
+#: osler/templates/core/patient_detail.html:190
+#: osler/templates/core/patient_detail.html:205
+#: osler/templates/core/patient_detail.html:221
 #, python-format
 msgid "by %(note.author)s (%(note.author_type)s) at %(note.written_datetime)s"
 msgstr ""
 "von %(note.author)s (%(note.author_type)s) am %(note.written_datetime)s"
 
-#: osler/templates/core/patient_detail.html:166
+#: osler/templates/core/patient_detail.html:165
 msgid "Uploaded Prescriptions and Documents"
 msgstr "Hochgeladenen Rezepte und Dokumente"
 
-#: osler/templates/core/patient_detail.html:184
+#: osler/templates/core/patient_detail.html:183
 msgid "Followups"
 msgstr "Folgeuntersuchungen"
 
-#: osler/templates/core/patient_detail.html:218
+#: osler/templates/core/patient_detail.html:204
+msgid "Referral Followup"
+msgstr "Folgeuntersuchung bei Überweisung"
+
+#: osler/templates/core/patient_detail.html:215
 #: osler/templates/workup/progressnote_detail.html:6
 msgid "Psych Progress Note"
 msgstr "Psychologische Verlaufs-Untersuchung"
 
-#: osler/templates/core/patient_detail.html:223
+#: osler/templates/core/patient_detail.html:220
 msgid "Progress Note"
 msgstr "Verlaufs-Dokumentation"
 
-#: osler/templates/core/patient_detail.html:236
+#: osler/templates/core/patient_detail.html:233
 #, python-format
 msgid "Action Items (%(total_ais)s Total)"
 msgstr "Aufgaben (%(total_ais)s insgesamt)"
 
-#: osler/templates/core/patient_detail.html:264
+#: osler/templates/core/patient_detail.html:261
 #, python-format
 msgid "Appointments (%(patient.appointment_set.all | length)s Total)"
 msgstr "Termine (%(patient.appointment_set.all | length)s insgesamt)"
 
-#: osler/templates/core/patient_detail.html:285
+#: osler/templates/core/patient_detail.html:282
 msgid "Edit Appointment"
 msgstr "Termin bearbeiten"
 
@@ -1949,18 +1852,6 @@ msgstr "Arbeits-Status"
 #: osler/templates/demographics/demographics_detail.html:101
 msgid "Annual Income"
 msgstr "Jährliches Einkommen"
-
-#: osler/templates/followup/referral-followup-create.html:10
-#, fuzzy
-#| msgid "Referral Followup"
-msgid "New Referral Followup"
-msgstr "Folgeuntersuchung bei Überweisung"
-
-#: osler/templates/followup/referral-followup-create.html:12
-#, fuzzy
-#| msgid "Referral Followup"
-msgid "Add a new referral followup for"
-msgstr "Folgeuntersuchung bei Überweisung"
 
 #: osler/templates/referral/new-FQHC-referral.html:6
 msgid "Create new FQHC referral"
@@ -2571,6 +2462,10 @@ msgstr "Voucher für Bildgebung"
 msgid "Patient pays imaging"
 msgstr "Patient bezahlt Bildgebung"
 
+#: osler/workup/models.py:255
+msgid "Referral type"
+msgstr "Überweisungsart"
+
 #: osler/workup/models.py:256
 msgid "Rererral location"
 msgstr "Ort der Überweisung"
@@ -2631,6 +2526,73 @@ msgstr ""
 #: osler/workup/views.py:140 osler/workup/views.py:150
 msgid "Clinical Psychology Note"
 msgstr ""
+
+#~ msgid ""
+#~ "Appointment location is required when the patient has an appointment."
+#~ msgstr ""
+#~ "Ein Ortsangabe für den Termin wird benötigt, wenn der Patient einen "
+#~ "Termin hat."
+
+#~ msgid "If the patient showed, a noshow reason should not be given."
+#~ msgstr ""
+#~ "Wenn der Patient den Termin wahrgenommen hat, sollte kein Grund für ein "
+#~ "Nicht-Erscheinen angegeben werden."
+
+#~ msgid "When does the patient want to get their next dose (if applicable)?"
+#~ msgstr ""
+#~ "Wann möchte der Patient sein nächstes Rezept abholen (nur wenn "
+#~ "zutreffend)?"
+
+#~ msgid "What kind of provider was the patient referred to?"
+#~ msgstr "Zu was für einer Art von Arzt wurde der Patient überwiesen"
+
+#~ msgid "Does the patient have an appointment?"
+#~ msgstr "Hat der Patient einen Termin?"
+
+#~ msgid "Has appointment"
+#~ msgstr "Hat Termin"
+
+#, fuzzy
+#~| msgid "Edit Appointment"
+#~ msgid "Where is the appointment?"
+#~ msgstr "Wo ist der Termin?"
+
+#~ msgid "Not yet"
+#~ msgstr "Noch nicht"
+
+#~ msgid "Patient showed"
+#~ msgstr "Patient ist erschienen"
+
+#~ msgid "If the patient didn't go to appointment, why not?"
+#~ msgstr "Wenn der Patient nicht zum Termin erschienen ist, warum?"
+
+#~ msgid "Patient made an appointment,"
+#~ msgstr "Patient hat einen Termin vereinbart,"
+
+#~ msgid "and the patient attended"
+#~ msgstr "und der Patient kam auch"
+
+#~ msgid "and the patient will be attending"
+#~ msgstr "und der Patient wird kommen"
+
+#~ msgid "but the patient didn't go because"
+#~ msgstr "aber der Patient kam nicht, weil"
+
+#~ msgid "No appointment made because "
+#~ msgstr "Kein Termin ausgemacht, weil"
+
+#~ msgid "General Followup"
+#~ msgstr "Allgemeine Folgeuntersuchung"
+
+#, fuzzy
+#~| msgid "Referral Followup"
+#~ msgid "New Referral Followup"
+#~ msgstr "Folgeuntersuchung bei Überweisung"
+
+#, fuzzy
+#~| msgid "Referral Followup"
+#~ msgid "Add a new referral followup for"
+#~ msgstr "Folgeuntersuchung bei Überweisung"
 
 #~ msgid "case manager"
 #~ msgstr "Fall-Manager"

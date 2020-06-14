@@ -231,6 +231,7 @@ class PreIntakeSelect(ListView):
 
 class PreIntake(FormView):
     """A view for ensuring new patient is not already in the database.
+
     Searches if there is a patient with same, or similar first and last
     name. If none similar directs to patient intake;  If one or more similar
     directs to preintake-select urls are sent with first and last name in

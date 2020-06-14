@@ -11,9 +11,9 @@ from django.utils.translation import gettext_lazy as _
 class Referral(Note):
     """A record of a particular patient's referral to a particular center."""
 
-    STATUS_SUCCESSFUL = _('S')
-    STATUS_PENDING = _('P')
-    STATUS_UNSUCCESSFUL = _('U')
+    STATUS_SUCCESSFUL = 'S'
+    STATUS_PENDING = 'P'
+    STATUS_UNSUCCESSFUL = 'U'
 
     # Status if there are no referrals of a specific type
     # Used in aggregate_referral_status
@@ -129,8 +129,8 @@ class PatientContact(Note):
         on_delete=models.PROTECT,
         help_text=_("Did you make contact with the patient about this referral?"))
 
-    PTSHOW_YES = _("Y")
-    PTSHOW_NO = _("N")
+    PTSHOW_YES = "Y"
+    PTSHOW_NO = "N"
     PTSHOW_OPTS = [(PTSHOW_YES, _("Yes")),
                    (PTSHOW_NO, _("No"))]
 

@@ -18,7 +18,6 @@
   <div class="btn-group">
     <a class="btn btn-success" href="{% url 'new-followup' ftype='labs' pt_id=patient.pk %}" role="button">{% trans 'Labs' %}</a>
     <a class="btn btn-info" href="{% url 'new-followup' ftype='vaccine' pt_id=patient.pk %}" role="button">{% trans 'Vaccine' %}</a>
-    <a class="btn btn-warning" href="{% url 'new-followup' ftype='general' pt_id=patient.pk %}" role="button">{% trans 'General' %}</a>
   </div>
 </div>
 
