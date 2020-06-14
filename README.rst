@@ -13,13 +13,12 @@ A free, open-source EHR for free clinics.
 
 :License: GPLv3
 
+Getting Started
+---------------
 
-Settings
---------
+Follow the django-cookiecutter instructions for `running locally with Docker`_.
 
-Moved to settings_.
-
-.. _settings: http://cookiecutter-django.readthedocs.io/en/latest/settings.html
+.. _`running locally with Docker`: https://cookiecutter-django.readthedocs.io/en/latest/developing-locally-docker.html#getting-up-and-running-locally-with-docker
 
 Basic Commands
 --------------
@@ -73,13 +72,6 @@ Moved to `Live reloading and SASS compilation`_.
 
 Deployment
 ----------
-
-The following details how to deploy this application.
-
-
-
-Docker
-^^^^^^
 
 See detailed `cookiecutter-django Docker documentation`_.
 
