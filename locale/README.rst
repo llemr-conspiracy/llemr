@@ -10,6 +10,5 @@ For defining the language which you want to translate you have to type following
     python manage.py makemessages -l de
 
 
-After the message file has been created it has to be compiled to a more efficient form. This also applies if changes has been made to a message file. Run this command::
-
+For making the translated strings of the `.po` file readable for django, you have to run following command to create the `.mo` binary file::
     python manage.py compilemessages
