@@ -28,6 +28,7 @@ urlpatterns = [
     path('demographics/', include('osler.demographics.urls')),
     path('appointment/', include('osler.appointment.urls')),
     path('referral/', include('osler.referral.urls')),
+    path('inventory/', include('osler.inventory.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS

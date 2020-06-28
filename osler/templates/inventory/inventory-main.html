@@ -1,0 +1,180 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Drug Inventory
+{% endblock %}
+
+{% block header %}
+<h2>Drug Inventory</h2>
+<a class="btn btn-primary btn-lg" href="{% url 'pre-drug-add-new' %}" role="button">Add New Drug</a>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-group">
+        <label for="drug-list-filter-input"  class="sr-only" >Filter</label>
+        <div class="input-group">
+            <div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+            <input type="text" id="drug-list-filter-input" placeholder="Filter by drug name or lot number" class="form-control" onkeyup="filterDrugListTable()">
+        </div>
+    </div>
+    <table class="table" id="drug-list-table">
+        <tr>
+          <th>Name</th>
+            <th>Category</th>
+            <th>Stock</th>
+            <th>Lot Number</th>
+            <th>Dose</th>
+            <th>Expiration Date</th>
+            <th>Manufacturer</th>
+            <th></th>
+        </tr>
+        {% for drug in drugs %}
+            <tr>
+                <td><a href="{% url 'drug-update' pk=drug.id %}">{{ drug.name }}</a></td>
+                <td>{{ drug.category }}</td>
+                <td>{{ drug.stock }}</td>
+                <td>{{ drug.lot_number }}</td>
+                <td>{% if drug.dose %}
+                        {{ drug.dose }}
+                    {% endif %}
+                    {% if drug.unit %}
+                        {{ drug.unit }}
+                    {% endif %}</td>
+                <td>{% if drug.expiration_date %}
+                        {{ drug.expiration_date }}
+                    {% endif %}</td>
+                <td>{% if drug.manufacturer %}
+                        {{ drug.manufacturer }}
+                    {% endif %}
+                </td>
+                <td><a href="#" class="btn btn-success a-btn-slide-text btn-xs" data-toggle="modal" data-target="#addModal{{ drug.id }}">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                        <span><strong>Add</strong></span>
+                    </a>
+                    <!-- Modal -->
+                    <div class="modal fade" id="addModal{{ drug.id }}" tabindex="-1" role="dialog" aria-labelledby="addModal{{ drug.id }}Label" aria-hidden="true">
+                    <form action="{% url 'drug-add' %}" method="post">
+                      {% csrf_token %}
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h2 class="modal-title" id="addModal{{ drug.id }}Label">Add Drug</h2>
+                          </div>
+                          <div class="modal-body">
+                            How many {{ drug.name }} would you like to add?<input type="number" placeholder="1" name="num" id="num" min="1" required>
+                            <input type="hidden" name="pk" id="pk" value="{{ drug.id }}">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Add Drug</a>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                    </div>
+
+                    <a href="#" class="btn btn-success a-btn-slide-text btn-xs" data-toggle="modal" data-target="#dispenseModal{{ drug.id }}">
+                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                        <span><strong>Dispense</strong></span>
+                    </a>
+                    <!-- Modal -->
+                    <div class="modal fade" id="dispenseModal{{ drug.id }}" tabindex="-1" role="dialog" aria-labelledby="dispenseModal{{ drug.id }}Label" aria-hidden="true">
+                    <form action="{% url 'drug-dispense' %}" method="post">
+                      {% csrf_token %}
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h2 class="modal-title" id="dispenseModal{{ drug.id }}Label">Dispense Drug</h2>
+                          </div>
+                          <div class="modal-body">
+                            How many {{ drug.name }} would you like to dispense?<input type="number" placeholder="1" name="num" id="num" min="1" required>
+                            <input type="hidden" name="pk" id="pk" value="{{ drug.id }}">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Dispense Drug</a>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                    </div>
+
+                    <a href="#" class="btn btn-danger a-btn-slide-text btn-xs" data-toggle="modal" data-target="#deleteModal{{ drug.id }}">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        <span><strong>Delete</strong></span>
+                    </a>
+                    <!-- Modal -->
+                    <div class="modal fade" id="deleteModal{{ drug.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModal{{ drug.id }}Label" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h2 class="modal-title" id="deleteModal{{ drug.id }}Label">Delete Drug</h2>
+                          </div>
+                          <div class="modal-body">
+                            Are you sure you want to delete {{ drug.name }}?
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <a href="{% url 'drug-delete' pk=drug.id %}" type="button" class="btn btn-danger">Delete Drug</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+{# adapted from "https://www.w3schools.com/howto/howto_js_filter_table.asp" #}
+function filterDrugListTable() {
+  // Declare variables
+  var input, filter, table, tr, td, i;
+  input = document.getElementById("drug-list-filter-input");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("drug-list-table");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  // Start at one to avoid hitting table header
+  for (i = 1; i < tr.length; i++) {
+    var match = 0;
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+        // need additional indexing because patient's name is a link
+        if (check(td.getElementsByTagName("a")[0], filter)) {
+            match = 1;
+        }
+    }
+    td = tr[i].getElementsByTagName("td")[3];
+    if (td) {
+        if (check(td, filter)) {
+            match = 1;
+        }
+    }
+    if (match == 1) {
+      tr[i].style.display = "";
+    } else {
+      tr[i].style.display = "none";
+    }
+  }
+}
+
+function check(haystack_element, needle){
+    var haystack = haystack_element.innerHTML.toUpperCase()
+    if (!needle) {return 1}
+    if (haystack && haystack.indexOf(needle) > -1) {
+        return 1
+    } else {
+        return 0
+    }
+}
+
+</script>
+{% endblock %}
