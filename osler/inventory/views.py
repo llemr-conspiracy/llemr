@@ -30,18 +30,20 @@ class PreDrugAddNew(FormView):
         name_str = form.cleaned_data['name'].capitalize()
         lot_number_str = form.cleaned_data['lot_number']
 
+        querystr = '%s=%s&%s=%s' % ("name", name_str,
+                                    "lot_number", lot_number_str)
+
+        add_new_drug_url = "%s?%s" % (reverse("drug-add-new"), querystr)
+
         if lot_number_str.strip() == '':
             return HttpResponseRedirect(add_new_drug_url)
 
         matching_drugs = models.Drug.objects.filter(lot_number=lot_number_str)
 
-        querystr = '%s=%s&%s=%s' % ("name", name_str,
-                                    "lot_number", lot_number_str)
         if len(matching_drugs) > 0:
             predrug_select_url = "%s?%s" % (reverse("predrug-select"), querystr)
             return HttpResponseRedirect(predrug_select_url)
 
-        add_new_drug_url = "%s?%s" % (reverse("drug-add-new"), querystr)
         return HttpResponseRedirect(add_new_drug_url)
 
 class PreDrugSelect(ListView):
