@@ -29,6 +29,10 @@ class PreDrugAddNew(FormView):
     def form_valid(self, form):
         name_str = form.cleaned_data['name'].capitalize()
         lot_number_str = form.cleaned_data['lot_number']
+
+        if lot_number_str.strip() == '':
+            return HttpResponseRedirect(add_new_drug_url)
+
         matching_drugs = models.Drug.objects.filter(lot_number=lot_number_str)
 
         querystr = '%s=%s&%s=%s' % ("name", name_str,
