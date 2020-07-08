@@ -126,8 +126,6 @@ class ActionItemForm(ModelForm):
 
 class ProviderForm(ModelForm):
 
-    provider_email = EmailField(label="Email")
-
     class Meta(object):
         model = models.Provider
         exclude = ['associated_user', 'needs_updating']
