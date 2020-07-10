@@ -5,22 +5,24 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic.edit import FormView, UpdateView
 from django.views.generic.list import ListView
 from django.urls import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseNotFound
 
 from . import models
 from . import forms
 from . import utils
 
 # Create your views here.
+class DrugListView(ListView):
+    template_name = 'inventory/inventory-main.html'
+    def get_queryset(self):
+        druglist = models.Drug.objects.\
+                    select_related('unit').\
+                    select_related('category').\
+                    select_related('manufacturer').\
+                    order_by('category', 'name').\
+                    exclude(stock=0).all()
+        return druglist
 
-
-def drug_list(request):
-    drugs = models.Drug.objects.all().order_by('name')
-    drug_types = {
-        'drugs': drugs,
-    }
-
-    return render(request, 'inventory/inventory-main.html', drug_types)
 
 class PreDrugAddNew(FormView):
     template_name = 'inventory/pre_add_new_drug.html'
@@ -29,16 +31,18 @@ class PreDrugAddNew(FormView):
     def form_valid(self, form):
         name_str = form.cleaned_data['name'].capitalize()
         lot_number_str = form.cleaned_data['lot_number']
+        manufacturer_str = form.cleaned_data['manufacturer']
 
-        querystr = '%s=%s&%s=%s' % ("name", name_str,
-                                    "lot_number", lot_number_str)
+        querystr = '%s=%s&%s=%s&%s=%s' % ("name", name_str,
+                                    "lot_number", lot_number_str,
+                                    "manufacturer", manufacturer_str)
 
         add_new_drug_url = "%s?%s" % (reverse("drug-add-new"), querystr)
 
         if lot_number_str.strip() == '':
             return HttpResponseRedirect(add_new_drug_url)
 
-        matching_drugs = models.Drug.objects.filter(lot_number=lot_number_str)
+        matching_drugs = models.Drug.objects.filter(name=name_str, lot_number=lot_number_str, manufacturer=manufacturer_str)
 
         if len(matching_drugs) > 0:
             predrug_select_url = "%s?%s" % (reverse("predrug-select"), querystr)
@@ -58,7 +62,9 @@ class PreDrugSelect(ListView):
         initial = self.parse_url_querystring()
         if (initial.get('name', None) is None):
             return []
-        possible_duplicates = models.Drug.objects.filter(lot_number=initial.get('lot_number', None))
+        possible_duplicates = models.Drug.objects.filter(name=initial.get('name', None),\
+                                                        lot_number=initial.get('lot_number', None),\
+                                                        manufacturer=initial.get('manufacturer', None))
         return possible_duplicates
 
     def get_context_data(self, **kwargs):
@@ -67,10 +73,12 @@ class PreDrugSelect(ListView):
         initial = self.parse_url_querystring()
         context['name'] = initial.get('name', None)
         context['lot_number'] = initial.get('lot_number', None)
-        context['new_drug_url'] = "%s?%s=%s&%s=%s" % (
+        context['manufacturer'] = initial.get('manufacturer', None)
+        context['new_drug_url'] = "%s?%s=%s&%s=%s&%s=%s" % (
             reverse("drug-add-new"),
             "name", initial.get('name', None),
-            "lot_number", initial.get('lot_number', None))
+            "lot_number", initial.get('lot_number', None),
+            "manufacturer", initial.get('manufacturer', None))
         context['home'] = reverse("drug-list")
         return context
 
@@ -100,25 +108,13 @@ class DrugUpdate(UpdateView):
         df.save()
         return redirect('drug-list')
 
-def drug_delete(request, pk):
-    drug = get_object_or_404(models.Drug, id=pk)
-    drug.delete()
-    return redirect('drug-list')
-
-def drug_add(request):
-    pk = request.POST['pk']
-    num = request.POST['num']
-    drug = get_object_or_404(models.Drug, id=pk)
-    drug.stock += int(num)
-    drug.save()
-    return redirect('drug-list')
-
 def drug_dispense(request):
     pk = request.POST['pk']
     num = request.POST['num']
     drug = get_object_or_404(models.Drug, id=pk)
-    drug.stock -= int(num)
-    if drug.stock < 0:
-        drug.stock = 0
-    drug.save()
+    can_dispense = drug.can_dispense(int(num))
+    if can_dispense is False:
+        return HttpResponseNotFound('<h1>Cannot dispense more drugs than in stock!</h1>')
+    else:
+        drug.dispense(int(num))
     return redirect('drug-list')

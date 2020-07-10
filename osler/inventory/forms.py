@@ -3,7 +3,7 @@ from django.forms import ModelForm, Form
 from . import models
 
 from django.forms import (Form, CharField, ModelForm, EmailField,
-                          CheckboxSelectMultiple, ModelMultipleChoiceField)
+                          CheckboxSelectMultiple, ModelMultipleChoiceField, IntegerField)
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from crispy_forms.bootstrap import InlineCheckboxes
@@ -29,9 +29,12 @@ class DrugForm(ModelForm):
         self.helper.field_class = 'col-lg-8'
         self.helper.add_input(Submit('submit', 'Submit'))
 
-class DuplicateDrugForm(Form):
-    name = CharField(label='Drug Name')
-    lot_number= CharField(label='Lot Number', help_text = 'Leave blank if no lot number', required=False)
+class DuplicateDrugForm(ModelForm):
+    class Meta:
+        model = models.Drug
+        fields = ['name', 'lot_number', 'manufacturer']
+    #name = CharField(label='Drug Name')
+    #lot_number= CharField(label='Lot Number', required=True)
 
     def __init__(self, *args, **kwargs):
         super(DuplicateDrugForm, self).__init__(*args, **kwargs)

@@ -8,7 +8,7 @@ from osler.inventory import models
 unwrapped_urlconf = [
     re_path(
         r'^$',
-        views.drug_list,
+        views.DrugListView.as_view(),
         name='drug-list'),
     re_path(
         r'^add-new-drug/$',
@@ -26,14 +26,6 @@ unwrapped_urlconf = [
         r'^drug/update/(?P<pk>[0-9]+)/$',
         views.DrugUpdate.as_view(),
         name='drug-update'),
-    re_path(
-        r'^drug_delete/(?P<pk>[0-9]+)/$',
-        views.drug_delete,
-        name='drug-delete'),
-    re_path(
-        r'^drug-add/$',
-        views.drug_add,
-        name='drug-add'),
     re_path(
         r'^drug-dispense/$',
         views.drug_dispense,

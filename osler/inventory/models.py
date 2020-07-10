@@ -40,12 +40,22 @@ class Drug(models.Model):
 
     expiration_date = models.DateField(help_text="MM/DD/YYYY", blank=True, null=True)
 
-    lot_number = models.CharField(max_length=100, blank=True)
+    lot_number = models.CharField(max_length=100, blank=False)
 
     category = models.ForeignKey(DrugCategory, on_delete=models.PROTECT)
 
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT)
 
+    def can_dispense(self,num):
+        if self.stock < num:
+            return False
+        else:
+            return True
+
+    def dispense(self,num):
+        self.stock -= num
+        self.save()
+
     def __str__(self):
-        return self.name
+        return '{}, {}, stock: {}'.format(self.name, self.lot_number, self.stock)
 

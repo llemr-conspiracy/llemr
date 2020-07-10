@@ -49,31 +49,10 @@ Drug Inventory
                     {% endif %}
                 </td>
                 <td>
-                    <a href="#" class="btn btn-success a-btn-slide-text btn-xs" data-toggle="modal" data-target="#dispenseModal{{ drug.id }}">
+                    <a href="{% url 'drug-dispense-temp' pk=drug.id %}" class="btn btn-success a-btn-slide-text btn-xs" data-toggle="modal" data-target="#dispenseModal{{ drug.id }}">
                         <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
                         <span><strong>Dispense</strong></span>
                     </a>
-                    <!-- Modal -->
-                    <div class="modal fade" id="dispenseModal{{ drug.id }}" tabindex="-1" role="dialog" aria-labelledby="dispenseModal{{ drug.id }}Label" aria-hidden="true">
-                    <form action="{% url 'drug-dispense' %}" method="post">
-                      {% csrf_token %}
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h2 class="modal-title" id="dispenseModal{{ drug.id }}Label">Dispense Drug</h2>
-                          </div>
-                          <div class="modal-body">
-                            How many {{ drug.name }} would you like to dispense?<input type="number" placeholder="1" name="num" id="num" min="1" max="{{ drug.stock }}" required>
-                            <input type="hidden" name="pk" id="pk" value="{{ drug.id }}">
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Dispense Drug</a>
-                          </div>
-                        </div>
-                      </div>
-                    </form>
-                    </div>
                 </td>
             </tr>
         {% endfor %}
