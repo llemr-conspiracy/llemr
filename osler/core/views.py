@@ -74,25 +74,15 @@ class ProviderCreate(FormView):
     template_name = 'core/new-provider.html'
     form_class = forms.ProviderForm
 
-    def get_initial(self):
-        initial = super(ProviderCreate, self).get_initial()
-
-        initial['first_name'] = self.request.user.first_name
-        initial['last_name'] = self.request.user.last_name
-
-        return initial
-
     def form_valid(self, form):
         provider = form.save(commit=False)
         # check that user did not previously create a provider
         if not hasattr(self.request.user, 'provider'):
             provider.associated_user = self.request.user
-            # populate the User object with the email and name data from
+            # populate the User object with the name data from
             # the Provider form
             user = provider.associated_user
-            user.email = form.cleaned_data['provider_email']
-            user.first_name = provider.first_name
-            user.last_name = provider.last_name
+            user.name = provider.name()
             user.save()
             provider.save()
             form.save_m2m()
@@ -119,13 +109,6 @@ class ProviderUpdate(UpdateView):
     model = core_models.Provider
     form_class = forms.ProviderForm
 
-    def get_initial(self):
-        """Pre-populates email, which is a property of the User
-        """
-        initial = super(ProviderUpdate, self).get_initial()
-        initial['provider_email'] = self.request.user.email
-        return initial
-
     def get_object(self):
         """Returns the request's provider
         """
@@ -134,12 +117,10 @@ class ProviderUpdate(UpdateView):
     def form_valid(self, form):
         provider = form.save(commit=False)
         provider.needs_updating = False
-        # populate the User object with the email and name data from
+        # populate the User object with the name data from
         # the Provider form
         user = provider.associated_user
-        user.email = form.cleaned_data['provider_email']
-        user.first_name = provider.first_name
-        user.last_name = provider.last_name
+        user.name = provider.name()
         user.save()
         provider.save()
         form.save_m2m()

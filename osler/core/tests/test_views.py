@@ -367,7 +367,6 @@ class ProviderCreateTest(TestCase):
             'phone': "8888888888",
             'languages': models.Language.objects.first().pk,
             'gender': models.Gender.objects.first().pk,
-            'provider_email': "jj@wustl.edu",
             'clinical_roles': models.ProviderType.objects.first().pk,
         }
         response = self.client.post(response.url, form_data)
@@ -378,11 +377,7 @@ class ProviderCreateTest(TestCase):
         new_provider = list(models.Provider.objects.all())[-1]
 
         # verify the writethrough
-        for name in ['first_name', 'last_name']:
-            self.assertEqual(getattr(new_provider, name),
-                             getattr(new_provider.associated_user, name))
-        assert form_data['provider_email'] == \
-            new_provider.associated_user.email
+        self.assertEqual(new_provider.name(), new_provider.associated_user.name)
 
         # now verify we're redirected
         response = self.client.get(final_url)
@@ -403,9 +398,7 @@ class ProviderCreateTest(TestCase):
         # Verify that number of providers has not changed, and user's
         # names is still the original new_provider's names
         self.assertEqual(len(models.Provider.objects.all()), n_provider)
-        for name in ['first_name', 'last_name']:
-            self.assertEqual(getattr(new_provider, name),
-                             getattr(new_provider.associated_user, name))
+        self.assertEqual(new_provider.name(), new_provider.associated_user.name)
 
         # now verify we're redirected
         response = self.client.get(final_url)
@@ -685,8 +678,6 @@ class ProviderUpdateTest(TestCase):
             models.Provider.objects.get(pk=provider_pk).needs_updating is True
 
         response = self.client.get(reverse('home'), follow=True)
-        assert response.context[0]['form'].initial['provider_email'] == \
-            'tommyljones@gmail.com'
         self.assertRedirects(
             response, ''.join([reverse('core:provider-update'),
                                "?next=/dashboard/dispatch/"]))
@@ -697,7 +688,6 @@ class ProviderUpdateTest(TestCase):
             'phone': "8888888888",
             'languages': [models.Language.objects.first().pk],
             'gender': models.Gender.objects.first().pk,
-            'provider_email': "jj@wustl.edu",
             'clinical_roles': [models.ProviderType.objects.get(
                 short_name='Clinical').pk],
         }

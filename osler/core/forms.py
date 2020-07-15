@@ -126,8 +126,6 @@ class ActionItemForm(ModelForm):
 
 class ProviderForm(ModelForm):
 
-    provider_email = EmailField(label="Email")
-
     class Meta(object):
         model = models.Provider
         exclude = ['associated_user', 'needs_updating']
@@ -156,12 +154,3 @@ class DocumentForm(ModelForm):
         super(DocumentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
-
-
-class CrispyAuthenticationForm(AuthenticationForm):
-
-    def __init__(self, *args, **kwargs):
-        super(CrispyAuthenticationForm, self).__init__(*args, **kwargs)
-
-        self.helper = FormHelper(self)
-        self.helper.add_input(Submit('submit', 'Login'))
