@@ -18,16 +18,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='historicalvaccinefollowup',
-            name='history_user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AddField(
-            model_name='historicalvaccinefollowup',
-            name='patient',
-            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Patient'),
-        ),
-        migrations.AddField(
             model_name='historicallabfollowup',
             name='author',
             field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.Provider'),

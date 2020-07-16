@@ -30,6 +30,7 @@ INSTALLED_APPS = (
     'dashboard',
     'appointment',
     'referral',
+    'vaccine',
     'api',
     'crispy_forms',
     'bootstrap3',

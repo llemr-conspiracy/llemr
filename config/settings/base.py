@@ -84,6 +84,7 @@ LOCAL_APPS = [
     'osler.appointment.apps.AppointmentConfig',
     'osler.referral.apps.ReferralConfig',
     'osler.audit.apps.AuditConfig',
+    'osler.vaccine.apps.VaccineConfig',
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -323,7 +324,8 @@ OSLER_MIN_DIASTOLIC = 40
 # Specifies which apps are displayed under action items on patient detail page
 OSLER_TODO_LIST_MANAGERS = [
     ('core', 'ActionItem'),
-    ('referral', 'FollowupRequest')]
+    ('referral', 'FollowupRequest'),
+    ('vaccine', 'VaccineActionItem')]
 
 OSLER_MAX_APPOINTMENTS = 5
 OSLER_DEFAULT_APPOINTMENT_HOUR = 9

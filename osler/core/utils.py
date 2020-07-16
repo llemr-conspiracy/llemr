@@ -55,3 +55,12 @@ def get_names_from_url_query_dict(request):
                if param in request.GET}
 
     return qs_dict
+
+def get_due_date_from_url_query_dict(request):
+    '''Get due date from request object in a dict'''
+
+    qs_dict = {param: request.GET[param] for param
+               in ['due_date']
+               if param in request.GET}
+
+    return qs_dict

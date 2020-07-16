@@ -6,7 +6,7 @@ from builtins import range
 from builtins import object
 
 from django.forms import (Form, CharField, ModelForm, EmailField,
-                          CheckboxSelectMultiple, ModelMultipleChoiceField)
+                          CheckboxSelectMultiple, ModelMultipleChoiceField, CheckboxInput)
 from django.contrib.auth.forms import AuthenticationForm
 
 from crispy_forms.helper import FormHelper
@@ -90,38 +90,34 @@ class PatientForm(ModelForm):
                     " if a Alternate Phone is specified")
 
 
-class ActionItemForm(ModelForm):
+class AbstractActionItemForm(ModelForm):
+    '''The base class for action item forms'''
+    class Meta(object):
+        abstract = True
+        model = models.AbstractActionItem
+        exclude = []
+
+    def __init__(self, *args, **kwargs):
+        super(AbstractActionItemForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+
+        self.fields['instruction'].queryset = models.ActionInstruction\
+            .objects.filter(active=True)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+
+class ActionItemForm(AbstractActionItemForm):
     class Meta(object):
         model = models.ActionItem
         exclude = ['completion_date', 'author', 'written_date', 'patient',
                    'completion_author', 'author_type']
+        widgets = {'priority': CheckboxInput}
         # widgets = {'due_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
-
-    def __init__(self, *args, **kwargs):
-
-        super(ActionItemForm, self).__init__(*args, **kwargs)
-        self.helper = FormHelper(self)
-
-        self.helper.layout = Layout(
-            Row(
-                Column(css_class='form-group col-md-3 col-xs-4'),
-                Column('due_date', css_class='form-group col-md-3 col-xs-4'),
-                Column('instruction', css_class='form-group col-md-3 col-xs-4'),
-                css_class='form-row'
-            ),
-            Row(
-                Column(css_class='form-group col-md-3 col-xs-4'),
-                Column('comments', css_class='form-group col-md-6 col-xs-6')
-            ),
-            CustomCheckbox('priority'),
-            Row(
-                Column(Submit('submit', 'Submit'),
-                    css_class='formgroup col-md-offset-3 col-xs-offset-4')
-            )
-        )
-
-        self.fields['instruction'].queryset = models.ActionInstruction\
-            .objects.filter(active=True)
 
 
 class ProviderForm(ModelForm):

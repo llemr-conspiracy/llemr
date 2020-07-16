@@ -5,8 +5,8 @@ from osler.utils.admin import NoteAdmin, simplehistory_aware_register
 from . import models
 
 
-for model in [models.NoShowReason, models.NoAptReason, models.ContactResult]:
+for model in [models.VaccineSeriesType, models.VaccineDoseType]:
     simplehistory_aware_register(model)
 
-for model in [models.LabFollowup, models.ActionItemFollowup]:
+for model in [models.VaccineSeries, models.VaccineDose, models.VaccineActionItem, models. VaccineFollowup]:
     admin.site.register(model, NoteAdmin)

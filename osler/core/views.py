@@ -15,6 +15,7 @@ from django.utils.http import url_has_allowed_host_and_scheme
 
 from osler.workup import models as workupmodels
 from osler.referral.models import Referral, FollowupRequest, PatientContact
+from osler.vaccine.models import VaccineFollowup
 from osler.appointment.models import Appointment
 
 from osler.core import models as core_models
@@ -401,7 +402,7 @@ def patient_detail(request, pk):
     total_ais = len(active_ais) + len(inactive_ais) + len(done_ais)
 
     zipped_ai_list = list(zip(
-        ['collapse5', 'collapse6', 'collapse7'],
+        ['collapse6', 'collapse7', 'collapse8'],
         [active_ais, inactive_ais, done_ais],
         ['Active Action Items', 'Pending Action Items',
          'Completed Action Items'],
@@ -423,7 +424,9 @@ def patient_detail(request, pk):
 
     # Pass referral follow up set to page
     referral_followups = PatientContact.objects.filter(patient=pt)
-    total_followups = referral_followups.count() + len(pt.followup_set())
+    #Pass vaccine follow up set to page
+    vaccine_followups = VaccineFollowup.objects.filter(patient=pt)
+    total_followups = referral_followups.count() + len(pt.followup_set()) + vaccine_followups.count()
 
     appointments = Appointment.objects \
         .filter(patient=pt) \
@@ -455,7 +458,7 @@ def patient_detail(request, pk):
             previous_apt[a.clindate] = [a]
 
     zipped_apt_list = list(zip(
-        ['collapse8', 'collapse9'],
+        ['collapse9', 'collapse10'],
         [future_date_appointments, previous_date_appointments],
         ['Future Appointments', 'Past Appointments'],
         [future_apt, previous_apt]))
@@ -467,6 +470,7 @@ def patient_detail(request, pk):
                    'referral_status': referral_status_output,
                    'referrals': referrals,
                    'referral_followups': referral_followups,
+                   'vaccine_followups': vaccine_followups,
                    'total_followups': total_followups,
                    'patient': pt,
                    'appointments_by_date': future_apt,

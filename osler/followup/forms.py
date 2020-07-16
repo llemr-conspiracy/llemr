@@ -24,25 +24,6 @@ class BaseFollowup(ModelForm):
         super(BaseFollowup, self).__init__(*args, **kwargs)
 
 
-class VaccineFollowup(BaseFollowup):
-    '''A form to process the handling of a vaccine followup.'''
-    class Meta(object):
-        model = models.VaccineFollowup
-        exclude = ['patient', 'author', 'author_type']
-
-    def clean(self):
-        '''VaccineFollowups require a next dose date iff there there is a next
-        dose.'''
-
-        cleaned_data = super(VaccineFollowup, self).clean()
-
-        if cleaned_data.get('subsq_dose') and \
-           not cleaned_data.get('dose_date'):
-
-            self.add_error('dose_date', 'A next dosage date is required if ' +
-                           'the patient is returning for another dose.')
-
-
 class ActionItemFollowup(BaseFollowup):
     class Meta(object):
         model = models.ActionItemFollowup

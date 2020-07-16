@@ -323,7 +323,6 @@ class Patient(Person):
     def followup_set(self):
         followups = []
         followups.extend(self.labfollowup_set.all())
-        followups.extend(self.vaccinefollowup_set.all())
         followups.extend(self.actionitemfollowup_set.all())
 
         return followups
@@ -347,6 +346,9 @@ class Patient(Person):
         note_list.extend(self.workup_set.all())
         note_list.extend(self.followup_set())
         note_list.extend(self.document_set.all())
+        note_list.extend(self.vaccinedose_set.all())
+        note_list.extend(self.vaccinefollowup_set.all())
+        note_list.extend(self.patientcontact_set.all())
 
         return sorted(note_list, key=lambda k: k.written_datetime)
 
@@ -502,26 +504,22 @@ class CompletableMixin(models.Model):
             "a summary of the action that must be undertaken.")
 
 
-class ActionItem(Note, CompletableMixin):
+class AbstractActionItem(Note, CompletableMixin):
+    class Meta(object):
+        abstract = True
+
     instruction = models.ForeignKey(ActionInstruction,
                                     on_delete=models.PROTECT)
-    priority = models.BooleanField(
-        default=False,
-        help_text='Check this box if this action item is high priority')
     comments = models.TextField()
 
-    MARK_DONE_URL_NAME = 'done-action-item'
-
-    history = HistoricalRecords()
+    def class_name(self):
+        return self.__class__.__name__
 
     def short_name(self):
         return str(self.instruction)
 
     def summary(self):
         return self.comments
-
-    def class_name(self):
-        return self.__class__.__name__
 
     def attribution(self):
         if self.done():
@@ -530,6 +528,16 @@ class ActionItem(Note, CompletableMixin):
         else:
             return " ".join(["Added by", str(self.author), "on",
                              str(self.written_datetime.date())])
+
+
+class ActionItem(AbstractActionItem):
+    priority = models.BooleanField(
+        default=False,
+        help_text='Check this box if this action item is high priority')
+
+    MARK_DONE_URL_NAME = 'done-action-item'
+
+    history = HistoricalRecords()
 
     def mark_done_url(self):
         return reverse('core:%s' % self.MARK_DONE_URL_NAME, args=(self.id,))
