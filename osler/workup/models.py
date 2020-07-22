@@ -1,8 +1,6 @@
-from __future__ import unicode_literals
-from builtins import str
-from builtins import object
 import datetime
 
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Q
 from django.utils.timezone import now
@@ -11,7 +9,7 @@ from django.core.validators import MinValueValidator
 
 from simple_history.models import HistoricalRecords
 
-from osler.core.models import Note, Provider, ReferralLocation, ReferralType
+from osler.core.models import Note, ReferralLocation, ReferralType
 from osler.core.validators import validate_attending
 from osler.workup import validators as workup_validators
 
@@ -58,14 +56,14 @@ class ClinicDate(models.Model):
         return self.workup_set.count()
 
     def infer_attendings(self):
-        qs = Provider.objects.filter(
+        qs = get_user_model().objects.filter(
             Q(attending_physician__clinic_day=self) |
-            Q(signed_workups__clinic_day=self)).distinct()
+            Q(signed_workups_workup__clinic_day=self)).distinct()
 
         return qs
 
     def infer_volunteers(self):
-        return Provider.objects.filter(Q(workup__clinic_day=self) |
+        return get_user_model().objects.filter(Q(workup__clinic_day=self) |
                                        Q(other_volunteer__clinic_day=self)) \
                                .distinct()
 
@@ -84,7 +82,7 @@ class ClinicDate(models.Model):
               datetime.timedelta(days=1))
         )
 
-        coordinator_set = Provider.objects \
+        coordinator_set = get_user_model().objects \
             .filter(written_timeframe | cleared_timeframe)\
             .distinct()
 
@@ -92,40 +90,50 @@ class ClinicDate(models.Model):
 
 
 class AttestableNote(Note):
-    class Meta(object):
+    class Meta:
         abstract = True
+        permissions = [('can_sign', "Can sign note")]
 
-    def sign(self, user, active_role=None):
+    signer = models.ForeignKey(
+        get_user_model(),
+        blank=True, null=True,
+        on_delete=models.PROTECT,
+        related_name="signed_%(app_label)s_%(class)s",
+        validators=[validate_attending])
+    signed_date = models.DateTimeField(blank=True, null=True)
+
+    def sign(self, user, active_group=None):
         """Signs this workup.
 
-        The active_role parameter isn't necessary if the user has only
+        The active_group parameter isn't necessary if the user has only
         one role.
         """
 
-        if active_role is None:
-            if len(user.provider.clinical_roles.all()) != 1:
-                raise ValueError("For users with > role, it must be provided.")
+        if active_group is None:
+            if user.groups.count() == 1:
+                active_group = user.groups.first()
             else:
-                active_role = user.provider.clinical_roles.all()[0]
-        elif active_role not in user.provider.clinical_roles.all():
+                raise ValueError("For users with > role, it must be provided.")
+        elif active_group not in user.groups.all():
             raise ValueError(
-                "Provider {p} doesn't have role {r}!".format(
-                    p=user.provider, r=active_role))
+                "User %s doesn't belong to group %s!" %
+                (user, active_group)
+            )
 
-        if active_role.signs_charts:
-            assert active_role in user.provider.clinical_roles.all()
+        if user.has_perm('%s.can_sign' % type(self)):
+            assert active_group in user.groups.all()
 
             self.signed_date = now()
-            self.signer = user.provider
+            self.signer = user
         else:
-            raise ValueError("You must be an attending to sign workups.")
+            raise ValueError("Special permissions are required to sign notes.")
 
     def signed(self):
-        '''Has this workup been attested? Returns True if yes, False if no.'''
+        """Has this workup been attested? Returns True if yes, False if no."""
         return self.signer is not None
 
     def attribution(self):
-        '''Builds an attribution string of the form Doe, John on DATE'''
+        """Builds an attribution string of the form Doe, John on DATE"""
         return " ".join([str(self.author), "on", str(self.written_date())])
 
 
@@ -134,14 +142,6 @@ class ProgressNote(AttestableNote):
     text = models.TextField()
 
     history = HistoricalRecords()
-
-    signer = models.ForeignKey(
-        Provider,
-        blank=True, null=True,
-        on_delete=models.PROTECT,
-        related_name="signed_progress_notes",
-        validators=[validate_attending])
-    signed_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         u = '{} on at {} by {}'.format(
@@ -153,14 +153,23 @@ class ProgressNote(AttestableNote):
     def short_text(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse('progress-note-detail', args=[str(self.id)])
+
 
 class Workup(AttestableNote):
-    '''Datamodel of a workup. Has fields specific to each part of an exam,
-    along with SNHC-specific info about where the patient has been referred for
-    continuity care.'''
+    """Model for a medical student H&P for an outpatient clinic setting.
+
+    Has fields specific to each part of an exam, along with SNHC-specific
+    info about where the patient has been referred for continuity care.
+    """
+
+    class Meta(AttestableNote.Meta):
+        permissions = AttestableNote.Meta.permissions + [
+            ('can_export_pdf', 'Can export note PDF')]
 
     attending = models.ForeignKey(
-        Provider,
+        get_user_model(),
         null=True, blank=True,
         related_name="attending_physician",
         on_delete=models.PROTECT,
@@ -168,7 +177,7 @@ class Workup(AttestableNote):
         help_text="Which attending saw the patient?")
 
     other_volunteer = models.ManyToManyField(
-        Provider,
+        get_user_model(),
         blank=True,
         related_name="other_volunteer",
         help_text="Which other volunteer(s) did you work with (if any)?")
@@ -256,14 +265,6 @@ class Workup(AttestableNote):
 
     A_and_P = models.TextField()
 
-    signer = models.ForeignKey(
-        Provider,
-        blank=True, null=True,
-        on_delete=models.PROTECT,
-        related_name="signed_workups",
-        validators=[validate_attending])
-    signed_date = models.DateTimeField(blank=True, null=True)
-
     history = HistoricalRecords()
 
     def short_text(self):
@@ -281,8 +282,8 @@ class Workup(AttestableNote):
         '''
         return self.clinic_day.clinic_date
 
-    def url(self):
-        return reverse('workup', args=(self.pk,))
+    def get_absolute_url(self):
+        return reverse('workup', args=[str(self.id)])
 
     def __str__(self):
         return self.patient.name() + " on " + str(self.clinic_day.clinic_date)

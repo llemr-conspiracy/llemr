@@ -22,15 +22,6 @@ from osler.core import forms
 from osler.core import utils
 
 
-def get_current_provider_type(request):
-    '''
-    Given the request, produce the ProviderType of the logged in user. This is
-    done using session data.
-    '''
-    return get_object_or_404(core_models.ProviderType,
-                             pk=request.session['clintype_pk'])
-
-
 class NoteFormView(FormView):
     note_type = None
 
@@ -69,83 +60,83 @@ class NoteUpdate(UpdateView):
     # TODO: add shared form_valid code here from all subclasses.
 
 
-class ProviderCreate(FormView):
-    '''A view for creating a new Provider to match an existing User.'''
-    template_name = 'core/new-provider.html'
-    form_class = forms.ProviderForm
+# class ProviderCreate(FormView):
+#     '''A view for creating a new Provider to match an existing User.'''
+#     template_name = 'core/new-provider.html'
+#     form_class = forms.ProviderForm
 
-    def get_initial(self):
-        initial = super(ProviderCreate, self).get_initial()
+#     def get_initial(self):
+#         initial = super(ProviderCreate, self).get_initial()
 
-        initial['first_name'] = self.request.user.first_name
-        initial['last_name'] = self.request.user.last_name
+#         initial['first_name'] = self.request.user.first_name
+#         initial['last_name'] = self.request.user.last_name
 
-        return initial
+#         return initial
 
-    def form_valid(self, form):
-        provider = form.save(commit=False)
-        # check that user did not previously create a provider
-        if not hasattr(self.request.user, 'provider'):
-            provider.associated_user = self.request.user
-            # populate the User object with the email and name data from
-            # the Provider form
-            user = provider.associated_user
-            user.email = form.cleaned_data['provider_email']
-            user.first_name = provider.first_name
-            user.last_name = provider.last_name
-            user.save()
-            provider.save()
-            form.save_m2m()
+#     def form_valid(self, form):
+#         provider = form.save(commit=False)
+#         # check that user did not previously create a provider
+#         if not hasattr(self.request.user, 'provider'):
+#             provider.associated_user = self.request.user
+#             # populate the User object with the email and name data from
+#             # the Provider form
+#             user = provider.associated_user
+#             user.email = form.cleaned_data['provider_email']
+#             user.first_name = provider.first_name
+#             user.last_name = provider.last_name
+#             user.save()
+#             provider.save()
+#             form.save_m2m()
 
-        if 'next' in self.request.GET:
-            next_url = self.request.GET['next']
-        else:
-            next_url = reverse('home')
+#         if 'next' in self.request.GET:
+#             next_url = self.request.GET['next']
+#         else:
+#             next_url = reverse('home')
 
-        return HttpResponseRedirect(next_url)
+#         return HttpResponseRedirect(next_url)
 
-    def get_context_data(self, **kwargs):
-        context = super(ProviderCreate, self).get_context_data(**kwargs)
-        context['next'] = self.request.GET.get('next')
-        return context
+#     def get_context_data(self, **kwargs):
+#         context = super(ProviderCreate, self).get_context_data(**kwargs)
+#         context['next'] = self.request.GET.get('next')
+#         return context
 
 
-class ProviderUpdate(UpdateView):
-    """For updating a provider, e.g. used during a new school year when
-    preclinicals become clinicals. Set needs_update to false using
-    require_providers_update() in core.models
-    """
-    template_name = 'core/provider-update.html'
-    model = core_models.Provider
-    form_class = forms.ProviderForm
+# class ProviderUpdate(UpdateView):
+#     """For updating a provider, e.g. used during a new school year when
+#     preclinicals become clinicals. Set needs_update to false using
+#     require_providers_update() in core.models
+#     """
+#     template_name = 'core/provider-update.html'
+#     model = core_models.Provider
+#     form_class = forms.ProviderForm
 
-    def get_initial(self):
-        """Pre-populates email, which is a property of the User
-        """
-        initial = super(ProviderUpdate, self).get_initial()
-        initial['provider_email'] = self.request.user.email
-        return initial
+#     def get_initial(self):
+#         """Pre-populates email, which is a property of the User
+#         """
+#         initial = super(ProviderUpdate, self).get_initial()
+#         initial['provider_email'] = self.request.user.email
+#         return initial
 
-    def get_object(self):
-        """Returns the request's provider
-        """
-        return self.request.user.provider
+#     def get_object(self):
+#         """Returns the request's provider
+#         """
+#         return self.request.user.provider
 
-    def form_valid(self, form):
-        provider = form.save(commit=False)
-        provider.needs_updating = False
-        # populate the User object with the email and name data from
-        # the Provider form
-        user = provider.associated_user
-        user.email = form.cleaned_data['provider_email']
-        user.first_name = provider.first_name
-        user.last_name = provider.last_name
-        user.save()
-        provider.save()
-        form.save_m2m()
+#     def form_valid(self, form):
+#         provider = form.save(commit=False)
+#         provider.needs_updating = False
+#         # populate the User object with the email and name data from
+#         # the Provider form
+#         user = provider.associated_user
+#         user.email = form.cleaned_data['provider_email']
+#         user.first_name = provider.first_name
+#         user.last_name = provider.last_name
+#         user.save()
+#         provider.save()
+#         form.save_m2m()
 
-        return HttpResponseRedirect(
-            self.request.GET.get('next', reverse('home')))
+#         return HttpResponseRedirect(
+#             self.request.GET.get('next', reverse('home')))
 
 
 class ActionItemCreate(NoteFormView):
@@ -160,8 +151,8 @@ class ActionItemCreate(NoteFormView):
         ai = form.save(commit=False)
 
         ai.completion_date = None
-        ai.author = self.request.user.provider
-        ai.author_type = get_current_provider_type(self.request)
+        ai.author = self.request.user
+        ai.author_type = utils.get_active_user_group(self.request)
         ai.patient = pt
 
         ai.save()
@@ -297,12 +288,13 @@ class DocumentCreate(NoteFormView):
 
         pt = get_object_or_404(core_models.Patient, pk=self.kwargs['pt_id'])
         doc.patient = pt
-        doc.author = self.request.user.provider
-        doc.author_type = get_current_provider_type(self.request)
+        doc.author = self.request.user
+        doc.author_type = utils.get_active_user_group(self.request)
 
         doc.save()
 
-        return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
+        return HttpResponseRedirect(reverse("core:patient-detail",
+                                            args=(pt.id,)))
 
 
 def choose_clintype(request):
@@ -315,7 +307,7 @@ def choose_clintype(request):
 
     if request.POST:
         request.session['clintype_pk'] = request.POST[RADIO_CHOICE_KEY]
-        active_provider_type = get_current_provider_type(request)
+        active_provider_type = utils.get_active_user_group(request)
         request.session['signs_charts'] = active_provider_type.signs_charts
         request.session['staff_view'] = active_provider_type.staff_view
 
@@ -326,7 +318,7 @@ def choose_clintype(request):
 
         if len(role_options) == 1:
             request.session['clintype_pk'] = role_options[0].pk
-            active_provider_type = get_current_provider_type(request)
+            active_provider_type = utils.get_active_user_group(request)
             request.session['signs_charts'] = active_provider_type.signs_charts
             request.session['staff_view'] = active_provider_type.staff_view
             return HttpResponseRedirect(redirect_to)
@@ -342,51 +334,6 @@ def choose_clintype(request):
 
 def home_page(request):
     return HttpResponseRedirect(reverse(settings.OSLER_DEFAULT_DASHBOARD))
-
-#     active_provider_type = get_object_or_404(core_models.ProviderType,
-#                                              pk=request.session['clintype_pk'])
-
-#     if active_provider_type.signs_charts:
-#         title = "Attending Tasks"
-#         lists = [
-#             {'url': 'filter=unsigned_workup', 'title': "Unsigned Workups",
-#              'identifier': 'unsignedwu', 'active': True},
-#             {'url': 'filter=active', 'title': "Active Patients",
-#              'identifier': 'activept', 'active': False}]
-
-#     elif active_provider_type.staff_view:
-#         title = "Coordinator Tasks"
-#         lists = [
-#             {'url': 'filter=active', 'title': "Active Patients",
-#              'identifier': 'activept', 'active': True},
-#             {'url': 'filter=ai_priority', 'title': "Priority Action Items",
-#              'identifier': 'priorityai', 'active': False},
-#             {'url': 'filter=ai_active', 'title': "Active Action Items",
-#              'identifier': 'activeai', 'active': False},
-#             {'url': 'filter=ai_inactive', 'title': "Pending Action Items",
-#              'identifier': 'pendingai', 'active': False},
-#             {'url': 'filter=unsigned_workup', 'title': "Unsigned Workups",
-#              'identifier': 'unsignedwu', 'active': False},
-#             {'url': 'filter=user_cases', 'title': "My Cases",
-#              'identifier': 'usercases', 'active': False}
-#         ]
-
-#     else:
-#         title = "Active Patients"
-#         lists = [
-#             {'url': 'filter=active',
-#              'title': "Active Patients",
-#              'identifier': 'activept',
-#              'active': True}]
-
-#     # remove last '/' before adding because there no '/' between
-#     # /api/pt_list and .json, but reverse generates '/api/pt_list/'
-#     api_url = reverse('pt_list_api')[:-1] + '.json/?'
-
-#     return render(request, 'core/patient_list.html',
-#                   {'lists': json.dumps(lists),
-#                    'title': title,
-#                    'api_url': api_url})
 
 
 def patient_detail(request, pk):

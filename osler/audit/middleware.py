@@ -1,9 +1,7 @@
 from __future__ import unicode_literals
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AnonymousUser, Group
 from django.conf import settings
 from django.apps import apps
-
-from osler.core.models import ProviderType
 
 
 class AuditMiddleware:
@@ -26,7 +24,7 @@ class AuditMiddleware:
         role = request.session.get('clintype_pk', None)
 
         if role is not None:
-            role = ProviderType.objects.get(pk=role)
+            role = Group.objects.get(pk=role)
 
         if user_ip not in settings.OSLER_AUDIT_BLACK_LIST:
             PageviewRecord = apps.get_app_config('audit').get_model(

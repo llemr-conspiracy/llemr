@@ -1,8 +1,53 @@
-from __future__ import unicode_literals
-from builtins import range
+import os
+import uuid
 import string
+
 from django.db.models import Q
+from django.conf import settings
+from django.contrib.auth.models import Group
+from django.shortcuts import get_object_or_404
+
 from . import models
+
+
+def get_active_user_group(request):
+    """Given a request, process which of the user's groups is "active".
+
+    This is used to determine which type of user to sign a note as, for
+    example.
+    """
+
+    group_pk = request.session['clintype_pk']
+    active_user_group = get_object_or_404(Group, pk=group_pk)
+
+    assert request.user.groups.filter(pk=group_pk).exists()
+
+    return active_user_group
+
+
+def make_filepath(instance, filename):
+    """Produces a unique file path for the upload_to of a FileField.
+
+    This is important because any URL is 1) transmitted unencrypted and
+    2) automatically referred to any libraries we include (i.e. Bootstrap).
+
+    The produced path is of the form:
+    "[model name]/[field name]/[random name].[filename extension]".
+
+    Inspired by https://djangosnippets.org/snippets/2819/, modified over
+    the years.
+    """
+
+    carry_on = True
+    while carry_on:
+        new_filename = "%s.%s" % (uuid.uuid4(), filename.split('.')[-1])
+
+        path = new_filename
+
+        # if the file already exists, try again to generate a new filename
+        carry_on = os.path.isfile(os.path.join(settings.MEDIA_ROOT, path))
+
+    return path
 
 
 def all_variations(name):
@@ -20,10 +65,10 @@ def all_variations(name):
         # try all variations of switching letters, other than first letter
         for i in range(1, len(name)):
             # remove letter
-            all_vars.append(name[:i] + name[i+1:])
+            all_vars.append(name[:i] + name[i + 1:])
             # change letter and add letter
             for j in string.ascii_lowercase:
-                all_vars.append(name[:i] + j + name[i+1:])
+                all_vars.append(name[:i] + j + name[i + 1:])
                 all_vars.append(name[:i] + j + name[i:])
 
         all_vars.append(name)

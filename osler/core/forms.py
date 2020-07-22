@@ -1,24 +1,15 @@
 '''Forms for the Oser core components.'''
-from __future__ import unicode_literals
-from builtins import zip
-from builtins import str
-from builtins import range
-from builtins import object
 
 from django.forms import (Form, CharField, ModelForm, EmailField,
                           CheckboxSelectMultiple, ModelMultipleChoiceField)
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import get_user_model
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import Submit, Field, Layout, Row, Column
 from crispy_forms.bootstrap import InlineCheckboxes
-from crispy_forms.layout import ButtonHolder, Submit
-from . import models
 
-from crispy_forms.layout import Field
-from django import forms
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Row, Column
+from . import models
 
 
 class CustomCheckbox(Field):
@@ -43,14 +34,13 @@ class PatientForm(ModelForm):
         model = models.Patient
         exclude = ['needs_workup', 'demographics']
 
-    # limit the options for the case_managers field to Providers with
-    # ProviderType with staff_view=True
-
+    # limit the options for the case_managers
     case_managers = ModelMultipleChoiceField(
         required=False,
-        queryset=models.Provider.objects.filter(
-            clinical_roles__in=models.ProviderType.objects.filter(
-                staff_view=True)).distinct().order_by("last_name"),
+        queryset=get_user_model().objects
+        .filter(groups__permissions__codename='can_case_manage')
+        .distinct()
+        .order_by("last_name"),
     )
 
     def __init__(self, *args, **kwargs):
@@ -124,27 +114,27 @@ class ActionItemForm(ModelForm):
             .objects.filter(active=True)
 
 
-class ProviderForm(ModelForm):
+# class ProviderForm(ModelForm):
 
-    provider_email = EmailField(label="Email")
+#     provider_email = EmailField(label="Email")
 
-    class Meta(object):
-        model = models.Provider
-        exclude = ['associated_user', 'needs_updating']
-        widgets = {'referral_location': CheckboxSelectMultiple,
-                   'referral_type': CheckboxSelectMultiple}
+#     class Meta(object):
+#         model = models.Provider
+#         exclude = ['associated_user', 'needs_updating']
+#         widgets = {'referral_location': CheckboxSelectMultiple,
+#                    'referral_type': CheckboxSelectMultiple}
 
-    def __init__(self, *args, **kwargs):
-        super(ProviderForm, self).__init__(*args, **kwargs)
+#     def __init__(self, *args, **kwargs):
+#         super(ProviderForm, self).__init__(*args, **kwargs)
 
-        self.helper = FormHelper(self)
-        self.helper.form_method = 'post'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-lg-2'
-        self.helper.field_class = 'col-lg-8'
-        self.helper['languages'].wrap(InlineCheckboxes)
-        self.helper['clinical_roles'].wrap(InlineCheckboxes)
-        self.helper.add_input(Submit('submit', 'Submit'))
+#         self.helper = FormHelper(self)
+#         self.helper.form_method = 'post'
+#         self.helper.form_class = 'form-horizontal'
+#         self.helper.label_class = 'col-lg-2'
+#         self.helper.field_class = 'col-lg-8'
+#         self.helper['languages'].wrap(InlineCheckboxes)
+#         self.helper['clinical_roles'].wrap(InlineCheckboxes)
+#         self.helper.add_input(Submit('submit', 'Submit'))
 
 
 class DocumentForm(ModelForm):

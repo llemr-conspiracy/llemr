@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
                 ('written_datetime', models.DateTimeField(auto_now_add=True)),
                 ('last_modified', models.DateTimeField(auto_now=True)),
                 ('title', models.CharField(max_length=200)),
-                ('image', models.FileField(help_text='Please deidentify all file names before upload! Delete all files after upload!', upload_to=osler.core.models.make_filepath, verbose_name='PDF File or Image Upload')),
+                ('image', models.FileField(help_text='Please deidentify all file names before upload! Delete all files after upload!', upload_to=osler.core.utils.make_filepath, verbose_name='PDF File or Image Upload')),
                 ('comments', models.TextField()),
             ],
             options={
