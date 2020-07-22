@@ -38,7 +38,7 @@ class PatientForm(ModelForm):
     case_managers = ModelMultipleChoiceField(
         required=False,
         queryset=get_user_model().objects
-        .filter(user_permissions__contains='osler.core.can_case_manage')
+        .filter(groups__permissions__codename='can_case_manage')
         .distinct()
         .order_by("last_name"),
     )
@@ -114,27 +114,27 @@ class ActionItemForm(ModelForm):
             .objects.filter(active=True)
 
 
-class ProviderForm(ModelForm):
+# class ProviderForm(ModelForm):
 
-    provider_email = EmailField(label="Email")
+#     provider_email = EmailField(label="Email")
 
-    class Meta(object):
-        model = models.Provider
-        exclude = ['associated_user', 'needs_updating']
-        widgets = {'referral_location': CheckboxSelectMultiple,
-                   'referral_type': CheckboxSelectMultiple}
+#     class Meta(object):
+#         model = models.Provider
+#         exclude = ['associated_user', 'needs_updating']
+#         widgets = {'referral_location': CheckboxSelectMultiple,
+#                    'referral_type': CheckboxSelectMultiple}
 
-    def __init__(self, *args, **kwargs):
-        super(ProviderForm, self).__init__(*args, **kwargs)
+#     def __init__(self, *args, **kwargs):
+#         super(ProviderForm, self).__init__(*args, **kwargs)
 
-        self.helper = FormHelper(self)
-        self.helper.form_method = 'post'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-lg-2'
-        self.helper.field_class = 'col-lg-8'
-        self.helper['languages'].wrap(InlineCheckboxes)
-        self.helper['clinical_roles'].wrap(InlineCheckboxes)
-        self.helper.add_input(Submit('submit', 'Submit'))
+#         self.helper = FormHelper(self)
+#         self.helper.form_method = 'post'
+#         self.helper.form_class = 'form-horizontal'
+#         self.helper.label_class = 'col-lg-2'
+#         self.helper.field_class = 'col-lg-8'
+#         self.helper['languages'].wrap(InlineCheckboxes)
+#         self.helper['clinical_roles'].wrap(InlineCheckboxes)
+#         self.helper.add_input(Submit('submit', 'Submit'))
 
 
 class DocumentForm(ModelForm):

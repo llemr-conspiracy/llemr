@@ -12,7 +12,6 @@ from crispy_forms.bootstrap import (
     InlineCheckboxes, AppendedText, PrependedText)
 from crispy_forms.utils import TEMPLATE_PACK, render_field
 
-from osler.core.models import Provider
 from osler.workup import models
 
 
@@ -155,13 +154,13 @@ class WorkupForm(ModelForm):
     attending = ModelChoiceField(
         required=False,
         queryset=get_user_model().objects.filter(
-            user_permissions__contains='osler.workup.Workup.signs_charts')
+            groups__permissions__codename='osler.workup.Workup.signs_charts')
     )
 
     other_volunteer = ModelMultipleChoiceField(
         required=False,
         queryset=get_user_model().objects.exclude(
-            user_permissions__contains='osler.workup.Workup.signs_charts')
+            groups__permissions__codename='osler.workup.Workup.signs_charts')
     )
 
     def __init__(self, *args, **kwargs):
