@@ -42,7 +42,7 @@ class TestDrugList(TestCase):
             self.assertEqual(str(self.diff_drug[param]),
                              str(getattr(drug_get, param)))
 
-    def test_drug_dispense(self):
+    def test_drug_dispense_can_dispense(self):
         drug = Drug.objects.create(**drug_dict())
         drug_initial = Drug.objects.get(pk=drug.pk)
         url = reverse('inventory:drug-dispense')
@@ -51,6 +51,14 @@ class TestDrugList(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(str(getattr(drug_initial,'stock')-5),
                          str(getattr(drug_final,'stock')))
+
+    def test_drug_dispense_cannot_dispense(self):
+        drug = Drug.objects.create(**drug_dict())
+        drug_initial = Drug.objects.get(pk=drug.pk)
+        url = reverse('inventory:drug-dispense')
+        response = self.client.post(url, {'pk':drug.pk,'num':'11'}, follow=True)
+        drug_final = Drug.objects.get(pk=drug.pk)
+        self.assertEqual(response.status_code, 404)
 
 class TestDrugAdd(TestCase):
 
