@@ -4,7 +4,7 @@ import string
 
 from django.db.models import Q
 from django.conf import settings
-from django.contrib.auth.models import Group
+from django.contrib.auth import Group
 from django.shortcuts import get_object_or_404
 
 from . import models

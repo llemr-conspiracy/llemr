@@ -4,8 +4,8 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 
 from osler.core.models import Patient
-from osler.core.views import NoteUpdate, NoteFormView
-from osler.core.utils import get_active_user_group
+from osler.core.views import (NoteUpdate, NoteFormView,
+                                 get_current_provider_type)
 
 from osler.followup import forms
 from osler.followup import models
@@ -76,8 +76,8 @@ class FollowupCreate(NoteFormView):
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         fu = form.save(commit=False)
         fu.patient = pt
-        fu.author = self.request.user
-        fu.author_type = get_active_user_group(self.request)
+        fu.author = self.request.user.provider
+        fu.author_type = get_current_provider_type(self.request)
 
         fu.save()
 
