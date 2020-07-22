@@ -1,5 +1,3 @@
-from functools import partial
-
 from django.urls import re_path
 from django.views.generic import DetailView
 
@@ -27,7 +25,7 @@ unwrapped_urlconf = [
         name='workup-update'),
     re_path(
         r'^(?P<pk>[0-9]+)/sign/$',
-        partial(views.sign_attestable_note, attestable=models.Workup),
+        views.sign_workup,
         name='workup-sign'),
     re_path(
         r'^(?P<pk>[0-9]+)/error/$',
@@ -49,7 +47,7 @@ unwrapped_urlconf = [
         name="progress-note-update"),
     re_path(
         r'^psychnote/sign/(?P<pk>[0-9]+)$',
-        partial(views.sign_attestable_note, attestable=models.ProgressNote),
+        views.sign_progress_note,
         name='progress-note-sign'),
     re_path(
         r'^psychnote/(?P<pk>[0-9]+)$',

@@ -45,18 +45,18 @@ unwrapped_urlpatterns = [
         name='patient-activate-home'),
 
     # PROVIDERS
-    # re_path(
-    #     r'^new-provider/$',
-    #     views.ProviderCreate.as_view(),
-    #     name='new-provider'),
-    # re_path(
-    #     r'^choose-role/$',
-    #     views.choose_clintype,
-    #     name='choose-clintype'),
-    # re_path(
-    #     r'^provider-update/$',
-    #     views.ProviderUpdate.as_view(),
-    #     name='provider-update'),
+    re_path(
+        r'^new-provider/$',
+        views.ProviderCreate.as_view(),
+        name='new-provider'),
+    re_path(
+        r'^choose-role/$',
+        views.choose_clintype,
+        name='choose-clintype'),
+    re_path(
+        r'^provider-update/$',
+        views.ProviderUpdate.as_view(),
+        name='provider-update'),
 
     # ACTION ITEMS
     re_path(

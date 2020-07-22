@@ -4,8 +4,9 @@ from osler.utils import admin as admin_utils
 from osler.core import models
 
 
-for model in [models.Language, models.Patient,
-              models.Gender, models.ActionInstruction, models.Ethnicity,
+for model in [models.Language, models.Patient, models.Provider,
+              models.Gender, models.ProviderType,
+              models.ActionInstruction, models.Ethnicity,
               models.ReferralType, models.ReferralLocation,
               models.ContactMethod, models.DocumentType, models.Outcome]:
     admin_utils.simplehistory_aware_register(model)
