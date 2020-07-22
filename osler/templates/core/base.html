@@ -57,6 +57,7 @@
         <ul class="nav navbar-nav">
           <li><a href="{% url 'core:preintake' %}">New Patient</a></li>
           <li><a href="{% url 'core:all-patients' %}">All Patients</a></li>
+          <li><a href="{% url 'inventory:drug-list' %}">Drug Inventory</a></li>
           <li><a href="{% url 'appointment-list' %}">Appointments</a></li>
           <li><a href="//snhc.wustl.edu/wiki" target="_blank">Wiki</a></li>
           <li><a href="{% url 'about' %}">About</a></li>
@@ -68,7 +69,7 @@
             {% if user.is_superuser or user.is_staff %}
             <li><a href="{% url 'admin:index' %}">Admin</a></li>
             {% endif %}
-            <li><a href="{% url 'account_logout' %}">Logout 
+            <li><a href="{% url 'account_logout' %}">Logout
               {{ request.user.provider.first_name }} ({{ request.session.clintype_pk | default:"[no role]" }})
             </a></li>
         </ul>

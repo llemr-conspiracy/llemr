@@ -30,14 +30,14 @@ class PreDrugAddNew(FormView):
 
     def form_valid(self, form):
         name_str = form.cleaned_data['name'].capitalize()
-        lot_number_str = form.cleaned_data['lot_number']
+        lot_number_str = form.cleaned_data['lot_number'].upper()
         manufacturer_str = form.cleaned_data['manufacturer']
 
         querystr = '%s=%s&%s=%s&%s=%s' % ("name", name_str,
                                     "lot_number", lot_number_str,
                                     "manufacturer", manufacturer_str)
 
-        add_new_drug_url = "%s?%s" % (reverse("drug-add-new"), querystr)
+        add_new_drug_url = "%s?%s" % (reverse("inventory:drug-add-new"), querystr)
 
         if lot_number_str.strip() == '':
             return HttpResponseRedirect(add_new_drug_url)
@@ -45,7 +45,7 @@ class PreDrugAddNew(FormView):
         matching_drugs = models.Drug.objects.filter(name=name_str, lot_number=lot_number_str, manufacturer=manufacturer_str)
 
         if len(matching_drugs) > 0:
-            predrug_select_url = "%s?%s" % (reverse("predrug-select"), querystr)
+            predrug_select_url = "%s?%s" % (reverse("inventory:predrug-select"), querystr)
             return HttpResponseRedirect(predrug_select_url)
 
         return HttpResponseRedirect(add_new_drug_url)
@@ -75,11 +75,11 @@ class PreDrugSelect(ListView):
         context['lot_number'] = initial.get('lot_number', None)
         context['manufacturer'] = initial.get('manufacturer', None)
         context['new_drug_url'] = "%s?%s=%s&%s=%s&%s=%s" % (
-            reverse("drug-add-new"),
+            reverse("inventory:drug-add-new"),
             "name", initial.get('name', None),
             "lot_number", initial.get('lot_number', None),
             "manufacturer", initial.get('manufacturer', None))
-        context['home'] = reverse("drug-list")
+        context['home'] = reverse("inventory:drug-list")
         return context
 
 class DrugAddNew(FormView):
@@ -89,7 +89,7 @@ class DrugAddNew(FormView):
     def form_valid(self, form):
         df = form.save()
         df.save()
-        return redirect('drug-list')
+        return redirect('inventory:drug-list')
 
     def get_initial(self):
         initial = super(DrugAddNew, self).get_initial()
@@ -106,7 +106,7 @@ class DrugUpdate(UpdateView):
     def form_valid(self, form):
         df = form.save()
         df.save()
-        return redirect('drug-list')
+        return redirect('inventory:drug-list')
 
 def drug_dispense(request):
     pk = request.POST['pk']
@@ -117,4 +117,4 @@ def drug_dispense(request):
         return HttpResponseNotFound('<h1>Cannot dispense more drugs than in stock!</h1>')
     else:
         drug.dispense(int(num))
-    return redirect('drug-list')
+    return redirect('inventory:drug-list')

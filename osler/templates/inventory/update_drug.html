@@ -5,7 +5,7 @@ Edit Drug ({{ object.name }})
 {% endblock %}
 
 {% block header %}
-<h1><a href="{% url 'drug-list' %}"><small><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></small></a>
+<h1><a href="{% url 'inventory:drug-list' %}"><small><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></small></a>
   Edit Drug
 </h1>
 <p class="lead">Edit <em>{{ object.name }}</em></p>

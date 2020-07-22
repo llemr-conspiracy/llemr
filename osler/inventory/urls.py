@@ -5,6 +5,7 @@ from osler.core.urls import wrap_url
 from osler.inventory import views
 from osler.inventory import models
 
+app_name = 'inventory'
 unwrapped_urlconf = [
     re_path(
         r'^$',

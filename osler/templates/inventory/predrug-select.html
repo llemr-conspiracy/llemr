@@ -5,27 +5,27 @@ Add New Drug
 {% endblock %}
 
 {% block header %}
-<h1>Add New Drug</h1>
+<h1>Existing Drug</h1>
 <p class="lead">There was one or more similar drugs already in the database.<br/>Select one or create a new drug.</p>
 {% endblock %}
 
 {% block content %}
     <div class="container">
-        <h2>For lookup {{name}}, {{lot_number}} </h2>
+        <h2>Existing drug {{name}}, {{lot_number}} </h2>
         <table class="table table-striped">
             <tr>
                 <th>Name</th><th>Lot Number</th><th>Category</th><th>Stock</th>
             </tr>
             {% for drug in object_list %}
                 <tr>
-                    <td><a href="{% url 'drug-update' pk=drug.id %}">{{ drug.name }}</a></td>
+                    <td><a href="{% url 'inventory:drug-update' pk=drug.id %}">{{ drug.name }}</a></td>
                     <td>{{ drug.lot_number }}</td>
                     <td>{{ drug.category }}</td>
                     <td>{{ drug.stock }}</td>
                 </tr>
             {% endfor %}
         </table>
-        <button class="btn btn-warning" onclick="location.href ='{{new_drug_url}}'">New Drug</button>
+        <button class="btn btn-warning" onclick="location.href ='{{new_drug_url}}'">Create New Drug</button>
         <button class="btn btn-default" onclick="location.href ='{{home}}'">Cancel</button>
     </div>
 {% endblock %}
