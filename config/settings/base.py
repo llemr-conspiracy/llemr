@@ -344,3 +344,6 @@ OSLER_PROVIDERTYPE_DASHBOARDS = {
 
 # List of IP addresses to exclude from audit
 OSLER_AUDIT_BLACK_LIST = []
+
+
+OSLER_TEST_CHECK_CONNECTION_RUNNING = False

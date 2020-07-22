@@ -7,15 +7,20 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 
-from osler.pttack import models
+from osler.core import models
 from osler.core.tests.test_views import build_provider
 from osler.core.tests.test import SeleniumLiveTestCase
 
 from osler.workup import models as workup_models
-
+from osler.workup.forms import WorkupForm
 
 BASIC_FIXTURE = 'core.json'
+
+FIXTURES = ['core', 'workup', 'followup']
+
+import pytest
 
 
 class LiveTesting(SeleniumLiveTestCase):
@@ -506,3 +511,4 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         self.assertNotIn(str(self.pt2), present_pt_names)
         self.assertNotIn(str(self.pt3), present_pt_names)
         self.assertIn(str(self.pt5), present_pt_names)
+

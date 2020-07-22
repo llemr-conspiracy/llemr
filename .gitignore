@@ -279,3 +279,6 @@ osler/media/
 
 # VS Code
 .vscode/*
+
+# Temporary
+tmp.html
