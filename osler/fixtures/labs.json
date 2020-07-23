@@ -1,0 +1,85 @@
+[
+{
+    "model": "labs.labtype",
+    "pk": 1,
+    "fields": {
+        "name": "BMP"
+    }
+},
+{
+    "model": "labs.labtype",
+    "pk": 2,
+    "fields": {
+        "name": "HIV"
+    }
+},
+{
+    "model": "labs.labtype",
+    "pk": 3,
+    "fields": {
+        "name": "A1c"
+    }
+},
+{
+    "model": "labs.labtype",
+    "pk": 4,
+    "fields": {
+        "name": "Urinalysis"
+    }
+},
+{
+    "model": "labs.measurementtype",
+    "pk": "A1c",
+    "fields": {
+        "short_name": "A1c",
+        "unit": "%",
+        "panic_upper": "5.7",
+        "panic_lower": "0.0",
+        "lab_type": 3
+    }
+},
+{
+    "model": "labs.measurementtype",
+    "pk": "HIV Test",
+    "fields": {
+        "short_name": "HIV",
+        "unit": "",
+        "panic_upper": "",
+        "panic_lower": "",
+        "lab_type": 2
+    }
+},
+{
+    "model": "labs.measurementtype",
+    "pk": "Nitrite",
+    "fields": {
+        "short_name": "Nitrite",
+        "unit": "",
+        "panic_upper": "",
+        "panic_lower": "",
+        "lab_type": 4
+    }
+},
+{
+    "model": "labs.measurementtype",
+    "pk": "Potassium, serum",
+    "fields": {
+        "short_name": "K+",
+        "unit": "mmol/L",
+        "panic_upper": "6.0",
+        "panic_lower": "3.0",
+        "lab_type": 1
+    }
+},
+{
+    "model": "labs.measurementtype",
+    "pk": "Sodium, serum",
+    "fields": {
+        "short_name": "Na+",
+        "unit": "mmol/L",
+        "panic_upper": "155.0",
+        "panic_lower": "125.0",
+        "lab_type": 1
+    }
+}
+]

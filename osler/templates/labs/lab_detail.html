@@ -1,0 +1,28 @@
+{% extends "pttrack/base.html" %}
+
+{% block title %}
+Lab detail
+{% endblock %}
+
+{% block header %}
+<h1>Lab detail</h1>
+<p class="lead"></p>
+{% endblock %}
+
+{% block content %}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<div class="container">
+	{{ lab }}
+	<ul>
+		{% for measurement in cont_list %}
+			<li>{{ measurement }}</li>
+		{% endfor %}
+		{% for measurement in disc_list %}
+			<li>{{ measurement }}</li>
+		{% endfor %}
+	</ul>
+</div>
+
+{% endblock %}

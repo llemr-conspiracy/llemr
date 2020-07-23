@@ -1,0 +1,91 @@
+{% extends "pttrack/base.html" %}
+
+{% block title %}
+All Labs
+{% endblock %}
+
+{% block header%}
+<h1>All Labs</h1>
+<h2>
+	Patient: <a href="{% url 'patient-detail' patient.id %}">{{ patient.name }} </a>
+</h2>
+{% endblock %}
+
+{% block content %}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<style>
+	th {
+	  position: -webkit-sticky;
+	  position: sticky;
+	  top: 0;
+	  z-index: 2;
+	}
+</style>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function(){
+    $('#lab_table td.y_n').each(function(){
+        if (~$(this).text().indexOf('⚠⚠')) {
+            $(this).css('color','#f00');
+        } else if (~$(this).text().indexOf('⚠')) {
+            $(this).css('color','#0000FF');
+        }
+        if (~$(this).text().indexOf('Lab: ')) {
+            $(this).css('font-weight','bold');
+        } 
+    });
+});
+
+</script>
+
+<div class="container">
+	<form class="form-inline">
+	  <div class="form-group mb-2", style="font-weight:bold">
+	    Lab date
+	  </div>
+	  <div class="form-group mx-sm-3 mb-2">
+			<select class="form-control " id="selectMonth">
+	    	{% for month in months %}
+	        	<option>{{ month }}</option>
+	        {% endfor %}
+		    </select>
+	  </div>
+	  <a class="btn btn-primary" href="{% url 'all-labs-table' patient.id %}" role="button">Filter</a>
+	</form>
+</div>
+
+
+<div class="container", id="lab_table">
+	<table class="table">
+	    <tr>
+	    	{% for item in header %}
+	        	<th>{{ item }}</th>
+	        {% endfor %}
+	    </tr>
+	    {% for row in table %}
+	    <tr> 
+	    	{% for item in row %}
+	        		<td class="y_n">{{ item }}</td>
+	        {% endfor %}
+	    </tr>
+	    {% endfor %}
+	</table>
+</div>
+
+
+<div class="container">
+    <div class="row text-center">
+		<div class="btn-group">
+		        <a class="btn btn-primary" href="{% url 'new-lab' patient.id %}" role="button">New Lab</a>
+		        <!--
+		        	<a class="btn btn-info" href="{% url 'patient-detail' patient.id %}" role="button">Return to patient info</a>
+		        -->
+		</div>
+	</div>
+</div>
+
+{% endblock %}

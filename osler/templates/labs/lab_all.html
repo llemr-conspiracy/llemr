@@ -1,0 +1,21 @@
+{% extends "pttrack/base.html" %}
+
+{% block title %}
+All Labs
+{% endblock %}
+
+{% block header%}
+<h1>All Labs</h1>
+{% endblock %}
+
+{% block content %}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<div class="container">
+	{% for lab in labs %}
+		<p><a href="{% url 'lab-detail' lab.id %}">{{ lab }}</a></p>
+	{% endfor %}
+</div>
+
+{% endblock %}

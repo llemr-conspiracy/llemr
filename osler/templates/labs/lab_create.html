@@ -1,0 +1,23 @@
+{% extends "pttrack/base.html" %}
+
+{% block title %}
+Create New Lab
+{% endblock %}
+
+{% block header %}
+<h1>Create New Lab</h1>
+{% endblock %}
+
+{% block content %}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<div class="container">
+	<form class="site-form" method="post">
+		{% load crispy_forms_tags %}
+		{% crispy form %}
+	</form>
+
+</div>
+
+{% endblock %}
