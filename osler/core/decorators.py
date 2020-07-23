@@ -64,12 +64,16 @@ def clintype_required(func):
 
 
 def provider_update_required(func):
-    return user_passes_test(
-        provider_has_updated,
-        login_url=reverse_lazy('core:provider-update'))(func)
+    return func
+
+    # return user_passes_test(
+    #     provider_has_updated,
+    #     login_url=reverse_lazy('core:provider-update'))(func)
 
 
 def provider_required(func):
-    return user_passes_test(
-        provider_exists,
-        login_url=reverse_lazy('core:new-provider'))(func)
+    return func
+
+    # return user_passes_test(
+    #     provider_exists,
+    #     login_url=reverse_lazy('core:new-provider'))(func)

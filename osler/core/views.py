@@ -314,7 +314,7 @@ def choose_clintype(request):
         return HttpResponseRedirect(redirect_to)
 
     if request.GET:
-        role_options = request.user.provider.clinical_roles.all()
+        role_options = request.user.groups.all()
 
         if len(role_options) == 1:
             request.session['clintype_pk'] = role_options[0].pk

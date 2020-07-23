@@ -8,6 +8,8 @@ from django.conf import settings
 from osler.workup.models import ClinicDate
 from osler.core.models import Patient
 
+from osler.core.utils import get_active_user_group
+
 
 def dashboard_dispatch(request):
     """Redirect an incoming user to the appropriate dashboard.
@@ -15,7 +17,7 @@ def dashboard_dispatch(request):
     Falls back to the 'home' url.
     """
 
-    provider_type = request.session['clintype_pk']
+    provider_type = get_active_user_group(request)
     dashboard_dispatch = settings.OSLER_PROVIDERTYPE_DASHBOARDS
 
     if provider_type in dashboard_dispatch:

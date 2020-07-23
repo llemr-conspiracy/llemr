@@ -17,6 +17,8 @@ def get_active_user_group(request):
     example.
     """
 
+    import ipdb; ipdb.set_trace()
+
     group_pk = request.session['clintype_pk']
     active_user_group = get_object_or_404(Group, pk=group_pk)
 
