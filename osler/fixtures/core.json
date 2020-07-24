@@ -379,61 +379,19 @@
     "fields": {}
 },
 {
-    "model": "core.providertype",
-    "pk": "Attending",
-    "fields": {
-        "long_name": "Attending Physician",
-        "signs_charts": true,
-        "staff_view": false
-    }
-},
-{
-    "model": "core.providertype",
-    "pk": "Clinical",
-    "fields": {
-        "long_name": "Clinical Medical Student",
-        "signs_charts": false,
-        "staff_view": false
-    }
-},
-{
-    "model": "core.providertype",
-    "pk": "Coordinator",
-    "fields": {
-        "long_name": "Coordinator",
-        "signs_charts": false,
-        "staff_view": true
-    }
-},
-{
-    "model": "core.providertype",
-    "pk": "Preclinical",
-    "fields": {
-        "long_name": "Preclinical Medical Student",
-        "signs_charts": false,
-        "staff_view": false
-    }
-},
-{
     "model": "core.gender",
     "pk": "Female",
-    "fields": {
-        "short_name": "F"
-    }
+    "fields": {}
 },
 {
     "model": "core.gender",
     "pk": "Male",
-    "fields": {
-        "short_name": "M"
-    }
+    "fields": {}
 },
 {
     "model": "core.gender",
     "pk": "Other",
-    "fields": {
-        "short_name": "O"
-    }
+    "fields": {}
 },
 {
     "model": "core.historicalpatient",

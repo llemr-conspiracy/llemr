@@ -17,20 +17,18 @@ def dashboard_dispatch(request):
     Falls back to the 'home' url.
     """
 
-    provider_type = get_active_user_group(request)
+    active_group = get_active_user_group(request)
     dashboard_dispatch = settings.OSLER_PROVIDERTYPE_DASHBOARDS
 
-    if provider_type in dashboard_dispatch:
-        return redirect(dashboard_dispatch[provider_type])
+    if active_group in dashboard_dispatch:
+        return redirect(dashboard_dispatch[active_group])
     else:
         return redirect(settings.OSLER_DEFAULT_DASHBOARD)
 
 
 def dashboard_attending(request):
-
-    provider = request.user.provider
-
-    clinic_list = ClinicDate.objects.filter(workup__attending=provider)
+    
+    clinic_list = ClinicDate.objects.filter(workup__attending=request.user)
 
     paginator = Paginator(clinic_list, settings.OSLER_CLINIC_DAYS_PER_PAGE,
                           allow_empty_first_page=True)

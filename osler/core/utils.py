@@ -17,8 +17,6 @@ def get_active_user_group(request):
     example.
     """
 
-    import ipdb; ipdb.set_trace()
-
     group_pk = request.session['clintype_pk']
     active_user_group = get_object_or_404(Group, pk=group_pk)
 
@@ -102,3 +100,9 @@ def get_names_from_url_query_dict(request):
                if param in request.GET}
 
     return qs_dict
+
+def create_groups(request):
+    """Provides default group set."""
+    groups = ["Coordinator", "Attending", "Clinical", "Preclinical"]
+    for group_name in groups:
+        Group.objects.create(name=group_name)

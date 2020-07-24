@@ -16,7 +16,7 @@ Create a New Note
 		<table class="table table-striped" style="text-align: center">
 			<tr><th style="text-align: center"><h4>Note Type</h4></th></tr>
 
-			{% for note_name, note_url in note_types.iteritems %}
+			{% for note_name, note_url in note_types.items %}
 			<tr><td>
 				<a href="{{note_url}}" role="button">{{ note_name }}</a>
 			</td></tr>

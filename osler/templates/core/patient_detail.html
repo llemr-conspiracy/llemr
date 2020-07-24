@@ -260,7 +260,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
                             </h4>
                         </div>
                         <div id="{{ apt_type.0 }}" class="panel-collapse collapse">
-                            {% for date, app_list in apt_type.3.iteritems %}
+                            {% for date, app_list in apt_type.3.items %}
                                 <div class="panel-body">
                                     <h3>{{ date  | date:"l F d, Y" }}</h3>
                                     {% for app in app_list %}
