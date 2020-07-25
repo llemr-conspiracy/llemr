@@ -11,10 +11,7 @@
 	"folders":
 	[
 		{
-			"path": "."
-		},
-		{
-			"path": "../osler-cookiecutter-base/osler"
+			"path": "/Users/ameller/projects/osler-cookiecutter-base/osler"
 		}
 	]
 }
