@@ -100,9 +100,3 @@ def get_names_from_url_query_dict(request):
                if param in request.GET}
 
     return qs_dict
-
-def create_groups(request):
-    """Provides default group set."""
-    groups = ["Coordinator", "Attending", "Clinical", "Preclinical"]
-    for group_name in groups:
-        Group.objects.create(name=group_name)

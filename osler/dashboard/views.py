@@ -17,11 +17,11 @@ def dashboard_dispatch(request):
     Falls back to the 'home' url.
     """
 
-    active_group = get_active_user_group(request)
+    active_user_group = get_active_user_group(request)
     dashboard_dispatch = settings.OSLER_PROVIDERTYPE_DASHBOARDS
 
-    if active_group in dashboard_dispatch:
-        return redirect(dashboard_dispatch[active_group])
+    if active_user_group in dashboard_dispatch:
+        return redirect(dashboard_dispatch[active_user_group])
     else:
         return redirect(settings.OSLER_DEFAULT_DASHBOARD)
 

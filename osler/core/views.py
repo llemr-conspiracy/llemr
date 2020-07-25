@@ -316,20 +316,17 @@ def choose_clintype(request):
         return HttpResponseRedirect(redirect_to)
 
     if request.GET:
-        if not Group.objects.all():
-            utils.create_groups()
-        role_options = Group.objects.all()
-        request.user.groups.set(role_options)
+        role_options = request.user.groups.all()
+        # TODO create way to populate user groups
+        if not role_options:
+            role_options = Group.objects.all()
+            request.user.groups.set(role_options)
         if len(role_options) == 1:
             request.session['clintype_pk'] = role_options[0].pk
-            active_provider_type = utils.get_active_user_group(request)
-            request.session['signs_charts'] = active_provider_type.signs_charts
-            request.session['staff_view'] = active_provider_type.staff_view
             return HttpResponseRedirect(redirect_to)
         elif not role_options:
             return HttpResponseServerError(
-                "Fatal: your Provider register is corrupted, and lacks "
-                "ProviderTypes. Report this error!")
+                "Fatal: you have failed instantiate any Groups. Report this error!")
         else:
             return render(request, 'core/role-choice.html',
                           {'roles': role_options,

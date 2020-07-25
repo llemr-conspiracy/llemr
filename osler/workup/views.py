@@ -91,12 +91,12 @@ class WorkupCreate(NoteFormView):
 
     def form_valid(self, form):
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
-        active_user_group = get_object_or_404(
-            Group, pk=self.request.session['clintype_pk'])
+        active_user_group = get_active_user_group(self.request)
 
         wu = form.save(commit=False)
         wu.patient = pt
         wu.author = self.request.user
+        wu.author_type = active_user_group
         if wu.author.has_perm('osler.workup.Workup.can_sign'):
             wu.sign(self.request.user, active_user_group)
 
@@ -118,11 +118,11 @@ class WorkupUpdate(NoteUpdate):
         Intercept dispatch for NoteUpdate and verify that the user has
         permission to modify this Workup.
         '''
-        current_user_type = get_active_user_group(self.request)
+        active_user_group = get_active_user_group(self.request)
         wu = get_object_or_404(models.Workup, pk=kwargs['pk'])
 
         # if it's an attending, we allow updates.
-        if current_user_type.signs_charts or not wu.signed():
+        if active_user_group.signs_charts or not wu.signed():
             return super(WorkupUpdate, self).dispatch(*args, **kwargs)
         else:
             return HttpResponseRedirect(reverse('workup',
