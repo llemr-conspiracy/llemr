@@ -13,6 +13,7 @@ from osler.core.models import Note, ReferralLocation, ReferralType
 from osler.core.validators import validate_attending
 from osler.workup import validators as workup_validators
 
+from osler.core.utils import group_has_permission
 
 class DiagnosisType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
@@ -114,15 +115,13 @@ class AttestableNote(Note):
                 active_user_group = user.groups.first()
             else:
                 raise ValueError("For users with > role, it must be provided.")
-        elif active_user_group not in user.groups.all():
+        elif not user.groups.get(pk=active_user_group.pk).exists():
             raise ValueError(
                 "User %s doesn't belong to group %s!" %
                 (user, active_user_group)
             )
 
-        if user.has_perm('%s.can_sign' % type(self)):
-            assert active_user_group in user.groups.all()
-
+        if group_has_permission(active_user_group, '%s.can_sign' % type(self)):
             self.signed_date = now()
             self.signer = user
         else:

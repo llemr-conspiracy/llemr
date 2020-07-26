@@ -4,7 +4,7 @@ import string
 
 from django.db.models import Q
 from django.conf import settings
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from django.shortcuts import get_object_or_404
 
 from . import models
@@ -100,3 +100,11 @@ def get_names_from_url_query_dict(request):
                if param in request.GET}
 
     return qs_dict
+
+def group_has_permission(group, permission_name: str) -> bool:
+    # try:
+    #     permission = Permission.objects.get(name=permission_name)
+    # except Permission.DoesNotExist:
+    #     return False
+    permission = Permission.objects.get(name=permission_name)
+    return group.permissions.filter(pk=permission.pk).exists()

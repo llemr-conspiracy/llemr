@@ -20,6 +20,8 @@ from osler.core.utils import get_active_user_group
 from osler.workup import models
 from osler.workup import forms
 
+from osler.core.utils import group_has_permission
+
 
 def get_clindates():
     '''Get the clinic dates associated with today.'''
@@ -97,7 +99,8 @@ class WorkupCreate(NoteFormView):
         wu.patient = pt
         wu.author = self.request.user
         wu.author_type = active_user_group
-        if wu.author.has_perm('osler.workup.Workup.can_sign'):
+
+        if group_has_permission(active_user_group, 'osler.workup.Workup.can_sign'):
             wu.sign(self.request.user, active_user_group)
 
         wu.save()
@@ -157,7 +160,7 @@ class ProgressNoteCreate(NoteFormView):
         active_user_group = get_active_user_group(self.request)
         pnote.author_type = active_user_group
 
-        if pnote.author.has_perm('osler.core.ProgressNote.can_sign'):
+        if group_has_permission(active_user_group, 'osler.core.ProgressNote.can_sign'):
             pnote.sign(pnote.author, active_user_group)
 
         pnote.save()
