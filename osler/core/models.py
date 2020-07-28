@@ -143,7 +143,7 @@ class Person(models.Model):
 class Patient(Person):
 
     class Meta:
-        permissions = [('can_case_manage', "Can act as a case manager.")]
+        permissions = [('patient.can_case_manage', "Can act as a case manager.")]
 
     case_managers = models.ManyToManyField(settings.AUTH_USER_MODEL)
 

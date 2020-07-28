@@ -7,7 +7,7 @@ from django.utils.timezone import now
 
 from osler.core.views import NoteFormView, NoteUpdate
 from osler.core.models import Patient
-from osler.core.utils import get_active_user_group
+from osler.core.utils import get_active_role
 
 from osler.appointment.models import Appointment
 from osler.appointment.forms import AppointmentForm
@@ -69,7 +69,7 @@ class AppointmentCreate(NoteFormView):
     def form_valid(self, form):
         appointment = form.save(commit=False)
         appointment.author = self.request.user
-        appointment.author_type = get_active_user_group(self.request)
+        appointment.author_type = get_active_role(self.request)
 
         appointment.save()
 

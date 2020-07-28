@@ -5,8 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from osler.core import models
 from osler.core import views
-from osler.core.decorators import (provider_required, clintype_required,
-                                   provider_update_required)
+from osler.core.decorators import active_role_required
 
 
 app_name = 'core'
@@ -44,19 +43,11 @@ unwrapped_urlpatterns = [
         views.patient_activate_home,
         name='patient-activate-home'),
 
-    # PROVIDERS
-    # re_path(
-    #     r'^new-provider/$',
-    #     views.ProviderCreate.as_view(),
-    #     name='new-provider'),
+    # ACTIVE ROLE
     re_path(
         r'^choose-role/$',
-        views.choose_clintype,
-        name='choose-clintype'),
-    # re_path(
-    #     r'^provider-update/$',
-    #     views.ProviderUpdate.as_view(),
-    #     name='provider-update'),
+        views.choose_role,
+        name='choose-role'),
 
     # ACTION ITEMS
     re_path(
@@ -114,7 +105,7 @@ def wrap_url(url, no_wrap=[], login_only=[], provider_only=[],
         url.callback = login_required(url.callback)
 
     else:  # wrap in everything
-        url.callback = clintype_required(url.callback)
+        url.callback = active_role_required(url.callback)
         # url.callback = provider_update_required(url.callback)
         # url.callback = provider_required(url.callback)
         url.callback = login_required(url.callback)
@@ -125,7 +116,7 @@ def wrap_url(url, no_wrap=[], login_only=[], provider_only=[],
 wrap_config = {
     # 'login_only': ['new-provider'],
     # 'provider_only': ['provider-update'],
-    'updated_provider_only': ['choose-clintype']
+    'updated_provider_only': ['choose-role']
 }
 
 

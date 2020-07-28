@@ -103,25 +103,25 @@ class AttestableNote(Note):
         validators=[validate_attending])
     signed_date = models.DateTimeField(blank=True, null=True)
 
-    def sign(self, user, active_user_group=None):
+    def sign(self, user, active_role=None):
         """Signs this workup.
 
         The active_group parameter isn't necessary if the user has only
         one role.
         """
 
-        if active_user_group is None:
+        if active_role is None:
             if user.groups.count() == 1:
-                active_user_group = user.groups.first()
+                active_role = user.groups.first()
             else:
                 raise ValueError("For users with > role, it must be provided.")
-        elif not user.groups.get(pk=active_user_group.pk).exists():
+        elif not user.groups.get(pk=active_role.pk).exists():
             raise ValueError(
                 "User %s doesn't belong to group %s!" %
-                (user, active_user_group)
+                (user, active_role)
             )
 
-        if group_has_permission(active_user_group, '%s.can_sign' % type(self)):
+        if group_has_permission(active_role, '%s.can_sign' % type(self)):
             self.signed_date = now()
             self.signer = user
         else:

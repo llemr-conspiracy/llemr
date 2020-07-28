@@ -154,7 +154,7 @@ class ActionItemCreate(NoteFormView):
 
         ai.completion_date = None
         ai.author = self.request.user
-        ai.author_type = utils.get_active_user_group(self.request)
+        ai.author_type = utils.get_active_role(self.request)
         ai.patient = pt
 
         ai.save()
@@ -291,7 +291,7 @@ class DocumentCreate(NoteFormView):
         pt = get_object_or_404(core_models.Patient, pk=self.kwargs['pt_id'])
         doc.patient = pt
         doc.author = self.request.user
-        doc.author_type = utils.get_active_user_group(self.request)
+        doc.author_type = utils.get_active_role(self.request)
 
         doc.save()
 
@@ -299,7 +299,7 @@ class DocumentCreate(NoteFormView):
                                             args=(pt.id,)))
 
 
-def choose_clintype(request):
+def choose_role(request):
     RADIO_CHOICE_KEY = 'radio-roles'
 
     redirect_to = request.GET['next']
@@ -308,11 +308,10 @@ def choose_clintype(request):
         redirect_to = reverse('home')
 
     if request.POST:
-        request.session['clintype_pk'] = request.POST[RADIO_CHOICE_KEY]
-        # active_provider_type = utils.get_active_user_group(request)
-        # request.session['signs_charts'] = active_provider_type.signs_charts
-        # request.session['staff_view'] = active_provider_type.staff_view
-
+        active_role_pk = request.POST[RADIO_CHOICE_KEY]
+        request.user.active_role = Group.objects.get(pk=active_role_pk)
+        request.user.save()
+        request.session['active_role_set'] = True
         return HttpResponseRedirect(redirect_to)
 
     if request.GET:
@@ -322,11 +321,13 @@ def choose_clintype(request):
             role_options = Group.objects.all()
             request.user.groups.set(role_options)
         if len(role_options) == 1:
-            request.session['clintype_pk'] = role_options[0].pk
+            request.user.active_role = role_options[0]
+            request.user.active_role.save()
+            request.session['active_role_set'] = True
             return HttpResponseRedirect(redirect_to)
         elif not role_options:
             return HttpResponseServerError(
-                "Fatal: you have failed instantiate any Groups. Report this error!")
+                "Fatal: you have failed to instantiate any Groups. Report this error!")
         else:
             return render(request, 'core/role-choice.html',
                           {'roles': role_options,

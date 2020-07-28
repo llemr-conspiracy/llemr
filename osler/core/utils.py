@@ -10,20 +10,16 @@ from django.shortcuts import get_object_or_404
 from . import models
 
 
-def get_active_user_group(request):
+def get_active_role(request):
     """Given a request, process which of the user's groups is "active".
 
     This is used to determine which type of user to sign a note as, for
     example.
     """
 
-    group_pk = request.session['clintype_pk']
-    active_user_group = get_object_or_404(Group, pk=group_pk)
-
-    assert request.user.groups.filter(pk=group_pk).exists()
-
-    return active_user_group
-
+    active_role = request.user.active_role        
+    assert request.user.groups.filter(pk=active_role.pk).exists()
+    return active_role
 
 def make_filepath(instance, filename):
     """Produces a unique file path for the upload_to of a FileField.
@@ -106,5 +102,5 @@ def group_has_permission(group, permission_name: str) -> bool:
     #     permission = Permission.objects.get(name=permission_name)
     # except Permission.DoesNotExist:
     #     return False
-    permission = Permission.objects.get(name=permission_name)
-    return group.permissions.filter(pk=permission.pk).exists()
+    return group.permissions.filter(codename=permission_name).exists()
+

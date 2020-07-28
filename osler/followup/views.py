@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 
 from osler.core.models import Patient
 from osler.core.views import NoteUpdate, NoteFormView
-from osler.core.utils import get_active_user_group
+from osler.core.utils import get_active_role
 
 from osler.followup import forms
 from osler.followup import models
@@ -77,7 +77,7 @@ class FollowupCreate(NoteFormView):
         fu = form.save(commit=False)
         fu.patient = pt
         fu.author = self.request.user
-        fu.author_type = get_active_user_group(self.request)
+        fu.author_type = get_active_role(self.request)
 
         fu.save()
 

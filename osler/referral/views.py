@@ -6,7 +6,7 @@ from django.views.generic.edit import FormView
 from django.http import HttpResponseRedirect
 
 from osler.core.models import Patient, ReferralType
-from osler.core.utils import get_active_user_group
+from osler.core.utils import get_active_role
 
 from osler.referral.models import Referral, FollowupRequest, ReferralLocation
 from osler.referral.forms import (FollowupRequestForm, ReferralForm,
@@ -82,7 +82,7 @@ class ReferralCreate(FormView):
 
         # Assign author and author type
         referral.author = self.request.user.provider
-        referral.author_type = get_active_user_group(self.request)
+        referral.author_type = get_active_role(self.request)
         referral.patient = pt
 
         referral.save()
@@ -116,7 +116,7 @@ class FollowupRequestCreate(FormView):
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         followup_request = form.save(commit=False)
         followup_request.author = self.request.user.provider
-        followup_request.author_type = get_active_user_group(self.request)
+        followup_request.author_type = get_active_role(self.request)
         followup_request.referral = get_object_or_404(
             Referral, pk=self.kwargs['referral_id'])
         followup_request.patient = pt
@@ -169,7 +169,7 @@ class PatientContactCreate(FormView):
 
         # Fill in remaining fields of form
         patient_contact.author = self.request.user.provider
-        patient_contact.author_type = get_active_user_group(self.request)
+        patient_contact.author_type = get_active_role(self.request)
         patient_contact.referral = referral
         patient_contact.patient = pt
         patient_contact.followup_request = followup_request

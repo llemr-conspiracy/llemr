@@ -8,7 +8,7 @@ from django.conf import settings
 from osler.workup.models import ClinicDate
 from osler.core.models import Patient
 
-from osler.core.utils import get_active_user_group
+from osler.core.utils import get_active_role
 
 
 def dashboard_dispatch(request):
@@ -17,11 +17,11 @@ def dashboard_dispatch(request):
     Falls back to the 'home' url.
     """
 
-    active_user_group = get_active_user_group(request)
+    active_role = get_active_role(request)
     dashboard_dispatch = settings.OSLER_PROVIDERTYPE_DASHBOARDS
 
-    if active_user_group in dashboard_dispatch:
-        return redirect(dashboard_dispatch[active_user_group])
+    if active_role in dashboard_dispatch:
+        return redirect(dashboard_dispatch[active_role])
     else:
         return redirect(settings.OSLER_DEFAULT_DASHBOARD)
 

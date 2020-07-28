@@ -9,14 +9,12 @@ from django.shortcuts import resolve_url
 
 
 def provider_exists(user):
-    # print "Chekcing provider", hasattr(user, 'provider')
     return hasattr(user, 'provider')
 
 
-def clintype_set(session):
-    # print "Checking clintype", 'clintype_pk' in session
-    return 'clintype_pk' in session
-
+def active_role_set(session):
+    return 'active_role_set' in session and session['active_role_set']
+    
 
 def provider_has_updated(user):
     return (not getattr(user, 'provider').needs_updating)
@@ -57,10 +55,10 @@ def session_passes_test(test_func, fail_url,
     return decorator
 
 
-def clintype_required(func):
+def active_role_required(func):
     return session_passes_test(
-        clintype_set,
-        fail_url=reverse_lazy('core:choose-clintype'))(func)
+        active_role_set,
+        fail_url=reverse_lazy('core:choose-role'))(func)
 
 
 def provider_update_required(func):

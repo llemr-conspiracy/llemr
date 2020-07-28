@@ -15,7 +15,7 @@ from django.utils.timezone import now
 
 from osler.core.views import NoteFormView, NoteUpdate
 from osler.core.models import Patient
-from osler.core.utils import get_active_user_group
+from osler.core.utils import get_active_role
 
 from osler.workup import models
 from osler.workup import forms
@@ -93,15 +93,15 @@ class WorkupCreate(NoteFormView):
 
     def form_valid(self, form):
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
-        active_user_group = get_active_user_group(self.request)
+        active_role = get_active_role(self.request)
 
         wu = form.save(commit=False)
         wu.patient = pt
         wu.author = self.request.user
-        wu.author_type = active_user_group
+        wu.author_type = active_role
 
-        if group_has_permission(active_user_group, 'osler.workup.Workup.can_sign'):
-            wu.sign(self.request.user, active_user_group)
+        if group_has_permission(active_role, 'osler.workup.Workup.can_sign'):
+            wu.sign(self.request.user, active_role)
 
         wu.save()
 
@@ -121,11 +121,11 @@ class WorkupUpdate(NoteUpdate):
         Intercept dispatch for NoteUpdate and verify that the user has
         permission to modify this Workup.
         '''
-        active_user_group = get_active_user_group(self.request)
+        active_role = get_active_role(self.request)
         wu = get_object_or_404(models.Workup, pk=kwargs['pk'])
 
         # if it's an attending, we allow updates.
-        if active_user_group.signs_charts or not wu.signed():
+        if active_role.signs_charts or not wu.signed():
             return super(WorkupUpdate, self).dispatch(*args, **kwargs)
         else:
             return HttpResponseRedirect(reverse('workup',
@@ -157,11 +157,11 @@ class ProgressNoteCreate(NoteFormView):
         pnote.patient = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         pnote.author = self.request.user
 
-        active_user_group = get_active_user_group(self.request)
-        pnote.author_type = active_user_group
+        active_role = get_active_role(self.request)
+        pnote.author_type = active_role
 
-        if group_has_permission(active_user_group, 'osler.core.ProgressNote.can_sign'):
-            pnote.sign(pnote.author, active_user_group)
+        if group_has_permission(active_role, 'osler.core.ProgressNote.can_sign'):
+            pnote.sign(pnote.author, active_role)
 
         pnote.save()
         form.save_m2m()
@@ -223,10 +223,10 @@ def clinic_date_list(request):
 def sign_attestable_note(request, pk, redirect, attestable):
 
     note = get_object_or_404(attestable, pk=pk)
-    active_user_group = get_active_user_group(request)
+    active_role = get_active_role(request)
 
     try:
-        note.sign(request.user, active_user_group)
+        note.sign(request.user, active_role)
         note.save()
     except ValueError:
         # thrown exception can be ignored since we just redirect back to the
