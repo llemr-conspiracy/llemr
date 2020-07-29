@@ -96,11 +96,3 @@ def get_names_from_url_query_dict(request):
                if param in request.GET}
 
     return qs_dict
-
-def group_has_permission(group, permission_name: str) -> bool:
-    # try:
-    #     permission = Permission.objects.get(name=permission_name)
-    # except Permission.DoesNotExist:
-    #     return False
-    return group.permissions.filter(codename=permission_name).exists()
-

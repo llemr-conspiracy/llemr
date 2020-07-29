@@ -13,8 +13,6 @@ from osler.core.models import Note, ReferralLocation, ReferralType
 from osler.core.validators import validate_attending
 from osler.workup import validators as workup_validators
 
-from osler.core.utils import group_has_permission
-
 class DiagnosisType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
     diagnosis a pateint can recieve.'''
@@ -93,7 +91,6 @@ class ClinicDate(models.Model):
 class AttestableNote(Note):
     class Meta:
         abstract = True
-        permissions = [('can_sign', "Can sign note")]
 
     signer = models.ForeignKey(
         get_user_model(),
@@ -103,25 +100,10 @@ class AttestableNote(Note):
         validators=[validate_attending])
     signed_date = models.DateTimeField(blank=True, null=True)
 
-    def sign(self, user, active_role=None):
-        """Signs this workup.
+    def sign(self, user):
+        """Signs this workup."""
 
-        The active_group parameter isn't necessary if the user has only
-        one role.
-        """
-
-        if active_role is None:
-            if user.groups.count() == 1:
-                active_role = user.groups.first()
-            else:
-                raise ValueError("For users with > role, it must be provided.")
-        elif not user.groups.get(pk=active_role.pk).exists():
-            raise ValueError(
-                "User %s doesn't belong to group %s!" %
-                (user, active_role)
-            )
-
-        if group_has_permission(active_role, '%s.can_sign' % type(self)):
+        if user.has_permission('workup.%s.can_sign' % type(self)):
             self.signed_date = now()
             self.signer = user
         else:
@@ -141,6 +123,11 @@ class ProgressNote(AttestableNote):
     text = models.TextField()
 
     history = HistoricalRecords()
+
+    class Meta:
+        permissions = [
+            ('workup.ProgressNote.can_sign', "Can sign note")
+            ]
 
     def __str__(self):
         u = '{} on at {} by {}'.format(
@@ -163,9 +150,11 @@ class Workup(AttestableNote):
     info about where the patient has been referred for continuity care.
     """
 
-    class Meta(AttestableNote.Meta):
-        permissions = AttestableNote.Meta.permissions + [
-            ('can_export_pdf', 'Can export note PDF')]
+    class Meta:
+        permissions = [
+            ('workup.Workup.can_export_pdf', 'Can export note PDF'),
+            ('workup.Workup.can_sign', "Can sign note")
+            ]
 
     attending = models.ForeignKey(
         get_user_model(),

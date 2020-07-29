@@ -342,7 +342,7 @@ OSLER_WORKUP_COPY_FORWARD_MESSAGE = (u"Migrated from previous workup on {date}"
 OSLER_CLINIC_DAYS_PER_PAGE = 20
 
 OSLER_DEFAULT_DASHBOARD = 'dashboard-attending'
-OSLER_PROVIDERTYPE_DASHBOARDS = {
+OSLER_ROLE_DASHBOARDS = {
     'Attending': 'dashboard-attending'
 }
 

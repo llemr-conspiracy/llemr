@@ -18,10 +18,10 @@ def dashboard_dispatch(request):
     """
 
     active_role = get_active_role(request)
-    dashboard_dispatch = settings.OSLER_PROVIDERTYPE_DASHBOARDS
+    dashboard_dispatch = settings.OSLER_ROLE_DASHBOARDS
 
-    if active_role in dashboard_dispatch:
-        return redirect(dashboard_dispatch[active_role])
+    if active_role.name in dashboard_dispatch:
+        return redirect(dashboard_dispatch[active_role.name])
     else:
         return redirect(settings.OSLER_DEFAULT_DASHBOARD)
 

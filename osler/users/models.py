@@ -13,3 +13,8 @@ class User(AbstractUser):
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})
+
+    def has_permission(self, permission_name):
+        '''Similar to django.contrib.auth.models.User.has_perm(), but permissions depend
+        on only the active role, and the app name should not be supplied.'''
+        return self.active_role.permissions.filter(codename=permission_name).exists()

@@ -20,8 +20,6 @@ from osler.core.utils import get_active_role
 from osler.workup import models
 from osler.workup import forms
 
-from osler.core.utils import group_has_permission
-
 
 def get_clindates():
     '''Get the clinic dates associated with today.'''
@@ -100,8 +98,8 @@ class WorkupCreate(NoteFormView):
         wu.author = self.request.user
         wu.author_type = active_role
 
-        if group_has_permission(active_role, 'osler.workup.Workup.can_sign'):
-            wu.sign(self.request.user, active_role)
+        if self.request.user.has_permission('workup.Workup.can_sign'):
+            wu.sign(self.request.user)
 
         wu.save()
 
@@ -160,8 +158,8 @@ class ProgressNoteCreate(NoteFormView):
         active_role = get_active_role(self.request)
         pnote.author_type = active_role
 
-        if group_has_permission(active_role, 'osler.core.ProgressNote.can_sign'):
-            pnote.sign(pnote.author, active_role)
+        if self.request.user.has_permission('workup.ProgressNote.can_sign'):
+            pnote.sign(self.request.user)
 
         pnote.save()
         form.save_m2m()
@@ -226,7 +224,7 @@ def sign_attestable_note(request, pk, redirect, attestable):
     active_role = get_active_role(request)
 
     try:
-        note.sign(request.user, active_role)
+        note.sign(request.user)
         note.save()
     except ValueError:
         # thrown exception can be ignored since we just redirect back to the
