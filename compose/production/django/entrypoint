@@ -19,6 +19,12 @@ import sys
 
 import psycopg2
 
+print("${POSTGRES_DB}")
+print("${POSTGRES_USER}")
+print("${POSTGRES_PASSWORD}")
+print("${POSTGRES_HOST}")
+print("${POSTGRES_PORT}")
+
 try:
     psycopg2.connect(
         dbname="${POSTGRES_DB}",
@@ -34,7 +40,7 @@ sys.exit(0)
 END
 }
 until postgres_ready; do
-  >&2 echo 'Waiting for PostgreSQL to become available...'
+  >&2 echo 'Waiting for PostgreSQL to become available... '
   sleep 1
 done
 >&2 echo 'PostgreSQL is available'

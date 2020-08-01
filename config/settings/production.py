@@ -10,7 +10,18 @@ ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["oslerproject.org"])
 
 # DATABASES
 # ------------------------------------------------------------------------------
-DATABASES["default"] = env.db("DATABASE_URL")  # noqa F405
+# DATABASES["default"] = env.db("DATABASE_URL")  # noqa F405
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'HOST': 'host.docker.internal', # set in docker-compose.yml
+        'PORT': 5432 # default postgres port
+    }
+}
+
 DATABASES["default"]["ATOMIC_REQUESTS"] = True  # noqa F405
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # noqa F405
 

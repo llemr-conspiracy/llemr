@@ -12,23 +12,30 @@ services:
       dockerfile: ./compose/production/django/Dockerfile
     image: osler_production_django
     depends_on:
-      - postgres
+      # - postgres
       - redis
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
     command: /start
 
-  postgres:
-    build:
-      context: .
-      dockerfile: ./compose/production/postgres/Dockerfile
-    image: osler_production_postgres
-    volumes:
-      - production_postgres_data:/var/lib/postgresql/data
-      - production_postgres_data_backups:/backups
-    env_file:
-      - ./.envs/.production/.postgres
+  # postgres:
+  #   image: osler_production_postgres
+  #   expose:
+  #   - "5432"
+  #   ports:
+  #   - "5432:5432"
+
+  # postgres:
+  #   build:
+  #     context: .
+  #     dockerfile: ./compose/production/postgres/Dockerfile
+  #   image: osler_production_postgres
+  #   volumes:
+  #     - production_postgres_data:/var/lib/postgresql/data
+  #     - production_postgres_data_backups:/backups
+  #   env_file:
+  #     - ./.envs/.production/.postgres
 
   traefik:
     build:

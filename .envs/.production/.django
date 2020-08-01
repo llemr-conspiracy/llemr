@@ -14,9 +14,6 @@ DJANGO_SECURE_SSL_REDIRECT=False
 # Email
 # ------------------------------------------------------------------------------
 DJANGO_SERVER_EMAIL=
-{% if cookiecutter.mail_service == 'Mailgun' %}
-
-{% endif %}
 
 # django-allauth
 # ------------------------------------------------------------------------------
