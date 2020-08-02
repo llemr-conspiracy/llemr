@@ -103,7 +103,7 @@ class AttestableNote(Note):
     def sign(self, user):
         """Signs this workup."""
 
-        if user.has_permission('workup.can_sign' % type(self)):
+        if user.has_permission('workup.can_sign_%s' % type(self).__name__):
             self.signed_date = now()
             self.signer = user
         else:

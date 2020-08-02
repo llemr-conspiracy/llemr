@@ -151,16 +151,16 @@ class WorkupForm(ModelForm):
 
     # limit the options for the attending, other_volunteer field by
     # checking the signs charts permission.
+    can_sign_perm = 'can_sign_Workup'
     attending = ModelChoiceField(
         required=False,
         queryset=get_user_model().objects.filter(
-            groups__permissions__codename='osler.workup.Workup.signs_charts')
+            groups__permissions__codename=can_sign_perm)
     )
 
     other_volunteer = ModelMultipleChoiceField(
         required=False,
-        queryset=get_user_model().objects.exclude(
-            groups__permissions__codename='osler.workup.Workup.signs_charts')
+        queryset=get_user_model().objects.all()
     )
 
     def __init__(self, *args, **kwargs):
@@ -248,6 +248,11 @@ class WorkupForm(ModelForm):
                          ['imaging_voucher_amount',
                           'patient_pays_imaging'])
 
+        attending = cleaned_data.get('attending')
+        if attending and attending in cleaned_data.get('other_volunteer'):
+            self.add_error('other_volunteer', 
+            'Attending physician must be different from other volunteers.')
+        
         if 't' in cleaned_data and cleaned_data.get('t') is not None:
             if cleaned_data.get('temperature_units') == 'F':
                 c = Decimal(fahrenheit2centigrade(

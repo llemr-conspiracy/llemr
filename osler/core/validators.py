@@ -6,6 +6,7 @@ import datetime
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 from django.apps import apps
+from osler.users.models import User
 
 
 def validate_zip(value):
@@ -51,8 +52,6 @@ def validate_attending(value):
     Verify that a provider has attending priviledges.
     '''
 
-    Provider = apps.get_model('core', 'Provider')
-    attending = Provider.objects.get(pk=value)
-
-    if not attending.clinical_roles.filter(signs_charts=True).exists():
-        raise ValidationError("This provider is not allowed to sign charts.")
+    attending = User.objects.get(pk=value)
+    if not attending.has_perm('workup.can_sign_Workup'):
+        raise ValidationError("This user is not allowed to sign charts.")
