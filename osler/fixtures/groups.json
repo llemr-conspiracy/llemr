@@ -1,13 +1,10 @@
-PostgreSQL is available
 [
 {
     "model": "auth.group",
     "pk": 1,
     "fields": {
         "name": "Coordinator",
-        "permissions": [
-            851
-        ]
+        "permissions": []
     }
 },
 {
@@ -15,10 +12,7 @@ PostgreSQL is available
     "pk": 2,
     "fields": {
         "name": "Attending",
-        "permissions": [
-            926,
-            921
-        ]
+        "permissions": []
     }
 },
 {
