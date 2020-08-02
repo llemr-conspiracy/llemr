@@ -38,7 +38,7 @@ class PatientForm(ModelForm):
     case_managers = ModelMultipleChoiceField(
         required=False,
         queryset=get_user_model().objects
-        .filter(groups__permissions__codename='patient.can_case_manage')
+        .filter(groups__permissions__codename='can_case_manage_Patient')
         .distinct()
         .order_by("last_name"),
     )

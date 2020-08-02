@@ -103,7 +103,7 @@ class AttestableNote(Note):
     def sign(self, user):
         """Signs this workup."""
 
-        if user.has_permission('workup.%s.can_sign' % type(self)):
+        if user.has_permission('workup.can_sign' % type(self)):
             self.signed_date = now()
             self.signer = user
         else:
@@ -126,7 +126,7 @@ class ProgressNote(AttestableNote):
 
     class Meta:
         permissions = [
-            ('workup.ProgressNote.can_sign', "Can sign note")
+            ('can_sign_ProgressNote', "Can sign note")
             ]
 
     def __str__(self):
@@ -152,8 +152,8 @@ class Workup(AttestableNote):
 
     class Meta:
         permissions = [
-            ('workup.Workup.can_export_pdf', 'Can export note PDF'),
-            ('workup.Workup.can_sign', "Can sign note")
+            ('can_export_pdf_Workup', 'Can export note PDF'),
+            ('can_sign_Workup', "Can sign note")
             ]
 
     attending = models.ForeignKey(

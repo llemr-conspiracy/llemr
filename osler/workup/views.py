@@ -98,7 +98,7 @@ class WorkupCreate(NoteFormView):
         wu.author = self.request.user
         wu.author_type = active_role
 
-        if self.request.user.has_permission('workup.Workup.can_sign'):
+        if self.request.user.has_permission('workup.can_sign_Workup'):
             wu.sign(self.request.user)
 
         wu.save()
@@ -158,7 +158,7 @@ class ProgressNoteCreate(NoteFormView):
         active_role = get_active_role(self.request)
         pnote.author_type = active_role
 
-        if self.request.user.has_permission('workup.ProgressNote.can_sign'):
+        if self.request.user.has_permission('workup.can_sign_ProgressNote'):
             pnote.sign(self.request.user)
 
         pnote.save()
@@ -242,7 +242,7 @@ def error_workup(request, pk):
     return render(request, 'core/workup_error.html', {'workup': wu})
 
 
-@permission_required('workup.can_export_pdf')
+@permission_required('workup.workup.Workup.can_export_pdf')
 def pdf_workup(request, pk):
 
     wu = get_object_or_404(models.Workup, pk=pk)

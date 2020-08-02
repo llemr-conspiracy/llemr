@@ -1,3 +1,4 @@
+PostgreSQL is available
 [
 {
     "model": "auth.group",
@@ -5,7 +6,7 @@
     "fields": {
         "name": "Coordinator",
         "permissions": [
-            93
+            851
         ]
     }
 },
@@ -15,8 +16,8 @@
     "fields": {
         "name": "Attending",
         "permissions": [
-            178,
-            187
+            926,
+            921
         ]
     }
 },

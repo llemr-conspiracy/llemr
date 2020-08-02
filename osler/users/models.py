@@ -16,5 +16,8 @@ class User(AbstractUser):
 
     def has_permission(self, permission_name):
         '''Similar to django.contrib.auth.models.User.has_perm(), but permissions depend
-        on only the active role, and the app name should not be supplied.'''
-        return self.active_role.permissions.filter(codename=permission_name).exists()
+        on only the active role.'''
+        split = permission_name.index('.')
+        app_label = permission_name[:split]
+        codename = permission_name[(split+1):]
+        return self.active_role.permissions.filter(codename=codename, content_type__app_label=app_label).exists()
