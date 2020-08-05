@@ -10,7 +10,6 @@ from django.core.validators import MinValueValidator
 from simple_history.models import HistoricalRecords
 
 from osler.core.models import Note, ReferralLocation, ReferralType
-from osler.core.validators import validate_attending
 from osler.workup import validators as workup_validators
 
 class DiagnosisType(models.Model):
@@ -96,14 +95,13 @@ class AttestableNote(Note):
         get_user_model(),
         blank=True, null=True,
         on_delete=models.PROTECT,
-        related_name="signed_%(app_label)s_%(class)s",
-        validators=[validate_attending])
+        related_name="signed_%(app_label)s_%(class)s")
     signed_date = models.DateTimeField(blank=True, null=True)
 
     def sign(self, user):
         """Signs this workup."""
 
-        if user.has_permission('workup.can_sign_%s' % type(self).__name__):
+        if user.has_active_perm('workup.can_sign_%s' % type(self).__name__):
             self.signed_date = now()
             self.signer = user
         else:
@@ -161,7 +159,6 @@ class Workup(AttestableNote):
         null=True, blank=True,
         related_name="attending_physician",
         on_delete=models.PROTECT,
-        validators=[validate_attending],
         help_text="Which attending saw the patient?")
 
     other_volunteer = models.ManyToManyField(

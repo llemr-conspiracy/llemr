@@ -62,45 +62,49 @@ class NoteUpdate(UpdateView):
     # TODO: add shared form_valid code here from all subclasses.
 
 
-# class ProviderCreate(FormView):
-#     '''A view for creating a new Provider to match an existing User.'''
-#     template_name = 'core/new-provider.html'
-#     form_class = forms.ProviderForm
+class UserCreate(FormView):
+    '''A view for filling in the Person details and groups for a User'''
+    template_name = 'core/user_create.html'
+    form_class = forms.UserCreateForm
 
-#     def get_initial(self):
-#         initial = super(ProviderCreate, self).get_initial()
+    # def get_initial(self):
+    #     initial = super(UserCreate
+    #, self).get_initial()
 
-#         initial['first_name'] = self.request.user.first_name
-#         initial['last_name'] = self.request.user.last_name
+    #     initial['first_name'] = self.request.user.first_name
+    #     initial['last_name'] = self.request.user.last_name
 
-#         return initial
+    #     return initial
 
-#     def form_valid(self, form):
-#         provider = form.save(commit=False)
-#         # check that user did not previously create a provider
-#         if not hasattr(self.request.user, 'provider'):
-#             provider.associated_user = self.request.user
-#             # populate the User object with the email and name data from
-#             # the Provider form
-#             user = provider.associated_user
-#             user.email = form.cleaned_data['provider_email']
-#             user.first_name = provider.first_name
-#             user.last_name = provider.last_name
-#             user.save()
-#             provider.save()
-#             form.save_m2m()
+    def form_valid(self, form):
+        # provider = form.save(commit=False)
+        # # check that user did not previously create a provider
+        # if not hasattr(self.request.user, 'provider'):
+        #     provider.associated_user = self.request.user
+        #     # populate the User object with the email and name data from
+        #     # the Provider form
+        #     user = provider.associated_user
+        #     user.email = form.cleaned_data['provider_email']
+        #     user.first_name = provider.first_name
+        #     user.last_name = provider.last_name
+        #     user.save()
+        #     provider.save()
+        
+        form.save_m2m()
 
-#         if 'next' in self.request.GET:
-#             next_url = self.request.GET['next']
-#         else:
-#             next_url = reverse('home')
 
-#         return HttpResponseRedirect(next_url)
+        if 'next' in self.request.GET:
+            next_url = self.request.GET['next']
+        else:
+            next_url = reverse('home')
 
-#     def get_context_data(self, **kwargs):
-#         context = super(ProviderCreate, self).get_context_data(**kwargs)
-#         context['next'] = self.request.GET.get('next')
-#         return context
+        return HttpResponseRedirect(next_url)
+
+    def get_context_data(self, **kwargs):
+        context = super(UserCreate
+    , self).get_context_data(**kwargs)
+        context['next'] = self.request.GET.get('next')
+        return context
 
 
 # class ProviderUpdate(UpdateView):
@@ -329,7 +333,7 @@ def choose_role(request):
             return HttpResponseServerError(
                 "Fatal: you have failed to instantiate any Groups. Report this error!")
         else:
-            return render(request, 'core/role-choice.html',
+            return render(request, 'core/role_choice.html',
                           {'roles': role_options,
                            'choice_key': RADIO_CHOICE_KEY})
 

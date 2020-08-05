@@ -10,6 +10,7 @@ from crispy_forms.layout import Submit, Field, Layout, Row, Column
 from crispy_forms.bootstrap import InlineCheckboxes
 
 from . import models
+from osler.users.models import User
 
 
 class CustomCheckbox(Field):
@@ -114,27 +115,26 @@ class ActionItemForm(ModelForm):
             .objects.filter(active=True)
 
 
-# class ProviderForm(ModelForm):
+class UserCreateForm(ModelForm):
 
-#     provider_email = EmailField(label="Email")
+    provider_email = EmailField(label="Email")
 
-#     class Meta(object):
-#         model = models.Provider
-#         exclude = ['associated_user', 'needs_updating']
-#         widgets = {'referral_location': CheckboxSelectMultiple,
-#                    'referral_type': CheckboxSelectMultiple}
+    class Meta(object):
+        model = User
+        exclude = ['associated_user', 'needs_updating']
+        widgets = {'referral_location': CheckboxSelectMultiple,
+                   'referral_type': CheckboxSelectMultiple}
 
-#     def __init__(self, *args, **kwargs):
-#         super(ProviderForm, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(UserCreate, self).__init__(*args, **kwargs)
 
-#         self.helper = FormHelper(self)
-#         self.helper.form_method = 'post'
-#         self.helper.form_class = 'form-horizontal'
-#         self.helper.label_class = 'col-lg-2'
-#         self.helper.field_class = 'col-lg-8'
-#         self.helper['languages'].wrap(InlineCheckboxes)
-#         self.helper['clinical_roles'].wrap(InlineCheckboxes)
-#         self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper = FormHelper(self)
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-8'
+        self.helper['languages'].wrap(InlineCheckboxes)
+        self.helper.add_input(Submit('submit', 'Submit'))
 
 
 class DocumentForm(ModelForm):

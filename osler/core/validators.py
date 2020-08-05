@@ -6,7 +6,6 @@ import datetime
 from django.core.exceptions import ValidationError
 from django.utils.timezone import now
 from django.apps import apps
-from osler.users.models import User
 
 
 def validate_zip(value):
@@ -46,12 +45,9 @@ def validate_name(value):
     if value.startswith((' ', '\t')) or value.endswith((' ', '\t')):
         raise ValidationError("Name cannot start or end with a space")
 
-
 def validate_attending(value):
     '''
     Verify that a provider has attending priviledges.
     '''
 
-    attending = User.objects.get(pk=value)
-    if not attending.has_perm('workup.can_sign_Workup'):
-        raise ValidationError("This user is not allowed to sign charts.")
+    pass

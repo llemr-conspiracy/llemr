@@ -98,7 +98,7 @@ class WorkupCreate(NoteFormView):
         wu.author = self.request.user
         wu.author_type = active_role
 
-        if self.request.user.has_permission('workup.can_sign_Workup'):
+        if self.request.user.has_active_perm('workup.can_sign_Workup'):
             wu.sign(self.request.user)
 
         wu.save()
@@ -158,7 +158,7 @@ class ProgressNoteCreate(NoteFormView):
         active_role = get_active_role(self.request)
         pnote.author_type = active_role
 
-        if self.request.user.has_permission('workup.can_sign_ProgressNote'):
+        if self.request.user.has_active_perm('workup.can_sign_ProgressNote'):
             pnote.sign(self.request.user)
 
         pnote.save()

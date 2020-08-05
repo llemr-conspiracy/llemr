@@ -8,8 +8,8 @@ from django.urls import reverse_lazy
 from django.shortcuts import resolve_url
 
 
-def provider_exists(user):
-    return hasattr(user, 'provider')
+def user_details_set(user):
+    return user.groups.exists()
 
 
 def active_role_set(session):
@@ -61,15 +61,7 @@ def active_role_required(func):
         fail_url=reverse_lazy('core:choose-role'))(func)
 
 
-def provider_update_required(func):
-    pass
-    # return user_passes_test(
-    #     provider_has_updated,
-    #     login_url=reverse_lazy('core:provider-update'))(func)
-
-
-def provider_required(func):
-    pass
-    # return user_passes_test(
-    #     provider_exists,
-    #     login_url=reverse_lazy('core:new-provider'))(func)
+def user_details_required(func):
+    return user_passes_test(
+        user_details_set,
+        login_url=reverse_lazy('core:new-user'))(func)

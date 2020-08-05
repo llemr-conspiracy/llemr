@@ -14,6 +14,8 @@ from simple_history.models import HistoricalRecords
 from osler.core import validators
 from osler.core import utils
 
+from osler.users.models import Language, Gender
+
 
 class ContactMethod(models.Model):
     '''Simple text-contiaining class for storing the method of contacting a
@@ -53,15 +55,6 @@ class ReferralLocation(models.Model):
             return self.name
 
 
-class Language(models.Model):
-    """A natural language, spoken by a provider or patient.
-    """
-    name = models.CharField(max_length=50, primary_key=True)
-
-    def __str__(self):
-        return self.name
-
-
 class Ethnicity(models.Model):
     """An ethnicity, of a patient.
     """
@@ -81,16 +74,6 @@ class ActionInstruction(models.Model):
 
     def __str__(self):
         return self.instruction
-
-
-class Gender(models.Model):
-    name = models.CharField(max_length=30, primary_key=True)
-
-    def __str__(self):
-        return self.name
-
-    def short_name(self):
-        return self.name[0]
 
 
 class Outcome(models.Model):
@@ -145,7 +128,7 @@ class Patient(Person):
     class Meta:
         permissions = [('can_case_manage_Patient', "Can act as a case manager.")]
 
-    case_managers = models.ManyToManyField(settings.AUTH_USER_MODEL)
+    case_managers = models.ManyToManyField(get_user_model())
 
     outcome = models.ForeignKey(Outcome, null=True, blank=True,
                                 on_delete=models.PROTECT)

@@ -43,11 +43,15 @@ unwrapped_urlpatterns = [
         views.patient_activate_home,
         name='patient-activate-home'),
 
-    # ACTIVE ROLE
+    # USER MANAGEMENT
     re_path(
         r'^choose-role/$',
         views.choose_role,
         name='choose-role'),
+    re_path(
+        r'^new-user/$',
+        views.UserCreate.as_view(),
+        name='new-user'),
 
     # ACTION ITEMS
     re_path(
