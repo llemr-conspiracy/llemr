@@ -33,11 +33,11 @@ class User(AbstractUser):
     phone = models.CharField(max_length=40, null=True, blank=True)
 
     languages = models.ManyToManyField(
-        Language, 
+        Language,
         help_text="Specify here languages that are spoken at a "
                             "level sufficient to be used for medical "
                             "communication.")
-    gender = models.ForeignKey(Gender, on_delete=models.PROTECT)
+    gender = models.ForeignKey(Gender, null=True, on_delete=models.PROTECT)
 
     active_role = models.ForeignKey(
         Group, 

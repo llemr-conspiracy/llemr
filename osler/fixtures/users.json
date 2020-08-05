@@ -1,0 +1,386 @@
+[
+{
+    "model": "users.language",
+    "pk": "Arabic",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Armenian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Bengali",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Chinese",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Croatian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Czech",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Danish",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Dutch",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "English",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Finnish",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "French",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "French Creole",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "German",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Greek",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Hebrew",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Hindi/Urdu",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Hungarian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Italian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Japanese",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Korean",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Lithuanian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Persian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Polish",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Portuguese",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Romanian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Russian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Samoan",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Serbocroatian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Slovak",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Spanish",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Swedish",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Tagalog",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Thai/Laotian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Turkish",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Ukrainian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Vietnamese",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Yiddish",
+    "fields": {}
+},{
+    "model": "users.language",
+    "pk": "Arabic",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Armenian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Bengali",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Chinese",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Croatian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Czech",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Danish",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Dutch",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "English",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Finnish",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "French",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "French Creole",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "German",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Greek",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Hebrew",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Hindi/Urdu",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Hungarian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Italian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Japanese",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Korean",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Lithuanian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Persian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Polish",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Portuguese",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Romanian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Russian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Samoan",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Serbocroatian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Slovak",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Spanish",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Swedish",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Tagalog",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Thai/Laotian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Turkish",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Ukrainian",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Vietnamese",
+    "fields": {}
+},
+{
+    "model": "users.language",
+    "pk": "Yiddish",
+    "fields": {}
+},
+{
+    "model": "users.gender",
+    "pk": "Female",
+    "fields": {}
+},
+{
+    "model": "users.gender",
+    "pk": "Male",
+    "fields": {}
+},
+{
+    "model": "users.gender",
+    "pk": "Other",
+    "fields": {}
+}
+]
