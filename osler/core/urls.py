@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 
 from osler.core import models
 from osler.core import views
-from osler.core.decorators import active_role_required
+from osler.core.decorators import active_role_required, user_init_required
 
 
 app_name = 'core'
@@ -49,9 +49,9 @@ unwrapped_urlpatterns = [
         views.choose_role,
         name='choose-role'),
     re_path(
-        r'^new-user/$',
-        views.UserCreate.as_view(),
-        name='new-user'),
+        r'^user-init/$',
+        views.UserInit.as_view(),
+        name='user-init'),
 
     # ACTION ITEMS
     re_path(
@@ -87,8 +87,7 @@ unwrapped_urlpatterns = [
 ]
 
 
-def wrap_url(url, no_wrap=[], login_only=[], provider_only=[],
-             updated_provider_only=[]):
+def wrap_url(url, no_wrap=[], login_only=[], user_init_only=[]):
     '''
     Wrap URL in decorators as appropriate.
     '''
@@ -99,28 +98,21 @@ def wrap_url(url, no_wrap=[], login_only=[], provider_only=[],
     elif url.name in login_only:
         url.callback = login_required(url.callback)
 
-    elif url.name in provider_only:
-        url.callback = provider_required(url.callback)
-        url.callback = login_required(url.callback)
-
-    elif url.name in updated_provider_only:
-        # url.callback = provider_update_required(url.callback)
-        # url.callback = provider_required(url.callback)
+    elif url.name in user_init_only:
+        url.callback = user_init_required(url.callback)
         url.callback = login_required(url.callback)
 
     else:  # wrap in everything
         url.callback = active_role_required(url.callback)
-        # url.callback = provider_update_required(url.callback)
-        # url.callback = provider_required(url.callback)
+        url.callback = user_init_required(url.callback)
         url.callback = login_required(url.callback)
 
     return url
 
 
 wrap_config = {
-    # 'login_only': ['new-provider'],
-    # 'provider_only': ['provider-update'],
-    'updated_provider_only': ['choose-role']
+    'login_only': ['user-init'],
+    'user_init_only': ['choose-role']
 }
 
 

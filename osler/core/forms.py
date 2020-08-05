@@ -115,18 +115,23 @@ class ActionItemForm(ModelForm):
             .objects.filter(active=True)
 
 
-class UserCreateForm(ModelForm):
-
-    provider_email = EmailField(label="Email")
+class UserInitForm(ModelForm):
 
     class Meta(object):
         model = User
-        exclude = ['associated_user', 'needs_updating']
-        widgets = {'referral_location': CheckboxSelectMultiple,
-                   'referral_type': CheckboxSelectMultiple}
+        fields = [
+            'name',
+            'first_name', 
+            'last_name', 
+            'phone', 
+            'email', 
+            'languages', 
+            'gender', 
+            'groups'
+        ]
 
     def __init__(self, *args, **kwargs):
-        super(UserCreate, self).__init__(*args, **kwargs)
+        super(UserInitForm, self).__init__(*args, **kwargs)
 
         self.helper = FormHelper(self)
         self.helper.form_method = 'post'
@@ -134,7 +139,13 @@ class UserCreateForm(ModelForm):
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
         self.helper['languages'].wrap(InlineCheckboxes)
+        self.helper['groups'].wrap(InlineCheckboxes)
         self.helper.add_input(Submit('submit', 'Submit'))
+
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
+        self.fields['groups'].required = True
+        self.fields['groups'].help_text = ""
 
 
 class DocumentForm(ModelForm):

@@ -8,16 +8,12 @@ from django.urls import reverse_lazy
 from django.shortcuts import resolve_url
 
 
-def user_details_set(user):
+def user_is_init(user):
     return user.groups.exists()
 
 
 def active_role_set(session):
     return 'active_role_set' in session and session['active_role_set']
-    
-
-def provider_has_updated(user):
-    return (not getattr(user, 'provider').needs_updating)
 
 
 def session_passes_test(test_func, fail_url,
@@ -61,7 +57,7 @@ def active_role_required(func):
         fail_url=reverse_lazy('core:choose-role'))(func)
 
 
-def user_details_required(func):
+def user_init_required(func):
     return user_passes_test(
-        user_details_set,
-        login_url=reverse_lazy('core:new-user'))(func)
+        user_is_init,
+        login_url=reverse_lazy('core:user-init'))(func)
