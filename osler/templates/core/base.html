@@ -67,7 +67,7 @@
             <li><a href="{% url 'admin:index' %}">Admin</a></li>
             {% endif %}
             <li><a href="{% url 'account_logout' %}">Logout 
-              {{ request.user.name }} ({{ request.user.active_role.name | default:"[no role]" }})
+              {{ request.user }} ({{ request.user.active_role.name | default:"[no role]" }})
             </a></li>
         </ul>
         {% endif %}

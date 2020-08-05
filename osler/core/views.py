@@ -22,7 +22,9 @@ from osler.core import forms
 from osler.core import utils
 
 from django.contrib.auth.models import Group
+from django.contrib.auth import get_user_model
 
+from django.db.models.fields.related import ManyToManyField
 
 class NoteFormView(FormView):
     note_type = None
@@ -69,29 +71,23 @@ class UserInit(FormView):
 
     def get_initial(self):
         initial = super(UserInit, self).get_initial()
-
-        initial['first_name'] = self.request.user.first_name
-        initial['last_name'] = self.request.user.last_name
-        
-
+        user = self.request.user
+        for field in self.form_class.Meta.fields:
+            initial[field] = getattr(user, field)
         return initial
 
     def form_valid(self, form):
-        # provider = form.save(commit=False)
-        # # check that user did not previously create a provider
-        # if not hasattr(self.request.user, 'provider'):
-        #     provider.associated_user = self.request.user
-        #     # populate the User object with the email and name data from
-        #     # the Provider form
-        #     user = provider.associated_user
-        #     user.email = form.cleaned_data['provider_email']
-        #     user.first_name = provider.first_name
-        #     user.last_name = provider.last_name
-        #     user.save()
-        #     provider.save()
-        
-        form.save()
-
+        user = self.request.user
+        User = get_user_model()
+        for field in self.form_class.Meta.fields:
+            field_class = getattr(User, field).field
+            value = form.cleaned_data[field]
+            # many to many relations need to use set()
+            if isinstance(field_class, ManyToManyField):
+                getattr(user, field).set(value)
+            else:
+                setattr(user, field, value)
+        user.save()
 
         if 'next' in self.request.GET:
             next_url = self.request.GET['next']

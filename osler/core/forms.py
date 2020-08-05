@@ -124,7 +124,6 @@ class UserInitForm(ModelForm):
             'first_name', 
             'last_name', 
             'phone', 
-            'email', 
             'languages', 
             'gender', 
             'groups'
