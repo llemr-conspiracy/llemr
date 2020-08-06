@@ -6,25 +6,6 @@ from django.utils.translation import ugettext_lazy as _
 from osler.core import validators
 
 
-class Language(models.Model):
-    """A natural language, spoken by a provider or patient.
-    """
-    name = models.CharField(max_length=50, primary_key=True)
-
-    def __str__(self):
-        return self.name
-
-
-class Gender(models.Model):
-    name = models.CharField(max_length=30, primary_key=True)
-
-    def __str__(self):
-        return self.name
-
-    def short_name(self):
-        return self.name[0]
-
-
 class User(AbstractUser):
 
     # more inclusive of name patterns around the world
@@ -33,11 +14,11 @@ class User(AbstractUser):
     phone = models.CharField(max_length=40, null=True, blank=True)
 
     languages = models.ManyToManyField(
-        Language,
+        "core.Language",
         help_text="Specify here languages that are spoken at a "
                             "level sufficient to be used for medical "
                             "communication.")
-    gender = models.ForeignKey(Gender, null=True, on_delete=models.PROTECT)
+    gender = models.ForeignKey("core.Gender", null=True, on_delete=models.PROTECT)
 
     active_role = models.ForeignKey(
         Group, 

@@ -127,7 +127,7 @@ class UserInitForm(ModelForm):
             'languages', 
             'gender', 
             'groups'
-        ]
+            ]
 
     def __init__(self, *args, **kwargs):
         super(UserInitForm, self).__init__(*args, **kwargs)
@@ -141,9 +141,14 @@ class UserInitForm(ModelForm):
         self.helper['groups'].wrap(InlineCheckboxes)
         self.helper.add_input(Submit('submit', 'Submit'))
 
-        self.fields['first_name'].required = True
-        self.fields['last_name'].required = True
-        self.fields['groups'].required = True
+        required_fields = [
+            'first_name', 
+            'last_name', 
+            'groups'
+            ]
+        for field in required_fields:
+            self.fields[field].required = True
+
         self.fields['groups'].help_text = ""
 
 

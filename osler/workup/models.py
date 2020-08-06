@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.utils.timezone import now
 from django.urls import reverse
 from django.core.validators import MinValueValidator
+from django.conf import settings
 
 from simple_history.models import HistoricalRecords
 
@@ -92,7 +93,7 @@ class AttestableNote(Note):
         abstract = True
 
     signer = models.ForeignKey(
-        get_user_model(),
+        settings.AUTH_USER_MODEL,
         blank=True, null=True,
         on_delete=models.PROTECT,
         related_name="signed_%(app_label)s_%(class)s")
@@ -155,14 +156,14 @@ class Workup(AttestableNote):
             ]
 
     attending = models.ForeignKey(
-        get_user_model(),
+        settings.AUTH_USER_MODEL,
         null=True, blank=True,
         related_name="attending_physician",
         on_delete=models.PROTECT,
         help_text="Which attending saw the patient?")
 
     other_volunteer = models.ManyToManyField(
-        get_user_model(),
+        settings.AUTH_USER_MODEL,
         blank=True,
         related_name="other_volunteer",
         help_text="Which other volunteer(s) did you work with (if any)?")
