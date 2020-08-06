@@ -2,8 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.conf import settings
-
-from osler.core import models as core_models
+from django.contrib.auth.models import Group
 
 
 class PageviewRecord(models.Model):
@@ -18,7 +17,7 @@ class PageviewRecord(models.Model):
     )
     user_ip = models.GenericIPAddressField()
     role = models.ForeignKey(
-        core_models.ProviderType,
+        Group,
         on_delete=models.DO_NOTHING,
         blank=True, null=True)
 

@@ -3,9 +3,9 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
-from osler.core.models import Patient, ActionItem
-from osler.core.views import (NoteUpdate, NoteFormView,
-                                 get_current_provider_type)
+from osler.core.models import Patient
+from osler.core.views import NoteUpdate, NoteFormView
+from osler.core.utils import get_active_role
 
 from osler.followup import forms
 from osler.followup import models
@@ -62,8 +62,8 @@ class FollowupCreate(NoteFormView):
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         fu = form.save(commit=False)
         fu.patient = pt
-        fu.author = self.request.user.provider
-        fu.author_type = get_current_provider_type(self.request)
+        fu.author = self.request.user
+        fu.author_type = get_active_role(self.request)
 
         fu.save()
 
@@ -91,7 +91,7 @@ class ActionItemFollowupCreate(FollowupCreate):
 
         ai_fu = form.save(commit=False)
         ai_fu.author = self.request.user.provider
-        ai_fu.author_type = get_current_provider_type(self.request)
+        ai_fu.author_type = get_active_role(self.request)
         ai_fu.action_item = ai
         ai_fu.patient = pt
         ai_fu.save()

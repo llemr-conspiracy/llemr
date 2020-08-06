@@ -1,9 +1,6 @@
-from __future__ import division
-from __future__ import unicode_literals
-from builtins import object
-from past.utils import old_div
 from decimal import Decimal, ROUND_HALF_UP
 
+from django.contrib.auth import get_user_model
 from django.forms import (
     fields, ModelForm, ModelChoiceField, ModelMultipleChoiceField, RadioSelect
 )
@@ -15,7 +12,6 @@ from crispy_forms.bootstrap import (
     InlineCheckboxes, AppendedText, PrependedText)
 from crispy_forms.utils import TEMPLATE_PACK, render_field
 
-from osler.core.models import Provider, ProviderType
 from osler.workup import models
 
 
@@ -153,21 +149,18 @@ class WorkupForm(ModelForm):
         exclude = ['patient', 'author', 'signer', 'author_type',
                    'signed_date', 'referral_location', 'referral_type']
 
-    # limit the options for the attending, other_volunteer field to
-    # Providers with ProviderType with signs_charts=True, False
-    # (includes coordinators and volunteers)
+    # limit the options for the attending, other_volunteer field by
+    # checking the signs charts permission.
+    can_sign_perm = 'can_sign_Workup'
     attending = ModelChoiceField(
         required=False,
-        queryset=Provider.objects.filter(
-            clinical_roles__in=ProviderType.objects.filter(
-                signs_charts=True)).order_by("last_name")
+        queryset=get_user_model().objects.filter(
+            groups__permissions__codename=can_sign_perm)
     )
 
     other_volunteer = ModelMultipleChoiceField(
         required=False,
-        queryset=Provider.objects.filter(
-            clinical_roles__in=ProviderType.objects.filter(
-                signs_charts=False)).distinct().order_by("last_name"),
+        queryset=get_user_model().objects.all()
     )
 
     def __init__(self, *args, **kwargs):
@@ -255,6 +248,11 @@ class WorkupForm(ModelForm):
                          ['imaging_voucher_amount',
                           'patient_pays_imaging'])
 
+        attending = cleaned_data.get('attending')
+        if attending and attending in cleaned_data.get('other_volunteer'):
+            self.add_error('other_volunteer', 
+            'Attending physician must be different from other volunteers.')
+        
         if 't' in cleaned_data and cleaned_data.get('t') is not None:
             if cleaned_data.get('temperature_units') == 'F':
                 c = Decimal(fahrenheit2centigrade(
