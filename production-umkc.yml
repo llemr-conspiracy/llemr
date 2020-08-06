@@ -18,6 +18,10 @@ services:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
     command: /start
+    ports:
+      - "5000:5000"
+    extra_hosts:
+      - "kc-med-oslerdb.kc.umkc.edu:192.168.0.2"
 
   # postgres:
   #   image: osler_production_postgres
@@ -36,20 +40,20 @@ services:
   #     - production_postgres_data_backups:/backups
   #   env_file:
   #     - ./.envs/.production/.postgres
-
-  traefik:
-    build:
-      context: .
-      dockerfile: ./compose/production/traefik/Dockerfile
-    image: osler_production_traefik
-    depends_on:
-      - django
-    volumes:
-      - production_traefik:/etc/traefik/acme
-    ports:
-      - "0.0.0.0:8084:80"
-      - "0.0.0.0:443:443"
-
+#   
+#     traefik:
+#       build:
+#         context: .
+#         dockerfile: ./compose/production/traefik/Dockerfile
+#       image: osler_production_traefik
+#       depends_on:
+#         - django
+#       volumes:
+#         - production_traefik:/etc/traefik/acme
+#       ports:
+#         - "0.0.0.0:8084:80"
+#         - "0.0.0.0:443:443"
+# 
   redis:
     image: redis:5.0
 
