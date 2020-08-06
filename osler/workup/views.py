@@ -242,7 +242,7 @@ def error_workup(request, pk):
     return render(request, 'core/workup_error.html', {'workup': wu})
 
 
-@permission_required('workup.workup.Workup.can_export_pdf')
+@permission_required('workup.can_export_pdf_Workup')
 def pdf_workup(request, pk):
 
     wu = get_object_or_404(models.Workup, pk=pk)
