@@ -280,7 +280,7 @@ def choose_role(request):
         role_options = request.user.groups.all()
         if len(role_options) == 1:
             request.user.active_role = role_options[0]
-            request.user.active_role.save()
+            request.user.save()
             request.session['active_role_set'] = True
             return HttpResponseRedirect(redirect_to)
         elif not role_options:

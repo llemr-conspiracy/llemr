@@ -402,7 +402,7 @@ class CompletableMixin(models.Model):
 
     completion_date = models.DateTimeField(blank=True, null=True)
     completion_author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        get_user_model(),
         blank=True, null=True,
         related_name="%(app_label)s_%(class)s_completed",
         on_delete=models.PROTECT)

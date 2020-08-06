@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from osler.core import models
 from osler.workup.api.serializers import WorkupSerializer
+from django.contrib.auth import get_user_model
 
 
 class LastHistorySerializer(serializers.Serializer):
@@ -13,7 +14,7 @@ class HistorySerializer(serializers.Serializer):
 
 class CaseManagerSerializer(serializers.ModelSerializer):
     class Meta(object):
-        model = models.Provider
+        model = get_user_model()
         fields = ['name']
 
     name = serializers.StringRelatedField(read_only=True)
