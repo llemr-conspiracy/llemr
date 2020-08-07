@@ -1,28 +1,55 @@
-{% extends "pttrack/base.html" %}
+{% extends "core/base.html" %}
 
 {% block title %}
 Lab detail
 {% endblock %}
 
 {% block header %}
-<h1>Lab detail</h1>
-<p class="lead"></p>
+<h1>Lab Detail</h1>
 {% endblock %}
 
 {% block content %}
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
+<div class="container text-center">
+	<div class="btn-group">
+	    <a class="btn btn-info" href="{% url 'labs:all-labs' pt.id %}" role="button">Back to All Labs</a>
+		{% if change_perm %}
+		    <a class="btn btn-warning" href="{% url 'labs:lab-edit' lab.id %}" role="button">Edit Lab</a>
+		    <a class="btn btn-danger" href="{% url 'labs:lab-delete' lab.id %}" role="button">Delete Lab</a>
+		{% endif %}
+	</div>
+</div>
+
 <div class="container">
-	{{ lab }}
-	<ul>
+	<h4>Patient Name: <b>{{pt.name}}</b></h4>
+	<h4>Lab Type: <b>{{lab.lab_type}}</b></h4>
+	<h4>Lab Time: <b>{{lab.lab_time}}</b> </h4>
+</div>
+
+
+<div class="container">
+	<table class="table">
+		<tr>
+			<th>Measurement</th>
+			<th>Value</th>
+		</tr>
 		{% for measurement in cont_list %}
-			<li>{{ measurement }}</li>
+			<tr>
+				<td>{{ measurement.measurement_type }}</td>
+				<td>{{ measurement.value }}</td>
+			</tr>
 		{% endfor %}
 		{% for measurement in disc_list %}
-			<li>{{ measurement }}</li>
+			<tr>
+				<td>{{ measurement.measurement_type }}</td>
+				<td>{{ measurement.value }}</td>
+			</tr>
 		{% endfor %}
-	</ul>
+	</table>
+
+	
 </div>
 
 {% endblock %}

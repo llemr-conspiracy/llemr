@@ -62,7 +62,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
       </li>
       <li class="list-group-item">
         <span class="glyphicon glyphicon-tint" aria-hidden="true"></span>&nbsp;
-          <a href="{% url 'all-labs-table' pt_id=patient.pk %}"><strong>Labs</strong></a>
+          <a href="{% url 'labs:all-labs-table' pt_id=patient.pk %}"><strong>View Labs</strong></a>
       </li>
     </ul>
   </div>

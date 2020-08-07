@@ -1,19 +1,34 @@
-{% extends "pttrack/base.html" %}
+{% extends "core/base.html" %}
 
 {% block title %}
-All Labs
+Recent Labs
 {% endblock %}
 
 {% block header%}
-<h1>All Labs</h1>
-<h2>
-	Patient: <a href="{% url 'patient-detail' patient.id %}">{{ patient.name }} </a>
-</h2>
+<h1>Recent Labs</h1>
+
+<div class="row text">
+	<div class="col-mb-2">
+		<h2>Patient: <a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }} </a></h2>
+	</div>
+</div>
+
 {% endblock %}
+
 
 {% block content %}
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<div class="container text-center">
+	<div class="btn-group">
+	    <a class="btn btn-info" href="{% url 'core:patient-detail' patient.id %}" role="button">Back to Patient Detail</a>
+	    {% if change_perm %}
+	    	<a class="btn btn-primary" href="{% url 'labs:new-lab' patient.id %}" role="button">New Lab</a>
+	    {% endif %}
+	    <a class="btn btn-warning" href="{% url 'labs:all-labs' patient.id %}" role="button">All Labs</a>
+	</div>
+</div>
 
 <style>
 	th {
@@ -31,6 +46,7 @@ $(document).ready(function(){
     $('#lab_table td.y_n').each(function(){
         if (~$(this).text().indexOf('⚠⚠')) {
             $(this).css('color','#f00');
+            $(this).text().slice()
         } else if (~$(this).text().indexOf('⚠')) {
             $(this).css('color','#0000FF');
         }
@@ -40,21 +56,25 @@ $(document).ready(function(){
     });
 });
 
+$( "#myselect option:selected" )
+
 </script>
 
 <div class="container">
-	<form class="form-inline">
+	<form method="GET" class="form-inline">
 	  <div class="form-group mb-2", style="font-weight:bold">
 	    Lab date
 	  </div>
 	  <div class="form-group mx-sm-3 mb-2">
-			<select class="form-control " id="selectMonth">
+			<select class="form-control" id="myselect">
 	    	{% for month in months %}
-	        	<option>{{ month }}</option>
+	        	<option value="{{month}}">{{ month }}</option>
 	        {% endfor %}
 		    </select>
+		    <input type="submit" value="Filter">
 	  </div>
-	  <a class="btn btn-primary" href="{% url 'all-labs-table' patient.id %}" role="button">Filter</a>
+
+
 	</form>
 </div>
 
@@ -74,18 +94,6 @@ $(document).ready(function(){
 	    </tr>
 	    {% endfor %}
 	</table>
-</div>
-
-
-<div class="container">
-    <div class="row text-center">
-		<div class="btn-group">
-		        <a class="btn btn-primary" href="{% url 'new-lab' patient.id %}" role="button">New Lab</a>
-		        <!--
-		        	<a class="btn btn-info" href="{% url 'patient-detail' patient.id %}" role="button">Return to patient info</a>
-		        -->
-		</div>
-	</div>
 </div>
 
 {% endblock %}

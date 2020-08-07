@@ -1,85 +1,305 @@
 [
-{
-    "model": "labs.labtype",
-    "pk": 1,
-    "fields": {
-        "name": "BMP"
-    }
-},
-{
-    "model": "labs.labtype",
-    "pk": 2,
-    "fields": {
-        "name": "HIV"
-    }
-},
-{
-    "model": "labs.labtype",
-    "pk": 3,
-    "fields": {
-        "name": "A1c"
-    }
-},
-{
-    "model": "labs.labtype",
-    "pk": 4,
-    "fields": {
-        "name": "Urinalysis"
-    }
-},
-{
-    "model": "labs.measurementtype",
-    "pk": "A1c",
-    "fields": {
-        "short_name": "A1c",
-        "unit": "%",
-        "panic_upper": "5.7",
-        "panic_lower": "0.0",
-        "lab_type": 3
-    }
-},
-{
-    "model": "labs.measurementtype",
-    "pk": "HIV Test",
-    "fields": {
-        "short_name": "HIV",
-        "unit": "",
-        "panic_upper": "",
-        "panic_lower": "",
-        "lab_type": 2
-    }
-},
-{
-    "model": "labs.measurementtype",
-    "pk": "Nitrite",
-    "fields": {
-        "short_name": "Nitrite",
-        "unit": "",
-        "panic_upper": "",
-        "panic_lower": "",
-        "lab_type": 4
-    }
-},
-{
-    "model": "labs.measurementtype",
-    "pk": "Potassium, serum",
-    "fields": {
-        "short_name": "K+",
-        "unit": "mmol/L",
-        "panic_upper": "6.0",
-        "panic_lower": "3.0",
-        "lab_type": 1
-    }
-},
-{
-    "model": "labs.measurementtype",
-    "pk": "Sodium, serum",
-    "fields": {
-        "short_name": "Na+",
-        "unit": "mmol/L",
-        "panic_upper": "155.0",
-        "panic_lower": "125.0",
-        "lab_type": 1
-    }
-}
+   {
+      "model":"labs.labtype",
+      "pk":1,
+      "fields":{
+         "name":"BMP",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.labtype",
+      "pk":2,
+      "fields":{
+         "name":"HIV",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.labtype",
+      "pk":3,
+      "fields":{
+         "name":"A1c",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.labtype",
+      "pk":4,
+      "fields":{
+         "name":"Urinalysis",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"A1c",
+      "fields":{
+         "short_name":"A1c",
+         "unit":"%",
+         "panic_upper":"5.7",
+         "panic_lower":"0.0",
+         "lab_type":3,
+         "value_type":"Continuous",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"Anion Gap",
+      "fields":{
+         "short_name":"Anion Gap",
+         "unit":null,
+         "panic_upper":null,
+         "panic_lower":null,
+         "lab_type":1,
+         "value_type":"Continuous",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"Bicarbonate, serum",
+      "fields":{
+         "short_name":"HCO3",
+         "unit":null,
+         "panic_upper":null,
+         "panic_lower":null,
+         "lab_type":1,
+         "value_type":"Continuous",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"Blood Urea Nitrogen",
+      "fields":{
+         "short_name":"BUN",
+         "unit":null,
+         "panic_upper":null,
+         "panic_lower":null,
+         "lab_type":1,
+         "value_type":"Continuous",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"Calcium, serum",
+      "fields":{
+         "short_name":"Ca2+",
+         "unit":null,
+         "panic_upper":null,
+         "panic_lower":null,
+         "lab_type":1,
+         "value_type":"Continuous",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"Chloride",
+      "fields":{
+         "short_name":"Cl",
+         "unit":"mmol/L",
+         "panic_upper":"100.0",
+         "panic_lower":"50.0",
+         "lab_type":1,
+         "value_type":"Continuous",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"Creatinine, serum",
+      "fields":{
+         "short_name":"Cr",
+         "unit":null,
+         "panic_upper":null,
+         "panic_lower":null,
+         "lab_type":1,
+         "value_type":"Continuous",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"Glucose, serum",
+      "fields":{
+         "short_name":"Glucose",
+         "unit":null,
+         "panic_upper":null,
+         "panic_lower":null,
+         "lab_type":1,
+         "value_type":"Continuous",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"Hematocrit",
+      "fields":{
+         "short_name":"HCT",
+         "unit":null,
+         "panic_upper":null,
+         "panic_lower":null,
+         "lab_type":1,
+         "value_type":"Continuous",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"Hemoglobin",
+      "fields":{
+         "short_name":"Hb",
+         "unit":null,
+         "panic_upper":null,
+         "panic_lower":null,
+         "lab_type":1,
+         "value_type":"Continuous",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"HIV Test",
+      "fields":{
+         "short_name":"HIV",
+         "unit":null,
+         "panic_upper":null,
+         "panic_lower":null,
+         "lab_type":2,
+         "value_type":"Discrete",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"Ketone",
+      "fields":{
+         "short_name":"Ketone",
+         "unit":null,
+         "panic_upper":null,
+         "panic_lower":null,
+         "lab_type":4,
+         "value_type":"Discrete",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"Nitrite",
+      "fields":{
+         "short_name":"Nitrite",
+         "unit":null,
+         "panic_upper":null,
+         "panic_lower":null,
+         "lab_type":4,
+         "value_type":"Discrete",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"pH",
+      "fields":{
+         "short_name":"pH",
+         "unit":null,
+         "panic_upper":"6.0",
+         "panic_lower":"8.0",
+         "lab_type":4,
+         "value_type":"Continuous",
+         "order_index":2
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"Potassium, serum",
+      "fields":{
+         "short_name":"K+",
+         "unit":"mmol/L",
+         "panic_upper":"6.0",
+         "panic_lower":"3.0",
+         "lab_type":1,
+         "value_type":"Continuous",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.measurementtype",
+      "pk":"Sodium, serum",
+      "fields":{
+         "short_name":"Na+",
+         "unit":"mmol/L",
+         "panic_upper":"155.0",
+         "panic_lower":"125.0",
+         "lab_type":1,
+         "value_type":"Continuous",
+         "order_index":1
+      }
+   },
+   {
+      "model":"labs.discreteresulttype",
+      "pk":"Large",
+      "fields":{
+         "is_panic":"T",
+         "measurement_type":[
+            "Ketone"
+         ]
+      }
+   },
+   {
+      "model":"labs.discreteresulttype",
+      "pk":"Moderate",
+      "fields":{
+         "is_panic":"T",
+         "measurement_type":[
+            "Ketone"
+         ]
+      }
+   },
+   {
+      "model":"labs.discreteresulttype",
+      "pk":"Negative",
+      "fields":{
+         "is_panic":"F",
+         "measurement_type":[
+            "HIV Test",
+            "Nitrite",
+            "Ketone"
+         ]
+      }
+   },
+   {
+      "model":"labs.discreteresulttype",
+      "pk":"Positive",
+      "fields":{
+         "is_panic":"T",
+         "measurement_type":[
+            "HIV Test",
+            "Nitrite"
+         ]
+      }
+   },
+   {
+      "model":"labs.discreteresulttype",
+      "pk":"Small",
+      "fields":{
+         "is_panic":"T",
+         "measurement_type":[
+            "Ketone"
+         ]
+      }
+   },
+   {
+      "model":"labs.discreteresulttype",
+      "pk":"Trace",
+      "fields":{
+         "is_panic":"T",
+         "measurement_type":[
+            "Ketone"
+         ]
+      }
+   }
 ]

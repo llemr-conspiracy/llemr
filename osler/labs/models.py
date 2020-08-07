@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import datetime
 
 from django.db import models
@@ -11,9 +8,10 @@ from osler.core.models import (Patient)
 # e.g. BMP, A1c, CBC, etc.
 class LabType(models.Model):
 	name = models.CharField(max_length=30)
+	order_index = models.PositiveIntegerField(default=0, blank=False, null=False)
 
 	class Meta:
-		app_label = 'osler.labs'
+		ordering = ['order_index']
 		
 	def __str__(self):
 		return self.name
@@ -21,41 +19,40 @@ class LabType(models.Model):
 
 # object of a lab panel
 class Lab(models.Model):
-	class Meta:
-		app_label = 'osler.labs'
-
 	patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
 	
-	written_datetime = models.DateTimeField(auto_now_add=True)
+	#written_datetime = models.DateTimeField(auto_now_add=True)
+
+	lab_time = models.DateTimeField(default=timezone.now)
 
 	lab_type = models.ForeignKey(LabType, on_delete=models.PROTECT)
 
-	def __unicode__(self):
+	class Meta:
+		ordering = ['-lab_time']
+
+	def __str__(self):
 		to_tz = timezone.get_default_timezone()
-		str_time = self.written_datetime.astimezone(to_tz).strftime("%B-%d-%Y, %H:%M")
+		str_time = self.lab_time.astimezone(to_tz).strftime("%B-%d-%Y, %H:%M")
 		return '%s | %s | %s ' %(str(self.patient),str(self.lab_type),str_time)
 
 	def get_day(self):
-		day = self.written_datetime.date()
+		day = self.lab_time.date()
 		return day
 
 	def get_table_time(self):
 		to_tz = timezone.get_default_timezone()
-		str_time = self.written_datetime.astimezone(to_tz).strftime("%m/%d/%Y\n%H%M")
+		str_time = self.lab_time.astimezone(to_tz).strftime("%m/%d/%Y\n%H%M")
 		return str_time
 
 	def get_table_day(self):
 		to_tz = timezone.get_default_timezone()
-		str_time = self.written_datetime.astimezone(to_tz).strftime("%m/%d/%Y")
+		str_time = self.lab_time.astimezone(to_tz).strftime("%m/%d/%Y")
 		return str_time
 
 
 # type of measurements in a lab panel
 # e.g. Na+, K+ in BMP, A1c in A1c, WBC in CBC, etc.
 class MeasurementType(models.Model):
-	class Meta:
-		app_label = 'osler.labs'
-
 	long_name = models.CharField(max_length=30, primary_key=True)
 	short_name = models.CharField(max_length=15)
 	unit = models.CharField(max_length=15, blank=True, null=True)
@@ -63,17 +60,71 @@ class MeasurementType(models.Model):
 	panic_lower = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)
 
 	lab_type = models.ForeignKey(LabType, on_delete=models.PROTECT)
+	VALUE_TYPE_CHOICES = (
+		('Continuous','Numerical'),
+		('Discrete','Categorical')
+	)
+	value_type = models.CharField(max_length=15, choices=VALUE_TYPE_CHOICES)
 
-	def __unicode__(self):
+	order_index = models.PositiveIntegerField(default=0, blank=False, null=False)
+
+	class Meta:
+		ordering = ['order_index']
+
+	def __str__(self):
 		return self.long_name
 
 	def panic(self, value):
-		if value < self.panic_lower:
+		if (self.panic_lower==None or self.panic_upper==None):
+			return ''
+		elif value < self.panic_lower:
 			return '⚠'
 		elif value > self.panic_upper:
 			return '⚠⚠'
 		return ''
 
+	def panic(self, value):
+		if self.value_type=='Continuous':
+			if ((self.panic_lower!=None) and (value < self.panic_lower)):
+				return True
+			elif((self.panic_upper!=None) and (value > self.panic_upper)):
+				return True
+			return False
+		elif self.value_type=='Discrete':
+			# Only give warnings if the option is part of this measurement type
+			if not DiscreteResultType.objects.filter(measurement_type=self, name=value.name).exists():
+				return False
+			if value.is_panic == 'T':
+				return True
+			elif value.is_panic == 'F':
+				return False
+			return False
+
+	def panic_color(self, value):
+		if self.value_type=='Continuous':
+			if ((self.panic_lower!=None) and (value < self.panic_lower)):
+				return '#0000FF' #blue
+			elif((self.panic_upper!=None) and (value > self.panic_upper)):
+				return '#f00' #red
+			return ''
+		elif value_type=='Discrete':
+			if value.is_panic == 'T':
+				return '#f00' #red
+			elif value.is_panic == 'F':
+				return ''
+			return ''
+
+
+	def get_ref(self):
+		if self.value_type == 'Discrete':
+			return ''
+		if (self.panic_lower==None and self.panic_upper==None):
+			return ''
+		else:
+			lower_str = '' if (self.panic_lower is None) else ('%2g' %self.panic_lower)
+			upper_str = '' if (self.panic_upper is None) else ('%2g' %self.panic_upper)
+			unit_str = '' if (self.unit is None) else str(self.unit)
+			return '[%s - %s %s]' %(lower_str, upper_str, unit_str)
 	## def get_field()
 
 
@@ -81,32 +132,32 @@ class MeasurementType(models.Model):
 
 ## make this a abstract class (e.g. note)
 class Measurement(models.Model):
-	class Meta:
-		app_label = 'osler.labs'
-
 	measurement_type = models.ForeignKey(MeasurementType, on_delete=models.PROTECT)
 	lab = models.ForeignKey(Lab, on_delete=models.CASCADE)
 
 
 # object of a continuous measurement
 class ContinuousMeasurement(Measurement):
-	class Meta:
-		app_label = 'osler.labs'
+	#class Meta:
+	#	app_label = 'osler.labs'
 	value = models.DecimalField(max_digits=5, decimal_places=1)
 
-	def __unicode__(self):
+	def __str__(self):
 		return '%s: %2g' %(self.measurement_type, self.value)
 
 
 # type of discrete results
 # e.g. Positive, Negative, Trace, etc.
 class DiscreteResultType(models.Model):
-	class Meta:
-		app_label = 'osler.labs'
-
 	name = models.CharField(max_length=30, primary_key=True)
-	#measurement_type = models.ManyToManyField(MeasurementType)
-	measurement_type = models.ForeignKey(MeasurementType, on_delete=models.CASCADE)
+	measurement_type = models.ManyToManyField(MeasurementType)
+	PANIC_CHOICES = (
+		('T','Abnormal value'),
+		('F','Normal value')
+	)
+	is_panic = models.CharField(max_length=1, choices=PANIC_CHOICES,
+		default='T')
+	#measurement_type = models.ForeignKey(MeasurementType, on_delete=models.CASCADE)
 
 	def __str__(self):
 		return self.name
@@ -114,12 +165,8 @@ class DiscreteResultType(models.Model):
 
 # object of a continuous measurement
 class DiscreteMeasurement(Measurement):
-	class Meta:
-		app_label = 'osler.labs'
-
 	value = models.ForeignKey(DiscreteResultType, on_delete=models.PROTECT)
-	## panic 
 
-	def __unicode__(self):
+	def __str__(self):
 		value_name = DiscreteResultType.objects.get(pk=self.value)
 		return '%s: %s' %(self.measurement_type, value_name.name)
