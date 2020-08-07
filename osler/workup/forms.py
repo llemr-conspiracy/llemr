@@ -151,11 +151,11 @@ class WorkupForm(ModelForm):
 
     # limit the options for the attending, other_volunteer field by
     # checking the signs charts permission.
-    can_sign_perm = 'can_sign_Workup'
+    can_sign_perm_codename = 'can_sign_Workup'
     attending = ModelChoiceField(
         required=False,
         queryset=get_user_model().objects.filter(
-            groups__permissions__codename=can_sign_perm)
+            groups__permissions__codename=can_sign_perm_codename)
     )
 
     other_volunteer = ModelMultipleChoiceField(

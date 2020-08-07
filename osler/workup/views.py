@@ -51,6 +51,10 @@ class WorkupCreate(NoteFormView):
         """Check that we have an instantiated ClinicDate today,
         then dispatch to get() of the superclass view."""
 
+        self.request.session["can_sign_workup"] = (
+            self.request.user.has_active_perm("workup.can_sign_Workup")
+        )
+
         clindates = get_clindates()
         pt = get_object_or_404(Patient, pk=kwargs['pt_id'])
 
@@ -125,6 +129,7 @@ class WorkupUpdate(NoteUpdate):
         # if it's an attending, we allow updates.
         if (self.request.user.has_active_perm('workup.can_sign_Workup') 
             or not wu.signed()):
+            self.request.session["can_sign_workup"] = True
             return super(WorkupUpdate, self).dispatch(*args, **kwargs)
         else:
             return HttpResponseRedirect(reverse('workup',
@@ -219,7 +224,7 @@ def clinic_date_list(request):
                    'page_range': paginator.page_range})
 
 
-def sign_attestable_note(request, pk, redirect, attestable):
+def sign_attestable_note(request, pk, attestable):
 
     note = get_object_or_404(attestable, pk=pk)
     active_role = get_active_role(request)
