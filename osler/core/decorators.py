@@ -8,18 +8,12 @@ from django.urls import reverse_lazy
 from django.shortcuts import resolve_url
 
 
-def provider_exists(user):
-    # print "Chekcing provider", hasattr(user, 'provider')
-    return hasattr(user, 'provider')
+def user_is_init(user):
+    return user.groups.exists()
 
 
-def clintype_set(session):
-    # print "Checking clintype", 'clintype_pk' in session
-    return 'clintype_pk' in session
-
-
-def provider_has_updated(user):
-    return (not getattr(user, 'provider').needs_updating)
+def active_role_set(session):
+    return 'active_role_set' in session and session['active_role_set']
 
 
 def session_passes_test(test_func, fail_url,
@@ -57,19 +51,13 @@ def session_passes_test(test_func, fail_url,
     return decorator
 
 
-def clintype_required(func):
+def active_role_required(func):
     return session_passes_test(
-        clintype_set,
-        fail_url=reverse_lazy('core:choose-clintype'))(func)
+        active_role_set,
+        fail_url=reverse_lazy('core:choose-role'))(func)
 
 
-def provider_update_required(func):
+def user_init_required(func):
     return user_passes_test(
-        provider_has_updated,
-        login_url=reverse_lazy('core:provider-update'))(func)
-
-
-def provider_required(func):
-    return user_passes_test(
-        provider_exists,
-        login_url=reverse_lazy('core:new-provider'))(func)
+        user_is_init,
+        login_url=reverse_lazy('core:user-init'))(func)

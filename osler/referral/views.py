@@ -5,7 +5,9 @@ from django.urls import reverse
 from django.views.generic.edit import FormView
 from django.http import HttpResponseRedirect
 
-from osler.core.models import Patient, ProviderType, ReferralType
+from osler.core.models import Patient, ReferralType
+from osler.core.utils import get_active_role
+
 from osler.referral.models import Referral, FollowupRequest, ReferralLocation
 from osler.referral.forms import (FollowupRequestForm, ReferralForm,
                                   PatientContactForm, ReferralSelectForm)
@@ -79,9 +81,8 @@ class ReferralCreate(FormView):
         referral.kind = get_object_or_404(ReferralType, name=rtype)
 
         # Assign author and author type
-        referral.author = self.request.user.provider
-        referral.author_type = get_object_or_404(
-            ProviderType, pk=self.request.session['clintype_pk'])
+        referral.author = self.request.user
+        referral.author_type = get_active_role(self.request)
         referral.patient = pt
 
         referral.save()
@@ -114,9 +115,8 @@ class FollowupRequestCreate(FormView):
     def form_valid(self, form):
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         followup_request = form.save(commit=False)
-        followup_request.author = self.request.user.provider
-        followup_request.author_type = get_object_or_404(
-            ProviderType, pk=self.request.session['clintype_pk'])
+        followup_request.author = self.request.user
+        followup_request.author_type = get_active_role(self.request)
         followup_request.referral = get_object_or_404(
             Referral, pk=self.kwargs['referral_id'])
         followup_request.patient = pt
@@ -162,15 +162,14 @@ class PatientContactCreate(FormView):
                                              pk=self.kwargs['followup_id'])
 
         # Add completion date to followup request
-        followup_request.mark_done(self.request.user.provider)
+        followup_request.mark_done(self.request.user)
         followup_request.save()
 
         patient_contact = form.save(commit=False)
 
         # Fill in remaining fields of form
-        patient_contact.author = self.request.user.provider
-        patient_contact.author_type = get_object_or_404(
-            ProviderType, pk=self.request.session['clintype_pk'])
+        patient_contact.author = self.request.user
+        patient_contact.author_type = get_active_role(self.request)
         patient_contact.referral = referral
         patient_contact.patient = pt
         patient_contact.followup_request = followup_request

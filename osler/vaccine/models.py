@@ -25,8 +25,7 @@ class VaccineSeriesType(models.Model):
         if dose==self.last_dose():
             return None
         else:
-            #Please change if you have a more elegant way of doing
-            #Hypothetically shouldn't take forever to query db since shouldn't be too many doses
+            # TODO find more elegant way to do this
             for index, item in enumerate(self.doses()):
                 if dose==item:
                     return self.doses()[index+1]

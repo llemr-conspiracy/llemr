@@ -136,7 +136,7 @@ def user_cases(user, qs):
     '''
 
     qs = coremodels.Patient.objects.filter(
-        case_managers=user.provider
+        case_managers=user
     )
 
     return qs

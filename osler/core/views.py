@@ -22,15 +22,10 @@ from osler.core import models as core_models
 from osler.core import forms
 from osler.core import utils
 
+from django.contrib.auth.models import Group
+from django.contrib.auth import get_user_model
 
-def get_current_provider_type(request):
-    '''
-    Given the request, produce the ProviderType of the logged in user. This is
-    done using session data.
-    '''
-    return get_object_or_404(core_models.ProviderType,
-                             pk=request.session['clintype_pk'])
-
+from django.db.models.fields.related import ManyToManyField
 
 class NoteFormView(FormView):
     note_type = None
@@ -70,23 +65,30 @@ class NoteUpdate(UpdateView):
     # TODO: add shared form_valid code here from all subclasses.
 
 
-class ProviderCreate(FormView):
-    '''A view for creating a new Provider to match an existing User.'''
-    template_name = 'core/new-provider.html'
-    form_class = forms.ProviderForm
+class UserInit(FormView):
+    '''A view for filling in the Person details and groups for a User'''
+    template_name = 'core/user_init.html'
+    form_class = forms.UserInitForm
+
+    def get_initial(self):
+        initial = super(UserInit, self).get_initial()
+        user = self.request.user
+        for field in self.form_class.Meta.fields:
+            initial[field] = getattr(user, field)
+        return initial
 
     def form_valid(self, form):
-        provider = form.save(commit=False)
-        # check that user did not previously create a provider
-        if not hasattr(self.request.user, 'provider'):
-            provider.associated_user = self.request.user
-            # populate the User object with the name data from
-            # the Provider form
-            user = provider.associated_user
-            user.name = provider.name()
-            user.save()
-            provider.save()
-            form.save_m2m()
+        user = self.request.user
+        User = get_user_model()
+        for field in self.form_class.Meta.fields:
+            field_class = getattr(User, field).field
+            value = form.cleaned_data[field]
+            # many to many relations need to use set()
+            if isinstance(field_class, ManyToManyField):
+                getattr(user, field).set(value)
+            else:
+                setattr(user, field, value)
+        user.save()
 
         if 'next' in self.request.GET:
             next_url = self.request.GET['next']
@@ -96,38 +98,9 @@ class ProviderCreate(FormView):
         return HttpResponseRedirect(next_url)
 
     def get_context_data(self, **kwargs):
-        context = super(ProviderCreate, self).get_context_data(**kwargs)
+        context = super(UserInit, self).get_context_data(**kwargs)
         context['next'] = self.request.GET.get('next')
         return context
-
-
-class ProviderUpdate(UpdateView):
-    """For updating a provider, e.g. used during a new school year when
-    preclinicals become clinicals. Set needs_update to false using
-    require_providers_update() in core.models
-    """
-    template_name = 'core/provider-update.html'
-    model = core_models.Provider
-    form_class = forms.ProviderForm
-
-    def get_object(self):
-        """Returns the request's provider
-        """
-        return self.request.user.provider
-
-    def form_valid(self, form):
-        provider = form.save(commit=False)
-        provider.needs_updating = False
-        # populate the User object with the name data from
-        # the Provider form
-        user = provider.associated_user
-        user.name = provider.name()
-        user.save()
-        provider.save()
-        form.save_m2m()
-
-        return HttpResponseRedirect(
-            self.request.GET.get('next', reverse('home')))
 
 
 class ActionItemCreate(NoteFormView):
@@ -137,13 +110,13 @@ class ActionItemCreate(NoteFormView):
     note_type = 'Action Item'
 
     def form_valid(self, form):
-        '''Set the patient, provider, and written timestamp for the item.'''
+        '''Set the patient, user, and written timestamp for the item.'''
         pt = get_object_or_404(core_models.Patient, pk=self.kwargs['pt_id'])
         ai = form.save(commit=False)
 
         ai.completion_date = None
-        ai.author = self.request.user.provider
-        ai.author_type = get_current_provider_type(self.request)
+        ai.author = self.request.user
+        ai.author_type = utils.get_active_role(self.request)
         ai.patient = pt
 
         ai.save()
@@ -279,15 +252,16 @@ class DocumentCreate(NoteFormView):
 
         pt = get_object_or_404(core_models.Patient, pk=self.kwargs['pt_id'])
         doc.patient = pt
-        doc.author = self.request.user.provider
-        doc.author_type = get_current_provider_type(self.request)
+        doc.author = self.request.user
+        doc.author_type = utils.get_active_role(self.request)
 
         doc.save()
 
-        return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
+        return HttpResponseRedirect(reverse("core:patient-detail",
+                                            args=(pt.id,)))
 
 
-def choose_clintype(request):
+def choose_role(request):
     RADIO_CHOICE_KEY = 'radio-roles'
 
     redirect_to = request.GET['next']
@@ -296,79 +270,30 @@ def choose_clintype(request):
         redirect_to = reverse('home')
 
     if request.POST:
-        request.session['clintype_pk'] = request.POST[RADIO_CHOICE_KEY]
-        active_provider_type = get_current_provider_type(request)
-        request.session['signs_charts'] = active_provider_type.signs_charts
-        request.session['staff_view'] = active_provider_type.staff_view
-
+        active_role_pk = request.POST[RADIO_CHOICE_KEY]
+        request.user.active_role = Group.objects.get(pk=active_role_pk)
+        request.user.save()
+        request.session['active_role_set'] = True
         return HttpResponseRedirect(redirect_to)
 
     if request.GET:
-        role_options = request.user.provider.clinical_roles.all()
-
+        role_options = request.user.groups.all()
         if len(role_options) == 1:
-            request.session['clintype_pk'] = role_options[0].pk
-            active_provider_type = get_current_provider_type(request)
-            request.session['signs_charts'] = active_provider_type.signs_charts
-            request.session['staff_view'] = active_provider_type.staff_view
+            request.user.active_role = role_options[0]
+            request.user.save()
+            request.session['active_role_set'] = True
             return HttpResponseRedirect(redirect_to)
-        elif len(role_options) == 0:
+        elif not role_options:
             return HttpResponseServerError(
-                "Fatal: your Provider register is corrupted, and lacks "
-                "ProviderTypes. Report this error!")
+                "Fatal: you have failed to instantiate any Groups. Report this error!")
         else:
-            return render(request, 'core/role-choice.html',
+            return render(request, 'core/role_choice.html',
                           {'roles': role_options,
                            'choice_key': RADIO_CHOICE_KEY})
 
 
 def home_page(request):
     return HttpResponseRedirect(reverse(settings.OSLER_DEFAULT_DASHBOARD))
-
-#     active_provider_type = get_object_or_404(core_models.ProviderType,
-#                                              pk=request.session['clintype_pk'])
-
-#     if active_provider_type.signs_charts:
-#         title = "Attending Tasks"
-#         lists = [
-#             {'url': 'filter=unsigned_workup', 'title': "Unsigned Workups",
-#              'identifier': 'unsignedwu', 'active': True},
-#             {'url': 'filter=active', 'title': "Active Patients",
-#              'identifier': 'activept', 'active': False}]
-
-#     elif active_provider_type.staff_view:
-#         title = "Coordinator Tasks"
-#         lists = [
-#             {'url': 'filter=active', 'title': "Active Patients",
-#              'identifier': 'activept', 'active': True},
-#             {'url': 'filter=ai_priority', 'title': "Priority Action Items",
-#              'identifier': 'priorityai', 'active': False},
-#             {'url': 'filter=ai_active', 'title': "Active Action Items",
-#              'identifier': 'activeai', 'active': False},
-#             {'url': 'filter=ai_inactive', 'title': "Pending Action Items",
-#              'identifier': 'pendingai', 'active': False},
-#             {'url': 'filter=unsigned_workup', 'title': "Unsigned Workups",
-#              'identifier': 'unsignedwu', 'active': False},
-#             {'url': 'filter=user_cases', 'title': "My Cases",
-#              'identifier': 'usercases', 'active': False}
-#         ]
-
-#     else:
-#         title = "Active Patients"
-#         lists = [
-#             {'url': 'filter=active',
-#              'title': "Active Patients",
-#              'identifier': 'activept',
-#              'active': True}]
-
-#     # remove last '/' before adding because there no '/' between
-#     # /api/pt_list and .json, but reverse generates '/api/pt_list/'
-#     api_url = reverse('pt_list_api')[:-1] + '.json/?'
-
-#     return render(request, 'core/patient_list.html',
-#                   {'lists': json.dumps(lists),
-#                    'title': title,
-#                    'api_url': api_url})
 
 
 def patient_detail(request, pk):
@@ -523,7 +448,7 @@ def patient_activate_home(request, pk):
 
 def done_action_item(request, ai_id):
     ai = get_object_or_404(core_models.ActionItem, pk=ai_id)
-    ai.mark_done(request.user.provider)
+    ai.mark_done(request.user)
     ai.save()
 
     return HttpResponseRedirect(reverse("new-actionitem-followup",

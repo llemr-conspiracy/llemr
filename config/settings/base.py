@@ -40,8 +40,8 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 # DATABASES
 # -----------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-DATABASES = {"default": env.db("DATABASE_URL")}
-DATABASES["default"]["ATOMIC_REQUESTS"] = True
+#DATABASES = {"default": env.db("DATABASE_URL")}
+#DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # URLS
 # -----------------------------------------------------------------------------
@@ -282,7 +282,7 @@ ACCOUNT_AUTHENTICATION_METHOD = "username"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_REQUIRED = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_VERIFICATION = "optional"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_ADAPTER = "osler.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
@@ -328,6 +328,10 @@ OSLER_TODO_LIST_MANAGERS = [
     ('referral', 'FollowupRequest'),
     ('vaccine', 'VaccineActionItem')]
 
+OSLER_DEFAULT_CITY = "St. Louis"
+OSLER_DEFAULT_STATE = "MO"
+OSLER_DEFAULT_COUNTRY = "USA"
+
 OSLER_MAX_APPOINTMENTS = 5
 OSLER_DEFAULT_APPOINTMENT_HOUR = 9
 
@@ -340,8 +344,8 @@ OSLER_WORKUP_COPY_FORWARD_MESSAGE = (u"Migrated from previous workup on {date}"
 # Dashboard settings
 OSLER_CLINIC_DAYS_PER_PAGE = 20
 
-OSLER_DEFAULT_DASHBOARD = 'dashboard-attending'
-OSLER_PROVIDERTYPE_DASHBOARDS = {
+OSLER_DEFAULT_DASHBOARD = 'core:all-patients'
+OSLER_ROLE_DASHBOARDS = {
     'Attending': 'dashboard-attending'
 }
 

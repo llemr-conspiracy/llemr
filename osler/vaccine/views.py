@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
-from osler.core.models import Patient, ProviderType
+from osler.core.models import Patient
 from osler.core.views import NoteFormView
 from osler.core import utils
 from osler.followup.views import FollowupCreate
@@ -33,14 +33,13 @@ class VaccineSeriesCreate(NoteFormView):
     form_class = VaccineSeriesForm
 
     def form_valid(self, form):
-        """Set the patient, provider, and written timestamp, and status."""
+        """Set the patient, author, and written timestamp, and status."""
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         series = form.save(commit=False)
 
         # Assign author and author type
-        series.author = self.request.user.provider
-        series.author_type = get_object_or_404(
-            ProviderType, pk=self.request.session['clintype_pk'])
+        series.author = self.request.user
+        series.author_type = utils.get_active_role(self.request)
         series.patient = pt
 
         series.save()
@@ -70,9 +69,8 @@ class VaccineDoseCreate(NoteFormView):
         dose = form.save(commit=False)
 
         # Assign author and author type
-        dose.author = self.request.user.provider
-        dose.author_type = get_object_or_404(
-            ProviderType, pk=self.request.session['clintype_pk'])
+        dose.author = self.request.user
+        dose.author_type = utils.get_active_role(self.request)
         dose.patient = pt
         dose.series = series
 
@@ -106,9 +104,8 @@ class VaccineActionItemCreate(NoteFormView):
         vai = form.save(commit=False)
 
         vai.completion_date = None
-        vai.author = self.request.user.provider
-        vai.author_type = get_object_or_404(
-            ProviderType, pk=self.request.session['clintype_pk'])
+        vai.author = self.request.user
+        vai.author_type = utils.get_active_role()
         vai.vaccine = get_object_or_404(
             VaccineSeries, pk=self.kwargs['series_id'])
         vai.patient = pt
@@ -129,13 +126,12 @@ class VaccineFollowupCreate(FollowupCreate):
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         vai = get_object_or_404(VaccineActionItem, pk=self.kwargs['ai_id'])
 
-        vai.mark_done(self.request.user.provider)
+        vai.mark_done(self.request.user)
         vai.save()
 
         vai_fu = form.save(commit=False)
-        vai_fu.author = self.request.user.provider
-        vai_fu.author_type = get_object_or_404(
-            ProviderType, pk=self.request.session['clintype_pk'])
+        vai_fu.author = self.request.user
+        vai_fu.author_type = utils.get_active_role(self.request)
         vai_fu.action_item = vai
         vai_fu.patient = pt
         vai_fu.save()

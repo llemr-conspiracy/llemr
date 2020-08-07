@@ -45,14 +45,9 @@ def validate_name(value):
     if value.startswith((' ', '\t')) or value.endswith((' ', '\t')):
         raise ValidationError("Name cannot start or end with a space")
 
-
 def validate_attending(value):
     '''
     Verify that a provider has attending priviledges.
     '''
 
-    Provider = apps.get_model('core', 'Provider')
-    attending = Provider.objects.get(pk=value)
-
-    if not attending.clinical_roles.filter(signs_charts=True).exists():
-        raise ValidationError("This provider is not allowed to sign charts.")
+    pass

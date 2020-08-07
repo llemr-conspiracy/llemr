@@ -1,19 +1,21 @@
 from tempfile import TemporaryFile
 from xhtml2pdf import pisa
 
-from django.shortcuts import get_object_or_404, render
+from django.conf import settings
+from django.contrib.auth.models import Group
+from django.contrib.auth.decorators import permission_required
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import (HttpResponseRedirect, HttpResponseServerError,
                          HttpResponse)
-from django.urls import reverse
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.shortcuts import get_object_or_404, render
 from django.template.loader import get_template
-from django.utils.timezone import now
 from django.views.generic.edit import FormView
-from django.conf import settings
+from django.urls import reverse
+from django.utils.timezone import now
 
-from osler.core.views import (NoteFormView, NoteUpdate,
-                                 get_current_provider_type)
-from osler.core.models import Patient, ProviderType
+from osler.core.views import NoteFormView, NoteUpdate
+from osler.core.models import Patient
+from osler.core.utils import get_active_role
 
 from osler.workup import models
 from osler.workup import forms
@@ -48,6 +50,10 @@ class WorkupCreate(NoteFormView):
     def get(self, *args, **kwargs):
         """Check that we have an instantiated ClinicDate today,
         then dispatch to get() of the superclass view."""
+
+        self.request.session["can_sign_workup"] = (
+            self.request.user.has_active_perm("workup.can_sign_Workup")
+        )
 
         clindates = get_clindates()
         pt = get_object_or_404(Patient, pk=kwargs['pt_id'])
@@ -89,16 +95,15 @@ class WorkupCreate(NoteFormView):
 
     def form_valid(self, form):
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
-        active_provider_type = get_object_or_404(
-            ProviderType,
-            pk=self.request.session['clintype_pk'])
+        active_role = get_active_role(self.request)
 
         wu = form.save(commit=False)
         wu.patient = pt
-        wu.author = self.request.user.provider
-        wu.author_type = get_current_provider_type(self.request)
-        if wu.author_type.signs_charts:
-            wu.sign(self.request.user, active_provider_type)
+        wu.author = self.request.user
+        wu.author_type = active_role
+
+        if self.request.user.has_active_perm('workup.can_sign_Workup'):
+            wu.sign(self.request.user)
 
         wu.save()
 
@@ -118,11 +123,13 @@ class WorkupUpdate(NoteUpdate):
         Intercept dispatch for NoteUpdate and verify that the user has
         permission to modify this Workup.
         '''
-        current_user_type = get_current_provider_type(self.request)
+        active_role = get_active_role(self.request)
         wu = get_object_or_404(models.Workup, pk=kwargs['pk'])
 
         # if it's an attending, we allow updates.
-        if current_user_type.signs_charts or not wu.signed():
+        if (self.request.user.has_active_perm('workup.can_sign_Workup') 
+            or not wu.signed()):
+            self.request.session["can_sign_workup"] = True
             return super(WorkupUpdate, self).dispatch(*args, **kwargs)
         else:
             return HttpResponseRedirect(reverse('workup',
@@ -150,20 +157,21 @@ class ProgressNoteCreate(NoteFormView):
 
     def form_valid(self, form):
         pnote = form.save(commit=False)
-        active_provider_type = get_object_or_404(
-            ProviderType,
-            pk=self.request.session['clintype_pk'])
-        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
-        pnote.patient = pt
-        pnote.author = self.request.user.provider
-        pnote.author_type = get_current_provider_type(self.request)
-        if pnote.author_type.signs_charts:
-            pnote.sign(self.request.user, active_provider_type)
-        pnote.save()
 
+        pnote.patient = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        pnote.author = self.request.user
+
+        active_role = get_active_role(self.request)
+        pnote.author_type = active_role
+
+        if self.request.user.has_active_perm('workup.can_sign_ProgressNote'):
+            pnote.sign(self.request.user)
+
+        pnote.save()
         form.save_m2m()
 
-        return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
+        return HttpResponseRedirect(reverse("core:patient-detail",
+                                            args=(pnote.patient.id,)))
 
 
 class ClinicDateCreate(FormView):
@@ -216,36 +224,21 @@ def clinic_date_list(request):
                    'page_range': paginator.page_range})
 
 
-def sign_workup(request, pk):
+def sign_attestable_note(request, pk, attestable):
 
-    wu = get_object_or_404(models.Workup, pk=pk)
-    active_provider_type = get_object_or_404(ProviderType,
-                                             pk=request.session['clintype_pk'])
+    note = get_object_or_404(attestable, pk=pk)
+    active_role = get_active_role(request)
 
     try:
-        wu.sign(request.user, active_provider_type)
-        wu.save()
+        note.sign(request.user)
+        note.save()
     except ValueError:
         # thrown exception can be ignored since we just redirect back to the
         # workup detail view anyway
         pass
 
-    return HttpResponseRedirect(reverse("workup", args=(wu.id,)))
+    return HttpResponseRedirect(note.get_absolute_url())
 
-
-def sign_progress_note(request, pk):
-    wu = get_object_or_404(models.ProgressNote, pk=pk)
-    active_provider_type = get_object_or_404(ProviderType,
-                                             pk=request.session['clintype_pk'])
-    try:
-        wu.sign(request.user, active_provider_type)
-        wu.save()
-    except ValueError:
-        # thrown exception can be ignored since we just redirect back to the
-        # workup detail view anyway
-        pass
-
-    return HttpResponseRedirect(reverse("progress-note-detail", args=(wu.id,)))
 
 def error_workup(request, pk):
 
@@ -255,38 +248,33 @@ def error_workup(request, pk):
     return render(request, 'core/workup_error.html', {'workup': wu})
 
 
+@permission_required('workup.can_export_pdf_Workup')
 def pdf_workup(request, pk):
 
     wu = get_object_or_404(models.Workup, pk=pk)
-    active_provider_type = get_object_or_404(ProviderType,
-                                             pk=request.session['clintype_pk'])
 
-    if active_provider_type.staff_view:
-        data = {'workup': wu}
+    data = {'workup': wu}
 
-        template = get_template('workup/workup_body.html')
-        html = template.render(data)
+    template = get_template('workup/workup_body.html')
+    html = template.render(data)
 
-        with TemporaryFile(mode="w+b") as file:
-            pisa.CreatePDF(html.encode('utf-8'), dest=file,
-                           encoding='utf-8')
+    with TemporaryFile(mode="w+b") as file:
+        pisa.CreatePDF(html.encode('utf-8'), dest=file,
+                       encoding='utf-8')
 
-            file.seek(0)
-            pdf = file.read()
+        file.seek(0)
+        pdf = file.read()
 
-        initials = ''.join(name[0].upper() for name in wu.patient.name(
-            reverse=False, middle_short=False).split())
-        formatdate = '.'.join(
-            [str(wu.clinic_day.clinic_date.month).zfill(2),
-             str(wu.clinic_day.clinic_date.day).zfill(2),
-             str(wu.clinic_day.clinic_date.year)])
-        filename = ''.join([initials, ' (', formatdate, ')'])
+    initials = ''.join(name[0].upper() for name in wu.patient.name(
+        reverse=False, middle_short=False).split())
+    formatdate = '.'.join(
+        [str(wu.clinic_day.clinic_date.month).zfill(2),
+         str(wu.clinic_day.clinic_date.day).zfill(2),
+         str(wu.clinic_day.clinic_date.year)])
+    filename = ''.join([initials, ' (', formatdate, ')'])
 
-        response = HttpResponse(pdf, 'application/pdf')
-        response["Content-Disposition"] = (
-            "attachment; filename=%s.pdf" % (filename,))
+    response = HttpResponse(pdf, 'application/pdf')
+    response["Content-Disposition"] = (
+        "attachment; filename=%s.pdf" % (filename,))
 
-        return response
-    else:
-        return HttpResponseRedirect(reverse('workup',
-                                            args=(wu.id,)))
+    return response

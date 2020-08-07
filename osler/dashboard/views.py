@@ -8,6 +8,8 @@ from django.conf import settings
 from osler.workup.models import ClinicDate
 from osler.core.models import Patient
 
+from osler.core.utils import get_active_role
+
 
 def dashboard_dispatch(request):
     """Redirect an incoming user to the appropriate dashboard.
@@ -15,20 +17,18 @@ def dashboard_dispatch(request):
     Falls back to the 'home' url.
     """
 
-    provider_type = request.session['clintype_pk']
-    dashboard_dispatch = settings.OSLER_PROVIDERTYPE_DASHBOARDS
+    active_role = get_active_role(request)
+    dashboard_dispatch = settings.OSLER_ROLE_DASHBOARDS
 
-    if provider_type in dashboard_dispatch:
-        return redirect(dashboard_dispatch[provider_type])
+    if active_role.name in dashboard_dispatch:
+        return redirect(dashboard_dispatch[active_role.name])
     else:
         return redirect(settings.OSLER_DEFAULT_DASHBOARD)
 
 
 def dashboard_attending(request):
-
-    provider = request.user.provider
-
-    clinic_list = ClinicDate.objects.filter(workup__attending=provider)
+    
+    clinic_list = ClinicDate.objects.filter(workup__attending=request.user)
 
     paginator = Paginator(clinic_list, settings.OSLER_CLINIC_DAYS_PER_PAGE,
                           allow_empty_first_page=True)

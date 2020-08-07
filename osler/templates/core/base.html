@@ -13,8 +13,6 @@
   <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
   <title>{% block title %}{% endblock %}</title>
 
-  <link rel="apple-touch-icon" href={% static "apple-touch-icon.png" %}>
-
   <!-- Bootstrap -->
 	<link rel="stylesheet" href={% static "css/bootstrap.min.css" %}>
 	<link rel="stylesheet" href={% static "css/bootstrap-theme.min.css" %}>
@@ -69,7 +67,7 @@
             <li><a href="{% url 'admin:index' %}">Admin</a></li>
             {% endif %}
             <li><a href="{% url 'account_logout' %}">Logout 
-              {{ request.user.provider.first_name }} ({{ request.session.clintype_pk | default:"[no role]" }})
+              {{ request.user }} ({{ request.user.active_role.name | default:"[no role]" }})
             </a></li>
         </ul>
         {% endif %}

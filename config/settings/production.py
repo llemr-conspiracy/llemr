@@ -4,13 +4,29 @@ from .base import env
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
-SECRET_KEY = env("DJANGO_SECRET_KEY")
+with open('/app/config/settings/secrets/secret_key.txt', 'r') as f:
+    SECRET_KEY = f.read().strip()
+#SECRET_KEY = env("DJANGO_SECRET_KEY")
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["oslerproject.org"])
 
 # DATABASES
 # ------------------------------------------------------------------------------
-DATABASES["default"] = env.db("DATABASE_URL")  # noqa F405
+#DATABASES["default"] = env.db("DATABASE_URL")  # noqa F405
+
+with open('/app/config/settings/secrets/postgres_password.txt', 'r') as f:
+    POSTGRES_PASSWORD = f.read().strip()
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'osler',
+        'USER': 'django',
+        'PASSWORD': POSTGRES_PASSWORD,
+        'HOST': 'kc-med-oslerdb.kc.umkc.edu',
+        'PORT': '',
+    }
+}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True  # noqa F405
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # noqa F405
 
@@ -78,7 +94,7 @@ TEMPLATES[-1]["OPTIONS"]["loaders"] = [  # type: ignore[index] # noqa F405
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
 DEFAULT_FROM_EMAIL = env(
     "DJANGO_DEFAULT_FROM_EMAIL",
-    default="Osler <noreply@oslerproject.org>"
+    default="Osler <noreply@osler.umkc.edu>"
 )
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#server-email
