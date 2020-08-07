@@ -123,7 +123,8 @@ class WorkupUpdate(NoteUpdate):
         wu = get_object_or_404(models.Workup, pk=kwargs['pk'])
 
         # if it's an attending, we allow updates.
-        if active_role.signs_charts or not wu.signed():
+        if (self.request.user.has_active_perm('workup.can_sign_Workup') 
+            or not wu.signed()):
             return super(WorkupUpdate, self).dispatch(*args, **kwargs)
         else:
             return HttpResponseRedirect(reverse('workup',

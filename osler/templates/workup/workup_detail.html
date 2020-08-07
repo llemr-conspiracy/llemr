@@ -20,10 +20,11 @@ Workup: {{ workup.patient.name }}
     <div class="row text-center">
         <h4>Actions</h4>
         <div class="btn-group">
-            {% if workup.signed and request.session.signs_charts or not workup.signed %}
+            {% can_sign = request.session.user.has_active_perm("workup.can_sign_Workup") %}
+            {% if workup.signed and can_sign or not workup.signed %}
             <a class="btn btn-primary" href="{% url 'workup-update' pk=workup.pk %}" role="button">Update</a>
             {% endif %}
-            {% if not workup.signed and request.session.signs_charts %}
+            {% if not workup.signed and can_sign %}
             <a class="btn btn-success" href="{% url 'workup-sign' pk=workup.pk %}" role="button">Attest</a>
             {% endif %}
             <a class="btn btn-info" href="{% url 'core:new-action-item' pt_id=workup.patient.pk %}" role="button">Add Action Item</a>

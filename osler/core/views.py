@@ -448,7 +448,7 @@ def patient_activate_home(request, pk):
 
 def done_action_item(request, ai_id):
     ai = get_object_or_404(core_models.ActionItem, pk=ai_id)
-    ai.mark_done(request.user.provider)
+    ai.mark_done(request.user)
     ai.save()
 
     return HttpResponseRedirect(reverse("new-actionitem-followup",

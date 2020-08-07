@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 
-from osler.core.models import Patient
+from osler.core.models import Patient, ActionItem
 from osler.core.views import NoteUpdate, NoteFormView
 from osler.core.utils import get_active_role
 
@@ -90,7 +90,7 @@ class ActionItemFollowupCreate(FollowupCreate):
         ai = get_object_or_404(ActionItem, pk=self.kwargs['ai_id'])
 
         ai_fu = form.save(commit=False)
-        ai_fu.author = self.request.user.provider
+        ai_fu.author = self.request.user
         ai_fu.author_type = get_active_role(self.request)
         ai_fu.action_item = ai
         ai_fu.patient = pt
