@@ -40,6 +40,31 @@ def new_note_dispatch(request, pt_id):
                   {'note_types': note_types})
 
 
+class AttestableNoteCreate(NoteFormView):
+
+    def form_valid(self, form):
+        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        active_group = get_object_or_404(
+            Group, pk=self.request.session['clintype_pk'])
+
+        note = form.save(commit=False)
+        note.patient = pt
+        note.author = self.request.user
+
+        can_sign = active_group.permissions.filter(
+            'can_sign_%s' % str(self.form_class.Meta.object).lower()
+        ).count() > 0
+
+        if can_sign:
+            note.sign(self.request.user, active_group)
+
+        note.save()
+        form.save_m2m()
+
+        return HttpResponseRedirect(reverse("core:patient-detail",
+                                            args=(pt.id,)))
+
+
 class WorkupCreate(NoteFormView):
     '''A view for creating a new workup. Checks to see if today is a
     clinic date first, and prompts its creation if none exist.'''
@@ -150,7 +175,7 @@ class ProgressNoteUpdate(NoteUpdate):
         return reverse("progress-note-detail", args=(pnote.id, ))
 
 
-class ProgressNoteCreate(NoteFormView):
+class ProgressNoteCreate(AttestableNoteCreate):
     template_name = 'core/form_submission.html'
     form_class = forms.ProgressNoteForm
     note_type = 'Clinical Psychology Note'

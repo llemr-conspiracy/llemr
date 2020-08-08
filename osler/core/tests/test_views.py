@@ -1,9 +1,3 @@
-from __future__ import print_function, division
-from __future__ import unicode_literals
-
-from builtins import zip
-from builtins import str
-from builtins import range
 import datetime
 import json
 import os
@@ -11,7 +5,7 @@ import os
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.timezone import now
-from django.core import mail, files
+from django.core import mail
 from django.core.management import call_command
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -21,8 +15,8 @@ from osler.followup.models import ContactResult
 from osler.referral.models import Referral, FollowupRequest, PatientContact
 from osler.referral.forms import PatientContactForm
 
-
-BASIC_FIXTURE = 'core.json'
+from osler.core.tests import factories
+from osler.users.tests import factories as user_factories
 
 
 def note_check(note, author, clintype, pt_pk):
@@ -39,60 +33,28 @@ def note_check(note, author, clintype, pt_pk):
     assert (now() - note.last_modified).total_seconds() <= 10
 
 
-def build_provider(roles=None, username=None, password='password', email=None):
+def build_provider(group_factories=None):
 
-    User = get_user_model()
+    if group_factories is None:
+        group_factories = [user_factories.VolunteerGroupFactory]
 
-    # TODO this is not preferred. Should swap None for '__all__'
-    # this will require hunting down all the places this is called, though.
-    if roles is None:
-        roles = ["Coordinator", "Attending", "Clinical", "Preclinical"]
+    return user_factories.UserFactory(
+        groups=[f() for f in group_factories]
+    )
 
-    provtypes = [models.ProviderType.objects.get(short_name=role)
-                 for role in roles]
+def log_in_provider(client, user):
+    """Creates a provider and logs them in. Role defines their provider_type,
+    default is all"""
 
-    if username is None:
-        username = 'user' + str(User.objects.all().count())
+    client.force_login(user)
 
-    if email is None:
-        email = 'tommyljones@gmail.com'
-    user = User.objects.create_user(
-        username,
-        email, password)
+    user.active_role = user.groups.first()
+    client.session['active_role_set'] = True
+
+    client.session.save()
     user.save()
 
-    g = models.Gender.objects.first()
-    prov = models.Provider.objects.create(
-        first_name="Tommy", middle_name="Lee", last_name="Jones",
-        phone="425-243-9115", gender=g, associated_user=user)
-
-    coordinator_provider = models.ProviderType.objects.get(pk="Coordinator")
-    coordinator_provider.staff_view = True
-    coordinator_provider.save()
-
-    prov.clinical_roles.add(*provtypes)
-    prov.save()
-    user.save()
-
-    assert len(roles) == prov.clinical_roles.count()
-    assert user.provider is not None
-
-    return user.provider
-
-
-def log_in_provider(client, provider):
-    ''' Creates a provider and logs them in. Role defines their provider_type,
-    default is all '''
-
-    user = provider.associated_user
-
-    client.login(username=user.username, password='password')
-
-    session = client.session
-    session['clintype_pk'] = user.provider.clinical_roles.first().pk
-    session.save()
-
-    return user.provider
+    return user
 
 
 def get_url_pt_list_identifiers(self, url):
@@ -112,90 +74,90 @@ def is_uuid4(uuid):
 
 
 class SendEmailTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
+    # fixtures = [BASIC_FIXTURE]
     """Test custom django management command sendemail
     """
     def setUp(self):
-        log_in_provider(
-            self.client, build_provider(roles=["Coordinator"],
-                                        email='user1@gmail.com'))
-        log_in_provider(
-            self.client, build_provider(roles=["Coordinator"],
-                                        email='user2@gmail.com'))
-        log_in_provider(
-            self.client, build_provider(roles=["Coordinator"],
-                                        email='user3@gmail.com'))
+        self.users = user_factories.UserFactory.create_batch(
+            4,
+            groups=[user_factories.CaseManagerGroupFactory()],
+            provider=factories.ProviderFactory())
 
-        pt = models.Patient.objects.first()
-        pt.case_managers.add(models.Provider.objects.first())
-        pt.case_managers.add(models.Provider.objects.all()[2])
-
-        ai_inst = models.ActionInstruction.objects.create(
-            instruction="Follow up on labs")
+        pt = factories.PatientFactory(
+            case_managers=[self.users[0], self.users[2]]
+        )
 
         tomorrow = now().date() + datetime.timedelta(days=1)
         yesterday = now().date() - datetime.timedelta(days=1)
 
-        ai_prototype = {
-            'instruction': ai_inst,
-            'comments': "",
-            'author_type': models.ProviderType.objects.first(),
-            'patient': pt
-        }
-
         # action item due today
-        models.ActionItem.objects.create(
+        factories.ActionItemFactory(
+            patient=pt,
             due_date=now().today(),
-            author=models.Provider.objects.first(),
-            **ai_prototype
+            author=self.users[0]
         )
 
         # action item due yesterday
-        models.ActionItem.objects.create(
+        factories.ActionItemFactory(
+            patient=pt,
             due_date=yesterday,
-            author=models.Provider.objects.first(),
-            **ai_prototype
+            author=self.users[0]
         )
 
         # action item due tomorrow
-        models.ActionItem.objects.create(
+        factories.ActionItemFactory(
+            patient=pt,
             due_date=tomorrow,
-            author=models.Provider.objects.all()[1],
-            **ai_prototype
+            author=self.users[1]
         )
 
         # complete action item from yesterday
-        models.ActionItem.objects.create(
+        factories.ActionItemFactory(
+            patient=pt,
             due_date=yesterday,
-            author=models.Provider.objects.all()[1],
+            author=self.users[1],
             completion_date=now(),
-            completion_author=models.Provider.objects.first(),
-            **ai_prototype
+            completion_author=self.users[1],
         )
 
     def test_sendemail(self):
-        '''
-        Verifies that email is correctly being sent for incomplete,
+        """Verifies that email is correctly being sent for incomplete,
         overdue action items
-        '''
+        """
+
+        print([(i, u.email) for i, u in enumerate(self.users)])
+
         call_command('action_item_spam')
 
         # test that 1 message has been sent for the AI due yesterday and
         # today but only 1 email bc same pt/case manager
-        self.assertEqual(len(mail.outbox), 1)
+        assert len(mail.outbox) == 1
 
-        #verify that subject is correct
-        self.assertEqual(mail.outbox[0].subject, 'SNHC: Action Item Due')
+        # verify that subject is correct
+        assert mail.outbox[0].subject == 'SNHC: Action Item Due'
 
-        #verify that the 1 message is to user1 and user3 (second case manager)
-        self.assertEqual(mail.outbox[0].to, ['user1@gmail.com', 'user3@gmail.com'])
+        # verify that the 1 message is to user[0] and user[2] (second
+        # case manager) and NOT user[1] and user[3]
+        print(mail.outbox[0].to)
+        assert set(mail.outbox[0].to) == set([self.users[0].email,
+                                              self.users[2].email])
 
 
 class ViewsExistTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
+    # fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        log_in_provider(self.client, build_provider())
+        self.user = user_factories.UserFactory(
+            groups=[user_factories.VolunteerGroupFactory()]
+        )
+        self.user.save()
+
+        self.client.force_login(self.user)
+        s = self.client.session
+        s['clintype_pk'] = self.user.groups.first().pk
+        s.save()
+
+        self.patient = factories.PatientFactory()
 
     def test_initial_config(self):
         session = self.client.session
@@ -204,13 +166,13 @@ class ViewsExistTest(TestCase):
 
         # verify: no clinic date -> create clinic date
         response = self.client.get(reverse('core:all-patients'))
-        self.assertRedirects(response,
-                             ''.join([reverse('core:choose-clintype'),
-                                      "?next=",
-                                      reverse('core:all-patients')]))
 
         # verify: no provider -> provider creation
         # (now done in ProviderCreateTest)
+        assert response.status_code == 302
+        assert response.url == ''.join([reverse('core:choose-role'),
+                                        "?next=",
+                                        reverse('core:all-patients')])
 
         # verify: not logged in -> log in
         self.client.logout()
@@ -248,34 +210,24 @@ class ViewsExistTest(TestCase):
                 raise e
 
     def test_provider_urls(self):
-        response = self.client.get(reverse('core:new-provider'))
+        response = self.client.get(reverse('core:user-init'))
         assert response.status_code == 200
 
     def test_document_urls(self):
-        '''
-        Test the views showing documents, as well as the integrity of path
-        saving in document creation (probably superfluous).
-        '''
+        """Test the views showing documents
 
-        self.test_img = os.path.join(settings.FIXTURE_DIRS[0], 'media',
-                                     'test.jpg')
-        assert os.path.isfile(self.test_img)
+        Check the integrity of path saving in document creation (probably
+        superfluous) and the UUID file naming.
+        """
 
-        url = reverse('core:new-document', args=(1,))
+        url = reverse('core:new-document', args=(self.patient.pk,))
 
         response = self.client.get(url)
         assert response.status_code == 200
-        dtype = models.DocumentType.objects.create(name="Silly Picture")
 
-        doc = models.Document.objects.create(
-            title="who done it?",
-            comments="Pictured: silliness",
-            document_type=dtype,
-            image=files.File(open(self.test_img, 'rb')),
-            patient=models.Patient.objects.first(),
-            author=models.Provider.objects.first(),
-            author_type=models.ProviderType.objects.first()
-        )
+        doc = factories.DocumentFactory(
+            author=self.user,
+            author_type=self.user.groups.first())
 
         p = models.Document.objects.first().image.path
         assert open(p)
@@ -287,52 +239,24 @@ class ViewsExistTest(TestCase):
         response = self.client.get(url)
         assert response.status_code == 200
 
-        # test the creation of many documents, just in case.
-        for i in range(101):
-            doc = models.Document.objects.create(
-                title="who done it? " + str(i),
-                comments="Pictured: silliness",
-                document_type=dtype,
-                image=files.File(open(self.test_img, 'rb')),
-                patient=models.Patient.objects.first(),
-                author=models.Provider.objects.first(),
-                author_type=models.ProviderType.objects.first())
-
-            p = models.Document.objects.get(id=doc.pk).image.path
-            assert open(p)
-            assert doc.image.path == p
-            assert os.path.isfile(p)
-            assert is_uuid4(p.split("/")[-1].split(".")[0])
-
-            url = reverse('core:document-detail', args=(doc.pk,))
-            response = self.client.get(url)
-            assert response.status_code == 200
-
-            url = reverse('core:document-detail', args=(doc.pk,))
-            response = self.client.get(url)
-            assert response.status_code == 200
-
-            os.remove(p)
-            assert not os.path.isfile(p)
-
     def test_inject_choose_clintype_malicious_next(self):
 
         # First, check that we successfully redirect to all patients.
         url = ''.join([
-            reverse('core:choose-clintype'),
+            reverse('core:choose-role'),
             "?next=",
             reverse('core:all-patients')
         ])
 
-        form_data = {'radio-roles': models.ProviderType.objects.first().pk}
+        form_data = {'radio-roles': self.user.groups.first().pk}
         response = self.client.post(url, form_data)
 
         self.assertRedirects(response, reverse('core:all-patients'))
 
         # Then, verfy that we will NOT redirect to google.com
-        url = reverse('core:choose-clintype') + "?next=http://www.google.com/"
+        url = reverse('core:choose-role') + "?next=http://www.google.com/"
 
-        form_data = {'radio-roles': models.ProviderType.objects.first().pk}
+        form_data = {'radio-roles': self.user.groups.first().pk}
         response = self.client.post(url, form_data)
 
         assert response.status_code == 302
@@ -340,7 +264,6 @@ class ViewsExistTest(TestCase):
 
 
 class ProviderCreateTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
         log_in_provider(self.client, build_provider())
@@ -356,7 +279,7 @@ class ProviderCreateTest(TestCase):
         response = self.client.get(final_url)
         final_response_url = response.url
         self.assertRedirects(
-            response, reverse('core:new-provider') + '?next=' + final_url)
+            response, reverse('core:user-init') + '?next=' + final_url)
 
         n_provider = len(models.Provider.objects.all())
 
@@ -405,31 +328,8 @@ class ProviderCreateTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-# class ProviderTypeTest(TestCase):
-#     fixtures = [BASIC_FIXTURE]
-
-    # def test_home_pt_list_types(self):
-    #     url = reverse("home")
-
-    #     log_in_provider(self.client, build_provider(["Coordinator"]))
-    #     self.assertEqual(
-    #         get_url_pt_list_identifiers(self, url),
-    #         ['activept', 'priorityai', 'activeai', 'pendingai', 'unsignedwu', 'usercases'])
-
-    #     log_in_provider(self.client, build_provider(["Attending"]))
-    #     self.assertEqual(
-    #         get_url_pt_list_identifiers(self, url),
-    #         ['unsignedwu', 'activept'])
-
-    #     log_in_provider(self.client, build_provider(["Clinical"]))
-    #     self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept'])
-
-    #     log_in_provider(self.client, build_provider(["Preclinical"]))
-    #     self.assertEqual(get_url_pt_list_identifiers(self, url), ['activept'])
-
-
 class IntakeTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
+    # fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
         log_in_provider(self.client, build_provider())
@@ -439,8 +339,8 @@ class IntakeTest(TestCase):
             'last_name': "Brodeltein",
             'middle_name': "Bayer",
             'phone': '+49 178 236 5288',
-            'languages': [models.Language.objects.first()],
-            'gender': models.Gender.objects.first().pk,
+            'languages': [factories.LanguageFactory()],
+            'gender': factories.GenderFactory(),
             'address': 'Schulstrasse 9',
             'city': 'Munich',
             'state': 'BA',
@@ -449,9 +349,9 @@ class IntakeTest(TestCase):
             'pcp_preferred_zip': '63018',
             'date_of_birth': datetime.date(1990, 1, 1),
             'patient_comfortable_with_english': False,
-            'ethnicities': [models.Ethnicity.objects.first()],
+            'ethnicities': [factories.EthnicityFactory()],
             'preferred_contact_method':
-                models.ContactMethod.objects.first().pk
+                factories.ContactMethodFactory()
         }
 
     def preintake_patient_with_collision(self):
@@ -503,8 +403,10 @@ class IntakeTest(TestCase):
 
         response = self.client.post(url, submitted_pt)
 
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(models.Patient.objects.count(), n_pt + 1)
+        print(response)
+
+        assert response.status_code == 200
+        assert models.Patient.objects.count() == n_pt + 1
 
         new_pt = models.Patient.objects.last()
 
@@ -522,10 +424,10 @@ class IntakeTest(TestCase):
 
 
 class ActionItemTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
+    # fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        self.coordinator = build_provider(["Coordinator"])
+        self.coordinator = build_provider([user_factories.CaseManagerGroupFactory])
         self.provider = log_in_provider(self.client, self.coordinator)
 
     def test_action_item_completeable_functions(self):
@@ -636,7 +538,10 @@ class ActionItemTest(TestCase):
 
 
 class ProviderUpdateTest(TestCase):
-    fixtures = [BASIC_FIXTURE]
+    # fixtures = [BASIC_FIXTURE]
+
+    def setUp(self):
+        self.provider = build_provider([user_factories.VolunteerGroupFactory])
 
     def test_require_providers_update(self):
         """Test that the require_providers_update() method sets all
@@ -646,10 +551,7 @@ class ProviderUpdateTest(TestCase):
         # this line is repeated for every test instead of in a setUp
         # def so that we can store the provider variable
 
-        provider = build_provider(
-            username='jrporter', password='password',
-            roles=['Preclinical'])
-        log_in_provider(self.client, provider)
+        log_in_provider(self.client, self.provider)
         for provider in models.Provider.objects.all():
             self.assertEqual(provider.needs_updating, False)
 
@@ -663,19 +565,16 @@ class ProviderUpdateTest(TestCase):
         """
         final_url = reverse('home')
 
-        provider = build_provider(username='jrporter', password='password',
-                                  roles=['Preclinical'])
-        log_in_provider(self.client, provider)
-        provider.languages.add(models.Language.objects.first())
-        provider.save()
+        log_in_provider(self.client, self.provider)
+        self.provider.languages.add(models.Language.objects.first())
+        self.provider.save()
 
         initial_num_providers = models.Provider.objects.count()
-        provider_pk = provider.pk
 
         # Verify needs_update -> will redirect
         models.require_providers_update()
         assert \
-            models.Provider.objects.get(pk=provider_pk).needs_updating is True
+            models.Provider.objects.get(pk=self.provider.pk).needs_updating is True
 
         response = self.client.get(reverse('home'), follow=True)
         self.assertRedirects(
@@ -726,7 +625,7 @@ class TestReferralPatientDetailIntegration(TestCase):
     """Tests integration of Action Items and Referral Followups in
     core:patient-detail."""
 
-    fixtures = [BASIC_FIXTURE]
+    # fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
         log_in_provider(self.client, build_provider())

@@ -51,7 +51,7 @@ class NoteUpdate(UpdateView):
     note_type = None
 
     def get_context_data(self, **kwargs):
-        '''Inject self.note_type as the note type.'''
+        """Inject self.note_type as the note type."""
 
         if self.note_type is None:
             raise ImproperlyConfigured("NoteUpdate view must have"
@@ -270,10 +270,12 @@ def choose_role(request):
         redirect_to = reverse('home')
 
     if request.POST:
+
         active_role_pk = request.POST[RADIO_CHOICE_KEY]
         request.user.active_role = Group.objects.get(pk=active_role_pk)
         request.user.save()
         request.session['active_role_set'] = True
+
         return HttpResponseRedirect(redirect_to)
 
     if request.GET:

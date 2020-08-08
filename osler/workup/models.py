@@ -116,6 +116,11 @@ class AttestableNote(Note):
         """Builds an attribution string of the form Doe, John on DATE"""
         return " ".join([str(self.author), "on", str(self.written_date())])
 
+    def group_can_sign(self, group):
+        # TODO / STUB: takes a group and checks if it has sign permission to
+        # this object
+        pass
+
 
 class ProgressNote(AttestableNote):
     title = models.CharField(max_length=200)

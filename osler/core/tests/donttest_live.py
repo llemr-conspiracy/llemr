@@ -36,7 +36,7 @@ class LiveTesting(SeleniumLiveTestCase):
         # now we should have to choose a clinical role
         self.assertEqual(self.selenium.current_url,
                           '%s%s%s' % (self.live_server_url,
-                                      reverse('core:choose-clintype'),
+                                      reverse('core:core:choose-role'),
                                       '?next=' +
                                       reverse('dashboard-dispatch')))
 
@@ -143,9 +143,9 @@ class LiveTesting(SeleniumLiveTestCase):
         self.submit_login('timmy', 'password')
 
         for url in urls.urlpatterns:
-            # except 'choose-clintype' and action item modifiers from test
+            # except 'core:choose-role' and action item modifiers from test
             # since they're redirects.
-            if url.name in ['choose-clintype', 'done-action-item',
+            if url.name in ['core:choose-role', 'done-action-item',
                             'reset-action-item', 'document-detail',
                             'document-update', 'update-action-item']:
                 # TODO: add test data for documents so document-detail and
