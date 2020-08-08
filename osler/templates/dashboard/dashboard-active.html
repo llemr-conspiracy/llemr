@@ -1,0 +1,46 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Active Patients
+{% endblock %}
+
+{% block header %}
+<h1>Active Patients</h1>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+	<table class="table table-striped">
+    <tr>
+        <th>St.</th>
+	    <th>Patient</th>
+	    <th>Age / Gender</th>
+	    <th>First Seen</th>
+	    <th>Latest Activity</th>
+	</tr>
+	{% for patient in patients %}
+	<tr>
+		<td><a href="{% url 'core:patient-activate-home' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle"></span></a></td>
+		<td><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></td>
+		<td>{{ patient.age }} / {{ patient.gender }}</a></td>
+		<td>{{ patient.history.first.history_date | date:"D d M Y" }}</td>
+        <td>
+            {% with latest_workup=patient.workup_set.all.0 %}
+            {% if latest_workup %}
+                <a href="{% url 'workup' pk=latest_workup.pk %}">Seen {{ latest_workup.clinic_day.clinic_date }}</a>: {{latest_workup.chief_complaint}}
+            {% else %}
+                <a href="{% url 'core:patient-update' pk=patient.id %}">Intake</a>: {{patient.history.last.history_date}}
+            {% endif %}
+            {% endwith %}
+        </td>
+	<tr>
+	{% endfor %}
+	</table>	
+
+</div>
+
+
+
+{% endblock %}

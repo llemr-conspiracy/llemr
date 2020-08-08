@@ -11,6 +11,9 @@ unwrapped_urlconf = [
     path(r'attending/',
          views.dashboard_attending,
          name='dashboard-attending'),
+    path(r'active/',
+         views.dashboard_active,
+         name='dashboard-active'),
 ]
 
 urlpatterns = [wrap_url(u, **{}) for u in unwrapped_urlconf]
