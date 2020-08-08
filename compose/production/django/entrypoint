@@ -16,15 +16,6 @@ export DATABASE_URL="postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES
 #  This is needed because if the postgres VM comes up after the django VM,
 #  django freaks out.
 
-if [ -z ${POSTGRES_PASSWORD+x} ];
-    then echo '$POSTGRES_PASSWORD is unset; check .envs/'; exit(-1);
-fi
-
-if [ -z ${DJANGO_SECRET_KEY+x} ];
-    then echo '$DJANGO_SECRET_KEY is unset; check .envs/'; exit(-1);
-fi
-
-
 postgres_ready() {
 python << END
 import sys
