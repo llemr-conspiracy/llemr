@@ -9,6 +9,8 @@ networks:
   default:
     driver: bridge
     driver_opts:
+      # this MTU size should be the same as the host network
+      # check with `ifconfig | grep -i mtu` on host & vm
       com.docker.network.driver.mtu: 1500
 
 services:
@@ -30,36 +32,5 @@ services:
     extra_hosts:
       - "kc-med-oslerdb.kc.umkc.edu:192.168.0.2"
 
-  # postgres:
-  #   image: osler_production_postgres
-  #   expose:
-  #   - "5432"
-  #   ports:
-  #   - "5432:5432"
-
-  # postgres:
-  #   build:
-  #     context: .
-  #     dockerfile: ./compose/production/postgres/Dockerfile
-  #   image: osler_production_postgres
-  #   volumes:
-  #     - production_postgres_data:/var/lib/postgresql/data
-  #     - production_postgres_data_backups:/backups
-  #   env_file:
-  #     - ./.envs/.production/.postgres
-#   
-#     traefik:
-#       build:
-#         context: .
-#         dockerfile: ./compose/production/traefik/Dockerfile
-#       image: osler_production_traefik
-#       depends_on:
-#         - django
-#       volumes:
-#         - production_traefik:/etc/traefik/acme
-#       ports:
-#         - "0.0.0.0:8084:80"
-#         - "0.0.0.0:443:443"
-# 
   redis:
     image: redis:5.0
