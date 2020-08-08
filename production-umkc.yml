@@ -5,6 +5,12 @@ volumes:
   production_postgres_data_backups: {}
   production_traefik: {}
 
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1500
+
 services:
   django:
     build:
@@ -57,5 +63,3 @@ services:
 # 
   redis:
     image: redis:5.0
-
-  
