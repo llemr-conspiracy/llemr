@@ -5,9 +5,10 @@ from django.test import TestCase
 from django.utils.timezone import now
 
 from osler.core.models import Patient
+from osler.core.forms import AppointmentForm
 
-from .forms import AppointmentForm
-
+from osler.core.tests import factories
+from osler.users.tests.factories import UserFactory
 
 User = get_user_model()
 
@@ -18,17 +19,15 @@ def apt_dict():
         'clintime': time(9, 0),
         'appointment_type': 'PSYCH_NIGHT',
         'comment': 'stuff',
-        'author': User.objects.first(),
-        'author_type': User.objects.first().groups.first(),
-        'patient': Patient.objects.first().id
+        'author': UserFactory(),
+        'patient': factories.PatientFactory()
     }
+    apt['author_type'] = apt['author'].groups.first()
 
-    return(apt)
+    return apt
 
 
 class TestAppointmentForm(TestCase):
-
-    fixtures = ['core.json']
 
     def setUp(self):
         apt = apt_dict()

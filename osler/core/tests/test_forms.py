@@ -67,7 +67,7 @@ class TestPatientCreateForms(TestCase):
         not_casemanager = user_factories.VolunteerGroupFactory()
 
         assert Permission.objects.filter(
-            codename='can_case_manage').count() == 1
+            codename='can_case_manage_Patient').count() == 1
 
         pvds[0].groups.add(not_casemanager)
         pvds[1].groups.add(casemanager)

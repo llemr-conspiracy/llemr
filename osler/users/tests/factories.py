@@ -29,7 +29,7 @@ class VolunteerGroupFactory(GroupFactory):
     def groups(self, create, extracted, **kwargs):
         self.permissions.add(
             *Permission.objects.exclude(
-                Q(codename__startswith='sign_') | Q(codename='can_case_manage')
+                Q(codename__startswith='sign_') | Q(codename='can_case_manage_Patient')
             )
         )
 
@@ -53,7 +53,7 @@ class AttendingGroupFactory(GroupFactory):
     def groups(self, create, extracted, **kwargs):
         self.permissions.add(
             *Permission.objects.exclude(
-                Q(codename='can_case_manage')
+                Q(codename='can_case_manage_Patient')
             )
         )
 
