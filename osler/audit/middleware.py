@@ -21,7 +21,7 @@ class AuditMiddleware:
         else:
             user_ip = request.META.get('REMOTE_ADDR')
 
-        role = None if isinstance(request.user, AnonymousUser) else request.user.active_role
+        role = request.session.active_role_pk if hasattr(request.session, 'active_role_pk') else None
         
         if user_ip not in settings.OSLER_AUDIT_BLACK_LIST:
             PageviewRecord = apps.get_app_config('audit').get_model(

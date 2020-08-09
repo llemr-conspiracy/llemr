@@ -44,19 +44,16 @@ class AttestableNoteCreate(NoteFormView):
 
     def form_valid(self, form):
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
-        active_group = get_object_or_404(
-            Group, pk=self.request.session['clintype_pk'])
+        active_role = get_active_role(self.request)
 
         note = form.save(commit=False)
         note.patient = pt
         note.author = self.request.user
 
-        can_sign = active_group.permissions.filter(
-            'can_sign_%s' % str(self.form_class.Meta.object).lower()
-        ).count() > 0
+        can_sign = self.form_class.group_can_sign(active_role)
 
         if can_sign:
-            note.sign(self.request.user, active_group)
+            note.sign(self.request.user, active_role)
 
         note.save()
         form.save_m2m()
@@ -76,9 +73,8 @@ class WorkupCreate(NoteFormView):
         """Check that we have an instantiated ClinicDate today,
         then dispatch to get() of the superclass view."""
 
-        self.request.session["can_sign_workup"] = (
-            self.request.user.has_active_perm("workup.can_sign_Workup")
-        )
+        active_role = get_active_role(self.request)
+        self.request.session["can_sign"] = form_class.group_can_sign(active_role)
 
         clindates = get_clindates()
         pt = get_object_or_404(Patient, pk=kwargs['pt_id'])
@@ -127,7 +123,7 @@ class WorkupCreate(NoteFormView):
         wu.author = self.request.user
         wu.author_type = active_role
 
-        if self.request.user.has_active_perm('workup.can_sign_Workup'):
+        if form_class.group_can_sign(active_role):
             wu.sign(self.request.user)
 
         wu.save()
@@ -151,10 +147,9 @@ class WorkupUpdate(NoteUpdate):
         active_role = get_active_role(self.request)
         wu = get_object_or_404(models.Workup, pk=kwargs['pk'])
 
-        # if it's an attending, we allow updates.
-        if (self.request.user.has_active_perm('workup.can_sign_Workup') 
-            or not wu.signed()):
-            self.request.session["can_sign_workup"] = True
+        # if it's an attending, we allow updates.  
+        if form_class.group_can_sign(active_role) or not wu.signed():
+            self.request.session["can_sign"] = True
             return super(WorkupUpdate, self).dispatch(*args, **kwargs)
         else:
             return HttpResponseRedirect(reverse('workup',
@@ -189,7 +184,7 @@ class ProgressNoteCreate(AttestableNoteCreate):
         active_role = get_active_role(self.request)
         pnote.author_type = active_role
 
-        if self.request.user.has_active_perm('workup.can_sign_ProgressNote'):
+        if form_class.group_can_sign(active_role):
             pnote.sign(self.request.user)
 
         pnote.save()

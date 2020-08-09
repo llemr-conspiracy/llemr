@@ -13,6 +13,8 @@ from simple_history.models import HistoricalRecords
 from osler.core.models import Note, ReferralLocation, ReferralType
 from osler.workup import validators as workup_validators
 
+from osler.core.utils import group_has_perm
+
 class DiagnosisType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
     diagnosis a pateint can recieve.'''
@@ -99,10 +101,10 @@ class AttestableNote(Note):
         related_name="signed_%(app_label)s_%(class)s")
     signed_date = models.DateTimeField(blank=True, null=True)
 
-    def sign(self, user):
+    def sign(self, user, group):
         """Signs this workup."""
 
-        if user.has_active_perm('workup.can_sign_%s' % type(self).__name__):
+        if self.group_can_sign(group):
             self.signed_date = now()
             self.signer = user
         else:
@@ -113,13 +115,13 @@ class AttestableNote(Note):
         return self.signer is not None
 
     def attribution(self):
-        """Builds an attribution string of the form Doe, John on DATE"""
+        """Builds an att0ribution string of the form Doe, John on DATE"""
         return " ".join([str(self.author), "on", str(self.written_date())])
 
-    def group_can_sign(self, group):
-        # TODO / STUB: takes a group and checks if it has sign permission to
-        # this object
-        pass
+    @classmethod
+    def group_can_sign(cls, group):
+        """takes a group and checks if it has sign permission to this object."""
+        return group_has_perm('workup.can_sign_%s' % cls.__name__)
 
 
 class ProgressNote(AttestableNote):
