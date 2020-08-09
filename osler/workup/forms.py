@@ -155,7 +155,9 @@ class WorkupForm(ModelForm):
     attending = ModelChoiceField(
         required=False,
         queryset=get_user_model().objects.filter(
-            groups__permissions__codename=can_sign_perm_codename)
+            groups__in=Group.objects.filter(
+            permissions__codename=can_sign_perm_codename)
+        ).distinct()
     )
 
     other_volunteer = ModelMultipleChoiceField(
