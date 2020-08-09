@@ -31,9 +31,9 @@ def get_clindates():
 def new_note_dispatch(request, pt_id):
 
     note_types = {
-        'Standard Note': reverse("new-workup", args=(pt_id,)),
-        'Clinical Psychology Note': reverse("new-progress-note",
-                                            args=(pt_id,)),
+        'Standard Medical Note': reverse("new-workup", args=(pt_id,)),
+        'Other Basic Note': reverse("new-progress-note",
+                                    args=(pt_id,)),
     }
 
     return render(request, 'workup/new-note-dispatch.html',

@@ -218,7 +218,7 @@ class Workup(AttestableNote):
     pe = models.TextField(verbose_name="Physical Examination")
 
     labs_ordered_quest = models.TextField(
-        blank=True, null=True, verbose_name="Labs Ordered from Quest")
+        blank=True, null=True, verbose_name="Labs Ordered Externally")
     labs_ordered_internal = models.TextField(
         blank=True, null=True, verbose_name="Labs Ordered Internally")
 
