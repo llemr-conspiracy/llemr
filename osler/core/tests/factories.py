@@ -9,7 +9,7 @@ from factory import Faker
 from factory.django import DjangoModelFactory, mute_signals
 
 from osler.core import models
-
+from osler.users.tests import factories as user_factories
 
 class ActionInstructionFactory(DjangoModelFactory):
 
@@ -17,14 +17,6 @@ class ActionInstructionFactory(DjangoModelFactory):
         model = models.ActionInstruction
 
     instruction = factory.Sequence(lambda n: 'Action instruction #%s' % n)
-
-class ActionItemFactory(DjangoModelFactory):
-
-    class Meta:
-        model = models.ActionItem
-
-    instruction = factory.SubFactory(ActionInstructionFactory)
-    author_type = factory.LazyAttribute(lambda ai: ai.author.groups.first())
 
 
 class GenderFactory(DjangoModelFactory):
@@ -41,10 +33,7 @@ class ProviderFactory(DjangoModelFactory):
     class Meta:
         model = models.Provider
 
-    # We pass in provider=None to prevent UserFactory from creating another
-    # provider (this disables the RelatedFactory)
-    user = factory.SubFactory('osler.users.tests.factories.UserFactory',
-                              provider=None)
+    user = factory.SubFactory('osler.users.tests.factories.UserFactory')
     gender = factory.SubFactory(GenderFactory)
 
 
@@ -150,5 +139,16 @@ class DocumentFactory(DjangoModelFactory):
     image = factory.django.FileField(
         from_path=os.path.join(settings.FIXTURE_DIRS[0], 'media', 'test.jpg'))
     patient = factory.SubFactory(PatientFactory)
-    # author = factory.Iterator(get_user_model().objects.all())
-    # author_type = factory.SubFactory(user_factories.GroupFactory)
+
+
+class ActionItemFactory(DjangoModelFactory):
+
+    class Meta:
+        model = models.ActionItem
+
+    patient = factory.SubFactory(PatientFactory)
+    instruction = factory.SubFactory(ActionInstructionFactory)
+
+    # really, this should automatically create a user and an author_type
+    # if those things aren't specified (maybe with a post_generation hook)
+    # but I can't figure out how to make that work. -JRP

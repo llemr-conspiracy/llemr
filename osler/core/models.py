@@ -479,10 +479,10 @@ class AbstractActionItem(Note, CompletableMixin):
 
     def attribution(self):
         if self.done():
-            return " ".join(["Marked done by", str(self.completion_author),
+            return " ".join(["Marked done by", self.completion_author.name,
                              "on", str(self.completion_date.date())])
         else:
-            return " ".join(["Added by", str(self.author), "on",
+            return " ".join(["Added by", self.author.name, "on",
                              str(self.written_datetime.date())])
 
 

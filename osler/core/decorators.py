@@ -13,7 +13,7 @@ def user_is_init(user):
 
 
 def active_role_set(session):
-    return 'active_role_set' in session and session['active_role_set']
+    return session.get('active_role_set', False)
 
 
 def provider_exists(user):

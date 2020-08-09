@@ -18,8 +18,6 @@ class Command(BaseCommand):
         ).filter(completion_date__isnull=True)
 
         for ai in ai_list:
-
-            print(ai)
             for coordinator in ai.patient.case_managers.all():
                 email = coordinator.email
                 if email not in provider_emails:
