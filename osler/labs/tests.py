@@ -13,6 +13,7 @@ from django.utils.timezone import now
 
 from django.shortcuts import get_object_or_404
 
+
 class TestUrls(TestCase):
     def test_all_labs_list_url(self):
         path = reverse('labs:all-labs', kwargs={'pt_id':1})
@@ -328,13 +329,14 @@ class TestLabView(TestCase):
     def setUp(self):
         TestMeasurementsCreationForm().setUp()
 
-        preclin_username = 'preclin-user'
+        preclin_username = 'blank-user'
         User = get_user_model()
         user = User.objects.create(username=preclin_username)
         user.set_password('password')
         user.save()
         self.user = get_object_or_404(User, username=preclin_username)
 
+        """
         coord_username = 'coordinator-user'
         user2 = User.objects.create(username=coord_username)
         change_perm = Permission.objects.get(codename='change_lab')
@@ -343,6 +345,7 @@ class TestLabView(TestCase):
         user2.save()
         # Need to refetch user since permission change is cached
         self.user2 = get_object_or_404(User, username=coord_username)
+        """
         self.pt = Patient.objects.first()
 
 
@@ -352,8 +355,13 @@ class TestLabView(TestCase):
         self.assertEqual(self.user.has_perm('labs.change_lab'), False)
         self.assertEqual(self.user.has_perm('labs.delete_lab'), False)
 
+        change_perm = Permission.objects.get(codename='change_lab')
+        user.user_permissions.add(change_perm)
         self.assertEqual(self.user2.has_perm('labs.change_lab'), True)
         self.assertEqual(self.user2.has_perm('change_lab'), False)
+        user.user_permissions.remove(change_perm)
+        self.assertEqual(self.user2.has_perm('labs.change_lab'), False)
+
 
 
     def test_lab_list_view(self):

@@ -23,7 +23,7 @@ Recent Labs
 <div class="container text-center">
 	<div class="btn-group">
 	    <a class="btn btn-info" href="{% url 'core:patient-detail' patient.id %}" role="button">Back to Patient Detail</a>
-	    {% if change_perm %}
+	    {% if add_perm %}
 	    	<a class="btn btn-primary" href="{% url 'labs:new-lab' patient.id %}" role="button">New Lab</a>
 	    {% endif %}
 	    <a class="btn btn-warning" href="{% url 'labs:all-labs' patient.id %}" role="button">All Labs</a>

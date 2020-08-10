@@ -17,6 +17,8 @@ Lab detail
 	    <a class="btn btn-info" href="{% url 'labs:all-labs' pt.id %}" role="button">Back to All Labs</a>
 		{% if change_perm %}
 		    <a class="btn btn-warning" href="{% url 'labs:lab-edit' lab.id %}" role="button">Edit Lab</a>
+		{% endif %}
+		{% if delete_perm %}
 		    <a class="btn btn-danger" href="{% url 'labs:lab-delete' lab.id %}" role="button">Delete Lab</a>
 		{% endif %}
 	</div>

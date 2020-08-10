@@ -14,7 +14,6 @@ from crispy_forms.bootstrap import (
 	InlineCheckboxes, AppendedText, PrependedText)
 from django.http import HttpResponseRedirect
 
-PERM_NAME = 'change_lab'
 
 class LabListView(ListView):
 	model = Lab
@@ -26,7 +25,7 @@ class LabListView(ListView):
 		self.pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
 		context['pt'] = self.pt
 		context['labs'] = Lab.objects.filter(patient=self.kwargs['pt_id'])
-		context['change_perm'] = self.request.user.has_perm(PERM_NAME)
+		context['add_perm'] = self.request.user.has_perm('labs.add_lab')
 		return context
 
 
@@ -41,7 +40,8 @@ class LabDetailView(DetailView):
 		context['pt'] = self.lab.patient
 		context['cont_list'] = ContinuousMeasurement.objects.filter(lab=self.lab)
 		context['disc_list'] = DiscreteMeasurement.objects.filter(lab=self.lab)
-		context['change_perm'] = self.request.user.has_perm(PERM_NAME)
+		context['change_perm'] = self.request.user.has_perm('labs.change_lab')
+		context['delete_perm'] = self.request.user.has_perm('labs.delete_lab')
 		return context
 
 
@@ -183,6 +183,6 @@ def view_all_as_table(request,pt_id,filter=''):
 		  'table':table,
 		  'header':header,
 		  'months':lab_months+['All'],
-		  'change_perm':request.user.has_perm(PERM_NAME)}
+		  'add_perm':request.user.has_perm('labs.add_lab')}
 
 	return render(request, 'labs/lab_all_table.html', qs)
