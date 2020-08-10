@@ -115,13 +115,13 @@ class AttestableNote(Note):
         return self.signer is not None
 
     def attribution(self):
-        """Builds an att0ribution string of the form Doe, John on DATE"""
+        """Builds an attribution string of the form Doe, John on DATE"""
         return " ".join([str(self.author), "on", str(self.written_date())])
 
     @classmethod
     def group_can_sign(cls, group):
         """takes a group and checks if it has sign permission to this object."""
-        return group_has_perm('workup.can_sign_%s' % cls.__name__)
+        return group_has_perm(group, 'workup.sign_%s' % cls.__name__)
 
 
 class ProgressNote(AttestableNote):
@@ -132,7 +132,7 @@ class ProgressNote(AttestableNote):
 
     class Meta:
         permissions = [
-            ('can_sign_ProgressNote', "Can sign note")
+            ('sign_ProgressNote', "Can sign note")
             ]
 
     def __str__(self):
@@ -158,8 +158,8 @@ class Workup(AttestableNote):
 
     class Meta:
         permissions = [
-            ('can_export_pdf_Workup', 'Can export note PDF'),
-            ('can_sign_Workup', "Can sign note")
+            ('export_pdf_Workup', 'Can export note PDF'),
+            ('sign_Workup', "Can sign note")
             ]
 
     attending = models.ForeignKey(

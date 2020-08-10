@@ -9,7 +9,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.conf import settings
 
-from osler.core.tests.test_views import log_in_provider, build_provider
+from osler.core.tests.test_views import log_in_user, build_provider
 from osler.core.models import (Gender, Patient, ContactMethod)
 
 from osler.workup.models import ClinicDate, ClinicType, Workup
@@ -30,7 +30,7 @@ class TestAttendingDashboard(TestCase):
                                         email='user1@gmail.com')
         self.clinical_student = build_provider(
             roles=["Clinical"], email='user2@gmail.com')
-        log_in_provider(self.client, self.attending)
+        log_in_user(self.client, self.attending)
 
         self.wu_info = dict(
             chief_complaint="SOB", diagnosis="MI", HPI="A", PMH_PSH="B",

@@ -7,14 +7,18 @@ from django.urls import reverse
 from django.core.management import call_command
 from django.utils.timezone import now
 
-from osler.core.tests.test_views import build_provider, log_in_provider
-from osler.core.models import Patient, ProviderType, Provider
+from osler.core.tests.test_views import build_user, log_in_user
+from osler.core.models import Patient
+
+from django.contrib.auth import get_user_model
 
 from osler.workup import validators
 from osler.workup import models
 
 
 def wu_dict(units=False):
+    user = get_user_model().objects.first()
+
     wu = {'clinic_day': models.ClinicDate.objects.first(),
           'chief_complaint': "SOB",
           'diagnosis': "MI",
@@ -26,8 +30,8 @@ def wu_dict(units=False):
           'got_voucher': False,
           'got_imaging_voucher': False,
           'will_return': True,
-          'author': Provider.objects.first(),
-          'author_type': ProviderType.objects.first(),
+          'author': user,
+          'author_type': user.groups.first(),
           'patient': Patient.objects.first()
           }
 
@@ -44,9 +48,9 @@ class TestEmailForUnsignedNotes(TestCase):
     fixtures = ['workup', 'core']
 
     def setUp(self):
-        self.provider = log_in_provider(
+        self.provider = log_in_user(
             self.client,
-            build_provider())
+            build_user())
 
         models.ClinicType.objects.create(name="Basic Care Clinic")
         models.ClinicDate.objects.create(
@@ -85,9 +89,9 @@ class TestClinDateViews(TestCase):
     fixtures = ['workup', 'core']
 
     def setUp(self):
-        self.provider = log_in_provider(
+        self.provider = log_in_user(
             self.client,
-            build_provider())
+            build_user())
 
     def test_create_clindate(self):
 
@@ -192,9 +196,9 @@ class TestWorkupModel(TestCase):
     fixtures = ['workup', 'core']
 
     def setUp(self):
-        self.provider = log_in_provider(
+        self.provider = log_in_user(
             self.client,
-            build_provider())
+            build_user())
 
         models.ClinicType.objects.create(name="Basic Care Clinic")
         models.ClinicDate.objects.create(

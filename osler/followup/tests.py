@@ -9,7 +9,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from osler.core.models import Gender, Patient, Provider, ProviderType, ActionItem, ActionInstruction
-from osler.core.tests.test_views import log_in_provider, build_provider
+from osler.core.tests.test_views import log_in_user, build_provider
 
 from . import forms
 from . import models
@@ -21,7 +21,7 @@ class FollowupTest(TestCase):
     fixtures = ['followup', 'core']
 
     def setUp(self):
-        log_in_provider(self.client, build_provider())
+        log_in_user(self.client, build_provider())
 
         self.ai = ActionItem.objects.create(
             due_date=datetime.date(2020, 1, 1),

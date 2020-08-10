@@ -162,7 +162,7 @@ class Provider(Person):
 class Patient(Person):
 
     class Meta:
-        permissions = [('can_case_manage_Patient', "Can act as a case manager.")]
+        permissions = [('case_manage_Patient', "Can act as a case manager.")]
 
     case_managers = models.ManyToManyField(settings.AUTH_USER_MODEL)
 

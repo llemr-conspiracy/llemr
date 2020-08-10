@@ -28,16 +28,20 @@ def build_user(group_factories=None):
         groups=[f() for f in group_factories]
     )
 
-def log_in_provider(client, user):
-    """Creates a provider and logs them in. Role defines their provider_type,
-    default is all"""
+def log_in_user(client, user, group=None):
+    """Logs a user in and sets their active role as the provided group, if
+    supplied, otherwise their first group."""
 
     client.force_login(user)
 
     user.active_role = user.groups.first()
 
     session = client.session
-    session['active_role_set'] = True
+    if not group:
+        group = user.groups.first()
+    assert user.groups.filter(pk=group.pk).exists()
+    session['active_role_pk'] = group.pk
+    session['active_role_name'] = group.name
     session.save()
 
     user.save()
@@ -136,13 +140,14 @@ class ViewsExistTest(TestCase):
 
     def setUp(self):
         self.user = build_user()
-        log_in_provider(self.client, self.user)
+        log_in_user(self.client, self.user)
 
         self.patient = factories.PatientFactory()
 
     def test_initial_config(self):
         session = self.client.session
-        del session['active_role_set']
+        del session['active_role_pk']
+        del session['active_role_name']
         session.save()
 
         # verify: no clinic date -> create clinic date
@@ -242,7 +247,7 @@ class IntakeTest(TestCase):
 
     def setUp(self):
         user = build_user()
-        log_in_provider(self.client, user)
+        log_in_user(self.client, user)
 
         self.valid_pt_dict = {
             'first_name': "Juggie",
@@ -333,7 +338,7 @@ class ActionItemTest(TestCase):
 
     def setUp(self):
         self.coordinator = build_user([user_factories.CaseManagerGroupFactory])
-        log_in_provider(self.client, self.coordinator)
+        log_in_user(self.client, self.coordinator)
 
     def test_action_item_completeable_functions(self):
 

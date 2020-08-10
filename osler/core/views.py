@@ -270,7 +270,6 @@ def choose_role(request):
         redirect_to = reverse('home')
 
     if request.POST:
-
         active_role_pk = request.POST[RADIO_CHOICE_KEY]
         request.session['active_role_pk'] = active_role_pk
         request.session['active_role_name'] = Group.objects.get(pk=active_role_pk).name
@@ -280,7 +279,8 @@ def choose_role(request):
     if request.GET:
         role_options = request.user.groups.all()
         if len(role_options) == 1:
-            request.session['active_role_pk'] = role_options[0].pk
+            active_role_pk = role_options[0].pk
+            request.session['active_role_pk'] = active_role_pk
             request.session['active_role_name'] = Group.objects.get(pk=active_role_pk).name
 
             return HttpResponseRedirect(redirect_to)

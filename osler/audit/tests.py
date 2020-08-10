@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 
 from osler.core.models import ProviderType
-from osler.core.tests.test_views import build_provider, log_in_provider
+from osler.core.tests.test_views import build_provider, log_in_user
 
 from .models import PageviewRecord
 
@@ -36,7 +36,7 @@ class TestAudit(TestCase):
 
     def test_create_on_view(self):
 
-        provider = log_in_provider(self.client, build_provider(["Attending"]))
+        provider = log_in_user(self.client, build_provider(["Attending"]))
         expected_user = provider.associated_user
 
         # format is: {X-Forwarded-For: client, proxy1, proxy2}
@@ -55,7 +55,7 @@ class TestAudit(TestCase):
         self.assertEqual(record.method, 'GET')
 
     def test_audit_admin(self):
-        p = log_in_provider(self.client, build_provider(["Coordinator"]))
+        p = log_in_user(self.client, build_provider(["Coordinator"]))
         p.associated_user.is_staff = True
         p.associated_user.is_superuser = True
         p.associated_user.save()
@@ -66,7 +66,7 @@ class TestAudit(TestCase):
     @override_settings(OSLER_AUDIT_BLACK_LIST=['0.0.0.1'])
     def test_create_on_view_if_USER_IP_is_not_in_BLACKLIST(self):
 
-        provider = log_in_provider(self.client, build_provider(["Attending"]))
+        provider = log_in_user(self.client, build_provider(["Attending"]))
         expected_user = provider.associated_user
 
         # format is: {X-Forwarded-For: client, proxy1, proxy2}
@@ -87,7 +87,7 @@ class TestAudit(TestCase):
     @override_settings(OSLER_AUDIT_BLACK_LIST=['0.0.0.1'])
     def test_no_create_on_view_if_USER_IP_is_in_BLACKLIST(self):
 
-        provider = log_in_provider(self.client, build_provider(["Attending"]))
+        provider = log_in_user(self.client, build_provider(["Attending"]))
         expected_user = provider.associated_user
 
         # format is: {X-Forwarded-For: client, proxy1, proxy2}

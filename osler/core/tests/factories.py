@@ -5,7 +5,6 @@ from django.conf import settings
 from django.db.models.signals import post_save
 
 import factory
-from factory import Faker
 from factory.django import DjangoModelFactory, mute_signals
 
 from osler.core import models
@@ -133,7 +132,7 @@ class DocumentFactory(DjangoModelFactory):
         model = models.Document
 
     title = factory.Sequence(lambda n: "who done it #%s?" % n)
-    comments = Faker('paragraph')
+    comments = factory.Faker('paragraph')
 
     document_type = factory.SubFactory(DocumentTypeFactory)
     image = factory.django.FileField(

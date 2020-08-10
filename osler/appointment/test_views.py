@@ -7,7 +7,7 @@ from django.utils.timezone import now
 from django.urls import reverse
 
 from osler.core.models import Provider, ProviderType, Patient
-from osler.core.tests.test_views import log_in_provider, build_provider
+from osler.core.tests.test_views import log_in_user, build_provider
 
 from osler.appointment import models
 from osler.appointment.test_forms import apt_dict
@@ -21,7 +21,7 @@ class TestAppointmentViews(TestCase):
 
         self.all_roles_provider = build_provider()
 
-        log_in_provider(self.client, self.all_roles_provider)
+        log_in_user(self.client, self.all_roles_provider)
 
         self.apt = models.Appointment.objects.create(
             comment='test this stuff',

@@ -50,7 +50,7 @@ class AttestableNoteCreate(NoteFormView):
         note.patient = pt
         note.author = self.request.user
 
-        can_sign = self.form_class.group_can_sign(active_role)
+        can_sign = self.form_class.Meta.model.group_can_sign(active_role)
 
         if can_sign:
             note.sign(self.request.user, active_role)
@@ -67,6 +67,7 @@ class WorkupCreate(NoteFormView):
     clinic date first, and prompts its creation if none exist.'''
     template_name = 'workup/workup-create.html'
     form_class = forms.WorkupForm
+    model = models.Workup
     note_type = 'Workup'
 
     def get(self, *args, **kwargs):
@@ -74,7 +75,7 @@ class WorkupCreate(NoteFormView):
         then dispatch to get() of the superclass view."""
 
         active_role = get_active_role(self.request)
-        self.request.session["can_sign"] = form_class.group_can_sign(active_role)
+        self.request.session["can_sign"] = self.model.group_can_sign(active_role)
 
         clindates = get_clindates()
         pt = get_object_or_404(Patient, pk=kwargs['pt_id'])
@@ -123,8 +124,8 @@ class WorkupCreate(NoteFormView):
         wu.author = self.request.user
         wu.author_type = active_role
 
-        if form_class.group_can_sign(active_role):
-            wu.sign(self.request.user)
+        if self.model.group_can_sign(active_role):
+            wu.sign(self.request.user, active_role)
 
         wu.save()
 
@@ -148,7 +149,7 @@ class WorkupUpdate(NoteUpdate):
         wu = get_object_or_404(models.Workup, pk=kwargs['pk'])
 
         # if it's an attending, we allow updates.  
-        if form_class.group_can_sign(active_role) or not wu.signed():
+        if self.model.group_can_sign(active_role) or not wu.signed():
             self.request.session["can_sign"] = True
             return super(WorkupUpdate, self).dispatch(*args, **kwargs)
         else:
@@ -184,7 +185,7 @@ class ProgressNoteCreate(AttestableNoteCreate):
         active_role = get_active_role(self.request)
         pnote.author_type = active_role
 
-        if form_class.group_can_sign(active_role):
+        if self.form_class.Meta.model.group_can_sign(active_role):
             pnote.sign(self.request.user)
 
         pnote.save()
@@ -250,7 +251,7 @@ def sign_attestable_note(request, pk, attestable):
     active_role = get_active_role(request)
 
     try:
-        note.sign(request.user)
+        note.sign(request.user, active_role)
         note.save()
     except ValueError:
         # thrown exception can be ignored since we just redirect back to the

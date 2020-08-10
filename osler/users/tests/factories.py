@@ -29,7 +29,7 @@ class VolunteerGroupFactory(GroupFactory):
     def groups(self, create, extracted, **kwargs):
         self.permissions.add(
             *Permission.objects.exclude(
-                Q(codename__startswith='sign_') | Q(codename='can_case_manage_Patient')
+                Q(codename__startswith='sign_') | Q(codename='case_manage_Patient')
             )
         )
 
@@ -47,13 +47,13 @@ class CaseManagerGroupFactory(GroupFactory):
 
 class AttendingGroupFactory(GroupFactory):
 
-    name = factory.Sequence(lambda n: "Volunteer Group #%s" % n)
+    name = factory.Sequence(lambda n: "Attending Group #%s" % n)
 
     @factory.post_generation
     def groups(self, create, extracted, **kwargs):
         self.permissions.add(
             *Permission.objects.exclude(
-                Q(codename='can_case_manage_Patient')
+                Q(codename='case_manage_Patient')
             )
         )
 
@@ -95,3 +95,9 @@ class UserFactory(factory.django.DjangoModelFactory):
             # A list of groups were passed in, use them
             for group in extracted:
                 self.groups.add(group)
+
+
+# constants to be used across tests
+attesting_roles = set([AttendingGroupFactory])
+nonattesting_roles = set([CaseManagerGroupFactory, VolunteerGroupFactory])
+all_roles = attesting_roles | nonattesting_roles

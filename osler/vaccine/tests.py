@@ -6,7 +6,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils.timezone import now
 
-from osler.core.tests.test_views import log_in_provider, build_provider
+from osler.core.tests.test_views import log_in_user, build_provider
 from osler.core.models import (
     Gender, Patient, Provider, ProviderType, ActionInstruction)
 from osler.followup.models import (ContactMethod, ContactResult)
@@ -21,7 +21,7 @@ class TestVaccineSeriesCreate(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_provider(self.client, build_provider())
+        log_in_user(self.client, build_provider())
 
         self.pt = Patient.objects.create(
             first_name="Juggie",
@@ -67,7 +67,7 @@ class TestVaccineSeriesSelect(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_provider(self.client, build_provider())
+        log_in_user(self.client, build_provider())
 
         self.pt = Patient.objects.create(
             first_name="Juggie",
@@ -160,7 +160,7 @@ class TestVaccineDoseCreate(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_provider(self.client, build_provider())
+        log_in_user(self.client, build_provider())
 
         self.pt = Patient.objects.create(
             first_name="Juggie",
@@ -233,7 +233,7 @@ class TestVaccineActionItemCreate(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_provider(self.client, build_provider())
+        log_in_user(self.client, build_provider())
 
         self.pt = Patient.objects.create(
             first_name="Juggie",
@@ -301,7 +301,7 @@ class TestVaccineFollowupCreate(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_provider(self.client, build_provider())
+        log_in_user(self.client, build_provider())
 
         self.pt = Patient.objects.create(
             first_name="Juggie",

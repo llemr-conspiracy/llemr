@@ -13,7 +13,7 @@ from osler.followup.models import (
 from osler.core.models import (
     Gender, Patient, Provider, ProviderType, ReferralType, ReferralLocation
 )
-from osler.core.tests.test_views import log_in_provider, build_provider
+from osler.core.tests.test_views import log_in_user, build_provider
 
 from . import forms
 from . import models
@@ -29,7 +29,7 @@ class TestPatientContactForm(TestCase):
 
     def setUp(self):
         """ Provides the same context in all the tests """
-        log_in_provider(self.client, build_provider())
+        log_in_user(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(
             name="Carrier Pidgeon")
@@ -318,7 +318,7 @@ class TestSelectReferralType(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_provider(self.client, build_provider())
+        log_in_user(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(
             name="Carrier Pidgeon")
@@ -380,7 +380,7 @@ class TestCreateReferral(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_provider(self.client, build_provider())
+        log_in_user(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(
             name="Carrier Pidgeon")
@@ -477,7 +477,7 @@ class TestSelectReferral(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_provider(self.client, build_provider())
+        log_in_user(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(
             name="Carrier Pidgeon")
@@ -673,7 +673,7 @@ class TestPatientContactCreateView(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_provider(self.client, build_provider())
+        log_in_user(self.client, build_provider())
 
         self.contact_method = ContactMethod.objects.create(
             name="Carrier Pidgeon")
@@ -786,7 +786,7 @@ class TestReferralPatientDetailIntegration(TestCase):
 
     def setUp(self):
         self.user = build_user([user_factories.CaseManagerGroupFactory])
-        log_in_provider(self.client, self.user)
+        log_in_user(self.client, self.user)
 
         self.contact_method = models.ContactMethod.objects.create(
             name="Carrier Pidgeon")
