@@ -4,29 +4,32 @@ from .base import env
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
-with open('/app/config/settings/secrets/secret_key.txt', 'r') as f:
-    SECRET_KEY = f.read().strip()
-#SECRET_KEY = env("DJANGO_SECRET_KEY")
+SECRET_KEY = env("DJANGO_SECRET_KEY")
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["oslerproject.org"])
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
 
 # DATABASES
 # ------------------------------------------------------------------------------
-#DATABASES["default"] = env.db("DATABASE_URL")  # noqa F405
+# not used because it fails with some passwords (not URI-compliant characters)
+# DATABASES["default"] = env.db("DATABASE_URL")  # noqa F405
 
-with open('/app/config/settings/secrets/postgres_password.txt', 'r') as f:
-    POSTGRES_PASSWORD = f.read().strip()
+# env package pulls from environment variables set by the contents of
+# .envs/.production/{.postgres,.django,.secrets}
+# note that .envs/.production/.secrets is not version-controlled and you have to
+# create it for production.
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'osler',
-        'USER': 'django',
-        'PASSWORD': POSTGRES_PASSWORD,
-        'HOST': 'kc-med-oslerdb.kc.umkc.edu',
-        'PORT': '',
+        'NAME': env("POSTGRES_DB"),
+        'USER': env("POSTGRES_USER"),
+        'PASSWORD': env("POSTGRES_PASSWORD"),
+        'HOST': env("POSTGRES_HOST"),
+        'PORT': env("POSTGRES_PORT"),
     }
 }
+
 DATABASES["default"]["ATOMIC_REQUESTS"] = True  # noqa F405
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # noqa F405
 

@@ -26,6 +26,15 @@ def dashboard_dispatch(request):
         return redirect(settings.OSLER_DEFAULT_DASHBOARD)
 
 
+def dashboard_active(request):
+
+    active_patients = Patient.objects.filter(needs_workup=True).prefetch_related()
+
+    return render(request,
+                  'dashboard/dashboard-active.html',
+                  {'patients': active_patients})
+
+
 def dashboard_attending(request):
     
     clinic_list = ClinicDate.objects.filter(workup__attending=request.user)

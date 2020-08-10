@@ -17,18 +17,10 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
     <p class="lead"><strong>FQHC Referral Status:</strong> {{ referral_status }}</p>
     <p class="lead"><strong>Referrals:</strong> {{ referrals.iterator | join:", " }}</p>
     <p class="lead"><strong>Case Manager:</strong> {{patient.case_managers.iterator | join:"; "}}
-      {% if request.session.staff_view %}
       {% if patient.needs_workup %}
       <p class="lead"> Patient is Active <a href="{% url 'core:patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></p>
       {% else %}
       <p class="lead"> Patient is Inactive <a href="{% url 'core:patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a></p>
-      {% endif %}
-      {% else %}
-      {% if patient.needs_workup %}
-      <p class="lead"> Patient is Active </p>
-      {% else %}
-      <p class="lead"> Patient is Inactive </p>
-      {% endif %}
       {% endif %}
   </div>
 </div>

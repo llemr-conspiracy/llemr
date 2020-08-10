@@ -344,9 +344,9 @@ OSLER_WORKUP_COPY_FORWARD_MESSAGE = (u"Migrated from previous workup on {date}"
 # Dashboard settings
 OSLER_CLINIC_DAYS_PER_PAGE = 20
 
-OSLER_DEFAULT_DASHBOARD = 'core:all-patients'
+OSLER_DEFAULT_DASHBOARD = 'dashboard-active'
 OSLER_ROLE_DASHBOARDS = {
-    'Attending': 'dashboard-attending'
+    'Attending': 'dashboard-attending',
 }
 
 # List of IP addresses to exclude from audit

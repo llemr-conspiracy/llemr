@@ -5,14 +5,16 @@ set -o pipefail
 set -o nounset
 
 
-
-
 if [ -z "${POSTGRES_USER}" ]; then
     base_postgres_image_default_user='postgres'
     export POSTGRES_USER="${base_postgres_image_default_user}"
 fi
 export DATABASE_URL="postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}"
-echo $DATABASE_URL
+
+#  This is a small program that repeatedly tries to connect to postgres
+#  eventually when it does, it launches the main django projects.
+#  This is needed because if the postgres VM comes up after the django VM,
+#  django freaks out.
 
 postgres_ready() {
 python << END
@@ -20,21 +22,15 @@ import sys
 
 import psycopg2
 
-#print("${POSTGRES_DB}")
-#print("${POSTGRES_USER}")
-#print("${POSTGRES_PASSWORD}")
-#print("${POSTGRES_HOST}")
-#print("${POSTGRES_PORT}")
-
 try:
     psycopg2.connect(
         dbname="osler",
-        user="django",
-        password="vT8MiDHe;@N9a7M]TB#GMs8QW3ndusn^",
-        host="kc-med-oslerdb.kc.umkc.edu",
+        user="${POSTGRES_USER}",
+        password="${POSTGRES_PASSWORD}",
+        host="${POSTGRES_HOST}",
         port="5432",
     )
-except psycopg2.OperationalError:
+except psycopg2.OperationalError as e:
     sys.exit(-1)
 sys.exit(0)
 

@@ -4,47 +4,31 @@
 {% load account socialaccount %}
 {% load crispy_forms_tags %}
 
-{% block head_title %}{% trans "Welcome to Osler" %}{% endblock %}
+{% block title %}{% trans "Welcome to Osler" %}{% endblock %}
 
 {% block header %}<h1>Welcome to Osler!</h1>{% endblock %}
 
-{% block inner %}
+{% block content %}
 
-<h1>Sign In</h1>
+<div class="container">
 
-{% get_providers as socialaccount_providers %}
+	<h1>Sign In</h1>
 
-{% if socialaccount_providers %}
-<p>Please sign in with one
-of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
-for a {{ site_name }} account and sign in below:</p>
+	{% get_providers as socialaccount_providers %}
 
-<div class="socialaccount_ballot">
+	<p>If you don't have an account, ask an administrator or coordinator to make you one.</p>
 
-  <ul class="socialaccount_providers">
-    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-  </ul>
-
-  <div class="login-or">{% trans 'or' %}</div>
+	<form class="login" method="POST" action="{% url 'account_login' %}">
+	  {% csrf_token %}
+	  {{ form | crispy }}
+	  {% if redirect_field_value %}
+	  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+	  {% endif %}
+	  <a class="button secondaryAction" href="{% url 'account_reset_password' %}">Forgot Password?</a>
+	  <button class="primaryAction btn btn-primary" type="submit">Sign In</button>
+	</form>
 
 </div>
-
-{% include "socialaccount/snippets/login_extra.html" %}
-
-{% else %}
-<p>If you have not created an account yet, then please
-<a href="{{ signup_url }}">sign up</a> first.</p>
-{% endif %}
-
-<form class="login" method="POST" action="{% url 'account_login' %}">
-  {% csrf_token %}
-  {{ form|crispy }}
-  {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-  {% endif %}
-  <a class="button secondaryAction" href="{% url 'account_reset_password' %}">Forgot Password?</a>
-  <button class="primaryAction btn btn-primary" type="submit">Sign In</button>
-</form>
 
 {% endblock %}
 
