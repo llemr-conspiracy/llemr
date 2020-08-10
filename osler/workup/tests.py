@@ -10,14 +10,12 @@ from django.utils.timezone import now
 from osler.core.tests.test_views import build_user, log_in_user
 from osler.core.models import Patient
 
-from django.contrib.auth import get_user_model
-
 from osler.workup import validators
 from osler.workup import models
 
 
-def wu_dict(units=False):
-    user = get_user_model().objects.first()
+def wu_dict(units=False, clinic_day_pk=False, dx_category=False):
+    user = build_user()
 
     wu = {'clinic_day': models.ClinicDate.objects.first(),
           'chief_complaint': "SOB",
@@ -39,6 +37,12 @@ def wu_dict(units=False):
         wu['temperature_units'] = 'F'
         wu['weight_units'] = 'lbs'
         wu['height_units'] = 'in'
+
+    if clinic_day_pk:
+        wu['clinic_day'] = wu['clinic_day'].pk
+
+    if dx_category:
+        wu['diagnosis_categories'] = [models.DiagnosisType.objects.first().pk]
 
     return wu
 

@@ -14,6 +14,7 @@ from osler.workup import models
 from osler.workup.tests import wu_dict
 
 import pytest
+import factory
 
 
 class ViewsExistTest(TestCase):
@@ -166,20 +167,16 @@ class ViewsExistTest(TestCase):
             pt_id = Patient.objects.first().pk
 
             wu_count = models.Workup.objects.all().count()
-            wu_data = wu_dict(units=True)
-            # wu_data['diagnosis_categories'] = [
-            #     models.DiagnosisType.objects.first().pk]
-            wu_data['clinic_day'] = wu_data['clinic_day'].pk
+            wu_data = wu_dict(units=True, clinic_day_pk=True, dx_category=True)
 
-            r = self.client.post(
+            response = self.client.post(
                 reverse('new-workup', args=(pt_id,)),
                 data=wu_data)
-            self.assertRedirects(r, reverse("core:patient-detail", args=(pt_id,)))
+            self.assertRedirects(response, reverse("core:patient-detail", args=(pt_id,)))
 
-            self.assertEqual(wu_count + 1, models.Workup.objects.all().count())
-            self.assertEqual(
-                models.Workup.objects.last().signed(),
-                user.clinical_roles.first().signs_charts)
+            can_attest = role in user_factories.attesting_roles
+            assert models.Workup.objects.all().count() == wu_count + 1
+            assert models.Workup.objects.last().signed() == can_attest
 
     def test_invalid_workup_submit_preserves_units(self):
 
@@ -188,22 +185,20 @@ class ViewsExistTest(TestCase):
         wu_data = wu_dict(units=True)
         pt_id = Patient.objects.first().pk
 
-        r = self.client.post(
+        response = self.client.post(
             reverse('new-workup', args=(pt_id,)),
             data=wu_data)
 
         # verify we're bounced back to workup-create
-        self.assertEqual(r.status_code, 200)
-        self.assertTemplateUsed(r, 'workup/workup-create.html')
-        self.assertFormError(r, 'form', 'diagnosis_categories',
+        assert response.status_code == 200
+        self.assertTemplateUsed(response, 'workup/workup-create.html')
+        self.assertFormError(response, 'form', 'diagnosis_categories',
                              'This field is required.')
 
         for unit in ['height_units', 'weight_units', 'temperature_units']:
-            self.assertContains(r, '<input name="%s"' % (unit))
+            self.assertContains(response, '<input name="%s"' % (unit))
 
-            self.assertEqual(
-                r.context['form'][unit].value(),
-                wu_data[unit])
+            assert response.context['form'][unit].value() == wu_data[unit]
 
 
 class TestProgressNoteViews(TestCase):
@@ -214,15 +209,15 @@ class TestProgressNoteViews(TestCase):
 
     def setUp(self):
 
-        provider = build_user()
-        log_in_user(self.client, provider)
+        user = build_user()
+        log_in_user(self.client, user)
 
         self.formdata = {
             'title': 'Depression',
-            'text': 'so sad does testing work???',
+            'text': factory.Faker('paragraph'),
             'patient': Patient.objects.first(),
-            'author': provider,
-            'author_type': ProviderType.objects.first()
+            'author': user,
+            'author_type': user.groups.first()
         }
 
         models.ClinicDate.objects.create(
@@ -234,11 +229,11 @@ class TestProgressNoteViews(TestCase):
 
         n_notes = models.ProgressNote.objects.count()
 
-        url = reverse('new-progress-note', args=(pt.id,))
-        response = self.client.get(url)
+        pn_url = reverse('new-progress-note', args=(pt.id,))
+        response = self.client.get(pn_url)
         assert response.status_code == 200
 
-        response = self.client.post(url, self.formdata)
+        response = self.client.post(pn_url, self.formdata)
         self.assertRedirects(response,
                              reverse('core:patient-detail', args=(pt.id,)))
         assert models.ProgressNote.objects.count() == n_notes + 1
@@ -250,7 +245,7 @@ class TestProgressNoteViews(TestCase):
 
         self.formdata['text'] = 'actually not so bad'
 
-        response = self.client.post(url, self.formdata)
+        response = self.client.post(pn_url, self.formdata)
         self.assertRedirects(response,
                              reverse('core:patient-detail', args=(pt.id,)))
 
@@ -258,37 +253,21 @@ class TestProgressNoteViews(TestCase):
         """Verify that singing is possible for attendings and not for others.
         """
 
-        sign_url = "progress-note-sign"
+        pn_url = "progress-note-sign"
 
-        pn = models.ProgressNote.objects.create(
-            title='Depression',
-            text='so sad does testing work???',
-            patient=Patient.objects.first(),
-            author=models.Provider.objects.first(),
-            author_type=ProviderType.objects.first()
-        )
+        pn = models.ProgressNote.objects.create(**self.formdata)
 
         # Fresh notes should be unsigned
-        self.assertFalse(pn.signed())
+        assert not pn.signed()
 
         # Providers with can_attend == False should not be able to sign
-        for nonattesting_role in ["Preclinical", "Clinical", "Coordinator"]:
-            log_in_user(self.client, build_user([nonattesting_role]))
-
-            response = self.client.get(
-                reverse(sign_url, args=(pn.id,)))
+        for role in user_factories.all_roles:
+            log_in_user(self.client, build_user([role]))
+            response = self.client.get(reverse(pn_url, args=(pn.id,)))
             self.assertRedirects(response,
                                  reverse('progress-note-detail',
                                          args=(pn.id,)))
-            self.assertFalse(models.ProgressNote.objects
-                             .get(pk=pn.id)
-                             .signed())
-
-        # Providers able to attend should be able to sign.
-        log_in_user(self.client, build_user(["Attending"]))
-
-        response = self.client.get(reverse(sign_url, args=(pn.id,)))
-        self.assertRedirects(response, reverse('progress-note-detail',
-                                               args=(pn.id,)),)
-        # the pn has been updated, so we have to hit the db again.
-        self.assertTrue(models.ProgressNote.objects.get(pk=pn.id).signed())
+            can_attest = role in user_factories.attesting_roles
+            assert models.ProgressNote.objects.get(pk=pn.id).signed() == can_attest
+            pn.signer = None
+            pn.save()
