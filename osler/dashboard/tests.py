@@ -113,7 +113,7 @@ class TestAttendingDashboard(TestCase):
         # both of which are marked as unattested
         self.assertContains(response, '<tr  class="warning" >', count=2)
 
-        wu3.sign(self.attending, user_factories.AttendingGroupFactory())
+        wu3.sign(self.attending, self.attending.groups.first())
         wu3.save()
 
         response = self.client.get(reverse('dashboard-attending'))

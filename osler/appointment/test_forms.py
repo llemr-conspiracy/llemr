@@ -8,21 +8,22 @@ from osler.core.models import Patient
 from osler.appointment.forms import AppointmentForm
 
 from osler.core.tests import factories as core_factories
-from osler.users.tests.factories import UserFactory
+from osler.core.tests.test_views import build_user
 
 User = get_user_model()
 
 
 def apt_dict():
+    user = build_user()
     apt = {
         'clindate': now().date(),
         'clintime': time(9, 0),
         'appointment_type': 'PSYCH_NIGHT',
         'comment': 'stuff',
-        'author': UserFactory(),
-        'patient': core_factories.PatientFactory()
+        'author': user,
+        'patient': core_factories.PatientFactory(),
+        'author_type': user.groups.first()
     }
-    apt['author_type'] = apt['author'].groups.first()
 
     return apt
 

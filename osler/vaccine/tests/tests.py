@@ -22,10 +22,12 @@ class TestVaccineSeriesCreate(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_user(self.client, build_user())
+        self.user = build_user()
+
+        log_in_user(self.client, self.user)
 
         self.pt = core_factories.PatientFactory(
-            case_managers=self.user)
+            case_managers=[self.user])
 
     def test_vaccine_series_create_view(self):
         series1 = factories.VaccineSeriesTypeFactory()
@@ -59,7 +61,7 @@ class TestVaccineSeriesSelect(TestCase):
         log_in_user(self.client, self.user)
 
         self.pt = core_factories.PatientFactory(
-            case_managers=self.user)
+            case_managers=[self.user])
 
         self.series_type = factories.VaccineSeriesTypeFactory()
 
@@ -142,7 +144,7 @@ class TestVaccineDoseCreate(TestCase):
         log_in_user(self.client, self.user)
 
         self.pt = core_factories.PatientFactory(
-            case_managers=self.user)
+            case_managers=[self.user])
 
         self.series_type = factories.VaccineSeriesTypeFactory()
 
@@ -205,7 +207,7 @@ class TestVaccineActionItemCreate(TestCase):
         log_in_user(self.client, self.user)
 
         self.pt = core_factories.PatientFactory(
-            case_managers=self.user)
+            case_managers=[self.user])
 
         self.series_type = factories.VaccineSeriesTypeFactory()
 
@@ -264,7 +266,7 @@ class TestVaccineFollowupCreate(TestCase):
         log_in_user(self.client, self.user)
 
         self.pt = core_factories.PatientFactory(
-            case_managers=self.user)
+            case_managers=[self.user])
 
         self.series_type = factories.VaccineSeriesTypeFactory()
 

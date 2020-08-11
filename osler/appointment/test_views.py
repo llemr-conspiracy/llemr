@@ -8,6 +8,7 @@ from django.urls import reverse
 
 from osler.core.models import Patient
 from osler.core.tests.test_views import log_in_user, build_user
+from osler.users.tests import factories as user_factories
 
 from osler.appointment import models
 from osler.appointment.test_forms import apt_dict
@@ -38,8 +39,7 @@ class TestAppointmentViews(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Posting new appointment
-        response = self.client.post(reverse("appointment-new"),
-                                    data=apt_dict())
+        response = self.client.post(reverse("appointment-new"), apt_dict())
         self.assertEqual(response.status_code, 302)
 
     def test_update_appointment_view(self):
@@ -53,7 +53,7 @@ class TestAppointmentViews(TestCase):
         # Posting updated appointment
         self.assertEqual(apt.comment, 'test this stuff')
         response = self.client.post(reverse('appointment-update',
-                                    kwargs={'pk': apt.pk}), data=apt_dict())
+                                    kwargs={'pk': apt.pk}), apt_dict())
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('appointment-list'))
         apt_test = models.Appointment.objects.filter(id=apt.pk).first()

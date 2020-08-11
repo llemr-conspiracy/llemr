@@ -105,7 +105,7 @@ class VaccineActionItemCreate(NoteFormView):
 
         vai.completion_date = None
         vai.author = self.request.user
-        vai.author_type = utils.get_active_role()
+        vai.author_type = utils.get_active_role(self.request)
         vai.vaccine = get_object_or_404(
             VaccineSeries, pk=self.kwargs['series_id'])
         vai.patient = pt
