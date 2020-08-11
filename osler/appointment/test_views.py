@@ -39,7 +39,7 @@ class TestAppointmentViews(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Posting new appointment
-        response = self.client.post(reverse("appointment-new"), apt_dict())
+        response = self.client.post(reverse("appointment-new"), data=apt_dict())
         self.assertEqual(response.status_code, 302)
 
     def test_update_appointment_view(self):
@@ -53,8 +53,9 @@ class TestAppointmentViews(TestCase):
         # Posting updated appointment
         self.assertEqual(apt.comment, 'test this stuff')
         response = self.client.post(reverse('appointment-update',
-                                    kwargs={'pk': apt.pk}), apt_dict())
+                                    kwargs={'pk': apt.pk}), data=apt_dict())
         self.assertEqual(response.status_code, 302)
+        
         self.assertRedirects(response, reverse('appointment-list'))
         apt_test = models.Appointment.objects.filter(id=apt.pk).first()
         self.assertEqual(apt_test.comment, 'stuff')
