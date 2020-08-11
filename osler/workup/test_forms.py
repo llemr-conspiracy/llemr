@@ -254,7 +254,7 @@ class TestWorkupFormProviderChoices(TestCase):
 
         # c[0] is the pk of each, [1:] indexing required because element 0
         # is the "blank" option.
-        attending_options = [c[0] for c in self.form['attending'].field.choices][1:]
+        attending_options = [c[0] for c in form['attending'].field.choices][1:]
 
         # ensure that options are the same
         assert set(attending_options) == set(attending_users)
@@ -268,7 +268,7 @@ class TestWorkupFormProviderChoices(TestCase):
 
         form = WorkupForm()
         user_pks = [u.pk for u in self.users]
-        other_vol_options = [c[0] for c in self.form['other_volunteer'].field.choices]
+        other_vol_options = [c[0] for c in form['other_volunteer'].field.choices]
 
         # check that any user can be the other volunteer
         assert set(user_pks) == set(other_vol_options)
@@ -276,14 +276,17 @@ class TestWorkupFormProviderChoices(TestCase):
 
         # check that error is thrown if one of the other volunteers
         # is the attending
+        attending = build_user([user_factories.AttendingGroupFactory])
+        non_attending = build_user()
+
         form_data = wu_dict()
-        form_data['attending'] = user_pks[0]
-        form_data['other_volunteer'] = [user_pks[0]]
+        form_data['attending'] = attending
+        form_data['other_volunteer'] = [non_attending, attending]
         form = WorkupForm(data=form_data)
-        assert len(form['other_volunteer'].errors) > 0
+        assert form['other_volunteer'].errors
 
         # and that no error is thrown if they are different
-        form_data['other_volunteer'] = [user_pks[1]]
+        form_data['other_volunteer'] = [non_attending]
         form = WorkupForm(data=form_data)
-        assert len(form['other_volunteer'].errors) == 0
+        assert not form['other_volunteer'].errors
 
