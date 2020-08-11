@@ -3,7 +3,9 @@ from __future__ import unicode_literals
 from django.test import TestCase
 from django.urls import reverse, resolve
 from osler.labs.models import *
-from osler.core.models import (Patient)
+from osler.core.models import (Patient, Gender)
+
+from osler.core.tests.test_views import log_in_provider, build_provider
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
@@ -12,7 +14,6 @@ from osler.labs import views, forms
 from django.utils.timezone import now
 
 from django.shortcuts import get_object_or_404
-
 
 class TestUrls(TestCase):
     def test_all_labs_list_url(self):
@@ -280,11 +281,6 @@ class TestMeasurementsCreationForm(TestCase):
         self.assertEqual(new_m1_edit.value, new_mt1_value)
 
 
-
-    def test_edit_form_no_permission(self):
-        pass
-
-
     def test_delete_form(self):
         self.assertEqual(len(Lab.objects.all()),0)
         self.assertEqual(len(ContinuousMeasurement.objects.all()),0)
@@ -315,9 +311,6 @@ class TestMeasurementsCreationForm(TestCase):
         self.assertEqual(len(DiscreteMeasurement.objects.all()),0)
 
 
-    def test_delete_form_no_permission(self):
-        pass
-
 
 class TestLabView(TestCase):
     """
@@ -329,14 +322,22 @@ class TestLabView(TestCase):
     def setUp(self):
         TestMeasurementsCreationForm().setUp()
 
-        preclin_username = 'blank-user'
+        self.pt = Patient.objects.first()
+
+        preclin_username = 'preclin-user'
         User = get_user_model()
         user = User.objects.create(username=preclin_username)
         user.set_password('password')
         user.save()
         self.user = get_object_or_404(User, username=preclin_username)
 
-        """
+        g = Gender.objects.first()
+        prov = Provider.objects.create(
+        first_name="Jane", middle_name="M.", last_name="Doe",
+        phone="111-222-3333", gender=g, associated_user=self.user)
+
+        self.prov = prov
+
         coord_username = 'coordinator-user'
         user2 = User.objects.create(username=coord_username)
         change_perm = Permission.objects.get(codename='change_lab')
@@ -345,38 +346,50 @@ class TestLabView(TestCase):
         user2.save()
         # Need to refetch user since permission change is cached
         self.user2 = get_object_or_404(User, username=coord_username)
-        """
-        self.pt = Patient.objects.first()
 
 
     def test_default_permission(self):
+        User = get_user_model()
+
         self.assertEqual(self.user.has_perm('labs.view_lab'), False)
         self.assertEqual(self.user.has_perm('labs.add_lab'), False)
         self.assertEqual(self.user.has_perm('labs.change_lab'), False)
         self.assertEqual(self.user.has_perm('labs.delete_lab'), False)
 
+        # Add permission
         change_perm = Permission.objects.get(codename='change_lab')
-        user.user_permissions.add(change_perm)
-        self.assertEqual(self.user2.has_perm('labs.change_lab'), True)
-        self.assertEqual(self.user2.has_perm('change_lab'), False)
-        user.user_permissions.remove(change_perm)
-        self.assertEqual(self.user2.has_perm('labs.change_lab'), False)
+        self.user.user_permissions.add(change_perm)
+        self.user.save()
+        user = get_object_or_404(User, username=self.user.username)
+        self.assertEqual(user.has_perm('labs.change_lab'), True)
+        self.assertEqual(user.has_perm('change_lab'), False)
 
+        # Remove permission
+        user.user_permissions.remove(change_perm)
+        user.save()
+        user = get_object_or_404(User, username=self.user.username)
+        self.assertEqual(user.has_perm('labs.change_lab'), False)
+        user.save()
+        self.user = get_object_or_404(User, username=self.user.username)
 
 
     def test_lab_list_view(self):
+        log_in_provider(self.client, build_provider())
         url = reverse('labs:all-labs', kwargs={'pt_id':self.pt.id})
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
 
 
     def test_lab_table_view(self):
+        log_in_provider(self.client, build_provider())
         url = reverse('labs:all-labs-table', kwargs={'pt_id':self.pt.id})
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
 
 
     def test_lab_detail_view(self):
+        log_in_provider(self.client, build_provider())
+
         lt1 = LabType.objects.get(name='testlabtype')
         form_data = TestMeasurementsCreationForm().build_form(
             lab_type=lt1,
@@ -393,30 +406,41 @@ class TestLabView(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
 
-
-        login = self.client.login(username=self.user.username, password='password')
-        self.client.session.save()
-
-        self.assertTrue(login) 
-
         fake_pk = 0
         self.assertFalse(Lab.objects.filter(pk=fake_pk).exists())
         url = reverse('labs:lab-detail', kwargs={'pk':fake_pk})
         response = self.client.get(url)
-        #print(response)
-        #self.assertEqual(response.status_code, 400)
-        #self.assertTemplateUsed(response, '404.html')
+        print(response)
+        self.assertEqual(response.status_code, 404)
+
+
+    def switch_user(self, current_provider, new_user):
+        current_provider.associated_user = new_user
+        updated_provider = log_in_provider(self.client, current_provider)
+        return updated_provider
 
 
     def test_lab_add_view_no_perm(self):
-        login = self.client.login(username=self.user.username, password='password')
-        self.client.session.save()
+        User = get_user_model()
 
-        self.assertTrue(login) 
+        provider = log_in_provider(self.client, build_provider())
+        user = provider.associated_user
 
+        # User can't view add lab page when having no permission
+        self.assertFalse(user.has_perm('labs.add_lab'))
         url = reverse('labs:new-lab', kwargs={'pt_id':self.pt.id})
         response = self.client.get(url, follow=True)
-        #self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 403)
 
+        add_perm = Permission.objects.get(codename='add_lab')
+        user.user_permissions.add(add_perm)
+        user.save()
+        provider.associated_user = get_object_or_404(User, username=user.username)
+        provider = log_in_provider(self.client, provider)
+        user = provider.associated_user
 
+        self.assertTrue(user.has_perm('labs.add_lab'))
+        url = reverse('labs:new-lab', kwargs={'pt_id':self.pt.id})
+        response = self.client.get(url, follow=True)
+        self.assertEqual(response.status_code, 200)
 

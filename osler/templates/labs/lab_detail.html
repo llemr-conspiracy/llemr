@@ -15,6 +15,7 @@ Lab detail
 <div class="container text-center">
 	<div class="btn-group">
 	    <a class="btn btn-info" href="{% url 'labs:all-labs' pt.id %}" role="button">Back to All Labs</a>
+	    <a class="btn btn-info" href="{% url 'labs:all-labs-table' pt.id %}" role="button">Back to Recent Labs</a>
 		{% if change_perm %}
 		    <a class="btn btn-warning" href="{% url 'labs:lab-edit' lab.id %}" role="button">Edit Lab</a>
 		{% endif %}
@@ -35,8 +36,10 @@ Lab detail
 	<table class="table">
 		<tr>
 			<th>Measurement</th>
+			<th>Reference</th>
 			<th>Value</th>
 		</tr>
+		<!--
 		{% for measurement in cont_list %}
 			<tr>
 				<td>{{ measurement.measurement_type }}</td>
@@ -47,6 +50,15 @@ Lab detail
 			<tr>
 				<td>{{ measurement.measurement_type }}</td>
 				<td>{{ measurement.value }}</td>
+			</tr>
+		{% endfor %}
+		-->
+		{% for measurement in measurement_list %}
+			<tr>
+				<td>{{ measurement.measurement_type }}</td>
+				<td>{{ measurement.ref }}</td>
+				<td style="color:{{measurement.color}}">{{ measurement.value }} {{measurement.warning}}</td>
+				<!--td>{{ measurement.value }}</td-->
 			</tr>
 		{% endfor %}
 	</table>

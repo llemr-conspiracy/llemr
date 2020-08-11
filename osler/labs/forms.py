@@ -67,14 +67,16 @@ class MeasurementsCreationForm(Form):
 		else:
 			self.qs_fields = models.MeasurementType.objects.filter(lab_type=self.new_lab_type)
 			"""
+
 		self.qs_fields = models.MeasurementType.objects.filter(lab_type=self.new_lab_type)
 
 		for measurement_type in self.qs_fields:
 			str_name = measurement_type.short_name
 			unit = measurement_type.unit
 			value_type = measurement_type.value_type
-			self.fields_display.append(Field(str_name))
-			self.fields_display[-1] = AppendedText(str_name,unit)
+			#self.fields_display.append(Field(str_name))
+			self.fields_display.append(Div(AppendedText(str_name,unit),style='width:400px;'))
+			#self.fields_display[-1].widget.attrs['style'] = 'width:400px;'
 			
 			if value_type=='Continuous': 
 				new_field = fields_for_model(models.ContinuousMeasurement)['value']
@@ -82,7 +84,7 @@ class MeasurementsCreationForm(Form):
 				new_field = fields_for_model(models.DiscreteMeasurement)['value']
 				new_field.queryset = models.DiscreteResultType.objects.filter(measurement_type=measurement_type)
 			new_field.label = str_name
-
+			new_field.widget.attrs['style'] = 'width:400px;'
 			if self.lab_pk is not None:
 				existing_measurements = self.measurements_dict[value_type]
 				try:

@@ -68,8 +68,13 @@ class MeasurementType(models.Model):
 
 	order_index = models.PositiveIntegerField(default=0, blank=False, null=False)
 
+
 	class Meta:
 		ordering = ['order_index']
+
+	def __lt__(self, other):
+		return ((self.order_index) < (other.order_index))
+
 
 	def __str__(self):
 		return self.long_name
@@ -107,7 +112,7 @@ class MeasurementType(models.Model):
 			elif((self.panic_upper!=None) and (value > self.panic_upper)):
 				return '#f00' #red
 			return ''
-		elif value_type=='Discrete':
+		elif self.value_type=='Discrete':
 			if value.is_panic == 'T':
 				return '#f00' #red
 			elif value.is_panic == 'F':

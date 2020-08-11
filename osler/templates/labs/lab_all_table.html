@@ -39,25 +39,6 @@ Recent Labs
 	}
 </style>
 
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.js"></script>
-<script type="text/javascript">
-
-$(document).ready(function(){
-    $('#lab_table td.y_n').each(function(){
-        if (~$(this).text().indexOf('⚠⚠')) {
-            $(this).css('color','#f00');
-            $(this).text().slice()
-        } else if (~$(this).text().indexOf('⚠')) {
-            $(this).css('color','#0000FF');
-        }
-        if (~$(this).text().indexOf('Lab: ')) {
-            $(this).css('font-weight','bold');
-        } 
-    });
-});
-
-$( "#myselect option:selected" )
-
 </script>
 
 <div class="container">
@@ -80,20 +61,67 @@ $( "#myselect option:selected" )
 
 
 <div class="container", id="lab_table">
+	{% if dup_lab_bool %}
+	<div class="alert alert-warning" role="alert">
+      <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+      <strong>Warning!</strong>
+      Multiple labs exist for the date(s) with *. The latest values on that day are displayed here. Please check All Labs page for details.</div>
+	{% endif %}
 	<table class="table">
-	    <tr>
-	    	{% for item in header %}
-	        	<th>{{ item }}</th>
-	        {% endfor %}
-	    </tr>
-	    {% for row in table %}
-	    <tr> 
-	    	{% for item in row %}
-	        		<td class="y_n">{{ item }}</td>
-	        {% endfor %}
-	    </tr>
-	    {% endfor %}
+	    {% for lab_section in table_content %}
+
+	    	{% for row in lab_section %}
+				<tr>
+					{% firstof row as firstelem %}
+					{% if "Lab Category" in firstelem %}
+						<!--td colspan="{{ncol}}" style="background-color:powderblue;"><b>{{ row }}</b></td-->
+						{% for item in row %}
+							<th style="background-color:lightgrey;">{{ item }}</th>
+					    {% endfor %}
+					{% else %}
+						{% for item in row %}
+							{% if item.value is not None %}
+					        <td style="color:{{item.color}}">{{ item.value }} {{item.warning}}</td>
+							{% else %}
+					        <td>{{ item }}</td>
+					        {% endif %}
+					    {% endfor %}
+					{% endif %}
+				</tr>
+			{% endfor %}
+
+		{% endfor %}
 	</table>
 </div>
+
+
+<!--div class="container", id="lab_table">
+	<table class="table">
+	    <tr>
+	    	{% for item in table_header %}
+	        	<th style="background-color:lightgrey;">{{ item }}</th>
+	        {% endfor %}
+	    </tr>
+	    {% for lab_section in table_content %}
+
+	    	{% for row in lab_section %}
+				<tr>
+					{% if "Lab Category" in row %}
+						<td colspan="{{ncol}}" style="background-color:powderblue;"><b>{{ row }}</b></td>
+					{% else %}
+						{% for item in row %}
+							{% if item.value is not None %}
+					        <td style="color:{{item.color}}">{{ item.value }} {{item.warning}}</td>
+							{% else %}
+					        <td>{{ item }}</td>
+					        {% endif %}
+					    {% endfor %}
+					{% endif %}
+				</tr>
+			{% endfor %}
+
+		{% endfor %}
+	</table>
+</div-->
 
 {% endblock %}
