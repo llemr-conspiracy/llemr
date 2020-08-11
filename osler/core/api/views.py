@@ -7,11 +7,11 @@ from django.db.models import Min
 
 from rest_framework import generics
 
-from osler.core import models as coremodels
-from osler.workup import models as workupmodels
-from referral import models as referrals
+from osler.core import models as core_models
+from osler.workup import models as workup_models
+from osler.referral import models as referrals
 
-from . import serializers
+from osler.workup.api import serializers
 
 
 def active_patients_filter(qs):
@@ -53,12 +53,12 @@ def active_ai_patients_filter(qs):
     items.
     '''
 
-    ai_qs = coremodels.ActionItem.objects \
+    ai_qs = core_models.ActionItem.objects \
         .filter(due_date__lte=django.utils.timezone.now().date()) \
         .filter(completion_date=None) \
         .select_related('patient')
 
-    pts_with_active_ais = coremodels.Patient.objects \
+    pts_with_active_ais = core_models.Patient.objects \
         .filter(actionitem__in=ai_qs) \
         .distinct().annotate(soonest_due_date=Min('actionitem__due_date'))
 
@@ -67,7 +67,7 @@ def active_ai_patients_filter(qs):
         .filter(completion_date=None) \
         .select_related('patient')
 
-    pts_with_active_referrals = coremodels.Patient.objects \
+    pts_with_active_referrals = core_models.Patient.objects \
         .filter(followuprequest__in=referral_qs) \
         .distinct().annotate(soonest_due_date=Min('followuprequest__due_date'))
 
@@ -82,14 +82,14 @@ def inactive_ai_patients_filter(qs):
     items due in the future.
     '''
 
-    future_ai_pts = coremodels.Patient.objects.filter(
-        actionitem__in=coremodels.ActionItem.objects
+    future_ai_pts = core_models.Patient.objects.filter(
+        actionitem__in=core_models.ActionItem.objects
             .filter(due_date__gt=django.utils.timezone.now().date())
             .filter(completion_date=None)
             .select_related('patient')
     ).annotate(soonest_due_date=Min('actionitem__due_date'))
 
-    future_referral_pts = coremodels.Patient.objects.filter(
+    future_referral_pts = core_models.Patient.objects.filter(
         followuprequest__in=referrals.FollowupRequest.objects
             .filter(due_date__gt=django.utils.timezone.now().date())
             .filter(completion_date=None)
@@ -107,12 +107,12 @@ def unsigned_workup_patients_filter(qs):
     workup.
     '''
 
-    wu_qs = workupmodels.Workup.objects \
+    wu_qs = workup_models.Workup.objects \
         .filter(signer__isnull=True) \
         .order_by('last_name') \
         .select_related('patient')  # optimization only
 
-    return coremodels.Patient.objects.filter(workup__in=wu_qs)
+    return core_models.Patient.objects.filter(workup__in=wu_qs)
 
 
 def priority_ai_patients_filter(qs):
@@ -120,8 +120,8 @@ def priority_ai_patients_filter(qs):
     action item.
     '''
 
-    priority_ai_pts = coremodels.Patient.objects.filter(
-        actionitem__in=coremodels.ActionItem.objects
+    priority_ai_pts = core_models.Patient.objects.filter(
+        actionitem__in=core_models.ActionItem.objects
         .filter(priority=True)
         .filter(completion_date=None)
         .select_related('patient')
@@ -135,7 +135,7 @@ def user_cases(user, qs):
     manager for
     '''
 
-    qs = coremodels.Patient.objects.filter(
+    qs = core_models.Patient.objects.filter(
         case_managers=user
     )
 
@@ -173,13 +173,13 @@ class PtList(generics.ListAPIView):  # read only
                 latestdate = latestwu.clinic_day.clinic_date
             return latestdate
 
-        queryset = coremodels.Patient.objects
+        queryset = core_models.Patient.objects
         sort = self.request.query_params.get('sort', None)
         filter_name = self.request.query_params.get('filter', None)
 
         if sort is not None:
             if str(sort) == 'latest_workup':
-                pt_list_latest = list(coremodels.Patient.objects.all())
+                pt_list_latest = list(core_models.Patient.objects.all())
                 pt_list_latest.sort(key=bylatestKey, reverse=True)
                 queryset = pt_list_latest
             else:

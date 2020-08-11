@@ -120,9 +120,15 @@ class AttestableNote(Note):
         return " ".join([str(self.author), "on", str(self.written_date())])
 
     @classmethod
+    def get_sign_perm(cls):
+        """returns name of signing perm"""
+        return 'workup.sign_%s' % cls.__name__
+
+    @classmethod
     def group_can_sign(cls, group):
         """takes a group and checks if it has sign permission to this object."""
-        return group_has_perm(group, 'workup.sign_%s' % cls.__name__)
+        return group_has_perm(group, cls.get_sign_perm())
+
 
 
 class ProgressNote(AttestableNote):
