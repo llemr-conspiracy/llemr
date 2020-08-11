@@ -4,7 +4,7 @@ from datetime import date
 from django.test import TestCase
 from django.urls import reverse
 
-from osler.core.tests.test_views import build_provider, log_in_user
+from osler.core.tests.test_views import build_user, log_in_user
 from osler.core.models import Patient, Gender, ContactMethod
 
 from . import models
@@ -19,7 +19,7 @@ class ViewsExistTest(TestCase):
 
     def setUp(self):
 
-        log_in_user(self.client, build_provider())
+        log_in_user(self.client, build_user())
 
         models.IncomeRange.objects.create(name="Default")
         models.EducationLevel.objects.create(name="Default")
@@ -72,7 +72,7 @@ class FormSubmissionTest(TestCase):
 
     def setUp(self):
 
-        log_in_user(self.client, build_provider())
+        log_in_user(self.client, build_user())
 
         models.IncomeRange.objects.create(name="Default")
         models.EducationLevel.objects.create(name="Default")
