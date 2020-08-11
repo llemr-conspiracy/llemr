@@ -18,9 +18,9 @@ class FollowupTest(TestCase):
     fixtures = ['followup', 'core']
 
     def setUp(self):
-        log_in_user(self.client, build_user())
+        self.user = build_user()
 
-        self.user = user_factories.UserFactory()
+        log_in_user(self.client, self.user)
 
         self.ai = ActionItem.objects.create(
             due_date=datetime.date(2020, 1, 1),

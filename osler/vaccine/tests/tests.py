@@ -24,8 +24,6 @@ class TestVaccineSeriesCreate(TestCase):
     def setUp(self):
         log_in_user(self.client, build_user())
 
-        self.user = user_factories.UserFactory()
-
         self.pt = core_factories.PatientFactory(
             case_managers=self.user)
 
@@ -56,9 +54,9 @@ class TestVaccineSeriesSelect(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_user(self.client, build_user())
+        self.user = build_user()
 
-        self.user = user_factories.UserFactory()
+        log_in_user(self.client, self.user)
 
         self.pt = core_factories.PatientFactory(
             case_managers=self.user)
@@ -139,9 +137,9 @@ class TestVaccineDoseCreate(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_user(self.client, build_user())
+        self.user = build_user()
 
-        self.user = user_factories.UserFactory()
+        log_in_user(self.client, self.user)
 
         self.pt = core_factories.PatientFactory(
             case_managers=self.user)
@@ -202,9 +200,9 @@ class TestVaccineActionItemCreate(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_user(self.client, build_user())
+        self.user = build_user()
 
-        self.user = user_factories.UserFactory()
+        log_in_user(self.client, self.user)
 
         self.pt = core_factories.PatientFactory(
             case_managers=self.user)
@@ -261,9 +259,9 @@ class TestVaccineFollowupCreate(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_user(self.client, build_user())
+        self.user = build_user()
 
-        self.user = user_factories.UserFactory()
+        log_in_user(self.client, self.user)
 
         self.pt = core_factories.PatientFactory(
             case_managers=self.user)
