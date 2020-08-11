@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-from builtins import zip
 import datetime
 
 from django.test import TestCase
@@ -11,12 +10,13 @@ from django.utils.timezone import now
 from osler.followup.models import (
     ContactMethod, NoAptReason, NoShowReason, ContactResult)
 from osler.core.models import (
-    Gender, Patient, Provider, ProviderType, ReferralType, ReferralLocation
+    Gender, Patient, Provider, ReferralType, ReferralLocation
 )
-from osler.core.tests.test_views import log_in_user, build_provider
+from osler.referral import forms, models
 
-from . import forms
-from . import models
+from osler.core.tests.test_views import log_in_user, build_user
+from osler.core.tests import factories as core_factories
+from osler.users.tests import factories as user_factories
 
 
 class TestPatientContactForm(TestCase):
@@ -29,7 +29,9 @@ class TestPatientContactForm(TestCase):
 
     def setUp(self):
         """ Provides the same context in all the tests """
-        log_in_user(self.client, build_provider())
+        self.user = build_user()
+
+        log_in_user(self.client, self.user)
 
         self.contact_method = ContactMethod.objects.create(
             name="Carrier Pidgeon")
@@ -59,8 +61,8 @@ class TestPatientContactForm(TestCase):
             comments="Needs his back checked",
             status=models.Referral.STATUS_PENDING,
             kind=reftype,
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt
         )
         self.referral.location.add(refloc)
@@ -69,8 +71,8 @@ class TestPatientContactForm(TestCase):
             referral=self.referral,
             contact_instructions="Call him",
             due_date=datetime.date(2018, 9, 1),
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt
         )
 
@@ -318,7 +320,7 @@ class TestSelectReferralType(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_user(self.client, build_provider())
+        log_in_user(self.client, build_user())
 
         self.contact_method = ContactMethod.objects.create(
             name="Carrier Pidgeon")
@@ -380,7 +382,7 @@ class TestCreateReferral(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_user(self.client, build_provider())
+        log_in_user(self.client, build_user())
 
         self.contact_method = ContactMethod.objects.create(
             name="Carrier Pidgeon")
@@ -477,7 +479,9 @@ class TestSelectReferral(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_user(self.client, build_provider())
+        self.user = build_user()
+
+        log_in_user(self.client, self.user)
 
         self.contact_method = ContactMethod.objects.create(
             name="Carrier Pidgeon")
@@ -514,8 +518,8 @@ class TestSelectReferral(TestCase):
             comments="Needs his back checked",
             status=models.Referral.STATUS_PENDING,
             kind=self.reftype,
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt
         )
         referral1.location.add(self.refloc)
@@ -524,8 +528,8 @@ class TestSelectReferral(TestCase):
             referral=referral1,
             contact_instructions="Call him",
             due_date=datetime.date(2018, 11, 1),
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt
         )
 
@@ -539,8 +543,8 @@ class TestSelectReferral(TestCase):
             comments="Needs his back checked",
             status=models.Referral.STATUS_PENDING,
             kind=reftype2,
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt
         )
         referral2.location.add(refloc2)
@@ -572,8 +576,8 @@ class TestSelectReferral(TestCase):
             comments="Needs his back checked",
             status=models.Referral.STATUS_PENDING,
             kind=reftype3,
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=pt2
         )
         referral3.location.add(refloc2)
@@ -582,8 +586,8 @@ class TestSelectReferral(TestCase):
             referral=referral3,
             contact_instructions="Call him",
             due_date=datetime.date(2018, 11, 1),
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=pt2
         )
 
@@ -640,8 +644,8 @@ class TestSelectReferral(TestCase):
 
         ref = models.Referral.objects.create(
             patient=self.pt,
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             comments="",
             status=models.Referral.STATUS_PENDING,
             kind=ReferralType.objects.first())
@@ -653,8 +657,8 @@ class TestSelectReferral(TestCase):
             contact_instructions="Call him",
             due_date=(datetime.datetime.now().date() +
                       datetime.timedelta(days=2)),
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt
         )
 
@@ -673,7 +677,9 @@ class TestPatientContactCreateView(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_user(self.client, build_provider())
+        self.user = build_user()
+
+        log_in_user(self.client, self.user)
 
         self.contact_method = ContactMethod.objects.create(
             name="Carrier Pidgeon")
@@ -713,8 +719,8 @@ class TestPatientContactCreateView(TestCase):
             comments="Needs his back checked",
             status=models.Referral.STATUS_PENDING,
             kind=self.reftype,
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt
         )
         referral1.location.add(self.refloc)
@@ -723,8 +729,8 @@ class TestPatientContactCreateView(TestCase):
             referral=referral1,
             contact_instructions="Call him",
             due_date=datetime.date(2018, 11, 1),
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt
         )
 
@@ -791,7 +797,7 @@ class TestReferralPatientDetailIntegration(TestCase):
         self.contact_method = models.ContactMethod.objects.create(
             name="Carrier Pidgeon")
 
-        self.pt = factories.PatientFactory()
+        self.pt = core_factories.PatientFactory()
         self.pt.case_managers.add(self.user)
         self.pt.save()
 
@@ -843,8 +849,8 @@ class TestReferralPatientDetailIntegration(TestCase):
             comments="Connecting patient to FQHC",
             status=Referral.STATUS_PENDING,
             kind=fqhc_reftype,
-            author=models.Provider.objects.first(),
-            author_type=models.ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt
         )
         referral2.location.add(fhc)
@@ -853,8 +859,8 @@ class TestReferralPatientDetailIntegration(TestCase):
             referral=referral2,
             contact_instructions="Call him",
             due_date=now().date(),
-            author=models.Provider.objects.first(),
-            author_type=models.ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt
         )
 
