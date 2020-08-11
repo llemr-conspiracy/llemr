@@ -1,18 +1,19 @@
 from __future__ import unicode_literals
-from builtins import str
 import datetime
 
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.timezone import now
 
-from osler.core.tests.test_views import log_in_user, build_provider
+from osler.vaccine import models, forms
 from osler.core.models import (
-    Gender, Patient, Provider, ProviderType, ActionInstruction)
+    Gender, Patient, ActionInstruction)
 from osler.followup.models import (ContactMethod, ContactResult)
 
-from . import forms
-from . import models
+from osler.core.tests.test_views import log_in_user, build_user
+from osler.core.tests import factories as core_factories
+from osler.users.tests import factories as user_factories
+from osler.vaccine.tests import factories
 
 
 class TestVaccineSeriesCreate(TestCase):
@@ -21,28 +22,16 @@ class TestVaccineSeriesCreate(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_user(self.client, build_provider())
+        log_in_user(self.client, build_user())
 
-        self.pt = Patient.objects.create(
-            first_name="Juggie",
-            last_name="Brodeltein",
-            middle_name="Bayer",
-            phone='+49 178 236 5288',
-            gender=Gender.objects.first(),
-            address='Schulstrasse 9',
-            city='Munich',
-            state='BA',
-            zip_code='63108',
-            pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 1, 1),
-            patient_comfortable_with_english=False,
-        )
+        self.user = user_factories.UserFactory()
+
+        self.pt = core_factories.PatientFactory(
+            case_managers=self.user)
 
     def test_vaccine_series_create_view(self):
-        series1 = models.VaccineSeriesType.objects.create(
-            name="Hepatitis A")
-        series2 = models.VaccineSeriesType.objects.create(
-            name="Influenza")
+        series1 = factories.VaccineSeriesTypeFactory()
+        series2 = factories.VaccineSeriesTypeFactory()
 
         url = reverse('new-vaccine-series',
                       args=(self.pt.id,))
@@ -67,38 +56,28 @@ class TestVaccineSeriesSelect(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_user(self.client, build_provider())
+        log_in_user(self.client, build_user())
 
-        self.pt = Patient.objects.create(
-            first_name="Juggie",
-            last_name="Brodeltein",
-            middle_name="Bayer",
-            phone='+49 178 236 5288',
-            gender=Gender.objects.first(),
-            address='Schulstrasse 9',
-            city='Munich',
-            state='BA',
-            zip_code='63108',
-            pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 1, 1),
-            patient_comfortable_with_english=False,
-        )
-        self.series_type = models.VaccineSeriesType.objects.create(
-            name="Hepatitis A")
+        self.user = user_factories.UserFactory()
+
+        self.pt = core_factories.PatientFactory(
+            case_managers=self.user)
+
+        self.series_type = factories.VaccineSeriesTypeFactory()
 
     def test_vaccine_series_select_view(self):
         #Create vaccine series for patient
-        series1 = models.VaccineSeries.objects.create(
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+        series1 = factories.VaccineSeriesFactory(
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt,
             kind=self.series_type)
 
         series2 = models.VaccineSeries.objects.create(
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt,
-            kind=models.VaccineSeriesType.objects.create(name="Flu"))
+            kind=factories.VaccineSeriesTypeFactory())
 
         #Create vaccine series for another patient
         pt2 = Patient.objects.create(
@@ -117,10 +96,10 @@ class TestVaccineSeriesSelect(TestCase):
         )
 
         series3 = models.VaccineSeries.objects.create(
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=pt2,
-            kind=models.VaccineSeriesType.objects.create(name="MMR"))
+            kind=factories.VaccineSeriesTypeFactory())
 
         #Two vaccine series for patient 1
         url = reverse('select-vaccine-series',
@@ -160,41 +139,31 @@ class TestVaccineDoseCreate(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_user(self.client, build_provider())
+        log_in_user(self.client, build_user())
 
-        self.pt = Patient.objects.create(
-            first_name="Juggie",
-            last_name="Brodeltein",
-            middle_name="Bayer",
-            phone='+49 178 236 5288',
-            gender=Gender.objects.first(),
-            address='Schulstrasse 9',
-            city='Munich',
-            state='BA',
-            zip_code='63108',
-            pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 1, 1),
-            patient_comfortable_with_english=False,
-        )
-        self.series_type = models.VaccineSeriesType.objects.create(
-          name="Hepatitis A")
-        self.series = models.VaccineSeries.objects.create(
-          author=Provider.objects.first(),
-          author_type=ProviderType.objects.first(),
-          patient=self.pt,
-          kind=self.series_type)
+        self.user = user_factories.UserFactory()
+
+        self.pt = core_factories.PatientFactory(
+            case_managers=self.user)
+
+        self.series_type = factories.VaccineSeriesTypeFactory()
+
+        self.series = factories.VaccineSeriesFactory(
+            author=self.user,
+            author_type=self.user.groups.first(),
+            patient=self.pt,
+            kind=self.series_type)
 
     def test_vaccine_dose_create_view(self):
-        dosetype1 = models.VaccineDoseType.objects.create(
+        dosetype1 = factories.VaccineDoseTypeFactory(
             kind=self.series_type,
             time_from_first=datetime.timedelta(0))
-        dosetype2 = models.VaccineDoseType.objects.create(
+        dosetype2 = factories.VaccineDoseTypeFactory(
             kind=self.series_type,
             time_from_first=datetime.timedelta(days=30))
 
         #Create another series type and subsequent dose type
-        series_type2 = models.VaccineSeriesType.objects.create(
-            name="Flu")
+        series_type2 = factories.VaccineSeriesTypeFactory()
         dosetype3 = models.VaccineDoseType.objects.create(
             kind=series_type2,
             time_from_first=datetime.timedelta(0))
@@ -233,29 +202,20 @@ class TestVaccineActionItemCreate(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_user(self.client, build_provider())
+        log_in_user(self.client, build_user())
 
-        self.pt = Patient.objects.create(
-            first_name="Juggie",
-            last_name="Brodeltein",
-            middle_name="Bayer",
-            phone='+49 178 236 5288',
-            gender=Gender.objects.first(),
-            address='Schulstrasse 9',
-            city='Munich',
-            state='BA',
-            zip_code='63108',
-            pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 1, 1),
-            patient_comfortable_with_english=False,
-        )
-        self.series_type = models.VaccineSeriesType.objects.create(
-          name="Hepatitis A")
-        self.series = models.VaccineSeries.objects.create(
-          author=Provider.objects.first(),
-          author_type=ProviderType.objects.first(),
-          patient=self.pt,
-          kind=self.series_type)
+        self.user = user_factories.UserFactory()
+
+        self.pt = core_factories.PatientFactory(
+            case_managers=self.user)
+
+        self.series_type = factories.VaccineSeriesTypeFactory()
+
+        self.series = factories.VaccineSeriesFactory(
+            author=self.user,
+            author_type=self.user.groups.first(),
+            patient=self.pt,
+            kind=self.series_type)
 
     def test_vaccine_ai_create(self):
 
@@ -282,8 +242,8 @@ class TestVaccineActionItemCreate(TestCase):
             instruction=ActionInstruction.objects.create(instruction="Please call"),
             due_date=datetime.date.today(),
             comments="",
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt,
             vaccine=self.series)
 
@@ -301,35 +261,27 @@ class TestVaccineFollowupCreate(TestCase):
     fixtures = ['core']
 
     def setUp(self):
-        log_in_user(self.client, build_provider())
+        log_in_user(self.client, build_user())
 
-        self.pt = Patient.objects.create(
-            first_name="Juggie",
-            last_name="Brodeltein",
-            middle_name="Bayer",
-            phone='+49 178 236 5288',
-            gender=Gender.objects.first(),
-            address='Schulstrasse 9',
-            city='Munich',
-            state='BA',
-            zip_code='63108',
-            pcp_preferred_zip='63018',
-            date_of_birth=datetime.date(1990, 1, 1),
-            patient_comfortable_with_english=False,
-        )
-        self.series_type = models.VaccineSeriesType.objects.create(
-            name="Hepatitis A")
-        self.series = models.VaccineSeries.objects.create(
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+        self.user = user_factories.UserFactory()
+
+        self.pt = core_factories.PatientFactory(
+            case_managers=self.user)
+
+        self.series_type = factories.VaccineSeriesTypeFactory()
+
+        self.series = factories.VaccineSeriesFactory(
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt,
             kind=self.series_type)
+
         self.vai = models.VaccineActionItem.objects.create(
             instruction=ActionInstruction.objects.create(instruction="Please call"),
             due_date=datetime.date.today(),
             comments="",
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=self.pt,
             vaccine=self.series)
 
