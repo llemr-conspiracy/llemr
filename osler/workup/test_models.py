@@ -2,10 +2,13 @@ from __future__ import unicode_literals
 from django.test import TestCase
 from django.utils.timezone import now
 
-from osler.core.models import Provider, ProviderType, Patient
-from osler.core.tests.test_views import build_provider
+from osler.core.models import Patient
+from osler.core.tests.test_views import build_user
 
-from . import models
+from osler.workup import models
+from osler.workup.tests import wu_dict, pn_dict
+
+import osler.users.tests.factories as user_factories
 
 
 class TestAttestations(TestCase):
@@ -18,94 +21,65 @@ class TestAttestations(TestCase):
             clinic_type=models.ClinicType.objects.first(),
             clinic_date=now().date())
 
-        # roles=["AP", "C", "PV", "CV"])
-        self.all_roles_provider = build_provider()
+        self.wu = models.Workup.objects.create(**wu_dict())
+        self.pn = models.ProgressNote.objects.create(**pn_dict())
 
-        self.wu = models.Workup.objects.create(
-            clinic_day=models.ClinicDate.objects.first(),
-            chief_complaint="SOB",
-            diagnosis="MI",
-            HPI="A", PMH_PSH="B", meds="C", allergies="D",
-            fam_hx="E",
-            author=Provider.objects.first(),
-            soc_hx="F", ros="", pe="", A_and_P="",
-            author_type=ProviderType.objects.filter(
-                signs_charts=False).first(),
-            patient=Patient.objects.first())
+    def test_wu_signing(self):
+        """test signing permissions """
+        self.attestable_note_signing_one_group_test(self.wu)
+        self.attestable_note_signing_all_groups_test(self.wu)
 
-        self.pn = models.ProgressNote.objects.create(
-            title='Good',
-            text='very good',
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.filter(
-                signs_charts=False).first(),
-            patient=Patient.objects.first())
 
-    # Workup Attestation Testing
-    def test_all_roles_provider_wu_signing(self):
-        # roles=["AP", "C", "PV", "CV"], username=None,
-        # password='password', email=None)
-        all_roles_provider = build_provider()
+    def test_pn_signing(self):
+        self.attestable_note_signing_one_group_test(self.pn)
+        self.attestable_note_signing_all_groups_test(self.pn)
 
-        # test that if a provider tries to sign a chart with a provider
-        # type they do not have, an error is thrown
-        with self.assertRaises(ValueError):
-            self.wu.sign(
-                all_roles_provider.associated_user,
-                active_role=ProviderType(
-                    long_name="Test Provider", short_name="TP",
-                    signs_charts=False, staff_view=False))
+    def attestable_note_signing_one_group_test(self, note):  
+        """test signing permissions for attestable note
+        when user has one group."""
 
-        self.assertFalse(self.wu.signed())
+        for role in user_factories.all_roles:
+            user = build_user([role])
+            group = user.groups.first()
 
-        with self.assertRaises(ValueError):  # test that with active_role=None, an error is thrown
-            self.wu.sign(
-                all_roles_provider.associated_user)
+            # attending can sign
+            if role in user_factories.attesting_roles:
+                note.sign(user, group)
+                assert note.signed()
 
-        self.assertFalse(self.wu.signed())
-
-        # test that provider given all roles can sign a chart if their active role allows for it
-        self.wu.sign(
-            all_roles_provider.associated_user,
-            active_role=ProviderType.objects.filter(signs_charts=True).first())
-
-        self.assertTrue(self.wu.signed())
-
-    def test_non_signing_provider_wu_signing(self):  # test that provider with no roles that allow for signing the chart cannot sign chart
-
-        all_roles_provider = build_provider()
-
-        # self.assertEqual(len(ProviderType.objects.filter(signs_charts=False)), 3)
-
-        with self.assertRaises(ValueError):
-            self.wu.sign(
-                all_roles_provider.associated_user,
-                active_role=ProviderType.objects.filter(signs_charts=False).first())
-
-        self.assertFalse(self.wu.signed())
-
-    def test_one_role_provider_wu_signing(self):  # test that provider given one role will use that roll, and can only sign chart if ProviderType allows for it
-
-        for role in ["Preclinical", "Clinical", "Coordinator", "Attending"]:  # ProviderType is not Iterable, even though the QuerySet should be iterable?
-            one_role_provider = build_provider(roles=[role])
-            if one_role_provider.clinical_roles.first().signs_charts:
-                self.wu.sign(
-                    one_role_provider.associated_user)
-
-                self.assertTrue(self.wu.signed())
-
-            else:  # one_role_provider.signs_charts = False
+            else:  
+                # non-attending can't sign
                 with self.assertRaises(ValueError):
-                    self.wu.sign(
-                        one_role_provider.associated_user)
+                    note.sign(user, group)
+                assert not note.signed()
 
-                self.assertFalse(self.wu.signed())
+                # non-attending can't use another group to sign
+                with self.assertRaises(ValueError):
+                    note.sign(user, user_factories.AttendingGroupFactory())
+                assert not note.signed()
 
-                with self.assertRaises(ValueError):  # test that a non-Attending provider cannot use the Attending role to sign a chart
-                    self.wu.sign(
-                        one_role_provider.associated_user,
-                        active_role=ProviderType.objects.filter(signs_charts=True).first())
+            # reset chart's signed status
+            note.signer = None
 
-                self.assertFalse(self.wu.signed())
+    def attestable_note_signing_all_groups_test(self, note):
+        """Check that signing permission depend on only the
+        supplied group."""
 
-            self.wu.signer = None  # reset chart's signed status
+        user = build_user(user_factories.all_roles)
+        for group in user.groups.all():
+
+            # should be able to sign
+            if note.group_can_sign(group):
+                note.sign(user, group)
+                assert note.signed()
+
+            # should not be able to sign
+            else:
+                with self.assertRaises(ValueError):
+                    note.sign(user, group)
+                assert not note.signed()
+
+            note.signer = None
+
+        
+

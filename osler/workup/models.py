@@ -104,7 +104,8 @@ class AttestableNote(Note):
     def sign(self, user, group):
         """Signs this workup."""
 
-        if self.group_can_sign(group):
+        user_has_group = user.groups.filter(pk=group.pk).exists()
+        if user_has_group and self.group_can_sign(group):
             self.signed_date = now()
             self.signer = user
         else:

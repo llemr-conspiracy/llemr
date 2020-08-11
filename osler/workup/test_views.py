@@ -11,7 +11,7 @@ from osler.core.tests.test_views import build_user, log_in_user
 import osler.users.tests.factories as user_factories
 
 from osler.workup import models
-from osler.workup.tests import wu_dict
+from osler.workup.tests import wu_dict, pn_dict
 
 import pytest
 import factory
@@ -24,7 +24,6 @@ class ViewsExistTest(TestCase):
     fixtures = ['workup', 'core']
 
 
-
     def setUp(self):
 
         models.ClinicDate.objects.create(
@@ -34,15 +33,7 @@ class ViewsExistTest(TestCase):
         self.user = build_user()
         log_in_user(self.client, self.user)
 
-        self.wu = models.Workup.objects.create(
-            clinic_day=models.ClinicDate.objects.first(),
-            chief_complaint="SOB",
-            diagnosis="MI",
-            HPI="A", PMH_PSH="B", meds="C", allergies="D", fam_hx="E",
-            soc_hx="F", ros="", pe="", A_and_P="",
-            author=self.user,
-            author_type=self.user.groups.first(),
-            patient=Patient.objects.first())
+        self.wu = models.Workup.objects.create(**wu_dict(user=self.user))
 
     def test_clindate_create_redirect(self):
         '''Verify that if no clindate exists, we're properly redirected to a
@@ -60,19 +51,21 @@ class ViewsExistTest(TestCase):
         self.assertRedirects(response, reverse('new-clindate', args=(pt.id,)))
 
     def test_new_workup_view(self):
+        """Test that user can successfully access new workup page."""
 
         pt = Patient.objects.first()
         response = self.client.get(reverse('new-workup', args=(pt.id,)))
         assert response.status_code == 200
 
     def test_workup_urls(self):
+        """Test creation of many workups."""
+
         wu_urls = ['workup',
                    'workup-update']
 
-        # test the creation of many workups, just in case.
-        for i in range(10):
+        for i in range(5):
             models.Workup.objects.bulk_create(
-                [models.Workup(**wu_dict()) for i in range(77)])
+                [models.Workup(**wu_dict()) for i in range(20)])
             wu = models.Workup.objects.last()
 
             wu.diagnosis_categories.add(models.DiagnosisType.objects.first())
@@ -90,11 +83,10 @@ class ViewsExistTest(TestCase):
 
         # TODO test use of settings.OSLER_WORKUP_COPY_FORWARD_FIELDS
         response = self.client.get(reverse('new-workup', args=(pt.id,)))
-        assert response.context['form'].initial['PMH_PSH'] == heading_text + "B"
-        assert response.context['form'].initial['meds'] == heading_text + "C"
-        assert response.context['form'].initial['allergies'] == heading_text + "D"
-        assert response.context['form'].initial['fam_hx'] == heading_text + "E"
-        assert response.context['form'].initial['soc_hx'] == heading_text + "F"
+
+        field_list = ['PMH_PSH', 'meds', 'allergies', 'fam_hx', 'soc_hx']
+        for field in field_list:
+            assert response.context['form'].initial[field] == heading_text + getattr(self.wu, field)
 
     def test_workup_update(self):
         '''
@@ -209,16 +201,10 @@ class TestProgressNoteViews(TestCase):
 
     def setUp(self):
 
-        user = build_user()
-        log_in_user(self.client, user)
+        self.user = build_user()
+        log_in_user(self.client, self.user)
 
-        self.formdata = {
-            'title': 'Depression',
-            'text': factory.Faker('paragraph'),
-            'patient': Patient.objects.first(),
-            'author': user,
-            'author_type': user.groups.first()
-        }
+        self.pn_data = pn_dict(user=self.user)
 
         models.ClinicDate.objects.create(
             clinic_type=models.ClinicType.objects.first(),
@@ -233,7 +219,7 @@ class TestProgressNoteViews(TestCase):
         response = self.client.get(pn_url)
         assert response.status_code == 200
 
-        response = self.client.post(pn_url, self.formdata)
+        response = self.client.post(pn_url, self.pn_data)
         self.assertRedirects(response,
                              reverse('core:patient-detail', args=(pt.id,)))
         assert models.ProgressNote.objects.count() == n_notes + 1
@@ -245,7 +231,7 @@ class TestProgressNoteViews(TestCase):
 
         self.formdata['text'] = 'actually not so bad'
 
-        response = self.client.post(pn_url, self.formdata)
+        response = self.client.post(pn_url, self.pn_data)
         self.assertRedirects(response,
                              reverse('core:patient-detail', args=(pt.id,)))
 
@@ -255,7 +241,7 @@ class TestProgressNoteViews(TestCase):
 
         pn_url = "progress-note-sign"
 
-        pn = models.ProgressNote.objects.create(**self.formdata)
+        pn = models.ProgressNote.objects.create(**self.pn_data)
 
         # Fresh notes should be unsigned
         assert not pn.signed()

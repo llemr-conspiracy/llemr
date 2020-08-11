@@ -13,15 +13,25 @@ from osler.core.models import Patient
 from osler.workup import validators
 from osler.workup import models
 
+import factory
 
-def wu_dict(units=False, clinic_day_pk=False, dx_category=False):
-    user = build_user()
+
+def wu_dict(user=None, units=False, clinic_day_pk=False, dx_category=False):
+
+    if not user:
+        user = build_user()
+
+    fake_text = factory.Faker('paragraph')
 
     wu = {'clinic_day': models.ClinicDate.objects.first(),
           'chief_complaint': "SOB",
           'diagnosis': "MI",
-          'HPI': "f", 'PMH_PSH': "f", 'meds': "f", 'allergies': "f",
-          'fam_hx': "f", 'soc_hx': "f",
+          'HPI': fake_text.generate(), 
+          'PMH_PSH': fake_text.generate(), 
+          'meds': fake_text.generate(), 
+          'allergies': fake_text.generate(),
+          'fam_hx': fake_text.generate(), 
+          'soc_hx': fake_text.generate(),
           'ros': "f", 'pe': "f", 'A_and_P': "f",
           'hr': '89', 'bp_sys': '120', 'bp_dia': '80', 'rr': '16', 't': '98',
           'labs_ordered_internal': 'f', 'labs_ordered_quest': 'f',
@@ -46,6 +56,20 @@ def wu_dict(units=False, clinic_day_pk=False, dx_category=False):
 
     return wu
 
+def pn_dict(user=None):
+
+    if not user:
+        user = build_user()
+
+    pn = {
+        'title': 'Good',
+        'text': factory.Faker('paragraph').generate(),
+        'author': user,
+        'author_type': user.groups.first(),
+        'patient': Patient.objects.first()
+    }
+
+    return pn
 
 class TestEmailForUnsignedNotes(TestCase):
 
