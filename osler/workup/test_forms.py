@@ -7,28 +7,35 @@ import decimal
 
 from django.test import TestCase
 
-from osler.core.models import Provider, ProviderType, Gender
+from osler.core.models import Gender
 
-from .models import DiagnosisType, ClinicDate, ClinicType
-from .forms import WorkupForm
+from osler.workup.models import DiagnosisType, ClinicDate, ClinicType, Workup
+from osler.workup.forms import WorkupForm
 
-from .tests import wu_dict
+from osler.workup.tests import wu_dict, pn_dict
+
+from osler.core.tests.test_views import build_user
+import osler.users.tests.factories as user_factories
+
+from itertools import chain, combinations
 
 
 class TestHelperFunctions(TestCase):
 
     def test_unit_converter_helpers_accept_None(self):
-        from . import forms
+        from osler.workup import forms
 
-        self.assertEqual(
-            forms.fahrenheit2centigrade(None), None)
-        self.assertEqual(
-            forms.pounds2kilos(None), None)
-        self.assertEqual(
-            forms.inches2cm(None), None)
-
+        unit_converters = [
+            forms.fahrenheit2centigrade,
+            forms.pounds2kilos,
+            forms.inches2cm
+        ]
+        for unit_converter in unit_converters:
+            assert not unit_converter(None)
 
 class TestWorkupFormUnitAwareFields(TestCase):
+
+    # fixtures = ['core', 'workup']
 
     def setUp(self):
         DiagnosisType.objects.create(name='Cardiovascular')
@@ -225,87 +232,58 @@ class TestWorkupFormValidators(TestCase):
 class TestWorkupFormProviderChoices(TestCase):
 
     def setUp(self):
-        Gender.objects.create(short_name='A', long_name="Alien")
 
-        attending = ProviderType.objects.create(
-            long_name='Attending Physician', short_name='AP',
-            signs_charts=True, staff_view=True)
-
-        coordinator = ProviderType.objects.create(
-            long_name='Coordinator', short_name='C',
-            signs_charts=False, staff_view=True)
-
-        volunteer = ProviderType.objects.create(
-            long_name='Volunteer', short_name='V',
-            signs_charts=False, staff_view=False)
-
-        provider_skeleton = {
-            'first_name': "Firstname",
-            'last_name': "Lastname",
-            'gender': Gender.objects.first(),
-        }
-
-        pvds = [Provider.objects.create(
-            middle_name=str(i), **provider_skeleton) for i in range(4)]
-        pvds[1].clinical_roles.add(attending)
-        pvds[2].clinical_roles.add(coordinator)
-        pvds[3].clinical_roles.add(volunteer)
-        [p.save() for p in pvds]
-
-        self.pvds = pvds
-        self.form = WorkupForm()
+        # build large list of users with different combinations of roles
+        self.users = []
+        role_list = list(user_factories.all_roles)
+        role_powerset = chain.from_iterable(
+            combinations(role_list, r) for r in range(1, len(role_list)+1))
+        for role_tuple in role_powerset:
+            for _ in range(3):
+                self.users.append(build_user(list(role_tuple)))
 
     def test_form_attending_options(self):
-        """WorkupForm offers only attending Providers for 'attending'"""
+        """WorkupForm offers only attending users for 'attending'"""
 
-        cm_qs = Provider.objects.filter(
-            clinical_roles__in=ProviderType.objects.filter(
-                signs_charts=True)).values_list('id', flat=True)
+        form = WorkupForm()
+
+        # find all users able to attest
+        attending_users = [u.pk for u in filter(
+            lambda u: u.has_perm(Workup.get_sign_perm()), 
+            self.users)]
 
         # c[0] is the pk of each, [1:] indexing required because element 0
         # is the "blank" option.
-        form_list = [c[0] for c in self.form['attending'].field.choices][1:]
+        attending_options = [c[0] for c in self.form['attending'].field.choices][1:]
 
-        # cast to set for 1) order-insensitivity and 2) b/c cm_qs is
-        # a queryset and form_list is a list
-        self.assertEqual(set(cm_qs), set(form_list))
+        # ensure that options are the same
+        assert set(attending_options) == set(attending_users)
 
-        # Make sure we reject non-attending providers
-        form_data = wu_dict()
-        form_data['attending'] = self.pvds[2].pk
-        form = WorkupForm(data=form_data)
-        self.assertNotEqual(len(form['attending'].errors), 0)
+        # and that each option is distinct
+        assert len(attending_options) == len(attending_users)
 
-        form_data['attending'] = self.pvds[3].pk
-        form = WorkupForm(data=form_data)
-        self.assertNotEqual(len(form['attending'].errors), 0)
-
-        # Make sure we accept attending providers
-        form_data['attending'] = self.pvds[1].pk
-        form = WorkupForm(data=form_data)
-        self.assertEqual(len(form['attending'].errors), 0)
 
     def test_form_other_volunteer_options(self):
         """WorkupForm offers only non-attendings for 'other volunteers'"""
 
-        cm_qs = Provider.objects.filter(
-            clinical_roles__in=ProviderType.objects.filter(
-                signs_charts=False)).values_list('id', flat=True)
-        form_list = [c[0] for c in self.form['other_volunteer'].field.choices]
+        form = WorkupForm()
+        user_pks = [u.pk for u in self.users]
+        other_vol_options = [c[0] for c in self.form['other_volunteer'].field.choices]
 
-        self.assertEqual(set(cm_qs), set(form_list))
+        # check that any user can be the other volunteer
+        assert set(user_pks) == set(other_vol_options)
+        assert len(user_pks) == len(other_vol_options)
 
-        # Reject attending providers
+        # check that error is thrown if one of the other volunteers
+        # is the attending
         form_data = wu_dict()
-        form_data['other_volunteer'] = self.pvds[1].pk
+        form_data['attending'] = user_pks[0]
+        form_data['other_volunteer'] = [user_pks[0]]
         form = WorkupForm(data=form_data)
-        self.assertNotEqual(len(form['other_volunteer'].errors), 0)
+        assert len(form['other_volunteer'].errors) > 0
 
-        # Accept non-attending providers
-        form_data['other_volunteer'] = [self.pvds[2].pk]
+        # and that no error is thrown if they are different
+        form_data['other_volunteer'] = [user_pks[1]]
         form = WorkupForm(data=form_data)
-        self.assertEqual(len(form['other_volunteer'].errors), 0)
+        assert len(form['other_volunteer'].errors) == 0
 
-        form_data['other_volunteer'] = [self.pvds[3].pk]
-        form = WorkupForm(data=form_data)
-        self.assertEqual(len(form['other_volunteer'].errors), 0)

@@ -229,7 +229,7 @@ class TestProgressNoteViews(TestCase):
                     args=(models.ProgressNote.objects.last().pk,)))
         assert response.status_code == 200
 
-        self.formdata['text'] = 'actually not so bad'
+        self.pn_data['text'] = 'actually not so bad'
 
         response = self.client.post(pn_url, self.pn_data)
         self.assertRedirects(response,
