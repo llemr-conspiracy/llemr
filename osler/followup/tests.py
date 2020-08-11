@@ -1,18 +1,15 @@
 '''Module for testing the followups Osler module.'''
 from __future__ import unicode_literals
-
-from builtins import str
-from builtins import range
 import datetime
 
 from django.test import TestCase
 from django.urls import reverse
 
-from osler.core.models import Gender, Patient, Provider, ProviderType, ActionItem, ActionInstruction
-from osler.core.tests.test_views import log_in_user, build_provider
+from osler.followup import forms, models
+from osler.core.models import Gender, Patient, Provider, ActionItem, ActionInstruction
 
-from . import forms
-from . import models
+from osler.core.tests.test_views import log_in_user, build_user
+from osler.users.tests import factories as user_factories
 
 FU_TYPES = ["labs"]
 
@@ -21,15 +18,17 @@ class FollowupTest(TestCase):
     fixtures = ['followup', 'core']
 
     def setUp(self):
-        log_in_user(self.client, build_provider())
+        log_in_user(self.client, build_user())
+
+        self.user = user_factories.UserFactory()
 
         self.ai = ActionItem.objects.create(
             due_date=datetime.date(2020, 1, 1),
-            author=Provider.objects.first(),
+            author=self.user,
             instruction=ActionInstruction.objects.create(
                 instruction="Follow up on labs"),
             comments="I hate tests",
-            author_type=ProviderType.objects.all()[0],
+            author_type=self.user.groups.first(),
             patient=Patient.objects.all()[0])
 
     def tearDown(self):
@@ -54,8 +53,8 @@ class FollowupTest(TestCase):
             lf = models.LabFollowup.objects.create(
                 contact_method=method,
                 contact_resolution=res,
-                author=Provider.objects.all()[0],
-                author_type=ProviderType.objects.all()[0],
+                author=self.user,
+                author_type=self.user.groups.first(),
                 patient=pt,
                 communication_success=True)
 
@@ -66,8 +65,8 @@ class FollowupTest(TestCase):
             aif = models.ActionItemFollowup.objects.create(
                 contact_method=method,
                 contact_resolution=res,
-                author=Provider.objects.all()[0],
-                author_type=ProviderType.objects.all()[0],
+                author=self.user,
+                author_type=self.user.groups.first(),
                 patient=pt,
                 action_item=ai)
 
