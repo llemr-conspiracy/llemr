@@ -10,7 +10,7 @@ from django.utils.timezone import now
 from osler.followup.models import (
     ContactMethod, NoAptReason, NoShowReason, ContactResult)
 from osler.core.models import (
-    Gender, Patient, Provider, ReferralType, ReferralLocation
+    Gender, Patient, ReferralType, ReferralLocation
 )
 from osler.referral import forms, models
 

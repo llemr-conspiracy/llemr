@@ -6,8 +6,8 @@ from django.test import TestCase
 from django.utils.timezone import now
 from django.urls import reverse
 
-from osler.core.models import Provider, ProviderType, Patient
-from osler.core.tests.test_views import log_in_user, build_provider
+from osler.core.models import Patient
+from osler.core.tests.test_views import log_in_user, build_user
 
 from osler.appointment import models
 from osler.appointment.test_forms import apt_dict
@@ -19,18 +19,17 @@ class TestAppointmentViews(TestCase):
 
     def setUp(self):
 
-        self.all_roles_provider = build_provider()
+        self.user = build_user()
 
-        log_in_user(self.client, self.all_roles_provider)
+        log_in_user(self.client, self.user)
 
         self.apt = models.Appointment.objects.create(
             comment='test this stuff',
             clindate=now().date(),
             clintime=time(9, 0),
             appointment_type='PSYCH_NIGHT',
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.filter(
-                signs_charts=False).first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=Patient.objects.first())
 
     def test_new_appointment_view(self):
@@ -129,9 +128,8 @@ class TestAppointmentViews(TestCase):
                 clindate=date,
                 clintime=time(9, 0),
                 appointment_type='PSYCH_NIGHT',
-                author=Provider.objects.first(),
-                author_type=ProviderType.objects.filter(
-                    signs_charts=False).first(),
+                author=self.user,
+                author_type=self.user.groups.first(),
                 patient=Patient.objects.first()))
 
         # three appointments should exist, total

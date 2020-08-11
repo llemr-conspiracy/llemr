@@ -6,10 +6,9 @@ from django.test import TestCase
 from django.urls import reverse
 
 from osler.followup import forms, models
-from osler.core.models import Gender, Patient, Provider, ActionItem, ActionInstruction
+from osler.core.models import Gender, Patient, ActionItem, ActionInstruction
 
 from osler.core.tests.test_views import log_in_user, build_user
-from osler.users.tests import factories as user_factories
 
 FU_TYPES = ["labs"]
 

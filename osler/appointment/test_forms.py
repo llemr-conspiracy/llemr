@@ -5,9 +5,9 @@ from django.test import TestCase
 from django.utils.timezone import now
 
 from osler.core.models import Patient
-from osler.core.forms import AppointmentForm
+from osler.appointment.forms import AppointmentForm
 
-from osler.core.tests import factories
+from osler.core.tests import factories as core_factories
 from osler.users.tests.factories import UserFactory
 
 User = get_user_model()
@@ -20,7 +20,7 @@ def apt_dict():
         'appointment_type': 'PSYCH_NIGHT',
         'comment': 'stuff',
         'author': UserFactory(),
-        'patient': factories.PatientFactory()
+        'patient': core_factories.PatientFactory()
     }
     apt['author_type'] = apt['author'].groups.first()
 
