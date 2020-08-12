@@ -9,10 +9,12 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.conf import settings
 
-from osler.core.tests.test_views import log_in_provider, build_provider
 from osler.core.models import (Gender, Patient, ContactMethod)
 
 from osler.workup.models import ClinicDate, ClinicType, Workup
+
+from osler.core.tests.test_views import log_in_user, build_user
+from osler.users.tests import factories as user_factories
 
 
 def dewhitespace(s):
@@ -26,11 +28,9 @@ class TestAttendingDashboard(TestCase):
     def setUp(self):
 
         # build an attending and a clinical student
-        self.attending = build_provider(roles=["Attending"],
-                                        email='user1@gmail.com')
-        self.clinical_student = build_provider(
-            roles=["Clinical"], email='user2@gmail.com')
-        log_in_provider(self.client, self.attending)
+        self.attending = build_user([user_factories.AttendingGroupFactory])
+        self.clinical_student = build_user()
+        log_in_user(self.client, self.attending)
 
         self.wu_info = dict(
             chief_complaint="SOB", diagnosis="MI", HPI="A", PMH_PSH="B",
@@ -55,7 +55,7 @@ class TestAttendingDashboard(TestCase):
         self.wu2 = Workup.objects.create(
             clinic_day=self.clinic_today,
             author=self.clinical_student,
-            author_type=self.clinical_student.clinical_roles.first(),
+            author_type=self.clinical_student.groups.first(),
             patient=self.pt2,
             **self.wu_info)
 
@@ -89,7 +89,7 @@ class TestAttendingDashboard(TestCase):
         wu3 = Workup.objects.create(
             clinic_day=self.clinic_today,
             author=self.clinical_student,
-            author_type=self.clinical_student.clinical_roles.first(),
+            author_type=self.clinical_student.groups.first(),
             patient=pt3,
             **self.wu_info)
 
@@ -113,7 +113,7 @@ class TestAttendingDashboard(TestCase):
         # both of which are marked as unattested
         self.assertContains(response, '<tr  class="warning" >', count=2)
 
-        wu3.sign(self.attending.associated_user)
+        wu3.sign(self.attending, self.attending.groups.first())
         wu3.save()
 
         response = self.client.get(reverse('dashboard-attending'))
@@ -170,7 +170,7 @@ class TestAttendingDashboard(TestCase):
                 attending=self.attending,
                 clinic_day=cd,
                 author=self.clinical_student,
-                author_type=self.clinical_student.clinical_roles.first(),
+                author_type=self.clinical_student.groups.first(),
                 patient=pt,
                 **self.wu_info)
 
@@ -216,7 +216,7 @@ class TestAttendingDashboard(TestCase):
                 attending=self.attending,
                 clinic_day=cd,
                 author=self.clinical_student,
-                author_type=self.clinical_student.clinical_roles.first(),
+                author_type=self.clinical_student.groups.first(),
                 patient=pt,
                 **self.wu_info)
 

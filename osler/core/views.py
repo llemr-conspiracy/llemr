@@ -51,7 +51,7 @@ class NoteUpdate(UpdateView):
     note_type = None
 
     def get_context_data(self, **kwargs):
-        '''Inject self.note_type as the note type.'''
+        """Inject self.note_type as the note type."""
 
         if self.note_type is None:
             raise ImproperlyConfigured("NoteUpdate view must have"
@@ -271,21 +271,22 @@ def choose_role(request):
 
     if request.POST:
         active_role_pk = request.POST[RADIO_CHOICE_KEY]
-        request.user.active_role = Group.objects.get(pk=active_role_pk)
-        request.user.save()
-        request.session['active_role_set'] = True
+        request.session['active_role_pk'] = active_role_pk
+        request.session['active_role_name'] = Group.objects.get(pk=active_role_pk).name
+
         return HttpResponseRedirect(redirect_to)
 
     if request.GET:
         role_options = request.user.groups.all()
         if len(role_options) == 1:
-            request.user.active_role = role_options[0]
-            request.user.save()
-            request.session['active_role_set'] = True
+            active_role_pk = role_options[0].pk
+            request.session['active_role_pk'] = active_role_pk
+            request.session['active_role_name'] = Group.objects.get(pk=active_role_pk).name
+
             return HttpResponseRedirect(redirect_to)
         elif not role_options:
             return HttpResponseServerError(
-                "Fatal: you have failed to instantiate any Groups. Report this error!")
+                "Fatal: This user must be initialized with groups. Report this error!")
         else:
             return render(request, 'core/role_choice.html',
                           {'roles': role_options,

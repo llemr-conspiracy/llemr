@@ -6,8 +6,8 @@ from django.utils.timezone import now
 from django.conf import settings
 from django.core.exceptions import ValidationError
 
-from osler.core.models import Provider, ProviderType, Patient
-from osler.core.tests.test_views import build_provider
+from osler.core.models import Patient
+from osler.core.tests.test_views import build_user
 
 from . import models
 
@@ -18,14 +18,13 @@ class TestAppointments(TestCase):
     fixtures = ['workup', 'core']
 
     def setUp(self):
-        self.all_roles_provider = build_provider()
+        self.user = build_user()
 
         self.apt = models.Appointment.objects.create(
             comment='test this stuff',
             clindate=now().date(),
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.filter(
-                signs_charts=False).first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=Patient.objects.first())
 
     # test editing appointment -- editing should in fact change comment
@@ -55,14 +54,14 @@ class TestMaxAppointments(TestCase):
 
     def setUp(self):
 
-        self.all_roles_provider = build_provider()
+        self.user = build_user()
 
         for i in range(settings.OSLER_MAX_APPOINTMENTS):
             models.Appointment.objects.create(
                 comment=str(i),
                 clindate=now().date(),
-                author=Provider.objects.first(),
-                author_type=ProviderType.objects.filter(signs_charts=False).first(),
+                author=self.user,
+                author_type=self.user.groups.first(),
                 patient=Patient.objects.first())
 
     # test creation of too many appointments
@@ -72,8 +71,8 @@ class TestMaxAppointments(TestCase):
         apt = models.Appointment(
             comment="one more",
             clindate=now().date(),
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.filter(signs_charts=False).first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=Patient.objects.first())
 
         with self.assertRaises(ValidationError):

@@ -57,14 +57,15 @@ class AppointmentUpdate(NoteUpdate):
     model = Appointment
     form_class = AppointmentForm
     note_type = "Appointment"
-    success_url = "/appointment/list"
+
+    def get_success_url(self):
+        return reverse("appointment-list")
 
 
 class AppointmentCreate(NoteFormView):
     template_name = 'appointment/form_submission.html'
     note_type = "Appointment"
     form_class = AppointmentForm
-    success_url = "list"
 
     def form_valid(self, form):
         appointment = form.save(commit=False)
@@ -72,6 +73,7 @@ class AppointmentCreate(NoteFormView):
         appointment.author_type = get_active_role(self.request)
 
         appointment.save()
+        form.save_m2m()
 
         return HttpResponseRedirect(reverse("appointment-list"))
 

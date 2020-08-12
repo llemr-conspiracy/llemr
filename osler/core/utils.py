@@ -17,8 +17,8 @@ def get_active_role(request):
     example.
     """
 
-    active_role = request.user.active_role        
-    assert request.user.groups.filter(pk=active_role.pk).exists()
+    active_role_pk = request.session['active_role_pk']
+    active_role = Group.objects.get(pk=active_role_pk)
     return active_role
 
 def make_filepath(instance, filename):
@@ -105,3 +105,12 @@ def get_due_date_from_url_query_dict(request):
                if param in request.GET}
 
     return qs_dict
+
+def group_has_perm(group, permission_name):
+    """Checks that a group has a certain permission.
+    Name permission as <app_label>.<codename>"""
+
+    split = permission_name.index('.')
+    app_label = permission_name[:split]
+    codename = permission_name[split+1:]
+    return group.permissions.filter(codename=codename, content_type__app_label=app_label).exists()

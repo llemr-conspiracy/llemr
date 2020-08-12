@@ -140,10 +140,29 @@ class Person(models.Model):
                              self.last_name])
 
 
+class Provider(Person):
+    """Data additional to the User model to track about each provider.
+
+    Primarily combines Person and User.
+    """
+
+    # Users should be made inactive rather than deleted in almost all cases
+    user = models.OneToOneField(get_user_model(), on_delete=models.PROTECT)
+
+    def first_name(self):
+        return self.user.first_name
+
+    def last_name(self):
+        return self.user.last_name
+
+    def __str__(self):
+        return "Provider Object on %s." % self.user
+
+
 class Patient(Person):
 
     class Meta:
-        permissions = [('can_case_manage_Patient', "Can act as a case manager.")]
+        permissions = [('case_manage_Patient', "Can act as a case manager.")]
 
     case_managers = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
@@ -460,10 +479,10 @@ class AbstractActionItem(Note, CompletableMixin):
 
     def attribution(self):
         if self.done():
-            return " ".join(["Marked done by", str(self.completion_author),
+            return " ".join(["Marked done by", self.completion_author.name,
                              "on", str(self.completion_date.date())])
         else:
-            return " ".join(["Added by", str(self.author), "on",
+            return " ".join(["Added by", self.author.name, "on",
                              str(self.written_datetime.date())])
 
 

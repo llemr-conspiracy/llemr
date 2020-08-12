@@ -1,26 +1,32 @@
-from __future__ import unicode_literals
+from datetime import time
+
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils.timezone import now
-from osler.core.models import Provider, ProviderType, Patient
-from datetime import time
-from .forms import AppointmentForm
+
+from osler.appointment.forms import AppointmentForm
+
+from osler.core.tests import factories as core_factories
+from osler.core.tests.test_views import build_user
+
+User = get_user_model()
 
 
 def apt_dict():
-    apt = {'clindate': now().date(),
-           'clintime': time(9, 0),
-           'appointment_type': 'PSYCH_NIGHT',
-           'comment': 'stuff',
-           'author': Provider.objects.first(),
-           'author_type': ProviderType.objects.first(),
-           'patient': Patient.objects.first().id}
+    apt = {
+        'clindate': now().date(),
+        'clintime': time(9, 0),
+        'appointment_type': 'PSYCH_NIGHT',
+        'comment': 'stuff',
+        'author': build_user(),
+        'patient': core_factories.PatientFactory().id
+    }
+    apt['author_type'] = apt['author'].groups.first()
 
-    return(apt)
+    return apt
 
 
 class TestAppointmentForm(TestCase):
-
-    fixtures = ['core.json']
 
     def setUp(self):
         apt = apt_dict()
