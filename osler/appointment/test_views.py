@@ -55,15 +55,16 @@ class TestAppointmentViews(TestCase):
         response = self.client.post(reverse('appointment-update',
                                     kwargs={'pk': apt.pk}), data=apt_dict())
         self.assertEqual(response.status_code, 302)
-        
         self.assertRedirects(response, reverse('appointment-list'))
+        
         apt_test = models.Appointment.objects.filter(id=apt.pk).first()
         self.assertEqual(apt_test.comment, 'stuff')
 
     def test_new_appointment_with_patient_name(self):
-        response = self.client.get(
-            "%s?pt_id=%s" % (reverse("appointment-new"),
-                             Patient.objects.filter(pk=1).first().pk))
+        #Get new appointment view
+        url = "%s?pt_id=%s" % (reverse("appointment-new"),
+                             Patient.objects.filter(pk=1).first().pk)
+        response = self.client.get(url)
         self.assertEqual(response.context['form'].initial['patient'],
                          Patient.objects.filter(pk=1).first())
 
