@@ -20,7 +20,7 @@ All Labs
 
 <div class="container text-center">
 	<div class="btn-group">
-		    <a class="btn btn-info" href="{% url 'labs:all-labs-table' pt.id %}" role="button">Back to Recent Labs</a>
+		    <a class="btn btn-info" href="{% url 'labs:all-labs-table' pt.id %}" role="button">Recent Labs</a>
 			{% if add_perm %}
 			    <a class="btn btn-primary" href="{% url 'labs:new-lab' pt.id %}" role="button">New Lab</a>
 		    {% endif %}

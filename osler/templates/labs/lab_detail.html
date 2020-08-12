@@ -6,6 +6,13 @@ Lab detail
 
 {% block header %}
 <h1>Lab Detail</h1>
+
+<div class="container">
+	<h4>Patient Name: <b><a href="{% url 'core:patient-detail' pk=pt.id %}">{{ pt.name }} </a></b></h4>
+	<h4>Lab Type: <b>{{lab.lab_type}}</b></h4>
+	<h4>Lab Time: <b>{{lab.lab_time}}</b> </h4>
+</div>
+
 {% endblock %}
 
 {% block content %}
@@ -14,8 +21,8 @@ Lab detail
 
 <div class="container text-center">
 	<div class="btn-group">
-	    <a class="btn btn-info" href="{% url 'labs:all-labs' pt.id %}" role="button">Back to All Labs</a>
-	    <a class="btn btn-info" href="{% url 'labs:all-labs-table' pt.id %}" role="button">Back to Recent Labs</a>
+	    <a class="btn btn-dark" href="{% url 'labs:all-labs' pt.id %}" role="button">Back to All Labs</a>
+	    <a class="btn btn-info" href="{% url 'labs:all-labs-table' pt.id %}" role="button">Recent Labs</a>
 		{% if change_perm %}
 		    <a class="btn btn-warning" href="{% url 'labs:lab-edit' lab.id %}" role="button">Edit Lab</a>
 		{% endif %}
@@ -23,12 +30,6 @@ Lab detail
 		    <a class="btn btn-danger" href="{% url 'labs:lab-delete' lab.id %}" role="button">Delete Lab</a>
 		{% endif %}
 	</div>
-</div>
-
-<div class="container">
-	<h4>Patient Name: <b>{{pt.name}}</b></h4>
-	<h4>Lab Type: <b>{{lab.lab_type}}</b></h4>
-	<h4>Lab Time: <b>{{lab.lab_time}}</b> </h4>
 </div>
 
 
@@ -57,7 +58,7 @@ Lab detail
 			<tr>
 				<td>{{ measurement.measurement_type }}</td>
 				<td>{{ measurement.ref }}</td>
-				<td style="color:{{measurement.color}}">{{ measurement.value }} {{measurement.warning}}</td>
+				<td style="color:{{measurement.color}}">{{ measurement.value }} {{measurement.unit}} {{measurement.warning}}</td>
 				<!--td>{{ measurement.value }}</td-->
 			</tr>
 		{% endfor %}

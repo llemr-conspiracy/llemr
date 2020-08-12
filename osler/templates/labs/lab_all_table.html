@@ -7,10 +7,11 @@ Recent Labs
 {% block header%}
 <h1>Recent Labs</h1>
 
-<div class="row text">
+<div class="row text">  
 	<div class="col-mb-2">
 		<h2>Patient: <a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }} </a></h2>
 	</div>
+
 </div>
 
 {% endblock %}
@@ -22,7 +23,7 @@ Recent Labs
 
 <div class="container text-center">
 	<div class="btn-group">
-	    <a class="btn btn-info" href="{% url 'core:patient-detail' patient.id %}" role="button">Back to Patient Detail</a>
+	    <a class="btn btn-dark" href="{% url 'core:patient-detail' patient.id %}" role="button">Back to Patient Detail</a>
 	    {% if add_perm %}
 	    	<a class="btn btn-primary" href="{% url 'labs:new-lab' patient.id %}" role="button">New Lab</a>
 	    {% endif %}
@@ -30,32 +31,25 @@ Recent Labs
 	</div>
 </div>
 
-<style>
-	th {
-	  position: -webkit-sticky;
-	  position: sticky;
-	  top: 0;
-	  z-index: 2;
-	}
-</style>
 
-</script>
 
 <div class="container">
 	<form method="GET" class="form-inline">
 	  <div class="form-group mb-2", style="font-weight:bold">
-	    Lab date
+	    Lab date:
 	  </div>
 	  <div class="form-group mx-sm-3 mb-2">
-			<select class="form-control" id="myselect">
-	    	{% for month in months %}
-	        	<option value="{{month}}">{{ month }}</option>
-	        {% endfor %}
-		    </select>
-		    <input type="submit" value="Filter">
+	  	<form method='get' action="{% url 'labs:all-labs-table' patient.id %}">
+				<select class="form-control" name="select">
+				<option value="" selected disabled hidden>Choose here</option>
+		    	<option value="6">Last 6 months</option>
+		    	<option value="12">Last year</option>
+		    	<option value="24">Last 2 years</option>
+		    	<option value="6000">All</option>
+			    </select>
+			    <input type="submit" value="Filter">
+		</form>
 	  </div>
-
-
 	</form>
 </div>
 
@@ -81,7 +75,7 @@ Recent Labs
 					{% else %}
 						{% for item in row %}
 							{% if item.value is not None %}
-					        <td style="color:{{item.color}}">{{ item.value }} {{item.warning}}</td>
+					        <td style="color:{{item.color}}">{{ item.value }} {{item.unit}} {{item.warning}}</td>
 							{% else %}
 					        <td>{{ item }}</td>
 					        {% endif %}

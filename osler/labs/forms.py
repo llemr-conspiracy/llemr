@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Div, Row, HTML, Field
 from crispy_forms.bootstrap import (
-    InlineCheckboxes, AppendedText, PrependedText)
+	InlineCheckboxes, AppendedText, PrependedText)
 from django.urls import reverse
 from . import models
 from django.db.models import DateTimeField, ForeignKey
@@ -45,12 +45,15 @@ class MeasurementsCreationForm(Form):
 		
 		super(MeasurementsCreationForm, self).__init__(*args, **kwargs)
 
+		STYLE = 'width:400px;'
+
 		pt_info = Row(
 				HTML('<p>Patient name: <b>%s</b> </p>' %self.pt.name()),
 				HTML('<p>Lab type: <b>%s</b> </p>' %self.new_lab_type))
 		self.fields_display = [pt_info]
 
 		self.fields['lab_time'] = fields_for_model(models.Lab)['lab_time']
+		self.fields['lab_time'].widget.attrs['style'] = STYLE
 		self.fields_display.append(Field('lab_time'))
 		if self.lab_pk is not None:
 			self.fields['lab_time'].initial = models.Lab.objects.get(pk=self.lab_pk).lab_time
@@ -74,9 +77,8 @@ class MeasurementsCreationForm(Form):
 			str_name = measurement_type.short_name
 			unit = measurement_type.unit
 			value_type = measurement_type.value_type
-			#self.fields_display.append(Field(str_name))
-			self.fields_display.append(Div(AppendedText(str_name,unit),style='width:400px;'))
-			#self.fields_display[-1].widget.attrs['style'] = 'width:400px;'
+			self.fields_display.append(Div(AppendedText(str_name,unit),style=STYLE))
+			
 			
 			if value_type=='Continuous': 
 				new_field = fields_for_model(models.ContinuousMeasurement)['value']
@@ -84,7 +86,7 @@ class MeasurementsCreationForm(Form):
 				new_field = fields_for_model(models.DiscreteMeasurement)['value']
 				new_field.queryset = models.DiscreteResultType.objects.filter(measurement_type=measurement_type)
 			new_field.label = str_name
-			new_field.widget.attrs['style'] = 'width:400px;'
+			new_field.widget.attrs['style'] = STYLE
 			if self.lab_pk is not None:
 				existing_measurements = self.measurements_dict[value_type]
 				try:
@@ -96,7 +98,7 @@ class MeasurementsCreationForm(Form):
 
 		self.helper = FormHelper()
 		self.helper.form_method = 'post'
-
+		
 		if len(self.fields_display)==0:
 			button = []
 		else:
@@ -135,8 +137,8 @@ class MeasurementsCreationForm(Form):
 		else:
 			self.new_lab = get_object_or_404(models.Lab, pk=self.lab_pk)
 			if self.cleaned_data['lab_time']!=self.new_lab.lab_time:
-				new_lab.lab_time = self.cleaned_data['lab_time']
-				new_lab.save()
+				self.new_lab.lab_time = self.cleaned_data['lab_time']
+				self.new_lab.save()
 			measurement_list = chain(*self.measurements_dict.values())
 			for measure in measurement_list:
 				field_name = measure.measurement_type.short_name

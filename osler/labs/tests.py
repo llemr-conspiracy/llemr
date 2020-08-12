@@ -340,7 +340,7 @@ class TestLabView(TestCase):
 
         coord_username = 'coordinator-user'
         user2 = User.objects.create(username=coord_username)
-        change_perm = Permission.objects.get(codename='change_lab')
+        change_perm = Permission.objects.get(codename='change_lab', content_type__app_label='labs')
         user2.user_permissions.add(change_perm)
         user2.set_password('password')
         user2.save()
@@ -357,7 +357,7 @@ class TestLabView(TestCase):
         self.assertEqual(self.user.has_perm('labs.delete_lab'), False)
 
         # Add permission
-        change_perm = Permission.objects.get(codename='change_lab')
+        change_perm = Permission.objects.get(codename='change_lab', content_type__app_label='labs')
         self.user.user_permissions.add(change_perm)
         self.user.save()
         user = get_object_or_404(User, username=self.user.username)
@@ -432,7 +432,7 @@ class TestLabView(TestCase):
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 403)
 
-        add_perm = Permission.objects.get(codename='add_lab')
+        add_perm = Permission.objects.get(codename='add_lab', content_type__app_label='labs')
         user.user_permissions.add(add_perm)
         user.save()
         provider.associated_user = get_object_or_404(User, username=user.username)

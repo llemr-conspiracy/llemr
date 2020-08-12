@@ -36,7 +36,8 @@ class Lab(models.Model):
 		return '%s | %s | %s ' %(str(self.patient),str(self.lab_type),str_time)
 
 	def get_day(self):
-		day = self.lab_time.date()
+		to_tz = timezone.get_default_timezone()
+		day = self.lab_time.astimezone(to_tz).date()
 		return day
 
 	def get_table_time(self):
@@ -53,20 +54,27 @@ class Lab(models.Model):
 # type of measurements in a lab panel
 # e.g. Na+, K+ in BMP, A1c in A1c, WBC in CBC, etc.
 class MeasurementType(models.Model):
-	long_name = models.CharField(max_length=30, primary_key=True)
-	short_name = models.CharField(max_length=15)
-	unit = models.CharField(max_length=15, blank=True, null=True)
-	panic_upper = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)
-	panic_lower = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)
+	long_name = models.CharField(max_length=30, primary_key=True,
+		help_text="A unique name of the measurement")
+	short_name = models.CharField(max_length=30)
 
-	lab_type = models.ForeignKey(LabType, on_delete=models.PROTECT)
 	VALUE_TYPE_CHOICES = (
 		('Continuous','Numerical'),
 		('Discrete','Categorical')
 	)
 	value_type = models.CharField(max_length=15, choices=VALUE_TYPE_CHOICES)
 
-	order_index = models.PositiveIntegerField(default=0, blank=False, null=False)
+	unit = models.CharField(max_length=15, blank=True, null=True,
+		help_text="Leave blank if this measurement is categorical")
+	panic_upper = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True,
+		help_text="All labs above this value will display as red with a warning sign. Will also be used as the upper bound of reference. Leave blank if this measurement is categorical")
+	panic_lower = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True,
+		help_text="All labs below this value will display as blue with a warning sign. Will also be used as the lower bound of reference. Leave blank if this measurement is categorical")
+
+	lab_type = models.ForeignKey(LabType, on_delete=models.PROTECT)
+
+	order_index = models.PositiveIntegerField(default=0, blank=False, null=False,
+		help_text="Order at which this measurement will display")
 
 
 	class Meta:
@@ -75,18 +83,8 @@ class MeasurementType(models.Model):
 	def __lt__(self, other):
 		return ((self.order_index) < (other.order_index))
 
-
 	def __str__(self):
 		return self.long_name
-
-	def panic(self, value):
-		if (self.panic_lower==None or self.panic_upper==None):
-			return ''
-		elif value < self.panic_lower:
-			return '⚠'
-		elif value > self.panic_upper:
-			return '⚠⚠'
-		return ''
 
 	def panic(self, value):
 		if self.value_type=='Continuous':
@@ -161,7 +159,8 @@ class DiscreteResultType(models.Model):
 		('F','Normal value')
 	)
 	is_panic = models.CharField(max_length=1, choices=PANIC_CHOICES,
-		default='T')
+		default='T',
+		help_text="If abnormal, all labs with this value will display as red with a warning sign.")
 	#measurement_type = models.ForeignKey(MeasurementType, on_delete=models.CASCADE)
 
 	def __str__(self):
