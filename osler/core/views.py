@@ -389,6 +389,11 @@ def patient_detail(request, pk):
         ['Future Appointments', 'Past Appointments'],
         [future_apt, previous_apt]))
 
+    #Permissions to display things on patient-detial, just toggle active status for now
+    #But I think this way vs in the html will make it easier to add/change later
+    active_role = utils.get_active_role(request)
+    can_activate = pt.group_can_activate(active_role)
+
     return render(request,
                   'core/patient_detail.html',
                   {'zipped_ai_list': zipped_ai_list,
@@ -400,7 +405,8 @@ def patient_detail(request, pk):
                    'total_followups': total_followups,
                    'patient': pt,
                    'appointments_by_date': future_apt,
-                   'zipped_apt_list': zipped_apt_list})
+                   'zipped_apt_list': zipped_apt_list,
+                   'can_activate': can_activate})
 
 
 def all_patients(request):
@@ -429,8 +435,12 @@ def all_patients(request):
 
 def patient_activate_detail(request, pk):
     pt = get_object_or_404(core_models.Patient, pk=pk)
+    active_role = utils.get_active_role(request)
 
-    pt.toggle_active_status()
+    can_activate = pt.group_can_activate(active_role)
+
+    if can_activate:
+        pt.toggle_active_status(request.user, active_role)
 
     pt.save()
 
@@ -439,8 +449,12 @@ def patient_activate_detail(request, pk):
 
 def patient_activate_home(request, pk):
     pt = get_object_or_404(core_models.Patient, pk=pk)
+    active_role = utils.get_active_role(request)
 
-    pt.toggle_active_status()
+    can_activate = pt.group_can_activate(active_role)
+
+    if can_activate:
+        pt.toggle_active_status(request.user, active_role)
 
     pt.save()
 
