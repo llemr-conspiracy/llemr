@@ -2,7 +2,6 @@ from .models import *
 from itertools import chain
 from operator import attrgetter
 from django.shortcuts import get_object_or_404
-from django.utils import timezone
 
 from django.contrib.auth.models import Permission, Group
 from django.core.exceptions import PermissionDenied
@@ -13,13 +12,6 @@ def get_measurements_from_lab(lab_id):
 
 	cont_list = ContinuousMeasurement.objects.filter(lab=lab)
 	disc_list = DiscreteMeasurement.objects.filter(lab=lab)
-	measurement_list = sorted(chain(cont_list,disc_list), key=attrgetter('measurement_type'))
-	return measurement_list
-
-
-def get_measurements_from_lab_qs(lab_qs):
-	cont_list = ContinuousMeasurement.objects.filter(lab__in=lab_qs)
-	disc_list = DiscreteMeasurement.objects.filter(lab__in=lab_qs)
 	measurement_list = sorted(chain(cont_list,disc_list), key=attrgetter('measurement_type'))
 	return measurement_list
 

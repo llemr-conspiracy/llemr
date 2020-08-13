@@ -1,17 +1,12 @@
-from django.forms import (
-	fields, ModelForm, ModelChoiceField, ModelMultipleChoiceField, DecimalField, RadioSelect,Form
-)
+from django.forms import (fields, ModelForm, Form)
 from django.forms.models import model_to_dict, fields_for_model
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import get_object_or_404
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Div, Row, HTML, Field
-from crispy_forms.bootstrap import (
-	InlineCheckboxes, AppendedText, PrependedText)
-from django.urls import reverse
+from crispy_forms.bootstrap import (AppendedText)
+
 from . import models
-from django.db.models import DateTimeField, ForeignKey
-import django.db
-import decimal
+
 from itertools import chain
 
 # Create a lab object to a patient without any measurements 
@@ -62,14 +57,6 @@ class MeasurementsCreationForm(Form):
 		if self.lab_pk is not None:
 			self.measurements_dict['Continuous'] = models.ContinuousMeasurement.objects.filter(lab=self.lab_pk)
 			self.measurements_dict['Discrete'] = models.DiscreteMeasurement.objects.filter(lab=self.lab_pk)
-			"""
-			# Fields for an old lab can be different from the current ones
-			measurement_list = chain(*self.measurements_dict.values())
-			self.qs_fields = list(map(lambda x: x.measurement_type, measurement_list))
-
-		else:
-			self.qs_fields = models.MeasurementType.objects.filter(lab_type=self.new_lab_type)
-			"""
 
 		self.qs_fields = models.MeasurementType.objects.filter(lab_type=self.new_lab_type)
 

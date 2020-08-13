@@ -5,24 +5,17 @@ from django.contrib.auth.models import Permission, Group
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView
 from .models import *
 from .forms import *
-
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Div, Row, HTML, Field
-from crispy_forms.bootstrap import (
-	InlineCheckboxes, AppendedText, PrependedText)
-from django.http import HttpResponseRedirect
 
 from django.utils import timezone
 from datetime import datetime, timedelta
 
-from itertools import chain
-from operator import attrgetter
-
 from .util import *
 
+
+# List all labs in a list
 class LabListView(ListView):
 	model = Lab
 	template_name = 'labs/lab_all.html'
@@ -38,6 +31,7 @@ class LabListView(ListView):
 		return context
 
 
+# List all measurement values to one lab
 class LabDetailView(DetailView):
 	model = Lab
 	context_object_name = 'lab'
@@ -47,10 +41,6 @@ class LabDetailView(DetailView):
 		self.lab = get_object_or_404(Lab, pk=self.kwargs['pk'])
 		context['lab'] = self.lab
 		context['pt'] = self.lab.patient
-		#cont_list = ContinuousMeasurement.objects.filter(lab=self.lab)
-		#disc_list = DiscreteMeasurement.objects.filter(lab=self.lab)
-		#measurement_list = sorted(chain(cont_list,disc_list), key=attrgetter('measurement_type'))
-		#context['measurement_list'] = measurement_list
 		measurement_list = get_measurements_from_lab(self.lab.id)
 		for m in measurement_list:
 			m_type = m.measurement_type
@@ -66,6 +56,7 @@ class LabDetailView(DetailView):
 		return context
 
 
+# Lab create view (part 1) where the user chooses a lab type
 @user_passes_test(generate_has_perm_func('add_lab',raise_exception=True))
 def lab_create(request, pt_id):
 	pt = get_object_or_404(Patient, pk=pt_id)
@@ -84,6 +75,8 @@ def lab_create(request, pt_id):
 	return render(request, 'labs/lab_create.html', {'form':form})
 
 
+# Lab create view (part 2) where the user fills in 
+# all measurement values associated with the choosen lab type
 @user_passes_test(generate_has_perm_func('add_lab',raise_exception=True))
 def full_lab_create(request, pt_id, lab_type_id):
 	lab_type = get_object_or_404(LabType, pk=lab_type_id)
@@ -102,6 +95,7 @@ def full_lab_create(request, pt_id, lab_type_id):
 	return render(request, 'labs/lab_create.html', {'form':form})
 
 
+# Lab delete view 
 @user_passes_test(generate_has_perm_func('delete_lab',raise_exception=True))
 def lab_delete(request, pk):
 	lab = get_object_or_404(Lab, pk=pk)
@@ -110,14 +104,14 @@ def lab_delete(request, pk):
 	return redirect(reverse("labs:all-labs", args=(pt.id,)))
 
 
+# Lab edit view
+# Same view as lab create view but with a form 
+# prepopulated with existing values of the lab
 @user_passes_test(generate_has_perm_func('change_lab',raise_exception=True))
 def lab_edit(request, pk):
 	lab = get_object_or_404(Lab, pk=pk)
 	pt = lab.patient
 	lab_type = lab.lab_type
-
-	#print(request.session['clintype_pk'])
-	#print(request.session)
 
 	if request.method == 'POST':
 		form = MeasurementsCreationForm(request.POST, new_lab_type=lab_type, pt=pt, lab_pk=pk)
@@ -132,7 +126,9 @@ def lab_edit(request, pk):
 	return render(request, 'labs/lab_edit.html', {'form':form})
 
 
-
+# Lab table view with recent labs
+# A table with rows as measurement values and columns as labs
+# Displays recent labs
 def view_all_as_table(request,pt_id,month_range=6):
 	if request.method == 'GET':
 		try:
@@ -148,17 +144,16 @@ def view_all_as_table(request,pt_id,month_range=6):
 	to_tz = timezone.get_default_timezone()
 	time_threshold = datetime.datetime.now(to_tz) - timedelta(days=month_range*31)
 	lab_qs = Lab.objects.filter(patient=pt_id, lab_time__gt=time_threshold)
-	# clinic days
 	lab_days = sorted(map(lambda x: x.get_day(), lab_qs), reverse=True)
 	unique_lab_days=reduce(lambda l, x: l if x in l else l+[x], lab_days, [])
 
 	listed_lab_days = unique_lab_days[:]
 	n_days = len(listed_lab_days)
 
+
 	# Initiate empty table
 	# width = # of labs
 	# height = # of measurement types
-
 
 	table_header = ['','Reference']
 	col_header_len = len(table_header)
@@ -169,7 +164,6 @@ def view_all_as_table(request,pt_id,month_range=6):
 
 	for t_lab_type in lab_types:
 		m_types = measure_types.filter(lab_type=t_lab_type)
-		#table_1col_header.append('Lab: '+str(t_lab_type))
 		table_content.append([table_header[:]])
 		table_content[-1][0][0] = ('Lab Category: '+str(t_lab_type))
 		sorted_measure_types.append([])
@@ -182,8 +176,6 @@ def view_all_as_table(request,pt_id,month_range=6):
 	for t_lab in lab_qs.reverse():
 		if (not (t_lab.get_day() in listed_lab_days)):
 			continue
-		#cont_ms = cont_m_qs.filter(lab=t_lab)
-		#dist_ms = dist_m_qs.filter(lab=t_lab)
 		measurements = get_measurements_from_lab(t_lab.id)
 		col_index = listed_lab_days.index(t_lab.get_day()) + col_header_len
 		for m in measurements:
@@ -193,7 +185,6 @@ def view_all_as_table(request,pt_id,month_range=6):
 			m.warning = '⚠' if m_type.panic(m.value) else ''
 			m.color = m_type.panic_color(m.value)
 			m.unit = m_type.unit if m_type.unit else ''
-			#table[row_index][col_index] = str(m.value) + warning
 			current_value = table_content[section_index][row_index+1][col_index]
 			if current_value=='':
 				table_content[section_index][row_index+1][col_index] = m

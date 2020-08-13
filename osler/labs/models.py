@@ -102,6 +102,7 @@ class MeasurementType(models.Model):
 			elif value.is_panic == 'F':
 				return False
 			return False
+			
 
 	def panic_color(self, value):
 		if self.value_type=='Continuous':
@@ -132,9 +133,10 @@ class MeasurementType(models.Model):
 
 
 # parent class of measurements
-
-## make this a abstract class (e.g. note)
 class Measurement(models.Model):
+	class Meta:
+		abstract = True
+
 	measurement_type = models.ForeignKey(MeasurementType, on_delete=models.PROTECT)
 	lab = models.ForeignKey(Lab, on_delete=models.CASCADE)
 
@@ -161,7 +163,6 @@ class DiscreteResultType(models.Model):
 	is_panic = models.CharField(max_length=1, choices=PANIC_CHOICES,
 		default='T',
 		help_text="If abnormal, all labs with this value will display as red with a warning sign.")
-	#measurement_type = models.ForeignKey(MeasurementType, on_delete=models.CASCADE)
 
 	def __str__(self):
 		return self.name
