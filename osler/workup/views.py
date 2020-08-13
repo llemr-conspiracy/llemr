@@ -40,20 +40,42 @@ def new_note_dispatch(request, pt_id):
                   {'note_types': note_types})
 
 
+class AttestableNoteCreate(NoteFormView):
+
+    def form_valid(self, form):
+        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        active_role = get_active_role(self.request)
+
+        note = form.save(commit=False)
+        note.patient = pt
+        note.author = self.request.user
+
+        can_sign = self.form_class.Meta.model.group_can_sign(active_role)
+
+        if can_sign:
+            note.sign(self.request.user, active_role)
+
+        note.save()
+        form.save_m2m()
+
+        return HttpResponseRedirect(reverse("core:patient-detail",
+                                            args=(pt.id,)))
+
+
 class WorkupCreate(NoteFormView):
     '''A view for creating a new workup. Checks to see if today is a
     clinic date first, and prompts its creation if none exist.'''
     template_name = 'workup/workup-create.html'
     form_class = forms.WorkupForm
+    model = models.Workup
     note_type = 'Workup'
 
     def get(self, *args, **kwargs):
         """Check that we have an instantiated ClinicDate today,
         then dispatch to get() of the superclass view."""
 
-        self.request.session["can_sign_workup"] = (
-            self.request.user.has_active_perm("workup.can_sign_Workup")
-        )
+        active_role = get_active_role(self.request)
+        self.request.session["can_sign"] = self.model.group_can_sign(active_role)
 
         clindates = get_clindates()
         pt = get_object_or_404(Patient, pk=kwargs['pt_id'])
@@ -102,8 +124,8 @@ class WorkupCreate(NoteFormView):
         wu.author = self.request.user
         wu.author_type = active_role
 
-        if self.request.user.has_active_perm('workup.can_sign_Workup'):
-            wu.sign(self.request.user)
+        if self.model.group_can_sign(active_role):
+            wu.sign(self.request.user, active_role)
 
         wu.save()
 
@@ -126,10 +148,9 @@ class WorkupUpdate(NoteUpdate):
         active_role = get_active_role(self.request)
         wu = get_object_or_404(models.Workup, pk=kwargs['pk'])
 
-        # if it's an attending, we allow updates.
-        if (self.request.user.has_active_perm('workup.can_sign_Workup') 
-            or not wu.signed()):
-            self.request.session["can_sign_workup"] = True
+        # if it's an attending, we allow updates.  
+        if self.model.group_can_sign(active_role) or not wu.signed():
+            self.request.session["can_sign"] = True
             return super(WorkupUpdate, self).dispatch(*args, **kwargs)
         else:
             return HttpResponseRedirect(reverse('workup',
@@ -150,7 +171,7 @@ class ProgressNoteUpdate(NoteUpdate):
         return reverse("progress-note-detail", args=(pnote.id, ))
 
 
-class ProgressNoteCreate(NoteFormView):
+class ProgressNoteCreate(AttestableNoteCreate):
     template_name = 'core/form_submission.html'
     form_class = forms.ProgressNoteForm
     note_type = 'Clinical Psychology Note'
@@ -164,7 +185,7 @@ class ProgressNoteCreate(NoteFormView):
         active_role = get_active_role(self.request)
         pnote.author_type = active_role
 
-        if self.request.user.has_active_perm('workup.can_sign_ProgressNote'):
+        if self.form_class.Meta.model.group_can_sign(active_role):
             pnote.sign(self.request.user)
 
         pnote.save()
@@ -230,7 +251,7 @@ def sign_attestable_note(request, pk, attestable):
     active_role = get_active_role(request)
 
     try:
-        note.sign(request.user)
+        note.sign(request.user, active_role)
         note.save()
     except ValueError:
         # thrown exception can be ignored since we just redirect back to the

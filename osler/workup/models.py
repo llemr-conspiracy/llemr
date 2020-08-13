@@ -13,6 +13,8 @@ from simple_history.models import HistoricalRecords
 from osler.core.models import Note, ReferralLocation, ReferralType
 from osler.workup import validators as workup_validators
 
+from osler.core.utils import group_has_perm
+
 class DiagnosisType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
     diagnosis a pateint can recieve.'''
@@ -99,10 +101,11 @@ class AttestableNote(Note):
         related_name="signed_%(app_label)s_%(class)s")
     signed_date = models.DateTimeField(blank=True, null=True)
 
-    def sign(self, user):
+    def sign(self, user, group):
         """Signs this workup."""
 
-        if user.has_active_perm('workup.can_sign_%s' % type(self).__name__):
+        user_has_group = user.groups.filter(pk=group.pk).exists()
+        if user_has_group and self.group_can_sign(group):
             self.signed_date = now()
             self.signer = user
         else:
@@ -116,6 +119,17 @@ class AttestableNote(Note):
         """Builds an attribution string of the form Doe, John on DATE"""
         return " ".join([str(self.author), "on", str(self.written_date())])
 
+    @classmethod
+    def get_sign_perm(cls):
+        """returns name of signing perm"""
+        return 'workup.sign_%s' % cls.__name__
+
+    @classmethod
+    def group_can_sign(cls, group):
+        """takes a group and checks if it has sign permission to this object."""
+        return group_has_perm(group, cls.get_sign_perm())
+
+
 
 class ProgressNote(AttestableNote):
     title = models.CharField(max_length=200)
@@ -125,7 +139,7 @@ class ProgressNote(AttestableNote):
 
     class Meta:
         permissions = [
-            ('can_sign_ProgressNote', "Can sign note")
+            ('sign_ProgressNote', "Can sign note")
             ]
 
     def __str__(self):
@@ -151,8 +165,8 @@ class Workup(AttestableNote):
 
     class Meta:
         permissions = [
-            ('can_export_pdf_Workup', 'Can export note PDF'),
-            ('can_sign_Workup', "Can sign note")
+            ('export_pdf_Workup', 'Can export note PDF'),
+            ('sign_Workup', "Can sign note")
             ]
 
     attending = models.ForeignKey(

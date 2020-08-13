@@ -6,8 +6,9 @@ from django.test import TestCase
 from django.utils.timezone import now
 from django.urls import reverse
 
-from osler.core.models import Provider, ProviderType, Patient
-from osler.core.tests.test_views import log_in_provider, build_provider
+from osler.core.models import Patient
+from osler.core.tests.test_views import log_in_user, build_user
+from osler.users.tests import factories as user_factories
 
 from osler.appointment import models
 from osler.appointment.test_forms import apt_dict
@@ -19,18 +20,17 @@ class TestAppointmentViews(TestCase):
 
     def setUp(self):
 
-        self.all_roles_provider = build_provider()
+        self.user = build_user()
 
-        log_in_provider(self.client, self.all_roles_provider)
+        log_in_user(self.client, self.user)
 
         self.apt = models.Appointment.objects.create(
             comment='test this stuff',
             clindate=now().date(),
             clintime=time(9, 0),
             appointment_type='PSYCH_NIGHT',
-            author=Provider.objects.first(),
-            author_type=ProviderType.objects.filter(
-                signs_charts=False).first(),
+            author=self.user,
+            author_type=self.user.groups.first(),
             patient=Patient.objects.first())
 
     def test_new_appointment_view(self):
@@ -39,8 +39,7 @@ class TestAppointmentViews(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Posting new appointment
-        response = self.client.post(reverse("appointment-new"),
-                                    data=apt_dict())
+        response = self.client.post(reverse("appointment-new"), data=apt_dict())
         self.assertEqual(response.status_code, 302)
 
     def test_update_appointment_view(self):
@@ -57,13 +56,15 @@ class TestAppointmentViews(TestCase):
                                     kwargs={'pk': apt.pk}), data=apt_dict())
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('appointment-list'))
+        
         apt_test = models.Appointment.objects.filter(id=apt.pk).first()
         self.assertEqual(apt_test.comment, 'stuff')
 
     def test_new_appointment_with_patient_name(self):
-        response = self.client.get(
-            "%s?pt_id=%s" % (reverse("appointment-new"),
-                             Patient.objects.filter(pk=1).first().pk))
+        #Get new appointment view
+        url = "%s?pt_id=%s" % (reverse("appointment-new"),
+                             Patient.objects.filter(pk=1).first().pk)
+        response = self.client.get(url)
         self.assertEqual(response.context['form'].initial['patient'],
                          Patient.objects.filter(pk=1).first())
 
@@ -129,9 +130,8 @@ class TestAppointmentViews(TestCase):
                 clindate=date,
                 clintime=time(9, 0),
                 appointment_type='PSYCH_NIGHT',
-                author=Provider.objects.first(),
-                author_type=ProviderType.objects.filter(
-                    signs_charts=False).first(),
+                author=self.user,
+                author_type=self.user.groups.first(),
                 patient=Patient.objects.first()))
 
         # three appointments should exist, total

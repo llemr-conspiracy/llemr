@@ -1,15 +1,19 @@
 '''Forms for the Oser core components.'''
 
-from django.forms import (Form, CharField, ModelForm, EmailField,
-                          CheckboxSelectMultiple, ModelMultipleChoiceField, CheckboxInput)
+from django.forms import (
+    Form, CharField, ModelForm, EmailField, CheckboxSelectMultiple,
+    ModelMultipleChoiceField, CheckboxInput)
 from django.contrib.auth.forms import AuthenticationForm
+
 from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import Group, Permission
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Field, Layout, Row, Column
 from crispy_forms.bootstrap import InlineCheckboxes
 
-from . import models
+from osler.core import models
 from osler.users.models import User
 
 
@@ -39,9 +43,9 @@ class PatientForm(ModelForm):
     case_managers = ModelMultipleChoiceField(
         required=False,
         queryset=get_user_model().objects
-        .filter(groups__permissions__codename='can_case_manage_Patient')
-        .distinct()
-        .order_by("last_name"),
+            .filter(groups__permissions__codename='case_manage_Patient')
+            .distinct()
+            .order_by("last_name"),
     )
 
     def __init__(self, *args, **kwargs):

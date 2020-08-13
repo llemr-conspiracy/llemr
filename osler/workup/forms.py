@@ -15,6 +15,8 @@ from crispy_forms.utils import TEMPLATE_PACK, render_field
 
 from osler.workup import models
 
+from past.utils import old_div
+
 
 def form_required_if(form, conditional, fields):
     """Adds an error to the form if conditional is truthy-false and any
@@ -152,7 +154,7 @@ class WorkupForm(ModelForm):
 
     # limit the options for the attending, other_volunteer field by
     # checking the signs charts permission.
-    can_sign_perm_codename = 'can_sign_Workup'
+    can_sign_perm_codename = 'sign_Workup'
     attending = ModelChoiceField(
         required=False,
         queryset=get_user_model().objects.filter(

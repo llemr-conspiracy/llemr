@@ -51,7 +51,7 @@ class NoteUpdate(UpdateView):
     note_type = None
 
     def get_context_data(self, **kwargs):
-        '''Inject self.note_type as the note type.'''
+        """Inject self.note_type as the note type."""
 
         if self.note_type is None:
             raise ImproperlyConfigured("NoteUpdate view must have"
@@ -271,21 +271,22 @@ def choose_role(request):
 
     if request.POST:
         active_role_pk = request.POST[RADIO_CHOICE_KEY]
-        request.user.active_role = Group.objects.get(pk=active_role_pk)
-        request.user.save()
-        request.session['active_role_set'] = True
+        request.session['active_role_pk'] = active_role_pk
+        request.session['active_role_name'] = Group.objects.get(pk=active_role_pk).name
+
         return HttpResponseRedirect(redirect_to)
 
     if request.GET:
         role_options = request.user.groups.all()
         if len(role_options) == 1:
-            request.user.active_role = role_options[0]
-            request.user.save()
-            request.session['active_role_set'] = True
+            active_role_pk = role_options[0].pk
+            request.session['active_role_pk'] = active_role_pk
+            request.session['active_role_name'] = Group.objects.get(pk=active_role_pk).name
+
             return HttpResponseRedirect(redirect_to)
         elif not role_options:
             return HttpResponseServerError(
-                "Fatal: you have failed to instantiate any Groups. Report this error!")
+                "Fatal: This user must be initialized with groups. Report this error!")
         else:
             return render(request, 'core/role_choice.html',
                           {'roles': role_options,
@@ -388,6 +389,11 @@ def patient_detail(request, pk):
         ['Future Appointments', 'Past Appointments'],
         [future_apt, previous_apt]))
 
+    #Permissions to display things on patient-detial, just toggle active status for now
+    #But I think this way vs in the html will make it easier to add/change later
+    active_role = utils.get_active_role(request)
+    can_activate = pt.group_can_activate(active_role)
+
     return render(request,
                   'core/patient_detail.html',
                   {'zipped_ai_list': zipped_ai_list,
@@ -399,7 +405,8 @@ def patient_detail(request, pk):
                    'total_followups': total_followups,
                    'patient': pt,
                    'appointments_by_date': future_apt,
-                   'zipped_apt_list': zipped_apt_list})
+                   'zipped_apt_list': zipped_apt_list,
+                   'can_activate': can_activate})
 
 
 def all_patients(request):
@@ -428,8 +435,12 @@ def all_patients(request):
 
 def patient_activate_detail(request, pk):
     pt = get_object_or_404(core_models.Patient, pk=pk)
+    active_role = utils.get_active_role(request)
 
-    pt.toggle_active_status()
+    can_activate = pt.group_can_activate(active_role)
+
+    if can_activate:
+        pt.toggle_active_status(request.user, active_role)
 
     pt.save()
 
@@ -438,8 +449,12 @@ def patient_activate_detail(request, pk):
 
 def patient_activate_home(request, pk):
     pt = get_object_or_404(core_models.Patient, pk=pk)
+    active_role = utils.get_active_role(request)
 
-    pt.toggle_active_status()
+    can_activate = pt.group_can_activate(active_role)
+
+    if can_activate:
+        pt.toggle_active_status(request.user, active_role)
 
     pt.save()
 

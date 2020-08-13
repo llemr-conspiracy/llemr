@@ -140,10 +140,32 @@ class Person(models.Model):
                              self.last_name])
 
 
+class Provider(Person):
+    """Data additional to the User model to track about each provider.
+
+    Primarily combines Person and User.
+    """
+
+    # Users should be made inactive rather than deleted in almost all cases
+    user = models.OneToOneField(get_user_model(), on_delete=models.PROTECT)
+
+    def first_name(self):
+        return self.user.first_name
+
+    def last_name(self):
+        return self.user.last_name
+
+    def __str__(self):
+        return "Provider Object on %s." % self.user
+
+
 class Patient(Person):
 
     class Meta:
-        permissions = [('can_case_manage_Patient', "Can act as a case manager.")]
+        permissions = [
+            ('case_manage_Patient', "Can act as a case manager."),
+            ('activate_Patient', "Can in/activate patients")
+        ]
 
     case_managers = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
@@ -312,9 +334,14 @@ class Patient(Person):
 
         return phones
 
-    def toggle_active_status(self):
+    def toggle_active_status(self, user, group):
         ''' Will Activate or Inactivate the Patient'''
-        self.needs_workup = not self.needs_workup
+
+        user_has_group = user.groups.filter(pk=group.pk).exists()
+        if user_has_group and self.group_can_activate(group):
+            self.needs_workup = not self.needs_workup
+        else:
+            raise ValueError("Special permissions are required to change active status.")
 
     def detail_url(self):
         return reverse('core:patient-detail', args=(self.pk,))
@@ -324,6 +351,10 @@ class Patient(Person):
 
     def activate_url(self):
         return reverse('core:patient-activate-home', args=(self.pk,))
+
+    def group_can_activate(self, group):
+        """takes a group and checks if it has activate permission to this object."""
+        return utils.group_has_perm(group, 'core.activate_Patient')
 
 
 class Note(models.Model):
@@ -460,10 +491,10 @@ class AbstractActionItem(Note, CompletableMixin):
 
     def attribution(self):
         if self.done():
-            return " ".join(["Marked done by", str(self.completion_author),
+            return " ".join(["Marked done by", self.completion_author.name,
                              "on", str(self.completion_date.date())])
         else:
-            return " ".join(["Added by", str(self.author), "on",
+            return " ".join(["Added by", self.author.name, "on",
                              str(self.written_datetime.date())])
 
 

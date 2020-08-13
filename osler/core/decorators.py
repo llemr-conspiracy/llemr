@@ -13,7 +13,19 @@ def user_is_init(user):
 
 
 def active_role_set(session):
-    return 'active_role_set' in session and session['active_role_set']
+    return 'active_role_pk' in session
+
+
+def provider_exists(user):
+    return hasattr(user, 'provider')
+
+
+def clintype_set(session):
+    return 'clintype_pk' in session
+
+
+def provider_has_updated(user):
+    return not user.needs_updating
 
 
 def session_passes_test(test_func, fail_url,
