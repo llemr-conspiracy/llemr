@@ -57,7 +57,7 @@ class LabDetailView(DetailView):
 
 
 # Lab create view (part 1) where the user chooses a lab type
-@user_passes_test(generate_has_perm_func('add_lab',raise_exception=True))
+#@user_passes_test(generate_has_perm_func('add_lab',raise_exception=True))
 def lab_create(request, pt_id):
 	pt = get_object_or_404(Patient, pk=pt_id)
 
@@ -77,7 +77,7 @@ def lab_create(request, pt_id):
 
 # Lab create view (part 2) where the user fills in 
 # all measurement values associated with the choosen lab type
-@user_passes_test(generate_has_perm_func('add_lab',raise_exception=True))
+#@user_passes_test(generate_has_perm_func('add_lab',raise_exception=True))
 def full_lab_create(request, pt_id, lab_type_id):
 	lab_type = get_object_or_404(LabType, pk=lab_type_id)
 	pt = get_object_or_404(Patient, pk=pt_id)
@@ -96,7 +96,7 @@ def full_lab_create(request, pt_id, lab_type_id):
 
 
 # Lab delete view 
-@user_passes_test(generate_has_perm_func('delete_lab',raise_exception=True))
+#@user_passes_test(generate_has_perm_func('delete_lab',raise_exception=True))
 def lab_delete(request, pk):
 	lab = get_object_or_404(Lab, pk=pk)
 	pt = lab.patient
@@ -107,7 +107,7 @@ def lab_delete(request, pk):
 # Lab edit view
 # Same view as lab create view but with a form 
 # prepopulated with existing values of the lab
-@user_passes_test(generate_has_perm_func('change_lab',raise_exception=True))
+#@user_passes_test(generate_has_perm_func('change_lab',raise_exception=True))
 def lab_edit(request, pk):
 	lab = get_object_or_404(Lab, pk=pk)
 	pt = lab.patient
