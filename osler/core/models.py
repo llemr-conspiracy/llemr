@@ -162,7 +162,10 @@ class Provider(Person):
 class Patient(Person):
 
     class Meta:
-        permissions = [('case_manage_Patient', "Can act as a case manager.")]
+        permissions = [
+            ('case_manage_Patient', "Can act as a case manager."),
+            ('activate_Patient', "Can in/activate patients")
+        ]
 
     case_managers = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
@@ -331,9 +334,14 @@ class Patient(Person):
 
         return phones
 
-    def toggle_active_status(self):
+    def toggle_active_status(self, user, group):
         ''' Will Activate or Inactivate the Patient'''
-        self.needs_workup = not self.needs_workup
+
+        user_has_group = user.groups.filter(pk=group.pk).exists()
+        if user_has_group and self.group_can_activate(group):
+            self.needs_workup = not self.needs_workup
+        else:
+            raise ValueError("Special permissions are required to change active status.")
 
     def detail_url(self):
         return reverse('core:patient-detail', args=(self.pk,))
@@ -343,6 +351,10 @@ class Patient(Person):
 
     def activate_url(self):
         return reverse('core:patient-activate-home', args=(self.pk,))
+
+    def group_can_activate(self, group):
+        """takes a group and checks if it has activate permission to this object."""
+        return utils.group_has_perm(group, 'core.activate_Patient')
 
 
 class Note(models.Model):

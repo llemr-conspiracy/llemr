@@ -176,18 +176,11 @@ class ViewsExistTest(TestCase):
                    'new-clindate',
         ]
 
-        pt_urls_redirect = ['core:patient-activate-detail',
-                            'core:patient-activate-home']
-
         pt = models.Patient.objects.first()
 
         for pt_url in pt_urls:
             response = self.client.get(reverse(pt_url, args=(pt.id,)))
             assert response.status_code == 200
-
-        for pt_url in pt_urls_redirect:
-            response = self.client.get(reverse(pt_url, args=(pt.id,)))
-            assert response.status_code == 302
 
     def test_provider_urls(self):
         response = self.client.get(reverse('core:user-init'))
@@ -447,3 +440,38 @@ class ActionItemTest(TestCase):
 
         assert (now() - new_ai.written_datetime).total_seconds() <= 10
         assert (now() - new_ai.last_modified).total_seconds() <= 10
+
+
+class ToggleStatusTest(TestCase):
+
+    def setUp(self):
+        self.coordinator = build_user([user_factories.CaseManagerGroupFactory])
+        log_in_user(self.client, self.coordinator)
+
+    def test_activate_urls(self):
+        pt = factories.PatientFactory()
+
+        response = self.client.get(reverse('core:patient-activate-detail', args=(pt.id,)))
+        assert response.status_code == 302
+
+        response = self.client.get(reverse('core:patient-activate-home', args=(pt.id,)))
+        assert response.status_code == 302
+
+    def test_activate_perms(self):
+        pt = factories.PatientFactory()
+        assert pt.needs_workup
+
+        pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
+        assert not pt.needs_workup
+
+        attending = build_user([user_factories.AttendingGroupFactory])
+        with self.assertRaises(ValueError):
+            pt.toggle_active_status(attending, attending.groups.first())
+        assert not pt.needs_workup
+
+        volunteer = build_user([user_factories.VolunteerGroupFactory])
+        with self.assertRaises(ValueError):
+            pt.toggle_active_status(volunteer, volunteer.groups.first())
+        assert not pt.needs_workup
+        
+
