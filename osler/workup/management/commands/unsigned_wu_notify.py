@@ -4,8 +4,9 @@ from django.urls import reverse
 from django.core.management.base import BaseCommand
 from django.core.mail import send_mail
 
-from osler.core.models import Provider
 from osler.workup.models import Workup
+
+from collections import defaultdict
 
 
 class Command(BaseCommand):
@@ -13,32 +14,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        unsigned_wus = Workup.objects.filter(signer=None)
+        unsigned_wus = Workup.objects.filter(signer=None, attending__isnull=False)
+        attending_to_unsigned = defaultdict(list)
+        for wu in unsigned_wus:
+            attending_to_unsigned[wu.attending].append(wu)
 
-        # print(unsigned_wus)
+        for attending, wu_list in attending_to_unsigned.items():
 
-        unsigned_wu2providers = {
-            wu: Provider.objects.filter(
-                signed_workups__in=wu.clinic_day.workup_set.all()).first()
-            for wu in unsigned_wus}
-
-        provider2unsigned = {}
-        uninferred = []
-        for unsigned_wu, provider in list(unsigned_wu2providers.items()):
-            if provider is not None:
-                if provider in provider2unsigned:
-                    provider2unsigned[provider].append(unsigned_wu)
-                else:
-                    provider2unsigned[provider] = [unsigned_wu]
-            else:
-                uninferred.append(unsigned_wu)
-
-        # print(provider2unsigned)
-
-        for provider, inferred_wus in list(provider2unsigned.items()):
-
-            last_name = (provider.last_name if provider.last_name
-                         else provider.associated_user.last_name)
+            last_name = attending.last_name if attending.last_name else ""
 
             message_lines = [
                 ("Hi there Dr. %s," % last_name),
@@ -52,7 +35,7 @@ class Command(BaseCommand):
                 ""
             ]
 
-            for wu in inferred_wus:
+            for wu in wu_list:
                 message_lines.append(" ".join([
                     '-', str(wu.patient),
                     '(seen %s):' % wu.clinic_day.clinic_date,
@@ -69,9 +52,9 @@ class Command(BaseCommand):
             ])
 
             send_mail(
-                '[OSLER] %s Unattested Notes' % len(inferred_wus),
+                '[OSLER] %s Unattested Notes' % len(wu_list),
                 "\n".join(message_lines),
                 'jrporter@wustl.edu',
-                [provider.associated_user.email],
+                [attending.email],
                 fail_silently=False,
             )

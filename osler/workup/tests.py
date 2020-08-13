@@ -87,15 +87,18 @@ class TestEmailForUnsignedNotes(TestCase):
             clinic_type=models.ClinicType.objects.first(),
             clinic_date=now().date())
 
-    def donttest_unsigned_email(self):
+    def test_unsigned_email(self):
 
         pt = Patient.objects.first()
 
-        wu_signed = models.Workup.objects.create(**wu_dict(user=self.user))
+        wu_data = wu_dict(user=self.user)
+        wu_data['attending'] = self.user
+
+        wu_signed = models.Workup.objects.create(**wu_data)
         wu_signed.sign(self.user, self.user.groups.first())
         wu_signed.save()
 
-        wu_unsigned = models.Workup.objects.create(**wu_dict(user=self.user))
+        wu_unsigned = models.Workup.objects.create(**wu_data)
 
         call_command('unsigned_wu_notify')
 
