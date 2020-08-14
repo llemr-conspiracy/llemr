@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 
 from osler.core.models import Patient, ActionItem
 from osler.core.views import NoteUpdate, NoteFormView
-from osler.core.utils import get_active_role
+from osler.users.utils import get_active_role
 
 from osler.followup import forms
 from osler.followup import models

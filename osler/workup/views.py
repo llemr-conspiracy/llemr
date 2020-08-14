@@ -15,7 +15,8 @@ from django.utils.timezone import now
 
 from osler.core.views import NoteFormView, NoteUpdate
 from osler.core.models import Patient
-from osler.core.utils import get_active_role
+
+from osler.users.utils import get_active_role
 
 from osler.workup import models
 from osler.workup import forms

@@ -5,7 +5,7 @@ from django.urls import reverse, resolve
 from osler.labs.models import *
 from osler.core.models import (Patient, Gender)
 
-from osler.core.tests.test_views import log_in_provider, build_provider
+from osler.core.tests.test_views import log_in_user, build_user
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
@@ -374,21 +374,21 @@ class TestLabView(TestCase):
 
 
     def test_lab_list_view(self):
-        log_in_provider(self.client, build_provider())
+        log_in_user(self.client, build_user())
         url = reverse('labs:all-labs', kwargs={'pt_id':self.pt.id})
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
 
 
     def test_lab_table_view(self):
-        log_in_provider(self.client, build_provider())
+        log_in_user(self.client, build_user())
         url = reverse('labs:all-labs-table', kwargs={'pt_id':self.pt.id})
         response = self.client.get(url, follow=True)
         self.assertEqual(response.status_code, 200)
 
 
     def test_lab_detail_view(self):
-        log_in_provider(self.client, build_provider())
+        log_in_user(self.client, build_user())
 
         lt1 = LabType.objects.get(name='testlabtype')
         form_data = TestMeasurementsCreationForm().build_form(
@@ -416,14 +416,14 @@ class TestLabView(TestCase):
 
     def switch_user(self, current_provider, new_user):
         current_provider.associated_user = new_user
-        updated_provider = log_in_provider(self.client, current_provider)
+        updated_provider = log_in_user(self.client, current_provider)
         return updated_provider
 
 
     def test_lab_add_view_no_perm(self):
         User = get_user_model()
 
-        provider = log_in_provider(self.client, build_provider())
+        provider = log_in_user(self.client, build_user())
         user = provider.associated_user
 
         # User can't view add lab page when having no permission
@@ -436,7 +436,7 @@ class TestLabView(TestCase):
         user.user_permissions.add(add_perm)
         user.save()
         provider.associated_user = get_object_or_404(User, username=user.username)
-        provider = log_in_provider(self.client, provider)
+        provider = log_in_user(self.client, provider)
         user = provider.associated_user
 
         self.assertTrue(user.has_perm('labs.add_lab'))

@@ -14,6 +14,7 @@ from simple_history.models import HistoricalRecords
 from osler.core import validators
 from osler.core import utils
 
+from osler.users.utils import group_has_perm
 
 class Language(models.Model):
     """A natural language, spoken by a provider or patient.
@@ -352,9 +353,10 @@ class Patient(Person):
     def activate_url(self):
         return reverse('core:patient-activate-home', args=(self.pk,))
 
-    def group_can_activate(self, group):
+    @classmethod
+    def group_can_activate(cls, group):
         """takes a group and checks if it has activate permission to this object."""
-        return utils.group_has_perm(group, 'core.activate_Patient')
+        return group_has_perm(group, 'core.activate_Patient')
 
 
 class Note(models.Model):

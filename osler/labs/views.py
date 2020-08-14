@@ -1,6 +1,5 @@
 from functools import reduce
 from osler.core.models import (Patient)
-from django.contrib.auth.decorators import permission_required, user_passes_test
 from django.contrib.auth.models import Permission, Group
 
 from django.shortcuts import render, redirect, get_object_or_404
@@ -8,11 +7,13 @@ from django.urls import reverse
 from django.views.generic import ListView, DetailView
 from .models import *
 from .forms import *
+from .utils import get_measurements_from_lab
 
 from django.utils import timezone
 from datetime import datetime, timedelta
 
-from .util import *
+from osler.users.utils import get_active_role, group_has_perm
+from osler.users.decorators import active_permission_required
 
 
 # List all labs in a list
@@ -26,8 +27,9 @@ class LabListView(ListView):
 		self.pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
 		context['pt'] = self.pt
 		context['labs'] = Lab.objects.filter(patient=self.kwargs['pt_id'])
-		has_add_perm = has_perm_for_labs(self.request.user, 'add_lab')
-		context['add_perm'] = has_add_perm
+		active_role = get_active_role(self.request)
+		for perm in ['add_lab']:
+			context[perm] = group_has_perm(active_role, 'labs.%s' % perm)
 		return context
 
 
@@ -49,15 +51,14 @@ class LabDetailView(DetailView):
 			m.ref = m_type.get_ref()
 			m.unit = m_type.unit if m_type.unit else ''
 		context['measurement_list'] = measurement_list
-		has_change_perm = has_perm_for_labs(self.request.user, 'change_lab')
-		has_delete_perm = has_perm_for_labs(self.request.user, 'delete_lab')
-		context['change_perm'] = has_change_perm
-		context['delete_perm'] = has_delete_perm
+		active_role = get_active_role(self.request)
+		for perm in ['change_lab', 'delete_lab']:
+			context[perm] = group_has_perm(active_role, 'labs.%s' % perm)
 		return context
 
 
 # Lab create view (part 1) where the user chooses a lab type
-#@user_passes_test(generate_has_perm_func('add_lab',raise_exception=True))
+@active_permission_required('labs.add_lab', raise_exception=True)
 def lab_create(request, pt_id):
 	pt = get_object_or_404(Patient, pk=pt_id)
 
@@ -77,7 +78,7 @@ def lab_create(request, pt_id):
 
 # Lab create view (part 2) where the user fills in 
 # all measurement values associated with the choosen lab type
-#@user_passes_test(generate_has_perm_func('add_lab',raise_exception=True))
+@active_permission_required('labs.add_lab', raise_exception=True)
 def full_lab_create(request, pt_id, lab_type_id):
 	lab_type = get_object_or_404(LabType, pk=lab_type_id)
 	pt = get_object_or_404(Patient, pk=pt_id)
@@ -96,7 +97,7 @@ def full_lab_create(request, pt_id, lab_type_id):
 
 
 # Lab delete view 
-#@user_passes_test(generate_has_perm_func('delete_lab',raise_exception=True))
+@active_permission_required('labs.delete_lab', raise_exception=True)
 def lab_delete(request, pk):
 	lab = get_object_or_404(Lab, pk=pk)
 	pt = lab.patient
@@ -107,7 +108,7 @@ def lab_delete(request, pk):
 # Lab edit view
 # Same view as lab create view but with a form 
 # prepopulated with existing values of the lab
-#@user_passes_test(generate_has_perm_func('change_lab',raise_exception=True))
+@active_permission_required('labs.change_lab', raise_exception=True)
 def lab_edit(request, pk):
 	lab = get_object_or_404(Lab, pk=pk)
 	pt = lab.patient
@@ -130,11 +131,9 @@ def lab_edit(request, pk):
 # A table with rows as measurement values and columns as labs
 # Displays recent labs
 def view_all_as_table(request,pt_id,month_range=6):
-	if request.method == 'GET':
-		try:
-			month_range = int(request.GET['select'])
-		except:
-			pass
+
+	if request.method == 'GET' and 'select' in request.GET:
+		month_range = int(request.GET['select'])
 
 	# Get qs for the patient
 	pt = get_object_or_404(Patient, id=pt_id)
@@ -142,7 +141,7 @@ def view_all_as_table(request,pt_id,month_range=6):
 	measure_types = MeasurementType.objects.all()
 
 	to_tz = timezone.get_default_timezone()
-	time_threshold = datetime.datetime.now(to_tz) - timedelta(days=month_range*31)
+	time_threshold = datetime.now(to_tz) - timedelta(days=month_range*31)
 	lab_qs = Lab.objects.filter(patient=pt_id, lab_time__gt=time_threshold)
 	lab_days = sorted(map(lambda x: x.get_day(), lab_qs), reverse=True)
 	unique_lab_days=reduce(lambda l, x: l if x in l else l+[x], lab_days, [])
@@ -193,14 +192,12 @@ def view_all_as_table(request,pt_id,month_range=6):
 				table_content[section_index][0][col_index] += '*'
 				dup_lab_bool = True
 
-
-
 	qs = {'patient':pt, 
 		  'labs':lab_qs, 
 		  'table_content': table_content,
 		  'table_header': table_header,
 		  'ncol': len(table_header),
-		  'add_perm':has_perm_for_labs(request.user, 'add_lab'),
+		  'add_perm': group_has_perm(get_active_role(request), 'labs.add_lab'),
 		  'dup_lab_bool': dup_lab_bool}
 
 	return render(request, 'labs/lab_all_table.html', qs)

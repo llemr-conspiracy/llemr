@@ -65,7 +65,7 @@ class ViewsExistTest(TestCase):
 
         for i in range(5):
             models.Workup.objects.bulk_create(
-                [models.Workup(**wu_dict()) for i in range(20)])
+                [models.Workup(**wu_dict()) for i in range(5)])
             wu = models.Workup.objects.last()
 
             wu.diagnosis_categories.add(models.DiagnosisType.objects.first())
@@ -118,7 +118,7 @@ class ViewsExistTest(TestCase):
 
 
     def test_workup_signing(self):
-        """Verify that singing is possible for attendings, and not for others.
+        """Verify that signing is possible for attendings, and not for others.
         """
 
         wu_url = "workup-sign"

@@ -6,7 +6,7 @@ from django.views.generic.edit import FormView
 from django.http import HttpResponseRedirect
 
 from osler.core.models import Patient, ReferralType
-from osler.core.utils import get_active_role
+from osler.users.utils import get_active_role
 
 from osler.referral.models import Referral, FollowupRequest, ReferralLocation
 from osler.referral.forms import (FollowupRequestForm, ReferralForm,
