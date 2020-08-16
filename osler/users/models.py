@@ -28,3 +28,14 @@ class User(AbstractUser):
 
     def get_absolute_url(self):
         return reverse("users:detail", kwargs={"username": self.username})
+
+    def __str__(self):
+        if self.first_name and self.last_name:
+            return self.get_full_name()
+        else:
+            return self.username
+
+    def get_full_name(self):
+        first = self.name if self.name else self.first_name
+        full_name = '%s %s' % (first, self.last_name)
+        return full_name.strip()

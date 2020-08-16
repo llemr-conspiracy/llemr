@@ -1,6 +1,7 @@
 from decimal import Decimal, ROUND_HALF_UP
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.forms import (
     fields, ModelForm, ModelChoiceField, ModelMultipleChoiceField, RadioSelect
 )
