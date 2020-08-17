@@ -19,13 +19,15 @@ from osler.core.tests import factories
 from osler.users.tests import factories as user_factories
 
 
-def build_user(group_factories=None):
+def build_user(group_factories=None, username=None, password=None):
 
     if group_factories is None:
         group_factories = [user_factories.VolunteerGroupFactory]
 
     return user_factories.UserFactory(
-        groups=[f() for f in group_factories]
+        groups=[f() for f in group_factories],
+        username=username,
+        password=password
     )
 
 def log_in_user(client, user, group=None):

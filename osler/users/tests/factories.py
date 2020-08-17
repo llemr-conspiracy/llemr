@@ -63,11 +63,17 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = get_user_model()
-        django_get_or_create = ["username"]
 
-    username = factory.Faker("user_name")
     email = factory.Faker("email")
     name = factory.Faker("name")
+
+    @factory.post_generation
+    def username(self, create: bool, extracted: Sequence[Any], **kwargs):
+        self.username = (
+            extracted
+            if extracted
+            else factory.Faker("user_name").generate(extra_kwargs={})
+        )
 
     @factory.post_generation
     def password(self, create: bool, extracted: Sequence[Any], **kwargs):

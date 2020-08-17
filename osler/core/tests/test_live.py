@@ -8,12 +8,17 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from osler.pttack import models
-from osler.core.tests.test_views import build_provider
+from osler.core import models, urls
+from osler.core.tests.test_views import build_user
 from osler.core.tests.test import SeleniumLiveTestCase
 
 from osler.workup import models as workup_models
+from osler.workup.tests import wu_dict
 
+from osler.users.models import User
+import osler.users.tests.factories as user_factories
+
+import factory
 
 BASIC_FIXTURE = 'core.json'
 
@@ -27,7 +32,7 @@ class LiveTesting(SeleniumLiveTestCase):
         roles.
         '''
 
-        build_provider(username='jrporter', password='password')
+        build_user(username='jrporter', password='password')
 
         # any valid URL should redirect to login at this point.
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
@@ -36,7 +41,7 @@ class LiveTesting(SeleniumLiveTestCase):
         # now we should have to choose a clinical role
         self.assertEqual(self.selenium.current_url,
                           '%s%s%s' % (self.live_server_url,
-                                      reverse('core:core:choose-role'),
+                                      reverse('core:choose-role'),
                                       '?next=' +
                                       reverse('dashboard-dispatch')))
 
@@ -57,8 +62,8 @@ class LiveTesting(SeleniumLiveTestCase):
         self.selenium.get('%s%s' % (self.live_server_url, reverse('logout')))
 
         # make a provider with only one role.
-        build_provider(username='timmy', password='password',
-                       roles=["Attending"])
+        build_user(username='timmy', password='password',
+                       group_factories=[user_factories.AttendingGroupFactory])
 
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
         self.submit_login('timmy', 'password')
@@ -72,28 +77,27 @@ class LiveTesting(SeleniumLiveTestCase):
         """Ensure that collapsable AI lists open and close with AIs inside
         """
 
-        build_provider(username='timmy', password='password',
-                       roles=["Attending"])
+        user = build_user(username='timmy', password='password',
+                       group_factories=[user_factories.AttendingGroupFactory])
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
         self.submit_login('timmy', 'password')
 
         ai_prototype = {
             'instruction': models.ActionInstruction.objects.first(),
             'comments': "",
-            'author_type': models.ProviderType.objects.first(),
-            'patient': models.Patient.objects.first()
+            'author_type': user.groups.first(),
+            'patient': models.Patient.objects.first(),
+            'author': user
         }
 
         models.ActionItem.objects.create(
             due_date=now().today(),
-            author=models.Provider.objects.first(),
             **ai_prototype
         )
 
         yesterday = now().date() - datetime.timedelta(days=1)
         models.ActionItem.objects.create(
             due_date=yesterday,
-            author=models.Provider.objects.first(),
             **ai_prototype
         )
 
@@ -133,12 +137,11 @@ class LiveTesting(SeleniumLiveTestCase):
         Test that core urls render correctly, as determined by the
         existance of a jumbotron at the top.
         '''
-        from . import urls
         from django.urls import NoReverseMatch
 
         # build a provider and log in.
-        build_provider(username='timmy', password='password',
-                       roles=["Attending"])
+        build_user(username='timmy', password='password',
+            group_factories=[user_factories.AttendingGroupFactory])
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
         self.submit_login('timmy', 'password')
 
@@ -177,29 +180,21 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        # build a provider and log in
-        self.provider_password = 'password'
-        attending = build_provider(
-            username='timmy_attend',
-            password=self.provider_password,
-            roles=["Attending"])
-        coordinator = build_provider(
-            username='timmy_coord',
-            password=self.provider_password,
-            roles=["Coordinator"])
-        clinical = build_provider(
-            username='timmy_clinical',
-            password=self.provider_password,
-            roles=["Clinical"])
-        preclinical = build_provider(
-            username='timmy_preclin',
-            password=self.provider_password,
-            roles=["Preclinical"])
-        self.providers = {
+        # build a user and log in
+        self.password = factory.Faker("password").generate()
+        attending = build_user(
+            password=self.password,
+            group_factories=[user_factories.AttendingGroupFactory])
+        coordinator = build_user(
+            password=self.password,
+            group_factories=[user_factories.CaseManagerGroupFactory])
+        volunteer = build_user(
+            password=self.password,
+            group_factories=[user_factories.VolunteerGroupFactory])
+        self.users = {
             'attending': attending,
             'coordinator': coordinator,
-            'clinical': clinical,
-            'preclinical': preclinical
+            'volunteer': volunteer,
         }
 
         workup_models.ClinicType.objects.create(name="Basic Care Clinic")
@@ -219,10 +214,10 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         last_week_clindate = workup_models.ClinicDate.objects.create(
             clinic_type=workup_models.ClinicType.objects.first(),
             clinic_date=earlier_this_week)
-        # log_in_provider(self.client, build_provider(["Attending"]))
+        # log_in_provider(self.client, build_user(["Attending"]))
 
         pt1 = models.Patient.objects.get(pk=1)
-        pt1.toggle_active_status()
+        pt1.toggle_active_status(coordinator, coordinator.groups.first())
         pt1.save()
         self.pt1 = pt1
 
@@ -268,37 +263,35 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         )
         self.pt5.case_managers.add(coordinator)
 
-        wu_prototype = {
-            'chief_complaint': "SOB", 'diagnosis': "MI",
-            'HPI': "", 'PMH_PSH': "", 'meds': "", 'allergies': "",
-            'fam_hx': "", 'soc_hx': "",
-            'ros': "", 'pe': "", 'A_and_P': "",
-            'author': self.providers['coordinator'],
-            'author_type': self.providers['coordinator'].clinical_roles.first(),
-        }
+        # wu_prototype = {
+        #     'chief_complaint': "SOB", 'diagnosis': "MI",
+        #     'HPI': "", 'PMH_PSH': "", 'meds': "", 'allergies': "",
+        #     'fam_hx': "", 'soc_hx': "",
+        #     'ros': "", 'pe': "", 'A_and_P': "",
+        #     'author': self.users['coordinator'],
+        #     'author_type': self.users['coordinator'].clinical_role.first(),
+        # }
+
+        wu_prototype = wu_dict()
 
         # Give self.pt2 a workup one day later.
-        workup_models.Workup.objects.create(
-            clinic_day=tomorrow_clindate,
-            patient=self.pt2,
-            **wu_prototype)
+        wu_prototype['clinic_day'] = tomorrow_clindate
+        wu_prototype['patient'] = self.pt2
+        workup_models.Workup.objects.create(**wu_prototype)
 
         # Give pt3 a workup one day ago.
-        workup_models.Workup.objects.create(
-            clinic_day=yesterday_clindate,
-            patient=self.pt3,
-            **wu_prototype)
+        wu_prototype['clinic_day'] = yesterday_clindate
+        wu_prototype['patient'] = self.pt3
+        workup_models.Workup.objects.create(**wu_prototype)
 
         # Give pt1 a signed workup five days ago.
-        workup_models.Workup.objects.create(
-            clinic_day=last_week_clindate,
-            patient=pt1,
-            signer=self.providers['attending'],
-            **wu_prototype)
+        wu_prototype['clinic_day'] = yesterday_clindate
+        wu_prototype['patient'] = self.pt3
+        wu_prototype['signer'] = self.users['attending']
 
         ai_prototype = {
-            'author': self.providers['coordinator'],
-            'author_type': self.providers['coordinator'].clinical_roles.first(),
+            'author': self.users['coordinator'],
+            'author_type': self.users['coordinator'].groups.first(),
             'instruction': models.ActionInstruction.objects.first(),
             'comments': ""
         }
@@ -324,8 +317,8 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
     def test_attestation_column(self):
 
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        self.submit_login(self.providers['coordinator'].username,
-                          self.provider_password)
+        self.submit_login(self.users['coordinator'].username,
+                          self.password)
 
         self.selenium.get(
             '%s%s' % (self.live_server_url, reverse("core:all-patients")))
@@ -335,7 +328,7 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         pt1_attest_status = pt_tbody.find_element_by_xpath("//tr[5]/td[6]")
         # attested note is marked as having been attested by the attending
         self.assertEqual(pt1_attest_status.text,
-                          str(self.providers['attending']))
+                          str(self.users['attending']))
 
         # now a patient with no workup should have 'no note'
         pt4_attest_status = pt_tbody.find_element_by_xpath("//tr[2]/td[6]")
@@ -348,8 +341,8 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
     def test_all_patients_correct_order(self):
 
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        self.submit_login(self.providers['coordinator'].username,
-                          self.provider_password)
+        self.submit_login(self.users['coordinator'].username,
+                          self.password)
 
         self.selenium.get('%s%s' % (self.live_server_url,
                                     reverse("core:all-patients")))
@@ -411,8 +404,8 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
 
         for provider_type in provider_tabs:
             self.selenium.get('%s%s' % (self.live_server_url, '/'))
-            self.submit_login(self.providers[provider_type].username,
-                              self.provider_password)
+            self.submit_login(self.users[provider_type].username,
+                              self.password)
             self.selenium.get('%s%s' % (self.live_server_url, reverse("home")))
 
             for tab_name in provider_tabs[provider_type]:
@@ -446,8 +439,8 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         """
 
         self.selenium.get('%s%s' % (self.live_server_url, '/'))
-        self.submit_login(self.providers['coordinator'].username,
-                          self.provider_password)
+        self.submit_login(self.users['coordinator'].username,
+                          self.password)
         self.selenium.get(
             '%s%s' % (self.live_server_url, reverse("core:all-patients")))
 
@@ -498,7 +491,7 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         self.assertNotIn(str(self.pt3), present_pt_names)
 
         clear_and_check(filter_box)
-        filter_box.send_keys(self.providers['coordinator'].first_name)
+        filter_box.send_keys(self.users['coordinator'].first_name)
 
         # check for pt with coordinator
         present_pt_names = get_present_pt_names()
