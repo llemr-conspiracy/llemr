@@ -1,0 +1,177 @@
+Drug Name,Dose,Unit,Stock,Expiration Date,Lot Number,Category,Manufacturer
+Abacavir,mEq,759.0,0,2027-03-15,BYLEHU366170,Allergy,Faron
+Amitryptiline,%,537.0,77,2025-01-09,UOVGKD205760,Allergy,B. Braun Melsungen
+Amobarbital,%,263.0,47,2029-04-11,XTSENM055341,Allergy,Almirall
+Carbachol,%,48.0,52,2030-05-26,CUGVLN782731,Allergy,Avella
+Cefdinir,IU,579.0,13,2030-10-16,PDBYGG336594,Allergy,Hovione
+Cyclopentolate,%,140.0,36,2022-10-14,LXSTZA504440,Allergy,Procter & Gamble
+Dimenhydrinate,mg,737.0,87,2026-02-04,OKNRUN662575,Allergy,Pharma Nord
+Diphenhydramine,mEq,867.0,32,2028-03-05,HRMQOD520492,Allergy,Advanced Chemical Industries
+Epinephrine,mcg,806.0,87,2029-11-14,XQMVEB876830,Allergy,Alexion
+Fentanyl,IU,343.0,89,2025-06-25,XRRDLY260805,Allergy,Catalent
+Fluoxetine,mcg,256.0,30,2029-05-20,OQODUI399184,Allergy,Ipca
+Fosamprenovir,mL,313.0,16,2022-07-06,LVNJIW362084,Allergy,Teva
+Galantamine,mcg,562.0,93,2030-07-15,WCPQVL974648,Allergy,Novo Nordisk
+Glimepiride,%,976.0,81,2030-01-28,YDBBXS271477,Allergy,Boehringer Ingelheim
+Indinavir,%,910.0,96,2023-09-17,KZAQIK309474,Allergy,Repligen
+Meclizine,mL,814.0,91,2023-11-04,GPWOUH656154,Allergy,Ionis
+Nelfinavir,%,555.0,91,2027-05-03,FEJYGB332779,Allergy,Orexo
+Neostigmine,mL,569.0,67,2027-12-22,ZAHCHL997695,Allergy,Gedeon Richter
+Propantheline,mg,150.0,11,2024-03-04,EQHSVR983627,Allergy,Genmab
+Saquinavir,mEq,880.0,3,2024-08-07,MCMAUS301245,Allergy,PATH
+Stavudine,mEq,77.0,89,2021-01-16,HVTOJB336523,Allergy,Faron
+Zonisamide,mcg,100.0,17,2027-04-17,PXBHZQ137341,Allergy,Reckitt Benckiser
+Amlodipine,mg,565.0,37,2026-11-23,QAYRQX937917,Antibiotics,King
+Amoxapine,%,193.0,96,2022-07-06,ORETIH201095,Antibiotics,Orion
+Atazanavir,%,332.0,16,2023-09-08,PCBGHU764369,Antibiotics,General
+Bumetanide,mEq,567.0,84,2023-03-21,FMYAHO433781,Antibiotics,Alphapharm
+Cefotaxime,IU,646.0,17,2028-03-12,QQOZWQ536809,Antibiotics,Regeneron
+Ceftazidime,%,657.0,47,2023-09-27,SNLFBZ449090,Antibiotics,Sphere Fluidics
+Ceftibuten,mL,539.0,82,2022-06-19,BXWFYD581245,Antibiotics,Melior Discovery
+Dimenhydrinate,IU,927.0,89,2028-02-09,ODKOBI284832,Antibiotics,Biovest
+Donepezil,mg,769.0,61,2025-07-08,FICCUU738429,Antibiotics,Bausch Health
+Doxepin,mL,49.0,98,2022-10-03,NZQIBQ947654,Antibiotics,Wockhardt
+Emtricitabine,mEq,377.0,33,2025-12-11,UTHXCV978873,Antibiotics,Unichem
+Escitalopram,%,130.0,46,2023-08-17,HKVWLZ217031,Antibiotics,Ceragenix
+Felodipine,IU,944.0,25,2027-11-14,UCGYMW911223,Antibiotics,Help Remedies
+Flurazepam,%,227.0,87,2027-11-05,MMRTZT840596,Antibiotics,SIGA Technologies
+Furosemide,mg,624.0,33,2027-06-25,YHSFHX861349,Antibiotics,Emcure
+Ipratropium,%,999.0,89,2029-08-13,XHLAOJ013851,Antibiotics,BioCryst
+Lamivudine,mL,340.0,51,2024-04-10,MXHZLW396064,Antibiotics,Elder
+Methohexital,mcg,894.0,35,2025-07-23,RJBAIF105588,Antibiotics,Baxter
+Paliperidone,mL,983.0,94,2021-03-07,HPBMPH093914,Antibiotics,AstraZeneca
+Scopolamine,mcg,538.0,86,2028-12-20,GFITNS017684,Antibiotics,Aventis
+Streptomycin,mg,255.0,49,2026-06-21,MEWNIU395433,Antibiotics,Canadian Plasma Resources
+Trimipramine,mg,210.0,97,2030-06-24,TVWKNZ353331,Antibiotics,Avax
+Acetylcholine,mcg,538.0,38,2022-01-20,ECCFXW920519,Cardiovascular,Adcock Ingram
+Alfentanil,mcg,857.0,15,2029-08-24,DNXZGZ368041,Cardiovascular,Procter & Gamble
+Alfuzosin,mg,65.0,29,2024-09-23,BQDRID116166,Cardiovascular,McNeil Consumer Healthcare
+Aripiprazole,mL,921.0,42,2024-05-26,RQZLLK264274,Cardiovascular,General
+Cefixime,IU,790.0,37,2021-01-01,MPNUPX128995,Cardiovascular,Bioverativ
+Cyclizine,mEq,78.0,2,2022-11-19,NWFLXD607536,Cardiovascular,BioMarin
+Demecarium,%,669.0,64,2026-08-05,PFRZTM461070,Cardiovascular,Eskayef
+Galantamine,mcg,253.0,13,2030-12-06,BQSXOA550677,Cardiovascular,Incyte
+Glipizide,mL,781.0,23,2021-04-11,TNHHAH841558,Cardiovascular,Panacea Biotec
+Hydroxyzine,mEq,793.0,4,2030-03-04,EDDTRJ789558,Cardiovascular,Square
+Maprotiline,mg,722.0,5,2029-04-01,EJXOYA712101,Cardiovascular,Intellia Therapeutics
+Meperidine,mL,166.0,8,2024-04-13,MDRSWP432950,Cardiovascular,Eskayef
+Nisoldipine,mg,822.0,1,2029-11-09,MSHKWC884328,Cardiovascular,AstraZeneca
+Nortriptyline,mg,348.0,49,2023-03-23,HEKWHF538989,Cardiovascular,Acadia
+Phenytoin,mL,854.0,75,2022-01-05,ZJWKDK911383,Cardiovascular,Capsugel
+Pilocarpine,mcg,155.0,21,2026-08-09,MQKJVU184437,Cardiovascular,Oxford BioMedica
+Prazosin,mL,833.0,65,2025-04-17,KYARWL175590,Cardiovascular,SIGA Technologies
+Remifentanil,mg,62.0,90,2027-06-27,HCPQZB620430,Cardiovascular,Fareva
+Spirinolactone,mEq,738.0,69,2026-06-22,DCCMAI384498,Cardiovascular,Torrent
+Sufentanil,%,595.0,84,2025-07-15,LJOESP451144,Cardiovascular,Novo Nordisk
+Tobramycin,mEq,779.0,98,2030-12-26,IUWITT375513,Cardiovascular,Merck & Co.
+Ziprasidone,mcg,603.0,24,2027-12-27,RBPZYE227849,Cardiovascular,Alembic
+Adefovir,mL,749.0,41,2021-10-21,GAVGWA798545,Endocrine/GI,Abbott
+Amantidine,mEq,448.0,2,2028-09-04,OFQIWF954808,Endocrine/GI,Vertex
+Ceftriaxone,IU,458.0,78,2026-09-05,FDINJI036284,Endocrine/GI,Teva
+Chlordiazepoxide,mg,780.0,71,2025-12-22,QWUACW133110,Endocrine/GI,Yuhan
+Clindamycin,mg,901.0,21,2022-10-15,SCZUPY323227,Endocrine/GI,MannKind
+Didanosine,IU,773.0,83,2024-11-16,NNXREL975547,Endocrine/GI,Bausch Health
+Dopamine,mg,714.0,25,2024-10-21,JDVWNY185620,Endocrine/GI,Intellia Therapeutics
+Doxepin,mL,958.0,47,2021-06-02,MPAEPT818638,Endocrine/GI,Alzheon
+Edrophonium,mEq,975.0,41,2025-06-15,JQCERV959013,Endocrine/GI,Glatt group
+Eplerenone,mg,841.0,24,2030-01-24,YLRFPV392988,Endocrine/GI,Esteve
+Erythromycin,mL,711.0,34,2022-12-20,JZUKSJ522667,Endocrine/GI,AstraZeneca
+Estazolam,mL,505.0,32,2030-11-20,RXSNXH347713,Endocrine/GI,Panacea Biotec
+Flumazenil,mEq,35.0,10,2024-10-14,GELQMV131319,Endocrine/GI,Zandu Realty
+Gentamicin,%,253.0,73,2029-09-19,KVHPVE737589,Endocrine/GI,ViroMed
+Glyburide,mcg,288.0,82,2025-02-23,QCEDQW896967,Endocrine/GI,Teva Active Pharmaceutical Ingredients
+Imipramine,mL,595.0,37,2021-02-19,CQEMZE009241,Endocrine/GI,bioMérieux
+Interferon,mEq,80.0,47,2029-11-24,PHUNPU107487,Endocrine/GI,Onyx
+Lamotrigine,%,88.0,35,2022-11-09,LKSEIU366634,Endocrine/GI,Altana
+Linezolid,mEq,89.0,46,2025-07-03,EFYNRK739725,Endocrine/GI,Gedeon Richter
+Memantine,mL,14.0,92,2025-12-08,QETRRZ589100,Endocrine/GI,Arbutus
+Neomycin,mL,963.0,78,2029-11-25,SZGNBI721025,Endocrine/GI,Pharmacosmos
+Nicardipine,mEq,653.0,6,2024-03-24,BLJSKQ792342,Endocrine/GI,Dentsply Sirona
+Physostigmine,mEq,774.0,88,2023-10-22,APEMVD997201,Endocrine/GI,B. Braun Melsungen
+Quazepam,mg,47.0,55,2030-03-10,LBWSVT113005,Endocrine/GI,Turing
+Risperidone,mEq,924.0,42,2028-09-08,SFPGYF136932,Endocrine/GI,Julphar
+Tacrine,IU,334.0,30,2022-06-15,MAKCEV490609,Endocrine/GI,Esteve
+Terazosin,mg,84.0,30,2027-07-03,YKICFJ132015,Endocrine/GI,Dentsply Sirona
+Triamterene,mEq,28.0,50,2024-07-17,IIXHBD413165,Endocrine/GI,Sun
+Valproic Acid,mcg,326.0,33,2027-01-20,KUZXMU346368,Endocrine/GI,Avella
+Alprazolam,%,849.0,66,2024-02-26,OEIGTA409486,Other,Stryker
+Bethanechol,mEq,440.0,51,2028-02-13,OZPIFP022041,Other,Dr. Reddy's
+Carbamazepine,mg,744.0,20,2024-10-07,FPCSOT641360,Other,"Gilead, parent of Kite"
+Cevimeline,%,396.0,4,2029-11-20,RVSPGV634016,Other,Serum Institute of India
+Chlorazepate,mcg,878.0,78,2026-04-13,ZMZBNL620097,Other,Sigma Healthcare
+Citalopram,mcg,546.0,72,2026-02-10,BLPXJJ185236,Other,Regeneron
+Donepezil,mEq,286.0,15,2026-09-22,SLDIYD100098,Other,bioMérieux
+Felbamate,mL,52.0,100,2028-11-15,FAJMPK377758,Other,Ego
+Isoproterenol,%,114.0,84,2021-05-01,SAMUYL400195,Other,Yuhan
+Lamivudine,IU,441.0,67,2030-11-22,HVAIFP245823,Other,Eisai
+Lopinavir,mL,261.0,21,2024-05-15,DXRYAV940188,Other,Boehringer Ingelheim
+Protriptyline,mL,835.0,49,2021-10-02,TEIFFS795560,Other,Shionogi
+Pyridostigmine,mL,440.0,3,2026-07-01,RKHMKI836059,Other,Acadia
+Ritonavir,mEq,692.0,70,2026-02-22,ADZEYC750748,Other,Sphere Fluidics
+Secobarbital,mg,545.0,28,2026-05-13,CMYNKY153844,Other,Amgen
+Tropicamide,mL,42.0,87,2022-11-20,OVCCZY121076,Other,Advaxis
+Amiloride,mcg,111.0,70,2021-03-25,OIOMDW208632,Pain Relief,McGuff
+Ceftizoxime,IU,461.0,6,2029-12-17,DHEZZZ885855,Pain Relief,Teva Active Pharmaceutical Ingredients
+Chlorothiazide,%,362.0,27,2025-05-18,GZGJYZ090939,Pain Relief,Abbott
+Dobutamine,mg,697.0,17,2022-08-06,BZXMBA639345,Pain Relief,Unichem
+Doxazosin,mL,881.0,86,2022-09-23,EEJKDG278583,Pain Relief,AryoGen
+Entecavir,mEq,662.0,78,2022-03-03,DMZOZN085573,Pain Relief,Taro
+Ethacrynic acid,mcg,488.0,80,2021-12-11,YPYGED563843,Pain Relief,Bargn Farmaceutici Phils Co
+Fluvoxamine,mcg,478.0,88,2030-07-07,SMYQEP485197,Pain Relief,Biocon
+Hydrochlorothiazide,mg,917.0,30,2022-06-10,BNAPRK797578,Pain Relief,Pfizer
+Metolazone,mEq,125.0,28,2027-02-01,TZFLII259767,Pain Relief,Adcock Ingram
+Morphine,%,235.0,89,2027-11-03,XVBWQG533012,Pain Relief,CytRx
+Nifedipine,mcg,934.0,19,2029-08-12,HBTJLJ215792,Pain Relief,Parke-Davis
+Pentobarbital,mL,778.0,1,2030-06-04,UMZSLQ907001,Pain Relief,Adcock Ingram
+Procainamide,mEq,897.0,49,2027-11-16,NPFMLM184742,Pain Relief,CSL Behring
+Quetiapine,mEq,386.0,30,2025-04-07,RNHBUU026886,Pain Relief,Leo
+Quinidine,mg,215.0,63,2029-03-12,WJTSVW760637,Pain Relief,Fabre-Kramer
+Ribavirin,mEq,194.0,76,2022-02-20,EPQNYS227630,Pain Relief,Yuhan
+Rivastigmine,mg,792.0,26,2028-09-24,QALPBW390370,Pain Relief,Incepta
+Rivastigmine,%,245.0,54,2023-06-18,JMMXJL906527,Pain Relief,Elder
+Tenofovir,mcg,634.0,9,2024-09-25,TXPTOO057900,Pain Relief,Purdue Pharma
+Thiamylal,%,32.0,63,2030-12-17,HKVMTA110159,Pain Relief,Baxter
+Thiopental,IU,47.0,48,2028-05-14,RTZRJY144932,Pain Relief,Unichem
+Tipranavir,mL,479.0,93,2021-05-02,UHTLGE993741,Pain Relief,Merck Group
+Torsemide,mg,945.0,54,2028-06-22,FKFSER830719,Pain Relief,Grindeks
+Ambenomium,mcg,242.0,46,2022-10-18,FQNIHG926812,Respiratory,Noxxon
+Amikacin,mg,621.0,26,2029-11-15,OOKHXK358938,Respiratory,Ceragenix
+Atropine,mg,955.0,24,2030-12-03,OCCBHH277324,Respiratory,Avax
+Chloramphenicol,mL,646.0,83,2024-02-08,VWLWRQ787509,Respiratory,Stiefel
+Chlorpheniramine,%,644.0,57,2021-01-16,XOJHSM861612,Respiratory,Alkermes
+Clomipramine,mEq,594.0,15,2025-02-12,FYAULO140474,Respiratory,Oxford BioMedica
+Clonazepam,%,132.0,52,2029-09-27,NWZFNK652650,Respiratory,CinnaGen
+Clozapine,%,642.0,60,2029-08-18,FCPPOK207981,Respiratory,Otsuka
+Cyclizine,%,730.0,35,2023-12-13,APPHJB940148,Respiratory,Stiefel
+Desipramine,mg,592.0,51,2026-01-11,GXUVUH054816,Respiratory,Cipla
+Diazepam,mcg,805.0,38,2024-02-14,RVTOZJ733347,Respiratory,Alphapharm
+Doxepin,mg,975.0,57,2022-05-18,XWYANJ832350,Respiratory,Taro
+Doxylamine,IU,928.0,51,2029-07-10,HQFUAG624750,Respiratory,Esteve
+Heroin,mcg,744.0,18,2030-10-18,GUMGWF432861,Respiratory,ALK-Abelló
+Indapamide,mL,355.0,74,2028-10-18,LUVGDY941342,Respiratory,Esteve
+Methadone,mg,447.0,63,2029-07-17,HQPYMR552697,Respiratory,Sphere Fluidics
+Oxycodone,%,542.0,47,2026-04-23,ZJVCZZ832196,Respiratory,Serum Institute of India
+Paroxetine,IU,241.0,29,2022-05-16,JOZLNZ326578,Respiratory,General
+Promethazine,%,771.0,57,2026-03-11,BRVESW208725,Respiratory,CytRx
+Sertralline,mcg,697.0,14,2030-04-17,WLMUKY648884,Respiratory,Eisai
+Spectinomycin,mg,365.0,26,2025-07-01,OEAGIY132745,Respiratory,Deurali-Janta
+Tamsulosin,%,846.0,98,2023-07-03,LSROLZ150368,Respiratory,Bausch & Lomb
+Telbivudine,mL,62.0,31,2025-07-19,RGRXOF936284,Respiratory,Saidal
+Topiramate,mEq,572.0,50,2027-12-27,UNYJXC887400,Respiratory,Ferring
+Triazolam,mcg,477.0,29,2029-09-22,TPOZSU084655,Respiratory,Sphere Fluidics
+Zanamivir,mEq,180.0,52,2026-11-10,JEBLAT514165,Respiratory,Clovis Oncology
+Benztropine,%,582.0,52,2030-08-16,VXNDTG166969,Supplements,Acorda
+Chlorothalidone,%,427.0,7,2022-10-19,SGHBXL541437,Supplements,Capsugel
+Darunavir,mEq,700.0,30,2028-07-28,YXGXVK846086,Supplements,Crookes Healthcare
+Disopyramide,IU,495.0,45,2028-05-05,URAYDK511595,Supplements,Aventis
+Isradipine,mEq,425.0,30,2023-08-09,PQAROR001296,Supplements,Lupin Limited
+Lorazepam,mEq,683.0,73,2023-10-10,GEFJNY811563,Supplements,Hovione
+Meclizine,mL,545.0,30,2030-09-17,INYFSW586290,Supplements,Clovis Oncology
+Norepinephrine,%,341.0,22,2026-06-25,ZVNSGP529053,Supplements,Incepta
+Olanzapine,mcg,654.0,15,2023-08-11,NFIBTZ799546,Supplements,Chugai
+Oseltamivir,IU,400.0,91,2021-12-26,TCXNZD118496,Supplements,Purdue Pharma
+Oxozepam,mEq,336.0,17,2023-03-17,AUDXNZ940753,Supplements,Eisai
+Rimantadine,%,505.0,54,2030-07-06,TVBWYQ889766,Supplements,BTG
+Tacrine,mcg,326.0,53,2028-10-05,WQYKCI310401,Supplements,STADA Arzneimittel
+Temazepam,mg,707.0,41,2025-07-03,VLRCPM494341,Supplements,Fabre-Kramer
+Zidovudine,%,610.0,19,2028-03-02,PGMEPN851349,Supplements,Anfatis

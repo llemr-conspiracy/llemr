@@ -173,12 +173,12 @@ class Patient(Person):
                                 on_delete=models.PROTECT)
 
     address = models.CharField(max_length=200)
-
     city = models.CharField(max_length=50,
                             default=settings.OSLER_DEFAULT_CITY)
     state = models.CharField(max_length=3,
                              default=settings.OSLER_DEFAULT_STATE)
     zip_code = models.CharField(max_length=5,
+                                default=settings.OSLER_DEFAULT_ZIP_CODE,
                                 validators=[validators.validate_zip])
     country = models.CharField(max_length=100,
                                default=settings.OSLER_DEFAULT_COUNTRY)
