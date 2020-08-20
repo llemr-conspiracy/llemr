@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.test import override_settings
+from django.urls import reverse
 
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -13,7 +14,7 @@ import socket # access low-level network properties
 @override_settings(ALLOWED_HOSTS=["*"])
 class SeleniumLiveTestCase(StaticLiveServerTestCase):
 
-    DEFAULT_WAIT_TIME = 30
+    DEFAULT_WAIT_TIME = 10
     host = '0.0.0.0'
 
     @classmethod
@@ -34,13 +35,12 @@ class SeleniumLiveTestCase(StaticLiveServerTestCase):
 
     def submit_login(self, username, password):
 
-        # WebDriverWait(self.selenium, self.DEFAULT_WAIT_TIME).until(
-        #     EC.presence_of_element_located((By.NAME, "username")))
-        # WebDriverWait(self.selenium, self.DEFAULT_WAIT_TIME).until(
-        #     EC.presence_of_element_located((By.NAME, "password")))
-        # WebDriverWait(self.selenium, self.DEFAULT_WAIT_TIME).until(
-        #     EC.presence_of_element_located(
-        #         (By.XPATH, '//input[@type="submit"]')))
+        WebDriverWait(self.selenium, self.DEFAULT_WAIT_TIME).until(
+            EC.presence_of_element_located((By.NAME, "login")))
+        WebDriverWait(self.selenium, self.DEFAULT_WAIT_TIME).until(
+            EC.presence_of_element_located((By.NAME, "password")))
+        WebDriverWait(self.selenium, self.DEFAULT_WAIT_TIME).until(
+            EC.presence_of_element_located((By.NAME, "submit-button")))
 
         username_input = self.selenium.find_element_by_name("login")
         username_input.send_keys(username)
@@ -49,13 +49,14 @@ class SeleniumLiveTestCase(StaticLiveServerTestCase):
         submit_button = self.selenium.find_element_by_name("submit-button")
         submit_button.click()
 
+        WebDriverWait(self.selenium, self.DEFAULT_WAIT_TIME).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//div[@class="jumbotron"]')))
 
-        # self.selenium.find_element_by_xpath('//input[@type="submit"]').click()
+    def logout(self):
 
-        # self.selenium.find_element_by_xpath('//input[@type="submit"]').click()
+        self.selenium.get('%s%s' % (self.live_server_url, reverse('account_logout')))
+        self.selenium.find_element_by_xpath('//button[@type="submit"]').click()
 
-        # WebDriverWait(self.selenium, self.DEFAULT_WAIT_TIME).until(
-        #     EC.presence_of_element_located(
-        #         (By.XPATH, '//div[@class="jumbotron"]')))
-        # import time
-        # time.sleep(2)
+    def get_homepage(self):
+        self.selenium.get('%s%s' % (self.live_server_url, '/'))

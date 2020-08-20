@@ -21,7 +21,7 @@ Active Patients
 	    <th>Latest Activity</th>
 	</tr>
 	{% for patient in patients %}
-	<tr>
+	<tr id="id_pt_{{ patient.id }}">
 		<td><a href="{% url 'core:patient-activate-home' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle"></span></a></td>
 		<td><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></td>
 		<td>{{ patient.age }} / {{ patient.gender }}</a></td>
