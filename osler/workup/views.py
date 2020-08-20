@@ -20,6 +20,8 @@ from osler.core.utils import get_active_role
 from osler.workup import models
 from osler.workup import forms
 
+from osler.core.utils import group_has_perm
+
 
 def get_clindates():
     '''Get the clinic dates associated with today.'''
@@ -38,6 +40,22 @@ def new_note_dispatch(request, pt_id):
 
     return render(request, 'workup/new-note-dispatch.html',
                   {'note_types': note_types})
+
+def workup_detail(request, pk):
+
+    workup = get_object_or_404(models.Workup, pk=pk)
+    active_role = get_active_role(request)
+    can_sign = models.Workup.group_can_sign(active_role)
+    can_export_pdf = group_has_perm(active_role, 'workup.export_pdf_Workup')
+
+    return render(request,
+        'workup/workup_detail.html', 
+            {
+            'workup': workup,
+            'can_sign': can_sign,
+            'can_export_pdf': can_export_pdf
+            }
+        )
 
 
 class AttestableNoteCreate(NoteFormView):
@@ -74,8 +92,6 @@ class WorkupCreate(NoteFormView):
         """Check that we have an instantiated ClinicDate today,
         then dispatch to get() of the superclass view."""
 
-        active_role = get_active_role(self.request)
-        self.request.session["can_sign"] = self.model.group_can_sign(active_role)
 
         clindates = get_clindates()
         pt = get_object_or_404(Patient, pk=kwargs['pt_id'])
@@ -150,7 +166,6 @@ class WorkupUpdate(NoteUpdate):
 
         # if it's an attending, we allow updates.  
         if self.model.group_can_sign(active_role) or not wu.signed():
-            self.request.session["can_sign"] = True
             return super(WorkupUpdate, self).dispatch(*args, **kwargs)
         else:
             return HttpResponseRedirect(reverse('workup',
@@ -269,7 +284,7 @@ def error_workup(request, pk):
     return render(request, 'core/workup_error.html', {'workup': wu})
 
 
-@permission_required('workup.can_export_pdf_Workup')
+@permission_required('workup.export_pdf_Workup')
 def pdf_workup(request, pk):
 
     wu = get_object_or_404(models.Workup, pk=pk)

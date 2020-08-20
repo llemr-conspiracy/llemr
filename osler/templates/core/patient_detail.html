@@ -119,7 +119,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
   </div>
 </div>
 
-{% if request.session.staff_view %}
+{% if can_case_manage %}
 <div class="container">
   <div class="col-md-8 col-md-offset-2">
     {% if patient.demographics %}
@@ -148,7 +148,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
           <div class="panel-body">
             <p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
             <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-            {% if request.session.staff_view %}
+            {% if can_export_pdf %}
             <p class="text-right">
               <a href="{% url 'workup-pdf' pk=note.pk %}" target="_blank"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
               &nbsp;|&nbsp;
@@ -169,7 +169,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
           <div class="panel-body">
             <p><a href="{% url 'core:document-detail' pk=note.pk %}"><strong>{{ note.document_type | title }}:</strong></a> {{ note.short_text }}</p>
             <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-            {% if request.session.staff_view %}
+            {% if can_case_manage %}
             <p class="text-right"><a href="{% url 'admin:core_document_change' note.id %}" target="_blank"><i>Edit</i></a></p>
             {% endif %}
           </div>
@@ -188,7 +188,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
             {# here, the url takes an arugment to route it to the correct  #}
             <p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
             <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-            {% if request.session.staff_view %}
+            {% if can_case_manage %}
             {% if note.CS_HELP %}
             <a href="{% url 'admin:followup_labfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
             {% else %}
@@ -201,7 +201,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
           <div class="panel-body">
             <p><strong>Vaccine Followup:</strong> {{ note.short_text }}</p>
             <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-            {% if request.session.staff_view %}
+            {% if can_case_manage %}
             <a href="{% url 'admin:vaccine_vaccinefollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
             {% endif %}
           </div>
@@ -210,7 +210,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
           <div class="panel-body">
             <p><strong>Referral Followup:</strong> {{ note.short_text }}</p>
             <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-            {% if request.session.staff_view %}
+            {% if can_case_manage %}
             <a href="{% url 'admin:referral_patientcontact_change' note.id %}" target="_blank"><i>Edit</i></a></p>
             {% endif %}
           </div>
@@ -226,7 +226,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
           <div class="panel-body">
             <p><strong>Vaccine:</strong> {{ note }}</p>
             <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-            {% if request.session.staff_view %}
+            {% if can_case_manage %}
             <p class="text-right">
               <a href="{% url 'admin:vaccine_vaccinedose_change' note.id %}" target="_blank"><i>Edit</i></a>
             </p>
@@ -244,7 +244,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
           <div class="panel-body">
             <p><a href="{% url 'progress-note-detail' pk=note.pk %}"><strong>Progress Note:</strong></a> {{ note.short_text }}</p>
             <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
-            {% if request.session.staff_view %}
+            {% if can_case_manage %}
             <p class="text-right"><a href="{% url 'admin:workup_progressnote_change' note.id %}" target="_blank"><i>Edit</i></a>
             </p>
             {% endif %}

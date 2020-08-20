@@ -20,7 +20,7 @@
 	{% endif %}
 
 	<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
-	{% if request.session.staff_view %}
+	{% if can_case_manage %}
 		<p class="text-right"><a href="{{ admin_url }}" target="_blank"><i>Edit</i></a></p>
 	{% endif %}
 </li>

@@ -25,7 +25,7 @@
             <strong>Chief Complaint:</strong> {{workup.chief_complaint}}
         </div>
         <div class="col-md-4">
-            <strong>Author:</strong> {{ workup.author.name }} ({{ workup.author_type }})
+            <strong>Author:</strong> {{ workup.author }} ({{ workup.author_type }})
         </div>
         <div class="col-md-4">
             <strong>Other Volunteer(s):</strong> {{ workup.other_volunteer.iterator | join:"; "}}

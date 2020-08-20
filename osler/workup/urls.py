@@ -19,7 +19,7 @@ unwrapped_urlconf = [
         name='new-workup'),
     re_path(
         r'^(?P<pk>[0-9]+)/$',
-        DetailView.as_view(model=models.Workup),
+        views.workup_detail,
         name='workup'),
     re_path(
         r'^(?P<pk>[0-9]+)/update/$',

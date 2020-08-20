@@ -22,6 +22,8 @@ from osler.core import models as core_models
 from osler.core import forms
 from osler.core import utils
 
+from osler.core.utils import group_has_perm
+
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
 
@@ -389,24 +391,31 @@ def patient_detail(request, pk):
         ['Future Appointments', 'Past Appointments'],
         [future_apt, previous_apt]))
 
-    #Permissions to display things on patient-detial, just toggle active status for now
-    #But I think this way vs in the html will make it easier to add/change later
+    # Permissions to display things on patient-detail, just toggle active status for now
+    # But I think this way vs in the html will make it easier to add/change later
     active_role = utils.get_active_role(request)
     can_activate = pt.group_can_activate(active_role)
+    can_case_manage = group_has_perm(active_role, 'core.case_manage_Patient')
+    can_export_pdf = group_has_perm(active_role, 'workup.export_pdf_Workup')
 
     return render(request,
-                  'core/patient_detail.html',
-                  {'zipped_ai_list': zipped_ai_list,
-                   'total_ais': total_ais,
-                   'referral_status': referral_status_output,
-                   'referrals': referrals,
-                   'referral_followups': referral_followups,
-                   'vaccine_followups': vaccine_followups,
-                   'total_followups': total_followups,
-                   'patient': pt,
-                   'appointments_by_date': future_apt,
-                   'zipped_apt_list': zipped_apt_list,
-                   'can_activate': can_activate})
+        'core/patient_detail.html', 
+            {
+            'zipped_ai_list': zipped_ai_list,
+            'total_ais': total_ais,
+            'referral_status': referral_status_output,
+            'referrals': referrals,
+            'referral_followups': referral_followups,
+            'vaccine_followups': vaccine_followups,
+            'total_followups': total_followups,
+            'patient': pt,
+            'appointments_by_date': future_apt,
+            'zipped_apt_list': zipped_apt_list,
+            'can_activate': can_activate,
+            'can_case_manage': can_case_manage,
+            'can_export_pdf': can_export_pdf
+            }
+        )
 
 
 def all_patients(request):
