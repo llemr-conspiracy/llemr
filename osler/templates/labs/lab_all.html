@@ -21,7 +21,7 @@ All Labs
 <div class="container text-center">
 	<div class="btn-group">
 		    <a class="btn btn-info" href="{% url 'labs:all-labs-table' pt.id %}" role="button">Recent Labs</a>
-			{% if add_perm %}
+			{% if add_lab %}
 			    <a class="btn btn-primary" href="{% url 'labs:new-lab' pt.id %}" role="button">New Lab</a>
 		    {% endif %}
 	</div>
@@ -40,7 +40,6 @@ All Labs
         	<td>{{ lab.lab_type }}</td>
         	<td>{{ lab.lab_time }}</td>
         	<td><a class="btn btn-warning" href="{% url 'labs:lab-detail' lab.id %}" role="button">Lab Detail</a></td>
-        	<!--td><a class="btn btn-danger" href="{% url 'labs:lab-delete' lab.id %}" role="button">Delete Lab</a></td-->
 	    </tr>
 	    {% endfor %}
 	</table>

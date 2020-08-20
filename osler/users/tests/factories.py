@@ -59,6 +59,15 @@ class AttendingGroupFactory(GroupFactory):
         )
 
 
+class NoPermGroupFactory(GroupFactory):
+
+    name = factory.Sequence(lambda n: "No Permission Group #%s" % n)
+
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        pass
+
+
 class UserFactory(factory.django.DjangoModelFactory):
 
     class Meta:

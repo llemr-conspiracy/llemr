@@ -4,9 +4,12 @@ from django.db import models
 from django.utils import timezone
 from osler.core.models import (Patient)
 
-# type of lab panels
-# e.g. BMP, A1c, CBC, etc.
+
 class LabType(models.Model):
+	"""
+	type of lab panels
+	e.g. BMP, A1c, CBC, etc.
+	"""
 	name = models.CharField(max_length=30)
 	order_index = models.PositiveIntegerField(default=0, blank=False, null=False)
 
@@ -17,11 +20,9 @@ class LabType(models.Model):
 		return self.name
 
 
-# object of a lab panel
 class Lab(models.Model):
+	"""object of a lab panel"""
 	patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-	
-	#written_datetime = models.DateTimeField(auto_now_add=True)
 
 	lab_time = models.DateTimeField(default=timezone.now)
 
@@ -51,25 +52,19 @@ class Lab(models.Model):
 		return str_time
 
 
-# type of measurements in a lab panel
-# e.g. Na+, K+ in BMP, A1c in A1c, WBC in CBC, etc.
 class MeasurementType(models.Model):
+	"""
+	Abstract class: type of measurements with in a lab panel
+	e.g. Na+, K+ in BMP, A1c in A1c, WBC in CBC, HIV, etc.
+	"""
+	class Meta:
+		ordering = ['order_index']
+		abstract = True
+
+
 	long_name = models.CharField(max_length=30, primary_key=True,
 		help_text="A unique name of the measurement")
 	short_name = models.CharField(max_length=30)
-
-	VALUE_TYPE_CHOICES = (
-		('Continuous','Numerical'),
-		('Discrete','Categorical')
-	)
-	value_type = models.CharField(max_length=15, choices=VALUE_TYPE_CHOICES)
-
-	unit = models.CharField(max_length=15, blank=True, null=True,
-		help_text="Leave blank if this measurement is categorical")
-	panic_upper = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True,
-		help_text="All labs above this value will display as red with a warning sign. Will also be used as the upper bound of reference. Leave blank if this measurement is categorical")
-	panic_lower = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True,
-		help_text="All labs below this value will display as blue with a warning sign. Will also be used as the lower bound of reference. Leave blank if this measurement is categorical")
 
 	lab_type = models.ForeignKey(LabType, on_delete=models.PROTECT)
 
@@ -77,51 +72,27 @@ class MeasurementType(models.Model):
 		help_text="Order at which this measurement will display")
 
 
-	class Meta:
-		ordering = ['order_index']
-
 	def __lt__(self, other):
 		return ((self.order_index) < (other.order_index))
 
 	def __str__(self):
 		return self.long_name
 
-	def panic(self, value):
-		if self.value_type=='Continuous':
-			if ((self.panic_lower!=None) and (value < self.panic_lower)):
-				return True
-			elif((self.panic_upper!=None) and (value > self.panic_upper)):
-				return True
-			return False
-		elif self.value_type=='Discrete':
-			# Only give warnings if the option is part of this measurement type
-			if not DiscreteResultType.objects.filter(measurement_type=self, name=value.name).exists():
-				return False
-			if value.is_panic == 'T':
-				return True
-			elif value.is_panic == 'F':
-				return False
-			return False
-			
 
-	def panic_color(self, value):
-		if self.value_type=='Continuous':
-			if ((self.panic_lower!=None) and (value < self.panic_lower)):
-				return '#0000FF' #blue
-			elif((self.panic_upper!=None) and (value > self.panic_upper)):
-				return '#f00' #red
-			return ''
-		elif self.value_type=='Discrete':
-			if value.is_panic == 'T':
-				return '#f00' #red
-			elif value.is_panic == 'F':
-				return ''
-			return ''
+
+class ContinuousMeasurementType(MeasurementType):
+	"""
+	type of measurements with a continuous value in a lab panel
+	e.g. Na+, K+ in BMP, A1c in A1c, WBC in CBC, etc.
+	"""
+	unit = models.CharField(max_length=15, blank=True, null=True)
+	panic_upper = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True,
+		help_text="All labs above this value will display as red with a warning sign. Will also be used as the upper bound of reference.")
+	panic_lower = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True,
+		help_text="All labs below this value will display as blue with a warning sign. Will also be used as the lower bound of reference.")
 
 
 	def get_ref(self):
-		if self.value_type == 'Discrete':
-			return ''
 		if (self.panic_lower==None and self.panic_upper==None):
 			return ''
 		else:
@@ -129,33 +100,78 @@ class MeasurementType(models.Model):
 			upper_str = '' if (self.panic_upper is None) else ('%2g' %self.panic_upper)
 			unit_str = '' if (self.unit is None) else str(self.unit)
 			return '[%s - %s %s]' %(lower_str, upper_str, unit_str)
-	## def get_field()
+
+	def get_unit(self):
+		if self.unit:
+			return self.unit
+		else:
+			return ''
+
+	def get_value_type(self):
+		return 'Continuous'
 
 
-# parent class of measurements
+class DiscreteMeasurementType(MeasurementType):
+	"""
+	type of measurements with a discrete value in a lab panel
+	e.g. HIV, etc.
+	"""
+	def get_ref(self):
+		return ''
+
+	def get_unit(self):
+		return ''
+
+	def get_value_type(self):
+		return 'Discrete'
+
+
 class Measurement(models.Model):
+	"""
+	Abstract class: parent class of measurements
+	"""
 	class Meta:
 		abstract = True
 
-	measurement_type = models.ForeignKey(MeasurementType, on_delete=models.PROTECT)
 	lab = models.ForeignKey(Lab, on_delete=models.CASCADE)
 
 
-# object of a continuous measurement
 class ContinuousMeasurement(Measurement):
-	#class Meta:
-	#	app_label = 'osler.labs'
+	"""
+	object of a continuous measurement
+	"""
+	measurement_type = models.ForeignKey(ContinuousMeasurementType, on_delete=models.PROTECT)
 	value = models.DecimalField(max_digits=5, decimal_places=1)
 
 	def __str__(self):
 		return '%s: %2g' %(self.measurement_type, self.value)
 
+	def panic(self):
+		"""Returns True if the value is outside the reference range. Returns False if reference range doesn't exist"""
+		panic_lower = self.measurement_type.panic_lower
+		panic_upper = self.measurement_type.panic_upper
+		if ((panic_lower!=None) and (self.value < panic_lower)):
+			return True
+		elif((panic_upper!=None) and (self.value > panic_upper)):
+			return True
+		return False
 
-# type of discrete results
-# e.g. Positive, Negative, Trace, etc.
+
+	def panic_low(self):
+		"""Returns true if the value is lower than the reference range. To display in a different color than normal panic."""
+		panic_lower = self.measurement_type.panic_lower
+		if ((panic_lower!=None) and (self.value < panic_lower)):
+			return True
+		return False
+
+
 class DiscreteResultType(models.Model):
+	"""
+	type of discrete results
+	e.g. Positive, Negative, Trace, etc.
+	"""
 	name = models.CharField(max_length=30, primary_key=True)
-	measurement_type = models.ManyToManyField(MeasurementType)
+	measurement_type = models.ManyToManyField(DiscreteMeasurementType)
 	PANIC_CHOICES = (
 		('T','Abnormal value'),
 		('F','Normal value')
@@ -168,10 +184,24 @@ class DiscreteResultType(models.Model):
 		return self.name
 
 
-# object of a continuous measurement
 class DiscreteMeasurement(Measurement):
+	"""
+	object of a continuous measurement
+	"""
+	measurement_type = models.ForeignKey(DiscreteMeasurementType, on_delete=models.PROTECT)
 	value = models.ForeignKey(DiscreteResultType, on_delete=models.PROTECT)
 
 	def __str__(self):
 		value_name = DiscreteResultType.objects.get(pk=self.value)
 		return '%s: %s' %(self.measurement_type, value_name.name)
+
+	def panic(self):
+		"""Returns True if the value is not normal"""
+		if self.value.is_panic == 'T':
+			return True
+		return False
+
+	def panic_low(self):
+		"""Panic because the value is too low. 
+		To display in a different color than normal panic."""
+		return False

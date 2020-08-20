@@ -23,11 +23,8 @@ Lab detail
 	<div class="btn-group">
 	    <a class="btn btn-dark" href="{% url 'labs:all-labs' pt.id %}" role="button">Back to All Labs</a>
 	    <a class="btn btn-info" href="{% url 'labs:all-labs-table' pt.id %}" role="button">Recent Labs</a>
-		{% if change_perm %}
+		{% if change_lab %}
 		    <a class="btn btn-warning" href="{% url 'labs:lab-edit' lab.id %}" role="button">Edit Lab</a>
-		{% endif %}
-		{% if delete_perm %}
-		    <a class="btn btn-danger" href="{% url 'labs:lab-delete' lab.id %}" role="button">Delete Lab</a>
 		{% endif %}
 	</div>
 </div>
@@ -40,26 +37,17 @@ Lab detail
 			<th>Reference</th>
 			<th>Value</th>
 		</tr>
-		<!--
-		{% for measurement in cont_list %}
-			<tr>
-				<td>{{ measurement.measurement_type }}</td>
-				<td>{{ measurement.value }}</td>
-			</tr>
-		{% endfor %}
-		{% for measurement in disc_list %}
-			<tr>
-				<td>{{ measurement.measurement_type }}</td>
-				<td>{{ measurement.value }}</td>
-			</tr>
-		{% endfor %}
-		-->
 		{% for measurement in measurement_list %}
 			<tr>
 				<td>{{ measurement.measurement_type }}</td>
 				<td>{{ measurement.ref }}</td>
-				<td style="color:{{measurement.color}}">{{ measurement.value }} {{measurement.unit}} {{measurement.warning}}</td>
-				<!--td>{{ measurement.value }}</td-->
+				{% if measurement.panic_low %}
+					<td style="color:#0000FF">{{ measurement.value }} {{measurement.unit}}⚠</td>
+				{% elif measurement.panic %}
+					<td style="color:#f00">{{ measurement.value }} {{measurement.unit}}⚠</td>
+				{% else %}
+					<td>{{ measurement.value }} {{measurement.unit}}</td>
+				{% endif %}
 			</tr>
 		{% endfor %}
 	</table>

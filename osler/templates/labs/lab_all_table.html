@@ -24,7 +24,7 @@ Recent Labs
 <div class="container text-center">
 	<div class="btn-group">
 	    <a class="btn btn-dark" href="{% url 'core:patient-detail' patient.id %}" role="button">Back to Patient Detail</a>
-	    {% if add_perm %}
+	    {% if add_lab %}
 	    	<a class="btn btn-primary" href="{% url 'labs:new-lab' patient.id %}" role="button">New Lab</a>
 	    {% endif %}
 	    <a class="btn btn-warning" href="{% url 'labs:all-labs' patient.id %}" role="button">All Labs</a>
@@ -68,14 +68,19 @@ Recent Labs
 				<tr>
 					{% firstof row as firstelem %}
 					{% if "Lab Category" in firstelem %}
-						<!--td colspan="{{ncol}}" style="background-color:powderblue;"><b>{{ row }}</b></td-->
 						{% for item in row %}
 							<th style="background-color:lightgrey;">{{ item }}</th>
 					    {% endfor %}
 					{% else %}
 						{% for item in row %}
 							{% if item.value is not None %}
-					        <td style="color:{{item.color}}">{{ item.value }} {{item.unit}} {{item.warning}}</td>
+								{% if item.panic_low %}
+								<td style="color:#0000FF">{{ item.value }} {{item.unit}}⚠</td>
+								{% elif item.panic %}
+								<td style="color:#f00">{{ item.value }} {{item.unit}}⚠</td>
+								{% else %}
+								<td>{{ item.value }}{{item.unit}}</td>
+								{% endif %}
 							{% else %}
 					        <td>{{ item }}</td>
 					        {% endif %}
