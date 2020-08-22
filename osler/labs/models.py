@@ -41,16 +41,6 @@ class Lab(models.Model):
 		day = self.lab_time.astimezone(to_tz).date()
 		return day
 
-	def get_table_time(self):
-		to_tz = timezone.get_default_timezone()
-		str_time = self.lab_time.astimezone(to_tz).strftime("%m/%d/%Y\n%H%M")
-		return str_time
-
-	def get_table_day(self):
-		to_tz = timezone.get_default_timezone()
-		str_time = self.lab_time.astimezone(to_tz).strftime("%m/%d/%Y")
-		return str_time
-
 
 class MeasurementType(models.Model):
 	"""

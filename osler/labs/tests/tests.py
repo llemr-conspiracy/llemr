@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 from django.test import TestCase
 from django.urls import reverse, resolve
+from django.shortcuts import redirect
 from osler.labs.models import Lab, LabType, ContinuousMeasurement, DiscreteMeasurement, DiscreteResultType, ContinuousMeasurementType, DiscreteMeasurementType
 from osler.core.models import (Patient)
 
@@ -36,6 +37,16 @@ class TestModels(TestCase):
             short_name='blood',
             lab_type=self.ua
             )
+      
+        # Disc option 1, normal
+        self.disc_result_neg = factories.DiscreteResultTypeFactory(name='neg', is_panic='F')
+        self.disc_result_neg.measurement_type.set([self.ua_blood])
+        # Disc option 2, abnormal
+        self.disc_result_pos = factories.DiscreteResultTypeFactory(name='pos', is_panic='T')
+        self.disc_result_pos.measurement_type.set([self.ua_blood])
+
+        self.pt = core_factories.PatientFactory()
+        self.lab = factories.LabFactory(patient=self.pt, lab_type=self.ua)
 
 
     def test_measurement_type_get_ref(self):
@@ -55,6 +66,53 @@ class TestModels(TestCase):
 
         # Discrete measurement type has no unit
         assert self.ua_blood.get_ref()==''
+
+
+    def test_measurement_type_panic_discrete(self):
+        """ Test the panic() and panic_low() method for DiscreteMeasurement model
+        """
+        # Normal value 
+        lab_ua_blood_neg = factories.DiscreteMeasurementFactory(measurement_type=self.ua_blood, lab=self.lab, value=self.disc_result_neg)
+
+        assert not lab_ua_blood_neg.panic()
+        assert not lab_ua_blood_neg.panic_low()
+
+        # Abnormal value 
+        lab_ua_blood_pos = factories.DiscreteMeasurementFactory(measurement_type=self.ua_blood, lab=self.lab, value=self.disc_result_pos)
+
+        assert lab_ua_blood_pos.panic()
+        assert not lab_ua_blood_pos.panic_low()
+
+
+    def test_measurement_type_panic_continuous(self):
+        """ Test the panic() and panic_low() method for ContinuouseMeasurement model
+        """
+        lab_ua_glucose = factories.ContinuousMeasurementFactory(measurement_type=self.ua_glucose, lab=self.lab, value=5)
+
+        # No reference don't panic
+        assert not lab_ua_glucose.panic()
+        assert not lab_ua_glucose.panic_low()
+
+        # Test upper reference, normal value
+        self.ua_glucose.panic_upper = 10
+        assert not lab_ua_glucose.panic()
+        assert not lab_ua_glucose.panic_low()
+
+        # Test upper reference, abnormal value
+        self.ua_glucose.panic_upper = 2
+        assert lab_ua_glucose.panic()
+        assert not lab_ua_glucose.panic_low()
+
+        # Test lower reference, normal value
+        self.ua_glucose.panic_upper = None
+        self.ua_glucose.panic_lower = 2
+        assert not lab_ua_glucose.panic()
+        assert not lab_ua_glucose.panic_low()
+
+        # Test lower reference, abnormal value
+        self.ua_glucose.panic_lower = 10
+        assert lab_ua_glucose.panic()
+        assert lab_ua_glucose.panic_low()
 
 
 class TestMeasurementsCreationForm(TestCase):
@@ -188,34 +246,45 @@ class TestLabView(TestCase):
     """
 
     def setUp(self):
-        ua = factories.LabTypeFactory(name='Urinalysis')
-        ua_pH = factories.ContinuousMeasurementTypeFactory(
+        self.ua = factories.LabTypeFactory(name='Urinalysis')
+        self.ua_pH = factories.ContinuousMeasurementTypeFactory(
             long_name='Urine pH',
             short_name='pH',
-            lab_type=ua
+            lab_type=self.ua
             )
-        ua_glucose = factories.ContinuousMeasurementTypeFactory(
+        self.ua_glucose = factories.ContinuousMeasurementTypeFactory(
             long_name='Urine glucose',
             short_name='glucose',
-            lab_type=ua
+            lab_type=self.ua
             )
-        ua_blood = factories.DiscreteMeasurementTypeFactory(
+        self.ua_blood = factories.DiscreteMeasurementTypeFactory(
             long_name='Urine blood',
             short_name='blood',
-            lab_type=ua
+            lab_type=self.ua
             )
 
-        disc_result_neg = factories.DiscreteResultTypeFactory(name='neg')
-        disc_result_neg.measurement_type.set([ua_blood])
+        self.disc_result_neg = factories.DiscreteResultTypeFactory(name='neg')
+        self.disc_result_neg.measurement_type.set([self.ua_blood])
 
         self.pt = core_factories.PatientFactory()
-        self.lab = factories.LabFactory(patient=self.pt, lab_type=ua)
+        self.lab = factories.LabFactory(patient=self.pt, lab_type=self.ua)
 
-        lab_ua_pH = factories.ContinuousMeasurementFactory(measurement_type=ua_pH, lab=self.lab)
-        lab_ua_glucose1 = factories.ContinuousMeasurementFactory(measurement_type=ua_glucose, lab=self.lab)
-        lab_ua_blood1 = factories.DiscreteMeasurementFactory(measurement_type=ua_blood, lab=self.lab)
+        lab_ua_pH = factories.ContinuousMeasurementFactory(measurement_type=self.ua_pH, lab=self.lab)
+        lab_ua_glucose = factories.ContinuousMeasurementFactory(measurement_type=self.ua_glucose, lab=self.lab)
+        lab_ua_blood = factories.DiscreteMeasurementFactory(measurement_type=self.ua_blood, lab=self.lab)
 
         log_in_user(self.client, build_user())
+
+        self.submitted_form_step1 = {
+            "lab_type": self.ua.id
+        }
+
+        self.submitted_form_step2 = {
+            'lab_time': now().strftime("%Y-%m-%d %H:%M:%S"),
+            'pH': '5',
+            'glucose': '1',
+            'blood': self.disc_result_neg.name
+        }
 
 
     def test_lab_list_view(self):
@@ -246,16 +315,35 @@ class TestLabView(TestCase):
         assert response.status_code == 404
 
 
-        assert ContinuousMeasurement.objects.count() > 0
-
-
     def test_lab_add_view_with_perm(self):
         """User with lab permissions is able to add lab"""
         log_in_user(self.client, build_user([user_factories.CaseManagerGroupFactory]))
 
+        assert ContinuousMeasurement.objects.count() == 2
+        assert DiscreteMeasurement.objects.count() == 1
+        assert Lab.objects.count() == 1
+
         url = reverse('labs:new-lab', kwargs={'pt_id':self.pt.id})
-        response = self.client.get(url, follow=True)
-        assert response.status_code == 200
+        response = self.client.get(url)
+
+        response = self.client.post(url, self.submitted_form_step1)
+        assert response.status_code == 302
+
+        # Successfully redirect to step 2 view
+        url = reverse('labs:new-full-lab', kwargs={'pt_id':self.pt.id, 'lab_type_id':self.ua.id})
+        assert response.url == url
+
+        response = self.client.post(url, self.submitted_form_step2)
+        assert response.status_code == 302
+
+        # Successfully added lab and measurement objects
+        assert ContinuousMeasurement.objects.count() == 4
+        assert DiscreteMeasurement.objects.count() == 2
+        assert Lab.objects.count() == 2
+
+        # Successfully redirect back to table view
+        url = reverse("labs:all-labs-table", kwargs={'pt_id':self.pt.id})
+        assert response.url == url
 
 
     def test_lab_add_view_no_perm(self):
@@ -272,9 +360,20 @@ class TestLabView(TestCase):
         log_in_user(self.client, build_user([user_factories.CaseManagerGroupFactory]))
 
         lab = self.lab
+        assert Lab.objects.count() == 1
+
         url = reverse('labs:lab-edit', kwargs={'pk':lab.id})
-        response = self.client.get(url, follow=True)
-        assert response.status_code == 200
+        response = self.client.get(url)
+        response = self.client.post(url, self.submitted_form_step2)
+        assert response.status_code == 302
+
+        # Successfully redirect back to detail view
+        url = reverse("labs:lab-detail", kwargs={'pk':lab.id})
+        assert response.url == url
+
+        # Successfully edited measurement values without creating a new lab object
+        assert Lab.objects.count() == 1
+        assert int(ContinuousMeasurement.objects.filter(measurement_type=self.ua_pH).last().value) == int(self.submitted_form_step2['pH'])
 
 
     def test_lab_edit_view_no_perm(self):

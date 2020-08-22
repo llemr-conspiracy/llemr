@@ -16,8 +16,6 @@ from django.utils.decorators import method_decorator
 from osler.users.utils import get_active_role, group_has_perm
 from osler.users.decorators import active_permission_required
 
-PANIC_COLOR = '#f00'
-PANIC_LOW_COLOR = '#0000FF'
 
 class LabListView(ListView):
 	"""
