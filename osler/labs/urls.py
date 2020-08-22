@@ -21,16 +21,13 @@ unwrapped_urlconf = [
         views.LabDetailView.as_view(),
         name='lab-detail'),
     url(r'^new/(?P<pt_id>[0-9]+)/(?P<lab_type_id>[0-9]+)/$',
-        views.full_lab_create,
+        views.MeasurementsCreate.as_view(),
         name='new-full-lab'), #create all measurements assoc w/ the lab obj
     url(r'^new/(?P<pt_id>[0-9]+)/$',
-        views.lab_create,
+        views.LabCreate.as_view(),
         name='new-lab'), #create "parent" lab object
-    url(r'^delete/(?P<pk>[0-9]+)/$',
-        views.lab_delete,
-        name='lab-delete'),
     url(r'^edit/(?P<pk>[0-9]+)/$',
-        views.lab_edit,
+        views.MeasurementsEdit.as_view(),
         name='lab-edit'),
 ]
 
