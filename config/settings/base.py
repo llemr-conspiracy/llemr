@@ -327,8 +327,10 @@ OSLER_TODO_LIST_MANAGERS = [
     ('referral', 'FollowupRequest'),
     ('vaccine', 'VaccineActionItem')]
 
-OSLER_DEFAULT_CITY = "St. Louis"
+OSLER_DEFAULT_ADDRESS = "205 East 9th St."
+OSLER_DEFAULT_CITY = "Kansas City"
 OSLER_DEFAULT_STATE = "MO"
+OSLER_DEFAULT_ZIP_CODE = "64106"
 OSLER_DEFAULT_COUNTRY = "USA"
 
 OSLER_MAX_APPOINTMENTS = 5

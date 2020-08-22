@@ -41,6 +41,10 @@ class ResourceAccess(models.Model):
 
 
 class ChronicCondition(models.Model):
+
+    class Meta:
+        ordering = ["name"]
+
     name = models.CharField(max_length=50, primary_key=True)
 
     def __str__(self):

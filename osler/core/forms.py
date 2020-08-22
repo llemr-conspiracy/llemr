@@ -60,6 +60,7 @@ class PatientForm(ModelForm):
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['ethnicities'].wrap(InlineCheckboxes)
         self.helper.add_input(Submit('submit', 'Submit'))
+        self.fields['address'].widget.attrs = {'placeholder': '205 East 9th St.'}
 
     def clean(self):
 

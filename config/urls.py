@@ -7,13 +7,11 @@ from django.views.generic import TemplateView, RedirectView
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
-    path('', RedirectView.as_view(pattern_name="dashboard-dispatch",
-                                  permanent=False),
+    path('', RedirectView.as_view(pattern_name="dashboard-dispatch", permanent=False),
          name="home"),
-    path(
-        "about/", TemplateView.as_view(template_name="pages/about.html"),
-        name="about"
-    ),
+    path("about/", RedirectView.as_view(url="http://www.sojournerhealthclinic.com/?page_id=1755", permanent=False),
+         name="about"),
+
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
