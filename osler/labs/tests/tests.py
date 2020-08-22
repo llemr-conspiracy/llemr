@@ -6,78 +6,36 @@ from osler.labs.models import Lab, LabType, ContinuousMeasurement, DiscreteMeasu
 from osler.core.models import (Patient)
 
 from osler.core.tests.test_views import log_in_user, build_user
-from osler.users.tests import factories
-
-#from django.contrib.auth import get_user_model
-#from django.contrib.auth.models import Permission
+from osler.core.tests import factories as core_factories
+from osler.users.tests import factories as user_factories
+from osler.labs.tests import factories
 
 from osler.labs import views, forms
 from django.utils.timezone import now
 
 from django.shortcuts import get_object_or_404
 
-class TestUrls(TestCase):
-
-    def test_all_labs_list_url(self):
-        path = reverse('labs:all-labs', kwargs={'pt_id':1})
-        self.assertEqual(resolve(path).view_name, 'labs:all-labs')
-
-    def test_all_labs_url(self):
-        path = reverse('labs:all-labs-table', kwargs={'pt_id':1})
-        self.assertEqual(resolve(path).view_name, 'labs:all-labs-table')
-    def test_lab_detail_url(self):
-        path = reverse('labs:lab-detail', kwargs={'pk':1})
-        self.assertEqual(resolve(path).view_name, 'labs:lab-detail')
-
-    def test_new_lab_url(self):
-        path = reverse('labs:new-lab', kwargs={'pt_id':1})
-        self.assertEqual(resolve(path).view_name, 'labs:new-lab')
-
-    def test_new_full_lab_url(self):
-        path = reverse('labs:new-full-lab', kwargs={'pt_id':1,
-            'lab_type_id':1})
-        self.assertEqual(resolve(path).view_name, 'labs:new-full-lab')
-
 
 class TestModels(TestCase):
 
     def setUp(self):
-        self.ua = LabType.objects.create(name='Urinalysis')
+        self.ua = factories.LabTypeFactory(name='Urinalysis')
 
-        # Cont measurement with panic levels
-        self.ua_pH = ContinuousMeasurementType.objects.create(
-            long_name='Urine pH',
-            short_name='pH',
-            lab_type=self.ua,
-            unit='unit',
-            panic_upper=10,
-            panic_lower=5
-            )
         # Cont measurement without panic levels
-        self.ua_glucose = ContinuousMeasurementType.objects.create(
+        self.ua_glucose = factories.ContinuousMeasurementTypeFactory(
             long_name='Urine glucose',
             short_name='glucose',
-            lab_type=self.ua
+            lab_type=self.ua,
+            unit=None,
+            panic_lower=None,
+            panic_upper=None
             )
         # Disc measurement
-        self.ua_blood = DiscreteMeasurementType.objects.create(
+        self.ua_blood = factories.DiscreteMeasurementTypeFactory(
             long_name='Urine blood',
             short_name='blood',
             lab_type=self.ua
             )
-
-        # Disc option, normal
-        self.disc_result_neg = DiscreteResultType.objects.create(name='negative', is_panic='F')
-        self.disc_result_neg.measurement_type.set([self.ua_blood])
-
-
-        # Disc option 2, abnormal
-        self.disc_result_pos = DiscreteResultType.objects.create(name='positive', is_panic='T')
-        self.disc_result_pos.measurement_type.set([self.ua_blood])
-
-
-        # Disc option 3, abnormal, but doesn't belong to any measurement type
-        self.disc_result_trace = DiscreteResultType.objects.create(name='trace', is_panic='T')
 
 
     def test_measurement_type_get_ref(self):
@@ -103,65 +61,50 @@ class TestMeasurementsCreationForm(TestCase):
     """Test the behavior of MeasurementsCreatinoForm which is generated dynamically based on lab_type, and can have complicated behavior when creating and editing.
     """
 
-    fixtures = ['core']
-
     def setUp(self):
-        self.ua = LabType.objects.create(name='Urinalysis')
+        self.ua = factories.LabTypeFactory(name='Urinalysis')
 
-        # Cont measurement with panic levels
-        self.ua_pH = ContinuousMeasurementType.objects.create(
+        self.ua_pH = factories.ContinuousMeasurementTypeFactory(
             long_name='Urine pH',
             short_name='pH',
-            lab_type=self.ua,
-            unit='unit',
-            panic_upper=10,
-            panic_lower=5
+            lab_type=self.ua
             )
-        # Cont measurement without panic levels
-        self.ua_glucose = ContinuousMeasurementType.objects.create(
+
+        self.ua_glucose = factories.ContinuousMeasurementTypeFactory(
             long_name='Urine glucose',
             short_name='glucose',
             lab_type=self.ua
             )
         # Disc measurement
-        self.ua_blood = DiscreteMeasurementType.objects.create(
+        self.ua_blood = factories.DiscreteMeasurementTypeFactory(
             long_name='Urine blood',
             short_name='blood',
             lab_type=self.ua
             )
 
-        # Disc option, normal
-        self.disc_result_neg = DiscreteResultType.objects.create(name='negative', is_panic='F')
+        # Disc option 1
+        self.disc_result_neg = factories.DiscreteResultTypeFactory(name='neg')
         self.disc_result_neg.measurement_type.set([self.ua_blood])
 
 
-        # Disc option 2, abnormal
-        self.disc_result_pos = DiscreteResultType.objects.create(name='positive', is_panic='T')
+        # Disc option 2
+        self.disc_result_pos = factories.DiscreteResultTypeFactory(name='pos')
         self.disc_result_pos.measurement_type.set([self.ua_blood])
 
+        self.pt = core_factories.PatientFactory()
 
-        # Disc option 3, abnormal, but doesn't belong to any measurement type
-        self.disc_result_trace = DiscreteResultType.objects.create(name='trace', is_panic='T')
-
-        self.pt = Patient.objects.first()
-
-
-    def build_form(self, lab_time, pt=None):
-        """Util function for generating the form from labtype=ua"""
-        if pt==None: pt=self.pt
-        form_data = {
-            'lab_time': lab_time,
-            'patient': pt,
+        self.form_data = {
+            'lab_time': now(),
+            'patient': self.pt,
             'pH': 5,
             'glucose': 1,
             'blood': self.disc_result_neg
         }
-        return form_data
 
 
     def test_submit_form(self):
         """Complete form can be submitted"""
-        form_data = self.build_form(lab_time=now())
+        form_data = self.form_data.copy()
         form = forms.MeasurementsCreationForm(new_lab_type=self.ua,
             pt=self.pt, data=form_data)
         assert len(form.errors)==0
@@ -169,7 +112,7 @@ class TestMeasurementsCreationForm(TestCase):
 
     def test_submit_form_incomplete(self):
         """Can't submit incomplete form"""
-        form_data = self.build_form(lab_time=now())
+        form_data = self.form_data.copy()
         form_data['blood'] = None
         form = forms.MeasurementsCreationForm(new_lab_type=self.ua,
             pt=self.pt, data=form_data)
@@ -178,7 +121,7 @@ class TestMeasurementsCreationForm(TestCase):
 
     def test_save_form(self):
         """Create lab & measurement objects when form is saved"""
-        form_data = self.build_form(lab_time=now())
+        form_data = self.form_data.copy()
         form = forms.MeasurementsCreationForm(new_lab_type=self.ua,
             pt=self.pt, data=form_data)
 
@@ -201,11 +144,11 @@ class TestMeasurementsCreationForm(TestCase):
 
     def test_save_form_incomplete(self):
         """Don't create any lab & measurement objects when the form is incomplete (even when the info for some objects are complete)"""
-        form_data = self.build_form(lab_time=now())
+        form_data = self.form_data.copy()
         form_data['blood']=None
         form = forms.MeasurementsCreationForm(new_lab_type=self.ua,
             pt=self.pt, data=form_data)
-        # Form shouldn't be valid because mt3 value is missing
+        # Form shouldn't be valid because one measurement value is missing
         if form.is_valid():
             form.save()
         assert not form.is_valid()
@@ -216,7 +159,7 @@ class TestMeasurementsCreationForm(TestCase):
 
 
     def test_edit_form(self):
-        form_data = self.build_form(lab_time=now())
+        form_data = self.form_data.copy()
         form = forms.MeasurementsCreationForm(new_lab_type=self.ua,
             pt=self.pt, data=form_data)
         new_pH_value = 100
@@ -244,55 +187,39 @@ class TestLabView(TestCase):
     Test all views in lab
     """
 
-    fixtures = ['core']
-
     def setUp(self):
-        self.ua = LabType.objects.create(name='Urinalysis')
-
-        # Cont measurement with panic levels
-        self.ua_pH = ContinuousMeasurementType.objects.create(
+        ua = factories.LabTypeFactory(name='Urinalysis')
+        ua_pH = factories.ContinuousMeasurementTypeFactory(
             long_name='Urine pH',
             short_name='pH',
-            lab_type=self.ua,
-            unit='unit',
-            panic_upper=10,
-            panic_lower=5
+            lab_type=ua
             )
-        # Cont measurement without panic levels
-        self.ua_glucose = ContinuousMeasurementType.objects.create(
+        ua_glucose = factories.ContinuousMeasurementTypeFactory(
             long_name='Urine glucose',
             short_name='glucose',
-            lab_type=self.ua
+            lab_type=ua
             )
-        # Disc measurement
-        self.ua_blood = DiscreteMeasurementType.objects.create(
+        ua_blood = factories.DiscreteMeasurementTypeFactory(
             long_name='Urine blood',
             short_name='blood',
-            lab_type=self.ua
+            lab_type=ua
             )
 
-        # Disc option, normal
-        self.disc_result_neg = DiscreteResultType.objects.create(name='negative', is_panic='F')
-        self.disc_result_neg.measurement_type.set([self.ua_blood])
+        disc_result_neg = factories.DiscreteResultTypeFactory(name='neg')
+        disc_result_neg.measurement_type.set([ua_blood])
 
-        self.pt = Patient.objects.first()
+        self.pt = core_factories.PatientFactory()
+        self.lab = factories.LabFactory(patient=self.pt, lab_type=ua)
 
-        form_data = {
-            'lab_time': now(),
-            'patient': self.pt,
-            'pH': 5,
-            'glucose': 1,
-            'blood': self.disc_result_neg
-        }
+        lab_ua_pH = factories.ContinuousMeasurementFactory(measurement_type=ua_pH, lab=self.lab)
+        lab_ua_glucose1 = factories.ContinuousMeasurementFactory(measurement_type=ua_glucose, lab=self.lab)
+        lab_ua_blood1 = factories.DiscreteMeasurementFactory(measurement_type=ua_blood, lab=self.lab)
 
-        form = forms.MeasurementsCreationForm(new_lab_type=self.ua, pt=self.pt, data=form_data)
-        if form.is_valid():
-            form.save()
+        log_in_user(self.client, build_user())
 
 
     def test_lab_list_view(self):
         """Any user able to view all lab list view"""
-        log_in_user(self.client, build_user())
         url = reverse('labs:all-labs', kwargs={'pt_id':self.pt.id})
         response = self.client.get(url, follow=True)
         assert response.status_code == 200
@@ -300,7 +227,6 @@ class TestLabView(TestCase):
 
     def test_lab_table_view(self):
         """Any user able to view all lab table view"""
-        log_in_user(self.client, build_user())
         url = reverse('labs:all-labs-table', kwargs={'pt_id':self.pt.id})
         response = self.client.get(url, follow=True)
         assert response.status_code == 200
@@ -308,9 +234,7 @@ class TestLabView(TestCase):
 
     def test_lab_detail_view(self):
         """Any user able to view all lab table view"""
-        log_in_user(self.client, build_user())
-
-        lab = Lab.objects.first()
+        lab = self.lab
         url = reverse('labs:lab-detail', kwargs={'pk':lab.id})
         response = self.client.get(url, follow=True)
         assert response.status_code == 200
@@ -319,13 +243,15 @@ class TestLabView(TestCase):
         assert not Lab.objects.filter(pk=fake_pk).exists()
         url = reverse('labs:lab-detail', kwargs={'pk':fake_pk})
         response = self.client.get(url)
-        print(response)
         assert response.status_code == 404
+
+
+        assert ContinuousMeasurement.objects.count() > 0
 
 
     def test_lab_add_view_with_perm(self):
         """User with lab permissions is able to add lab"""
-        log_in_user(self.client, build_user([factories.CaseManagerGroupFactory]))
+        log_in_user(self.client, build_user([user_factories.CaseManagerGroupFactory]))
 
         url = reverse('labs:new-lab', kwargs={'pt_id':self.pt.id})
         response = self.client.get(url, follow=True)
@@ -334,7 +260,7 @@ class TestLabView(TestCase):
 
     def test_lab_add_view_no_perm(self):
         """User without lab permissions can't add lab"""
-        log_in_user(self.client, build_user([factories.NoPermGroupFactory]))
+        log_in_user(self.client, build_user([user_factories.NoPermGroupFactory]))
 
         url = reverse('labs:new-lab', kwargs={'pt_id':self.pt.id})
         response = self.client.get(url, follow=True)
@@ -343,9 +269,9 @@ class TestLabView(TestCase):
 
     def test_lab_edit_view_with_perm(self):
         """User with lab permissions is able to edit lab"""
-        log_in_user(self.client, build_user([factories.CaseManagerGroupFactory]))
+        log_in_user(self.client, build_user([user_factories.CaseManagerGroupFactory]))
 
-        lab = Lab.objects.first()
+        lab = self.lab
         url = reverse('labs:lab-edit', kwargs={'pk':lab.id})
         response = self.client.get(url, follow=True)
         assert response.status_code == 200
@@ -353,9 +279,9 @@ class TestLabView(TestCase):
 
     def test_lab_edit_view_no_perm(self):
         """User without lab permissions can't edit lab"""
-        log_in_user(self.client, build_user([factories.NoPermGroupFactory]))
+        log_in_user(self.client, build_user([user_factories.NoPermGroupFactory]))
 
-        lab = Lab.objects.first()
+        lab = self.lab
         url = reverse('labs:lab-edit', kwargs={'pk':lab.id})
         response = self.client.get(url, follow=True)
         assert response.status_code == 403

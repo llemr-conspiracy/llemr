@@ -51,10 +51,6 @@ class LabDetailView(DetailView):
 		context['lab'] = self.lab
 		context['pt'] = self.lab.patient
 		measurement_list = get_measurements_from_lab(self.lab.id)
-		for m in measurement_list:
-			m_type = m.measurement_type
-			m.ref = m_type.get_ref()
-			m.unit = m_type.get_unit()
 		context['measurement_list'] = measurement_list
 		active_role = get_active_role(self.request)
 		for perm in ['change_lab']:
@@ -158,13 +154,11 @@ def view_all_as_table(request,pt_id,month_range=6):
 	to_tz = timezone.get_default_timezone()
 	time_threshold = datetime.now(to_tz) - timedelta(days=month_range*31)
 	lab_qs = Lab.objects.filter(patient=pt_id, lab_time__gt=time_threshold)
-	#lab_days = sorted(map(lambda x: x.get_day(), lab_qs), reverse=True)
 	lab_days = sorted([lab.get_day() for lab in lab_qs], reverse=True)
 	unique_lab_days=reduce(lambda l, x: l if x in l else l+[x], lab_days, [])
 
 	listed_lab_days = unique_lab_days[:]
 	n_days = len(listed_lab_days)
-
 
 	# Initiate empty table
 	# width = # of labs
@@ -197,7 +191,6 @@ def view_all_as_table(request,pt_id,month_range=6):
 			section_index = lab_types.index(t_lab.lab_type)
 			m_type = m.measurement_type
 			row_index = (sorted_measure_types[section_index]).index(m_type)
-			m.unit = m_type.get_unit()
 			current_value = table_content[section_index][row_index+1][col_index]
 			if current_value=='':
 				table_content[section_index][row_index+1][col_index] = m
@@ -207,11 +200,9 @@ def view_all_as_table(request,pt_id,month_range=6):
 				dup_lab_bool = True
 
 	qs = {'patient':pt, 
-		  'labs':lab_qs, 
 		  'table_content': table_content,
-		  'table_header': table_header,
-		  'ncol': len(table_header),
 		  'add_lab': group_has_perm(get_active_role(request), 'labs.add_lab'),
+		  'no_lab_bool':len(lab_qs)==0,
 		  'dup_lab_bool': dup_lab_bool}
 
 	return render(request, 'labs/lab_all_table.html', qs)

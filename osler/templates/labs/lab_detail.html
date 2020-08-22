@@ -40,13 +40,13 @@ Lab detail
 		{% for measurement in measurement_list %}
 			<tr>
 				<td>{{ measurement.measurement_type }}</td>
-				<td>{{ measurement.ref }}</td>
+				<td>{{ measurement.measurement_type.get_ref }}</td>
 				{% if measurement.panic_low %}
-					<td style="color:#0000FF">{{ measurement.value }} {{measurement.unit}}⚠</td>
+					<td style="color:#0000FF">{{ measurement.value }} {{measurement.measurement_type.get_unit}}⚠</td>
 				{% elif measurement.panic %}
-					<td style="color:#f00">{{ measurement.value }} {{measurement.unit}}⚠</td>
+					<td style="color:#f00">{{ measurement.value }} {{measurement.measurement_type.get_unit}}⚠</td>
 				{% else %}
-					<td>{{ measurement.value }} {{measurement.unit}}</td>
+					<td>{{ measurement.value }} {{measurement.measurement_type.get_unit}}</td>
 				{% endif %}
 			</tr>
 		{% endfor %}
