@@ -1,11 +1,16 @@
 from django.forms import (fields, ModelForm, Form)
 from django.forms.models import model_to_dict, fields_for_model
+
+from django.forms.widgets import SplitDateTimeWidget
+from django.contrib.admin.widgets import AdminDateWidget
+
 from django.shortcuts import get_object_or_404
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Div, Row, HTML, Field
 from crispy_forms.bootstrap import (AppendedText)
 
 from . import models
+from . import utils
 
 from itertools import chain
 
@@ -53,19 +58,17 @@ class MeasurementsCreationForm(Form):
 		if self.lab_pk is not None:
 			self.fields['lab_time'].initial = models.Lab.objects.get(pk=self.lab_pk).lab_time
 
-		self.measurements_dict = {}
+		self.measurements_list = []
 		if self.lab_pk is not None:
-			self.measurements_dict['Continuous'] = models.ContinuousMeasurement.objects.filter(lab=self.lab_pk)
-			self.measurements_dict['Discrete'] = models.DiscreteMeasurement.objects.filter(lab=self.lab_pk)
+			self.measurements_list = utils.get_measurements_from_lab(self.lab_pk)
 
-		self.qs_fields = models.MeasurementType.objects.filter(lab_type=self.new_lab_type)
+		self.measurementtypes_list = utils.get_measurementtypes_from_labtype(self.new_lab_type.id)
 
-		for measurement_type in self.qs_fields:
+		for measurement_type in self.measurementtypes_list:
 			str_name = measurement_type.short_name
-			unit = measurement_type.unit
-			value_type = measurement_type.value_type
+			unit = measurement_type.get_unit()
+			value_type = measurement_type.get_value_type()
 			self.fields_display.append(Div(AppendedText(str_name,unit),style=STYLE))
-			
 			
 			if value_type=='Continuous': 
 				new_field = fields_for_model(models.ContinuousMeasurement)['value']
@@ -75,9 +78,9 @@ class MeasurementsCreationForm(Form):
 			new_field.label = str_name
 			new_field.widget.attrs['style'] = STYLE
 			if self.lab_pk is not None:
-				existing_measurements = self.measurements_dict[value_type]
 				try:
-					new_field.initial = existing_measurements.get(measurement_type=measurement_type).value
+					#new_field.initial = self.measurements_list.get(measurement_type=measurement_type).value
+					new_field.initial = next((mt.value for mt in self.measurements_list if mt.measurement_type == measurement_type), None)
 				except:
 					pass
 
@@ -95,6 +98,7 @@ class MeasurementsCreationForm(Form):
 			*(self.fields_display + button)
 			)
 
+
 	def save(self, *args, **kwargs):
 		self.lab_pk = kwargs.pop('lab_pk') if ('lab_pk' in kwargs) else None
 
@@ -106,18 +110,18 @@ class MeasurementsCreationForm(Form):
 				lab_time = self.cleaned_data['lab_time']
 				)
 
-			for field in self.qs_fields:
-				if field.value_type=='Continuous':
+			for mt in self.measurementtypes_list:
+				if mt.get_value_type()=='Continuous':
 					models.ContinuousMeasurement.objects.create(
-						measurement_type = field,
+						measurement_type = mt,
 						lab = self.new_lab,
-						value = self.cleaned_data[field.short_name]
+						value = self.cleaned_data[mt.short_name]
 					)
-				elif field.value_type=='Discrete':
+				elif mt.get_value_type()=='Discrete':
 					models.DiscreteMeasurement.objects.create(
-						measurement_type = field,
+						measurement_type = mt,
 						lab = self.new_lab,
-						value = self.cleaned_data[field.short_name]
+						value = self.cleaned_data[mt.short_name]
 					)
 
 		# Updating an existing lab
@@ -126,7 +130,7 @@ class MeasurementsCreationForm(Form):
 			if self.cleaned_data['lab_time']!=self.new_lab.lab_time:
 				self.new_lab.lab_time = self.cleaned_data['lab_time']
 				self.new_lab.save()
-			measurement_list = chain(*self.measurements_dict.values())
+			measurement_list = self.measurements_list
 			for measure in measurement_list:
 				field_name = measure.measurement_type.short_name
 				if self.cleaned_data[field_name]!=measure.value:
