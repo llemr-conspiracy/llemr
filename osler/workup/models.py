@@ -13,7 +13,7 @@ from simple_history.models import HistoricalRecords
 from osler.core.models import Note, ReferralLocation, ReferralType
 from osler.workup import validators as workup_validators
 
-from osler.core.utils import group_has_perm
+from osler.users.utils import group_has_perm
 
 class DiagnosisType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of

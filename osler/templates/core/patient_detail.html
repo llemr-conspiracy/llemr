@@ -58,6 +58,10 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
         <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>&nbsp;
         <a href="{% url 'core:new-document' pt_id=patient.pk %}"><strong>Upload Document</strong></a>
       </li>
+      <li class="list-group-item">
+        <span class="glyphicon glyphicon-tint" aria-hidden="true"></span>&nbsp;
+          <a href="{% url 'labs:all-labs-table' pt_id=patient.pk %}"><strong>View Labs</strong></a>
+      </li>
     </ul>
   </div>
 

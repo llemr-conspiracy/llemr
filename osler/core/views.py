@@ -22,7 +22,7 @@ from osler.core import models as core_models
 from osler.core import forms
 from osler.core import utils
 
-from osler.core.utils import group_has_perm
+from osler.users.utils import get_active_role, group_has_perm
 
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
@@ -118,7 +118,7 @@ class ActionItemCreate(NoteFormView):
 
         ai.completion_date = None
         ai.author = self.request.user
-        ai.author_type = utils.get_active_role(self.request)
+        ai.author_type = get_active_role(self.request)
         ai.patient = pt
 
         ai.save()
@@ -255,7 +255,7 @@ class DocumentCreate(NoteFormView):
         pt = get_object_or_404(core_models.Patient, pk=self.kwargs['pt_id'])
         doc.patient = pt
         doc.author = self.request.user
-        doc.author_type = utils.get_active_role(self.request)
+        doc.author_type = get_active_role(self.request)
 
         doc.save()
 
@@ -393,7 +393,7 @@ def patient_detail(request, pk):
 
     # Permissions to display things on patient-detail, just toggle active status for now
     # But I think this way vs in the html will make it easier to add/change later
-    active_role = utils.get_active_role(request)
+    active_role = get_active_role(request)
     can_activate = pt.group_can_activate(active_role)
     can_case_manage = group_has_perm(active_role, 'core.case_manage_Patient')
     can_export_pdf = group_has_perm(active_role, 'workup.export_pdf_Workup')
@@ -444,7 +444,7 @@ def all_patients(request):
 
 def patient_activate_detail(request, pk):
     pt = get_object_or_404(core_models.Patient, pk=pk)
-    active_role = utils.get_active_role(request)
+    active_role = get_active_role(request)
 
     can_activate = pt.group_can_activate(active_role)
 
@@ -458,7 +458,7 @@ def patient_activate_detail(request, pk):
 
 def patient_activate_home(request, pk):
     pt = get_object_or_404(core_models.Patient, pk=pk)
-    active_role = utils.get_active_role(request)
+    active_role = get_active_role(request)
 
     can_activate = pt.group_can_activate(active_role)
 

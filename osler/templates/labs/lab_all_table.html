@@ -1,0 +1,121 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Recent Labs
+{% endblock %}
+
+{% block header%}
+<h1>Recent Labs</h1>
+
+<div class="row text">  
+	<div class="col-mb-2">
+		<h2>Patient: <a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }} </a></h2>
+	</div>
+
+</div>
+
+{% endblock %}
+
+
+{% block content %}
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<div class="container text-center">
+	<div class="btn-group">
+	    <a class="btn btn-dark" href="{% url 'core:patient-detail' patient.id %}" role="button">Back to Patient Detail</a>
+	    {% if add_perm %}
+	    	<a class="btn btn-primary" href="{% url 'labs:new-lab' patient.id %}" role="button">New Lab</a>
+	    {% endif %}
+	    <a class="btn btn-warning" href="{% url 'labs:all-labs' patient.id %}" role="button">All Labs</a>
+	</div>
+</div>
+
+
+
+<div class="container">
+	<form method="GET" class="form-inline">
+	  <div class="form-group mb-2", style="font-weight:bold">
+	    Lab date:
+	  </div>
+	  <div class="form-group mx-sm-3 mb-2">
+	  	<form method='get' action="{% url 'labs:all-labs-table' patient.id %}">
+				<select class="form-control" name="select">
+				<option value="" selected disabled hidden>Choose here</option>
+		    	<option value="6">Last 6 months</option>
+		    	<option value="12">Last year</option>
+		    	<option value="24">Last 2 years</option>
+		    	<option value="6000">All</option>
+			    </select>
+			    <input type="submit" value="Filter">
+		</form>
+	  </div>
+	</form>
+</div>
+
+
+<div class="container", id="lab_table">
+	{% if dup_lab_bool %}
+	<div class="alert alert-warning" role="alert">
+      <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+      <strong>Warning!</strong>
+      Multiple labs exist for the date(s) with *. The latest values on that day are displayed here. Please check All Labs page for details.</div>
+	{% endif %}
+	<table class="table">
+	    {% for lab_section in table_content %}
+
+	    	{% for row in lab_section %}
+				<tr>
+					{% firstof row as firstelem %}
+					{% if "Lab Category" in firstelem %}
+						<!--td colspan="{{ncol}}" style="background-color:powderblue;"><b>{{ row }}</b></td-->
+						{% for item in row %}
+							<th style="background-color:lightgrey;">{{ item }}</th>
+					    {% endfor %}
+					{% else %}
+						{% for item in row %}
+							{% if item.value is not None %}
+					        <td style="color:{{item.color}}">{{ item.value }} {{item.unit}} {{item.warning}}</td>
+							{% else %}
+					        <td>{{ item }}</td>
+					        {% endif %}
+					    {% endfor %}
+					{% endif %}
+				</tr>
+			{% endfor %}
+
+		{% endfor %}
+	</table>
+</div>
+
+
+<!--div class="container", id="lab_table">
+	<table class="table">
+	    <tr>
+	    	{% for item in table_header %}
+	        	<th style="background-color:lightgrey;">{{ item }}</th>
+	        {% endfor %}
+	    </tr>
+	    {% for lab_section in table_content %}
+
+	    	{% for row in lab_section %}
+				<tr>
+					{% if "Lab Category" in row %}
+						<td colspan="{{ncol}}" style="background-color:powderblue;"><b>{{ row }}</b></td>
+					{% else %}
+						{% for item in row %}
+							{% if item.value is not None %}
+					        <td style="color:{{item.color}}">{{ item.value }} {{item.warning}}</td>
+							{% else %}
+					        <td>{{ item }}</td>
+					        {% endif %}
+					    {% endfor %}
+					{% endif %}
+				</tr>
+			{% endfor %}
+
+		{% endfor %}
+	</table>
+</div-->
+
+{% endblock %}

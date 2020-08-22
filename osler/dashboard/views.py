@@ -8,7 +8,7 @@ from django.conf import settings
 from osler.workup.models import ClinicDate
 from osler.core.models import Patient
 
-from osler.core.utils import get_active_role
+from osler.users.utils import get_active_role
 
 
 def dashboard_dispatch(request):

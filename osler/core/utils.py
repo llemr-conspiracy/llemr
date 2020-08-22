@@ -4,22 +4,10 @@ import string
 
 from django.db.models import Q
 from django.conf import settings
-from django.contrib.auth.models import Group, Permission
 from django.shortcuts import get_object_or_404
 
 from . import models
 
-
-def get_active_role(request):
-    """Given a request, process which of the user's groups is "active".
-
-    This is used to determine which type of user to sign a note as, for
-    example.
-    """
-
-    active_role_pk = request.session['active_role_pk']
-    active_role = Group.objects.get(pk=active_role_pk)
-    return active_role
 
 def make_filepath(instance, filename):
     """Produces a unique file path for the upload_to of a FileField.
@@ -87,6 +75,7 @@ def return_duplicates(first_name_str, last_name_str):
          Q(first_name__istartswith=first_name_str.capitalize())) &
         Q(last_name__in=last_name_var))
 
+
 def get_names_from_url_query_dict(request):
     """Get first_name and last_name from a request object in a dict.
     """
@@ -97,6 +86,7 @@ def get_names_from_url_query_dict(request):
 
     return qs_dict
 
+
 def get_due_date_from_url_query_dict(request):
     '''Get due date from request object in a dict'''
 
@@ -105,12 +95,3 @@ def get_due_date_from_url_query_dict(request):
                if param in request.GET}
 
     return qs_dict
-
-def group_has_perm(group, permission_name):
-    """Checks that a group has a certain permission.
-    Name permission as <app_label>.<codename>"""
-
-    split = permission_name.index('.')
-    app_label = permission_name[:split]
-    codename = permission_name[split+1:]
-    return group.permissions.filter(codename=codename, content_type__app_label=app_label).exists()

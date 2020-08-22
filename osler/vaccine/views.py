@@ -4,7 +4,8 @@ from django.http import HttpResponseRedirect
 
 from osler.core.models import Patient
 from osler.core.views import NoteFormView
-from osler.core import utils
+from osler.core.utils import get_due_date_from_url_query_dict
+from osler.users.utils import get_active_role
 from osler.followup.views import FollowupCreate
 from osler.vaccine.models import VaccineSeries, VaccineActionItem
 from osler.vaccine.forms import (VaccineSeriesForm, VaccineDoseForm, 
@@ -39,7 +40,7 @@ class VaccineSeriesCreate(NoteFormView):
 
         # Assign author and author type
         series.author = self.request.user
-        series.author_type = utils.get_active_role(self.request)
+        series.author_type = get_active_role(self.request)
         series.patient = pt
 
         series.save()
@@ -70,7 +71,7 @@ class VaccineDoseCreate(NoteFormView):
 
         # Assign author and author type
         dose.author = self.request.user
-        dose.author_type = utils.get_active_role(self.request)
+        dose.author_type = get_active_role(self.request)
         dose.patient = pt
         dose.series = series
 
@@ -96,7 +97,7 @@ class VaccineActionItemCreate(NoteFormView):
     def get_initial(self):
         initial = super(VaccineActionItemCreate, self).get_initial()
 
-        initial.update(utils.get_due_date_from_url_query_dict(self.request))
+        initial.update(get_due_date_from_url_query_dict(self.request))
         return initial
 
     def form_valid(self, form):
@@ -105,7 +106,7 @@ class VaccineActionItemCreate(NoteFormView):
 
         vai.completion_date = None
         vai.author = self.request.user
-        vai.author_type = utils.get_active_role(self.request)
+        vai.author_type = get_active_role(self.request)
         vai.vaccine = get_object_or_404(
             VaccineSeries, pk=self.kwargs['series_id'])
         vai.patient = pt
@@ -131,7 +132,7 @@ class VaccineFollowupCreate(FollowupCreate):
 
         vai_fu = form.save(commit=False)
         vai_fu.author = self.request.user
-        vai_fu.author_type = utils.get_active_role(self.request)
+        vai_fu.author_type = get_active_role(self.request)
         vai_fu.action_item = vai
         vai_fu.patient = pt
         vai_fu.save()

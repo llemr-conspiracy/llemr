@@ -3,7 +3,6 @@ from xhtml2pdf import pisa
 
 from django.conf import settings
 from django.contrib.auth.models import Group
-from django.contrib.auth.decorators import permission_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import (HttpResponseRedirect, HttpResponseServerError,
                          HttpResponse)
@@ -15,12 +14,12 @@ from django.utils.timezone import now
 
 from osler.core.views import NoteFormView, NoteUpdate
 from osler.core.models import Patient
-from osler.core.utils import get_active_role
 
 from osler.workup import models
 from osler.workup import forms
 
-from osler.core.utils import group_has_perm
+from osler.users.utils import get_active_role, group_has_perm
+from osler.users.decorators import active_permission_required
 
 
 def get_clindates():
@@ -284,7 +283,7 @@ def error_workup(request, pk):
     return render(request, 'core/workup_error.html', {'workup': wu})
 
 
-@permission_required('workup.export_pdf_Workup')
+@active_permission_required('workup.export_pdf_Workup')
 def pdf_workup(request, pk):
 
     wu = get_object_or_404(models.Workup, pk=pk)

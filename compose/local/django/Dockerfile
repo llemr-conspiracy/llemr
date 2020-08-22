@@ -16,6 +16,7 @@ RUN apt-get update \
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
+RUN pip install --upgrade pip
 RUN pip install --use-feature=2020-resolver -r /requirements/local.txt
 
 COPY ./compose/production/django/entrypoint /entrypoint
