@@ -34,7 +34,7 @@ def new_note_dispatch(request, pt_id):
 
     note_types = {
         'Standard Medical Note': reverse("new-workup", args=(pt_id,)),
-        'Other Basic Note': reverse("new-progress-note",
+        'Attestable Basic Note': reverse("new-progress-note",
                                     args=(pt_id,)),
     }
 
@@ -175,21 +175,10 @@ class WorkupUpdate(NoteUpdate):
         return reverse('workup', args=(self.object.id,))
 
 
-class ProgressNoteUpdate(NoteUpdate):
-    template_name = "core/form-update.html"
-    model = models.ProgressNote
-    form_class = forms.ProgressNoteForm
-    note_type = 'Clinical Psychology Note'
-
-    def get_success_url(self):
-        pnote = self.object
-        return reverse("progress-note-detail", args=(pnote.id, ))
-
-
 class ProgressNoteCreate(AttestableNoteCreate):
     template_name = 'core/form_submission.html'
     form_class = forms.ProgressNoteForm
-    note_type = 'Clinical Psychology Note'
+    note_type = 'Attestable Basic Note'
 
     def form_valid(self, form):
         pnote = form.save(commit=False)
@@ -208,6 +197,17 @@ class ProgressNoteCreate(AttestableNoteCreate):
 
         return HttpResponseRedirect(reverse("core:patient-detail",
                                             args=(pnote.patient.id,)))
+
+
+class ProgressNoteUpdate(NoteUpdate):
+    template_name = "core/form-update.html"
+    model = models.ProgressNote
+    form_class = ProgressNoteCreate.form_class
+    note_type = ProgressNoteCreate.note_type
+
+    def get_success_url(self):
+        pnote = self.object
+        return reverse("progress-note-detail", args=(pnote.id, ))
 
 
 class ClinicDateCreate(FormView):
