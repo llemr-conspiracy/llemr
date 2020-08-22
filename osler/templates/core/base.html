@@ -56,7 +56,7 @@
           <li><a href="{% url 'core:preintake' %}">New Patient</a></li>
           <li><a href="{% url 'core:all-patients' %}">All Patients</a></li>
           <li><a href="{% url 'appointment-list' %}">Appointments</a></li>
-          <li><a href="http://www.sojournerhealthclinic.com/?page_id=1755" target="_blank">About</a></li>
+          <li><a href="{% url 'about' %}">About</a></li>
           {% if user.is_superuser or user.is_staff %}
           {% endif %}
         </ul>
