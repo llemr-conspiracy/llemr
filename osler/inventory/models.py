@@ -7,6 +7,7 @@ from osler.core.validators import validate_name
 class DrugCategory(models.Model):
     class Meta:
         verbose_name_plural = "drug categories"
+        ordering = ['name',]
 
     name = models.CharField(max_length=100, primary_key=True, validators=[validate_name])
 
@@ -16,6 +17,9 @@ class DrugCategory(models.Model):
 
 class MeasuringUnit(models.Model):
 
+    class Meta:
+        ordering = ['name',]
+
     name = models.CharField(max_length=50, primary_key=True, validators=[validate_name])
 
     def __str__(self):
@@ -23,12 +27,18 @@ class MeasuringUnit(models.Model):
 
 class Manufacturer(models.Model):
 
+    class Meta:
+        ordering = ['name',]
+
     name = models.CharField(max_length=100, primary_key=True, validators=[validate_name])
 
     def __str__(self):
         return self.name
 
 class Drug(models.Model):
+
+    class Meta:
+        ordering = ['name',]
 
     name = models.CharField(max_length=100, blank=False, validators=[validate_name])
 
