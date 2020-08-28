@@ -11,6 +11,9 @@ from . import models
 from . import forms
 from . import utils
 
+import csv
+from datetime import date
+
 # Create your views here.
 class DrugListView(ListView):
     template_name = 'inventory/inventory-main.html'
@@ -117,4 +120,30 @@ def drug_dispense(request):
         return HttpResponseNotFound('<h1>Cannot dispense more drugs than in stock!</h1>')
     else:
         drug.dispense(int(num))
+    return redirect('inventory:drug-list')
+
+
+def export_csv(request):
+    drugs = models.Drug.objects.\
+        select_related('unit').\
+        select_related('category').\
+        select_related('manufacturer').\
+        order_by('category', 'name')
+
+    csv_file = open('drug-inventory-'+str(date.today())+'.csv', 'w')
+    with csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow(['Drug Name', 'Dose', 'Unit', 'Stock', 'Expiration Date',
+                         'Lot Number', 'Category', 'Manufacturer'])
+        for drug in drugs:
+            writer.writerow(
+                [drug.name,
+                 drug.unit,
+                 drug.dose,
+                 drug.stock,
+                 drug.expiration_date,
+                 drug.lot_number,
+                 drug.category,
+                 drug.manufacturer])
+
     return redirect('inventory:drug-list')
