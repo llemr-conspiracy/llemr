@@ -55,6 +55,7 @@
         <ul class="nav navbar-nav">
           <li><a href="{% url 'core:preintake' %}">New Patient</a></li>
           <li><a href="{% url 'core:all-patients' %}">All Patients</a></li>
+          <li><a href="{% url 'inventory:drug-list' %}">Drug Inventory</a></li>
           <li><a href="{% url 'appointment-list' %}">Appointments</a></li>
           <li><a href="{% url 'about' %}">About</a></li>
         </ul>
@@ -63,7 +64,7 @@
             {% if user.is_superuser %}
             <li><a href="{% url 'admin:index' %}">Admin</a></li>
             {% endif %}
-            <li><a href="{% url 'account_logout' %}">Logout 
+            <li><a href="{% url 'account_logout' %}">Logout
               {{ request.user }} ({{ request.session.active_role_name | default:"no role" }})
             </a></li>
         </ul>

@@ -1,0 +1,136 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Drug Inventory
+{% endblock %}
+
+{% block header %}
+<h2>Drug Inventory</h2>
+<a class="btn btn-primary btn-lg" href="{% url 'inventory:pre-drug-add-new' %}" role="button">Add New Drug</a>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-group">
+        <label for="drug-list-filter-input"  class="sr-only" >Filter</label>
+        <div class="input-group">
+            <div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+            <input type="text" id="drug-list-filter-input" placeholder="Filter by drug name or lot number" class="form-control" onkeyup="filterDrugListTable()">
+        </div>
+    </div>
+    <table class="table" id="drug-list-table">
+        <tr>
+          <th>Name</th>
+            <th>Category</th>
+            <th>Stock</th>
+            <th>Lot Number</th>
+            <th>Dose</th>
+            <th>Expiration Date</th>
+            <th>Manufacturer</th>
+            <th></th>
+        </tr>
+        {% for drug in object_list %}
+            <tr>
+                <td><a href="{% url 'inventory:drug-update' pk=drug.id %}">{{ drug.name }}</a></td>
+                <td><b>{{ drug.category }}</b></td>
+                <td><b>{{ drug.stock }}</b></td>
+                <td>{{ drug.lot_number }}</td>
+                <td>{% if drug.dose %}
+                        {{ drug.dose }}
+                    {% endif %}
+                    {% if drug.unit %}
+                        {{ drug.unit }}
+                    {% endif %}</td>
+                <td>{% if drug.expiration_date %}
+                        {{ drug.expiration_date }}
+                    {% endif %}</td>
+                <td>{% if drug.manufacturer %}
+                        {{ drug.manufacturer }}
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="#" class="btn btn-success a-btn-slide-text btn-xs" data-toggle="modal" data-target="#dispenseModal{{ drug.id }}">
+                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                        <span><strong>Dispense</strong></span>
+                    </a>
+                    <!-- Modal -->
+                    <div class="modal fade" id="dispenseModal{{ drug.id }}" tabindex="-1" role="dialog" aria-labelledby="dispenseModal{{ drug.id }}Label" aria-hidden="true">
+                    <form action="{% url 'inventory:drug-dispense' %}" method="post">
+                      {% csrf_token %}
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h2 class="modal-title" id="dispenseModal{{ drug.id }}Label">Dispense Drug</h2>
+                          </div>
+                          <div class="modal-body">
+                            How many <b>{{ drug.name }} {% if drug.unit %}{{ drug.dose }}{% endif %}{% if drug.unit %}{{ drug.unit }}{% endif %}</b> would you like to dispense?
+                            <div class="form-group">
+                              <input type="number" class="form-control" placeholder="1" name="num" id="num" min="1" max="{{ drug.stock }}" required>
+                            </div>
+                            <input type="hidden" name="pk" id="pk" value="{{ drug.id }}">
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Dispense Drug</button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+{# adapted from "https://www.w3schools.com/howto/howto_js_filter_table.asp" #}
+function filterDrugListTable() {
+  // Declare variables
+  var input, filter, table, tr, td, i;
+  input = document.getElementById("drug-list-filter-input");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("drug-list-table");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  // Start at one to avoid hitting table header
+  for (i = 1; i < tr.length; i++) {
+    var match = 0;
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+        // need additional indexing because patient's name is a link
+        if (check(td.getElementsByTagName("a")[0], filter)) {
+            match = 1;
+        }
+    }
+    td = tr[i].getElementsByTagName("td")[3];
+    if (td) {
+        if (check(td, filter)) {
+            match = 1;
+        }
+    }
+    if (match == 1) {
+      tr[i].style.display = "";
+    } else {
+      tr[i].style.display = "none";
+    }
+  }
+}
+
+function check(haystack_element, needle){
+    var haystack = haystack_element.innerHTML.toUpperCase()
+    if (!needle) {return 1}
+    if (haystack && haystack.indexOf(needle) > -1) {
+        return 1
+    } else {
+        return 0
+    }
+}
+
+</script>
+{% endblock %}

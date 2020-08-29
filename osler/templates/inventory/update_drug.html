@@ -1,0 +1,19 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Edit Drug ({{ object.name }})
+{% endblock %}
+
+{% block header %}
+<h1><a href="{% url 'inventory:drug-list' %}"><small><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></small></a>
+  Edit Drug
+</h1>
+<p class="lead">Edit <em>{{ object.name }}</em></p>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% load crispy_forms_tags %}
+    {% crispy form %}
+</div>
+{% endblock %}

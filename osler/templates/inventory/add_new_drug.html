@@ -1,0 +1,18 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Add New Drug
+{% endblock %}
+
+{% block header %}
+<h1>Add New Drug</h1>
+<p class="lead">Create a new drug in the database</p>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% load crispy_forms_tags %}
+    {% crispy form %}
+</div>
+{% endblock %}
+
