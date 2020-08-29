@@ -6,7 +6,7 @@ from osler.core.models import Patient
 from osler.core.tests.test_views import build_user
 
 from osler.workup import models
-from osler.workup.tests import wu_dict, pn_dict
+from osler.workup.tests.tests import wu_dict, pn_dict
 
 import osler.users.tests.factories as user_factories
 

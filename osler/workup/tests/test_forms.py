@@ -12,7 +12,7 @@ from osler.core.models import Gender
 from osler.workup.models import DiagnosisType, ClinicDate, ClinicType, Workup
 from osler.workup.forms import WorkupForm
 
-from osler.workup.tests import wu_dict, pn_dict
+from osler.workup.tests.tests import wu_dict, pn_dict
 
 from osler.core.tests.test_views import build_user
 import osler.users.tests.factories as user_factories

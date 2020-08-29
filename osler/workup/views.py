@@ -21,6 +21,8 @@ from osler.workup import forms
 from osler.users.utils import get_active_role, group_has_perm
 from osler.users.decorators import active_permission_required
 
+from django.utils.translation import gettext_lazy as _
+
 
 def get_clindates():
     '''Get the clinic dates associated with today.'''
@@ -116,9 +118,39 @@ class WorkupCreate(NoteFormView):
         initial = super(WorkupCreate, self).get_initial()
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
 
-        # self.get() checks for >= 1 ClinicDay
         initial['clinic_day'] = get_clindates().first()
-        initial['ros'] = "Default: reviewed and negative"
+
+        initial['pe'] = _(
+            "Please UPDATE review of systems with pertinent positives/negatives. Delete this line when done.\n\n"
+
+            "General: Denies fevers, chills, sweats, fatigue, weight changes\n"
+            "Neuro: Denies dizziness, hearing loss, weakness, seizures, tremor, numbness, tingling\n"
+            "HEENT: Denies HA, change in vision, photophobia, change in hearing/tinnitus, earache, sore throat, nasal/sinus problems, hoarseness, dry mouth\n"
+            "Cardiovascular: Denies chest pain, palpitations, orthopnea, proximal nocturnal dyspnea, edema, claudication, decreased exercise tolerance\n"
+            "Pulmonary: Denies SOB, cough, wheezing, dyspnea, snoring, sputum, hemoptysis, TB exposure\n"
+            "GI: Denies N/V/D, constipation, abdominal pain, melena, hematochezia, hematemesis, dysphasia, odynophagia\n"
+            "GU: Denies increased urinary frequency, urgency, dysuria, nocturia, hesitancy, incontinence, hematuria"
+            "Heme: Denies easy bruising/bleeding\n"
+            "Skin: Denies rashes, itching, bruises, dryness, changes in moles, changes in hair\n"
+            "Endo: Denies heat/cold intolerance, polyuria, polydipsia, polyphagia or appetite changes\n"
+            "Musculoskeletal: Denies muscle/joint pain, myalgias, back pain, recent injuries\n"
+            "Psychiatric: Denies anxiety, depression, suicidal/homicidal ideations"
+        )
+
+        initial['ros'] = _(
+            "Please UPDATE physical exam with pertinent findings. Delete this line when done.\n\n"
+
+            "General: Well-developed, well-nourished, in no apparent distress.\n"
+            "HEENT: Head is normocephalic and atraumatic. Extraocular muscles are intact. Pupils are equal, round, and reactive to light. Nares appear normal. Mouth is without lesions. Mucous membranes are moist. Posterior pharynx has no exudate or lesions.\n"
+            "Neck: Supple. No carotid bruits.  No lymphadenopathy or thyromegaly.\n"
+            "Lungs: CTAB with normal equal air movement.\n"
+            "Heart: Regular rate and rhythm without murmur."
+            "Abdomen: Soft, nontender, nondistended.  Normal bowel sounds. No hepatosplenomegaly.\n"
+            "Extremities: No cyanosis, clubbing, or edema.\n"
+            "Neurologic: Alert and oriented to person, place, time, and situation. CN II through XII are grossly intact.\n"
+            "Psychiatric: Normal affect. Denies suicidal or homicidal ideations.\n"
+            "Skin: Intact with no rashes. Normal skin turgor. Brisk capillary refill."
+        )
 
         wu_previous = pt.latest_workup()
         if wu_previous is not None:

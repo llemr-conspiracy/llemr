@@ -3,7 +3,7 @@
     "model": "auth.group",
     "pk": 1,
     "fields": {
-        "name": "Coordinator",
+        "name": "Manager",
         "permissions": []
     }
 },
@@ -19,15 +19,7 @@
     "model": "auth.group",
     "pk": 3,
     "fields": {
-        "name": "Preclinical",
-        "permissions": []
-    }
-},
-{
-    "model": "auth.group",
-    "pk": 4,
-    "fields": {
-        "name": "Clinical",
+        "name": "Volunteer",
         "permissions": []
     }
 }

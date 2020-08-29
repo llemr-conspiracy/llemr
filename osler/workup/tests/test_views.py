@@ -11,7 +11,7 @@ from osler.core.tests.test_views import build_user, log_in_user
 import osler.users.tests.factories as user_factories
 
 from osler.workup import models
-from osler.workup.tests import wu_dict, pn_dict
+from osler.workup.tests.tests import wu_dict, pn_dict
 
 import pytest
 import factory

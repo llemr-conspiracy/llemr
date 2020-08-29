@@ -13,7 +13,7 @@ from osler.core.tests.test_views import build_user
 from osler.core.tests.test import SeleniumLiveTestCase
 
 from osler.workup import models as workup_models
-from osler.workup.tests import wu_dict
+from osler.workup.tests.tests import wu_dict
 
 from osler.users.models import User
 import osler.users.tests.factories as user_factories

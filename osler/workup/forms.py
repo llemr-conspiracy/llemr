@@ -17,6 +17,8 @@ from osler.workup import models
 
 from past.utils import old_div
 
+from django.utils.translation import gettext_lazy as _
+
 
 def form_required_if(form, conditional, fields):
     """Adds an error to the form if conditional is truthy-false and any
@@ -233,6 +235,9 @@ class WorkupForm(ModelForm):
             Submit('submit', 'Save', css_class='btn btn-success')
         )
 
+        self.fields['ros'].widget.attrs['rows'] = 12
+        self.fields['pe'].widget.attrs['rows'] = 13
+
     def clean(self):
         """Use form's clean hook to verify that fields in Workup are
         consistent with one another (e.g. if pt recieved a voucher, amount is
@@ -276,6 +281,15 @@ class WorkupForm(ModelForm):
             if cleaned_data.get('height_units') == 'in':
                 cm = int(inches2cm(cleaned_data.get('height')))
                 cleaned_data['height'] = cm
+
+        cleaned_data['ros'] = cleaned_data['ros'].strip()
+        cleaned_data['pe'] = cleaned_data['pe'].strip()
+
+        if "UPDATE" in cleaned_data.get('ros'):
+            self.add_error('ros', _("This field must be updated."))
+
+        if "UPDATE" in cleaned_data.get('pe'):
+            self.add_error('pe', _("This field must be updated."))
 
         form_require_together(self, ['bp_sys', 'bp_dia'])
         if cleaned_data.get('bp_sys') and cleaned_data.get('bp_dia'):
