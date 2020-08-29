@@ -42,14 +42,14 @@ class Drug(models.Model):
 
     name = models.CharField(max_length=100, blank=False, validators=[validate_name])
 
-    unit = models.ForeignKey(MeasuringUnit, on_delete=models.PROTECT, blank=True, null=True)
+    unit = models.ForeignKey(MeasuringUnit, on_delete=models.PROTECT)
 
-    dose = models.FloatField(blank=True, null=True)
+    dose = models.FloatField(blank=False, null=False)
 
     stock = models.PositiveSmallIntegerField(
-        default=0, blank=True, null=True)
+        default=0, blank=False, null=False)
 
-    expiration_date = models.DateField(help_text="MM/DD/YYYY", blank=True, null=True)
+    expiration_date = models.DateField(help_text="MM/DD/YYYY", blank=False, null=False)
 
     lot_number = models.CharField(max_length=100, blank=False)
 
@@ -57,13 +57,10 @@ class Drug(models.Model):
 
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT)
 
-    def can_dispense(self,num):
-        if self.stock < num:
-            return False
-        else:
-            return True
+    def can_dispense(self, num):
+        return self.stock >= num
 
-    def dispense(self,num):
+    def dispense(self, num):
         self.stock -= num
         self.save()
 

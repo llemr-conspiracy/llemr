@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic.edit import FormView, UpdateView
 from django.views.generic.list import ListView
 from django.urls import reverse
 from django.http import HttpResponseRedirect, HttpResponseNotFound
+import urllib
 
 from . import models
 from . import forms
@@ -33,14 +34,15 @@ class PreDrugAddNew(FormView):
         lot_number_str = form.cleaned_data['lot_number'].upper()
         manufacturer_str = form.cleaned_data['manufacturer']
 
-        querystr = '%s=%s&%s=%s&%s=%s' % ("name", name_str,
-                                    "lot_number", lot_number_str,
-                                    "manufacturer", manufacturer_str)
+        q = {
+            "name": name_str,
+            "lot_number": lot_number_str,
+            "manufacturer": manufacturer_str
+        }
+
+        querystr = urllib.parse.urlencode(q)
 
         add_new_drug_url = "%s?%s" % (reverse("inventory:drug-add-new"), querystr)
-
-        if lot_number_str.strip() == '':
-            return HttpResponseRedirect(add_new_drug_url)
 
         matching_drugs = models.Drug.objects.filter(name=name_str, lot_number=lot_number_str, manufacturer=manufacturer_str)
 
@@ -60,8 +62,6 @@ class PreDrugSelect(ListView):
 
     def get_queryset(self):
         initial = self.parse_url_querystring()
-        if (initial.get('name', None) is None):
-            return []
         possible_duplicates = models.Drug.objects.filter(name=initial.get('name', None),\
                                                         lot_number=initial.get('lot_number', None),\
                                                         manufacturer=initial.get('manufacturer', None))
@@ -74,11 +74,13 @@ class PreDrugSelect(ListView):
         context['name'] = initial.get('name', None)
         context['lot_number'] = initial.get('lot_number', None)
         context['manufacturer'] = initial.get('manufacturer', None)
-        context['new_drug_url'] = "%s?%s=%s&%s=%s&%s=%s" % (
-            reverse("inventory:drug-add-new"),
-            "name", initial.get('name', None),
-            "lot_number", initial.get('lot_number', None),
-            "manufacturer", initial.get('manufacturer', None))
+        u = {
+            "name": initial.get('name', None),
+            "lot_number": initial.get('lot_number', None),
+            "manufacturer": initial.get('manufacturer', None)
+        }
+        url = urllib.parse.urlencode(u)
+        context['new_drug_url'] = "%s?%s" % (reverse("inventory:drug-add-new"), url)
         context['home'] = reverse("inventory:drug-list")
         return context
 
@@ -113,8 +115,8 @@ def drug_dispense(request):
     num = request.POST['num']
     drug = get_object_or_404(models.Drug, id=pk)
     can_dispense = drug.can_dispense(int(num))
-    if can_dispense is False:
-        return HttpResponseNotFound('<h1>Cannot dispense more drugs than in stock!</h1>')
-    else:
+    if can_dispense:
         drug.dispense(int(num))
+    else:
+        return HttpResponseNotFound('<h1>Cannot dispense more drugs than in stock!</h1>')
     return redirect('inventory:drug-list')

@@ -21,9 +21,10 @@ class TestDrugList(TestCase):
                             'category': DrugCategory.objects.last().pk,
                             'manufacturer': Manufacturer.objects.last().pk
                         }
+        global drug
+        drug = Drug.objects.create(**drug_dict())
 
     def test_drug_list_view(self):
-        drug = Drug.objects.create(**drug_dict())
         url = reverse('inventory:drug-list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -31,7 +32,6 @@ class TestDrugList(TestCase):
         self.assertTemplateUsed(response, 'inventory/inventory-main.html')
 
     def test_drug_update(self):
-        drug = Drug.objects.create(**drug_dict())
         n_drugs = len(Drug.objects.all())
         url = reverse('inventory:drug-update', kwargs={'pk':drug.pk})
         response = self.client.post(url, self.diff_drug, follow=True)
@@ -43,17 +43,15 @@ class TestDrugList(TestCase):
                              str(getattr(drug_get, param)))
 
     def test_drug_dispense_can_dispense(self):
-        drug = Drug.objects.create(**drug_dict())
         drug_initial = Drug.objects.get(pk=drug.pk)
         url = reverse('inventory:drug-dispense')
         response = self.client.post(url, {'pk':drug.pk,'num':'5'}, follow=True)
         drug_final = Drug.objects.get(pk=drug.pk)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(str(getattr(drug_initial,'stock')-5),
-                         str(getattr(drug_final,'stock')))
+        self.assertEqual(getattr(drug_initial,'stock')-5,
+                         getattr(drug_final,'stock'))
 
     def test_drug_dispense_cannot_dispense(self):
-        drug = Drug.objects.create(**drug_dict())
         drug_initial = Drug.objects.get(pk=drug.pk)
         url = reverse('inventory:drug-dispense')
         response = self.client.post(url, {'pk':drug.pk,'num':'11'}, follow=True)

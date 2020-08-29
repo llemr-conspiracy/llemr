@@ -1,18 +1,7 @@
-from django import forms
-from django.forms import ModelForm, Form
 from . import models
-
-from django.forms import (Form, CharField, ModelForm, EmailField,
-                          CheckboxSelectMultiple, ModelMultipleChoiceField, IntegerField)
+from django.forms import ModelForm
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from crispy_forms.bootstrap import InlineCheckboxes
-from crispy_forms.layout import ButtonHolder, Submit
-
-from crispy_forms.layout import Field
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit, Row, Column
-
 
 class DrugForm(ModelForm):
     class Meta:
@@ -33,8 +22,6 @@ class DuplicateDrugForm(ModelForm):
     class Meta:
         model = models.Drug
         fields = ['name', 'lot_number', 'manufacturer']
-    #name = CharField(label='Drug Name')
-    #lot_number= CharField(label='Lot Number', required=True)
 
     def __init__(self, *args, **kwargs):
         super(DuplicateDrugForm, self).__init__(*args, **kwargs)

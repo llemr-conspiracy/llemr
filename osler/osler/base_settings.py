@@ -37,6 +37,8 @@ INSTALLED_APPS = (
     'rest_framework',
     'audit',
     'inventory',
+    'vaccine',
+    'labs',
 )
 
 MIDDLEWARE = (
