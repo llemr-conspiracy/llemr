@@ -1,0 +1,19 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Select Patient
+{% endblock %}
+
+{% block header %}
+<h1>Select Patient</h1>
+<p class="lead">Which patient would you like to dispense <b>{{ drug.name }} {{ drug.dose }}{{ drug.unit }}</b> to?</p>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  {% load crispy_forms_tags %}
+  {% crispy form %}
+</div>
+
+{% endblock %}

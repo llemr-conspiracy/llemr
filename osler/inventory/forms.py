@@ -1,7 +1,10 @@
 from . import models
-from django.forms import ModelForm
+from django.forms import ModelForm, Form, ModelChoiceField
+import django.forms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+
+from osler.core import models as core_models
 
 class DrugForm(ModelForm):
     class Meta:
@@ -28,3 +31,27 @@ class DuplicateDrugForm(ModelForm):
         self.helper = FormHelper(self)
         self.fields['name'].widget.attrs['autofocus'] = True
         self.helper.add_input(Submit('submit', 'Submit'))
+
+class SelectPatientForm(Form):
+    patient = ModelChoiceField(queryset=None)
+
+    def __init__(self, *args, **kwargs):
+        super(SelectPatientForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.fields['patient'].queryset = core_models.Patient.objects.all() \
+                                                                    .order_by('last_name') \
+                                                                    .select_related('gender')
+
+        self.helper.add_input(Submit('submit', 'Select Patient'))
+
+class DispenseDrugForm(ModelForm):
+    class Meta(object):
+        model = models.DispenseHistory
+        fields = ['dispense']
+
+    def __init__(self, pk, *args, **kwargs):
+        super(DispenseDrugForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.fields['dispense'].widget.attrs['min'] = 1
+        self.fields['dispense'].widget.attrs['max'] = models.Drug.objects.get(pk=pk).stock
+        self.helper.add_input(Submit('submit', 'Dispense'))

@@ -30,6 +30,14 @@ unwrapped_urlconf = [
         r'^drug-dispense/$',
         views.drug_dispense,
         name='drug-dispense'),
+    re_path(
+        r'^select-patient/(?P<pk>[0-9]+)/$',
+         views.select_patient,
+         name='select-patient'),
+    re_path(
+        r'^dispense-drug/(?P<pk>[0-9]+)/(?P<pt_id>[0-9]+)/$',
+         views.DispenseDrug.as_view(),
+         name='dispense-drug'),
 ]
 
 wrap_config = {}

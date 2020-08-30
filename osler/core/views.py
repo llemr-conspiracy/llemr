@@ -330,7 +330,7 @@ def patient_detail(request, pk):
     total_ais = len(active_ais) + len(inactive_ais) + len(done_ais)
 
     zipped_ai_list = list(zip(
-        ['collapse6', 'collapse7', 'collapse8'],
+        ['collapse7', 'collapse8', 'collapse9'],
         [active_ais, inactive_ais, done_ais],
         ['Active Action Items', 'Pending Action Items',
          'Completed Action Items'],
@@ -386,7 +386,7 @@ def patient_detail(request, pk):
             previous_apt[a.clindate] = [a]
 
     zipped_apt_list = list(zip(
-        ['collapse9', 'collapse10'],
+        ['collapse10', 'collapse11'],
         [future_date_appointments, previous_date_appointments],
         ['Future Appointments', 'Past Appointments'],
         [future_apt, previous_apt]))
@@ -399,7 +399,7 @@ def patient_detail(request, pk):
     can_export_pdf = group_has_perm(active_role, 'workup.export_pdf_Workup')
 
     return render(request,
-        'core/patient_detail.html', 
+        'core/patient_detail.html',
             {
             'zipped_ai_list': zipped_ai_list,
             'total_ais': total_ais,

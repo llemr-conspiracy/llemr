@@ -18,12 +18,12 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
     <p class="lead"><strong>Referrals:</strong> {{ referrals.iterator | join:", " }}</p>
     <p class="lead"><strong>Case Manager:</strong> {{patient.case_managers.iterator | join:"; "}}
       {% if patient.needs_workup %}
-      <p class="lead"> Patient is Active 
+      <p class="lead"> Patient is Active
         {% if can_activate %}
         <a href="{% url 'core:patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a>
         {% endif %}</p>
       {% else %}
-      <p class="lead"> Patient is Inactive 
+      <p class="lead"> Patient is Inactive
         {% if can_activate %}
         <a href="{% url 'core:patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a>
         {% endif %}</p>
@@ -251,6 +251,24 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
           {% endfor %}
         </div>
       </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse6">Dispensed Drugs ({{ patient.dispensehistory_set.all | length }})</a></h4>
+        </div>
+        <div id="collapse6" class="panel-collapse collapse">
+          {% for note in patient.dispensehistory_set.all %}
+          <div class="panel-body">
+            <p><strong>Dispensed Drugs:</strong> {{ note.drug.name }} ({{ note.drug.lot_number }})</p>
+            <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+            {% if can_case_manage %}
+            <p class="text-right">
+              <a href="{% url 'admin:inventory_dispensehistory_change' note.id %}" target="_blank"><i>Edit</i></a>
+            </p>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
     </div>
   </div>
   <div class="col-md-6">
@@ -298,7 +316,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
                                 {% for app in app_list %}
                                     <div class="row">
                                         <div class="col-md-4">{{ app.clintime }}</div>
-                                        
+
                                         <div class="col-md-4 pull-right">{{ app.get_appointmentType_display }}</div>
                                     </div>
                                     <div class="row">
@@ -310,7 +328,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
                                     </div>
                                 {% endfor %}
                             </div>
-                        {% endfor %}    
+                        {% endfor %}
                     </div>
                 </div>
             {% endfor %}

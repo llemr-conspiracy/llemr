@@ -1,5 +1,6 @@
 from django.db import models
 from osler.core.validators import validate_name
+from osler.core.models import Note
 
 # Create your models here.
 
@@ -46,8 +47,7 @@ class Drug(models.Model):
 
     dose = models.FloatField(blank=False, null=False)
 
-    stock = models.PositiveSmallIntegerField(
-        default=0, blank=False, null=False)
+    stock = models.PositiveSmallIntegerField(blank=False, null=False)
 
     expiration_date = models.DateField(help_text="MM/DD/YYYY", blank=False, null=False)
 
@@ -65,5 +65,15 @@ class Drug(models.Model):
         self.save()
 
     def __str__(self):
-        return '{}, {}, stock: {}'.format(self.name, self.lot_number, self.stock)
+        return self.name
 
+class DispenseHistory(Note):
+    class Meta:
+        verbose_name_plural = "dispense history"
+
+    dispense = models.PositiveSmallIntegerField(blank=False, null=False)
+
+    drug = models.ForeignKey(Drug, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return self.drug.lot_number

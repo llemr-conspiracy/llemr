@@ -49,11 +49,16 @@ Drug Inventory
                     {% endif %}
                 </td>
                 <td>
+                    <a href="{% url 'inventory:select-patient' pk=drug.pk %}" class="btn btn-success a-btn-slide-text btn-xs">
+                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                        <span><strong>Dispense</strong></span>
+                    </a>
+                </td>
+                <!-- <td>
                     <a href="#" class="btn btn-success a-btn-slide-text btn-xs" data-toggle="modal" data-target="#dispenseModal{{ drug.id }}">
                         <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
                         <span><strong>Dispense</strong></span>
                     </a>
-                    <!-- Modal -->
                     <div class="modal fade" id="dispenseModal{{ drug.id }}" tabindex="-1" role="dialog" aria-labelledby="dispenseModal{{ drug.id }}Label" aria-hidden="true">
                     <form action="{% url 'inventory:drug-dispense' %}" method="post">
                       {% csrf_token %}
@@ -77,7 +82,7 @@ Drug Inventory
                       </div>
                     </form>
                     </div>
-                </td>
+                </td> -->
             </tr>
         {% endfor %}
     </table>
