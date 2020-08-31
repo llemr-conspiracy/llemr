@@ -4,6 +4,7 @@ from osler.inventory.models import DrugCategory, MeasuringUnit, Manufacturer, Dr
 from osler.inventory import views
 from .tests import drug_dict
 from osler.core.tests.test_views import log_in_provider, build_provider
+import csv
 
 class TestDrugList(TestCase):
 
@@ -59,6 +60,7 @@ class TestDrugList(TestCase):
         response = self.client.post(url, {'pk':drug.pk,'num':'11'}, follow=True)
         drug_final = Drug.objects.get(pk=drug.pk)
         self.assertEqual(response.status_code, 404)
+        
 
 class TestDrugAdd(TestCase):
 
@@ -124,4 +126,19 @@ class TestDrugAdd(TestCase):
             self.assertEqual(str(self.drug_dict[param]),
                              str(getattr(new_drug, param)))
 
+# class TestDrugExport(TestCase):
+    def test_export_csv_gets_created(self):
+        output_file = open('test-export-inventory.csv', 'w')
+        expected_file = open('expected-export-inventory.csv', 'w')
+        url = reverse('inventory:export-csv')
+        response = self.client.post(url, self.drug_dict, follow=True)
+        self.assertRedirects(response,url)
+        # self.assertEqual()
+        # self.
 
+    # def test_export_csv_writes_correctly(self):
+
+    # write a fake file, 
+    # write a 'real' file made using fake drugs
+    # then read them both and compare the strings
+    # if equal, delete the file

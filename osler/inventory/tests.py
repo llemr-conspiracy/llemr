@@ -29,6 +29,10 @@ class TestUrls(TestCase):
     def test_drugupdate_url(self):
         path = reverse('inventory:drug-update', kwargs={'pk':1})
         self.assertEqual(resolve(path).view_name, 'inventory:drug-update')
+    
+    def test_export_csv_url(self):
+        path = reverse('inventory:export-csv')
+        self.assertEqual(resolve(path).view_name, 'inventory:export-csv')
 
 def drug_dict():
 
