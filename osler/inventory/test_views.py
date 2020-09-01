@@ -171,6 +171,3 @@ class TestDrugExport(TestCase):
             for row in reader:
                 self.assertDictEqual(row, output_drug_dict)   
             os.remove(created_csv_path)
-
-
-# /Users/ericsallinger/Downloads/Code/osler/drug-inventory-2020-08-31.csv
