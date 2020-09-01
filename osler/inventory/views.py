@@ -124,6 +124,7 @@ def drug_dispense(request):
 
 
 def export_csv(request):
+    '''Writes drug models to a new .csv file saved the project root-level folder'''
     drugs = models.Drug.objects.\
         select_related('unit').\
         select_related('category').\
@@ -138,8 +139,8 @@ def export_csv(request):
         for drug in drugs:
             writer.writerow(
                 [drug.name,
-                 drug.unit,
                  drug.dose,
+                 drug.unit,
                  drug.stock,
                  drug.expiration_date,
                  drug.lot_number,

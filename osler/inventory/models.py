@@ -1,9 +1,6 @@
 from django.db import models
 from osler.core.validators import validate_name
 
-# Create your models here.
-
-
 class DrugCategory(models.Model):
     class Meta:
         verbose_name_plural = "drug categories"

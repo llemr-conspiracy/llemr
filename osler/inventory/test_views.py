@@ -5,6 +5,8 @@ from osler.inventory import views
 from .tests import drug_dict
 from osler.core.tests.test_views import log_in_provider, build_provider
 import csv
+from datetime import date
+import os
 
 class TestDrugList(TestCase):
 
@@ -71,8 +73,8 @@ class TestDrugAdd(TestCase):
 
         self.drug_dict = {
                             'name': 'Somedrug',
-                            'unit': MeasuringUnit.objects.first(),
                             'dose': 1000.0,
+                            'unit': MeasuringUnit.objects.first(),
                             'stock': 10,
                             'expiration_date': '2040-01-01',
                             'lot_number': 'ABCDEFGH',
@@ -126,19 +128,49 @@ class TestDrugAdd(TestCase):
             self.assertEqual(str(self.drug_dict[param]),
                              str(getattr(new_drug, param)))
 
-# class TestDrugExport(TestCase):
-    def test_export_csv_gets_created(self):
-        output_file = open('test-export-inventory.csv', 'w')
-        expected_file = open('expected-export-inventory.csv', 'w')
+class TestDrugExport(TestCase):
+    fixtures = ['core', 'workup', 'inventory']
+
+    def setUp(self):
+        log_in_provider(self.client, build_provider())
+
+        self.drug_dict = {
+            'name': 'Somedrug',
+            'dose': 1000.0,
+            'unit': MeasuringUnit.objects.first(),
+            'stock': 10,
+            'expiration_date': '2040-01-01',
+            'lot_number': 'ABCDEFGH',
+            'category': DrugCategory.objects.first(),
+            'manufacturer': Manufacturer.objects.first()
+        }
+    
+    def test_export_csv_(self):
+        drug = Drug.objects.create(**self.drug_dict)
         url = reverse('inventory:export-csv')
-        response = self.client.post(url, self.drug_dict, follow=True)
-        self.assertRedirects(response,url)
-        # self.assertEqual()
-        # self.
+        response = self.client.post(url)
+        created_csv_path = 'drug-inventory-'+str(date.today())+'.csv'
+        self.assertTrue(os.path.exists(created_csv_path))
+        self.assertRedirects(response, reverse('inventory:drug-list'))
 
-    # def test_export_csv_writes_correctly(self):
+        output_drug_dict = {
+            'name': 'Somedrug',
+            'dose': '1000.0',
+            'unit': MeasuringUnit.objects.first().name,
+            'stock': '10',
+            'expiration_date': '2040-01-01',
+            'lot_number': 'ABCDEFGH',
+            'category': DrugCategory.objects.first().name,
+            'manufacturer': Manufacturer.objects.first().name
+        }
+        drug_fields = ['name', 'dose', 'unit', 'stock', 'expiration_date', 'lot_number', 'category', 'manufacturer']
 
-    # write a fake file, 
-    # write a 'real' file made using fake drugs
-    # then read them both and compare the strings
-    # if equal, delete the file
+        with open(created_csv_path, newline='') as csvfile:
+            next(csv.reader(csvfile))
+            reader = csv.DictReader(csvfile, drug_fields)
+            for row in reader:
+                self.assertDictEqual(row, output_drug_dict)   
+            os.remove(created_csv_path)
+
+
+# /Users/ericsallinger/Downloads/Code/osler/drug-inventory-2020-08-31.csv
