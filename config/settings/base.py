@@ -340,9 +340,9 @@ OSLER_DEFAULT_APPOINTMENT_HOUR = 9
 
 OSLER_WORKUP_COPY_FORWARD_FIELDS = ['PMH_PSH', 'fam_hx', 'soc_hx', 'meds',
                                     'allergies']
-OSLER_WORKUP_COPY_FORWARD_MESSAGE = (u"Migrated from previous workup on {date}"
-                                     u". Please delete this heading and modify"
-                                     u" the following:\n\n{contents}")
+OSLER_WORKUP_COPY_FORWARD_MESSAGE = (u"Migrated from previous workup on {date}. "
+                                     u"Please delete this heading and UPDATE "
+                                     u"the following as necessary:\n\n{contents}")
 
 # Dashboard settings
 OSLER_CLINIC_DAYS_PER_PAGE = 20

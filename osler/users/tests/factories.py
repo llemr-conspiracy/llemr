@@ -15,7 +15,7 @@ class GroupFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: "Generic Group #%s" % n)
 
     @factory.post_generation
-    def groups(self, create, extracted, **kwargs):
+    def permissions(self, create, extracted, **kwargs):
         self.permissions.add(
             *Permission.objects.all()
         )
@@ -26,7 +26,7 @@ class VolunteerGroupFactory(GroupFactory):
     name = factory.Sequence(lambda n: "Volunteer Group #%s" % n)
 
     @factory.post_generation
-    def groups(self, create, extracted, **kwargs):
+    def permissions(self, create, extracted, **kwargs):
         self.permissions.add(
             *Permission.objects.exclude(
                 Q(codename__startswith='sign_') | Q(codename='case_manage_Patient') | 
@@ -40,7 +40,7 @@ class CaseManagerGroupFactory(GroupFactory):
     name = factory.Sequence(lambda n: "Case Manager Group #%s" % n)
 
     @factory.post_generation
-    def groups(self, create, extracted, **kwargs):
+    def permissions(self, create, extracted, **kwargs):
         self.permissions.add(
             *Permission.objects.exclude(codename__startswith='sign_')
         )
@@ -51,7 +51,7 @@ class AttendingGroupFactory(GroupFactory):
     name = factory.Sequence(lambda n: "Attending Group #%s" % n)
 
     @factory.post_generation
-    def groups(self, create, extracted, **kwargs):
+    def permissions(self, create, extracted, **kwargs):
         self.permissions.add(
             *Permission.objects.exclude(
                 Q(codename='case_manage_Patient') | Q(codename='activate_Patient')
@@ -64,9 +64,25 @@ class NoPermGroupFactory(GroupFactory):
     name = factory.Sequence(lambda n: "No Permission Group #%s" % n)
 
     @factory.post_generation
-    def groups(self, create, extracted, **kwargs):
+    def permissions(self, create, extracted, **kwargs):
         pass
 
+
+class PermGroupFactory(GroupFactory):
+
+    name = factory.Sequence(lambda n: "Permission Group #%s" % n)
+
+    @factory.post_generation
+    def permissions(self, create, extracted, **kwargs):
+        if not create:
+            return
+        if extracted:
+            for perm in extracted:
+                split = perm.index('.')
+                app_label = perm[:split]
+                codename = perm[split+1:]
+                perm_obj = Permission.objects.get(codename=codename, content_type__app_label=app_label)
+                self.permissions.add(perm_obj)
 
 class UserFactory(factory.django.DjangoModelFactory):
 

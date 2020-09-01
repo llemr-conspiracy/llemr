@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 
-from builtins import range
 from django.test import TestCase
 from django.utils.timezone import now
 from django.urls import reverse
+from django.conf import settings
 
 from osler.core.models import Patient
 from osler.core.tests.test_views import build_user, log_in_user
@@ -12,9 +12,6 @@ import osler.users.tests.factories as user_factories
 
 from osler.workup import models
 from osler.workup.tests.tests import wu_dict, pn_dict
-
-import pytest
-import factory
 
 
 class ViewsExistTest(TestCase):
@@ -79,13 +76,11 @@ class ViewsExistTest(TestCase):
         pt = Patient.objects.first()
 
         date_string = self.wu.written_datetime.strftime("%B %d, %Y")
-        heading_text = "Migrated from previous workup on %s. Please delete this heading and modify the following:\n\n" % date_string
+        heading_text = settings.OSLER_WORKUP_COPY_FORWARD_MESSAGE.format(date=date_string, contents="")
 
-        # TODO test use of settings.OSLER_WORKUP_COPY_FORWARD_FIELDS
         response = self.client.get(reverse('new-workup', args=(pt.id,)))
 
-        field_list = ['PMH_PSH', 'meds', 'allergies', 'fam_hx', 'soc_hx']
-        for field in field_list:
+        for field in settings.OSLER_WORKUP_COPY_FORWARD_FIELDS:
             assert response.context['form'].initial[field] == heading_text + getattr(self.wu, field)
 
     def test_workup_update(self):
@@ -134,21 +129,19 @@ class ViewsExistTest(TestCase):
             self.wu.signer = None
             self.wu.save()
 
-    def donttest_workup_pdf(self):
+    def test_workup_pdf(self):
         """Verify that pdf download with the correct name
         """
 
         wu_url = "workup-pdf"
 
-        # nonattesting cannot export pdf while attesting can
-        for role in user_factories.all_roles:
-            log_in_user(self.client, build_user([role]))
+        no_perm_group = user_factories.NoPermGroupFactory()
+        pdf_perm_group = user_factories.PermGroupFactory(permissions=['workup.export_pdf_Workup'])
+
+        for group in [no_perm_group, pdf_perm_group]:
+            log_in_user(self.client, user_factories.UserFactory(groups=[group]))
             response = self.client.get(reverse(wu_url, args=(self.wu.id,)))
-            if role in user_factories.attesting_roles:
-                assert response.status_code == 200
-            else:
-                self.assertRedirects(response,
-                    reverse('workup', args=(self.wu.id,)))
+            assert response.status_code == 200 if group == pdf_perm_group else 403
 
     def test_workup_submit(self):
         """verify we can submit a valid workup as a signer and nonsigner"""

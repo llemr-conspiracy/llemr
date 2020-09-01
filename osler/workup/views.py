@@ -120,31 +120,31 @@ class WorkupCreate(NoteFormView):
 
         initial['clinic_day'] = get_clindates().first()
 
-        initial['pe'] = _(
-            "Please UPDATE review of systems with pertinent positives/negatives. Delete this line when done.\n\n"
+        initial['ros'] = _(
+            "Please UPDATE with pertinent positives and negatives and then delete this line.\n\n"
 
-            "General: Denies fevers, chills, sweats, fatigue, weight changes\n"
-            "Neuro: Denies dizziness, hearing loss, weakness, seizures, tremor, numbness, tingling\n"
-            "HEENT: Denies HA, change in vision, photophobia, change in hearing/tinnitus, earache, sore throat, nasal/sinus problems, hoarseness, dry mouth\n"
-            "Cardiovascular: Denies chest pain, palpitations, orthopnea, proximal nocturnal dyspnea, edema, claudication, decreased exercise tolerance\n"
-            "Pulmonary: Denies SOB, cough, wheezing, dyspnea, snoring, sputum, hemoptysis, TB exposure\n"
-            "GI: Denies N/V/D, constipation, abdominal pain, melena, hematochezia, hematemesis, dysphasia, odynophagia\n"
-            "GU: Denies increased urinary frequency, urgency, dysuria, nocturia, hesitancy, incontinence, hematuria"
-            "Heme: Denies easy bruising/bleeding\n"
-            "Skin: Denies rashes, itching, bruises, dryness, changes in moles, changes in hair\n"
-            "Endo: Denies heat/cold intolerance, polyuria, polydipsia, polyphagia or appetite changes\n"
-            "Musculoskeletal: Denies muscle/joint pain, myalgias, back pain, recent injuries\n"
-            "Psychiatric: Denies anxiety, depression, suicidal/homicidal ideations"
+            "General: \n"
+            "Neuro: \n"
+            "HEENT: \n" 
+            "Cardiovascular: \n" 
+            "Pulmonary: \n"
+            "GI: \n"
+            "GU: \n"
+            "Heme: \n" 
+            "Skin: \n"
+            "Endo: \n"
+            "Musculoskeletal: \n"
+            "Psychiatric: "
         )
 
-        initial['ros'] = _(
-            "Please UPDATE physical exam with pertinent findings. Delete this line when done.\n\n"
+        initial['pe'] = _(
+            "Please UPDATE with pertinent findings and then delete this line.\n\n"
 
             "General: Well-developed, well-nourished, in no apparent distress.\n"
             "HEENT: Head is normocephalic and atraumatic. Extraocular muscles are intact. Pupils are equal, round, and reactive to light. Nares appear normal. Mouth is without lesions. Mucous membranes are moist. Posterior pharynx has no exudate or lesions.\n"
             "Neck: Supple. No carotid bruits.  No lymphadenopathy or thyromegaly.\n"
             "Lungs: CTAB with normal equal air movement.\n"
-            "Heart: Regular rate and rhythm without murmur."
+            "Heart: Regular rate and rhythm without murmur.\n"
             "Abdomen: Soft, nontender, nondistended.  Normal bowel sounds. No hepatosplenomegaly.\n"
             "Extremities: No cyanosis, clubbing, or edema.\n"
             "Neurologic: Alert and oriented to person, place, time, and situation. CN II through XII are grossly intact.\n"
@@ -315,7 +315,7 @@ def error_workup(request, pk):
     return render(request, 'core/workup_error.html', {'workup': wu})
 
 
-@active_permission_required('workup.export_pdf_Workup')
+@active_permission_required('workup.export_pdf_Workup', raise_exception=True)
 def pdf_workup(request, pk):
 
     wu = get_object_or_404(models.Workup, pk=pk)

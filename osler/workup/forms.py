@@ -1,5 +1,6 @@
 from decimal import Decimal, ROUND_HALF_UP
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.forms import (
@@ -235,8 +236,8 @@ class WorkupForm(ModelForm):
             Submit('submit', 'Save', css_class='btn btn-success')
         )
 
-        self.fields['ros'].widget.attrs['rows'] = 12
-        self.fields['pe'].widget.attrs['rows'] = 13
+        self.fields['ros'].widget.attrs['rows'] = 15
+        self.fields['pe'].widget.attrs['rows'] = 14
 
     def clean(self):
         """Use form's clean hook to verify that fields in Workup are
@@ -282,15 +283,11 @@ class WorkupForm(ModelForm):
                 cm = int(inches2cm(cleaned_data.get('height')))
                 cleaned_data['height'] = cm
 
-        cleaned_data['ros'] = cleaned_data['ros'].strip()
-        cleaned_data['pe'] = cleaned_data['pe'].strip()
-
-        if "UPDATE" in cleaned_data.get('ros'):
-            self.add_error('ros', _("This field must be updated."))
-
-        if "UPDATE" in cleaned_data.get('pe'):
-            self.add_error('pe', _("This field must be updated."))
-
+        for field in ['ros', 'pe'] + settings.OSLER_WORKUP_COPY_FORWARD_FIELDS:
+            cleaned_data[field] = cleaned_data.get(field).strip()
+            if "UPDATE" in cleaned_data.get(field):
+                self.add_error(field, _("Please delete the heading and update contents as necessary"))
+        
         form_require_together(self, ['bp_sys', 'bp_dia'])
         if cleaned_data.get('bp_sys') and cleaned_data.get('bp_dia'):
             if cleaned_data.get('bp_sys') <= cleaned_data.get('bp_dia'):
