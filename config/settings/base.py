@@ -329,7 +329,6 @@ OSLER_TODO_LIST_MANAGERS = [
     ('referral', 'FollowupRequest'),
     ('vaccine', 'VaccineActionItem')]
 
-OSLER_DEFAULT_ADDRESS = "205 East 9th St."
 OSLER_DEFAULT_CITY = "Kansas City"
 OSLER_DEFAULT_STATE = "MO"
 OSLER_DEFAULT_ZIP_CODE = "64106"
@@ -354,3 +353,10 @@ OSLER_ROLE_DASHBOARDS = {
 
 # List of IP addresses to exclude from audit
 OSLER_AUDIT_BLACK_LIST = []
+
+# Display app settings - allows you to hide template components by passing settings variables through tmeplate render context
+#overrided in umkc.py
+# -----------------------------------------------------------------------------
+DISPLAY_REFERRALS = True
+DISPLAY_APPOINTMENTS = True
+DISPLAY_CASEMANAGERS = True
