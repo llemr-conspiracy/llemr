@@ -1,6 +1,5 @@
 from .base import *  # noqa
 from .base import env
-from .umkc import *
 
 # GENERAL
 # ------------------------------------------------------------------------------

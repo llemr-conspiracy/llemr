@@ -329,10 +329,11 @@ OSLER_TODO_LIST_MANAGERS = [
     ('referral', 'FollowupRequest'),
     ('vaccine', 'VaccineActionItem')]
 
-OSLER_DEFAULT_CITY = "Kansas City"
-OSLER_DEFAULT_STATE = "MO"
-OSLER_DEFAULT_ZIP_CODE = "64106"
-OSLER_DEFAULT_COUNTRY = "USA"
+OSLER_DEFAULT_ADDRESS = ""
+OSLER_DEFAULT_CITY = ""
+OSLER_DEFAULT_STATE = ""
+OSLER_DEFAULT_ZIP_CODE = ""
+OSLER_DEFAULT_COUNTRY = ""
 
 OSLER_MAX_APPOINTMENTS = 5
 OSLER_DEFAULT_APPOINTMENT_HOUR = 9
@@ -357,6 +358,6 @@ OSLER_AUDIT_BLACK_LIST = []
 # Display app settings - allows you to hide template components by passing settings variables through tmeplate render context
 #overrided in umkc.py
 # -----------------------------------------------------------------------------
-DISPLAY_REFERRALS = True
-DISPLAY_APPOINTMENTS = True
-DISPLAY_CASEMANAGERS = True
+OSLER_DISPLAY_REFERRALS = True
+OSLER_DISPLAY_APPOINTMENTS = True
+OSLER_DISPLAY_CASE_MANAGERS = True

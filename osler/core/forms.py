@@ -39,7 +39,7 @@ class PatientForm(ModelForm):
     class Meta(object):
         model = models.Patient
         exclude = ['needs_workup', 'demographics']
-        if not settings.DISPLAY_CASEMANAGERS:
+        if not settings.OSLER_DISPLAY_CASE_MANAGERS:
             exclude.append('case_managers')
 
     # limit the options for the case_managers
@@ -63,7 +63,7 @@ class PatientForm(ModelForm):
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['ethnicities'].wrap(InlineCheckboxes)
         self.helper.add_input(Submit('submit', 'Submit'))
-        self.fields['address'].widget.attrs = {'placeholder': '205 East 9th St.'}
+        self.fields['address'].widget.attrs = {'placeholder': settings.OSLER_DEFAULT_ADDRESS}
 
     def clean(self):
 

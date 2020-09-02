@@ -14,11 +14,11 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
       </a></h2>
     <p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
     <p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
-    {% if settings.DISPLAY_REFERRALS %}
+    {% if settings.OSLER_DISPLAY_REFERRALS %}
       <p class="lead"><strong>FQHC Referral Status:</strong> {{ referral_status }}</p>
       <p class="lead"><strong>Referrals:</strong> {{ referrals.iterator | join:", " }}</p>
     {% endif %}
-    {% if settings.DISPLAY_CASEMANAGERS %}
+    {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
       <p class="lead"><strong>Case Manager:</strong> {{patient.case_managers.iterator | join:"; "}}
     {% endif %}
       {% if patient.needs_workup %}
@@ -46,13 +46,13 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
         <span class="glyphicon glyphicon-search" aria-hidden="true"></span>&nbsp;
         <a href="{% url 'new-note-dispatch' pt_id=patient.pk %}"><strong>Write Note</strong></a>
       </li>
-      {% if settings.DISPLAY_REFERRALS %}
+      {% if settings.OSLER_DISPLAY_REFERRALS %}
       <li class="list-group-item">
         <span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>&nbsp;
         <a href="{% url 'select-referral-type' pt_id=patient.pk %}"><strong>Make Referral</strong></a>
       </li>
       {% endif %}
-      {% if settings.DISPLAY_APPOINTMENTS %}
+      {% if settings.OSLER_DISPLAY_APPOINTMENTS %}
       <li class="list-group-item">
         <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>&nbsp;
         <a href="{% url 'appointment-new' %}?pt_id={{patient.pk}}"><strong>Make Appointment</strong></a>
@@ -78,7 +78,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
       <h3 class="panel-title">Followup</h3>
     </div>
     <ul class="list-group">
-      {% if settings.DISPLAY_REFERRALS %}
+      {% if settings.OSLER_DISPLAY_REFERRALS %}
       <li class="list-group-item">
         <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span>&nbsp;
         <a href="{% url 'select-referral' pt_id=patient.pk %}"><strong>Log follow up</strong> (referral)</a>
@@ -290,7 +290,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
   </div>
 </div>
 
-{% if settings.DISPLAY_APPOINTMENTS %}
+{% if settings.OSLER_DISPLAY_APPOINTMENTS %}
   <div class="container">
       <div class="col-md-8">
           <h3>Appointments ({{ patient.appointment_set.all | length }} Total)</h3>

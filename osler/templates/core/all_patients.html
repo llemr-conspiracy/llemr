@@ -14,7 +14,7 @@ Osler: {{ title | default:"All Patients"}}
           <label for="all-patients-filter-input"  class="sr-only" >Filter</label>
           <div class="input-group">
               <div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
-              {% if settings.DISPLAY_CASEMANAGERS %}
+              {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
                 <input type="text" id="all-patients-filter-input" placeholder="Filter by patient or case manager name" class="form-control" onkeyup="filterAllPatientsTable()">
               {% else %}
                 <input type="text" id="all-patients-filter-input" placeholder="Filter by patient name" class="form-control" onkeyup="filterAllPatientsTable()">
@@ -26,7 +26,7 @@ Osler: {{ title | default:"All Patients"}}
           <tr>
               <th>Patient Name</th>
               <th>Age/Gender</th>
-              {% if settings.DISPLAY_CASEMANAGERS %}
+              {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
                 <th>Case Managers</th>
               {% endif%}
               <th>Latest Activity</th>
