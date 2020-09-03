@@ -7,7 +7,9 @@ Drug Inventory
 {% block header %}
 <h2>Drug Inventory</h2>
 <a class="btn btn-primary btn-lg" href="{% url 'inventory:pre-drug-add-new' %}" role="button">Add New Drug</a>
-<a class="btn btn-primary btn-lg" href="{% url 'inventory:export-csv' %}" role="button">Export CSV</a>
+{% if can_export_csv %}
+  <a class="btn btn-primary btn-lg" href="{% url 'inventory:export-csv' %}" role="button">Export CSV</a>
+{% endif %}
 {% endblock %}
 
 {% block content %}
