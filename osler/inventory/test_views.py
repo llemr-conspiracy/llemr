@@ -5,6 +5,10 @@ from osler.inventory import views
 from .tests import drug_dict
 from osler.core.tests.test_views import log_in_user, build_user
 
+import csv
+from datetime import date
+import os
+
 class TestDrugList(TestCase):
 
     fixtures = ['core', 'workup','inventory']
@@ -122,4 +126,48 @@ class TestDrugAdd(TestCase):
             self.assertEqual(str(self.drug_dict[param]),
                              str(getattr(new_drug, param)))
 
+
+class TestDrugExport(TestCase):
+    fixtures = ['core', 'workup', 'inventory']
+
+    def setUp(self):
+        log_in_user(self.client, build_user())
+
+        self.drug_dict = {
+            'name': 'Somedrug',
+            'dose': 1000.0,
+            'unit': MeasuringUnit.objects.first(),
+            'stock': 10,
+            'expiration_date': '2040-01-01',
+            'lot_number': 'ABCDEFGH',
+            'category': DrugCategory.objects.first(),
+            'manufacturer': Manufacturer.objects.first()
+        }
+
+    def test_export_csv_(self):
+        drug = Drug.objects.create(**self.drug_dict)
+        url = reverse('inventory:export-csv')
+        response = self.client.post(url)
+        created_csv_path = 'drug-inventory-'+str(date.today())+'.csv'
+        self.assertTrue(os.path.exists(created_csv_path))
+        self.assertRedirects(response, reverse('inventory:drug-list'))
+
+        output_drug_dict = {
+            'name': 'Somedrug',
+            'dose': '1000.0',
+            'unit': MeasuringUnit.objects.first().name,
+            'stock': '10',
+            'expiration_date': '2040-01-01',
+            'lot_number': 'ABCDEFGH',
+            'category': DrugCategory.objects.first().name,
+            'manufacturer': Manufacturer.objects.first().name
+        }
+        drug_fields = ['name', 'dose', 'unit', 'stock', 'expiration_date', 'lot_number', 'category', 'manufacturer']
+
+        with open(created_csv_path, newline='') as csvfile:
+            next(csv.reader(csvfile))
+            reader = csv.DictReader(csvfile, drug_fields)
+            for row in reader:
+                self.assertDictEqual(row, output_drug_dict)
+            os.remove(created_csv_path)
 
