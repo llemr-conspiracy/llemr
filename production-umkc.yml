@@ -26,6 +26,7 @@ services:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
       - ./.envs/.production/.secrets
+      - ./.envs/.production/.umkc
     command: /start
     ports:
       - "5000:5000"
