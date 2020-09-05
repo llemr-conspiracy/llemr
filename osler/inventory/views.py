@@ -5,14 +5,21 @@ from django.shortcuts import redirect, get_object_or_404
 from django.views.generic.edit import FormView, UpdateView
 from django.views.generic.list import ListView
 from django.urls import reverse
-from django.http import HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
 import urllib
+from osler.users.decorators import active_permission_required
+from osler.users.utils import get_active_role, group_has_perm
 
 from . import models
 from . import forms
 from . import utils
 
+from tempfile import NamedTemporaryFile
+import csv
+from datetime import date
+
 # Create your views here.
+
 class DrugListView(ListView):
     template_name = 'inventory/inventory-main.html'
     def get_queryset(self):
@@ -24,6 +31,12 @@ class DrugListView(ListView):
                     exclude(stock=0).all()
         return druglist
 
+    def get_context_data(self, **kwargs):
+        context = super(DrugListView, self).get_context_data(**kwargs)
+
+        active_role = get_active_role(self.request)
+        context['can_export_csv'] = group_has_perm(active_role, 'inventory.export_csv')
+        return context
 
 class PreDrugAddNew(FormView):
     template_name = 'inventory/pre_add_new_drug.html'
@@ -120,3 +133,39 @@ def drug_dispense(request):
     else:
         return HttpResponseNotFound('<h1>Cannot dispense more drugs than in stock!</h1>')
     return redirect('inventory:drug-list')
+
+
+@active_permission_required('inventory.export_csv', raise_exception=True)
+def export_csv(request):
+    '''Writes drug models to a new .csv file saved the project root-level folder'''
+    drugs = models.Drug.objects.\
+        select_related('unit').\
+        select_related('category').\
+        select_related('manufacturer').\
+        order_by('category', 'name')
+
+    with NamedTemporaryFile(mode='a+') as file:
+        writer = csv.writer(file)
+        header = ['Drug Name', 'Dose', 'Unit', 'Stock', 'Expiration Date',
+                  'Lot Number', 'Category', 'Manufacturer']
+        writer.writerow(header)
+        for drug in drugs:
+            writer.writerow(
+                [drug.name,
+                 drug.dose,
+                 drug.unit,
+                 drug.stock,
+                 drug.expiration_date,
+                 drug.lot_number,
+                 drug.category,
+                 drug.manufacturer])
+        file.seek(0)
+        csvfileread = file.read()
+
+    csv_filename = ''.join(['drug-inventory-',str(date.today()),'.csv'])
+
+    response = HttpResponse(csvfileread, 'application/csv')
+    response["Content-Disposition"] = (
+        "attachment; filename=%s" % (csv_filename,))
+
+    return response
