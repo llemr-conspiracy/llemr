@@ -5,9 +5,8 @@ from osler.inventory import views
 from .tests import drug_dict
 from osler.core.tests.test_views import log_in_user, build_user
 
-import csv
 from datetime import date
-import os
+import osler.users.tests.factories as user_factories
 
 class TestDrugList(TestCase):
 
@@ -128,14 +127,24 @@ class TestDrugAdd(TestCase):
 
 
 class TestDrugExport(TestCase):
-
+    """
+    Verify csv exports with correct name and user permissions work
+    """
     def setUp(self):
         log_in_user(self.client, build_user())
 
     def test_export_csv_(self):
-        url = reverse('inventory:export-csv')
-        response = self.client.post(url)
-        self.assertEqual(response.status_code, 200)
-        # test that filename is correctly passed
-        self.assertEqual(response["Content-Disposition"],
-                          ''.join(['attachment; filename=drug-inventory-',str(date.today()),'.csv']))
+        export_csv_url = reverse('inventory:export-csv')
+        no_perm_group = user_factories.NoPermGroupFactory()
+        csv_perm_group = user_factories.PermGroupFactory(permissions=['inventory.export_csv'])
+
+        for group in [no_perm_group, csv_perm_group]:
+            log_in_user(self.client, user_factories.UserFactory(groups=[group]))
+            response = self.client.post(export_csv_url)
+            
+            if group == csv_perm_group:
+                assert response.status_code == 200
+                self.assertEqual(response["Content-Disposition"],
+                                 ''.join(['attachment; filename=drug-inventory-', str(date.today()), '.csv']))
+            else:
+                 assert response.status_code == 403
