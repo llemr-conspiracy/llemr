@@ -14,12 +14,25 @@ Osler: {{ title | default:"All Patients"}}
           <label for="all-patients-filter-input"  class="sr-only" >Filter</label>
           <div class="input-group">
               <div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
-              <input type="text" id="all-patients-filter-input" placeholder="Filter by patient or case manager name" class="form-control" onkeyup="filterAllPatientsTable()">
+              {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
+                <input type="text" id="all-patients-filter-input" placeholder="Filter by patient or case manager name" class="form-control" onkeyup="filterAllPatientsTable()">
+              {% else %}
+                <input type="text" id="all-patients-filter-input" placeholder="Filter by patient name" class="form-control" onkeyup="filterAllPatientsTable()">
+              {% endif %}
           </div>
       </div>
 
       <table class="table" id="all-patients-table">
-          <tr><th>Patient Name</th><th>Age/Gender</th><th>Case Managers</th><th>Latest Activity</th><th>Next AI Due</th><th>Attestation</th></td>
+          <tr>
+              <th>Patient Name</th>
+              <th>Age/Gender</th>
+              {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
+                <th>Case Managers</th>
+              {% endif%}
+              <th>Latest Activity</th>
+              <th>Next AI Due</th>
+              <th>Attestation</th>
+          </td>
 
           {% for patient in object_list %}
               {% with latest_workup=patient.workup_set.all.0 %}

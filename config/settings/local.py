@@ -72,3 +72,4 @@ INSTALLED_APPS += ["django_extensions"]  # noqa F405
 # Your stuff...
 # ----------------------------------------------------------------------------
 CRISPY_FAIL_SILENTLY = not DEBUG
+

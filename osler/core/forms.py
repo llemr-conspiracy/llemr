@@ -5,6 +5,7 @@ from django.forms import (
     ModelMultipleChoiceField, CheckboxInput)
 from django.contrib.auth.forms import AuthenticationForm
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, Permission
@@ -38,15 +39,17 @@ class PatientForm(ModelForm):
     class Meta(object):
         model = models.Patient
         exclude = ['needs_workup', 'demographics']
+        if not settings.OSLER_DISPLAY_CASE_MANAGERS:
+            exclude.append('case_managers')
 
     # limit the options for the case_managers
-    case_managers = ModelMultipleChoiceField(
-        required=False,
-        queryset=get_user_model().objects
-            .filter(groups__permissions__codename='case_manage_Patient')
-            .distinct()
-            .order_by("last_name"),
-    )
+        case_managers = ModelMultipleChoiceField(
+            required=False,
+            queryset=get_user_model().objects
+                .filter(groups__permissions__codename='case_manage_Patient')
+                .distinct()
+                .order_by("last_name"),
+        )
 
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
@@ -60,7 +63,7 @@ class PatientForm(ModelForm):
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['ethnicities'].wrap(InlineCheckboxes)
         self.helper.add_input(Submit('submit', 'Submit'))
-        self.fields['address'].widget.attrs = {'placeholder': '205 East 9th St.'}
+        self.fields['address'].widget.attrs = {'placeholder': settings.OSLER_DEFAULT_ADDRESS}
 
     def clean(self):
 
