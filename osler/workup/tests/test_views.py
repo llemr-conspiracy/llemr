@@ -186,7 +186,7 @@ class ViewsExistTest(TestCase):
             assert response.context['form'][unit].value() == wu_data[unit]
 
 
-class TestProgressNoteViews(TestCase):
+class TestAttestableBasicNoteViews(TestCase):
     '''
     Verify that views involving the workup are functioning.
     '''
@@ -203,23 +203,23 @@ class TestProgressNoteViews(TestCase):
             clinic_type=models.ClinicType.objects.first(),
             clinic_date=now().date())
 
-    def test_progressnote_urls(self):
+    def test_AttestableBasicNote_urls(self):
         pt = Patient.objects.first()
 
-        n_notes = models.ProgressNote.objects.count()
+        n_notes = models.AttestableBasicNote.objects.count()
 
-        pn_url = reverse('new-progress-note', args=(pt.id,))
+        pn_url = reverse('new-attestable-basic-note', args=(pt.id,))
         response = self.client.get(pn_url)
         assert response.status_code == 200
 
         response = self.client.post(pn_url, self.pn_data)
         self.assertRedirects(response,
                              reverse('core:patient-detail', args=(pt.id,)))
-        assert models.ProgressNote.objects.count() == n_notes + 1
+        assert models.AttestableBasicNote.objects.count() == n_notes + 1
 
         response = self.client.get(
-            reverse('progress-note-update',
-                    args=(models.ProgressNote.objects.last().pk,)))
+            reverse('attestable-basic-note-update',
+                    args=(models.AttestableBasicNote.objects.last().pk,)))
         assert response.status_code == 200
 
         self.pn_data['text'] = 'actually not so bad'
@@ -228,13 +228,13 @@ class TestProgressNoteViews(TestCase):
         self.assertRedirects(response,
                              reverse('core:patient-detail', args=(pt.id,)))
 
-    def test_progressnote_signing(self):
+    def test_AttestableBasicNote_signing(self):
         """Verify that singing is possible for attendings and not for others.
         """
 
-        pn_url = "progress-note-sign"
+        pn_url = "attestable-basic-note-sign"
 
-        pn = models.ProgressNote.objects.create(**self.pn_data)
+        pn = models.AttestableBasicNote.objects.create(**self.pn_data)
 
         # Fresh notes should be unsigned
         assert not pn.signed()
@@ -244,9 +244,9 @@ class TestProgressNoteViews(TestCase):
             log_in_user(self.client, build_user([role]))
             response = self.client.get(reverse(pn_url, args=(pn.id,)))
             self.assertRedirects(response,
-                                 reverse('progress-note-detail',
+                                 reverse('attestable-basic-note-detail',
                                          args=(pn.id,)))
             can_attest = role in user_factories.attesting_roles
-            assert models.ProgressNote.objects.get(pk=pn.id).signed() == can_attest
+            assert models.AttestableBasicNote.objects.get(pk=pn.id).signed() == can_attest
             pn.signer = None
             pn.save()

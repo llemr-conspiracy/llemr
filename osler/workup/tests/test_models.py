@@ -22,7 +22,7 @@ class TestAttestations(TestCase):
             clinic_date=now().date())
 
         self.wu = models.Workup.objects.create(**wu_dict())
-        self.pn = models.ProgressNote.objects.create(**pn_dict())
+        self.pn = models.AttestableBasicNote.objects.create(**pn_dict())
 
     def test_wu_signing(self):
         """test signing permissions """

@@ -8,12 +8,13 @@ from django.urls import reverse
 from django.core.validators import MinValueValidator
 from django.conf import settings
 
-from simple_history.models import HistoricalRecords
-
 from osler.core.models import Note, ReferralLocation, ReferralType
 from osler.workup import validators as workup_validators
 
 from osler.users.utils import group_has_perm
+
+from simple_history.models import HistoricalRecords
+
 
 class DiagnosisType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
@@ -90,9 +91,7 @@ class ClinicDate(models.Model):
         return coordinator_set
 
 
-class AttestableNote(Note):
-    class Meta:
-        abstract = True
+class AttestationMixin(models.Model):
 
     signer = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -101,9 +100,11 @@ class AttestableNote(Note):
         related_name="signed_%(app_label)s_%(class)s")
     signed_date = models.DateTimeField(blank=True, null=True)
 
+    class Meta:
+        abstract = True
+
     def sign(self, user, group):
         """Signs this workup."""
-
         user_has_group = user.groups.filter(pk=group.pk).exists()
         if user_has_group and self.group_can_sign(group):
             self.signed_date = now()
@@ -130,17 +131,13 @@ class AttestableNote(Note):
         return group_has_perm(group, cls.get_sign_perm())
 
 
+class AbstractBasicNote(Note):
 
-class ProgressNote(AttestableNote):
     title = models.CharField(max_length=200)
     text = models.TextField()
 
-    history = HistoricalRecords()
-
     class Meta:
-        permissions = [
-            ('sign_ProgressNote', "Can sign note")
-            ]
+        abstract = True
 
     def __str__(self):
         u = '{} on at {} by {}'.format(
@@ -152,11 +149,29 @@ class ProgressNote(AttestableNote):
     def short_text(self):
         return self.title
 
+
+class BasicNote(AbstractBasicNote):
+
+    history = HistoricalRecords()
+
     def get_absolute_url(self):
-        return reverse('progress-note-detail', args=[str(self.id)])
+        return reverse('basic-note-detail', args=[str(self.id)])
 
 
-class Workup(AttestableNote):
+class AttestableBasicNote(AbstractBasicNote, AttestationMixin):
+
+    class Meta:
+        permissions = [
+            ('sign_AttestableBasicNote', "Can sign note")
+            ]
+
+    history = HistoricalRecords()
+
+    def get_absolute_url(self):
+        return reverse('attestable-basic-note-detail', args=[str(self.id)])
+
+
+class Workup(Note, AttestationMixin):
     """Model for a medical student H&P for an outpatient clinic setting.
 
     Has fields specific to each part of an exam, along with SNHC-specific

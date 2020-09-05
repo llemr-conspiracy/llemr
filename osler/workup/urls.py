@@ -8,11 +8,14 @@ from osler.workup import models
 from osler.workup import views
 
 unwrapped_urlconf = [
+
+    # DISPATCH
     re_path(
         r'^new-note/(?P<pt_id>[0-9]+)/$',
         views.new_note_dispatch,
         name='new-note-dispatch'),
 
+    # WORKUPS
     re_path(
         r'^new/(?P<pt_id>[0-9]+)/$',
         views.WorkupCreate.as_view(),
@@ -38,24 +41,39 @@ unwrapped_urlconf = [
         views.pdf_workup,
         name="workup-pdf"),
 
-    # PROGRESS NOTES
+    # ATTESTABLE BASIC NOTES
     re_path(
-        r'^(?P<pt_id>[0-9]+)/psychnote/$',
-        views.ProgressNoteCreate.as_view(),
-        name="new-progress-note"),
+        r'^(?P<pt_id>[0-9]+)/attestable-basic-note/$',
+        views.AttestableBasicNoteCreate.as_view(),
+        name="new-attestable-basic-note"),
     re_path(
-        r'^psychnote/update/(?P<pk>[0-9]+)$',
-        views.ProgressNoteUpdate.as_view(),
-        name="progress-note-update"),
+        r'^attestable-basic-note/update/(?P<pk>[0-9]+)$',
+        views.AttestableBasicNoteUpdate.as_view(),
+        name="attestable-basic-note-update"),
     re_path(
-        r'^psychnote/sign/(?P<pk>[0-9]+)$',
-        partial(views.sign_attestable_note, attestable=models.ProgressNote),
-        name='progress-note-sign'),
+        r'^attestable-basic-note/sign/(?P<pk>[0-9]+)$',
+        partial(views.sign_attestable_note, attestable=models.AttestableBasicNote),
+        name='attestable-basic-note-sign'),
     re_path(
-        r'^psychnote/(?P<pk>[0-9]+)$',
-        DetailView.as_view(model=models.ProgressNote),
-        name="progress-note-detail"),
+        r'^attestable-basic-note/(?P<pk>[0-9]+)$',
+        DetailView.as_view(model=models.AttestableBasicNote),
+        name="attestable-basic-note-detail"),
 
+    # BASIC NOTES
+    re_path(
+        r'^(?P<pt_id>[0-9]+)/basic-note/$',
+        views.BasicNoteCreate.as_view(),
+        name="new-basic-note"),
+    re_path(
+        r'^basic-note/update/(?P<pk>[0-9]+)$',
+        views.BasicNoteUpdate.as_view(),
+        name="basic-note-update"),
+    re_path(
+        r'^basic-note/(?P<pk>[0-9]+)$',
+        DetailView.as_view(model=models.BasicNote),
+        name="basic-note-detail"),
+
+    # CLINIC DATES
     re_path(
         r'^(?P<pt_id>[0-9]+)/clindate/$',
         views.ClinicDateCreate.as_view(),

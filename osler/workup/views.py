@@ -35,12 +35,15 @@ def new_note_dispatch(request, pt_id):
 
     note_types = {
         'Standard Medical Note': reverse("new-workup", args=(pt_id,)),
-        'Attestable Basic Note': reverse("new-progress-note",
+        'Basic Note': reverse("new-basic-note",
+                                    args=(pt_id,)),
+        'Attestable Basic Note': reverse("new-attestable-basic-note",
                                     args=(pt_id,)),
     }
 
     return render(request, 'workup/new-note-dispatch.html',
                   {'note_types': note_types})
+
 
 def workup_detail(request, pk):
 
@@ -59,28 +62,6 @@ def workup_detail(request, pk):
         )
 
 
-class AttestableNoteCreate(NoteFormView):
-
-    def form_valid(self, form):
-        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
-        active_role = get_active_role(self.request)
-
-        note = form.save(commit=False)
-        note.patient = pt
-        note.author = self.request.user
-
-        can_sign = self.form_class.Meta.model.group_can_sign(active_role)
-
-        if can_sign:
-            note.sign(self.request.user, active_role)
-
-        note.save()
-        form.save_m2m()
-
-        return HttpResponseRedirect(reverse("core:patient-detail",
-                                            args=(pt.id,)))
-
-
 class WorkupCreate(NoteFormView):
     '''A view for creating a new workup. Checks to see if today is a
     clinic date first, and prompts its creation if none exist.'''
@@ -92,7 +73,6 @@ class WorkupCreate(NoteFormView):
     def get(self, *args, **kwargs):
         """Check that we have an instantiated ClinicDate today,
         then dispatch to get() of the superclass view."""
-
 
         clindates = get_clindates()
         pt = get_object_or_404(Patient, pk=kwargs['pt_id'])
@@ -206,39 +186,71 @@ class WorkupUpdate(NoteUpdate):
         return reverse('workup', args=(self.object.id,))
 
 
-class ProgressNoteCreate(AttestableNoteCreate):
+class AttestableBasicNoteCreate(NoteFormView):
     template_name = 'core/form_submission.html'
-    form_class = forms.ProgressNoteForm
+    form_class = forms.AttestableBasicNoteForm
     note_type = 'Attestable Basic Note'
 
     def form_valid(self, form):
-        pnote = form.save(commit=False)
+        note = form.save(commit=False)
 
-        pnote.patient = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
-        pnote.author = self.request.user
+        note.patient = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        note.author = self.request.user
 
         active_role = get_active_role(self.request)
-        pnote.author_type = active_role
+        note.author_type = active_role
 
-        if self.form_class.Meta.model.group_can_sign(active_role):
-            pnote.sign(self.request.user)
+        if models.AttestableBasicNote.group_can_sign(active_role):
+            note.sign(self.request.user)
 
-        pnote.save()
+        note.save()
         form.save_m2m()
 
         return HttpResponseRedirect(reverse("core:patient-detail",
-                                            args=(pnote.patient.id,)))
+                                            args=(note.patient.id,)))
 
 
-class ProgressNoteUpdate(NoteUpdate):
+class AttestableBasicNoteUpdate(NoteUpdate):
     template_name = "core/form-update.html"
-    model = models.ProgressNote
-    form_class = ProgressNoteCreate.form_class
-    note_type = ProgressNoteCreate.note_type
+    model = models.AttestableBasicNote
+    form_class = AttestableBasicNoteCreate.form_class
+    note_type = AttestableBasicNoteCreate.note_type
 
     def get_success_url(self):
-        pnote = self.object
-        return reverse("progress-note-detail", args=(pnote.id, ))
+        note = self.object
+        return reverse("attestable-basic-note-detail", args=(note.id, ))
+
+
+class BasicNoteCreate(NoteFormView):
+    template_name = 'core/form_submission.html'
+    form_class = forms.BasicNoteForm
+    note_type = 'Basic Note'
+
+    def form_valid(self, form):
+        note = form.save(commit=False)
+
+        note.patient = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        note.author = self.request.user
+
+        active_role = get_active_role(self.request)
+        note.author_type = active_role
+
+        note.save()
+        form.save_m2m()
+
+        return HttpResponseRedirect(reverse("core:patient-detail",
+                                            args=(note.patient.id,)))
+
+
+class BasicNoteUpdate(NoteUpdate):
+    template_name = "core/form-update.html"
+    model = models.BasicNote
+    form_class = BasicNoteCreate.form_class
+    note_type = BasicNoteCreate.note_type
+
+    def get_success_url(self):
+        note = self.object
+        return reverse("basic-note-detail", args=(note.id, ))
 
 
 class ClinicDateCreate(FormView):

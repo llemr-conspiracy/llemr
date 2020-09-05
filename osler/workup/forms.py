@@ -298,13 +298,24 @@ class WorkupForm(ModelForm):
                         'than diastolic blood pressure.')
 
 
-class ProgressNoteForm(ModelForm):
+class AttestableBasicNoteForm(ModelForm):
     class Meta(object):
-        model = models.ProgressNote
+        model = models.AttestableBasicNote
         fields = ['title', 'text']
 
     def __init__(self, *args, **kwargs):
-        super(ProgressNoteForm, self).__init__(*args, **kwargs)
+        super(AttestableBasicNoteForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+
+class BasicNoteForm(ModelForm):
+    class Meta(object):
+        model = models.BasicNote
+        fields = ['title', 'text']
+
+    def __init__(self, *args, **kwargs):
+        super(BasicNoteForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
 

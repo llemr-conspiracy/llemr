@@ -33,11 +33,19 @@ class WorkupAdmin(admin_utils.NoteAdmin):
         return url
 
 
-@admin.register(models.ProgressNote)
-class ProgressNoteAdmin(admin_utils.NoteAdmin):
+@admin.register(models.AttestableBasicNote)
+class AttestableBasicNoteAdmin(admin_utils.NoteAdmin):
 
     def view_on_site(self, obj):
-        url = reverse('progress-note-detail', kwargs={'pk': obj.pk})
+        url = reverse('attestable-basic-note-detail', kwargs={'pk': obj.pk})
+        return url
+
+
+@admin.register(models.BasicNote)
+class BasicNoteAdmin(admin_utils.NoteAdmin):
+
+    def view_on_site(self, obj):
+        url = reverse('basic-note-detail', kwargs={'pk': obj.pk})
         return url
 
 
