@@ -56,7 +56,7 @@
           <li><a href="{% url 'core:preintake' %}">New Patient</a></li>
           <li><a href="{% url 'core:all-patients' %}">All Patients</a></li>
           <li><a href="{% url 'inventory:drug-list' %}">Drug Inventory</a></li>
-          {% if settings.DISPLAY_APPOINTMENTS %}
+          {% if settings.OSLER_DISPLAY_APPOINTMENTS %}
             <li><a href="{% url 'appointment-list' %}">Appointments</a></li>
           {% endif %}
           <li><a href="{% url 'about' %}">About</a></li>
