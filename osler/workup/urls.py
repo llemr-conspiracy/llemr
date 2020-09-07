@@ -47,15 +47,15 @@ unwrapped_urlconf = [
         views.AttestableBasicNoteCreate.as_view(),
         name="new-attestable-basic-note"),
     re_path(
-        r'^attestable-basic-note/update/(?P<pk>[0-9]+)$',
+        r'^attestable-basic-note/update/(?P<pk>[0-9]+)/$',
         views.AttestableBasicNoteUpdate.as_view(),
         name="attestable-basic-note-update"),
     re_path(
-        r'^attestable-basic-note/sign/(?P<pk>[0-9]+)$',
+        r'^attestable-basic-note/sign/(?P<pk>[0-9]+)/$',
         partial(views.sign_attestable_note, attestable=models.AttestableBasicNote),
         name='attestable-basic-note-sign'),
     re_path(
-        r'^attestable-basic-note/(?P<pk>[0-9]+)$',
+        r'^attestable-basic-note/(?P<pk>[0-9]+)/$',
         DetailView.as_view(model=models.AttestableBasicNote),
         name="attestable-basic-note-detail"),
 
@@ -65,11 +65,11 @@ unwrapped_urlconf = [
         views.BasicNoteCreate.as_view(),
         name="new-basic-note"),
     re_path(
-        r'^basic-note/update/(?P<pk>[0-9]+)$',
+        r'^basic-note/update/(?P<pk>[0-9]+)/$',
         views.BasicNoteUpdate.as_view(),
         name="basic-note-update"),
     re_path(
-        r'^basic-note/(?P<pk>[0-9]+)$',
+        r'^basic-note/(?P<pk>[0-9]+)/$',
         DetailView.as_view(model=models.BasicNote),
         name="basic-note-detail"),
 

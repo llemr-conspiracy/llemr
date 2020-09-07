@@ -6,7 +6,7 @@ from osler.core.models import Patient
 from osler.core.tests.test_views import build_user
 
 from osler.workup import models
-from osler.workup.tests.tests import wu_dict, pn_dict
+from osler.workup.tests.tests import wu_dict, note_dict
 
 import osler.users.tests.factories as user_factories
 
@@ -22,7 +22,7 @@ class TestAttestations(TestCase):
             clinic_date=now().date())
 
         self.wu = models.Workup.objects.create(**wu_dict())
-        self.pn = models.AttestableBasicNote.objects.create(**pn_dict())
+        self.note = models.AttestableBasicNote.objects.create(**note_dict())
 
     def test_wu_signing(self):
         """test signing permissions """
@@ -30,9 +30,9 @@ class TestAttestations(TestCase):
         self.attestable_note_signing_all_groups_test(self.wu)
 
 
-    def test_pn_signing(self):
-        self.attestable_note_signing_one_group_test(self.pn)
-        self.attestable_note_signing_all_groups_test(self.pn)
+    def test_basic_attestable_note_signing(self):
+        self.attestable_note_signing_one_group_test(self.note)
+        self.attestable_note_signing_all_groups_test(self.note)
 
     def attestable_note_signing_one_group_test(self, note):  
         """test signing permissions for attestable note
