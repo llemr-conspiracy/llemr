@@ -1,5 +1,5 @@
 from . import models
-from django.forms import ModelForm
+from django.forms import ModelForm, Form
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 

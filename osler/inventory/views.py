@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect
 from django.views.generic.edit import FormView, UpdateView
 from django.views.generic.list import ListView
 from django.urls import reverse
-from django.http import HttpResponseRedirect, HttpResponseNotFound
+from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
 import urllib
+
+from osler.core.views import NoteFormView
+from osler.core.models import Patient
+from osler.users.utils import get_active_role
 
 from . import models
 from . import forms
@@ -20,9 +24,14 @@ class DrugListView(ListView):
                     select_related('unit').\
                     select_related('category').\
                     select_related('manufacturer').\
-                    order_by('category', 'name').\
+                    order_by('category', 'name', 'dose', 'expiration_date').\
                     exclude(stock=0).all()
         return druglist
+
+    def get_context_data(self, **kwargs):
+        context = super(DrugListView, self).get_context_data(**kwargs)
+        context['patients'] = Patient.objects.all().order_by('last_name').select_related('gender')
+        return context
 
 
 class PreDrugAddNew(FormView):
@@ -68,7 +77,6 @@ class PreDrugSelect(ListView):
         return possible_duplicates
 
     def get_context_data(self, **kwargs):
-        # Call the base implementation first to get a context
         context = super(PreDrugSelect, self).get_context_data(**kwargs)
         initial = self.parse_url_querystring()
         context['name'] = initial.get('name', None)
@@ -110,12 +118,21 @@ class DrugUpdate(UpdateView):
         df.save()
         return redirect('inventory:drug-list')
 
+
 def drug_dispense(request):
     pk = request.POST['pk']
     num = request.POST['num']
-    drug = get_object_or_404(models.Drug, id=pk)
+    patient_pk = request.POST['patient_pk']
+    drug = models.Drug.objects.get(pk=pk)
+    patient = Patient.objects.get(pk=patient_pk)
     can_dispense = drug.can_dispense(int(num))
+
     if can_dispense:
+        models.DispenseHistory.objects.create(drug=drug,
+                                              dispense=num,
+                                              author=request.user,
+                                              author_type=get_active_role(request),
+                                              patient=patient)
         drug.dispense(int(num))
     else:
         return HttpResponseNotFound('<h1>Cannot dispense more drugs than in stock!</h1>')

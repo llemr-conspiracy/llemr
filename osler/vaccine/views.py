@@ -8,7 +8,7 @@ from osler.core.utils import get_due_date_from_url_query_dict
 from osler.users.utils import get_active_role
 from osler.followup.views import FollowupCreate
 from osler.vaccine.models import VaccineSeries, VaccineActionItem
-from osler.vaccine.forms import (VaccineSeriesForm, VaccineDoseForm, 
+from osler.vaccine.forms import (VaccineSeriesForm, VaccineDoseForm,
     VaccineSeriesSelectForm, VaccineFollowup, VaccineActionItemForm)
 
 def select_vaccine_series(request,pt_id):
@@ -83,11 +83,11 @@ class VaccineDoseCreate(NoteFormView):
         else:
             formatted_date = dose.next_due_date().strftime("%D")
             querystr = '%s=%s' % ("due_date", formatted_date)
-            vai_url = "%s?%s" % (reverse('new-vaccine-ai', 
+            vai_url = "%s?%s" % (reverse('new-vaccine-ai',
                 kwargs={'pt_id': pt.id, 'series_id': series.id}), querystr)
             return HttpResponseRedirect(vai_url)
-            
-            
+
+
 class VaccineActionItemCreate(NoteFormView):
     '''Create a vaccine action item that will appear on patient homepage'''
     template_name = 'core/form_submission.html'

@@ -321,6 +321,7 @@ class Patient(Person):
         note_list.extend(self.vaccinedose_set.all())
         note_list.extend(self.vaccinefollowup_set.all())
         note_list.extend(self.patientcontact_set.all())
+        note_list.extend(self.dispensehistory_set.all())
 
         return sorted(note_list, key=lambda k: k.written_datetime)
 

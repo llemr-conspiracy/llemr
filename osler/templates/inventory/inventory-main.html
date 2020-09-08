@@ -35,25 +35,22 @@ Drug Inventory
                 <td><b>{{ drug.category }}</b></td>
                 <td><b>{{ drug.stock }}</b></td>
                 <td>{{ drug.lot_number }}</td>
-                <td>{% if drug.dose %}
-                        {{ drug.dose }}
-                    {% endif %}
-                    {% if drug.unit %}
-                        {{ drug.unit }}
-                    {% endif %}</td>
-                <td>{% if drug.expiration_date %}
-                        {{ drug.expiration_date }}
-                    {% endif %}</td>
-                <td>{% if drug.manufacturer %}
-                        {{ drug.manufacturer }}
-                    {% endif %}
+                <td>{{ drug.dose }}{{ drug.unit }}</td>
+                <td>{% if drug.expired %}
+                  <b style="color:red;">{{ drug.expiration_date }}</b>
+                  {% elif drug.pre_expire %}
+                  <b style="color:gold;">{{ drug.expiration_date }}</b>
+                  {% else %}
+                  {{ drug.expiration_date }}
+                  {% endif %}
                 </td>
+                <td>{{ drug.manufacturer }}</td>
+
                 <td>
                     <a href="#" class="btn btn-success a-btn-slide-text btn-xs" data-toggle="modal" data-target="#dispenseModal{{ drug.id }}">
                         <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
                         <span><strong>Dispense</strong></span>
                     </a>
-                    <!-- Modal -->
                     <div class="modal fade" id="dispenseModal{{ drug.id }}" tabindex="-1" role="dialog" aria-labelledby="dispenseModal{{ drug.id }}Label" aria-hidden="true">
                     <form action="{% url 'inventory:drug-dispense' %}" method="post">
                       {% csrf_token %}
@@ -68,6 +65,16 @@ Drug Inventory
                               <input type="number" class="form-control" placeholder="1" name="num" id="num" min="1" max="{{ drug.stock }}" required>
                             </div>
                             <input type="hidden" name="pk" id="pk" value="{{ drug.id }}">
+                            For which patient would you like to dispense <b>{{ drug.name }}</b>?
+                            <div class="form-group">
+                              <select class="form-control" name="patient_pk" id="patient_pk">
+                                <option disabled selected value> -- select patient -- </option>
+                                {% for patient in patients %}
+                                  <option value="{{ patient.pk }}">
+                                    {{ patient.name }}  {{ patient.age }}/{{ patient.gender }}</span></option>
+                                {% endfor %}
+                              </select>
+                            </div>
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -78,6 +85,8 @@ Drug Inventory
                     </form>
                     </div>
                 </td>
+
+
             </tr>
         {% endfor %}
     </table>
