@@ -1,6 +1,8 @@
 from django.db import models
 from osler.core.validators import validate_name
 from osler.core.models import Note
+import datetime
+from dateutil.relativedelta import relativedelta
 
 # Create your models here.
 
@@ -57,6 +59,14 @@ class Drug(models.Model):
 
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT)
 
+    def pre_expire(self):
+        today = datetime.date.today()
+        two_month = today + relativedelta(months=+2)
+        return self.expiration_date >= today and self.expiration_date <= two_month
+
+    def expired(self):
+        return self.expiration_date < datetime.date.today()
+
     def can_dispense(self, num):
         return self.stock >= num
 
@@ -68,8 +78,10 @@ class Drug(models.Model):
         return self.name
 
 class DispenseHistory(Note):
+
     class Meta:
         verbose_name_plural = "dispense history"
+        ordering = ['written_datetime',]
 
     dispense = models.PositiveSmallIntegerField(blank=False, null=False)
 

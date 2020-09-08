@@ -32,8 +32,8 @@ class LiveTesting(SeleniumLiveTestCase):
         roles.
         '''
 
-        build_user(username='jrporter', password='password', 
-            group_factories=[user_factories.CaseManagerGroupFactory, 
+        build_user(username='jrporter', password='password',
+            group_factories=[user_factories.CaseManagerGroupFactory,
             user_factories.VolunteerGroupFactory]
         )
 
@@ -47,7 +47,7 @@ class LiveTesting(SeleniumLiveTestCase):
                                       '?next=%s' % reverse('dashboard-dispatch'))
 
         self.selenium.find_element_by_xpath(
-            '//input[@name="radio-roles"]').click()        
+            '//input[@name="radio-roles"]').click()
         self.selenium.find_element_by_xpath(
             '//button[@type="submit"]').click()
 
@@ -101,7 +101,7 @@ class LiveTesting(SeleniumLiveTestCase):
         self.selenium.get('%s%s' % (self.live_server_url,
             reverse('core:patient-detail', args=(1,))))
 
-        active_action_item_id = 'collapse6'
+        active_action_item_id = 'collapse7'
 
         WebDriverWait(self.selenium, 2).until(
             EC.presence_of_element_located(
@@ -338,7 +338,7 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         self.selenium.get('%s%s' % (self.live_server_url,
             reverse("core:all-patients")))
 
-        assert self.selenium.current_url == '%s%s' % (self.live_server_url, 
+        assert self.selenium.current_url == '%s%s' % (self.live_server_url,
             reverse('core:all-patients'))
 
         # TODO add wait statement
