@@ -2,7 +2,8 @@ from django.db import models
 from osler.core.validators import validate_name
 from osler.core.models import Note
 import datetime
-from dateutil.relativedelta import relativedelta
+from django.utils import timezone
+from simple_history.models import HistoricalRecords
 
 # Create your models here.
 
@@ -59,13 +60,15 @@ class Drug(models.Model):
 
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT)
 
+    history = HistoricalRecords()
+
     def pre_expire(self):
-        today = datetime.date.today()
-        two_month = today + relativedelta(months=+2)
+        today = timezone.now().date()
+        two_month = today + datetime.timedelta(days=60)
         return self.expiration_date >= today and self.expiration_date <= two_month
 
     def expired(self):
-        return self.expiration_date < datetime.date.today()
+        return self.expiration_date < timezone.now().date()
 
     def can_dispense(self, num):
         return self.stock >= num

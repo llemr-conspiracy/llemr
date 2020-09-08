@@ -30,7 +30,7 @@ class DrugListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(DrugListView, self).get_context_data(**kwargs)
-        context['patients'] = Patient.objects.all().order_by('last_name').select_related('gender')
+        context['patients'] = Patient.objects.filter(needs_workup=True).order_by('last_name').select_related('gender')
         return context
 
 
