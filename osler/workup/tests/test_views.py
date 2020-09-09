@@ -11,7 +11,7 @@ from osler.core.tests.test_views import build_user, log_in_user
 import osler.users.tests.factories as user_factories
 
 from osler.workup import models
-from osler.workup.tests.tests import wu_dict, pn_dict
+from osler.workup.tests.tests import wu_dict, note_dict
 
 
 class ViewsExistTest(TestCase):
@@ -186,7 +186,7 @@ class ViewsExistTest(TestCase):
             assert response.context['form'][unit].value() == wu_data[unit]
 
 
-class TestProgressNoteViews(TestCase):
+class TestABasicNoteViews(TestCase):
     '''
     Verify that views involving the workup are functioning.
     '''
@@ -197,56 +197,90 @@ class TestProgressNoteViews(TestCase):
         self.user = build_user()
         log_in_user(self.client, self.user)
 
-        self.pn_data = pn_dict(user=self.user)
+        self.note_data = note_dict(user=self.user)
 
         models.ClinicDate.objects.create(
             clinic_type=models.ClinicType.objects.first(),
             clinic_date=now().date())
 
-    def test_progressnote_urls(self):
+    def urls_test(self, model):
+
+        if model == models.BasicNote:
+            urls = {
+                'create': 'new-basic-note',
+                'detail': 'basic-note-detail',
+                'update': 'basic-note-update'
+            }
+        else:
+            urls = {
+                'create': 'new-attestable-basic-note',
+                'detail': 'attestable-basic-note-detail',
+                'update': 'attestable-basic-note-update'
+            }
+
         pt = Patient.objects.first()
 
-        n_notes = models.ProgressNote.objects.count()
+        n_notes = model.objects.count()
 
-        pn_url = reverse('new-progress-note', args=(pt.id,))
-        response = self.client.get(pn_url)
+        note_url = reverse(urls['create'], args=(pt.id,))
+        response = self.client.get(note_url)
         assert response.status_code == 200
 
-        response = self.client.post(pn_url, self.pn_data)
+        response = self.client.post(note_url, self.note_data)
         self.assertRedirects(response,
                              reverse('core:patient-detail', args=(pt.id,)))
-        assert models.ProgressNote.objects.count() == n_notes + 1
+        assert model.objects.count() == n_notes + 1
+
+        note = model.objects.last()
+
+        detail_url = reverse(urls['detail'], args=(note.pk,))
+        response = self.client.get(detail_url)
+        assert response.status_code == 200
 
         response = self.client.get(
-            reverse('progress-note-update',
-                    args=(models.ProgressNote.objects.last().pk,)))
+            reverse(urls['update'],
+                    args=(note.pk,)))
         assert response.status_code == 200
 
-        self.pn_data['text'] = 'actually not so bad'
+        self.note_data['text'] = 'actually not so bad'
 
-        response = self.client.post(pn_url, self.pn_data)
+        response = self.client.post(note_url, self.note_data)
         self.assertRedirects(response,
                              reverse('core:patient-detail', args=(pt.id,)))
 
-    def test_progressnote_signing(self):
-        """Verify that singing is possible for attendings and not for others.
+
+    def test_BasicNote_urls(self):
+        self.urls_test(models.BasicNote)
+
+
+    def test_AttestableBasicNote_urls(self):
+        self.urls_test(models.AttestableBasicNote)
+
+
+    def test_AttestableBasicNote_signing(self):
+        """Verify that signing is possible for those with relevant permission.
         """
 
-        pn_url = "progress-note-sign"
+        sign_url = "attestable-basic-note-sign"
 
-        pn = models.ProgressNote.objects.create(**self.pn_data)
+        note = models.AttestableBasicNote.objects.create(**self.note_data)
 
         # Fresh notes should be unsigned
-        assert not pn.signed()
+        assert not note.signed()
 
         # Providers with can_attend == False should not be able to sign
-        for role in user_factories.all_roles:
-            log_in_user(self.client, build_user([role]))
-            response = self.client.get(reverse(pn_url, args=(pn.id,)))
-            self.assertRedirects(response,
-                                 reverse('progress-note-detail',
-                                         args=(pn.id,)))
-            can_attest = role in user_factories.attesting_roles
-            assert models.ProgressNote.objects.get(pk=pn.id).signed() == can_attest
-            pn.signer = None
-            pn.save()
+        can_sign_group = user_factories.PermGroupFactory(permissions=['workup.sign_AttestableBasicNote'])
+        cannot_sign_group = user_factories.NoPermGroupFactory()
+
+        can_sign = user_factories.UserFactory(groups=[can_sign_group])
+        cannot_sign = user_factories.UserFactory(groups=[cannot_sign_group])
+
+        for user in [can_sign, cannot_sign]:
+            log_in_user(self.client, user)
+            response = self.client.get(reverse(sign_url, args=(note.id,)))
+            detail_url = reverse('attestable-basic-note-detail', args=(note.id,))
+            self.assertRedirects(response, detail_url)
+            assert models.AttestableBasicNote.objects.get(pk=note.id).signed() == (user == can_sign)
+            note.signer = None
+            note.save()
+

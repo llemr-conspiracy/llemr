@@ -58,7 +58,7 @@ def wu_dict(user=None, units=False, clinic_day_pk=False, dx_category=False):
 
     return wu
 
-def pn_dict(user=None):
+def note_dict(user=None):
 
     if not user:
         user = build_user()
