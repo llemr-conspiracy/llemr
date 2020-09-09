@@ -56,7 +56,7 @@ unwrapped_urlconf = [
         name='attestable-basic-note-sign'),
     re_path(
         r'^attestable-basic-note/(?P<pk>[0-9]+)/$',
-        DetailView.as_view(model=models.AttestableBasicNote),
+        partial(views.basicnote_detail, model=models.AttestableBasicNote),
         name="attestable-basic-note-detail"),
 
     # BASIC NOTES
@@ -70,7 +70,7 @@ unwrapped_urlconf = [
         name="basic-note-update"),
     re_path(
         r'^basic-note/(?P<pk>[0-9]+)/$',
-        DetailView.as_view(model=models.BasicNote),
+        partial(views.basicnote_detail, model=models.BasicNote),
         name="basic-note-detail"),
 
     # CLINIC DATES

@@ -45,6 +45,34 @@ def new_note_dispatch(request, pt_id):
                   {'note_types': note_types})
 
 
+def basicnote_detail(request, pk, model):
+
+    note = get_object_or_404(model, pk=pk)
+    active_role = get_active_role(request)
+    can_sign = False
+    can_update = False
+    attestable = (model == models.AttestableBasicNote)
+    title = ""
+
+    if attestable:
+        can_sign = note.group_can_sign(active_role)
+        can_update = group_has_perm(active_role, 'workup.change_attestablebasicnote')
+        title = "Attestable Basic Note"
+    else:
+        can_update = group_has_perm(active_role, 'workup.change_basicnote')
+        title = "Basic Note"
+
+    return render(request,
+        'workup/basicnote_detail.html', 
+            {
+            'note': note,
+            'can_sign': can_sign,
+            'can_update': can_update,
+            'attestable': attestable,
+            'title': title
+            }
+        )
+
 def workup_detail(request, pk):
 
     workup = get_object_or_404(models.Workup, pk=pk)
