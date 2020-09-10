@@ -14,18 +14,22 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
       </a></h2>
     <p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
     <p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
-    <p class="lead"><strong>FQHC Referral Status:</strong> {{ referral_status }}</p>
-    <p class="lead"><strong>Referrals:</strong> {{ referrals.iterator | join:", " }}</p>
-    <p class="lead"><strong>Case Manager:</strong> {{patient.case_managers.iterator | join:"; "}}
+    {% if settings.OSLER_DISPLAY_REFERRALS %}
+      <p class="lead"><strong>FQHC Referral Status:</strong> {{ referral_status }}</p>
+      <p class="lead"><strong>Referrals:</strong> {{ referrals.iterator | join:", " }}</p>
+    {% endif %}
+    {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
+      <p class="lead"><strong>Case Manager:</strong> {{patient.case_managers.iterator | join:"; "}}
+    {% endif %}
       {% if patient.needs_workup %}
       <p class="lead"> Patient is Active
         {% if can_activate %}
-        <a href="{% url 'core:patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a>
+          <a href="{% url 'core:patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a>
         {% endif %}</p>
       {% else %}
       <p class="lead"> Patient is Inactive
         {% if can_activate %}
-        <a href="{% url 'core:patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a>
+          <a href="{% url 'core:patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a>
         {% endif %}</p>
       {% endif %}
   </div>
@@ -42,14 +46,18 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
         <span class="glyphicon glyphicon-search" aria-hidden="true"></span>&nbsp;
         <a href="{% url 'new-note-dispatch' pt_id=patient.pk %}"><strong>Write Note</strong></a>
       </li>
+      {% if settings.OSLER_DISPLAY_REFERRALS %}
       <li class="list-group-item">
         <span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>&nbsp;
         <a href="{% url 'select-referral-type' pt_id=patient.pk %}"><strong>Make Referral</strong></a>
       </li>
+      {% endif %}
+      {% if settings.OSLER_DISPLAY_APPOINTMENTS %}
       <li class="list-group-item">
         <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>&nbsp;
         <a href="{% url 'appointment-new' %}?pt_id={{patient.pk}}"><strong>Make Appointment</strong></a>
       </li>
+      {% endif %}
       <li class="list-group-item">
         <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>&nbsp;
         <a href="{% url 'select-vaccine-series' pt_id=patient.pk %}"><strong>Give Vaccine</strong></a>
@@ -70,10 +78,12 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
       <h3 class="panel-title">Followup</h3>
     </div>
     <ul class="list-group">
+      {% if settings.OSLER_DISPLAY_REFERRALS %}
       <li class="list-group-item">
         <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span>&nbsp;
         <a href="{% url 'select-referral' pt_id=patient.pk %}"><strong>Log follow up</strong> (referral)</a>
       </li>
+      {% endif %}
       <li class="list-group-item">
         <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>&nbsp;
         <a href="{% url 'followup-choice' pt_id=patient.pk %}"><strong>Log follow up</strong> (other)</a>
@@ -315,42 +325,44 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
   </div>
 </div>
 
-<div class="container">
-    <div class="col-md-8">
-        <h3>Appointments ({{ patient.appointment_set.all | length }} Total)</h3>
-        <div class="panel-group">
-            {% for apt_type in zipped_apt_list %}
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                        <a data-toggle="collapse" href="#{{ apt_type.0 }}">{{ apt_type.2 }} ({{ apt_type.1 | length }})</a>
-                        </h4>
-                    </div>
-                    <div id="{{ apt_type.0 }}" class="panel-collapse collapse">
-                        {% for date, app_list in apt_type.3.items %}
-                            <div class="panel-body">
-                                <h3>{{ date  | date:"l F d, Y" }}</h3>
-                                {% for app in app_list %}
-                                    <div class="row">
-                                        <div class="col-md-4">{{ app.clintime }}</div>
-
-                                        <div class="col-md-4 pull-right">{{ app.get_appointmentType_display }}</div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-8"><i>{{ app.comment }}</i></div>
-                                        <div class="col-md-4"><a href="{% url 'appointment-update' pk=app.id %}">Edit Appointment</a></div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-9"></br></div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
+{% if settings.OSLER_DISPLAY_APPOINTMENTS %}
+  <div class="container">
+      <div class="col-md-8">
+          <h3>Appointments ({{ patient.appointment_set.all | length }} Total)</h3>
+          <div class="panel-group">
+              {% for apt_type in zipped_apt_list %}
+                  <div class="panel panel-default">
+                      <div class="panel-heading">
+                          <h4 class="panel-title">
+                          <a data-toggle="collapse" href="#{{ apt_type.0 }}">{{ apt_type.2 }} ({{ apt_type.1 | length }})</a>
+                          </h4>
+                      </div>
+                      <div id="{{ apt_type.0 }}" class="panel-collapse collapse">
+                          {% for date, app_list in apt_type.3.items %}
+                              <div class="panel-body">
+                                  <h3>{{ date  | date:"l F d, Y" }}</h3>
+                                  {% for app in app_list %}
+                                      <div class="row">
+                                          <div class="col-md-4">{{ app.clintime }}</div>
+                                          
+                                          <div class="col-md-4 pull-right">{{ app.get_appointmentType_display }}</div>
+                                      </div>
+                                      <div class="row">
+                                          <div class="col-md-8"><i>{{ app.comment }}</i></div>
+                                          <div class="col-md-4"><a href="{% url 'appointment-update' pk=app.id %}">Edit Appointment</a></div>
+                                      </div>
+                                      <div class="row">
+                                          <div class="col-md-9"></br></div>
+                                      </div>
+                                  {% endfor %}
+                              </div>
+                          {% endfor %}    
+                      </div>
+                  </div>
+              {% endfor %}
+          </div>
+      </div>
+  </div>
+{% endif %}
 
 {% endblock %}

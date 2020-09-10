@@ -398,24 +398,25 @@ def patient_detail(request, pk):
     can_case_manage = group_has_perm(active_role, 'core.case_manage_Patient')
     can_export_pdf = group_has_perm(active_role, 'workup.export_pdf_Workup')
 
+    context = {
+        'zipped_ai_list': zipped_ai_list,
+        'total_ais': total_ais,
+        'referral_status': referral_status_output,
+        'referrals': referrals,
+        'referral_followups': referral_followups,
+        'vaccine_followups': vaccine_followups,
+        'total_followups': total_followups,
+        'patient': pt,
+        'appointments_by_date': future_apt,
+        'zipped_apt_list': zipped_apt_list,
+        'can_activate': can_activate,
+        'can_case_manage': can_case_manage,
+        'can_export_pdf': can_export_pdf
+    }
+
     return render(request,
-        'core/patient_detail.html',
-            {
-            'zipped_ai_list': zipped_ai_list,
-            'total_ais': total_ais,
-            'referral_status': referral_status_output,
-            'referrals': referrals,
-            'referral_followups': referral_followups,
-            'vaccine_followups': vaccine_followups,
-            'total_followups': total_followups,
-            'patient': pt,
-            'appointments_by_date': future_apt,
-            'zipped_apt_list': zipped_apt_list,
-            'can_activate': can_activate,
-            'can_case_manage': can_case_manage,
-            'can_export_pdf': can_export_pdf
-            }
-        )
+        'core/patient_detail.html', 
+        context)
 
 
 def all_patients(request):

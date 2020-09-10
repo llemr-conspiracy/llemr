@@ -32,6 +32,23 @@ class TestUrls(TestCase):
         path = reverse('inventory:drug-update', kwargs={'pk':1})
         self.assertEqual(resolve(path).view_name, 'inventory:drug-update')
 
+    def test_export_csv_url(self):
+        path = reverse('inventory:export-csv')
+        self.assertEqual(resolve(path).view_name, 'inventory:export-csv')
+
+def drug_dict():
+
+    return {
+        'name': 'Somedrug',
+        'unit': MeasuringUnit.objects.create(name='someunit'),
+        'dose': 1000.0,
+        'stock': 10,
+        'expiration_date': '2040-01-01',
+        'lot_number': 'ABCDEFGH',
+        'category': DrugCategory.objects.create(name='somecategory'),
+        'manufacturer': Manufacturer.objects.create(name='somemanufacturer')
+    }
+
 class TestModels(TestCase):
 
     def test_drugcategory_creation(self):

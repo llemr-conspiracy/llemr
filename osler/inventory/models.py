@@ -42,6 +42,9 @@ class Drug(models.Model):
 
     class Meta:
         ordering = ['name',]
+        permissions = [
+            ('export_csv', "Can export drug inventory")
+        ]
 
     name = models.CharField(max_length=100, blank=False, validators=[validate_name])
 

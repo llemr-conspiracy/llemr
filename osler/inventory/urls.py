@@ -30,6 +30,10 @@ unwrapped_urlconf = [
         r'^drug-dispense/$',
         views.drug_dispense,
         name='drug-dispense'),
+    re_path(
+        r'^export-csv/$',
+        views.export_csv,
+        name='export-csv'),
 ]
 
 wrap_config = {}
