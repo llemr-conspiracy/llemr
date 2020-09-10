@@ -101,7 +101,7 @@ class LiveTesting(SeleniumLiveTestCase):
         self.selenium.get('%s%s' % (self.live_server_url,
             reverse('core:patient-detail', args=(1,))))
 
-        active_action_item_id = 'collapse7'
+        active_action_item_id = 'collapse8'
 
         WebDriverWait(self.selenium, 2).until(
             EC.presence_of_element_located(

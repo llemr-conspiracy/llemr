@@ -335,7 +335,7 @@ def patient_detail(request, pk):
     total_ais = len(active_ais) + len(inactive_ais) + len(done_ais)
 
     zipped_ai_list = list(zip(
-        ['collapse7', 'collapse8', 'collapse9'],
+        ['collapse8', 'collapse9', 'collapse10'],
         [active_ais, inactive_ais, done_ais],
         ['Active Action Items', 'Pending Action Items',
          'Completed Action Items'],
@@ -391,7 +391,7 @@ def patient_detail(request, pk):
             previous_apt[a.clindate] = [a]
 
     zipped_apt_list = list(zip(
-        ['collapse10', 'collapse11'],
+        ['collapse11', 'collapse12'],
         [future_date_appointments, previous_date_appointments],
         ['Future Appointments', 'Past Appointments'],
         [future_apt, previous_apt]))
@@ -420,7 +420,7 @@ def patient_detail(request, pk):
     }
 
     return render(request,
-        'core/patient_detail.html', 
+        'core/patient_detail.html',
         context)
 
 

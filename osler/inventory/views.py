@@ -37,6 +37,7 @@ class DrugListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(DrugListView, self).get_context_data(**kwargs)
+        context['patients'] = Patient.objects.filter(needs_workup=True).order_by('last_name').select_related('gender')
 
         active_role = get_active_role(self.request)
         context['can_export_csv'] = group_has_perm(active_role, 'inventory.export_csv')
