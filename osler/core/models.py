@@ -16,8 +16,6 @@ from osler.core import utils
 
 from osler.users.utils import group_has_perm
 
-import datetime
-
 class Language(models.Model):
     """A natural language, spoken by a provider or patient.
     """
