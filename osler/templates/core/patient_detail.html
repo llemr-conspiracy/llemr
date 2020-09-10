@@ -244,6 +244,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
           {% endfor %}
         </div>
       </div>
+      {% if settings.OSLER_DISPLAY_APPOINTMENTS %}
       <div class="panel panel-default">
         <div class="panel-heading">
           <h4 class="panel-title"><a data-toggle="collapse" href="#collapse5">Attestable Basic Notes ({{ patient.attestablebasicnote_set.all | length }})</a></h4>
@@ -261,6 +262,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
           {% endfor %}
         </div>
       </div>
+      {% endif %}
       <div class="panel panel-default">
         <div class="panel-heading">
           <h4 class="panel-title"><a data-toggle="collapse" href="#collapse6">Basic Notes ({{ patient.basicnote_set.all | length }})</a></h4>

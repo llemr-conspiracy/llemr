@@ -42,13 +42,13 @@ class PatientForm(ModelForm):
         if not settings.OSLER_DISPLAY_CASE_MANAGERS:
             exclude.append('case_managers')
 
-    # limit the options for the case_managers
+    if settings.OSLER_DISPLAY_CASE_MANAGERS:
         case_managers = ModelMultipleChoiceField(
             required=False,
             queryset=get_user_model().objects
                 .filter(groups__permissions__codename='case_manage_Patient')
                 .distinct()
-                .order_by("last_name"),
+                .order_by("last_name")
         )
 
     def __init__(self, *args, **kwargs):

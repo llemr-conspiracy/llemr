@@ -37,9 +37,12 @@ def new_note_dispatch(request, pt_id):
         'Standard Medical Note': reverse("new-workup", args=(pt_id,)),
         'Basic Note': reverse("new-basic-note",
                                     args=(pt_id,)),
-        'Attestable Basic Note': reverse("new-attestable-basic-note",
-                                    args=(pt_id,)),
     }
+
+    if settings.OSLER_DISPLAY_ATTESTABLE_BASIC_NOTE:
+        note_types['Attestable Basic Note'] = reverse("new-attestable-basic-note",
+                                                                    args=(pt_id,))
+                                                    
 
     return render(request, 'workup/new-note-dispatch.html',
                   {'note_types': note_types})

@@ -227,8 +227,13 @@ class PatientCreate(FormView):
 
     def get_initial(self):
         initial = super(PatientCreate, self).get_initial()
-
         initial.update(utils.get_names_from_url_query_dict(self.request))
+
+        initial['city'] = settings.OSLER_DEFAULT_CITY
+        initial['state'] = settings.OSLER_DEFAULT_STATE
+        initial['zip_code'] = settings.OSLER_DEFAULT_ZIP_CODE
+        initial['country'] = settings.OSLER_DEFAULT_COUNTRY
+
         return initial
 
 
