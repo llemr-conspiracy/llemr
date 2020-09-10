@@ -32,12 +32,21 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-md-12">
+            <strong>Chronic Conditions:</strong> {{ workup.patient.demographics.chronic_conditions.iterator | join:", " }}
+        </div>
+
+    </div>
+    <div class="row">
+        {% if settings.OSLER_DISPLAY_DIAGNOSIS %}
+
         <div class="col-md-4">
             <strong>Diagnosis:</strong> {{ workup.diagnosis }}
         </div>
         <div class="col-md-4">
             <strong>Dx Category:</strong> {{ workup.diagnosis_categories.iterator | join:", " }}
         </div>
+        {% endif %}
         <div class="col-md-4">
             <strong>Patient will Return:</strong> {{ workup.will_return | yesno }}
         </div>
@@ -97,7 +106,7 @@
             <strong>Physical Exam:</strong> {{workup.pe | linebreaksbr }}
         </div>
         <div class="col-md-6">
-            <strong>Labs (External):</strong> {{workup.labs_ordered_quest | linebreaksbr }}
+            <strong>Labs (External):</strong> {{workup.labs_ordered_external | linebreaksbr }}
         </div>
         <div class="col-md-6">
             <strong>Labs (In House):</strong> {{workup.labs_ordered_internal | linebreaksbr }}

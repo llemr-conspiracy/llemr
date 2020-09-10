@@ -47,7 +47,7 @@ Demographic Data: {{ demographics.patient.name }}
         </div>
         <div class="col-md-12">
             <strong>Chronic Conditions: </strong>
-            {% for condition in demographics.chronic_condition.all %}
+            {% for condition in demographics.chronic_conditions.all %}
               {{ condition }}
             {% endfor %}
         </div>

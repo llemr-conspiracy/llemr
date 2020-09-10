@@ -36,7 +36,7 @@ def wu_dict(user=None, units=False, clinic_day_pk=False, dx_category=False):
           'soc_hx': fake_text.generate(),
           'ros': "f", 'pe': "f", 'A_and_P': "f",
           'hr': '89', 'bp_sys': '120', 'bp_dia': '80', 'rr': '16', 't': '98',
-          'labs_ordered_internal': 'f', 'labs_ordered_quest': 'f',
+          'labs_ordered_internal': 'f', 'labs_ordered_external': 'f',
           'got_voucher': False,
           'got_imaging_voucher': False,
           'will_return': True,

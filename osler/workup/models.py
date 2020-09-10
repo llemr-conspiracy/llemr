@@ -205,7 +205,7 @@ class Workup(Note, AttestationMixin):
         help_text="When was the patient seen?")
 
     chief_complaint = models.CharField(max_length=1000, verbose_name="CC")
-    diagnosis = models.CharField(max_length=1000, verbose_name="Dx")
+    diagnosis = models.CharField(max_length=1000, verbose_name="Dx", blank=True, null=True)
     diagnosis_categories = models.ManyToManyField(DiagnosisType)
 
     HPI = models.TextField(verbose_name="HPI")
@@ -248,7 +248,7 @@ class Workup(Note, AttestationMixin):
 
     pe = models.TextField(verbose_name="Physical Examination")
 
-    labs_ordered_quest = models.TextField(
+    labs_ordered_external = models.TextField(
         blank=True, null=True, verbose_name="Labs Ordered Externally")
     labs_ordered_internal = models.TextField(
         blank=True, null=True, verbose_name="Labs Ordered Internally")

@@ -45,7 +45,7 @@ class ViewsExistTest(TestCase):
             dependents=4,
             currently_employed=True)
 
-        dg.chronic_condition.add(models.ChronicCondition.objects.all()[0])
+        dg.chronic_conditions.add(models.ChronicCondition.objects.all()[0])
         dg.resource_access.add(models.ResourceAccess.objects.all()[0])
         dg.save()
 

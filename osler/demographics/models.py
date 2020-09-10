@@ -65,7 +65,7 @@ class Demographics(models.Model):
 
     creation_date = models.DateField(blank=True, null=True)
 
-    chronic_condition = models.ManyToManyField(ChronicCondition, blank=True)
+    chronic_conditions = models.ManyToManyField(ChronicCondition, blank=True)
 
     has_insurance = models.BooleanField(null=True, blank=True)
 
