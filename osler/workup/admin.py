@@ -48,6 +48,10 @@ class BasicNoteAdmin(admin_utils.NoteAdmin):
         url = reverse('basic-note-detail', kwargs={'pk': obj.pk})
         return url
 
+@admin.register(models.Addendum)
+class WorkupAdmin(admin_utils.NoteAdmin):
+    pass
+
 
 for model in [models.ClinicType, models.DiagnosisType]:
     admin_utils.simplehistory_aware_register(model)

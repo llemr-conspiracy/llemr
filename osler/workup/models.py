@@ -15,6 +15,8 @@ from osler.users.utils import group_has_perm
 
 from simple_history.models import HistoricalRecords
 
+from django.utils.translation import gettext_lazy as _
+
 
 class DiagnosisType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
@@ -289,8 +291,6 @@ class Workup(Note, AttestationMixin):
         '''
         return self.chief_complaint
 
-    # TODO: this is not consistent with the written datetime that we see for
-    # the rest of the Note subclasses.
     def written_date(self):
         '''
         Returns the date (not datetime) this workup was written on.
@@ -302,3 +302,9 @@ class Workup(Note, AttestationMixin):
 
     def __str__(self):
         return self.patient.name() + " on " + str(self.clinic_day.clinic_date)
+
+class Addendum(Note):
+    '''Additional info to be associated with a workup'''
+
+    text = models.TextField()
+    workup = models.ForeignKey(Workup, verbose_name=_("Workup"), on_delete=models.CASCADE)

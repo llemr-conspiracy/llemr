@@ -174,9 +174,9 @@ class ViewsExistTest(TestCase):
             reverse('new-workup', args=(pt_id,)),
             data=wu_data)
 
-        # verify we're bounced back to workup-create
+        # verify we're bounced back to workup_create
         assert response.status_code == 200
-        self.assertTemplateUsed(response, 'workup/workup-create.html')
+        self.assertTemplateUsed(response, 'workup/workup_create.html')
         self.assertFormError(response, 'form', 'diagnosis_categories',
                              'This field is required.')
 

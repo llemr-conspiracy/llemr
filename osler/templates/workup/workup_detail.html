@@ -24,9 +24,10 @@ Workup: {{ workup.patient.name }}
             <a class="btn btn-primary" href="{% url 'workup-update' pk=workup.pk %}" role="button">Update</a>
             {% endif %}
             {% if not workup.signed and can_sign %}
-            <a class="btn btn-success" href="{% url 'workup-sign' pk=workup.pk %}" role="button">Attest</a>
+            <a class="btn btn-danger" href="{% url 'workup-sign' pk=workup.pk %}" role="button">Attest</a>
             {% endif %}
             <a class="btn btn-info" href="{% url 'core:new-action-item' pt_id=workup.patient.pk %}" role="button">Add Action Item</a>
+            <a class="btn btn-success" href="{% url 'new-addendum' wu_id=workup.pk pt_id=workup.patient.id %}" role="button">Add Addendum</a>
             {% if can_export_pdf %}
             <a class="btn btn-warning" href="{% url 'workup-pdf' pk=workup.pk %}" target="_blank" role="button">PDF</a>
             {% endif %}

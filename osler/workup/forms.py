@@ -320,6 +320,17 @@ class BasicNoteForm(ModelForm):
         self.helper.add_input(Submit('submit', 'Submit'))
 
 
+class AddendumForm(ModelForm):
+    class Meta(object):
+        model = models.Addendum
+        fields = ['text']
+
+    def __init__(self, *args, **kwargs):
+        super(AddendumForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+
 class ClinicDateForm(ModelForm):
     '''Form for the creation of a clinic date.'''
     class Meta(object):

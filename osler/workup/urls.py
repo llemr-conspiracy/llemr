@@ -81,7 +81,14 @@ unwrapped_urlconf = [
     re_path(
         r'^clindates/$',
         views.clinic_date_list,
-        name="clindate-list")
+        name="clindate-list"),
+
+    # ADDENDA
+    re_path(
+        r'^(?P<wu_id>[0-9]+)/addendum/(?P<pt_id>[0-9]+)/$',
+        views.AddendumCreate.as_view(),
+        name="new-addendum")
+    
 ]
 
 wrap_config = {}

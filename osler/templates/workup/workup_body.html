@@ -97,7 +97,7 @@
             <strong>Physical Exam:</strong> {{workup.pe | linebreaksbr }}
         </div>
         <div class="col-md-6">
-            <strong>Labs (Quest):</strong> {{workup.labs_ordered_quest | linebreaksbr }}
+            <strong>Labs (External):</strong> {{workup.labs_ordered_quest | linebreaksbr }}
         </div>
         <div class="col-md-6">
             <strong>Labs (In House):</strong> {{workup.labs_ordered_internal | linebreaksbr }}
@@ -145,5 +145,15 @@
             <strong>A and P:</strong> {{workup.A_and_P | linebreaksbr }}
         </div>
     </div>
+    <div class="row">
+        <h4>Addenda</h4>
+    </div>
+    {% for addendum in workup.addendum_set.all reversed %}
+    <div class="row">
+        <div class="col-md-12">
+            <strong>{{ addendum.author }} ({{ addendum.author_type }}) at {{ addendum.written_datetime }}:</strong> {{addendum.text| linebreaksbr }}
+        </div>
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}

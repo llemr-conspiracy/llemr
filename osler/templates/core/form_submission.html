@@ -5,9 +5,12 @@
 {% endblock %}
 
 {% block header %}
-<h1>New {{ note_type }} </h1>
+<h2>New {{ note_type }} </h2>
 <p class="lead">Add a new {{ note_type | lower }} for <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
 {% endblock %}
+
+<h1>New {{ note_type }} </h1>
+<p class="lead">Add a new {{ note_type | lower }} for <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
 
 {% block content %}
 <div class="container">

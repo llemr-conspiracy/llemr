@@ -96,7 +96,8 @@ def workup_detail(request, pk):
 class WorkupCreate(NoteFormView):
     '''A view for creating a new workup. Checks to see if today is a
     clinic date first, and prompts its creation if none exist.'''
-    template_name = 'workup/workup-create.html'
+    
+    template_name = 'workup/workup_create.html'
     form_class = forms.WorkupForm
     model = models.Workup
     note_type = 'Workup'
@@ -282,6 +283,32 @@ class BasicNoteUpdate(NoteUpdate):
     def get_success_url(self):
         note = self.object
         return reverse("basic-note-detail", args=(note.id, ))
+
+
+class AddendumCreate(NoteFormView):
+    template_name = 'core/form_submission.html'
+    form_class = forms.AddendumForm
+    note_type = 'Addendum'
+
+    def form_valid(self, form):
+        note = form.save(commit=False)
+
+        note.workup = get_object_or_404(models.Workup, pk=self.kwargs['wu_id'])
+        note.patient = note.workup.patient
+        note.author = self.request.user
+
+        if int(self.kwargs['pt_id']) != note.patient.id:
+            return HttpResponseServerError(
+                'Patient associated with workup does not match supplied patient primary key.')
+
+        active_role = get_active_role(self.request)
+        note.author_type = active_role
+
+        note.save()
+        form.save_m2m()
+
+        return HttpResponseRedirect(reverse("workup",
+                                            args=(self.kwargs['wu_id'],)))
 
 
 class ClinicDateCreate(FormView):
