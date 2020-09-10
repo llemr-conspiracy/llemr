@@ -188,7 +188,7 @@ class ViewsExistTest(TestCase):
 
 class TestABasicNoteViews(TestCase):
     '''
-    Verify that views involving the workup are functioning.
+    Verify that views involving the basic note models are functioning.
     '''
     fixtures = ['workup', 'core']
 
@@ -284,3 +284,44 @@ class TestABasicNoteViews(TestCase):
             note.signer = None
             note.save()
 
+class TestAddendum(TestCase):
+    '''
+    Verify that views involving the addendum model are functioning.
+    '''
+    fixtures = ['workup', 'core']
+
+    def setUp(self):
+
+        self.user = build_user()
+        log_in_user(self.client, self.user)
+
+        self.note_data = note_dict(user=self.user)
+
+        models.ClinicDate.objects.create(
+            clinic_type=models.ClinicType.objects.first(),
+            clinic_date=now().date())
+
+        self.wu = models.Workup.objects.create(**wu_dict(user=self.user))
+        self.form_data = note_dict(user=self.user)
+
+    def test_urls(self):
+
+        model = models.Addendum
+
+        pt = self.wu.patient
+
+        n_notes = model.objects.count()
+
+        url = reverse('new-addendum', args=(self.wu.id,pt.id))
+        response = self.client.get(url)
+        assert response.status_code == 200
+
+        response = self.client.post(url, self.form_data)
+        self.assertRedirects(response,
+                             reverse('workup', args=(self.wu.id,)))
+        assert model.objects.count() == n_notes + 1
+
+        url = reverse('new-addendum', args=(self.wu.id,pt.id+1))
+        response = self.client.post(url, self.form_data)
+        assert response.status_code == 500
+        assert model.objects.count() == n_notes + 1
