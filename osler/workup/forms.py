@@ -186,6 +186,7 @@ class WorkupForm(ModelForm):
 
             Row(HTML('<h3>History</h3>'),
                 Div('chief_complaint', css_class='col-sm-6'),
+                Div('diagnosis', css_class='col-sm-6'),
                 Div(InlineCheckboxes('diagnosis_categories'),
                     css_class='col-sm-12'),
                 Div('HPI', css_class='col-xs-12'),
@@ -237,6 +238,13 @@ class WorkupForm(ModelForm):
 
         self.fields['ros'].widget.attrs['rows'] = 15
         self.fields['pe'].widget.attrs['rows'] = 14
+
+        if not settings.OSLER_DISPLAY_DIAGNOSIS:
+            # delete diagnosis
+            self.helper.layout[1].pop(2)
+            # delete diagnosis category
+            self.helper.layout[1].pop(2)
+
 
     def clean(self):
         """Use form's clean hook to verify that fields in Workup are

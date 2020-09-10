@@ -206,7 +206,7 @@ class Workup(Note, AttestationMixin):
 
     chief_complaint = models.CharField(max_length=1000, verbose_name="CC")
     diagnosis = models.CharField(max_length=1000, verbose_name="Dx", blank=True, null=True)
-    diagnosis_categories = models.ManyToManyField(DiagnosisType)
+    diagnosis_categories = models.ManyToManyField(DiagnosisType, verbose_name="Diagnosis Categories", blank=True)
 
     HPI = models.TextField(verbose_name="HPI")
     PMH_PSH = models.TextField(verbose_name="PMH/PSH")

@@ -33,7 +33,8 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <strong>Chronic Conditions:</strong> {{ workup.patient.demographics.chronic_conditions.iterator | join:", " }}
+            <strong>Chronic Conditions:</strong> 
+            {{ workup.patient.demographics.chronic_conditions.iterator | join:", " }}
         </div>
 
     </div>
