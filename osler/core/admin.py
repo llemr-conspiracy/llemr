@@ -31,24 +31,32 @@ class PatientDataDashboardAdmin(admin.ModelAdmin):
             qs = response.context_data['cl'].queryset
         except (AttributeError, KeyError):
             return response
+        patients = models.Patient.objects.all()
+        
+        frankie = patients.filter(pk=1)
+        workups = Workup.objects.filter(patient__in=list(frankie.values_list('pk', flat=True))) #gets workups based on patient pk (aka get frankie's workups)
+        print(frankie)
+        # models.PatientDataSummary.objects.create(bp_readings=[130,120,150])
 
-        patient_data = {
-            # 'age': age(qs.values('date_of_birth'))
-            # (now().date() - qs.values('date_of_birth')).days // 365
-            # 'name': models.Person.gender(self)
-        }
+        # metrics = {
+        #     # 'age': age(qs.values('date_of_birth'))
+        #     # (now().date() - qs.values('date_of_birth')).days // 365
+        #     # 'name': models.Person.gender(self)
+        #     'bp': q.values('bp_sys')
+        # }
         
         # for patient in patients:
         #     patient.
         # for patient in models.Patient.objects.raw('SELECT * FROM core_patient'):
         #     print(patient.gender)
-        q = Workup.objects.all()
-        print(q[0].bp_sys)
         
-        response.context_data['age'] = list(
-            q
-            # .annotate(**patient_data)
+        response.context_data['data'] = list(
+            patients
+            
         )
+        # response.context_data['bp'] = list(
+        #     q.values('bp_sys')
+        # )
         
 
         return response

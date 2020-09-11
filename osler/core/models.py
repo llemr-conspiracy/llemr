@@ -5,9 +5,11 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_user_model
+from django.contrib.postgres.fields import ArrayField
 from django.utils.timezone import now
 from django.utils.text import slugify
 from django.urls import reverse
+
 
 from simple_history.models import HistoricalRecords
 
@@ -521,8 +523,10 @@ class ActionItem(AbstractActionItem):
         return " ".join(["AI for", str(self.patient) + ":",
                          str(self.instruction), "due on", str(self.due_date)])
 
+
 class PatientDataSummary(Patient):
     class Meta:
         proxy = True
         verbose_name = 'Patient Data Dashboard'
         verbose_name_plural = 'Patient Data Dashboard'
+
