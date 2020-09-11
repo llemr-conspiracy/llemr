@@ -40,7 +40,9 @@ Osler: {{ title | default:"All Patients"}}
                   <tr>
                       <td><a href="{% url 'core:patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
                       <td>{{ patient.age }}/{{patient.gender}}</td>
-                      <td>{{ patient.case_managers.all | join:"; " }}</td>
+                      {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
+                        <td>{{ patient.case_managers.all | join:"; " }}</td>
+                      {% endif%}
                       <td>
                           {% if latest_workup %}
                               <a href="{% url 'workup' pk=latest_workup.pk %}">Seen {{ latest_workup.clinic_day.clinic_date }}</a>: {{latest_workup.chief_complaint}}
