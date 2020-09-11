@@ -171,6 +171,12 @@ class WorkupCreate(NoteFormView):
                 initial[field] = settings.OSLER_WORKUP_COPY_FORWARD_MESSAGE.\
                     format(date=date_string,
                            contents=getattr(wu_previous, field))
+        else:
+            if hasattr(pt, 'demographics') and pt.demographics.chronic_conditions.exists():
+                conditions = [str(x) for x in pt.demographics.chronic_conditions.all()]
+                initial['PMH_PSH'] = 'Chronic condition(s): ' + ', '.join(conditions)
+            else:
+                initial['PMH_PSH'] = 'No chronic conditions reported during intake.'
 
         return initial
 

@@ -168,6 +168,7 @@ class ViewsExistTest(TestCase):
         # first, craft a workup that has units, but fail to set the
         # diagnosis categories, so that it will fail to be accepted.
         wu_data = wu_dict(units=True)
+        del wu_data['chief_complaint']
         pt_id = Patient.objects.first().pk
 
         response = self.client.post(
@@ -177,7 +178,7 @@ class ViewsExistTest(TestCase):
         # verify we're bounced back to workup_create
         assert response.status_code == 200
         self.assertTemplateUsed(response, 'workup/workup_create.html')
-        self.assertFormError(response, 'form', 'diagnosis_categories',
+        self.assertFormError(response, 'form', 'chief_complaint',
                              'This field is required.')
 
         for unit in ['height_units', 'weight_units', 'temperature_units']:
