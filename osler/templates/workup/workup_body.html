@@ -110,6 +110,7 @@
     </div>
     <div class="row">
         <h4>Discharge</h4>
+        {% if settings.OSLER_DISPLAY_VOUCHER %}
         <div class="col-md-4">
             <strong>Patient got Voucher:</strong> {{workup.got_voucher | yesno }}
         </div>
@@ -128,6 +129,7 @@
         <div class="col-md-4">
             <strong>Pt Pays:</strong> {{workup.patient_pays_imaging | default_if_none:"n/a" }}
         </div>
+        {% endif %}
         {% endif %}
         <div class="col-md-4">
             <strong>Referral Type:</strong> 

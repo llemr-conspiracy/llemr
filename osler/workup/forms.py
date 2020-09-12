@@ -245,6 +245,13 @@ class WorkupForm(ModelForm):
             # delete diagnosis category
             self.helper.layout[1].pop(2)
 
+        if not settings.OSLER_DISPLAY_VOUCHERS:
+            # delete medication voucher
+            self.helper.layout[4].pop(5)
+            # delete imaging voucher
+            self.helper.layout[4].pop(5)
+
+
 
     def clean(self):
         """Use form's clean hook to verify that fields in Workup are
