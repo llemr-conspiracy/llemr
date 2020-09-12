@@ -9,7 +9,7 @@
   },
   {
     "model": "users.user",
-    "pk": 2,
+    "pk": 1,
     "fields": {
       "name": "Annie Attending",
       "phone": "555-233-1234",
@@ -57,7 +57,7 @@
     "fields": {
       "clinic_day": 1,
       "chief_complaint": "High BP 1",
-      "diagnosis": "MI",
+      "diagnosis": "hypertension",
       "HPI": "abc",
       "PMH_PSH": "abc",
       "meds": "abc",
@@ -79,7 +79,7 @@
       "will_return": true,
       "author": 1,
       "author_type": 2,
-      "patient": 1,
+      "patient": 2,
       "written_datetime": "2019-09-10",
       "last_modified": "2019-09-10"
     }
@@ -90,7 +90,7 @@
     "fields": {
       "clinic_day": 1,
       "chief_complaint": "High BP 2",
-      "diagnosis": "MI",
+      "diagnosis": "hypertension",
       "HPI": "abc",
       "PMH_PSH": "abc",
       "meds": "abc",
@@ -123,7 +123,7 @@
     "fields": {
       "clinic_day": 1,
       "chief_complaint": "High BP 3",
-      "diagnosis": "MI",
+      "diagnosis": "hypertension",
       "HPI": "abc",
       "PMH_PSH": "abc",
       "meds": "abc",
@@ -145,9 +145,25 @@
       "will_return": true,
       "author": 1,
       "author_type": 2,
-      "patient": 2,
+      "patient": 3,
       "written_datetime": "2019-09-10",
       "last_modified": "2019-09-10"
     }
+  },
+  {
+    "model": "demographics.chroniccondition",
+    "pk": 1,
+    "fields": {
+      "name": "hypertension"
+    }
+  },
+  {
+    "model": "demographics.demographics",
+    "pk": 1,
+    "fields": {
+      "patient": 2,
+      "chronic_condition": ["hypertension"]
+    }
   }
 ]
+
