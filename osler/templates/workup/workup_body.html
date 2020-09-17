@@ -20,6 +20,17 @@
         {% endif%}
     </div>
     <div class="row">
+        <div class="col-md-4">
+            <strong>Age: </strong> {{workup.patient.age}} 
+        </div>
+        <div class="col-md-4">
+            <strong>Gender: </strong> {{ workup.patient.gender }}
+        </div>
+        <div class="col-md-4">
+            <strong>Ethnicity: </strong> {{ workup.patient.ethnicities.iterator | join:", " }}
+        </div>
+    </div>
+    <div class="row">
         <h4>At a Glance</h4>
         <div class="col-md-4">
             <strong>Chief Complaint:</strong> {{workup.chief_complaint}}
@@ -40,9 +51,11 @@
             <strong>Dx Category:</strong> {{ workup.diagnosis_categories.iterator | join:", " }}
         </div>
         {% endif %}
+        {% if settings.OSLER_DISPLAY_WILL_RETURN %}
         <div class="col-md-4">
             <strong>Patient will Return:</strong> {{ workup.will_return | yesno }}
         </div>
+        {% endif %}
     </div>
     <div class="row">
         <h4>H and P</h4>
@@ -99,18 +112,22 @@
             <strong>Physical Exam:</strong> {{workup.pe | linebreaksbr }}
         </div>
         <div class="col-md-6">
-            <strong>Labs (External):</strong> {{workup.labs_ordered_external | linebreaksbr }}
+            <strong>Labs (Internal):</strong> {{workup.labs_ordered_internal | linebreaksbr }}
         </div>
         <div class="col-md-6">
-            <strong>Labs (In House):</strong> {{workup.labs_ordered_internal | linebreaksbr }}
+            <strong>Labs (External):</strong> {{workup.labs_ordered_external | linebreaksbr }}
         </div>
+    </div>
+    <div class="row">
+        <h4>Discharge</h4>
+    </div>
+    <div class="row">
         <div class="col-md-12">
             <strong>Rx:</strong> {{workup.rx | linebreaksbr }}
         </div>
     </div>
     <div class="row">
-        <h4>Discharge</h4>
-        {% if settings.OSLER_DISPLAY_VOUCHER %}
+        {% if settings.OSLER_DISPLAY_VOUCHERS %}
         <div class="col-md-4">
             <strong>Patient got Voucher:</strong> {{workup.got_voucher | yesno }}
         </div>
@@ -131,6 +148,7 @@
         </div>
         {% endif %}
         {% endif %}
+        {% if settings.OSLER_DISPLAY_REFERRALS %}
         <div class="col-md-4">
             <strong>Referral Type:</strong> 
             {% for type in workup.referral_type.all %}
@@ -143,6 +161,7 @@
              {{ location.name }}
             {% endfor %}
         </div>
+        {% endif %}
     </div>
     <div class="row">
         <div class="col-md-12">

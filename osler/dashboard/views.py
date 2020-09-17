@@ -7,6 +7,7 @@ from django.conf import settings
 
 from osler.workup.models import ClinicDate
 from osler.core.models import Patient
+from osler.core.views import all_patients
 
 from osler.users.utils import get_active_role
 
@@ -27,12 +28,9 @@ def dashboard_dispatch(request):
 
 
 def dashboard_active(request):
+    """Calls active patient dashboard filtered by patients needing workups."""
 
-    active_patients = Patient.objects.filter(needs_workup=True).prefetch_related()
-
-    return render(request,
-                  'dashboard/dashboard-active.html',
-                  {'patients': active_patients})
+    return all_patients(request, title='Active Patients', active=True)
 
 
 def dashboard_attending(request):

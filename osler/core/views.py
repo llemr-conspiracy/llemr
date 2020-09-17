@@ -424,19 +424,22 @@ def patient_detail(request, pk):
         context)
 
 
-def all_patients(request):
+def all_patients(request, title='All Patients', active=False):
     """
     Query is written to minimize hits to the database; number of db hits can be
         see on the django debug toolbar.
     """
-    patient_list = core_models.Patient.objects.all() \
+    patient_list = core_models.Patient.objects.all()
+    if active:
+        patient_list = patient_list.filter(needs_workup=True)
+    patient_list = patient_list \
         .order_by('last_name') \
         .select_related('gender') \
         .prefetch_related('case_managers') \
         .prefetch_related(Prefetch(
             'workup_set',
             queryset=workupmodels.Workup.objects.order_by(
-                'clinic_day__clinic_date'))) \
+                '-clinic_day__clinic_date'))) \
         .prefetch_related('actionitem_set')
 
     # Don't know how to prefetch history
@@ -445,7 +448,10 @@ def all_patients(request):
 
     return render(request,
                   'core/all_patients.html',
-                  {'object_list': patient_list})
+                  {
+                    'object_list': patient_list,
+                    'title': title
+                  })
 
 
 def patient_activate_detail(request, pk):

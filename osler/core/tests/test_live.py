@@ -52,7 +52,7 @@ class LiveTesting(SeleniumLiveTestCase):
             '//button[@type="submit"]').click()
 
         WebDriverWait(self.selenium, self.DEFAULT_WAIT_TIME).until(
-            EC.presence_of_element_located((By.ID, "id_pt_1")))
+            EC.presence_of_element_located((By.ID, "all-patients-table")))
 
         assert self.selenium.current_url == '%s%s' % (self.live_server_url, reverse('dashboard-active'))
 
