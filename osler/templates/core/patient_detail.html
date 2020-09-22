@@ -150,10 +150,10 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
     <div class="panel-group">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">Workups ({{ patient.workup_set.all | length }})</a></h4>
+          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">Completed Workups ({{ patient.completed_workup_set.count }})</a></h4>
         </div>
         <div id="collapse1" class="panel-collapse collapse">
-          {% for note in patient.workup_set.all %}
+          {% for note in patient.completed_workup_set %}
           <div class="panel-body">
             <p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
             <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
@@ -161,9 +161,21 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
             <p class="text-right">
               <a href="{% url 'workup-pdf' pk=note.pk %}" target="_blank"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
               &nbsp;|&nbsp;
-              <a href="{% url 'admin:workup_workup_change' note.id %}" target="_blank"><i>Edit</i></a>
             </p>
             {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse13">Pending Workups ({{ patient.pending_workup_set.count }})</a></h4>
+        </div>
+        <div id="collapse13" class="panel-collapse collapse">
+          {% for note in patient.pending_workup_set %}
+          <div class="panel-body">
+            <p><a href="{% url 'workup-update' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
+            <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
           </div>
           {% endfor %}
         </div>

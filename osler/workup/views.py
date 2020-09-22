@@ -174,9 +174,9 @@ class WorkupCreate(NoteFormView):
         else:
             if hasattr(pt, 'demographics') and pt.demographics.chronic_conditions.exists():
                 conditions = [str(x) for x in pt.demographics.chronic_conditions.all()]
-                initial['PMH_PSH'] = 'Chronic condition(s): ' + ', '.join(conditions)
+                initial['pmh_psh'] = 'Chronic condition(s): ' + ', '.join(conditions)
             else:
-                initial['PMH_PSH'] = 'No chronic conditions reported during intake.'
+                initial['pmh_psh'] = 'No chronic conditions reported during intake.'
 
         return initial
 
@@ -189,7 +189,7 @@ class WorkupCreate(NoteFormView):
         wu.author = self.request.user
         wu.author_type = active_role
 
-        if self.model.group_can_sign(active_role):
+        if not wu.is_pending and self.model.group_can_sign(active_role):
             wu.sign(self.request.user, active_role)
 
         wu.save()
@@ -221,7 +221,10 @@ class WorkupUpdate(NoteUpdate):
                                         args=(kwargs['pk'],)))
 
     def get_success_url(self):
-        return reverse('workup', args=(self.object.id,))
+        if self.object.is_pending:
+            return reverse('core:patient-detail', args=(self.object.patient.id,))
+        else:
+            return reverse('workup', args=(self.object.id,))
 
 
 class AttestableBasicNoteCreate(NoteFormView):

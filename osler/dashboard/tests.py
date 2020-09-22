@@ -33,9 +33,9 @@ class TestAttendingDashboard(TestCase):
         log_in_user(self.client, self.attending)
 
         self.wu_info = dict(
-            chief_complaint="SOB", diagnosis="MI", HPI="A", PMH_PSH="B",
+            chief_complaint="SOB", diagnosis="MI", hpi="A", pmh_psh="B",
             meds="C", allergies="D", fam_hx="E", soc_hx="F", ros="", pe="",
-            A_and_P="")
+            a_and_p="")
 
         # prepare a patient with an unsigned wu today, in addition to
         # what comes in in the fixture

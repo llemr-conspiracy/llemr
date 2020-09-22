@@ -295,6 +295,12 @@ class Patient(Person):
 
         return followups
 
+    def pending_workup_set(self):
+        return self.workup_set.filter(is_pending=True)
+    
+    def completed_workup_set(self):
+        return self.workup_set.filter(is_pending=False)
+
     def latest_workup(self):
         """
         Keeping this method because it is used by WorkupCreate.get_initial in
@@ -303,8 +309,10 @@ class Patient(Person):
             gets all patients in prefetch_related instead of requesting for
             latest_workup individually.
         """
-        wu_set = self.workup_set
-        return wu_set.order_by("-clinic_day__clinic_date").first()
+        if self.completed_workup_set().exists():
+            return self.completed_workup_set().first()
+        else:
+            return None
 
     def notes(self):
         '''Returns a list of all the notes (workups and followups) associated

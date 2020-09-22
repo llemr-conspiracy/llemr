@@ -185,6 +185,7 @@ class Workup(Note, AttestationMixin):
             ('export_pdf_Workup', 'Can export note PDF'),
             ('sign_Workup', "Can sign note")
             ]
+        ordering = ['-clinic_day__clinic_date']
 
     attending = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -204,17 +205,17 @@ class Workup(Note, AttestationMixin):
         on_delete=models.PROTECT,
         help_text="When was the patient seen?")
 
-    chief_complaint = models.CharField(max_length=1000, verbose_name="CC")
-    diagnosis = models.CharField(max_length=1000, verbose_name="Dx", blank=True, null=True)
+    chief_complaint = models.CharField(max_length=1000, verbose_name="CC", blank=True)
+    diagnosis = models.CharField(max_length=1000, verbose_name="Dx", blank=True)
     diagnosis_categories = models.ManyToManyField(DiagnosisType, verbose_name="Diagnosis Categories", blank=True)
 
-    HPI = models.TextField(verbose_name="HPI")
-    PMH_PSH = models.TextField(verbose_name="PMH/PSH")
-    meds = models.TextField(verbose_name="Medications")
-    allergies = models.TextField()
-    fam_hx = models.TextField(verbose_name="Family History")
-    soc_hx = models.TextField(verbose_name="Social History")
-    ros = models.TextField(verbose_name="ROS")
+    hpi = models.TextField(verbose_name="HPI", blank=True)
+    pmh_psh = models.TextField(verbose_name="PMH/PSH", blank=True)
+    meds = models.TextField(verbose_name="Medications", blank=True)
+    allergies = models.TextField(blank=True)
+    fam_hx = models.TextField(verbose_name="Family History", blank=True)
+    soc_hx = models.TextField(verbose_name="Social History", blank=True)
+    ros = models.TextField(verbose_name="ROS", blank=True)
 
     # represented internally in per min
     hr = models.PositiveSmallIntegerField(
@@ -246,15 +247,14 @@ class Workup(Note, AttestationMixin):
         max_digits=5, decimal_places=1,
         blank=True, null=True)
 
-    pe = models.TextField(verbose_name="Physical Examination")
+    pe = models.TextField(verbose_name="Physical Examination", blank=True)
 
     labs_ordered_external = models.TextField(
-        blank=True, null=True, verbose_name="Labs Ordered Externally")
+        blank=True, verbose_name="Labs Ordered Externally")
     labs_ordered_internal = models.TextField(
-        blank=True, null=True, verbose_name="Labs Ordered Internally")
+        blank=True, verbose_name="Labs Ordered Internally")
 
-    rx = models.TextField(blank=True, null=True,
-                          verbose_name="Prescription Orders")
+    rx = models.TextField(blank=True, verbose_name="Prescription Orders")
 
     got_voucher = models.BooleanField(default=False)
     voucher_amount = models.DecimalField(
@@ -280,7 +280,9 @@ class Workup(Note, AttestationMixin):
     will_return = models.BooleanField(default=False,
                                       help_text="Will the pt. return to SNHC?")
 
-    A_and_P = models.TextField()
+    a_and_p = models.TextField(verbose_name="A and P", blank=True)
+
+    is_pending = models.BooleanField(default=False)
 
     history = HistoricalRecords()
 

@@ -189,8 +189,8 @@ class WorkupForm(ModelForm):
                 Div('diagnosis', css_class='col-sm-6'),
                 Div(InlineCheckboxes('diagnosis_categories'),
                     css_class='col-sm-12'),
-                Div('HPI', css_class='col-xs-12'),
-                Div('PMH_PSH', css_class='col-xs-12'),
+                Div('hpi', css_class='col-xs-12'),
+                Div('pmh_psh', css_class='col-xs-12'),
                 Div('fam_hx', css_class='col-md-6'),
                 Div('soc_hx', css_class='col-md-6'),
                 Div('meds', css_class='col-md-6'),
@@ -217,7 +217,7 @@ class WorkupForm(ModelForm):
                 Div('pe', css_class='col-xs-12')),
 
             Row(HTML('<h3>Assessment, Plan, & Orders</h3>'),
-                Div('A_and_P', css_class='col-xs-12'),
+                Div('a_and_p', css_class='col-xs-12'),
                 Div('rx', css_class='col-md-4'),
                 Div('labs_ordered_internal', css_class='col-md-4'),
                 Div('labs_ordered_external', css_class='col-md-4'),
@@ -233,7 +233,8 @@ class WorkupForm(ModelForm):
                     css_class='col-xs-6')
                 ),
 
-            Submit('submit', 'Save', css_class='btn btn-success')
+            Submit('pending', 'Save for Later', css_class='btn btn-warning'),
+            Submit('complete', 'Submit', css_class='btn btn-success')
         )
 
         self.fields['ros'].widget.attrs['rows'] = 15
@@ -259,6 +260,26 @@ class WorkupForm(ModelForm):
         given)."""
 
         cleaned_data = super(WorkupForm, self).clean()
+
+        if 'pending' in self.data:
+            cleaned_data['is_pending'] = True
+            return
+
+        required_fields = [
+            'chief_complaint', 
+            'hpi', 
+            'pmh_psh',
+            'meds',
+            'allergies',
+            'fam_hx',
+            'soc_hx',
+            'ros',
+            'pe',
+            'a_and_p'
+            ]
+        for field in required_fields:
+            if not cleaned_data.get(field):
+                self.add_error(field, _("This field is required"))
 
         # we allow specification of units when the measurement is not given
         # because you cannot uncheck radios and the converter methods accept
@@ -298,7 +319,10 @@ class WorkupForm(ModelForm):
                 cleaned_data['height'] = cm
 
         for field in ['ros', 'pe'] + settings.OSLER_WORKUP_COPY_FORWARD_FIELDS:
-            cleaned_data[field] = cleaned_data.get(field).strip()
+            user_input = cleaned_data.get(field)
+            if not user_input:
+                continue
+            cleaned_data[field] = user_input.strip()
             if "UPDATE" in cleaned_data.get(field):
                 self.add_error(field, _("Please delete the heading and update contents as necessary"))
         

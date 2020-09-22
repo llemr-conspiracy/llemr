@@ -154,7 +154,7 @@ class PatientUpdate(UpdateView):
 class PreIntakeSelect(ListView):
     """Allows users to see all patients with similar name to a
     particular patient first and last name. Allows user to open one of
-    the simmilarly named patients, or create a new patient
+    the similarly named patients, or create a new patient
     """
     template_name = 'core/preintake-select.html'
     new_pt_url = ""
@@ -436,10 +436,7 @@ def all_patients(request, title='All Patients', active=False):
         .order_by('last_name') \
         .select_related('gender') \
         .prefetch_related('case_managers') \
-        .prefetch_related(Prefetch(
-            'workup_set',
-            queryset=workupmodels.Workup.objects.order_by(
-                '-clinic_day__clinic_date'))) \
+        .prefetch_related('workup_set') \
         .prefetch_related('actionitem_set')
 
     # Don't know how to prefetch history
