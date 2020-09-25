@@ -279,7 +279,7 @@ class WorkupForm(ModelForm):
             ]
         for field in required_fields:
             if not cleaned_data.get(field):
-                self.add_error(field, _("This field is required"))
+                self.add_error(field, _("This field is required."))
 
         # we allow specification of units when the measurement is not given
         # because you cannot uncheck radios and the converter methods accept

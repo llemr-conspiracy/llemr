@@ -17,7 +17,7 @@ class WorkupAdmin(admin_utils.NoteAdmin):
     date_hierarchy = 'written_datetime'
 
     list_display = ('chief_complaint', 'written_datetime', 'patient',
-                    'author', 'clinic_day', 'attending', 'signed')
+                    'author', 'clinic_day', 'attending', 'signed', 'is_pending')
 
     readonly_fields = admin_utils.NoteAdmin.readonly_fields + (
         'author', 'signed_date', 'signer')
@@ -49,7 +49,7 @@ class BasicNoteAdmin(admin_utils.NoteAdmin):
         return url
 
 @admin.register(models.Addendum)
-class WorkupAdmin(admin_utils.NoteAdmin):
+class AddendumAdmin(admin_utils.NoteAdmin):
     pass
 
 

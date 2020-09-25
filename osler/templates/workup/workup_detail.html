@@ -5,7 +5,7 @@ Workup: {{ workup.patient.name }}
 {% endblock %}
 
 {% block header %}
-    <h1>Workup on <a href="{% url 'core:patient-detail' pk=workup.patient.id %}">{{ workup.patient.name }}</a></h1>
+    <h1>{% if workup.is_pending %}Pending {% endif %}Workup on <a href="{% url 'core:patient-detail' pk=workup.patient.id %}">{{ workup.patient.name }}</a></h1>
     <p class="lead">Seen on {{ workup.clinic_day.clinic_date }}</p>
     {% if workup.signed %}
     <p class="lead">Attested by {{workup.signer}} on {{workup.signed_date}} </p>
@@ -18,6 +18,11 @@ Workup: {{ workup.patient.name }}
 
 <div class="container">
     <div class="row text-center">
+        {% if workup.is_pending %}
+        <div class="btn-group">
+            <a class="btn btn-success" href="{% url 'workup-update' pk=workup.pk %}" role="button">Finish</a>
+        </div>
+        {% else %}
         <h4>Actions</h4>
         <div class="btn-group">
             {% if workup.signed and can_sign or not workup.signed %}
@@ -32,6 +37,7 @@ Workup: {{ workup.patient.name }}
             <a class="btn btn-warning" href="{% url 'workup-pdf' pk=workup.pk %}" target="_blank" role="button">PDF</a>
             {% endif %}
         </div>
+        {% endif %}
     </div>
 </div>
 
