@@ -60,6 +60,9 @@
             <li><a href="{% url 'appointment-list' %}">Appointments</a></li>
           {% endif %}
           <li><a href="{% url 'about' %}">About</a></li>
+          {% if settings.OSLER_DISPLAY_ATTENDANCE %}
+            <li><a href={{ settings.OSLER_ATTENDANCE_URL }} target="_blank">Attendance</a></li>
+          {% endif %}
         </ul>
 				{% if user.is_authenticated %}
 				<ul class="nav navbar-nav pull-right">

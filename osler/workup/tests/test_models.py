@@ -81,5 +81,15 @@ class TestAttestations(TestCase):
 
             note.signer = None
 
-        
+    def test_pending_wu_signing(self):  
+        """Pending workups should not be able to be signed."""
+
+        self.wu.is_pending = True
+        self.wu.save()
+
+        user = build_user([user_factories.AttendingGroupFactory])
+        group = user.groups.first()
+
+        with self.assertRaises(ValueError):
+            self.wu.sign(user, group)
 

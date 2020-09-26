@@ -305,6 +305,13 @@ class Workup(Note, AttestationMixin):
     def __str__(self):
         return self.patient.name() + " on " + str(self.clinic_day.clinic_date)
 
+    def sign(self, user, group):
+        if not self.is_pending:
+            super().sign(user, group)
+        else:
+            raise ValueError("Pending workups cannot be signed.")
+
+
 class Addendum(Note):
     '''Additional info to be associated with a workup'''
 

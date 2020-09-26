@@ -186,8 +186,34 @@ class ViewsExistTest(TestCase):
 
             assert response.context['form'][unit].value() == wu_data[unit]
 
+    def test_pending_note_submit(self):
 
-class TestABasicNoteViews(TestCase):
+        # pull standard workup data, but delete required field
+        wu_data = wu_dict(units=True, clinic_day_pk=True, dx_category=True)
+        wu_data['pending'] = ''
+        del wu_data['chief_complaint']
+
+        pt = Patient.objects.first()
+
+        prev_count = pt.workup_set.count()
+        prev_completed_count = pt.completed_workup_set().count()
+        prev_pending_count = pt.pending_workup_set().count()
+
+        response = self.client.post(
+            reverse('new-workup', args=(pt.id,)),
+            data=wu_data)
+
+        self.assertRedirects(response,
+                    reverse('core:patient-detail', args=(pt.id,)))
+
+        # new pending workup should be created which is not included
+        # in set of completed workups
+        assert pt.workup_set.count() == prev_count + 1
+        assert pt.completed_workup_set().count() == prev_completed_count
+        assert pt.pending_workup_set().count() == prev_pending_count + 1
+
+
+class TestBasicNoteViews(TestCase):
     '''
     Verify that views involving the basic note models are functioning.
     '''
