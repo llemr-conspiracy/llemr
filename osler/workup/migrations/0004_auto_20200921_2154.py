@@ -36,26 +36,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='historicalworkup',
-            name='diagnosis',
-            field=models.CharField(blank=True, default='', max_length=1000, verbose_name='Dx'),
-            preserve_default=False,
-        ),
-        migrations.AlterField(
-            model_name='historicalworkup',
             name='fam_hx',
             field=models.TextField(blank=True, verbose_name='Family History'),
-        ),
-        migrations.AlterField(
-            model_name='historicalworkup',
-            name='labs_ordered_external',
-            field=models.TextField(blank=True, default='', verbose_name='Labs Ordered Externally'),
-            preserve_default=False,
-        ),
-        migrations.AlterField(
-            model_name='historicalworkup',
-            name='labs_ordered_internal',
-            field=models.TextField(blank=True, default='', verbose_name='Labs Ordered Internally'),
-            preserve_default=False,
         ),
         migrations.AlterField(
             model_name='historicalworkup',
@@ -95,26 +77,8 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='workup',
-            name='diagnosis',
-            field=models.CharField(blank=True, default='', max_length=1000, verbose_name='Dx'),
-            preserve_default=False,
-        ),
-        migrations.AlterField(
-            model_name='workup',
             name='fam_hx',
             field=models.TextField(blank=True, verbose_name='Family History'),
-        ),
-        migrations.AlterField(
-            model_name='workup',
-            name='labs_ordered_external',
-            field=models.TextField(blank=True, default='', verbose_name='Labs Ordered Externally'),
-            preserve_default=False,
-        ),
-        migrations.AlterField(
-            model_name='workup',
-            name='labs_ordered_internal',
-            field=models.TextField(blank=True, default='', verbose_name='Labs Ordered Internally'),
-            preserve_default=False,
         ),
         migrations.AlterField(
             model_name='workup',
