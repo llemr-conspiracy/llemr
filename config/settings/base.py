@@ -367,4 +367,8 @@ OSLER_DISPLAY_VOUCHERS = True
 OSLER_DISPLAY_WILL_RETURN = True
 OSLER_DISPLAY_ATTENDANCE = False
 
-OSLER_ATTENDANCE_URL = 'https://www.wustl.edu'
+OSLER_ATTENDANCE_URL = env(
+    "OSLER_ATTENDANCE_URL",
+    default="https://www.wustl.edu",
+)
+
