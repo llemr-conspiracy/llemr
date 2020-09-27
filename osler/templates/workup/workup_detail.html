@@ -20,7 +20,7 @@ Workup: {{ workup.patient.name }}
     <div class="row text-center">
         {% if workup.is_pending %}
         <div class="btn-group">
-            <a class="btn btn-success" href="{% url 'workup-update' pk=workup.pk %}" role="button">Finish</a>
+            <a class="btn btn-success" href="{% url 'workup-update' pk=workup.pk %}" role="button">Update</a>
         </div>
         {% else %}
         <h4>Actions</h4>
