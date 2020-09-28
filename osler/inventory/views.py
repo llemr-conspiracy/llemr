@@ -196,7 +196,6 @@ def export_csv(request):
 def export_dispensing_history(request):
     start_date = request.POST.get('start_date')
     end_date = request.POST.get('end_date')
-    print(end_date)
 
     recent_dispense_histories = models.DispenseHistory.objects.exclude(
         written_datetime__gt=datetime.datetime.strptime(end_date, '%Y-%m-%d') + datetime.timedelta(days=1)).filter(written_datetime__gte=start_date)
