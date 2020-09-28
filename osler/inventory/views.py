@@ -20,7 +20,7 @@ from . import utils
 
 from tempfile import NamedTemporaryFile
 import csv
-from datetime import date
+from datetime import date, timedelta
 
 # Create your views here.
 
@@ -155,14 +155,19 @@ def export_csv(request):
         select_related('unit').\
         select_related('category').\
         select_related('manufacturer').\
-        order_by('category', 'name')
+        order_by('category', 'name', 'dose', 'expiration_date')
+    
+    day_interval = date.today() - timedelta(days=10)
+    recently_dispensed = models.DispenseHistory.objects.filter(written_datetime__gte=day_interval)
 
     with NamedTemporaryFile(mode='a+') as file:
         writer = csv.writer(file)
         header = ['Drug Name', 'Dose', 'Unit', 'Stock', 'Expiration Date',
-                  'Lot Number', 'Category', 'Manufacturer']
+                  'Lot Number', 'Category', 'Manufacturer', ''.join(['Dispensed Since ', str(day_interval)])]
         writer.writerow(header)
         for drug in drugs:
+            dispensed_list = list(recently_dispensed.filter(drug=drug.id).values_list('dispense', flat=True))
+            dispensed_sum = sum(dispensed_list)
             writer.writerow(
                 [drug.name,
                  drug.dose,
@@ -171,7 +176,9 @@ def export_csv(request):
                  drug.expiration_date,
                  drug.lot_number,
                  drug.category,
-                 drug.manufacturer])
+                 drug.manufacturer,
+                 dispensed_sum
+                 ])
         file.seek(0)
         csvfileread = file.read()
 
