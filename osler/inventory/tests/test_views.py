@@ -5,6 +5,8 @@ from osler.inventory import views
 from osler.core.tests.test_views import log_in_user, build_user
 from osler.core.tests import factories as core_factories
 from osler.inventory.tests import factories
+from osler.users.tests import factories as user_factories
+from datetime import date
 
 class TestDrugList(TestCase):
 
@@ -153,3 +155,41 @@ class TestDrugAdd(TestCase):
                              str(getattr(new_drug, param)))
 
 
+class TestDrugExport(TestCase):
+    """
+    Tests csv exports with correct name and user permissions work
+    """
+    def setUp(self):
+        log_in_user(self.client, build_user())
+
+    def test_export_csv(self):
+        export_csv_url = reverse('inventory:export-csv')
+        no_perm_group = user_factories.NoPermGroupFactory()
+        csv_perm_group = user_factories.PermGroupFactory(permissions=['inventory.export_csv'])
+
+        for group in [no_perm_group, csv_perm_group]:
+            log_in_user(self.client, user_factories.UserFactory(groups=[group]))
+            response = self.client.post(export_csv_url)
+
+            if group == csv_perm_group:
+                assert response.status_code == 200
+                self.assertEqual(response["Content-Disposition"],
+                                 ''.join(['attachment; filename=drug-inventory-', str(date.today()), '.csv']))
+            else:
+                 assert response.status_code == 403
+
+    def test_export_dispensing_histories(self):
+        export_dispensing_histories_url = reverse('inventory:export-dispensing-history')
+        no_perm_group = user_factories.NoPermGroupFactory()
+        csv_perm_group = user_factories.PermGroupFactory(permissions=['inventory.export_csv'])
+
+        for group in [no_perm_group, csv_perm_group]:
+            log_in_user(self.client, user_factories.UserFactory(groups=[group]))
+            response = self.client.post(export_dispensing_histories_url, {'start_date': '2020-09-22','end_date': '2020-09-28'})
+
+            if group == csv_perm_group:
+                assert response.status_code == 200
+                self.assertEqual(response["Content-Disposition"],
+                                 ''.join(['attachment; filename=drug-dispensing-history-through-2020-09-28.csv']))
+            else:
+                 assert response.status_code == 403

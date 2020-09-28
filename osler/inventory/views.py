@@ -20,7 +20,7 @@ from . import utils
 
 from tempfile import NamedTemporaryFile
 import csv
-from datetime import date, timedelta
+import datetime
 
 # Create your views here.
 
@@ -157,17 +157,19 @@ def export_csv(request):
         select_related('manufacturer').\
         order_by('category', 'name', 'dose', 'expiration_date')
     
-    day_interval = date.today() - timedelta(days=10)
+    day_interval = datetime.date.today() - datetime.timedelta(days=6)
     recently_dispensed = models.DispenseHistory.objects.filter(written_datetime__gte=day_interval)
 
     with NamedTemporaryFile(mode='a+') as file:
         writer = csv.writer(file)
-        header = ['Drug Name', 'Dose', 'Unit', 'Stock', 'Expiration Date',
-                  'Lot Number', 'Category', 'Manufacturer', ''.join(['Dispensed Since ', str(day_interval)])]
+        header = ['Drug Name', 'Dosage', 'Unit', 'Remaining Stock', 'Expiration Date',
+                  'Lot Number', 'Category', 'Manufacturer', ''.join(['Doses Dispensed Since ', str(day_interval)])]
         writer.writerow(header)
         for drug in drugs:
             dispensed_list = list(recently_dispensed.filter(drug=drug.id).values_list('dispense', flat=True))
             dispensed_sum = sum(dispensed_list)
+            if dispensed_sum == 0: 
+                dispensed_sum = ""
             writer.writerow(
                 [drug.name,
                  drug.dose,
@@ -182,10 +184,55 @@ def export_csv(request):
         file.seek(0)
         csvfileread = file.read()
 
-    csv_filename = ''.join(['drug-inventory-',str(date.today()),'.csv'])
+    csv_filename = ''.join(['drug-inventory-', str(datetime.date.today()), '.csv'])
 
     response = HttpResponse(csvfileread, 'application/csv')
     response["Content-Disposition"] = (
         "attachment; filename=%s" % (csv_filename,))
 
     return response
+
+@active_permission_required('inventory.export_csv', raise_exception=True)
+def export_dispensing_history(request):
+    start_date = request.POST.get('start_date')
+    end_date = request.POST.get('end_date')
+    print(end_date)
+
+    recent_dispense_histories = models.DispenseHistory.objects.exclude(
+        written_datetime__gt=datetime.datetime.strptime(end_date, '%Y-%m-%d') + datetime.timedelta(days=1)).filter(written_datetime__gte=start_date)
+
+    recently_dispensed_drugs = models.Drug.objects.filter(pk__in=list(recent_dispense_histories.values_list('drug', flat=True)))
+    recently_dispensed_drugs.select_related('unit').\
+        select_related('category').\
+        select_related('manufacturer').\
+        order_by('category', 'name', 'dose', 'expiration_date')
+
+    with NamedTemporaryFile(mode='a+') as file:
+        writer = csv.writer(file)
+        header = ['Drug Name', ''.join(['Doses Dispensed From: ', str(start_date),' through ', str(end_date)]), 'Remaining Stock', 'Dosage', 'Unit', 'Expiration Date',
+                'Lot Number', 'Category', 'Manufacturer']
+        writer.writerow(header)
+        for drug in recently_dispensed_drugs:
+            dispensed_list = list(recent_dispense_histories.filter(drug=drug.id).values_list('dispense', flat=True))
+            dispensed_sum = sum(dispensed_list)
+            writer.writerow(
+                [drug.name,
+                dispensed_sum,
+                drug.stock,
+                drug.dose,
+                drug.unit,
+                drug.expiration_date,
+                drug.lot_number,
+                drug.category,
+                drug.manufacturer,
+                ])
+        file.seek(0)
+        csvfileread = file.read()
+
+    csv_filename = ''.join(['drug-dispensing-history-through-', str(end_date), '.csv'])
+    response = HttpResponse(csvfileread, 'application/csv')
+    response["Content-Disposition"] = (
+        "attachment; filename=%s" % (csv_filename,))
+    redirect('inventory:drug-list')
+    return response
+

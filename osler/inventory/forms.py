@@ -4,6 +4,8 @@ import django.forms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from osler.core.models import Patient
+from django.forms.widgets import DateInput
+
 
 class DrugForm(ModelForm):
     class Meta:
