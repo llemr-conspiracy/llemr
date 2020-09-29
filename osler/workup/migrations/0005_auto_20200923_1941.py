@@ -20,16 +20,6 @@ class Migration(migrations.Migration):
             old_name='pmh_psh',
             new_name='pmh',
         ),
-        migrations.AddField(
-            model_name='historicalworkup',
-            name='psh',
-            field=models.TextField(blank=True, verbose_name='PSH'),
-        ),
-        migrations.AddField(
-            model_name='workup',
-            name='psh',
-            field=models.TextField(blank=True, verbose_name='PSH'),
-        ),
         migrations.AlterField(
             model_name='historicalworkup',
             name='pmh',
@@ -39,5 +29,15 @@ class Migration(migrations.Migration):
             model_name='workup',
             name='pmh',
             field=models.TextField(blank=True, verbose_name='PMH'),
+        ),
+        migrations.AddField(
+            model_name='historicalworkup',
+            name='psh',
+            field=models.TextField(blank=True, verbose_name='PSH'),
+        ),
+        migrations.AddField(
+            model_name='workup',
+            name='psh',
+            field=models.TextField(blank=True, verbose_name='PSH'),
         ),
     ]
