@@ -210,7 +210,8 @@ class Workup(Note, AttestationMixin):
     diagnosis_categories = models.ManyToManyField(DiagnosisType, verbose_name="Diagnosis Categories", blank=True)
 
     hpi = models.TextField(verbose_name="HPI", blank=True)
-    pmh_psh = models.TextField(verbose_name="PMH/PSH", blank=True)
+    pmh = models.TextField(verbose_name="PMH", blank=True)
+    psh = models.TextField(verbose_name="PSH", blank=True)
     meds = models.TextField(verbose_name="Medications", blank=True)
     allergies = models.TextField(blank=True)
     fam_hx = models.TextField(verbose_name="Family History", blank=True)

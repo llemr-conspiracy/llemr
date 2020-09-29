@@ -87,7 +87,7 @@ class APITest(APITestCase):
             clinic_day=workupModels.ClinicDate.objects.first(), # one day later
             chief_complaint="SOB",
             diagnosis="MI",
-            hpi="", pmh_psh="", meds="", allergies="", fam_hx="", soc_hx="",
+            hpi="", pmh="", psh="", meds="", allergies="", fam_hx="", soc_hx="",
             ros="", pe="", a_and_p="",
             author=models.Provider.objects.first(),
             author_type=models.ProviderType.objects.first(),
@@ -98,7 +98,7 @@ class APITest(APITestCase):
             clinic_day=workupModels.ClinicDate.objects.all()[1], # one day ago
             chief_complaint="SOB",
             diagnosis="MI",
-            hpi="", pmh_psh="", meds="", allergies="", fam_hx="", soc_hx="",
+            hpi="", pmh="", psh="", meds="", allergies="", fam_hx="", soc_hx="",
             ros="", pe="", a_and_p="",
             author=models.Provider.objects.first(),
             author_type=models.ProviderType.objects.first(),
@@ -110,7 +110,7 @@ class APITest(APITestCase):
             clinic_day=workupModels.ClinicDate.objects.all()[2], # five days ago
             chief_complaint="SOB",
             diagnosis="MI",
-            hpi="", pmh_psh="", meds="", allergies="", fam_hx="", soc_hx="",
+            hpi="", pmh="", psh="", meds="", allergies="", fam_hx="", soc_hx="",
             ros="", pe="", a_and_p="",
             author=models.Provider.objects.first(),
             author_type=models.ProviderType.objects.first(),
