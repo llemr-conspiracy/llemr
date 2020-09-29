@@ -338,7 +338,7 @@ OSLER_DEFAULT_COUNTRY = ""
 OSLER_MAX_APPOINTMENTS = 5
 OSLER_DEFAULT_APPOINTMENT_HOUR = 9
 
-OSLER_WORKUP_COPY_FORWARD_FIELDS = ['pmh_psh', 'fam_hx', 'soc_hx', 'meds',
+OSLER_WORKUP_COPY_FORWARD_FIELDS = ['pmh', 'psh', 'fam_hx', 'soc_hx', 'meds',
                                     'allergies']
 OSLER_WORKUP_COPY_FORWARD_MESSAGE = (u"Migrated from previous workup on {date}. "
                                      u"Please delete this heading and UPDATE "

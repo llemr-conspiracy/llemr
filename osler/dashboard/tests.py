@@ -33,7 +33,7 @@ class TestAttendingDashboard(TestCase):
         log_in_user(self.client, self.attending)
 
         self.wu_info = dict(
-            chief_complaint="SOB", diagnosis="MI", hpi="A", pmh_psh="B",
+            chief_complaint="SOB", diagnosis="MI", hpi="A", pmh="B", psh="W",
             meds="C", allergies="D", fam_hx="E", soc_hx="F", ros="", pe="",
             a_and_p="")
 
