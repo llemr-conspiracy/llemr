@@ -60,9 +60,9 @@ class TestModels(TestCase):
 
         # Continuous measurement type with ref info
         self.ua_glucose.panic_lower = 5
-        assert self.ua_glucose.get_ref().replace(' ','')=='[5-unit]'
+        assert self.ua_glucose.get_ref().replace(' ','')=='[5.0-unit]'
         self.ua_glucose.panic_upper = 10
-        assert self.ua_glucose.get_ref().replace(' ','')=='[5-10unit]'
+        assert self.ua_glucose.get_ref().replace(' ','')=='[5.0-10.0unit]'
 
         # Discrete measurement type has no unit
         assert self.ua_blood.get_ref()==''

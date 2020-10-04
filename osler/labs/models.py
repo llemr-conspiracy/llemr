@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 from django.utils import timezone
+from django.core.validators import MaxValueValidator, MinValueValidator
 from osler.core.models import (Patient)
 
 
@@ -76,18 +77,19 @@ class ContinuousMeasurementType(MeasurementType):
 	e.g. Na+, K+ in BMP, A1c in A1c, WBC in CBC, etc.
 	"""
 	unit = models.CharField(max_length=15, blank=True, null=True)
-	panic_upper = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True,
+	panic_upper = models.DecimalField(max_digits=7, decimal_places=3, blank=True, null=True,
 		help_text="All labs above this value will display as red with a warning sign. Will also be used as the upper bound of reference.")
-	panic_lower = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True,
+	panic_lower = models.DecimalField(max_digits=7, decimal_places=3, blank=True, null=True,
 		help_text="All labs below this value will display as blue with a warning sign. Will also be used as the lower bound of reference.")
+	display_decimals = models.SmallIntegerField(default=1, validators=[MinValueValidator(0), MaxValueValidator(3)])
 
 
 	def get_ref(self):
 		if (self.panic_lower==None and self.panic_upper==None):
 			return ''
 		else:
-			lower_str = '' if (self.panic_lower is None) else ('%2g' %self.panic_lower)
-			upper_str = '' if (self.panic_upper is None) else ('%2g' %self.panic_upper)
+			lower_str = '' if (self.panic_lower is None) else ('{:7.{deci}f}'.format(self.panic_lower, deci=self.display_decimals))
+			upper_str = '' if (self.panic_upper is None) else ('{:7.{deci}f}'.format(self.panic_upper, deci=self.display_decimals))
 			unit_str = '' if (self.unit is None) else str(self.unit)
 			return '[%s - %s %s]' %(lower_str, upper_str, unit_str)
 
@@ -131,7 +133,7 @@ class ContinuousMeasurement(Measurement):
 	object of a continuous measurement
 	"""
 	measurement_type = models.ForeignKey(ContinuousMeasurementType, on_delete=models.PROTECT)
-	value = models.DecimalField(max_digits=5, decimal_places=1)
+	value = models.DecimalField(max_digits=7, decimal_places=3)
 
 	def __str__(self):
 		return '%s: %2g' %(self.measurement_type, self.value)
@@ -153,6 +155,12 @@ class ContinuousMeasurement(Measurement):
 		if ((panic_lower!=None) and (self.value < panic_lower)):
 			return True
 		return False
+
+
+	def get_value(self):
+		"""Returns the value of the measurement"""
+		decimal = self.measurement_type.display_decimals
+		return '{:7.{deci}f}'.format(self.value, deci=decimal)
 
 
 class DiscreteResultType(models.Model):
@@ -195,3 +203,7 @@ class DiscreteMeasurement(Measurement):
 		"""Panic because the value is too low. 
 		To display in a different color than normal panic."""
 		return False
+
+	def get_value(self):
+		"""Returns the value of the measurement"""
+		return self.value

@@ -18,15 +18,6 @@ Recent Labs
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
-{% if no_lab_bool %}
-	<div class="container"/>
-		<h3>Oops! There aren't any existing labs for this patient yet...</h3>
-		{% if add_lab %}
-		<p>Do you want to <a href="{% url 'labs:new-lab' patient.id %}">create one?</a></p>
-		{% endif %}
-	</div>
-
-{% else %}
 
 
 <div class="container">
@@ -62,6 +53,14 @@ Recent Labs
 		</form>
 	</div>
 </div>
+
+
+{% if no_lab_bool %}
+	<div class="container"/>
+		<h3>Oops! The patient does not have any labs in your selected time frame. </h3>
+	</div>
+
+{% else %}
 
 
 {% if dup_lab_bool %}
@@ -105,11 +104,11 @@ th:first-child, td:first-child
 						{% for item in row %}
 							{% if item.value is not None %}
 								{% if item.panic_low %}
-								<td style="color:#0000FF">{{ item.value }} {{item.measurement_type.get_unit}}⚠</td>
+								<td style="color:#0000FF">{{ item.get_value }} ⚠</td>
 								{% elif item.panic %}
-								<td style="color:#f00">{{ item.value }} {{item.measurement_type.get_unit}}⚠</td>
+								<td style="color:#f00">{{ item.get_value }} ⚠</td>
 								{% else %}
-								<td>{{ item.value }}{{item.measurement_type.get_unit}}</td>
+								<td>{{ item.get_value }}</td>
 								{% endif %}
 							{% else %}
 					        <td>{{ item }}</td>

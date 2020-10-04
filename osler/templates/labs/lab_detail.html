@@ -42,11 +42,11 @@ Lab detail
 				<td>{{ measurement.measurement_type }}</td>
 				<td>{{ measurement.measurement_type.get_ref }}</td>
 				{% if measurement.panic_low %}
-					<td style="color:#0000FF">{{ measurement.value }} {{measurement.measurement_type.get_unit}}⚠</td>
+					<td style="color:#0000FF">{{ measurement.get_value }} ⚠</td>
 				{% elif measurement.panic %}
-					<td style="color:#f00">{{ measurement.value }} {{measurement.measurement_type.get_unit}}⚠</td>
+					<td style="color:#f00">{{ measurement.get_value }} ⚠</td>
 				{% else %}
-					<td>{{ measurement.value }} {{measurement.measurement_type.get_unit}}</td>
+					<td>{{ measurement.get_value }}</td>
 				{% endif %}
 			</tr>
 		{% endfor %}

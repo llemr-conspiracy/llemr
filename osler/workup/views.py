@@ -174,9 +174,9 @@ class WorkupCreate(NoteFormView):
         else:
             if hasattr(pt, 'demographics') and pt.demographics.chronic_conditions.exists():
                 conditions = [str(x) for x in pt.demographics.chronic_conditions.all()]
-                initial['pmh_psh'] = 'Chronic condition(s): ' + ', '.join(conditions)
+                initial['pmh'] = 'Chronic condition(s): ' + ', '.join(conditions)
             else:
-                initial['pmh_psh'] = 'No chronic conditions reported during intake.'
+                initial['pmh'] = 'No chronic conditions reported during intake.'
 
         return initial
 
