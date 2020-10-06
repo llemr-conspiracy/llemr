@@ -174,7 +174,7 @@ class TestDrugExport(TestCase):
             if group == csv_perm_group:
                 assert response.status_code == 200
                 self.assertEqual(response["Content-Disposition"],
-                                 ''.join(['attachment; filename=drug-inventory-', str(date.today()), '.csv']))
+                                 f"attachment; filename=drug-inventory-{str(date.today())}.csv")
             else:
                  assert response.status_code == 403
 
@@ -190,6 +190,6 @@ class TestDrugExport(TestCase):
             if group == csv_perm_group:
                 assert response.status_code == 200
                 self.assertEqual(response["Content-Disposition"],
-                                 ''.join(['attachment; filename=drug-dispensing-history-through-2020-09-28.csv']))
+                                 f"attachment; filename=drug-dispensing-history-through-2020-09-28.csv")
             else:
                  assert response.status_code == 403

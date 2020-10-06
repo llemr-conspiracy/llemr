@@ -163,7 +163,7 @@ def export_csv(request):
     with NamedTemporaryFile(mode='a+') as file:
         writer = csv.writer(file)
         header = ['Drug Name', 'Dosage', 'Unit', 'Remaining Stock', 'Expiration Date',
-                  'Lot Number', 'Category', 'Manufacturer', ''.join(['Doses Dispensed Since ', str(day_interval)])]
+                  'Lot Number', 'Category', 'Manufacturer', f"Doses Dispensed Since {str(day_interval)}"]
         writer.writerow(header)
         for drug in drugs:
             dispensed_list = list(recently_dispensed.filter(drug=drug.id).values_list('dispense', flat=True))
@@ -184,7 +184,7 @@ def export_csv(request):
         file.seek(0)
         csvfileread = file.read()
 
-    csv_filename = ''.join(['drug-inventory-', str(datetime.date.today()), '.csv'])
+    csv_filename = f"drug-inventory-{str(datetime.date.today())}.csv"
 
     response = HttpResponse(csvfileread, 'application/csv')
     response["Content-Disposition"] = (
@@ -208,7 +208,7 @@ def export_dispensing_history(request):
 
     with NamedTemporaryFile(mode='a+') as file:
         writer = csv.writer(file)
-        header = ['Drug Name', ''.join(['Doses Dispensed From: ', str(start_date),' through ', str(end_date)]), 'Remaining Stock', 'Dosage', 'Unit', 'Expiration Date',
+        header = ['Drug Name', f"Doses Dispensed From: {str(start_date)} through {str(end_date)}", 'Remaining Stock', 'Dosage', 'Unit', 'Expiration Date',
                 'Lot Number', 'Category', 'Manufacturer']
         writer.writerow(header)
         for drug in recently_dispensed_drugs:
@@ -228,7 +228,7 @@ def export_dispensing_history(request):
         file.seek(0)
         csvfileread = file.read()
 
-    csv_filename = ''.join(['drug-dispensing-history-through-', str(end_date), '.csv'])
+    csv_filename = f"drug-dispensing-history-through-{str(end_date)}.csv"
     response = HttpResponse(csvfileread, 'application/csv')
     response["Content-Disposition"] = (
         "attachment; filename=%s" % (csv_filename,))
