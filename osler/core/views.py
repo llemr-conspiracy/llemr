@@ -29,37 +29,6 @@ from django.contrib.auth import get_user_model
 
 from django.db.models.fields.related import ManyToManyField
 
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
-
-# class CustomAIView(FormView):
-#     template_name = "core/actionitem_detail.html"
-#     note_type = "Followup"
-#     form_class = forms.CustomActionItemForm
-#     model = core_models.ActionItem
-
-#     def get_context_data(self, **kwargs):
-        
-#         context = super(CustomAIView, self).get_context_data(**kwargs)
-#         context['note_type'] = self.note_type
-
-#         if 'pt_id' in self.kwargs:
-#             context['patient'] = core_models.Patient.objects. \
-#                 get(pk=self.kwargs['pt_id'])
-        
-#         if 'ai_id' in self.kwargs:
-#             context['note'] = get_object_or_404(core_models.ActionItem, pk=self.kwargs['ai_id'])
-
-#         return context
-    
-#     def __init__(self, *args, **kwargs):
-#         self.helper = FormHelper()
-#         self.helper.form_method = 'post'
-
-#         self.helper.add_input(Submit('followup_close', 'Submit and Close Action', css_class = 'btn btn-warning'))
-#         self.helper.add_input(Submit('followup_create', 'Submit and Create Action', css_class = 'btn btn-info'))
-#         super(CustomAIView, self).__init__(*args, **kwargs)
-
 class NoteFormView(FormView):
     note_type = None
 
@@ -520,7 +489,7 @@ def done_action_item(request, ai_id):
     ai.mark_done(request.user)
     ai.save()
 
-    return HttpResponseRedirect(reverse("umkc-ai",
+    return HttpResponseRedirect(reverse("new-actionitem-followup",
                                         kwargs={'pt_id':ai.patient.pk,
                                         'ai_id':ai.pk}))
 
@@ -534,14 +503,13 @@ def actionitem_detail(request, ai_id):
 
     pt_id = note.patient.pk
     form = forms.UMKCActionItemFollowupForm(request)
-    form.success_url = reverse("core:patient-detail", args=(pt_id, ))
     success_url = reverse("core:patient-detail", args=(pt_id, ))
     def get_success_url(self, **kwargs):
         note = get_object_or_404(core_models.ActionItem, pk=self.kwargs['ai_id'])
         pt_id = note.patient.pk
         return reverse("core:patient-detail", args=(pt_id, ))
     
-    return render(request, 'core/actionitem_detail.html', {'success_url':success_url,'form': form,"note":note,'note_type':note_type,'form_class':form_class})
+    return render(request, 'core/actionitem_detail.html', {'success_url':form.success_url,'form': form,"note":note,'note_type':note_type,'form_class':form_class})
 
 class UMKCActionItemFollowupView(NoteFormView):
     template_name = 'core/actionitem_detail.html'

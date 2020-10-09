@@ -123,15 +123,12 @@ class UMKCActionItemFollowupForm(ModelForm):
         model = models.ActionItem
         exclude = ['author','author_type','patient','completion_date','completion_author','due_date','instruction','comments','priority']
 
-    def get_success_url(self, **kwargs):
-        note = get_object_or_404(core_models.ActionItem, pk=self.kwargs['ai_id'])
-        pt_id = note.patient.pk
+    def get_absolute_url(self):
         return reverse("core:patient-detail", args=(pt_id, ))
-
+    
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_method = 'post'
-
         self.helper.add_input(Submit('followup_close', 'Submit and Close Action', css_class = 'btn btn-warning'))
         self.helper.add_input(Submit('followup_create', 'Submit and Create Action', css_class = 'btn btn-info'))
         super(UMKCActionItemFollowupForm, self).__init__(*args, **kwargs)
