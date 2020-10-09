@@ -17,7 +17,6 @@ admin.site.register(models.Document, admin_utils.NoteAdmin)
 admin.site.register(models.ActionItem, admin_utils.ActionItemAdmin)
 
 
-
 @admin.register(models.PatientDataSummary)
 class PatientDataDashboardAdmin(admin.ModelAdmin):
     # change_list_template = 'admin/sale_summary_change_list.html'
@@ -32,31 +31,39 @@ class PatientDataDashboardAdmin(admin.ModelAdmin):
         except (AttributeError, KeyError):
             return response
         patients = models.Patient.objects.all()
-        
+
+        dashboard_data = {}
+
+        hypertensive_workups = Workup.objects.filter(bp_sys__gte=140)
+        hypertensive_patients = list(hypertensive_workups.values_list('patient', flat=True))
+        for pk in hypertensive_patients:
+            patient = patients.filter(pk=pk)[0]  # initializes patient
+            workups = Workup.objects.filter(patient=pk)  # finds all the workups for this particular patient
+            current_workup = None
+            demographics = {}
+
+            for w in workups:  # finds the latest workup. alternative to latest_workup function
+                if(current_workup == None):
+                    current_workup = w
+                else:
+                    w_days = (now()-w.last_modified).days
+                    current_days = (now()-current_workup.last_modified).days
+                    if(w_days < current_days):
+                        current_workup = w
+
+            demographics['bp_sys'] = current_workup.bp_sys
+            demographics['age'] = (now().date() - patient.date_of_birth).days // 365
+            demographics['gender'] = patient.gender.name
+            demographics['ethnicity'] = patient.ethnicities
+            dashboard_data[patient.name()] = demographics
+
         frankie = patients.filter(pk=1)
-        workups = Workup.objects.filter(patient__in=list(frankie.values_list('pk', flat=True))) #gets workups based on patient pk (aka get frankie's workups)
-        print(frankie)
+        # gets workups based on patient pk (aka get frankie's workups)
+        workups = Workup.objects.filter(patient__in=list(frankie.values_list('pk', flat=True)))
         # models.PatientDataSummary.objects.create(bp_readings=[130,120,150])
 
-        # metrics = {
-        #     # 'age': age(qs.values('date_of_birth'))
-        #     # (now().date() - qs.values('date_of_birth')).days // 365
-        #     # 'name': models.Person.gender(self)
-        #     'bp': q.values('bp_sys')
-        # }
-        
-        # for patient in patients:
-        #     patient.
-        # for patient in models.Patient.objects.raw('SELECT * FROM core_patient'):
-        #     print(patient.gender)
-        
-        response.context_data['data'] = list(
-            patients
-            
+        response.context_data['data'] = dict(
+            dashboard_data
         )
-        # response.context_data['bp'] = list(
-        #     q.values('bp_sys')
-        # )
-        
 
         return response
