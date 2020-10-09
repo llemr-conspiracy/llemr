@@ -1,3 +1,4 @@
+from itertools import chain
 from django.utils.timezone import now
 from django.contrib import admin
 
@@ -17,53 +18,50 @@ admin.site.register(models.Document, admin_utils.NoteAdmin)
 admin.site.register(models.ActionItem, admin_utils.ActionItemAdmin)
 
 
+
 @admin.register(models.PatientDataSummary)
 class PatientDataDashboardAdmin(admin.ModelAdmin):
     # change_list_template = 'admin/sale_summary_change_list.html'
     change_list_template = "admin/patient_data_dashboard_change_list.html"
 
+    # is it ok to be doing the query globally? Should we put it in a function that's called in the main (changelist_view)?
+    hypertensive_workups = Workup.objects.filter(bp_sys__gte=140).select_related('patient')
+    # by doing select_related, we minimize the amount of times we have to hit the database, decreasing runtime
+
+    def check_if_hypertensive(self,patient_pk):
+            patient_workups = self.hypertensive_workups.filter(patient=patient_pk)
+            # maybe switch this to a ratio (ex. if > 50% of workups are hypertensive then it counts)
+            
+            print(patient_workups.count())
+            if patient_workups.count() >= 2:
+                return True
+            else:
+                return False
+        
     def changelist_view(self, request, extra_context=None):
         response = super(PatientDataDashboardAdmin, self).changelist_view(
             request, extra_context)
 
-        try:
-            qs = response.context_data['cl'].queryset
-        except (AttributeError, KeyError):
-            return response
-        patients = models.Patient.objects.all()
+        # for h in hypertensive_workups:
+        #     print(h.pk)
+        # self.check_if_hypertensive(99)
 
         dashboard_data = {}
-
-        hypertensive_workups = Workup.objects.filter(bp_sys__gte=140)
-        hypertensive_patients = list(hypertensive_workups.values_list('patient', flat=True))
-        for pk in hypertensive_patients:
-            patient = patients.filter(pk=pk)[0]  # initializes patient
-            workups = Workup.objects.filter(patient=pk)  # finds all the workups for this particular patient
-            current_workup = None
+        unique_patient_pk_list = []
+        for wu in self.hypertensive_workups:
             demographics = {}
-
-            for w in workups:  # finds the latest workup. alternative to latest_workup function
-                if(current_workup == None):
-                    current_workup = w
-                else:
-                    w_days = (now()-w.last_modified).days
-                    current_days = (now()-current_workup.last_modified).days
-                    if(w_days < current_days):
-                        current_workup = w
-
-            demographics['bp_sys'] = current_workup.bp_sys
-            demographics['age'] = (now().date() - patient.date_of_birth).days // 365
-            demographics['gender'] = patient.gender.name
-            demographics['ethnicity'] = patient.ethnicities
-            dashboard_data[patient.name()] = demographics
-
-        frankie = patients.filter(pk=1)
-        # gets workups based on patient pk (aka get frankie's workups)
-        workups = Workup.objects.filter(patient__in=list(frankie.values_list('pk', flat=True)))
-        # models.PatientDataSummary.objects.create(bp_readings=[130,120,150])
-
+            if wu.pk not in unique_patient_pk_list:
+                unique_patient_pk_list.append(wu.pk)    
+                if self.check_if_hypertensive(wu.patient):
+                    demographics['age'] = (now().date() - wu.patient.date_of_birth).days // 365
+                    demographics['gender'] = wu.patient.gender.name
+                    demographics['ethnicity'] = wu.patient.ethnicities
+                    dashboard_data[wu.patient.name()] = demographics
+                    # add to demographics dict
         response.context_data['data'] = dict(
             dashboard_data
         )
-
         return response
+
+  
+    
