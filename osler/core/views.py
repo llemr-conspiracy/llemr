@@ -500,16 +500,9 @@ def actionitem_detail(request, ai_id):
     note = get_object_or_404(core_models.ActionItem, pk=ai_id)
     note.mark_done(request.user)
     note.save()
-
-    pt_id = note.patient.pk
     form = forms.UMKCActionItemFollowupForm(request)
-    success_url = reverse("core:patient-detail", args=(pt_id, ))
-    def get_success_url(self, **kwargs):
-        note = get_object_or_404(core_models.ActionItem, pk=self.kwargs['ai_id'])
-        pt_id = note.patient.pk
-        return reverse("core:patient-detail", args=(pt_id, ))
     
-    return render(request, 'core/actionitem_detail.html', {'success_url':form.success_url,'form': form,"note":note,'note_type':note_type,'form_class':form_class})
+    return render(request, 'core/actionitem_detail.html', {'form': form,"note":note,'note_type':note_type,'form_class':form_class})
 
 class UMKCActionItemFollowupView(NoteFormView):
     template_name = 'core/actionitem_detail.html'

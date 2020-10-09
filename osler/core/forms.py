@@ -123,9 +123,6 @@ class UMKCActionItemFollowupForm(ModelForm):
         model = models.ActionItem
         exclude = ['author','author_type','patient','completion_date','completion_author','due_date','instruction','comments','priority']
 
-    def get_absolute_url(self):
-        return reverse("core:patient-detail", args=(pt_id, ))
-    
     def __init__(self, *args, **kwargs):
         self.helper = FormHelper()
         self.helper.form_method = 'post'
