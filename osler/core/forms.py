@@ -118,6 +118,18 @@ class ActionItemForm(AbstractActionItemForm):
         widgets = {'priority': CheckboxInput}
         # widgets = {'due_date': DateTimePicker(options={"format": "MM/DD/YYYY"})}
 
+class UMKCActionItemFollowupForm(ModelForm):
+    class Meta(object):
+        model = models.ActionItem
+        exclude = ['author','author_type','patient','completion_date','completion_author','due_date','instruction','comments','priority']
+
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+
+        self.helper.add_input(Submit('followup_close', 'Submit and Close Action', css_class = 'btn btn-warning'))
+        self.helper.add_input(Submit('followup_create', 'Submit and Create Action', css_class = 'btn btn-info'))
+        super(UMKCActionItemFollowupForm, self).__init__(*args, **kwargs)
 
 class UserInitForm(ModelForm):
 

@@ -29,6 +29,37 @@ from django.contrib.auth import get_user_model
 
 from django.db.models.fields.related import ManyToManyField
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
+
+# class CustomAIView(FormView):
+#     template_name = "core/actionitem_detail.html"
+#     note_type = "Followup"
+#     form_class = forms.CustomActionItemForm
+#     model = core_models.ActionItem
+
+#     def get_context_data(self, **kwargs):
+        
+#         context = super(CustomAIView, self).get_context_data(**kwargs)
+#         context['note_type'] = self.note_type
+
+#         if 'pt_id' in self.kwargs:
+#             context['patient'] = core_models.Patient.objects. \
+#                 get(pk=self.kwargs['pt_id'])
+        
+#         if 'ai_id' in self.kwargs:
+#             context['note'] = get_object_or_404(core_models.ActionItem, pk=self.kwargs['ai_id'])
+
+#         return context
+    
+#     def __init__(self, *args, **kwargs):
+#         self.helper = FormHelper()
+#         self.helper.form_method = 'post'
+
+#         self.helper.add_input(Submit('followup_close', 'Submit and Close Action', css_class = 'btn btn-warning'))
+#         self.helper.add_input(Submit('followup_create', 'Submit and Create Action', css_class = 'btn btn-info'))
+#         super(CustomAIView, self).__init__(*args, **kwargs)
+
 class NoteFormView(FormView):
     note_type = None
 
@@ -45,6 +76,9 @@ class NoteFormView(FormView):
         if 'pt_id' in self.kwargs:
             context['patient'] = core_models.Patient.objects. \
                 get(pk=self.kwargs['pt_id'])
+
+        if 'ai_id' in self.kwargs:
+            context['actionitem'] = get_object_or_404(core_models.ActionItem, pk=self.kwargs['ai_id'])
 
         return context
 
@@ -479,15 +513,64 @@ def patient_activate_home(request, pk):
     return HttpResponseRedirect(reverse("home"))
 
 
+
+
 def done_action_item(request, ai_id):
     ai = get_object_or_404(core_models.ActionItem, pk=ai_id)
     ai.mark_done(request.user)
     ai.save()
 
-    return HttpResponseRedirect(reverse("new-actionitem-followup",
+    return HttpResponseRedirect(reverse("umkc-ai",
                                         kwargs={'pt_id':ai.patient.pk,
                                         'ai_id':ai.pk}))
 
+def actionitem_detail(request, ai_id):
+    note_type = 'Action Item'
+    form_class = forms.UMKCActionItemFollowupForm
+    model = core_models.ActionItem
+    note = get_object_or_404(core_models.ActionItem, pk=ai_id)
+    note.mark_done(request.user)
+    note.save()
+
+    return render(request, 'core/actionitem_detail.html', {'form': None,"note":note,'note_type':note_type,'form_class':form_class})
+
+class UMKCActionItemFollowupView(NoteFormView):
+    template_name = 'core/actionitem_detail.html'
+    note_type = 'Action Item'
+    form_class = forms.UMKCActionItemFollowupForm
+    model = core_models.ActionItem
+
+    def get_success_url(self, **kwargs):
+        note = get_object_or_404(core_models.ActionItem, pk=self.kwargs['ai_id'])
+        pt_id = note.patient.pk
+        return reverse("core:patient-detail", args=(pt_id, ))
+    
+    def get_context_data(self, **kwargs):
+        '''Inject self.note_type and patient into the context.'''
+
+        if self.note_type is None:
+            raise ImproperlyConfigured("NoteCreate view must have"
+                                       "'note_type' variable set.")
+
+        context = super(NoteFormView, self).get_context_data(**kwargs)
+        context['note_type'] = self.note_type
+
+        if 'ai_id' in self.kwargs:
+            context['actionitem'] = get_object_or_404(core_models.ActionItem, pk=self.kwargs['ai_id'])
+
+        context['note'] = get_object_or_404(core_models.ActionItem, pk=self.kwargs['ai_id'])
+        context['pt_id'] = context['actionitem'].patient.pk
+        ai = get_object_or_404(core_models.ActionItem, pk=self.kwargs['ai_id'])
+        ai.mark_done(self.request.user)
+        ai.save()
+        return context
+
+   # def get_success_url(self):
+        #pt = self.object.patient
+        #return reverse("core:patient-detail", args=(pt.id, ))
+
+        
+     
 
 def reset_action_item(request, ai_id):
     ai = get_object_or_404(core_models.ActionItem, pk=ai_id)

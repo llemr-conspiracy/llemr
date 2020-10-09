@@ -62,14 +62,18 @@ unwrapped_urlpatterns = [
         r'^action-item/(?P<pk>[0-9]+)/update$',
         views.ActionItemUpdate.as_view(),
         name="update-action-item"),
-    re_path(
-        r'^action-item/(?P<ai_id>[0-9]+)/done$',
-        views.done_action_item,
-        name=models.ActionItem.MARK_DONE_URL_NAME),
+    # re_path(
+    #     r'^action-item/(?P<ai_id>[0-9]+)/done$',
+    #     views.done_action_item,
+    #     name=models.ActionItem.MARK_DONE_URL_NAME),
     re_path(
         r'^action-item/(?P<ai_id>[0-9]+)/reset$',
         views.reset_action_item,
         name='reset-action-item'),
+    re_path(
+        r'^action-item/(?P<ai_id>[0-9]+)/done$',
+        views.actionitem_detail,
+        name='done-action-item'),
 
     # DOCUMENTS
     re_path(
