@@ -16,11 +16,10 @@ for model in [models.Language, models.Patient,
 admin.site.register(models.Document, admin_utils.NoteAdmin)
 admin.site.register(models.ActionItem, admin_utils.ActionItemAdmin)
 
-
-
 @admin.register(models.PatientDataSummary)
 class PatientDataDashboardAdmin(admin.ModelAdmin):
     change_list_template = "admin/patient_data_dashboard_change_list.html"
+    # date_hierarchy = 'added_on'
 
     # is it ok to be doing the query globally? Should we put it in a function that's called in the main (changelist_view)?
     hypertensive_workups = Workup.objects.filter(bp_sys__gte=140).\
