@@ -33,7 +33,11 @@ unwrapped_urlconf = [
     re_path(
         r'^export-csv/$',
         views.export_csv,
-        name='export-csv'),
+        name='export-csv'),   
+    re_path(
+        r'^export-dispense-history/$',
+        views.export_dispensing_history,
+        name='export-dispensing-history'),
 ]
 
 wrap_config = {}

@@ -9,6 +9,31 @@ Drug Inventory
 <a class="btn btn-primary btn-lg" href="{% url 'inventory:pre-drug-add-new' %}" role="button">Add New Drug</a>
 {% if can_export_csv %}
   <a class="btn btn-primary btn-lg" href="{% url 'inventory:export-csv' %}" role="button">Export Inventory</a>
+  <a href="#" class="btn btn-primary btn-lg"  data-toggle="modal" data-target="#dispensingHistoryModal" role="button">Export Dispensing History</a>
+  <div class="modal fade" id="dispensingHistoryModal" tabindex="-1" role="dialog" aria-labelledby="dispensingHistoryModalLabel" aria-hidden="true">
+    <form action="{% url 'inventory:export-dispensing-history' %}" method="post">
+      {% csrf_token %}
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title" id="dispensingHistoryModalLabel">Select Date Range</h2>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              Start Date:
+              <input type="date" class="form-control" name="start_date" id="start_date" required>
+              End Date:
+              <input type="date" class="form-control" name="end_date" id="end_date" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Export Dispensing History</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
 {% endif %}
 {% endblock %}
 
@@ -100,7 +125,7 @@ Drug Inventory
 
 {% block extra_js %}
 <script>
-{# adapted from "https://www.w3schools.com/howto/howto_js_filter_table.asp" #}
+// {# adapted from "https://www.w3schools.com/howto/howto_js_filter_table.asp" #}
 function filterDrugListTable() {
   // Declare variables
   var input, filter, table, tr, td, i;
