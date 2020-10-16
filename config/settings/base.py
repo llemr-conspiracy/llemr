@@ -87,6 +87,7 @@ LOCAL_APPS = [
     'osler.vaccine.apps.VaccineConfig',
     'osler.labs.apps.LabsConfig',
     'osler.inventory.apps.InventoryConfig',
+    'osler.datadashboard.apps.DatadashboardConfig'
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
