@@ -1,16 +1,24 @@
 <li class="list-group-item">
 	{% if not action_item.done %}
 		<p>
-		  <a href="{{ clear_url }}"/>
-		    <span class="glyphicon glyphicon-unchecked" aria-hidden="true"></span>
-		  </a>
 		  <strong>
+		  {% if settings.OSLER_DISPLAY_FOLLOWUP %}
 		    <a href="{{ clear_url }}">{{ action_item.short_name }}:</a>
+		  {% else %}
+		    {{ action_item.short_name }}:
+		  {% endif %}
 		  </strong>
 		  {{ action_item.summary }}
 		</p>
+
+		{% if not settings.OSLER_DISPLAY_FOLLOWUP %}
+			<a class="btn btn-warning" href="{{ clear_url }}" role="button">Mark Complete</a>
+		{% endif %}
+
+
+
 	{% else %}  {# ai complete #}
-		<p><span class="glyphicon glyphicon-check" aria-hidden="true"></span>
+		<p>
 			<strong>{{ action_item.short_name }}:</strong> {{ action_item.summary }}
 		</p>
 	{% endif %}
@@ -18,9 +26,7 @@
 	{% if action_item.priority %}
 		<h4 class="text-left" style="color:red"><b>PRIORITY</b></h4>
 	{% endif %}
-
-	<p class="text-muted text-right">{{ action_item.author }} on {{ action_item.written_datetime }}</p>
-	{% if can_case_manage %}
-		<p class="text-right"><a href="{{ admin_url }}" target="_blank"><i>Edit</i></a></p>
-	{% endif %}
+	
+	<p class="text-muted text-right">Due {{ action_item.due_date }}</p>
+	<p class="text-muted text-right">Created by {{ action_item.author }} on {{ action_item.written_datetime }}</p>
 </li>

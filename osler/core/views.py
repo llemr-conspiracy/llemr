@@ -484,9 +484,13 @@ def done_action_item(request, ai_id):
     ai.mark_done(request.user)
     ai.save()
 
-    return HttpResponseRedirect(reverse("new-actionitem-followup",
+    if settings.OSLER_DISPLAY_FOLLOWUP:
+        return HttpResponseRedirect(reverse("new-actionitem-followup",
                                         kwargs={'pt_id':ai.patient.pk,
                                         'ai_id':ai.pk}))
+    else:
+        return HttpResponseRedirect(reverse("core:patient-detail",
+                                        args=(ai.patient.pk,)))
 
 
 def reset_action_item(request, ai_id):
