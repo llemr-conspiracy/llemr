@@ -10,7 +10,6 @@ Patient Data Dashboard
 
 {% block content %}
     <div class="container">
-        <div id="chart"></div>
         <canvas id="myChart"></canvas>
     </div>
 {% endblock %} {% block pagination %}{% endblock %}
@@ -18,26 +17,49 @@ Patient Data Dashboard
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <script>
-var jsondata = JSON.parse("{{data|escapejs}}");
-var labels = jsondata.map(function(e) {
-   return e.name;
-});
+var jsondata = JSON.parse("{{data|escapejs}}"),
+    ageStepSize = 10,
+    ageRanges = [],
+    ageLabels = [],
+    sortedAges = [];
+
 var ages = jsondata.map(function(e) {
     return e.age
 })
+
+var maxAge = ages.reduce(function(a, b) {
+    return Math.max(a, b);
+});
+// note: currently infants less than 1 years old are still counted and are displayed under the 1-ageStepSize range
+for(var i=0; i<maxAge; i+=ageStepSize){
+    ageDict = {}
+    ageDict['key'] = i;
+    ageDict['value'] = 0;
+    ageRanges.push(ageDict)
+    ageLabels.push(String(i+1)+"-"+String(i+ageStepSize))
+}
+
+jsondata.map(function(e){
+    ageRanges.forEach(function(range){
+        if(e.age > range['key'] && e.age <= range['key']+ageStepSize)
+            range['value']+=1
+    })
+})
+
+ageRanges.forEach(function(range){
+    sortedAges.push(range['value'])
+})
+
 var ctx = document.getElementById('myChart').getContext('2d');
 var chart = new Chart(ctx, {
-    // The type of chart we want to create
     type: 'bar',
-
-    // The data for our dataset
     data: {
-        labels: labels,
+        labels: ageLabels,
         datasets: [{
-            label: 'My First dataset',
-            backgroundColor: 'rgb(255, 99, 132)',
-            borderColor: 'rgb(255, 99, 132)',
-            data: ages
+            label: 'Hypertensive Age Ranges',
+            backgroundColor: 'rgb(100, 157, 210)',
+            borderColor: 'black',
+            data: sortedAges
         }]
     },
 
