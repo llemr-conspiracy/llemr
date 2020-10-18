@@ -10,7 +10,8 @@ Patient Data Dashboard
 
 {% block content %}
     <div class="container">
-        <canvas id="myChart"></canvas>
+        <canvas id="htnAgeChart"></canvas>
+        <canvas id="htnGenderChart"></canvas>
     </div>
 {% endblock %} {% block pagination %}{% endblock %}
 
@@ -30,6 +31,7 @@ var ages = jsondata.map(function(e) {
 var maxAge = ages.reduce(function(a, b) {
     return Math.max(a, b);
 });
+
 // note: currently infants less than 1 years old are still counted and are displayed under the 1-ageStepSize range
 for(var i=0; i<maxAge; i+=ageStepSize){
     ageDict = {}
@@ -50,7 +52,7 @@ ageRanges.forEach(function(range){
     sortedAges.push(range['value'])
 })
 
-var ctx = document.getElementById('myChart').getContext('2d');
+var ctx = document.getElementById('htnAgeChart').getContext('2d');
 var chart = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -65,6 +67,42 @@ var chart = new Chart(ctx, {
 
     // Configuration options go here
     options: {}
-});      
+});
+
+var genderData = {
+    "Male":0,
+    "Female":0,
+    "Other":0
+}
+jsondata.map(function(e) {
+    if(e.gender == "Male"){
+        genderData["Male"] += 1
+    }
+    else if(e.gender == "Female"){
+        genderData["Female"] += 1
+    }
+    else{
+        genderData["Other"] += 1
+    }
+})
+
+var genderChart = document.getElementById('htnGenderChart').getContext('2d');
+var pieChart = new Chart(genderChart, {
+    type: 'pie',
+    data: {
+      labels: ["Male","Female","Other"],
+      datasets: [{
+        label: "Genders",
+        backgroundColor: ["#3e95cd", "#8e5ea2","#666666"],
+        data: Object.values(genderData)
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'HTN Gender Distribution'
+      }
+    }
+});
 </script>    
 {% endblock %}
