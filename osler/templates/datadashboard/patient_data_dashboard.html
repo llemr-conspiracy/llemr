@@ -1,0 +1,48 @@
+{% extends "core/base.html" %}
+
+{% block title %}
+Patient Data Dashboard
+{% endblock %}
+
+{% block header %}
+Patient Data Dashboard
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div id="chart"></div>
+        <canvas id="myChart"></canvas>
+    </div>
+{% endblock %} {% block pagination %}{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script>
+var jsondata = JSON.parse("{{data|escapejs}}");
+var labels = jsondata.map(function(e) {
+   return e.name;
+});
+var ages = jsondata.map(function(e) {
+    return e.age
+})
+var ctx = document.getElementById('myChart').getContext('2d');
+var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'bar',
+
+    // The data for our dataset
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'My First dataset',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: ages
+        }]
+    },
+
+    // Configuration options go here
+    options: {}
+});      
+</script>    
+{% endblock %}
