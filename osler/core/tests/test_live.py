@@ -177,7 +177,7 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
 
     def setUp(self):
         # build a user and log in
-        self.password = factory.Faker("password").generate()
+        self.password = factory.Faker("password")
         attending = build_user(
             password=self.password,
             group_factories=[user_factories.AttendingGroupFactory])

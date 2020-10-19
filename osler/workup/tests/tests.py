@@ -23,18 +23,18 @@ def wu_dict(user=None, units=False, clinic_day_pk=False, dx_category=False):
     if not user:
         user = build_user()
 
-    fake_text = factory.Faker('paragraph')
+    fake_text = 'abc'
 
     wu = {'clinic_day': models.ClinicDate.objects.first(),
           'chief_complaint': "SOB",
           'diagnosis': "MI",
-          'hpi': fake_text.generate(), 
-          'pmh': fake_text.generate(), 
-          'psh': fake_text.generate(), 
-          'meds': fake_text.generate(), 
-          'allergies': fake_text.generate(),
-          'fam_hx': fake_text.generate(), 
-          'soc_hx': fake_text.generate(),
+          'hpi': fake_text,
+          'pmh': fake_text,
+          'psh': fake_text,
+          'meds': fake_text,
+          'allergies': fake_text,
+          'fam_hx': fake_text,
+          'soc_hx': fake_text,
           'ros': "f", 'pe': "f", 'a_and_p': "f",
           'hr': '89', 'bp_sys': '120', 'bp_dia': '80', 'rr': '16', 't': '98',
           'labs_ordered_internal': 'f', 'labs_ordered_external': 'f',
@@ -66,7 +66,7 @@ def note_dict(user=None):
 
     pn = {
         'title': 'Good',
-        'text': factory.Faker('paragraph').generate(),
+        'text': 'boy',
         'author': user,
         'author_type': user.groups.first(),
         'patient': Patient.objects.first()
