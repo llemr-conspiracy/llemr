@@ -12,6 +12,7 @@ Patient Data Dashboard
     <div class="container">
         <canvas id="htnAgeChart"></canvas>
         <canvas id="htnGenderChart"></canvas>
+        <canvas id="htnEthnicityChart"></canvas>
     </div>
 {% endblock %} {% block pagination %}{% endblock %}
 
@@ -69,28 +70,26 @@ var chart = new Chart(ctx, {
     options: {}
 });
 
+
+// is there a way to not hard code the gender types?
 var genderData = {
     "Male":0,
     "Female":0,
     "Other":0
 }
 jsondata.map(function(e) {
-    if(e.gender == "Male"){
-        genderData["Male"] += 1
-    }
-    else if(e.gender == "Female"){
-        genderData["Female"] += 1
-    }
-    else{
-        genderData["Other"] += 1
+    for(var i=0; i<Object.keys(genderData).length; i++){
+        if(e.gender == Object.keys(genderData)[i]){
+            genderData[Object.keys(genderData)[i]]++
+        }
     }
 })
 
 var genderChart = document.getElementById('htnGenderChart').getContext('2d');
 var pieChart = new Chart(genderChart, {
-    type: 'pie',
+    type: 'doughnut',
     data: {
-      labels: ["Male","Female","Other"],
+      labels: Object.keys(genderData),
       datasets: [{
         label: "Genders",
         backgroundColor: ["#3e95cd", "#8e5ea2","#666666"],
@@ -101,6 +100,45 @@ var pieChart = new Chart(genderChart, {
       title: {
         display: true,
         text: 'HTN Gender Distribution'
+      }
+    }
+});
+
+var ethnicityData = {
+    "White":0,
+    "Black or African American":0,
+    "American Indian or Alaska Native":0,
+    "Asian":0,
+    "Native Hawaiian or Other Pacific Islander":0,
+    "Hispanic or Latino":0,
+    "Other":0
+}
+jsondata.map(function(e){
+    e.ethnicities.forEach(function(ethnicity){
+        for(var i=0; i<Object.keys(ethnicityData).length; i++){
+            if(ethnicity == Object.keys(ethnicityData)[i]){
+                ethnicityData[Object.keys(ethnicityData)[i]]++
+            }
+        }
+    })     
+})
+
+var ethnicityChart = document.getElementById('htnEthnicityChart').getContext('2d');
+var pieChart = new Chart(ethnicityChart, {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(ethnicityData),
+      datasets: [{
+        label: "Genders",
+        backgroundColor: ['#002b36', '#073642', '#586e75', '#657b83',
+                '#839496', '#93a1a1', '#eee8d5', '#fdf6e3','#662404'],
+        data: Object.values(ethnicityData)
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'HTN Ethnicity Distribution'
       }
     }
 });

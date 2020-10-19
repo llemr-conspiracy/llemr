@@ -24,7 +24,10 @@ def display_hypertensive(request):
             unique_patient_pk_list.append(wu.patient.pk)
             demographics['age'] = (now().date() - wu.patient.date_of_birth).days // 365
             demographics['gender'] = wu.patient.gender.name
-            demographics['ethnicity'] = ", ".join(str(ethnicity) for ethnicity in wu.patient.ethnicities.all())
+            ethnicities = []
+            for ethnicity in list(wu.patient.ethnicities.all()):
+                ethnicities.append(getattr(ethnicity, 'name'))
+            demographics['ethnicities'] = ethnicities
             demographics['name'] = wu.patient.name()
             dashboard_data.append(demographics)
     data = dumps(dashboard_data)
