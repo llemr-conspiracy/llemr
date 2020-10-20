@@ -3,13 +3,16 @@ import pytest
 from osler.users.forms import UserCreationForm
 from osler.users.tests.factories import UserFactory
 
+import factory
+
 pytestmark = pytest.mark.django_db
 
 
 class TestUserCreationForm:
     def test_clean_username(self):
         # A user with proto_user params does not exist yet.
-        proto_user = UserFactory.build()
+        password = factory.Faker("password").generate({'locale':'en-us'})
+        proto_user = UserFactory.build(password=password)
 
         form = UserCreationForm(
             {

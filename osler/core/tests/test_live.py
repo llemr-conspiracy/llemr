@@ -177,7 +177,7 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
 
     def setUp(self):
         # build a user and log in
-        self.password = factory.Faker("password")
+        self.password = 'password'
         attending = build_user(
             password=self.password,
             group_factories=[user_factories.AttendingGroupFactory])
@@ -351,8 +351,8 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
             "//tr[2]/td[1]").text
         second_patient_name = pt_tbody.find_element_by_xpath(
             "//tr[3]/td[1]").text
-        self.assertLessEqual(first_patient_name, second_patient_name)
-        self.assertEqual(first_patient_name, "Action, No I.")
+        assert first_patient_name <= second_patient_name
+        assert first_patient_name == "Action, No I."
 
         # TODO test order by latest activity
 

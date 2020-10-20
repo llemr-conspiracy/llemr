@@ -30,13 +30,14 @@ class TestActionItemCreateForms(TestCase):
             instruction='Lab Followup', active=True)
 
         ai_qs = ActionInstruction.objects.filter(
-            active=True).values_list('instruction', flat=True)
+            active=True)
 
         form = forms.ActionItemForm(data=self.ai_data)
 
-        form_list = [c[0] for c in form['instruction'].field.choices][1:]
+        form_qs = form['instruction'].field.queryset
 
-        assert set(ai_qs) == set(form_list)
+        assert set(ai_qs) == set(form_qs)
+        assert len(ai_qs) == len(form_qs)
 
         # Accept active Action Instructions
         self.ai_data['instruction'] = Lab_Followup.pk
@@ -75,17 +76,16 @@ class TestPatientCreateForms(TestCase):
         [p.save() for p in pvds]
 
         cm_qs = User.objects.filter(
-            groups__in=[casemanager]).values_list('id', flat=True)
+            groups__in=[casemanager])
 
         form = forms.PatientForm()
 
-        # c[0] is the pk of each, [1:] indexing required because element 0
-        # is the "blank" option.
-        form_list = [c[0] for c in form['case_managers'].field.choices]
+        form_qs = form['case_managers'].field.queryset
 
-        # cast to set for 1) order-insensitivity and 2) b/c cm_qs is
-        # a queryset and form_list is a list
-        assert set(cm_qs) == set(form_list)
+        # avoid strange behavior with assertQuerysetEqual
+        assert set(cm_qs) == set(form_qs)
+        assert len(cm_qs) == len(form_qs)
+
 
         # Make sure we reject non-case manager providers
 
