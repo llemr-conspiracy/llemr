@@ -248,13 +248,13 @@ class TestWorkupFormProviderChoices(TestCase):
         form = WorkupForm()
 
         # find all users able to attest
-        attending_users = [u.pk for u in filter(
+        attending_users = [u for u in filter(
             lambda u: u.has_perm(Workup.get_sign_perm()), 
             self.users)]
 
         # c[0] is the pk of each, [1:] indexing required because element 0
         # is the "blank" option.
-        attending_options = [c[0] for c in form['attending'].field.choices][1:]
+        attending_options = form['attending'].field.queryset
 
         # ensure that options are the same
         assert set(attending_options) == set(attending_users)
@@ -267,8 +267,8 @@ class TestWorkupFormProviderChoices(TestCase):
         """WorkupForm offers only non-attendings for 'other volunteers'"""
 
         form = WorkupForm()
-        user_pks = [u.pk for u in self.users]
-        other_vol_options = [c[0] for c in form['other_volunteer'].field.choices]
+        user_pks = [u for u in self.users]
+        other_vol_options = form['other_volunteer'].field.queryset
 
         # check that any user can be the other volunteer
         assert set(user_pks) == set(other_vol_options)

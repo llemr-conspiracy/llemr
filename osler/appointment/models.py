@@ -42,9 +42,9 @@ class Appointment(Note):
     comment = models.TextField(
         help_text="What should happen at this appointment?")
 
-    pt_showed = models.NullBooleanField(
+    pt_showed = models.BooleanField(
         verbose_name="Patient Showed",
-        blank=True, help_text="Did the patient come to this appointment?")
+        blank=True, null=True, help_text="Did the patient come to this appointment?")
 
     history = HistoricalRecords()
 

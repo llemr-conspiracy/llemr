@@ -355,6 +355,9 @@ OSLER_ROLE_DASHBOARDS = {
 # List of IP addresses to exclude from audit
 OSLER_AUDIT_BLACK_LIST = []
 
+# Name of about link in top bar
+OSLER_ABOUT_NAME = "About"
+
 # Display app settings - allows you to hide template components by passing settings variables through tmeplate render context
 #overrided in umkc.py
 # -----------------------------------------------------------------------------
@@ -366,9 +369,9 @@ OSLER_DISPLAY_DIAGNOSIS = True
 OSLER_DISPLAY_VOUCHERS = True
 OSLER_DISPLAY_WILL_RETURN = True
 OSLER_DISPLAY_ATTENDANCE = False
+OSLER_DISPLAY_FOLLOWUP = True
 
 OSLER_ATTENDANCE_URL = env(
     "OSLER_ATTENDANCE_URL",
     default="https://www.wustl.edu",
 )
-
