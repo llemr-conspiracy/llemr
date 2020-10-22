@@ -21,6 +21,7 @@ from . import utils
 from tempfile import NamedTemporaryFile
 import csv
 import datetime
+from django.utils import timezone
 
 # Create your views here.
 
@@ -157,7 +158,7 @@ def export_csv(request):
         select_related('manufacturer').\
         order_by('category', 'name', 'dose', 'expiration_date')
     
-    day_interval = datetime.date.today() - datetime.timedelta(days=6)
+    day_interval = timezone.make_aware(timezone.datetime.today() - datetime.timedelta(days=6))
     recently_dispensed = models.DispenseHistory.objects.filter(written_datetime__gte=day_interval)
 
     with NamedTemporaryFile(mode='a+') as file:
@@ -184,7 +185,7 @@ def export_csv(request):
         file.seek(0)
         csvfileread = file.read()
 
-    csv_filename = f"drug-inventory-{str(datetime.date.today())}.csv"
+    csv_filename = f"drug-inventory-{str(timezone.now().date())}.csv"
 
     response = HttpResponse(csvfileread, 'application/csv')
     response["Content-Disposition"] = (
@@ -196,9 +197,12 @@ def export_csv(request):
 def export_dispensing_history(request):
     start_date = request.POST.get('start_date')
     end_date = request.POST.get('end_date')
+    tz_aware_start_date = timezone.make_aware(datetime.datetime.strptime(start_date, '%Y-%m-%d'))
+    tz_aware_end_date = timezone.make_aware(datetime.datetime.strptime(end_date, '%Y-%m-%d'))
+    tz_aware_end_date_plus_one = timezone.make_aware(datetime.datetime.strptime(end_date, '%Y-%m-%d') + datetime.timedelta(days=1))
 
     recent_dispense_histories = models.DispenseHistory.objects.exclude(
-        written_datetime__gt=datetime.datetime.strptime(end_date, '%Y-%m-%d') + datetime.timedelta(days=1)).filter(written_datetime__gte=start_date)
+        written_datetime__gt=tz_aware_end_date_plus_one).filter(written_datetime__gte=tz_aware_start_date)
 
     recently_dispensed_drugs = models.Drug.objects.filter(pk__in=list(recent_dispense_histories.values_list('drug', flat=True)))
     recently_dispensed_drugs.select_related('unit').\
@@ -208,7 +212,7 @@ def export_dispensing_history(request):
 
     with NamedTemporaryFile(mode='a+') as file:
         writer = csv.writer(file)
-        header = ['Drug Name', f"Doses Dispensed From: {str(start_date)} through {str(end_date)}", 'Remaining Stock', 'Dosage', 'Unit', 'Expiration Date',
+        header = ['Drug Name', f"Doses Dispensed From: {str(tz_aware_start_date.date())} through {str(tz_aware_end_date.date())}", 'Remaining Stock', 'Dosage', 'Unit', 'Expiration Date',
                 'Lot Number', 'Category', 'Manufacturer']
         writer.writerow(header)
         for drug in recently_dispensed_drugs:
@@ -228,7 +232,7 @@ def export_dispensing_history(request):
         file.seek(0)
         csvfileread = file.read()
 
-    csv_filename = f"drug-dispensing-history-through-{str(end_date)}.csv"
+    csv_filename = f"drug-dispensing-history-through-{str(tz_aware_end_date.date())}.csv"
     response = HttpResponse(csvfileread, 'application/csv')
     response["Content-Disposition"] = (
         "attachment; filename=%s" % (csv_filename,))

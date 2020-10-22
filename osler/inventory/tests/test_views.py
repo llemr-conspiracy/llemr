@@ -6,7 +6,7 @@ from osler.core.tests.test_views import log_in_user, build_user
 from osler.core.tests import factories as core_factories
 from osler.inventory.tests import factories
 from osler.users.tests import factories as user_factories
-from datetime import date
+from django.utils import timezone
 
 class TestDrugList(TestCase):
 
@@ -174,7 +174,7 @@ class TestDrugExport(TestCase):
             if group == csv_perm_group:
                 assert response.status_code == 200
                 self.assertEqual(response["Content-Disposition"],
-                                 f"attachment; filename=drug-inventory-{str(date.today())}.csv")
+                                 f"attachment; filename=drug-inventory-{str(timezone.now().date())}.csv")
             else:
                  assert response.status_code == 403
 
