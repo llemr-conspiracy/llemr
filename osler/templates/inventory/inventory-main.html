@@ -49,21 +49,21 @@ Drug Inventory
     <table class="table" id="drug-list-table">
         <tr>
           <th>Name</th>
-            <th>Category</th>
-            <th>Stock</th>
-            <th>Lot Number</th>
-            <th>Dose</th>
-            <th>Expiration Date</th>
-            <th>Manufacturer</th>
-            <th></th>
+          <th>Dose</th>
+          <th>Category</th>
+          <th>Stock</th>
+          <th>Lot Number</th>
+          <th>Expiration Date</th>
+          <th>Manufacturer</th>
+          <th></th>
         </tr>
         {% for drug in object_list %}
             <tr>
                 <td><a href="{% url 'inventory:drug-update' pk=drug.id %}">{{ drug.name }}</a></td>
+                <td>{{ drug.dose }} {{ drug.unit }}</td>
                 <td><b>{{ drug.category }}</b></td>
                 <td><b>{{ drug.stock }}</b></td>
                 <td>{{ drug.lot_number }}</td>
-                <td>{{ drug.dose }}{{ drug.unit }}</td>
                 <td>{% if drug.expired %}
                   <b style="color:red;">{{ drug.expiration_date }}</b>
                   {% elif drug.pre_expire %}
@@ -88,7 +88,7 @@ Drug Inventory
                             <h2 class="modal-title" id="dispenseModal{{ drug.id }}Label">Dispense Drug</h2>
                           </div>
                           <div class="modal-body">
-                            How many <b>{{ drug.name }} {% if drug.unit %}{{ drug.dose }}{% endif %}{% if drug.unit %}{{ drug.unit }}{% endif %}</b> would you like to dispense?
+                            How many <b>{{ drug.name }} {% if drug.unit %}{{ drug.dose }}{% endif %} {% if drug.unit %}{{ drug.unit }}{% endif %}</b> would you like to dispense?
                             <div class="form-group">
                               <input type="number" class="form-control" placeholder="1" name="num" id="num" min="1" max="{{ drug.stock }}" required>
                             </div>

@@ -309,7 +309,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
         <div id="collapse7" class="panel-collapse collapse">
           {% for note in patient.dispensehistory_set.all|dictsortreversed:"last_modified"|slice:":10" %}
           <div class="panel-body">
-            <p><strong>Dispensed Drugs:</strong> Dispensed {{ note.dispense }} {{ note.drug.name }} {{ note.drug.dose }}{{ note.drug.unit }}, Lot: {{ note.drug.lot_number }}</p>
+            <p><strong>Dispensed Drugs:</strong> Dispensed {{ note.dispense }} {{ note.drug.name }} {{ note.drug.dose }} {{ note.drug.unit }}, Lot: {{ note.drug.lot_number }}</p>
             <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
             {% if can_case_manage %}
             <p class="text-right">

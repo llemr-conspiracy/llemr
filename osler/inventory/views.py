@@ -157,7 +157,7 @@ def export_csv(request):
         select_related('category').\
         select_related('manufacturer').\
         order_by('category', 'name', 'dose', 'expiration_date')
-    
+
     day_interval = timezone.make_aware(timezone.datetime.today() - datetime.timedelta(days=6))
     recently_dispensed = models.DispenseHistory.objects.filter(written_datetime__gte=day_interval)
 
@@ -169,7 +169,7 @@ def export_csv(request):
         for drug in drugs:
             dispensed_list = list(recently_dispensed.filter(drug=drug.id).values_list('dispense', flat=True))
             dispensed_sum = sum(dispensed_list)
-            if dispensed_sum == 0: 
+            if dispensed_sum == 0:
                 dispensed_sum = ""
             writer.writerow(
                 [drug.name,
