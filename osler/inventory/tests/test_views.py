@@ -173,8 +173,10 @@ class TestDrugExport(TestCase):
 
             if group == csv_perm_group:
                 assert response.status_code == 200
+                date_list = str(timezone.now().date()).split("-")
+                formatted_date = f"{date_list[1]}/{date_list[2]}/{date_list[0][:2]}"
                 self.assertEqual(response["Content-Disposition"],
-                                 f"attachment; filename=drug-inventory-{str(timezone.now().date())}.csv")
+                                 f"attachment; filename=drug-inventory-{formatted_date}.csv")
             else:
                  assert response.status_code == 403
 
@@ -190,6 +192,6 @@ class TestDrugExport(TestCase):
             if group == csv_perm_group:
                 assert response.status_code == 200
                 self.assertEqual(response["Content-Disposition"],
-                                 f"attachment; filename=drug-dispensing-history-through-2020-09-28.csv")
+                                 f"attachment; filename=drug-dispensing-history-through-09/28/20.csv")
             else:
                  assert response.status_code == 403
