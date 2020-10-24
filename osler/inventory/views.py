@@ -163,8 +163,8 @@ def export_csv(request):
 
     with NamedTemporaryFile(mode='a+') as file:
         writer = csv.writer(file)
-        header = ['Drug Name', 'Dosage', 'Unit', 'Remaining Stock', 'Expiration Date',
-                  'Lot Number', 'Category', 'Manufacturer', f"Doses Dispensed Since {str(day_interval)}"]
+        header = ['Drug Name', 'Dosage', 'Unit', 'Category', 'Stock Remaining', 'Lot Number',
+        'Expiration Date', 'Manufacturer', f"Doses Dispensed Since {format_date(str(day_interval.date()))}"]
         writer.writerow(header)
         for drug in drugs:
             dispensed_list = list(recently_dispensed.filter(drug=drug.id).values_list('dispense', flat=True))
@@ -175,17 +175,17 @@ def export_csv(request):
                 [drug.name,
                  drug.dose,
                  drug.unit,
-                 drug.stock,
-                 drug.expiration_date,
-                 drug.lot_number,
                  drug.category,
+                 drug.stock,
+                 drug.lot_number,
+                 drug.expiration_date,                 
                  drug.manufacturer,
                  dispensed_sum
                  ])
         file.seek(0)
         csvfileread = file.read()
 
-    csv_filename = f"drug-inventory-{str(timezone.now().date())}.csv"
+    csv_filename = f"drug-inventory-{format_date(str(timezone.now().date()))}.csv"
 
     response = HttpResponse(csvfileread, 'application/csv')
     response["Content-Disposition"] = (
@@ -212,8 +212,8 @@ def export_dispensing_history(request):
 
     with NamedTemporaryFile(mode='a+') as file:
         writer = csv.writer(file)
-        header = ['Drug Name', f"Doses Dispensed From: {str(tz_aware_start_date.date())} through {str(tz_aware_end_date.date())}", 'Remaining Stock', 'Dosage', 'Unit', 'Expiration Date',
-                'Lot Number', 'Category', 'Manufacturer']
+        header = ['Drug Name', f"Doses Dispensed From: {format_date(str(tz_aware_start_date.date()))} - {format_date(str(tz_aware_end_date.date()))}", 
+                  'Stock Remaining ', 'Dosage', 'Unit', 'Category', 'Lot Number', 'Expiration Date', 'Manufacturer']
         writer.writerow(header)
         for drug in recently_dispensed_drugs:
             dispensed_list = list(recent_dispense_histories.filter(drug=drug.id).values_list('dispense', flat=True))
@@ -224,18 +224,22 @@ def export_dispensing_history(request):
                 drug.stock,
                 drug.dose,
                 drug.unit,
-                drug.expiration_date,
-                drug.lot_number,
                 drug.category,
-                drug.manufacturer,
+                drug.lot_number,
+                drug.expiration_date,                
+                drug.manufacturer
                 ])
         file.seek(0)
         csvfileread = file.read()
 
-    csv_filename = f"drug-dispensing-history-through-{str(tz_aware_end_date.date())}.csv"
+    csv_filename = f"drug-dispensing-history-through-{format_date(str(tz_aware_end_date.date()))}.csv"
     response = HttpResponse(csvfileread, 'application/csv')
     response["Content-Disposition"] = (
         "attachment; filename=%s" % (csv_filename,))
     redirect('inventory:drug-list')
     return response
 
+def format_date(date):
+    date_list = date.split("-")
+    formatted_date = f"{date_list[1]}/{date_list[2]}/{date_list[0][:2]}"
+    return formatted_date
