@@ -5,7 +5,6 @@ from osler.datadashboard import models
 import datetime
 from json import dumps
 
-
 def get_dashboard_data(hypertensive_workups):
     dashboard_data = []
     unique_patient_pk_list = []
