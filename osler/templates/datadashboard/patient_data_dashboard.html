@@ -1,16 +1,12 @@
 {% extends "core/base.html" %}
 
-<<<<<<< HEAD
 {% load static %}
 
-=======
->>>>>>> 66c0d5ffc9cea3f0285a6ceab03be43d04587b75
 {% block title %}
 Patient Data Dashboard
 {% endblock %}
 
 {% block header %}
-<<<<<<< HEAD
     <h3>Patient Data Dashboard</h3>
 {% endblock %}
 
@@ -166,21 +162,6 @@ Patient Data Dashboard
 
 
 
-=======
-Patient Data Dashboard
-{% endblock %}
-
-{% block content %}
-    <div class="container">
-        <canvas id="htnAgeChart"></canvas>
-        <canvas id="htnGenderChart"></canvas>
-        <canvas id="htnEthnicityChart"></canvas>
-    </div>
-{% endblock %} {% block pagination %}{% endblock %}
-
-{% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
->>>>>>> 66c0d5ffc9cea3f0285a6ceab03be43d04587b75
 <script>
 var jsondata = JSON.parse("{{data|escapejs}}"),
     ageStepSize = 10,
@@ -218,25 +199,17 @@ ageRanges.forEach(function(range){
 
 var ctx = document.getElementById('htnAgeChart').getContext('2d');
 var chart = new Chart(ctx, {
-<<<<<<< HEAD
     responsive: 'true',
-=======
->>>>>>> 66c0d5ffc9cea3f0285a6ceab03be43d04587b75
     type: 'bar',
     data: {
         labels: ageLabels,
         datasets: [{
             label: 'Hypertensive Age Ranges',
-<<<<<<< HEAD
             backgroundColor: '#FF9594',
-=======
-            backgroundColor: 'rgb(100, 157, 210)',
->>>>>>> 66c0d5ffc9cea3f0285a6ceab03be43d04587b75
             borderColor: 'black',
             data: sortedAges
         }]
     },
-<<<<<<< HEAD
     options: {
         fullCornerRadius: false,
         cornerRadius: 15,
@@ -272,11 +245,6 @@ var chart = new Chart(ctx, {
       
     }
 
-=======
-
-    // Configuration options go here
-    options: {}
->>>>>>> 66c0d5ffc9cea3f0285a6ceab03be43d04587b75
 });
 
 
@@ -301,16 +269,11 @@ var pieChart = new Chart(genderChart, {
       labels: Object.keys(genderData),
       datasets: [{
         label: "Genders",
-<<<<<<< HEAD
         backgroundColor: ["#80ABFC","#FF9594", "#68D7D4"],
-=======
-        backgroundColor: ["#3e95cd", "#8e5ea2","#666666"],
->>>>>>> 66c0d5ffc9cea3f0285a6ceab03be43d04587b75
         data: Object.values(genderData)
       }]
     },
     options: {
-<<<<<<< HEAD
         maintainAspectRatio: false,
         responsive: true,
 
@@ -322,10 +285,6 @@ var pieChart = new Chart(genderChart, {
         },
       title: {
         display: false,
-=======
-      title: {
-        display: true,
->>>>>>> 66c0d5ffc9cea3f0285a6ceab03be43d04587b75
         text: 'HTN Gender Distribution'
       }
     }
@@ -352,10 +311,7 @@ jsondata.map(function(e){
 
 var ethnicityChart = document.getElementById('htnEthnicityChart').getContext('2d');
 var pieChart = new Chart(ethnicityChart, {
-<<<<<<< HEAD
     responsive: 'true',
-=======
->>>>>>> 66c0d5ffc9cea3f0285a6ceab03be43d04587b75
     type: 'doughnut',
     data: {
       labels: Object.keys(ethnicityData),
@@ -367,14 +323,11 @@ var pieChart = new Chart(ethnicityChart, {
       }]
     },
     options: {
-<<<<<<< HEAD
         legend: {
             labels: {
                 usePointStyle: true
             }
         },
-=======
->>>>>>> 66c0d5ffc9cea3f0285a6ceab03be43d04587b75
       title: {
         display: true,
         text: 'HTN Ethnicity Distribution'
