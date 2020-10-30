@@ -1,6 +1,7 @@
 """
 Base settings to build other settings files upon.
 """
+from django.contrib.messages import constants as messages
 from pathlib import Path
 
 import environ
@@ -87,6 +88,7 @@ LOCAL_APPS = [
     'osler.vaccine.apps.VaccineConfig',
     'osler.labs.apps.LabsConfig',
     'osler.inventory.apps.InventoryConfig',
+    'osler.datadashboard.apps.DatadashboardConfig'
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -303,7 +305,6 @@ REST_FRAMEWORK = {
 
 # Messages configurations
 # -----------------------------------------------------------------------------
-from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.ERROR: 'bg-danger',
     messages.WARNING: 'bg-warning',
