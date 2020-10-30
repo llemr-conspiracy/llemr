@@ -6,9 +6,24 @@ import datetime
 from json import dumps
 
 
+<<<<<<< HEAD
 def get_dashboard_data(hypertensive_workups):
     dashboard_data = []
     unique_patient_pk_list = []
+=======
+def display_hypertensive(request):
+    '''Queries all workups defined as hypertensive (currently defined as bp_sys > 140) 
+    and formats related patient demographic data into a json to be rendered in template'''
+
+    hypertensive_workups = Workup.objects.filter(bp_sys__gte=140).\
+        select_related('patient').\
+        select_related('patient__gender').\
+        prefetch_related('patient__ethnicities')
+
+    dashboard_data = []
+    unique_patient_pk_list = []
+
+>>>>>>> 66c0d5ffc9cea3f0285a6ceab03be43d04587b75
     for wu in hypertensive_workups:
         demographics = {}
         if wu.patient.pk not in unique_patient_pk_list:
@@ -21,6 +36,7 @@ def get_dashboard_data(hypertensive_workups):
             demographics['ethnicities'] = ethnicities
             demographics['name'] = wu.patient.name()
             dashboard_data.append(demographics)
+<<<<<<< HEAD
     return dashboard_data
 
 
@@ -61,3 +77,7 @@ def display_daterange(request):
 
     context = {'data': data}
     return render(request, 'datadashboard/patient_data_dashboard.html', context)
+=======
+    data = dumps(dashboard_data)
+    return render(request, 'datadashboard/patient_data_dashboard.html', {"data": data})
+>>>>>>> 66c0d5ffc9cea3f0285a6ceab03be43d04587b75
