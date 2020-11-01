@@ -47,7 +47,7 @@ def display_hypertensive(request):
 
 def display_daterange(request):
     '''Queries all workups in a given timerange defined as hypertensive (currently just hypertensive patients, in future different kinds of diseases)'''
-    start_date = "2020-01-01"  # take these values from form (crsipy forms?)
+    start_date = "2020-01-01"  # take these values from form
     end_date = '2020-04-04'
     workups = Workup.objects.filter(date_range=[start_date, end_date]).filter(bp_sys__gte=140).\
         select_related('patient').\
