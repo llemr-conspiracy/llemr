@@ -12,6 +12,7 @@ def get_dashboard_data(hypertensive_workups):
         demographics = {}
         if wu.patient.pk not in unique_patient_pk_list:
             unique_patient_pk_list.append(wu.patient.pk)
+            print(wu.written_datetime)
             demographics['age'] = (now().date() - wu.patient.date_of_birth).days // 365
             demographics['gender'] = wu.patient.gender.name
             ethnicities = []
