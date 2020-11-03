@@ -36,7 +36,6 @@ def display_hypertensive(request):
         prefetch_related('patient__ethnicities')
 
     dashboard_data = get_dashboard_data(hypertensive_workups)
-
     data = dumps(dashboard_data)
 
     # should we do other "quick facts" like median age or gender distribution?
@@ -55,10 +54,7 @@ def display_diabetes(request):
         select_related('patient__gender').\
         prefetch_related('patient__ethnicities')
 
-    print(diabetic_workups)
-
     dashboard_data = get_dashboard_data(diabetic_workups)
-
     data = dumps(dashboard_data)
 
     context = {'workup_data': workup_data, 'data':data}
