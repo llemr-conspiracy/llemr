@@ -10,6 +10,10 @@ unwrapped_urlconf = [
         r'^$',
         views.display_hypertensive,
         name='display-hypertensive'),
+    re_path(
+        r'^diabetes/$',
+        views.display_diabetes,
+        name='display-diabetes'),
 ]
 
 wrap_config = {}

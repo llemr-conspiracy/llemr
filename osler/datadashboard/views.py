@@ -5,10 +5,10 @@ from osler.datadashboard import models
 import datetime
 from json import dumps
 
-def get_dashboard_data(hypertensive_workups):
+def get_dashboard_data(filtered_workups):
     dashboard_data = []
     unique_patient_pk_list = []
-    for wu in hypertensive_workups:
+    for wu in filtered_workups:
         demographics = {}
         if wu.patient.pk not in unique_patient_pk_list:
             unique_patient_pk_list.append(wu.patient.pk)
@@ -43,6 +43,26 @@ def display_hypertensive(request):
 
     context = {'workup_data': workup_data, 'data': data}
     return render(request, 'datadashboard/patient_data_dashboard.html', context)
+
+def display_diabetes(request):
+    '''Queries all workups defined as diabetic under diagnosis field
+    and formats them into json template'''
+    workup_data = {}
+    workup_data['all'] = Workup.objects.all().count()  
+
+    diabetic_workups = Workup.objects.filter(diagnosis__contains='diabetes').\
+        select_related('patient').\
+        select_related('patient__gender').\
+        prefetch_related('patient__ethnicities')
+
+    print(diabetic_workups)
+
+    dashboard_data = get_dashboard_data(diabetic_workups)
+
+    data = dumps(dashboard_data)
+
+    context = {'workup_data': workup_data, 'data':data}
+    return render(request,'datadashboard/patient_data_dashboard.html',context)
 
 
 def display_daterange(request):

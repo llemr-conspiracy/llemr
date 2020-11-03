@@ -52,6 +52,11 @@ def load_fixtures():
 			f = workup["fields"].copy()
 			f["bp_sys"] = str(random.randint(100,180))
 			f["patient"] = p
+			r = random.randint(0,1)
+			if(r==0):
+				f["diagnosis"] = "hypertension"
+			else:
+				f["diagnosis"] = "diabetes"
 			workup["fields"] = f
 			workups.append(workup)
 			pk+=1
