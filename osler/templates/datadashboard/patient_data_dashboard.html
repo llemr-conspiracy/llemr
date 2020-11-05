@@ -147,7 +147,7 @@ Patient Data Dashboard
                     </div> 
                 </div>
             </div>
-        <!-- <div class="col-lg-6"><canvas id="htnEthnicityChart"></canvas></div> -->
+        <div class="col-lg-6"><canvas id="htnEthnicityChart"></canvas></div>
     </div>
     </div>
     </div>
@@ -168,7 +168,7 @@ var jsondata = JSON.parse("{{data|escapejs}}"),
   ageLabels = [],
   sortedAges = [];
 
-var ages = jsondata.map(function (e) {
+var ages = Object.values(jsondata).map(function (e) {
   return e.age;
 });
 
@@ -185,7 +185,7 @@ for (var i = 0; i < maxAge; i += ageStepSize) {
   ageLabels.push(String(i + 1) + "-" + String(i + ageStepSize));
 }
 
-jsondata.map(function (e) {
+Object.values(jsondata).map(function (e) {
   ageRanges.forEach(function (range) {
     if (e.age > range["key"] && e.age <= range["key"] + ageStepSize)
       range["value"] += 1;
@@ -195,6 +195,7 @@ jsondata.map(function (e) {
 ageRanges.forEach(function (range) {
   sortedAges.push(range["value"]);
 });
+// console.log(sortedAges)
 
 var ctx = document.getElementById("htnAgeChart").getContext("2d");
 var chart = new Chart(ctx, {
@@ -256,7 +257,8 @@ var genderData = {
   Female: 0,
   Other: 0,
 };
-jsondata.map(function (e) {
+
+Object.values(jsondata).map(function (e) {
   for (var i = 0; i < Object.keys(genderData).length; i++) {
     if (e.gender == Object.keys(genderData)[i]) {
       genderData[Object.keys(genderData)[i]]++;
@@ -303,7 +305,8 @@ var ethnicityData = {
   "Hispanic or Latino": 0,
   Other: 0,
 };
-jsondata.map(function (e) {
+
+Object.values(jsondata).map(function (e) {
   e.ethnicities.forEach(function (ethnicity) {
     for (var i = 0; i < Object.keys(ethnicityData).length; i++) {
       if (ethnicity == Object.keys(ethnicityData)[i]) {

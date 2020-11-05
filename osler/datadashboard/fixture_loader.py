@@ -24,7 +24,7 @@ def random_date_in_range(start_date, end_date):
 
 def load_fixtures():
 	pk = 5
-	for p in range(6,100):
+	for p in range(6,15):
 		patient = patients[0].copy()
 		patient["pk"] = p
 		f = patient["fields"].copy()

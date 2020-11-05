@@ -6,13 +6,14 @@ import datetime
 from json import dumps
 
 def get_dashboard_data(hypertensive_workups):
-    dashboard_data = []
+    dashboard_data = {}
     unique_patient_pk_list = []
+    workups_by_patient = []
+    patient_workup_dates = {}
     for wu in hypertensive_workups:
-        demographics = {}
-        if wu.patient.pk not in unique_patient_pk_list:
+        demographics = {} #TODO FIGURE out way to append demographics to dashboard_data free from this for loop (has to work with else statement)
+        if wu.patient.pk not in unique_patient_pk_list:            
             unique_patient_pk_list.append(wu.patient.pk)
-            print(wu.written_datetime)
             demographics['age'] = (now().date() - wu.patient.date_of_birth).days // 365
             demographics['gender'] = wu.patient.gender.name
             ethnicities = []
@@ -20,7 +21,18 @@ def get_dashboard_data(hypertensive_workups):
                 ethnicities.append(getattr(ethnicity, 'name'))
             demographics['ethnicities'] = ethnicities
             demographics['name'] = wu.patient.name()
-            dashboard_data.append(demographics)
+            demographics['wu_dates'] = [str(wu.written_datetime.date())]
+            # patient_workup_dates[wu.patient.pk] = [str(wu.written_datetime.date())]
+
+            dashboard_data[wu.patient.pk] = demographics
+        else:
+            # adds repeat workups to date list to be used in js side date filtering
+            # dashboard_data[wu.patient.pk]
+            existing_wu_dates = dashboard_data.get(wu.patient.pk)['wu_dates']
+            existing_wu_dates.append(str(wu.written_datetime.date()))
+        # print(demographics['wu_dates'])
+        # print(dashboard_data)   
+
     return dashboard_data
 
 
@@ -31,7 +43,7 @@ def display_hypertensive(request):
     workup_data['all'] = Workup.objects.all().count()
     # workup_data['got_voucher'] = Workup.objects.filter(got_voucher=True).count()
 
-    hypertensive_workups = Workup.objects.filter(bp_sys__gte=140).\
+    hypertensive_workups = Workup.objects.filter(bp_sys__gte=100).\
         select_related('patient').\
         select_related('patient__gender').\
         prefetch_related('patient__ethnicities')
@@ -39,6 +51,7 @@ def display_hypertensive(request):
     dashboard_data = get_dashboard_data(hypertensive_workups)
 
     data = dumps(dashboard_data)
+    print(data)
 
     # should we do other "quick facts" like median age or gender distribution?
 
@@ -50,7 +63,7 @@ def display_daterange(request):
     '''Queries all workups in a given timerange defined as hypertensive (currently just hypertensive patients, in future different kinds of diseases)'''
     start_date = "2020-01-01"  # take these values from form
     end_date = '2020-04-04'
-    workups = Workup.objects.filter(date_range=[start_date, end_date]).filter(bp_sys__gte=140).\
+    workups = Workup.objects.filter(date_range=[start_date, end_date]).filter(bp_sys__gte=100).\
         select_related('patient').\
         select_related('patient__gender').\
         prefetch_related('patient__ethnicities')
