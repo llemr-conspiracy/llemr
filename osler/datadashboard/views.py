@@ -8,10 +8,8 @@ from json import dumps
 def get_dashboard_data(hypertensive_workups):
     dashboard_data = {}
     unique_patient_pk_list = []
-    workups_by_patient = []
-    patient_workup_dates = {}
     for wu in hypertensive_workups:
-        demographics = {} #TODO FIGURE out way to append demographics to dashboard_data free from this for loop (has to work with else statement)
+        demographics = {}
         if wu.patient.pk not in unique_patient_pk_list:            
             unique_patient_pk_list.append(wu.patient.pk)
             demographics['age'] = (now().date() - wu.patient.date_of_birth).days // 365
@@ -22,17 +20,11 @@ def get_dashboard_data(hypertensive_workups):
             demographics['ethnicities'] = ethnicities
             demographics['name'] = wu.patient.name()
             demographics['wu_dates'] = [str(wu.written_datetime.date())]
-            # patient_workup_dates[wu.patient.pk] = [str(wu.written_datetime.date())]
-
             dashboard_data[wu.patient.pk] = demographics
         else:
             # adds repeat workups to date list to be used in js side date filtering
-            # dashboard_data[wu.patient.pk]
             existing_wu_dates = dashboard_data.get(wu.patient.pk)['wu_dates']
             existing_wu_dates.append(str(wu.written_datetime.date()))
-        # print(demographics['wu_dates'])
-        # print(dashboard_data)   
-
     return dashboard_data
 
 
