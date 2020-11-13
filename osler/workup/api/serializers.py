@@ -1,6 +1,10 @@
+#TO DO OTHER VOLUNTEER, LIST ORDERING
+#IGNORE REFERRAL STUFF FOR NOW
+
 from rest_framework import serializers
 from osler.workup import models
 from osler.core.models import ReferralType, ReferralLocation
+from django.shortcuts import get_object_or_404
 
 class ReferralLocationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,7 +18,7 @@ class ClinicDateSerializer(serializers.ModelSerializer):
 class WorkupSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Workup
-        exclude = []
+        exclude = ['referral_type', 'referral_location']
 
     clinic_day = ClinicDateSerializer()
     url = serializers.StringRelatedField(read_only=True)
@@ -40,28 +44,35 @@ class WorkupSerializer(serializers.ModelSerializer):
         #So will have to implement another way to utilize them.
         #These could be added to exclude in the future depending on API needs.
         other_volunteer = validated_data.pop('other_volunteer')
-        diagonsis_categories = validated_data.pop('diagnosis_categories')
-        referral_type = validated_data.pop('referral_type')
-        referral_location = validated_data.pop('referral_location')
+        diagnosis_categories = validated_data.pop('diagnosis_categories')
 
         #Must find or create ClinicDate object
         clinic_day = validated_data.pop('clinic_day')
         clinic_instance, created = models.ClinicDate.objects.get_or_create(clinic_date=clinic_day['clinic_date'],clinic_type=clinic_day['clinic_type'])
         
-        referral_location_instance = ReferralLocation.objects.filter(name=referral_location)
-        
+        #create workup
         workup = models.Workup.objects.create(**validated_data, clinic_day=clinic_instance)
-        # workup.referral_location.add(referral_location_instance)
+        
+        #add diagnosis categories
+        for diagnosis_category in diagnosis_categories:
+            diag = get_object_or_404(models.DiagnosisType, name=diagnosis_category)
+            workup.diagnosis_categories.add(diag)
+
+        # referral_location_instance = ReferralLocation.objects.filter(name=referral_location)
+        # workup.referral_location.set(referral_location_instance)
         return workup
 
     def update(self, instance, validated_data):
         other_volunteer = validated_data.pop('other_volunteer')
-        diagonsis_categories = validated_data.pop('diagnosis_categories')
-        referral_type = validated_data.pop('referral_type')
-        referral_location = validated_data.pop('referral_location')
+        diagnosis_categories = validated_data.pop('diagnosis_categories')
         clinic_day = validated_data.pop('clinic_day')
+        #clinic_day isn't actually updated so it's safe not to have it as read-only but not great
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+        instance.diagnosis_categories.clear()
+        for diagnosis_category in diagnosis_categories:
+            diag = get_object_or_404(models.DiagnosisType, name=diagnosis_category)
+            instance.diagnosis_categories.add(diag)
         instance.save()
         return instance
 
@@ -71,11 +82,12 @@ class WorkupSerializer(serializers.ModelSerializer):
 
         #this makes certain fields read-only for update and partial_update
         #how to do clinic_day since it is a nested object
-        read_only_fields = ['patient','written_datetime','author','author_type']
+        read_only_fields = ['clinic_day','patient','written_datetime','author','author_type']
         if action in ['update', 'partial_update']:
             for field_name in read_only_fields:
                 kwargs = extra_kwargs.get(field_name, {})
                 kwargs['read_only'] = True
                 extra_kwargs[field_name] = kwargs
+            
 
         return extra_kwargs
