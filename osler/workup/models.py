@@ -255,7 +255,9 @@ class Workup(Note, AttestationMixin):
     labs_ordered_internal = models.TextField(
         blank=True, null=True, verbose_name="Labs Ordered Internally")
 
-    rx = models.TextField(blank=True, verbose_name="Prescription Orders")
+    rx = models.TextField(
+        blank=True, verbose_name="Prescription Orders",
+        help_text=_("Ex: Ibuprofen 200mg 1 tab PO PRN Q8H for pain #28"))
 
     got_voucher = models.BooleanField(default=False)
     voucher_amount = models.DecimalField(

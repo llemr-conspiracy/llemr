@@ -101,7 +101,7 @@ class TestAttendingDashboard(TestCase):
             1)
         self.assertEqual(
             response.context['no_note_patients'][0],
-            Patient.objects.first())
+            Patient.objects.get(pk=1))
 
         # and one clinic day
         self.assertEqual(len(response.context['clinics']), 1)

@@ -219,9 +219,12 @@ class WorkupForm(ModelForm):
 
             Row(HTML('<h3>Assessment, Plan, & Orders</h3>'),
                 Div('a_and_p', css_class='col-xs-12'),
-                Div('rx', HTML('Ex: Ibuprofen 200mg 1 tab PO PRN Q8H for pain #28'), css_class='col-md-4'),
+                Div('rx', css_class='col-md-4'),
                 Div('labs_ordered_internal', css_class='col-md-4'),
-                Div('labs_ordered_external', css_class='col-md-4'),
+                Div('labs_ordered_external', css_class='col-md-4')
+            ),
+
+            Row(
                 Div(HTML('<h4>Medication Voucher</h4>'),
                     'got_voucher',
                     PrependedText('voucher_amount', '$'),
@@ -233,8 +236,6 @@ class WorkupForm(ModelForm):
                     PrependedText('patient_pays_imaging', '$'),
                     css_class='col-xs-6')
                 ),
-
-            Row(HTML('<br><br>')),
 
             Submit('pending', 'Save for Later', css_class='btn btn-warning'),
             Submit('complete', 'Submit', css_class='btn btn-success')
@@ -251,11 +252,10 @@ class WorkupForm(ModelForm):
 
         if not settings.OSLER_DISPLAY_VOUCHERS:
             # delete medication voucher
-            self.helper.layout[4].pop(5)
-            # delete imaging voucher
-            self.helper.layout[4].pop(5)
-
-
+            self.helper.layout[5].pop()
+            # # delete imaging voucher
+            self.helper.layout[5].pop()
+            
 
     def clean(self):
         """Use form's clean hook to verify that fields in Workup are
