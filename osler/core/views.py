@@ -433,7 +433,6 @@ def all_patients(request, title='All Patients', active=False):
     if active:
         patient_list = patient_list.filter(needs_workup=True)
     patient_list = patient_list \
-        .order_by('last_name') \
         .select_related('gender') \
         .prefetch_related('case_managers') \
         .prefetch_related('workup_set') \

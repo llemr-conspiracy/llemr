@@ -10,6 +10,9 @@ from osler.core import validators
 
 class User(AbstractUser):
 
+    class Meta:
+        ordering = ["last_name",]
+
     # more inclusive of name patterns around the world
     name = models.CharField(_("Preferred name"), blank=True, max_length=255)
 

@@ -167,6 +167,8 @@ class Patient(Person):
             ('case_manage_Patient', "Can act as a case manager."),
             ('activate_Patient', "Can in/activate patients")
         ]
+        ordering = ["last_name",]
+
 
     case_managers = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
