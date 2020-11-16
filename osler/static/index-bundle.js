@@ -12,6 +12,6 @@
   \*******************************/
 /*! unknown exports (runtime-defined) */
 /*! runtime requirements:  */
-eval("function component() {\n  const element = document.createElement(\"div\");\n  element.innerHTML = \"Hello webpack\";\n  return element;\n}\ndocument.body.appendChild(component());\n\n\n//# sourceURL=webpack://osler/./osler/assets/index.js?");
+eval("function component() {\nconst element = document.createElement(\"div\");\nelement.innerHTML = \"Hello webpack\";\nreturn element;\n}\ndocument.body.appendChild(component());\n\n\n//# sourceURL=webpack://osler/./osler/assets/index.js?");
 /******/ })()
 ;

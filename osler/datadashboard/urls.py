@@ -8,8 +8,8 @@ app_name = 'datadashboard'
 unwrapped_urlconf = [
     re_path(
         r'^$',
-        views.display_hypertensive,
-        name='display-hypertensive'),
+        views.DataDashboardView.as_view(),
+        name='patient-data-dashboard'),
 ]
 
 wrap_config = {}
