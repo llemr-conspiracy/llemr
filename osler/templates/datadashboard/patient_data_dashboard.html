@@ -81,6 +81,14 @@ Patient Data Dashboard
 
 
 <div class="container">
+
+
+    <!-- TOOD tryand get these script tags to instead be bundled by webpack -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <input type="text" name="daterange" value="01/01/2018 - 01/15/2018" />
+
     <div class="row">
         <div class="col-sm-4">
             <div class="panel panel-default panel-modern">
@@ -92,7 +100,6 @@ Patient Data Dashboard
                         <div class="col-xs-10">
                             <div class="col-12 color-primary text-xlarge">{{workup_data.all}}</div>
                             <div class="col-12 color-light">Patient count</div>
-                            <script src="{% static 'index-bundle.js' %}"></script>
                         </div>
                 </div>
                 </div>
@@ -153,14 +160,16 @@ Patient Data Dashboard
     </div>
     </div>
 </div>
+
+<!-- this script allows you to use chart.js (bundled through webpack) -->
+<script src="{% static 'index-bundle.js' %}"></script>
+<!-- load patient demographic data from view at template -->
 {{ dashboard_data|json_script:'dashboard_data' }}
+
 {% endblock %} {% block pagination %}{% endblock %}
 
 {% block extra_js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.0/Chart.min.js"></script>
-
-<!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script> -->
 <script type="text/javascript" charset="utf-8" src="{% static 'js/datadashboard/Chart.roundedBarCharts.min.js' %}"></script>
 <script type="text/javascript" charset="utf-8" src="{% static 'js/datadashboard/patientDemographicCharts.js' %}"></script>
-
 {% endblock %}
+

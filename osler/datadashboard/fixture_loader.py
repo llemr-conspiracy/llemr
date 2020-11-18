@@ -15,6 +15,9 @@ names = ['Calvin Lawson', 'Perry Garcia', 'Gertrude Schneider', 'Forrest Cain', 
 ethnicities = ["White", "Black or African American", "American Indian or Alaska Native",
                "Asian", "Native Hawaiian or Other Pacific Islander", "Hispanic or Latino", "Other"]
 
+num_patients = 100
+wu_per_patient = 10
+
 def random_date_in_range(start_date, end_date):
 	start_date = datetime.datetime.strptime(start_date, '%m/%d/%Y')
 	end_date = datetime.datetime.strptime(end_date, '%m/%d/%Y')
@@ -24,7 +27,7 @@ def random_date_in_range(start_date, end_date):
 
 def load_fixtures():
 	pk = 5
-	for p in range(6,15):
+	for p in range(6,num_patients):
 		patient = patients[0].copy()
 		patient["pk"] = p
 		f = patient["fields"].copy()
@@ -40,14 +43,14 @@ def load_fixtures():
 		f["ethnicities"] = random.sample(ethnicities, random.randint(1, 3))
 		patient["fields"] = f
 		patients.append(patient)
-		num_workups = random.randint(1,5)
+		num_workups = random.randint(1,wu_per_patient)
 		for w in range(num_workups):
 			workup = workups[6].copy()
 			workup["pk"] = pk
 			f = workup["fields"].copy()
 			f["bp_sys"] = str(random.randint(100,180))
 			f["patient"] = p
-			f["written_datetime"] = random_date_in_range("01/01/2018","10/01/2020")
+			f["written_datetime"] = random_date_in_range("01/01/2019","12/25/2020")
 			workup["fields"] = f
 			workups.append(workup)
 			pk+=1
