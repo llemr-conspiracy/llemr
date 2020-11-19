@@ -1,4 +1,4 @@
-var jsondata = JSON.parse(document.getElementById("dashboard_data").textContent);
+var jsondata = null;
 
 //generate default date range
 var today = new Date(),
@@ -6,8 +6,20 @@ var today = new Date(),
     monthAgo = new Date(today.setMonth(today.getMonth() - 1)),
     monthAgoStr = monthAgo.toLocaleDateString();
 
+//load json data sent to a url. Is this secure??
 window.addEventListener("load", (event) => {
-  makeDateFilteredCharts(monthAgoStr, todayStr);
+  fetch("send-json/")
+    .then((res) => res.json())
+    .then(
+      (result) => {
+        jsondata = result;
+        makeDateFilteredCharts(monthAgoStr, todayStr);
+      },
+      (error) => {
+        console.log(error)
+      }
+    );
+  
 });
 
 //date range picker
@@ -50,7 +62,7 @@ function makeDateFilteredCharts(startDate,endDate){
     }
     
   };
-  console.log(dateFilteredData)
+  // console.log(dateFilteredData)
   ageChart(dateFilteredData);
   genderChart(dateFilteredData);
   ethnicityChart(dateFilteredData);
