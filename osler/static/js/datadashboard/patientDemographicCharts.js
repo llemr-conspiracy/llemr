@@ -1,19 +1,19 @@
 var jsondata = null;
 
-//generate default date range
+//generate default date range and define global variables that update with daterangepicker
 var today = new Date(),
-  todayStr = today.toLocaleDateString(),
+  globalEnd = today.toLocaleDateString(),
   monthAgo = new Date(today.setMonth(today.getMonth() - 1)),
-  monthAgoStr = monthAgo.toLocaleDateString();
+  globalStart = monthAgo.toLocaleDateString();
 
-//load json data sent to a url. Is this secure??
+//load json data from url on page load
 window.addEventListener("load", (event) => {
-  fetch("hypertension-json/")
+  fetch("all-json/")
     .then((res) => res.json())
     .then(
       (result) => {
         jsondata = result;
-        makeDateFilteredCharts(monthAgoStr, todayStr);
+        makeDateFilteredCharts(globalStart, globalEnd);
       },
       (error) => {
         console.log(error);
@@ -21,6 +21,27 @@ window.addEventListener("load", (event) => {
     );
 });
 
+//load all conditions data
+document.getElementById("all-btn").addEventListener("click", function () {
+  let span = document.createElement("span");
+  span.innerHTML = "Displaying: All Conditions";
+  document.getElementById("display-condition").childNodes[0].replaceWith(span);
+
+  fetch("all-json/")
+    .then((res) => res.json())
+    .then(
+      (result) => {
+        jsondata = result;
+        console.log(globalStart)
+        makeDateFilteredCharts(globalStart, globalEnd);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+});
+
+//load hypertension data
 document.getElementById("htn-btn").addEventListener("click", function () {
   let span = document.createElement("span");
   span.innerHTML = "Displaying: Hypertension";
@@ -31,7 +52,8 @@ document.getElementById("htn-btn").addEventListener("click", function () {
     .then(
       (result) => {
         jsondata = result;
-        makeDateFilteredCharts(monthAgoStr, todayStr);
+        console.log(globalStart)
+        makeDateFilteredCharts(globalStart, globalEnd);
       },
       (error) => {
         console.log(error);
@@ -39,6 +61,7 @@ document.getElementById("htn-btn").addEventListener("click", function () {
     );
 });
 
+//load diabetes data
 document.getElementById("dm-btn").addEventListener("click", function () {
   let span = document.createElement("span");
   span.innerHTML = "Displaying: Diabetes";
@@ -49,7 +72,7 @@ document.getElementById("dm-btn").addEventListener("click", function () {
     .then(
       (result) => {
         jsondata = result;
-        makeDateFilteredCharts(monthAgoStr, todayStr);
+        makeDateFilteredCharts(globalStart, globalEnd);
       },
       (error) => {
         console.log(error);
@@ -70,14 +93,16 @@ $(function () {
       },
       linkedCalendars: false,
       alwaysShowCalendars: true,
-      startDate: monthAgoStr,
-      endDate: todayStr,
+      startDate: globalStart,
+      endDate: globalEnd,
       opens: "right",
     },
-    function (start, end, label) {
+    function (startDate, endDate, label) {
+      globalStart = startDate.format("YYYY-MM-DD");
+      globalEnd = endDate.format("YYYY-MM-DD");
       makeDateFilteredCharts(
-        start.format("YYYY-MM-DD"),
-        end.format("YYYY-MM-DD")
+        startDate.format("YYYY-MM-DD"),
+        endDate.format("YYYY-MM-DD")
       );
     }
   );
