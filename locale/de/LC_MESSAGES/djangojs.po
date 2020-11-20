@@ -1,0 +1,136 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-11-20 15:05-0600\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: node_modules/daterangepicker/moment.min.js:1
+msgid ": "
+msgstr ""
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:30
+msgid "MM/DD/YYYY"
+msgstr "MM.DD.YYYY"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:32
+msgid "Apply"
+msgstr "Bestätigen"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:33
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:34
+msgid "From"
+msgstr "von"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:35
+msgid "To"
+msgstr "bis"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:36
+msgid "Custom"
+msgstr "Benutzerdefiniert"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:37
+msgid "W"
+msgstr "W"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:39
+msgid "Su"
+msgstr "So"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:40
+msgid "Mo"
+msgstr "Mo"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:41
+msgid "Tu"
+msgstr "Di"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:42
+msgid "We"
+msgstr "Mi"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:43
+msgid "Th"
+msgstr "Do"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:44
+msgid "Fr"
+msgstr "Fr"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:45
+msgid "Sa"
+msgstr "Sa"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:48
+msgid "January"
+msgstr "Januar"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:49
+msgid "February"
+msgstr "Februar"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:50
+msgid "March"
+msgstr "März"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:51
+msgid "April"
+msgstr "April"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:52
+msgid "May"
+msgstr "Mai"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:53
+msgid "June"
+msgstr "Juni"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:54
+msgid "July"
+msgstr "Juli"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:55
+msgid "August"
+msgstr "August"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:56
+msgid "September"
+msgstr "September"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:57
+msgid "October"
+msgstr "Oktober"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:58
+msgid "November"
+msgstr "November"
+
+#: osler/static/js/datadashboard/patientDemographicCharts.js:59
+msgid "December"
+msgstr "Dezember"
+
+#~ msgid "Last 7 Days"
+#~ msgstr "Letzte sieben Tage"
+
+#~ msgid "This Month"
+#~ msgstr "Dieser Monat"
+
+#~ msgid "This Year"
+#~ msgstr "Dieses Jahr"

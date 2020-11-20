@@ -1,86 +1,147 @@
 {% extends "core/base.html" %}
 
-{% load static %}
+{% load static i18n %}
 
 {% block title %}
-Patient Data Dashboard
+{% translate 'Patient Data Dashboard' %}
 {% endblock %}
 
 {% block header %}
-    <h3>Patient Data Dashboard</h3>
+<h3>{% translate 'Patient Data Dashboard' %}</h3>
 {% endblock %}
 
 {% block content %}
 
 <style>
-    .panel-modern {
-        background-color: #F1F3FB;
-        box-shadow: none;
-        border-width: none;
-        border-radius: 15px;
-        border-style: none;
-    }
-    .panel-light {
-        background-color: #ffffff;
-        box-shadow: none;
-        border-width: none;
-        border-radius: 15px;
-        border-style: none;
-    }
-    .text-center {
-        text-align: center;
-    }
-    .vertical-align {
-        display: flex;
-        align-items: center;
-    }
-    .margin-auto {
-        margin: 0 auto;
-        position: relative;
-        display: block;
-    }
-    .big-icon {
-        font-size: 3rem;
-        color: #969DB5
-    }
-    .text-xlarge {
-        font-size: 1.9rem;
-        font-weight: 1000
-    }
-    .color-primary {
-        color: #111A3C
-    }
-    .color-light {
-        color: #969DB5
-    }
-    .ml-3 {
-        margin-left: 3rem;
-    }
-    .mt-3 {
-        margin-top: 3rem
-    }
-    .mx-3 {
-        margin: 3rem
-    }
-    .px-3 {
-        padding: 3rem
-    }
-    .px-1 {
-        padding: 1rem
-    }
-    .pt-1 {
-        padding-top: 1rem
-    }
-    @media (min-width: 1200px) {
+  .panel-modern {
+    background-color: #F1F3FB;
+    box-shadow: none;
+    border-width: none;
+    border-radius: 15px;
+    border-style: none;
+  }
+
+  .panel-light {
+    background-color: #ffffff;
+    box-shadow: none;
+    border-width: none;
+    border-radius: 15px;
+    border-style: none;
+  }
+  .btn-modern::before {
+    box-shadow: none !important
+  }
+  .btn-modern {
+      background-color: #ffffff;
+      border-radius: 15px;
+  }
+
+  .dropdown-menu-modern {
+      border-radius: 15px;
+      border-color: #969DB5;
+      border-width: 2px;
+  }
+  .btn-link-modern {
+      color: #656d86;
+      text-decoration: none !important;
+  }
+  .btn-link-modern:hover {
+      color: #070a16
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+
+  .vertical-align {
+    display: flex;
+    align-items: center;
+  }
+  .horizontal-align {
+    display: flex;
+    justify-content: center;
+  }
+
+  .margin-auto {
+    margin: 0 auto;
+    position: relative;
+    display: block;
+  }
+
+  .big-icon {
+    font-size: 3rem;
+    color: #969DB5
+  }
+
+  .small-icon {
+    font-size: 2rem;
+    color: #969DB5
+  }
+
+  .text-xlarge {
+    font-size: 1.9rem;
+    font-weight: 1000
+  }
+
+  .color-primary {
+    color: #111A3C
+  }
+
+  .color-light {
+    color: #969DB5
+  }
+
+  .ml-3 {
+    margin-left: 3rem;
+  }
+
+  .mr-3 {
+    margin-right: 3rem;
+  }
+
+  .mr-1 {
+    margin-right: 1rem;
+  }
+
+  .mt-3 {
+    margin-top: 3rem
+  }
+
+  .mx-3 {
+    margin: 3rem
+  }
+
+  .px-3 {
+    padding: 3rem
+  }
+
+  .px-1 {
+    padding: 1rem
+  }
+
+  .pt-1 {
+    padding-top: 1rem
+  }
+
+
+  .control-input {
+    border-radius: 15px;
+    border: none !important
+  }
+
+  @media (min-width: 1200px) {
     .equal {
-        display: flex;
-        display: -webkit-flex;
-        flex-wrap: wrap;
-}}
+      display: flex;
+      display: -webkit-flex;
+      flex-wrap: wrap;
+    }
+  }
+
 </style>
 
 
 <div class="container">
+<<<<<<< Updated upstream
     <div class="row">
         <div class="col-sm-4">
             <div class="panel panel-default panel-modern">
@@ -94,59 +155,104 @@ Patient Data Dashboard
                             <div class="col-12 color-light">Patient count</div>
                         </div>
                 </div>
-                </div>
-              </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="panel panel-default panel-modern">
-                <div class="panel-body">
-                    <div class="row vertical-align">
-                        <div class="col-xs-2 text-center">
-                            <span class="glyphicon glyphicon-refresh big-icon" aria-hidden="true"></span>
-                        </div>
-                        <div class="col-xs-10">
-                            <div class="col-12 color-primary text-xlarge">354</div>
-                            <div class="col-12 color-light">Recurring patients</div>
-                        </div>
-                </div>
-                </div>
-              </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="panel panel-default panel-modern">
-                <div class="panel-body">
-                    <div class="row vertical-align">
-                        <div class="col-xs-2 text-center">
-                            <span class="glyphicon glyphicon-record big-icon" aria-hidden="true"></span>
-                        </div>
-                        <div class="col-xs-10">
-                            <div class="col-12 color-primary text-xlarge">{{workup_data.got_voucher|default:0}}</div>
-                            <div class="col-12 color-light">Drug prescriptions</div>
-                        </div>
-                </div>
-                </div>
-              </div>
-        </div>
+=======
+  <!-- TOOD tryand get these script tags to instead be bundled by webpack -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="panel panel-default panel-modern">
+        <div class="panel-body vertical-align">
+          <div class="col-sm-6 horizontal-align vertical-align">
+            <span class="glyphicon glyphicon-calendar small-icon mr-1" aria-hidden="true"></span><input
+              class="control-input px-1 color-light" type="text" name="daterange" value="18.09.2020 - 19.09.2020" />
+          </div>
+          <div class="col-sm-6 horizontal-align vertical-align">
+            <div class="btn-group">
+                <div type="button" class="btn btn-modern color-light" id="display-condition"><span>Displaying: All Conditions</span></div>
+                <button type="button" class="btn btn-modern dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="caret"></span>
+                </button>
+                  <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="dropdownMenu1">
+                    <li><button class="btn btn-link btn-link-modern" id="htn-btn">Hypertension</button></li>
+                    <li><button class="btn btn-link btn-link-modern" id="dm-btn">Diabetes</button></li>
+                    <li><button class="btn btn-link btn-link-modern" id="all-btn">All Conditions</button></li>
+              
+                    <!-- <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li> -->
+                  </ul>
+>>>>>>> Stashed changes
+                </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
+  </div>
 
-        <div class="panel panel-default panel-modern">
-            <div class="panel-body">
-            <p class="color-primary text-xlarge">Weekly summary</p>
-            <div class="row equal">
-            <div class="col-lg-8 col-md-6 col-sm-12 equal px-1">
-                <div class="col-lg-12 panel-light equal px-3">
-                    <!-- <h4 class="color-primary pt-1">Age distribution</h4> -->
-                    <canvas id="htnAgeChart"></canvas></div>
-                </div>
-                <div  class="col-lg-4 col-md-6 col-sm-12 equal px-1">
-                    <div class="col-lg-12 panel-light vertical-align equal px-3">
-                         <canvas id="htnGenderChart"></canvas>
-                    </div> 
-                </div>
+
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="panel panel-default panel-modern">
+        <div class="panel-body">
+          <div class="row vertical-align">
+            <div class="col-xs-2 text-center">
+              <span class="glyphicon glyphicon-user big-icon" aria-hidden="true"></span>
             </div>
+            <div class="col-xs-10">
+              <div class="col-12 color-primary text-xlarge">{{workup_data.all}}</div>
+              <div class="col-12 color-light">Patient count</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="panel panel-default panel-modern">
+        <div class="panel-body">
+          <div class="row vertical-align">
+            <div class="col-xs-2 text-center">
+              <span class="glyphicon glyphicon-refresh big-icon" aria-hidden="true"></span>
+            </div>
+            <div class="col-xs-10">
+              <div class="col-12 color-primary text-xlarge">354</div>
+              <div class="col-12 color-light">Recurring patients</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="panel panel-default panel-modern">
+        <div class="panel-body">
+          <div class="row vertical-align">
+            <div class="col-xs-2 text-center">
+              <span class="glyphicon glyphicon-record big-icon" aria-hidden="true"></span>
+            </div>
+            <div class="col-xs-10">
+              <div class="col-12 color-primary text-xlarge">{{workup_data.got_voucher|default:0}}</div>
+              <div class="col-12 color-light">Drug prescriptions</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+
+      <div class="panel panel-default panel-modern">
+        <div class="panel-body">
+          <p class="color-primary text-xlarge">Weekly summary</p>
+          <div class="row equal">
+            <div class="col-lg-8 col-md-6 col-sm-12 equal px-1">
+              <div class="col-lg-12 panel-light equal px-3">
+                <!-- <h4 class="color-primary pt-1">Age distribution</h4> -->
+                <canvas id="htnAgeChart"></canvas></div>
+            </div>
+<<<<<<< Updated upstream
         <!-- <div class="col-lg-6"><canvas id="htnEthnicityChart"></canvas></div> -->
     </div>
     </div>
@@ -336,3 +442,31 @@ var pieChart = new Chart(ethnicityChart, {
 });
 </script>    
 {% endblock %}
+=======
+            <div class="col-lg-4 col-md-6 col-sm-12 equal px-1">
+              <div class="col-lg-12 panel-light vertical-align equal px-3">
+                <canvas id="htnGenderChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6"><canvas id="htnEthnicityChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% endblock %} {% block pagination %}{% endblock %}
+
+  {% block extra_js %}
+  <!-- this script allows you to use chart.js (bundled through webpack) -->
+  <script type="text/javascript" charset="utf-8" src="{% static 'js/datadashboard/index-bundle.js' %}"></script>
+
+  <script type="text/javascript" charset="utf-8" src="{% static 'js/datadashboard/Chart.roundedBarCharts.min.js' %}">
+  </script>
+
+  <script type="text/javascript" src="{% url 'datadashboard:javascript-catalog' %}"></script>
+
+  <script type="text/javascript" charset="utf-8" src="{% static 'js/datadashboard/patientDemographicCharts.js' %}">
+  </script>
+  {% endblock %}
+>>>>>>> Stashed changes
