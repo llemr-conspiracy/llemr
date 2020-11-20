@@ -6,8 +6,6 @@ from django.views.i18n import JavaScriptCatalog
 from osler.core.urls import wrap_url
 from osler.datadashboard import views
 
-<<<<<<< Updated upstream
-=======
 
 # from django.urls import include, path
 # from rest_framework import routers
@@ -26,24 +24,14 @@ js_info_dict = {
     'packages': ('datadashboard',),
 }
 
->>>>>>> Stashed changes
 app_name = 'datadashboard'
 unwrapped_urlconf = [
     re_path(
         r'^$',
-<<<<<<< Updated upstream
-        views.display_hypertensive,
-        name='display-hypertensive'),
-    re_path(
-        r'^diabetes/$',
-        views.display_diabetes,
-        name='display-diabetes'),
-=======
         views.DataDashboardView.as_view(),
         name='patient-data-dashboard'),
     re_path(r'^send-json/', views.send_json, name='send_json'),
     re_path(r'^jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog')
->>>>>>> Stashed changes
 ]
 
 wrap_config = {}
