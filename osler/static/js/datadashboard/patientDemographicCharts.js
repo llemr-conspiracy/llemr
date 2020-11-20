@@ -232,7 +232,17 @@ function genderChart(dateFilteredData) {
     }
   });
 
-  var genderChart = document.getElementById("htnGenderChart").getContext("2d");
+    let span = document.createElement("span");
+    span.innerHTML = "Displaying: All Conditions";
+    document
+      .getElementById("display-condition")
+      .childNodes[0].replaceWith(span);
+
+  var genderChartParent = document.getElementById("htnGenderChart");
+  genderChartParent.removeChild(genderChartParent.firstChild);
+  var genderChartNode = document.createElement("canvas");
+  genderChartParent.appendChild(genderChartNode)
+  genderChart = genderChartNode.getContext("2d");
   return (pieChart = new Chart(genderChart, {
     type: "doughnut",
     data: {
