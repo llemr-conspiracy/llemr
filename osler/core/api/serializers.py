@@ -25,8 +25,10 @@ class PatientSerializer(serializers.ModelSerializer):
         model = models.Patient
         exclude = []
 
-    history = HistorySerializer()
-    latest_workup = WorkupSerializer()
+    def create(self, validated)
+
+    # history = HistorySerializer()
+    # latest_workup = WorkupSerializer()
     gender = serializers.StringRelatedField(read_only=True)
     age = serializers.StringRelatedField(read_only=True)
     name = serializers.StringRelatedField(read_only=True)

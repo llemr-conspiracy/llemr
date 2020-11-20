@@ -88,6 +88,5 @@ class WorkupSerializer(serializers.ModelSerializer):
                 kwargs = extra_kwargs.get(field_name, {})
                 kwargs['read_only'] = True
                 extra_kwargs[field_name] = kwargs
-            
 
         return extra_kwargs
