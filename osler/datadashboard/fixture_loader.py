@@ -51,6 +51,11 @@ def load_fixtures():
 			f["bp_sys"] = str(random.randint(100,180))
 			f["patient"] = p
 			f["written_datetime"] = random_date_in_range("01/01/2019","12/25/2020")
+			r = random.randint(0, 1)
+			if(r == 0):
+				f["diagnosis"] = "hypertension"
+			else:
+				f["diagnosis"] = "diabetes"
 			workup["fields"] = f
 			workups.append(workup)
 			pk+=1

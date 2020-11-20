@@ -2,13 +2,13 @@ var jsondata = null;
 
 //generate default date range
 var today = new Date(),
-    todayStr = today.toLocaleDateString(),
-    monthAgo = new Date(today.setMonth(today.getMonth() - 1)),
-    monthAgoStr = monthAgo.toLocaleDateString();
+  todayStr = today.toLocaleDateString(),
+  monthAgo = new Date(today.setMonth(today.getMonth() - 1)),
+  monthAgoStr = monthAgo.toLocaleDateString();
 
 //load json data sent to a url. Is this secure??
 window.addEventListener("load", (event) => {
-  fetch("send-json/")
+  fetch("hypertension-json/")
     .then((res) => res.json())
     .then(
       (result) => {
@@ -16,10 +16,45 @@ window.addEventListener("load", (event) => {
         makeDateFilteredCharts(monthAgoStr, todayStr);
       },
       (error) => {
-        console.log(error)
+        console.log(error);
       }
     );
-  
+});
+
+document.getElementById("htn-btn").addEventListener("click", function () {
+  let span = document.createElement("span");
+  span.innerHTML = "Displaying: Hypertension";
+  document.getElementById("display-condition").childNodes[0].replaceWith(span);
+
+  fetch("hypertension-json/")
+    .then((res) => res.json())
+    .then(
+      (result) => {
+        jsondata = result;
+        makeDateFilteredCharts(monthAgoStr, todayStr);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+});
+
+document.getElementById("dm-btn").addEventListener("click", function () {
+  let span = document.createElement("span");
+  span.innerHTML = "Displaying: Diabetes";
+  document.getElementById("display-condition").childNodes[0].replaceWith(span);
+
+  fetch("diabetes-json/")
+    .then((res) => res.json())
+    .then(
+      (result) => {
+        jsondata = result;
+        makeDateFilteredCharts(monthAgoStr, todayStr);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
 });
 
 //date range picker
@@ -31,7 +66,7 @@ $(function () {
         Today: [moment(), moment()],
         "Last 7 Days": [moment().subtract(6, "days"), moment()],
         "This Month": [moment().startOf("month"), moment()],
-        "This Year": [moment().startOf("year"), moment()]
+        "This Year": [moment().startOf("year"), moment()],
       },
       linkedCalendars: false,
       alwaysShowCalendars: true,
@@ -48,26 +83,27 @@ $(function () {
   );
 });
 
-function makeDateFilteredCharts(startDate,endDate){
+function makeDateFilteredCharts(startDate, endDate) {
   let dateFilteredData = {};
   for (const [key, value] of Object.entries(jsondata)) {
-    var filterOut = true
-    value.wu_dates.map(function(d){
-      if (Date.parse(d) >= Date.parse(startDate) && Date.parse(d) <= Date.parse(endDate)) {
+    var filterOut = true;
+    value.wu_dates.map(function (d) {
+      if (
+        Date.parse(d) >= Date.parse(startDate) &&
+        Date.parse(d) <= Date.parse(endDate)
+      ) {
         return (filterOut = false);
       }
-    })
-    if(!filterOut){
-      dateFilteredData[key] = value
+    });
+    if (!filterOut) {
+      dateFilteredData[key] = value;
     }
-    
-  };
+  }
   // console.log(dateFilteredData)
   ageChart(dateFilteredData);
   genderChart(dateFilteredData);
   ethnicityChart(dateFilteredData);
-
-};
+}
 
 function ageChart(dateFilteredData) {
   (ageStepSize = 10), (ageRanges = []), (ageLabels = []), (sortedAges = []);
@@ -101,7 +137,7 @@ function ageChart(dateFilteredData) {
   });
 
   var ctx = document.getElementById("htnAgeChart").getContext("2d");
-  return chart = new Chart(ctx, {
+  return (chart = new Chart(ctx, {
     responsive: "true",
     type: "bar",
     data: {
@@ -152,10 +188,10 @@ function ageChart(dateFilteredData) {
         display: false,
       },
     },
-  });
+  }));
 }
 
-function genderChart(dateFilteredData){
+function genderChart(dateFilteredData) {
   //pass in date filtered data and then within each function extract the demographic data
   var genderData = {
     Male: 0,
@@ -172,7 +208,7 @@ function genderChart(dateFilteredData){
   });
 
   var genderChart = document.getElementById("htnGenderChart").getContext("2d");
-  return pieChart = new Chart(genderChart, {
+  return (pieChart = new Chart(genderChart, {
     type: "doughnut",
     data: {
       labels: Object.keys(genderData),
@@ -199,10 +235,10 @@ function genderChart(dateFilteredData){
         text: "HTN Gender Distribution",
       },
     },
-  });
+  }));
 }
 
-function ethnicityChart(dateFilteredData){
+function ethnicityChart(dateFilteredData) {
   var ethnicityData = {
     White: 0,
     "Black or African American": 0,
@@ -226,7 +262,7 @@ function ethnicityChart(dateFilteredData){
   var ethnicityChart = document
     .getElementById("htnEthnicityChart")
     .getContext("2d");
-  return pieChart = new Chart(ethnicityChart, {
+  return (pieChart = new Chart(ethnicityChart, {
     responsive: "true",
     type: "doughnut",
     data: {
@@ -260,5 +296,5 @@ function ethnicityChart(dateFilteredData){
         text: "HTN Ethnicity Distribution",
       },
     },
-  });
+  }));
 }

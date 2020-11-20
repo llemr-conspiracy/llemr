@@ -20,12 +20,9 @@ from osler.datadashboard import views
 
 app_name = 'datadashboard'
 unwrapped_urlconf = [
-    re_path(
-        r'^$',
-        views.DataDashboardView.as_view(),
-        name='patient-data-dashboard'),
-
-    re_path(r'^send-json/', views.send_json, name='send_json'),
+    re_path(r'^$', views.DataDashboardView.as_view(), name='patient-data-dashboard'),
+    re_path(r'^hypertension-json/', views.send_hypertension_json, name='hypertension_json'),
+    re_path(r'^diabetes-json/', views.send_diabetes_json, name='diabetes_json'),
 ]
 
 wrap_config = {}
