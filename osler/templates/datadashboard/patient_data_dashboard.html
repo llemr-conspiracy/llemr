@@ -72,6 +72,17 @@
     display: flex;
     justify-content: center;
   }
+  .align-left {
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+  }
+  .align-right {
+    display: flex;
+    justify-content: flex-end !important;
+    flex-wrap: wrap;
+  }
+
   .space-between {
     display: flex;  
     flex-wrap: wrap;
@@ -90,7 +101,7 @@
   }
 
   .small-icon {
-    font-size: 2rem;
+    font-size: 1.5rem;
     color: #969DB5
   }
 
@@ -105,6 +116,10 @@
 
   .color-light {
     color: #969DB5
+  }
+
+  .ml-1 {
+    margin-left: 1rem;
   }
 
   .ml-3 {
@@ -150,6 +165,7 @@
   .control-input {
     border-radius: 15px;
     border: none !important;
+    background-color: #ffffff;
   }
 
   @media (min-width: 1200px) {
@@ -172,14 +188,16 @@
   <div class="row">
     <div class="col-lg-12">
       <div class="panel panel-default panel-modern">
-        <div class="panel-body space-between row">
-          <div class="col-md-4  mt-1 mb-1 vertical-align">
-            <span class="glyphicon glyphicon-calendar small-icon mr-1" aria-hidden="true"></span><input
+        <div class="panel-body align-left row">
+          <div class="col-md-4  mt-1 mb-1 vertical-align align-left">
+          <div class="control-input">
+            <span class="glyphicon glyphicon-calendar small-icon ml-1 mr-1" aria-hidden="true"></span><input
               class="control-input px-1 color-light" type="text" name="daterange" value="09/18/2020 - 09/27/2020" />
-          </div>
-          <div class="col-md-4 vertical-align mt-1 mb-1">
-            <span class="glyphicon glyphicon-tags small-icon mr-1" aria-hidden="true"></span><div class="btn-group">
-                <div type="button" class="btn btn-modern color-light px-1" id="display-condition"><span>Displaying: All Conditions</span></div>
+            </div>
+            </div>
+          <div class="col-md-4 vertical-align horizontal-align mt-1 mb-1">
+            <div class="btn-group">
+                <div type="button" class="btn btn-modern color-light px-1" id="display-condition"><span><span class="glyphicon glyphicon-tags small-icon mr-1" aria-hidden="true"></span> Displaying: All Conditions</span></div>
                 <button type="button" class="btn btn-modern dropdown-toggle px-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="caret"></span>
                 </button>
@@ -193,10 +211,8 @@
                   </ul>
                 </div>
           </div>
-          <div class="col-md-4 mt-1 mb-1 vertical-align">
-            <div class="btn-group">
-                <div type="button" class="btn btn-modern color-light " id="display-condition"><span><span class="glyphicon glyphicon-cloud-download small-icon mr-1" aria-hidden="true"></span> CSV-Export</span></div>
-                </div>
+          <div class="col-md-4 mt-1 mb-1 vertical-align align-right">
+                <div type="button" class="btn btn-modern color-light px-1 " id="display-condition"><span><span class="glyphicon glyphicon-cloud-download small-icon mr-1" aria-hidden="true"></span> CSV-Export</span></div>
           </div>
         </div>
       </div>
