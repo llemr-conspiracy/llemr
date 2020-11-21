@@ -74,6 +74,8 @@
   }
   .space-between {
     display: flex;  
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
 
   .margin-auto {
@@ -120,7 +122,12 @@
   .mt-3 {
     margin-top: 3rem
   }
-
+  .mt-1 {
+    margin-top: .5rem
+  }
+  .mb-1 {
+    margin-bottom: .5rem
+  }
   .mx-3 {
     margin: 3rem
   }
@@ -163,14 +170,14 @@
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
   <div class="row">
-    <div class="col-sm-12">
+    <div class="col-lg-12">
       <div class="panel panel-default panel-modern">
-        <div class="panel-body vertical-align space-between">
-          <div class="mr-3 vertical-align">
+        <div class="panel-body space-between row">
+          <div class="col-md-4  mt-1 mb-1 vertical-align">
             <span class="glyphicon glyphicon-calendar small-icon mr-1" aria-hidden="true"></span><input
               class="control-input px-1 color-light" type="text" name="daterange" value="09/18/2020 - 09/27/2020" />
           </div>
-          <div class=" vertical-align">
+          <div class="col-md-4 vertical-align mt-1 mb-1">
             <span class="glyphicon glyphicon-tags small-icon mr-1" aria-hidden="true"></span><div class="btn-group">
                 <div type="button" class="btn btn-modern color-light px-1" id="display-condition"><span>Displaying: All Conditions</span></div>
                 <button type="button" class="btn btn-modern dropdown-toggle px-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -184,6 +191,11 @@
                     <!-- <li><a href="#">Another action</a></li>
                     <li><a href="#">Something else here</a></li> -->
                   </ul>
+                </div>
+          </div>
+          <div class="col-md-4 mt-1 mb-1 vertical-align">
+            <div class="btn-group">
+                <div type="button" class="btn btn-modern color-light " id="display-condition"><span><span class="glyphicon glyphicon-cloud-download small-icon mr-1" aria-hidden="true"></span> CSV-Export</span></div>
                 </div>
           </div>
         </div>
