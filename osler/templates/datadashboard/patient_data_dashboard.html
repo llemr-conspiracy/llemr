@@ -28,9 +28,20 @@
     border-radius: 15px;
     border-style: none;
   }
-  .btn-modern::before {
+  .btn-modern:focus {
     box-shadow: none !important
   }
+
+  .btn:active,
+  .btn:focus,
+  .btn.active,
+  .btn:active:focus, 
+  .btn::after {
+   background-image: none;
+   outline: 0;
+   -webkit-box-shadow: none;
+   box-shadow: none;
+}
   .btn-modern {
       background-color: #ffffff;
       border-radius: 15px;
@@ -60,6 +71,9 @@
   .horizontal-align {
     display: flex;
     justify-content: center;
+  }
+  .space-between {
+    display: flex;  
   }
 
   .margin-auto {
@@ -123,10 +137,12 @@
     padding-top: 1rem
   }
 
-
+  .height-25 {
+    min-height: 40vh !important;
+  }
   .control-input {
     border-radius: 15px;
-    border: none !important
+    border: none !important;
   }
 
   @media (min-width: 1200px) {
@@ -149,15 +165,15 @@
   <div class="row">
     <div class="col-sm-12">
       <div class="panel panel-default panel-modern">
-        <div class="panel-body vertical-align">
-          <div class="col-sm-6 horizontal-align vertical-align">
+        <div class="panel-body vertical-align space-between">
+          <div class="mr-3 vertical-align">
             <span class="glyphicon glyphicon-calendar small-icon mr-1" aria-hidden="true"></span><input
-              class="control-input px-1 color-light" type="text" name="daterange" value="" />
+              class="control-input px-1 color-light" type="text" name="daterange" value="09/18/2020 - 09/27/2020" />
           </div>
-          <div class="col-sm-6 horizontal-align vertical-align">
-            <div class="btn-group">
-                <div type="button" class="btn btn-modern color-light" id="display-condition"><span>Displaying: All Conditions</span></div>
-                <button type="button" class="btn btn-modern dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <div class=" vertical-align">
+            <span class="glyphicon glyphicon-tags small-icon mr-1" aria-hidden="true"></span><div class="btn-group">
+                <div type="button" class="btn btn-modern color-light px-1" id="display-condition"><span>Displaying: All Conditions</span></div>
+                <button type="button" class="btn btn-modern dropdown-toggle px-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="caret"></span>
                 </button>
                   <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="dropdownMenu1">
@@ -236,13 +252,18 @@
                 <!-- <h4 class="color-primary pt-1">Age distribution</h4> -->
                 <canvas id="htnAgeChart"></canvas></div>
             </div>
+            
             <div class="col-lg-4 col-md-6 col-sm-12 equal px-1">
               <div class="col-lg-12 panel-light vertical-align equal px-3">
                 <canvas id="htnGenderChart"></canvas>
               </div>
             </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 equal px-1 ">
+              <div class="col-lg-12 panel-light vertical-align equal px-3 height-25">
+                <canvas id="htnEthnicityChart"></canvas>
+              </div>
+            </div>
           </div>
-          <div class="col-lg-6"><canvas id="htnEthnicityChart"></canvas></div>
         </div>
       </div>
     </div>
