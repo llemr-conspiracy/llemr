@@ -11,4 +11,5 @@ from osler.workup.models import Workup, ClinicDate
 
 class WorkupViewSet(CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,ListModelMixin,GenericViewSet):
     serializer_class = WorkupSerializer
-    queryset = Workup.objects.all()
+    queryset = Workup.objects.all().order_by('-id')
+    #search_fields = https://docs.djangoproject.com/en/3.1/ref/contrib/admin/#django.contrib.admin.ModelAdmin.search_fields
