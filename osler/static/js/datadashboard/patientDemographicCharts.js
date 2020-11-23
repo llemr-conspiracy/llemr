@@ -32,7 +32,6 @@ document.getElementById("all-btn").addEventListener("click", function () {
     .then(
       (result) => {
         jsondata = result;
-        console.log(globalStart)
         makeDateFilteredCharts(globalStart, globalEnd);
       },
       (error) => {
@@ -52,7 +51,6 @@ document.getElementById("htn-btn").addEventListener("click", function () {
     .then(
       (result) => {
         jsondata = result;
-        console.log(globalStart)
         makeDateFilteredCharts(globalStart, globalEnd);
       },
       (error) => {
@@ -159,12 +157,12 @@ function makeDateFilteredCharts(startDate, endDate) {
     }
   }
   // console.log(dateFilteredData)
-  ageChart(dateFilteredData);
-  genderChart(dateFilteredData);
-  ethnicityChart(dateFilteredData);
+  makeAgeChart(dateFilteredData);
+  makeGenderChart(dateFilteredData);
+  makeEthnicityChart(dateFilteredData);
 }
 
-function ageChart(dateFilteredData) {
+function makeAgeChart(dateFilteredData) {
   (ageStepSize = 10), (ageRanges = []), (ageLabels = []), (sortedAges = []);
 
   var ages = Object.values(dateFilteredData).map(function (e) {
@@ -195,8 +193,11 @@ function ageChart(dateFilteredData) {
     sortedAges.push(range["value"]);
   });
 
-  var ctx = document.getElementById("htnAgeChart").getContext("2d");
-  return (chart = new Chart(ctx, {
+
+
+  var ageChartNode = removeOldChart("ageChartDiv");
+  var ageChart = ageChartNode.getContext("2d");
+  return (chart = new Chart(ageChart, {
     responsive: "true",
     type: "bar",
     data: {
@@ -250,7 +251,7 @@ function ageChart(dateFilteredData) {
   }));
 }
 
-function genderChart(dateFilteredData) {
+function makeGenderChart(dateFilteredData) {
   //pass in date filtered data and then within each function extract the demographic data
   var genderData = {
     Male: 0,
@@ -266,16 +267,7 @@ function genderChart(dateFilteredData) {
     }
   });
 
-    let span = document.createElement("span");
-    span.innerHTML = "Displaying: All Conditions";
-    document
-      .getElementById("display-condition")
-      .childNodes[0].replaceWith(span);
-
-  var genderChartParent = document.getElementById("htnGenderChart");
-  genderChartParent.removeChild(genderChartParent.firstChild);
-  var genderChartNode = document.createElement("canvas");
-  genderChartParent.appendChild(genderChartNode)
+  var genderChartNode = removeOldChart("genderChartDiv");
   genderChart = genderChartNode.getContext("2d");
   return (pieChart = new Chart(genderChart, {
     type: "doughnut",
@@ -301,13 +293,13 @@ function genderChart(dateFilteredData) {
       },
       title: {
         display: false,
-        text: "HTN Gender Distribution",
+        text: "Gender Distribution",
       },
     },
   }));
 }
 
-function ethnicityChart(dateFilteredData) {
+function makeEthnicityChart(dateFilteredData) {
   var ethnicityData = {
     White: 0,
     "Black or African American": 0,
@@ -328,9 +320,8 @@ function ethnicityChart(dateFilteredData) {
     });
   });
 
-  var ethnicityChart = document
-    .getElementById("htnEthnicityChart")
-    .getContext("2d");
+  var ethnicityChartNode = removeOldChart("ethnicityChartDiv");
+  ethnicityChart = ethnicityChartNode.getContext("2d");
   return (pieChart = new Chart(ethnicityChart, {
     responsive: "true",
     type: "doughnut",
@@ -364,8 +355,19 @@ function ethnicityChart(dateFilteredData) {
       },
       title: {
         display: false,
-        text: "HTN Ethinicity Distribution",
+        text: "Ethinicity Distribution",
       },
     },
   }));
 }
+
+
+//helper functions
+function removeOldChart(chartName){
+  var ChartParent = document.getElementById(chartName);
+  console.log(ChartParent)
+  $(ChartParent).empty()
+  var ChartNode = document.createElement("canvas");
+  ChartParent.appendChild(ChartNode)
+  return ChartNode
+};
