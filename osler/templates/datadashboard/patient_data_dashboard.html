@@ -1,11 +1,20 @@
-{% extends "core/base.html" %} {% load static %} {% block title %} Patient Data
-Dashboard {% endblock %} {% block header %}
-<h3>Patient Data Dashboard</h3>
-{% endblock %} {% block content %}
+{% extends "core/base.html" %}
+
+{% load static i18n %}
+
+{% block title %}
+{% translate 'Patient Data Dashboard' %}
+{% endblock %}
+
+{% block header %}
+<h3>{% translate 'Patient Data Dashboard' %}</h3>
+{% endblock %}
+
+{% block content %}
 
 <style>
   .panel-modern {
-    background-color: #f1f3fb;
+    background-color: #F1F3FB;
     box-shadow: none;
     border-width: none;
     border-radius: 15px;
@@ -18,50 +27,146 @@ Dashboard {% endblock %} {% block header %}
     border-radius: 15px;
     border-style: none;
   }
+  .btn-modern:focus {
+    box-shadow: none !important
+  }
+
+  .btn:active,
+  .btn:focus,
+  .btn.active,
+  .btn:active:focus, 
+  .btn::after {
+   background-image: none;
+   outline: 0;
+   -webkit-box-shadow: none;
+   box-shadow: none;
+}
+  .btn-modern {
+      background-color: #ffffff;
+      border-radius: 15px;
+  }
+
+  .dropdown-menu-modern {
+      border-radius: 15px;
+      border-color: #969DB5;
+      border-width: 2px;
+  }
+  .btn-link-modern {
+      color: #656d86;
+      text-decoration: none !important;
+  }
+  .btn-link-modern:hover {
+      color: #070a16
+  }
+  
   .text-center {
     text-align: center;
   }
+
   .vertical-align {
     display: flex;
     align-items: center;
   }
+  .horizontal-align {
+    display: flex;
+    justify-content: center;
+  }
+  .align-left {
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+  }
+  .align-right {
+    display: flex;
+    justify-content: flex-end !important;
+    flex-wrap: wrap;
+  }
+
+  .space-between {
+    display: flex;  
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
   .margin-auto {
     margin: 0 auto;
     position: relative;
     display: block;
   }
+
   .big-icon {
     font-size: 3rem;
-    color: #969db5;
+    color: #969DB5
   }
+
+  .small-icon {
+    font-size: 1.5rem;
+    color: #969DB5
+  }
+
   .text-xlarge {
     font-size: 1.9rem;
-    font-weight: 1000;
+    font-weight: 1000
   }
+
   .color-primary {
-    color: #111a3c;
+    color: #111A3C
   }
+
   .color-light {
-    color: #969db5;
+    color: #969DB5
   }
+
+  .ml-1 {
+    margin-left: 1rem;
+  }
+
   .ml-3 {
     margin-left: 3rem;
   }
+
+  .mr-3 {
+    margin-right: 3rem;
+  }
+
+  .mr-1 {
+    margin-right: 1rem;
+  }
+
   .mt-3 {
-    margin-top: 3rem;
+    margin-top: 3rem
+  }
+  .mt-1 {
+    margin-top: .5rem
+  }
+  .mb-1 {
+    margin-bottom: .5rem
   }
   .mx-3 {
-    margin: 3rem;
+    margin: 3rem
   }
+
   .px-3 {
-    padding: 3rem;
+    padding: 3rem
   }
+
   .px-1 {
-    padding: 1rem;
+    padding: 1rem
   }
+
   .pt-1 {
-    padding-top: 1rem;
+    padding-top: 1rem
   }
+
+  .height-25 {
+    min-height: 40vh !important;
+  }
+  .control-input {
+    border-radius: 15px;
+    border: none !important;
+    background-color: #ffffff;
+  }
+
   @media (min-width: 1200px) {
     .equal {
       display: flex;
@@ -72,36 +177,45 @@ Dashboard {% endblock %} {% block header %}
 </style>
 
 <div class="container">
-  <div class="btn-group">
-  <div type="button" class="btn btn-default" id="display-condition"><span>Displaying: All Conditions</span></div>
-  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <span class="caret"></span>
-  </button>
-    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-      <li><button class="btn btn-link" id="htn-btn">Hypertension</button></li>
-      <li><button class="btn btn-link" id="dm-btn">Diabetes</button></li>
-      <li><button class="btn btn-link" id="all-btn">All Conditions</button></li>
+  <!-- TOOD tryand get these script tags to instead be bundled by webpack -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
-      <!-- <li><a href="#">Another action</a></li>
-      <li><a href="#">Something else here</a></li> -->
-    </ul>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="panel panel-default panel-modern">
+        <div class="panel-body align-left row">
+          <div class="col-md-4  mt-1 mb-1 vertical-align align-left">
+          <div class="control-input">
+            <span class="glyphicon glyphicon-calendar small-icon ml-1 mr-1" aria-hidden="true"></span><input
+              class="control-input px-1 color-light" type="text" name="daterange" value="09/18/2020 - 09/27/2020" />
+            </div>
+            </div>
+          <div class="col-md-4 vertical-align horizontal-align mt-1 mb-1">
+            <div class="btn-group">
+                <div type="button" class="btn btn-modern color-light px-1" id="display-condition"><span><span class="glyphicon glyphicon-tags small-icon mr-1" aria-hidden="true"></span> Displaying: All Conditions</span></div>
+                <button type="button" class="btn btn-modern dropdown-toggle px-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span class="caret"></span>
+                </button>
+                  <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="dropdownMenu1">
+                    <li><button class="btn btn-link btn-link-modern" id="htn-btn">Hypertension</button></li>
+                    <li><button class="btn btn-link btn-link-modern" id="dm-btn">Diabetes</button></li>
+                    <li><button class="btn btn-link btn-link-modern" id="all-btn">All Conditions</button></li>
+              
+                    <!-- <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li> -->
+                  </ul>
+                </div>
+          </div>
+          <div class="col-md-4 mt-1 mb-1 vertical-align align-right">
+                <div type="button" class="btn btn-modern color-light px-1 " id="display-condition"><span><span class="glyphicon glyphicon-cloud-download small-icon mr-1" aria-hidden="true"></span> CSV-Export</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- TOOD tryand get these script tags to instead be bundled by webpack -->
-  <script
-    type="text/javascript"
-    src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
-  ></script>
-  <script
-    type="text/javascript"
-    src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
-  ></script>
-  <link
-    rel="stylesheet"
-    type="text/css"
-    href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
-  />
-  <input type="text" name="daterange" value="01/01/2018 - 01/15/2018" />
 
   <div class="row">
     <div class="col-sm-4">
@@ -109,15 +223,10 @@ Dashboard {% endblock %} {% block header %}
         <div class="panel-body">
           <div class="row vertical-align">
             <div class="col-xs-2 text-center">
-              <span
-                class="glyphicon glyphicon-user big-icon"
-                aria-hidden="true"
-              ></span>
+              <span class="glyphicon glyphicon-user big-icon" aria-hidden="true"></span>
             </div>
             <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge">
-                {{workup_data.all}}
-              </div>
+              <div class="col-12 color-primary text-xlarge">{{workup_data.all}}</div>
               <div class="col-12 color-light">Patient count</div>
             </div>
           </div>
@@ -129,10 +238,7 @@ Dashboard {% endblock %} {% block header %}
         <div class="panel-body">
           <div class="row vertical-align">
             <div class="col-xs-2 text-center">
-              <span
-                class="glyphicon glyphicon-refresh big-icon"
-                aria-hidden="true"
-              ></span>
+              <span class="glyphicon glyphicon-refresh big-icon" aria-hidden="true"></span>
             </div>
             <div class="col-xs-10">
               <div class="col-12 color-primary text-xlarge">354</div>
@@ -147,24 +253,21 @@ Dashboard {% endblock %} {% block header %}
         <div class="panel-body">
           <div class="row vertical-align">
             <div class="col-xs-2 text-center">
-              <span
-                class="glyphicon glyphicon-record big-icon"
-                aria-hidden="true"
-              ></span>
+              <span class="glyphicon glyphicon-record big-icon" aria-hidden="true"></span>
             </div>
             <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge">
-                {{workup_data.got_voucher|default:0}}
-              </div>
+              <div class="col-12 color-primary text-xlarge">{{workup_data.got_voucher|default:0}}</div>
               <div class="col-12 color-light">Drug prescriptions</div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
   <div class="row">
     <div class="col-lg-12">
+
       <div class="panel panel-default panel-modern">
         <div class="panel-body">
           <p class="color-primary text-xlarge">Weekly summary</p>
@@ -172,33 +275,36 @@ Dashboard {% endblock %} {% block header %}
             <div class="col-lg-8 col-md-6 col-sm-12 equal px-1">
               <div class="col-lg-12 panel-light equal px-3">
                 <!-- <h4 class="color-primary pt-1">Age distribution</h4> -->
-                <canvas id="htnAgeChart"></canvas>
-              </div>
+                <canvas id="htnAgeChart"></canvas></div>
             </div>
+            
             <div class="col-lg-4 col-md-6 col-sm-12 equal px-1">
               <div class="col-lg-12 panel-light vertical-align equal px-3">
-                <div id="htnGenderChart"><canvas></canvas></div>
+                <canvas id="htnGenderChart"></canvas>
+              </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 equal px-1 ">
+              <div class="col-lg-12 panel-light vertical-align equal px-3 height-25">
+                <canvas id="htnEthnicityChart"></canvas>
               </div>
             </div>
           </div>
-          <div class="col-lg-6"><canvas id="htnEthnicityChart"></canvas></div>
         </div>
       </div>
     </div>
   </div>
 
-  {% endblock %} {% block pagination %}{% endblock %} {% block extra_js %}
+  {% endblock %} {% block pagination %}{% endblock %}
+
+  {% block extra_js %}
   <!-- this script allows you to use chart.js (bundled through webpack) -->
-  <script src="{% static 'index-bundle.js' %}"></script>
-  <script
-    type="text/javascript"
-    charset="utf-8"
-    src="{% static 'js/datadashboard/Chart.roundedBarCharts.min.js' %}"
-  ></script>
-  <script
-    type="text/javascript"
-    charset="utf-8"
-    src="{% static 'js/datadashboard/patientDemographicCharts.js' %}"
-  ></script>
+  <script type="text/javascript" charset="utf-8" src="{% static 'js/index-bundle.js' %}"></script>
+
+  <script type="text/javascript" charset="utf-8" src="{% static 'js/datadashboard/Chart.roundedBarCharts.min.js' %}">
+  </script>
+
+  <script type="text/javascript" src="{% url 'datadashboard:javascript-catalog' %}"></script>
+
+  <script type="text/javascript" charset="utf-8" src="{% static 'js/datadashboard/patientDemographicCharts.js' %}">
+  </script>
   {% endblock %}
-</div>

@@ -155,7 +155,9 @@ MIDDLEWARE = [
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'simple_history.middleware.HistoryRequestMiddleware',
-    'osler.audit.middleware.AuditMiddleware'
+    'osler.audit.middleware.AuditMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+
 ]
 
 # STATIC

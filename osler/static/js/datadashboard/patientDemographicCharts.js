@@ -84,6 +84,40 @@ document.getElementById("dm-btn").addEventListener("click", function () {
 $(function () {
   $('input[name="daterange"]').daterangepicker(
     {
+      locale: {
+        format: gettext("MM/DD/YYYY"),
+        separator: " - ",
+        applyLabel: gettext("Apply"),
+        cancelLabel: gettext("Cancel"),
+        fromLabel: gettext("From"),
+        toLabel: gettext("To"),
+        customRangeLabel: gettext("Custom"),
+        weekLabel: gettext("W"),
+        daysOfWeek: [
+          gettext("Su"),
+          gettext("Mo"),
+          gettext("Tu"),
+          gettext("We"),
+          gettext("Th"),
+          gettext("Fr"),
+          gettext("Sa"),
+        ],
+        monthNames: [
+          gettext("January"),
+          gettext("February"),
+          gettext("March"),
+          gettext("April"),
+          gettext("May"),
+          gettext("June"),
+          gettext("July"),
+          gettext("August"),
+          gettext("September"),
+          gettext("October"),
+          gettext("November"),
+          gettext("December"),
+        ],
+        firstDay: 1,
+      },
       showDropdowns: true,
       ranges: {
         Today: [moment(), moment()],
@@ -191,7 +225,7 @@ function ageChart(dateFilteredData) {
             },
             ticks: {
               beginAtZero: true,
-              display: false,
+              maxTicksLimit: 5,
             },
             scaleLabel: {
               display: false,
@@ -306,29 +340,31 @@ function ethnicityChart(dateFilteredData) {
         {
           label: "Genders",
           backgroundColor: [
-            "#002b36",
-            "#073642",
-            "#586e75",
-            "#657b83",
-            "#839496",
-            "#93a1a1",
-            "#eee8d5",
-            "#fdf6e3",
-            "#662404",
+            "#4875C7",
+            "#80ABFC",
+            "#68D7D4",
+            "#AFEAE8",
+            "#FF9594",
+            "#FFBCBC",
+            "#d6e4f8",
           ],
           data: Object.values(ethnicityData),
         },
       ],
     },
     options: {
+      maintainAspectRatio: false,
+      responsive: true,
+
       legend: {
+        position: "bottom",
         labels: {
           usePointStyle: true,
         },
       },
       title: {
-        display: true,
-        text: "HTN Ethnicity Distribution",
+        display: false,
+        text: "HTN Ethinicity Distribution",
       },
     },
   }));
