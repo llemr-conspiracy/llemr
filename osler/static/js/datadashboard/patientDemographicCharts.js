@@ -6,66 +6,9 @@ var today = new Date(),
   monthAgo = new Date(today.setMonth(today.getMonth() - 1)),
   globalStart = monthAgo.toLocaleDateString();
 
-//load json data from url on page load
+//initial page load - display all-conditions data
 window.addEventListener("load", (event) => {
   fetch("all-json/")
-    .then((res) => res.json())
-    .then(
-      (result) => {
-        jsondata = result;
-        makeDateFilteredCharts(globalStart, globalEnd);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-});
-
-//load all conditions data
-document.getElementById("all-btn").addEventListener("click", function () {
-  let span = document.createElement("span");
-  span.innerHTML = "Displaying: All Conditions";
-  document.getElementById("display-condition").childNodes[0].replaceWith(span);
-
-  fetch("all-json/")
-    .then((res) => res.json())
-    .then(
-      (result) => {
-        jsondata = result;
-        makeDateFilteredCharts(globalStart, globalEnd);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-});
-
-//load hypertension data
-document.getElementById("htn-btn").addEventListener("click", function () {
-  let span = document.createElement("span");
-  span.innerHTML = "Displaying: Hypertension";
-  document.getElementById("display-condition").childNodes[0].replaceWith(span);
-
-  fetch("hypertension-json/")
-    .then((res) => res.json())
-    .then(
-      (result) => {
-        jsondata = result;
-        makeDateFilteredCharts(globalStart, globalEnd);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-});
-
-//load diabetes data
-document.getElementById("dm-btn").addEventListener("click", function () {
-  let span = document.createElement("span");
-  span.innerHTML = "Displaying: Diabetes";
-  document.getElementById("display-condition").childNodes[0].replaceWith(span);
-
-  fetch("diabetes-json/")
     .then((res) => res.json())
     .then(
       (result) => {
@@ -122,6 +65,7 @@ $(function () {
         "Last 7 Days": [moment().subtract(6, "days"), moment()],
         "This Month": [moment().startOf("month"), moment()],
         "This Year": [moment().startOf("year"), moment()],
+        "All Time": [moment().subtract(20, "years"),moment()],
       },
       linkedCalendars: false,
       alwaysShowCalendars: true,
@@ -138,6 +82,60 @@ $(function () {
       );
     }
   );
+});
+
+//all conditions event listener - load all conditions data
+document.getElementById("all-btn").addEventListener("click", function () {
+  let span = document.createTextNode("Displaying: All Conditions");
+  document.getElementById("display-condition").childNodes[0].replaceWith(span);
+
+  fetch("all-json/")
+    .then((res) => res.json())
+    .then(
+      (result) => {
+        jsondata = result;
+        makeDateFilteredCharts(globalStart, globalEnd);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+});
+
+//hypertension event listener - load hypertension data
+document.getElementById("htn-btn").addEventListener("click", function () {
+  let span = document.createTextNode("Displaying: Hypertension");
+  document.getElementById("display-condition").childNodes[0].replaceWith(span);
+
+  fetch("hypertension-json/")
+    .then((res) => res.json())
+    .then(
+      (result) => {
+        jsondata = result;
+        makeDateFilteredCharts(globalStart, globalEnd);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+});
+
+//diabetes event listener - load diabetes data
+document.getElementById("dm-btn").addEventListener("click", function () {
+  let span = document.createTextNode("Displaying: Diabetes");
+  document.getElementById("display-condition").childNodes[0].replaceWith(span);
+
+  fetch("diabetes-json/")
+    .then((res) => res.json())
+    .then(
+      (result) => {
+        jsondata = result;
+        makeDateFilteredCharts(globalStart, globalEnd);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
 });
 
 function makeDateFilteredCharts(startDate, endDate) {
@@ -157,9 +155,18 @@ function makeDateFilteredCharts(startDate, endDate) {
     }
   }
   // console.log(dateFilteredData)
+  displayTotalPatients(dateFilteredData)
   makeAgeChart(dateFilteredData);
   makeGenderChart(dateFilteredData);
   makeEthnicityChart(dateFilteredData);
+}
+
+function displayTotalPatients(dateFilteredData){
+  ptCount = document.createTextNode(Object.keys(dateFilteredData).length);
+  ptCountNode = document.getElementById("uniquePatientCount")
+  $(ptCountNode).empty();
+  ptCountNode.appendChild(ptCount);
+
 }
 
 function makeAgeChart(dateFilteredData) {
@@ -204,7 +211,7 @@ function makeAgeChart(dateFilteredData) {
       labels: ageLabels,
       datasets: [
         {
-          label: "Hypertensive Age Ranges",
+          label: "# Patients",
           backgroundColor: "#FF9594",
           borderColor: "black",
           data: sortedAges,
@@ -365,7 +372,6 @@ function makeEthnicityChart(dateFilteredData) {
 //helper functions
 function removeOldChart(chartName){
   var ChartParent = document.getElementById(chartName);
-  console.log(ChartParent)
   $(ChartParent).empty()
   var ChartNode = document.createElement("canvas");
   ChartParent.appendChild(ChartNode)

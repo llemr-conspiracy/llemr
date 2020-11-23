@@ -189,7 +189,7 @@
           <div class="col-md-4  mt-1 mb-1 vertical-align align-left">
           <div class="control-input">
             <span class="glyphicon glyphicon-calendar small-icon ml-1 mr-1" aria-hidden="true"></span><input
-              class="control-input px-1 color-light" type="text" name="daterange" value="09/18/2020 - 09/27/2020" />
+              class="control-input px-1 color-light" type="text" name="daterange" value="09/18/2020 - 09/27/2020"/>
             </div>
             </div>
           <div class="col-md-4 vertical-align horizontal-align mt-1 mb-1">
@@ -209,7 +209,7 @@
                 </div>
           </div>
           <div class="col-md-4 mt-1 mb-1 vertical-align align-right">
-                <div type="button" class="btn btn-modern color-light px-1 " id="display-condition"><span><span class="glyphicon glyphicon-cloud-download small-icon mr-1" aria-hidden="true"></span> CSV-Export</span></div>
+                <div type="button" class="btn btn-modern color-light px-1 " id="display-condition"><span><span class="glyphicon glyphicon-cloud-download small-icon mr-1" aria-hidden="true"></span>Export Data</span></div>
           </div>
         </div>
       </div>
@@ -226,8 +226,8 @@
               <span class="glyphicon glyphicon-user big-icon" aria-hidden="true"></span>
             </div>
             <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge">{{workup_data.all}}</div>
-              <div class="col-12 color-light">Patient count</div>
+              <div class="col-12 color-primary text-xlarge" id="uniquePatientCount"></div>
+              <div class="col-12 color-light">Unique patient count</div>
             </div>
           </div>
         </div>
@@ -241,8 +241,8 @@
               <span class="glyphicon glyphicon-refresh big-icon" aria-hidden="true"></span>
             </div>
             <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge">354</div>
-              <div class="col-12 color-light">Recurring patients</div>
+              <div class="col-12 color-primary text-xlarge">#</div>
+              <div class="col-12 color-light">Data goes here</div>
             </div>
           </div>
         </div>
@@ -256,8 +256,8 @@
               <span class="glyphicon glyphicon-record big-icon" aria-hidden="true"></span>
             </div>
             <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge">{{workup_data.got_voucher|default:0}}</div>
-              <div class="col-12 color-light">Drug prescriptions</div>
+              <div class="col-12 color-primary text-xlarge">#</div>
+              <div class="col-12 color-light">Data goes here</div>
             </div>
           </div>
         </div>
