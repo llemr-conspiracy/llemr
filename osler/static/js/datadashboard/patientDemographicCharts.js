@@ -4,7 +4,8 @@ var jsondata = null;
 var today = new Date(),
   globalEnd = today.toLocaleDateString(),
   monthAgo = new Date(today.setMonth(today.getMonth() - 1)),
-  globalStart = monthAgo.toLocaleDateString();
+  globalStart = monthAgo.toLocaleDateString(),
+  dateFilteredData = {};;
 
 //initial page load - display all-conditions data
 window.addEventListener("load", (event) => {
@@ -32,7 +33,7 @@ $(function () {
         cancelLabel: gettext("Cancel"),
         fromLabel: gettext("From"),
         toLabel: gettext("To"),
-        customRangeLabel: gettext("Custom"),
+        customRangeLabel: gettext("Custom Range"),
         weekLabel: gettext("W"),
         daysOfWeek: [
           gettext("Su"),
@@ -139,7 +140,7 @@ document.getElementById("dm-btn").addEventListener("click", function () {
 });
 
 function makeDateFilteredCharts(startDate, endDate) {
-  let dateFilteredData = {};
+  dateFilteredData = {};
   for (const [key, value] of Object.entries(jsondata)) {
     var filterOut = true;
     value.wu_dates.map(function (d) {
@@ -159,15 +160,41 @@ function makeDateFilteredCharts(startDate, endDate) {
   makeAgeChart(dateFilteredData);
   makeGenderChart(dateFilteredData);
   makeEthnicityChart(dateFilteredData);
-}
+};
 
 function displayTotalPatients(dateFilteredData){
   ptCount = document.createTextNode(Object.keys(dateFilteredData).length);
-  ptCountNode = document.getElementById("uniquePatientCount")
+  ptCountNode = document.getElementById("unique-patient-count")
   $(ptCountNode).empty();
   ptCountNode.appendChild(ptCount);
 
-}
+};
+
+
+const data = { username: "example" };
+
+
+
+//export currently displayed data to csv
+document.getElementById("export-data").addEventListener("click", function () {
+  // https://docs.djangoproject.com/en/3.1/ref/csrf/ passing csrf tokens via fetch api
+  const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+  const request = new Request("export-csv/", {
+    headers: { "X-CSRFToken": csrftoken, "Content-Type": "application/json" },
+  });
+  fetch(request, {
+    method: "POST",
+    mode: "same-origin",
+    body: JSON.stringify(dateFilteredData),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Success:", data);
+    })
+    .catch((error) => {
+      // this fetch throws an error but still works so I'm just not logging it
+    });
+});
 
 function makeAgeChart(dateFilteredData) {
   (ageStepSize = 10), (ageRanges = []), (ageLabels = []), (sortedAges = []);
@@ -256,7 +283,7 @@ function makeAgeChart(dateFilteredData) {
       },
     },
   }));
-}
+};
 
 function makeGenderChart(dateFilteredData) {
   //pass in date filtered data and then within each function extract the demographic data
@@ -304,7 +331,7 @@ function makeGenderChart(dateFilteredData) {
       },
     },
   }));
-}
+};
 
 function makeEthnicityChart(dateFilteredData) {
   var ethnicityData = {
@@ -366,7 +393,7 @@ function makeEthnicityChart(dateFilteredData) {
       },
     },
   }));
-}
+};
 
 
 //helper functions

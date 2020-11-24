@@ -28,7 +28,8 @@ unwrapped_urlconf = [
     re_path(r'^hypertension-json/', views.send_hypertension_json, name='hypertension_json'),
     re_path(r'^diabetes-json/', views.send_diabetes_json, name='diabetes_json'),
     re_path(r'^all-json/', views.send_all_json, name='all_json'),
-    re_path(r'^jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog')
+    re_path(r'^jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
+    re_path(r'^export-csv/', views.export_csv, name='export-csv'),
 ]
 
 wrap_config = {}

@@ -1,9 +1,11 @@
 import datetime
+import json
 from django.utils.timezone import now
 from django.views.generic import TemplateView
 from django.http import JsonResponse
 from osler.workup.models import Workup
 from osler.datadashboard import models
+from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
 
 class DataDashboardView(TemplateView):
     template_name = 'datadashboard/patient_data_dashboard.html'        
@@ -70,3 +72,41 @@ def send_diabetes_json(request):
     diabetes_workups = query_diabetes_workups()
     dashboard_data = extract_demographic_data(diabetes_workups)
     return JsonResponse(dashboard_data)
+
+# @active_permission_required('inventory.export_csv', raise_exception=True)
+def export_csv(request):
+    '''Writes drug models to a new .csv file saved the project root-level folder'''
+    data = request.read()
+    jsondata = json.loads(data)
+    print(jsondata)
+
+    # with NamedTemporaryFile(mode='a+') as file:
+    #     writer = csv.writer(file)
+    #     header = ['Condition','']
+    #     writer.writerow(header)
+    #     for drug in drugs:
+    #         dispensed_list = list(recently_dispensed.filter(drug=drug.id).values_list('dispense', flat=True))
+    #         dispensed_sum = sum(dispensed_list)
+    #         if dispensed_sum == 0:
+    #             dispensed_sum = ""
+    #         writer.writerow(
+    #             [drug.name,
+    #              drug.dose,
+    #              drug.unit,
+    #              drug.category,
+    #              drug.stock,
+    #              drug.lot_number,
+    #              drug.expiration_date,
+    #              drug.manufacturer,
+    #              dispensed_sum
+    #              ])
+    #     file.seek(0)
+    #     csvfileread = file.read()
+
+    csv_filename = f"test.csv"
+
+    response = HttpResponse('application/csv')
+
+    # response["Content-Disposition"] = (
+    #     "attachment; filename=%s" % (csv_filename,))
+    return response

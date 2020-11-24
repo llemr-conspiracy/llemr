@@ -187,14 +187,14 @@
       <div class="panel panel-default panel-modern">
         <div class="panel-body align-left row">
           <div class="col-md-4  mt-1 mb-1 vertical-align align-left">
-          <div class="control-input">
-            <span class="glyphicon glyphicon-calendar small-icon ml-1 mr-1" aria-hidden="true"></span><input
-              class="control-input px-1 color-light" type="text" name="daterange" value="09/18/2020 - 09/27/2020"/>
+            <div class="control-input">
+              <span class="glyphicon glyphicon-calendar small-icon ml-1 mr-1" aria-hidden="true"></span>
+              <input class="control-input px-1 color-light" type="text" name="daterange"/>
             </div>
-            </div>
+          </div>
           <div class="col-md-4 vertical-align horizontal-align mt-1 mb-1">
             <div class="btn-group">
-                <div type="button" class="btn btn-modern color-light px-1" id="display-condition"><span><span class="glyphicon glyphicon-tags small-icon mr-1" aria-hidden="true"></span> Displaying: All Conditions</span></div>
+                <div type="button" class="btn btn-modern color-light px-1" id="display-condition"><span><span class="glyphicon glyphicon-tags small-icon mr-1" aria-hidden="true"></span>Displaying: All Conditions</span></div>
                 <button type="button" class="btn btn-modern dropdown-toggle px-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   <span class="caret"></span>
                 </button>
@@ -209,13 +209,13 @@
                 </div>
           </div>
           <div class="col-md-4 mt-1 mb-1 vertical-align align-right">
-                <div type="button" class="btn btn-modern color-light px-1 " id="display-condition"><span><span class="glyphicon glyphicon-cloud-download small-icon mr-1" aria-hidden="true"></span>Export Data</span></div>
+            {% csrf_token %}
+                <div type="button" class="btn btn-modern color-light px-1 " id="export-data"><span><span class="glyphicon glyphicon-cloud-download small-icon mr-1" aria-hidden="true"></span>Export Data</span></div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
 
   <div class="row">
     <div class="col-sm-4">
@@ -226,7 +226,7 @@
               <span class="glyphicon glyphicon-user big-icon" aria-hidden="true"></span>
             </div>
             <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge" id="uniquePatientCount"></div>
+              <div class="col-12 color-primary text-xlarge" id="unique-patient-count"></div>
               <div class="col-12 color-light">Unique patient count</div>
             </div>
           </div>
@@ -270,7 +270,7 @@
 
       <div class="panel panel-default panel-modern">
         <div class="panel-body">
-          <p class="color-primary text-xlarge">Weekly summary</p>
+          <p class="color-primary text-xlarge">Demographics summary</p>
           <div class="row equal">
             <div class="col-lg-8 col-md-6 col-sm-12 equal px-1">
               <div class="col-lg-12 panel-light equal px-3" id="ageChartDiv">
