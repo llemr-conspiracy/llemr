@@ -28,6 +28,7 @@
     border-radius: 15px;
     border-style: none;
   }
+
   .btn-modern:focus {
     box-shadow: none !important
   }
@@ -35,31 +36,34 @@
   .btn:active,
   .btn:focus,
   .btn.active,
-  .btn:active:focus, 
+  .btn:active:focus,
   .btn::after {
-   background-image: none;
-   outline: 0;
-   -webkit-box-shadow: none;
-   box-shadow: none;
-}
+    background-image: none;
+    outline: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+
   .btn-modern {
-      background-color: #ffffff;
-      border-radius: 15px;
+    background-color: #ffffff;
+    border-radius: 15px;
   }
 
   .dropdown-menu-modern {
-      border-radius: 15px;
-      border-color: #969DB5;
-      border-width: 2px;
+    border-radius: 15px;
+    border-color: #969DB5;
+    border-width: 2px;
   }
+
   .btn-link-modern {
-      color: #656d86;
-      text-decoration: none !important;
+    color: #656d86;
+    text-decoration: none !important;
   }
+
   .btn-link-modern:hover {
-      color: #070a16
+    color: #070a16
   }
-  
+
   .text-center {
     text-align: center;
   }
@@ -68,15 +72,18 @@
     display: flex;
     align-items: center;
   }
+
   .horizontal-align {
     display: flex;
     justify-content: center;
   }
+
   .align-left {
     display: flex;
     justify-content: start;
     flex-wrap: wrap;
   }
+
   .align-right {
     display: flex;
     justify-content: flex-end !important;
@@ -84,7 +91,7 @@
   }
 
   .space-between {
-    display: flex;  
+    display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
   }
@@ -137,12 +144,15 @@
   .mt-3 {
     margin-top: 3rem
   }
+
   .mt-1 {
     margin-top: .5rem
   }
+
   .mb-1 {
     margin-bottom: .5rem
   }
+
   .mx-3 {
     margin: 3rem
   }
@@ -162,6 +172,7 @@
   .height-25 {
     min-height: 40vh !important;
   }
+
   .control-input {
     border-radius: 15px;
     border: none !important;
@@ -178,7 +189,6 @@
 
 </style>
 
-
 <div class="container">
   <!-- TOOD tryand get these script tags to instead be bundled by webpack -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
@@ -190,35 +200,40 @@
       <div class="panel panel-default panel-modern">
         <div class="panel-body align-left row">
           <div class="col-md-4  mt-1 mb-1 vertical-align align-left">
-          <div class="control-input">
-            <span class="glyphicon glyphicon-calendar small-icon ml-1 mr-1" aria-hidden="true"></span><input
-              class="control-input px-1 color-light" type="text" name="daterange" value="09/18/2020 - 09/27/2020" />
+            <div class="control-input">
+              <span class="glyphicon glyphicon-calendar small-icon ml-1 mr-1" aria-hidden="true"></span>
+              <input class="control-input px-1 color-light" type="text" name="daterange" />
             </div>
-            </div>
+          </div>
           <div class="col-md-4 vertical-align horizontal-align mt-1 mb-1">
             <div class="btn-group">
-                <div type="button" class="btn btn-modern color-light px-1" id="display-condition"><span><span class="glyphicon glyphicon-tags small-icon mr-1" aria-hidden="true"></span> Displaying: All Conditions</span></div>
-                <button type="button" class="btn btn-modern dropdown-toggle px-1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span class="caret"></span>
-                </button>
-                  <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="dropdownMenu1">
-                    <li><button class="btn btn-link btn-link-modern" id="htn-btn">Hypertension</button></li>
-                    <li><button class="btn btn-link btn-link-modern" id="dm-btn">Diabetes</button></li>
-                    <li><button class="btn btn-link btn-link-modern" id="all-btn">All Conditions</button></li>
-              
-                    <!-- <li><a href="#">Another action</a></li>
+              <div type="button" class="btn btn-modern color-light px-1" id="display-condition"><span><span
+                    class="glyphicon glyphicon-tags small-icon mr-1" aria-hidden="true"></span>Displaying: All
+                  Conditions</span></div>
+              <button type="button" class="btn btn-modern dropdown-toggle px-1" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="dropdownMenu1">
+                <li><button class="btn btn-link btn-link-modern" id="htn-btn">Hypertension</button></li>
+                <li><button class="btn btn-link btn-link-modern" id="dm-btn">Diabetes</button></li>
+                <li><button class="btn btn-link btn-link-modern" id="all-btn">All Conditions</button></li>
+
+                <!-- <li><a href="#">Another action</a></li>
                     <li><a href="#">Something else here</a></li> -->
-                  </ul>
-                </div>
+              </ul>
+            </div>
           </div>
           <div class="col-md-4 mt-1 mb-1 vertical-align align-right">
-                <div type="button" class="btn btn-modern color-light px-1 " id="display-condition"><span><span class="glyphicon glyphicon-cloud-download small-icon mr-1" aria-hidden="true"></span> CSV-Export</span></div>
+            {% csrf_token %}
+            <div type="button" class="btn btn-modern color-light px-1 " id="export-data"><span><span
+                  class="glyphicon glyphicon-cloud-download small-icon mr-1" aria-hidden="true"></span>Export
+                Data</span></div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
 
   <div class="row">
     <div class="col-sm-4">
@@ -229,8 +244,8 @@
               <span class="glyphicon glyphicon-user big-icon" aria-hidden="true"></span>
             </div>
             <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge">{{workup_data.all}}</div>
-              <div class="col-12 color-light">Patient count</div>
+              <div class="col-12 color-primary text-xlarge" id="unique-patient-count"></div>
+              <div class="col-12 color-light">Unique patient count</div>
             </div>
           </div>
         </div>
@@ -244,8 +259,8 @@
               <span class="glyphicon glyphicon-refresh big-icon" aria-hidden="true"></span>
             </div>
             <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge">354</div>
-              <div class="col-12 color-light">Recurring patients</div>
+              <div class="col-12 color-primary text-xlarge">#</div>
+              <div class="col-12 color-light">Data goes here</div>
             </div>
           </div>
         </div>
@@ -259,8 +274,8 @@
               <span class="glyphicon glyphicon-record big-icon" aria-hidden="true"></span>
             </div>
             <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge">{{workup_data.got_voucher|default:0}}</div>
-              <div class="col-12 color-light">Drug prescriptions</div>
+              <div class="col-12 color-primary text-xlarge">#</div>
+              <div class="col-12 color-light">Data goes here</div>
             </div>
           </div>
         </div>
@@ -268,27 +283,29 @@
     </div>
 
   </div>
+
+
   <div class="row">
     <div class="col-lg-12">
 
       <div class="panel panel-default panel-modern">
         <div class="panel-body">
-          <p class="color-primary text-xlarge">Weekly summary</p>
+          <p class="color-primary text-xlarge">Demographics summary</p>
           <div class="row equal">
             <div class="col-lg-8 col-md-6 col-sm-12 equal px-1">
-              <div class="col-lg-12 panel-light equal px-3">
-                <!-- <h4 class="color-primary pt-1">Age distribution</h4> -->
-                <canvas id="htnAgeChart"></canvas></div>
+              <div class="col-lg-12 panel-light equal px-3" id="ageChartDiv"></div>
             </div>
-            
+
             <div class="col-lg-4 col-md-6 col-sm-12 equal px-1">
-              <div class="col-lg-12 panel-light vertical-align equal px-3">
-                <canvas id="htnGenderChart"></canvas>
+              <div class="col-lg-12 panel-light vertical-align equal px-3" id="genderChartDiv">
               </div>
             </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 equal px-1 ">
-              <div class="col-lg-12 panel-light vertical-align equal px-3 height-25">
-                <canvas id="htnEthnicityChart"></canvas>
+            <div class="col-lg-4 col-md-6 col-sm-12 equal px-1 ">
+              <div class="col-lg-12 panel-light vertical-align equal px-3 height-25" id="ethnicityChartDiv">
+              </div>
+            </div>
+            <div class="col-lg-8 col-md-6 col-sm-12 equal px-1 ">
+              <div class="col-lg-12 panel-light vertical-align equal px-3 height-25" id="conditions-chart-div">
               </div>
             </div>
           </div>
@@ -296,6 +313,7 @@
       </div>
     </div>
   </div>
+
 
   {% endblock %} {% block pagination %}{% endblock %}
 
