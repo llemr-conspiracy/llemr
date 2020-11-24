@@ -2,10 +2,12 @@ var jsondata = null;
 
 //generate default date range and define global variables that update with daterangepicker
 var today = new Date(),
-  globalEnd = today.toLocaleDateString(),
+  selectedEnd = today.toLocaleDateString(),
   monthAgo = new Date(today.setMonth(today.getMonth() - 1)),
-  globalStart = monthAgo.toLocaleDateString(),
-  dateFilteredData = {};;
+  selectedStart = monthAgo.toLocaleDateString(),
+  conditionsList = [],
+  selectedConditions = [];
+  // filteredData = {};
 
 //initial page load - display all-conditions data
 window.addEventListener("load", (event) => {
@@ -16,7 +18,7 @@ window.addEventListener("load", (event) => {
         jsondata = result;
         console.log(jsondata)
         makeCommonConditionsChart();
-        makeDateFilteredCharts(globalStart, globalEnd);
+        makeFilteredCharts();
       },
       (error) => {
         console.log(error);
@@ -26,18 +28,17 @@ window.addEventListener("load", (event) => {
 
 function makeCommonConditionsChart(){
   //map conditions to obj
-  commonConditionsPreSort = {}
+  commonConditionsPreSort = {};
   Object.values(jsondata).map(function (e) {
-    condition = e.conditions
-    // for (var i = 0; i < Object.keys(ethnicityData).length; i++) {   
-    if (!(condition in commonConditionsPreSort)){
+    condition = e.conditions;
+    // for (var i = 0; i < Object.keys(ethnicityData).length; i++) {
+    if (!(condition in commonConditionsPreSort)) {
       commonConditionsPreSort[condition] = 1;
-    }
-    else{
+    } else {
       commonConditionsPreSort[condition] += 1;
     }
   });
-  
+
   // sort by most patients
   var sortable = [];
   for (var condition in commonConditionsPreSort) {
@@ -46,12 +47,16 @@ function makeCommonConditionsChart(){
   sortable.sort(function (a, b) {
     return b[1] - a[1];
   });
-  commonConditions = {}
-  sortable.forEach((condition) =>  commonConditions[condition[0]] = condition[1]);
+  commonConditions = {};
+  sortable.forEach(
+    (condition) => (commonConditions[condition[0]] = condition[1])
+  );
+  conditionsList = Object.keys(commonConditions);
+  selectedConditions = conditionsList;
 
   var commonConditionsChartNode = removeOldChart("conditions-chart-div");
   var commonConditionsChart = commonConditionsChartNode.getContext("2d");
-  return (chart = new Chart(commonConditionsChart, {
+  conditionsChart = new Chart(commonConditionsChart, {
     type: "horizontalBar",
     data: {
       labels: Object.keys(commonConditions),
@@ -101,7 +106,14 @@ function makeCommonConditionsChart(){
         display: false,
       },
     },
-  }));
+  });
+  // event listeners for filtering by displayed conditions
+  canvas = document.getElementsByTagName("canvas")[0];
+  canvas.onclick = function (evt) {
+    var firstPoint = conditionsChart.getElementAtEvent(evt)[0];
+    selectedConditions = [conditionsChart.data.labels[firstPoint._index]];
+    makeFilteredCharts();
+  };
 };
 
 //date range picker
@@ -152,17 +164,18 @@ $(function () {
       },
       linkedCalendars: false,
       alwaysShowCalendars: true,
-      startDate: globalStart,
-      endDate: globalEnd,
+      startDate: selectedStart,
+      endDate: selectedEnd,
       opens: "right",
     },
     function (startDate, endDate, label) {
-      globalStart = startDate.format("YYYY-MM-DD");
-      globalEnd = endDate.format("YYYY-MM-DD");
-      makeDateFilteredCharts(
-        startDate.format("YYYY-MM-DD"),
-        endDate.format("YYYY-MM-DD")
-      );
+      selectedStart = startDate.format("YYYY-MM-DD");
+      selectedEnd = endDate.format("YYYY-MM-DD");
+      // filteredData = filterByDateRange(
+      //   startDate.format("YYYY-MM-DD"),
+      //   endDate.format("YYYY-MM-DD")
+      // );          
+      makeFilteredCharts(filteredData);
     }
   );
 });
@@ -171,77 +184,58 @@ $(function () {
 document.getElementById("all-btn").addEventListener("click", function () {
   let span = document.createTextNode("Displaying: All Conditions");
   document.getElementById("display-condition").childNodes[0].replaceWith(span);
-
-  fetch("all-json/")
-    .then((res) => res.json())
-    .then(
-      (result) => {
-        jsondata = result;
-        makeDateFilteredCharts(globalStart, globalEnd);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+  selectedConditions = conditionsList;
+  makeFilteredCharts();
 });
 
 //hypertension event listener - load hypertension data
 document.getElementById("htn-btn").addEventListener("click", function () {
   let span = document.createTextNode("Displaying: Hypertension");
   document.getElementById("display-condition").childNodes[0].replaceWith(span);
-
-  fetch("hypertension-json/")
-    .then((res) => res.json())
-    .then(
-      (result) => {
-        jsondata = result;
-        makeDateFilteredCharts(globalStart, globalEnd);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+  selectedConditions = ["hypertension"]
+  makeFilteredCharts();
 });
 
 //diabetes event listener - load diabetes data
 document.getElementById("dm-btn").addEventListener("click", function () {
   let span = document.createTextNode("Displaying: Diabetes");
   document.getElementById("display-condition").childNodes[0].replaceWith(span);
-
-  fetch("diabetes-json/")
-    .then((res) => res.json())
-    .then(
-      (result) => {
-        jsondata = result;
-        makeDateFilteredCharts(globalStart, globalEnd);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+  selectedConditions = ["diabetes"];
+  makeFilteredCharts();
 });
 
-function makeDateFilteredCharts(startDate, endDate) {
-  dateFilteredData = {};
+function filterData(jsondata){
+  filteredData = {};
+  console.log(selectedConditions)
+  console.log(selectedStart)
   for (const [key, value] of Object.entries(jsondata)) {
     var filterOut = true;
-    value.wu_dates.map(function (d) {
-      if (
-        Date.parse(d) >= Date.parse(startDate) &&
-        Date.parse(d) <= Date.parse(endDate)
-      ) {
-        return (filterOut = false);
-      }
-    });
+    // check if condition matches selected condition
+    if (selectedConditions.includes(value.conditions)) {
+      //check if within selected date range
+      value.wu_dates.map(function (d) {
+        if (
+          Date.parse(d) >= Date.parse(selectedStart) &&
+          Date.parse(d) <= Date.parse(selectedEnd)
+        ) {
+          return (filterOut = false);
+        }
+      });
+    }
     if (!filterOut) {
-      dateFilteredData[key] = value;
+      filteredData[key] = value;
     }
   }
-  // console.log(dateFilteredData)
-  displayTotalPatients(dateFilteredData)
-  makeAgeChart(dateFilteredData);
-  makeGenderChart(dateFilteredData);
-  makeEthnicityChart(dateFilteredData);
+  return filteredData;
+}
+
+function makeFilteredCharts() {
+  filteredData = filterData(jsondata);
+  console.log(filteredData)
+  displayTotalPatients(filteredData)
+  makeAgeChart(filteredData);
+  makeGenderChart(filteredData);
+  makeEthnicityChart(filteredData);
 };
 
 function displayTotalPatients(dateFilteredData){
@@ -262,7 +256,7 @@ document.getElementById("export-data").addEventListener("click", function () {
   fetch(request, {
     method: "POST",
     mode: "same-origin",
-    body: JSON.stringify(dateFilteredData),
+    body: JSON.stringify(filteredData),
   })
     .then((response) => response.json())
     .then((data) => {

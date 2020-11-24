@@ -10,29 +10,29 @@ from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
 class DataDashboardView(TemplateView):
     template_name = 'datadashboard/patient_data_dashboard.html'        
 
-def query_hypertension_workups():
-    '''Queries all workups defined as hypertensive (currently defined as bp_sys > 100)'''
-    hypertensive_workups = Workup.objects.filter(diagnosis__contains='hypertension').\
-        select_related('patient').\
-        select_related('patient__gender').\
-        prefetch_related('patient__ethnicities')
-    return hypertensive_workups
+# def query_hypertension_workups():
+#     '''Queries all workups defined as hypertensive (currently defined as bp_sys > 100)'''
+#     hypertensive_workups = Workup.objects.filter(diagnosis__contains='hypertension').\
+#         select_related('patient').\
+#         select_related('patient__gender').\
+#         prefetch_related('patient__ethnicities')
+#     return hypertensive_workups
 
-def query_diabetes_workups():
-    '''Queries all workups defined as diabetic under diagnosis field'''
-    diabetic_workups = Workup.objects.filter(diagnosis__contains='diabetes').\
-        select_related('patient').\
-        select_related('patient__gender').\
-        prefetch_related('patient__ethnicities')
-    return diabetic_workups
+# def query_diabetes_workups():
+#     '''Queries all workups defined as diabetic under diagnosis field'''
+#     diabetic_workups = Workup.objects.filter(diagnosis__contains='diabetes').\
+#         select_related('patient').\
+#         select_related('patient__gender').\
+#         prefetch_related('patient__ethnicities')
+#     return diabetic_workups
 
 def query_all_workups():
     '''Queries all workups'''
-    diabetic_workups = Workup.objects.all().\
+    return Workup.objects.all().\
         select_related('patient').\
         select_related('patient__gender').\
         prefetch_related('patient__ethnicities')
-    return diabetic_workups
+    
 
 def extract_demographic_data(workups):
     '''takes in queryed workups then extracts and formats related demographic data into json friendly format'''
@@ -64,15 +64,15 @@ def send_all_json(request):
     dashboard_data = extract_demographic_data(all_workups)
     return JsonResponse(dashboard_data)
 
-def send_hypertension_json(request):
-    hypertensive_workups = query_hypertension_workups()
-    dashboard_data = extract_demographic_data(hypertensive_workups)
-    return JsonResponse(dashboard_data)
+# def send_hypertension_json(request):
+#     hypertensive_workups = query_hypertension_workups()
+#     dashboard_data = extract_demographic_data(hypertensive_workups)
+#     return JsonResponse(dashboard_data)
 
-def send_diabetes_json(request):
-    diabetes_workups = query_diabetes_workups()
-    dashboard_data = extract_demographic_data(diabetes_workups)
-    return JsonResponse(dashboard_data)
+# def send_diabetes_json(request):
+#     diabetes_workups = query_diabetes_workups()
+#     dashboard_data = extract_demographic_data(diabetes_workups)
+#     return JsonResponse(dashboard_data)
 
 # @active_permission_required('inventory.export_csv', raise_exception=True)
 def export_csv(request):
