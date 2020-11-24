@@ -14,6 +14,8 @@ window.addEventListener("load", (event) => {
     .then(
       (result) => {
         jsondata = result;
+        console.log(jsondata)
+        makeCommonConditionsChart();
         makeDateFilteredCharts(globalStart, globalEnd);
       },
       (error) => {
@@ -21,6 +23,86 @@ window.addEventListener("load", (event) => {
       }
     );
 });
+
+function makeCommonConditionsChart(){
+  //map conditions to obj
+  commonConditionsPreSort = {}
+  Object.values(jsondata).map(function (e) {
+    condition = e.conditions
+    // for (var i = 0; i < Object.keys(ethnicityData).length; i++) {   
+    if (!(condition in commonConditionsPreSort)){
+      commonConditionsPreSort[condition] = 1;
+    }
+    else{
+      commonConditionsPreSort[condition] += 1;
+    }
+  });
+  
+  // sort by most patients
+  var sortable = [];
+  for (var condition in commonConditionsPreSort) {
+    sortable.push([condition, commonConditionsPreSort[condition]]);
+  }
+  sortable.sort(function (a, b) {
+    return b[1] - a[1];
+  });
+  commonConditions = {}
+  sortable.forEach((condition) =>  commonConditions[condition[0]] = condition[1]);
+
+  var commonConditionsChartNode = removeOldChart("conditions-chart-div");
+  var commonConditionsChart = commonConditionsChartNode.getContext("2d");
+  return (chart = new Chart(commonConditionsChart, {
+    type: "horizontalBar",
+    data: {
+      labels: Object.keys(commonConditions),
+      datasets: [
+        {
+          label: "# Patients with",
+          backgroundColor: "#FF9594",
+          borderColor: "black",
+          data: Object.values(commonConditions),
+        },
+      ],
+    },
+    options: {
+      fullCornerRadius: false,
+      cornerRadius: 15,
+      scales: {
+        yAxes: [
+          {
+            gridLines: {
+              display: true,
+              borderDash: [5, 5],
+              lineWidth: 2,
+              drawBorder: false,
+              offsetGridLines: false,
+            },
+            ticks: {
+              beginAtZero: true,
+              maxTicksLimit: 5,
+            },
+            scaleLabel: {
+              display: false,
+            },
+          },
+        ],
+        xAxes: [
+          {
+            gridLines: {
+              display: false,
+            },
+            ticks: {
+              beginAtZero: true,
+            },
+          },
+        ],
+      },
+      legend: {
+        display: false,
+      },
+    },
+  }));
+};
 
 //date range picker
 $(function () {
@@ -170,11 +252,6 @@ function displayTotalPatients(dateFilteredData){
 
 };
 
-
-const data = { username: "example" };
-
-
-
 //export currently displayed data to csv
 document.getElementById("export-data").addEventListener("click", function () {
   // https://docs.djangoproject.com/en/3.1/ref/csrf/ passing csrf tokens via fetch api
@@ -226,8 +303,6 @@ function makeAgeChart(dateFilteredData) {
   ageRanges.forEach(function (range) {
     sortedAges.push(range["value"]);
   });
-
-
 
   var ageChartNode = removeOldChart("ageChartDiv");
   var ageChart = ageChartNode.getContext("2d");

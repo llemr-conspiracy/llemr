@@ -42,6 +42,7 @@ def extract_demographic_data(workups):
         demographics = {}
         if wu.patient.pk not in unique_patient_pk_list:
             unique_patient_pk_list.append(wu.patient.pk)
+            demographics['conditions'] = wu.diagnosis
             demographics['age'] = (now().date() - wu.patient.date_of_birth).days // 365
             demographics['gender'] = wu.patient.gender.name
             ethnicities = []
@@ -104,7 +105,6 @@ def export_csv(request):
     #     csvfileread = file.read()
 
     csv_filename = f"test.csv"
-
     response = HttpResponse('application/csv')
 
     # response["Content-Disposition"] = (
