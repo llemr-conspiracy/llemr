@@ -19,7 +19,7 @@ window.addEventListener("load", (event) => {
         makeCommonConditionsChart();
         initializeHelper();
         dateRangePicker.data("daterangepicker").show();
-        makeFilteredCharts();
+        makeFilteredCharts("date");
       },
       (error) => {
         console.log(error);
@@ -113,7 +113,7 @@ function makeCommonConditionsChart(){
   canvas.onclick = function (evt) {
     var firstPoint = conditionsChart.getElementAtEvent(evt)[0];
     selectedConditions = [conditionsChart.data.labels[firstPoint._index]];
-    makeFilteredCharts();
+    makeFilteredCharts("condition");
   };
 };
 
@@ -171,7 +171,7 @@ var dateRangePicker = $('input[name="daterange"]').daterangepicker(
     function (startDate, endDate, label) {
       selectedStart = startDate.format("YYYY-MM-DD");
       selectedEnd = endDate.format("YYYY-MM-DD");      
-      makeFilteredCharts();
+      makeFilteredCharts("date");
     }
   );
 
@@ -181,7 +181,7 @@ document.getElementById("all-btn").addEventListener("click", function () {
   let span = document.createTextNode("Displaying: All Conditions");
   document.getElementById("display-condition").childNodes[0].replaceWith(span);
   selectedConditions = conditionsList;
-  makeFilteredCharts();
+  makeFilteredCharts("condition");
 });
 
 //hypertension event listener - load hypertension data
@@ -189,7 +189,7 @@ document.getElementById("htn-btn").addEventListener("click", function () {
   let span = document.createTextNode("Displaying: Hypertension");
   document.getElementById("display-condition").childNodes[0].replaceWith(span);
   selectedConditions = ["hypertension"]
-  makeFilteredCharts();
+  makeFilteredCharts("condition");
 });
 
 //diabetes event listener - load diabetes data
@@ -223,24 +223,32 @@ function filterData(jsondata){
   return filteredData;
 }
 
-function makeFilteredCharts() {
-  console.log("call make charts " + Object.keys(filterData(jsondata)).length);
-  //check if any data is selected if not - display error and open daterangepicker
-  $('input[name="daterange"]').on(
-    "apply.daterangepicker",
-    function (ev, picker) {
-      if (Object.keys(filterData(jsondata)).length === 0) {
-        picker.show();
-        document.getElementById("date-select-error").style.display = "inline-block";
-      } else {
-        document.getElementById("date-select-error").style.display = "none";
-        displayTotalPatients(filteredData);
-        makeAgeChart(filteredData);
-        makeGenderChart(filteredData);
-        makeEthnicityChart(filteredData);
+function makeFilteredCharts(filterChangeOrigin) {
+  if(filterChangeOrigin == "date"){
+    //check if any data is selected if not - display error and open daterangepicker
+    $('input[name="daterange"]').on("apply.daterangepicker",
+      function (ev, picker) {
+        if (Object.keys(filterData(jsondata)).length === 0) {
+          picker.show();
+          document.getElementById("date-select-error").style.display =
+            "inline-block";
+        } else {
+          document.getElementById("date-select-error").style.display = "none";
+          displayTotalPatients(filteredData);
+          makeAgeChart(filteredData);
+          makeGenderChart(filteredData);
+          makeEthnicityChart(filteredData);
+        }
       }
-    }
-  );
+    );
+  }
+  else if(filterChangeOrigin == "condition"){
+    displayTotalPatients(filteredData);
+    makeAgeChart(filteredData);
+    makeGenderChart(filteredData);
+    makeEthnicityChart(filteredData);
+  }
+  
 };
 
 function displayTotalPatients(dateFilteredData){
@@ -248,7 +256,6 @@ function displayTotalPatients(dateFilteredData){
   ptCountNode = document.getElementById("unique-patient-count")
   $(ptCountNode).empty();
   ptCountNode.appendChild(ptCount);
-
 };
 
 //export currently displayed data to csv
