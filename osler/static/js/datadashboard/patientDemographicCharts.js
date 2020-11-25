@@ -7,7 +7,6 @@ var today = new Date(),
   selectedStart = monthAgo.toLocaleDateString(),
   conditionsList = [],
   selectedConditions = [];
-  // filteredData = {};
 
 //initial page load - display all-conditions data
 window.addEventListener("load", (event) => {
@@ -18,6 +17,8 @@ window.addEventListener("load", (event) => {
         jsondata = result;
         console.log(jsondata)
         makeCommonConditionsChart();
+        initializeHelper();
+        dateRangePicker.data("daterangepicker").show();
         makeFilteredCharts();
       },
       (error) => {
@@ -117,8 +118,7 @@ function makeCommonConditionsChart(){
 };
 
 //date range picker
-$(function () {
-  $('input[name="daterange"]').daterangepicker(
+var dateRangePicker = $('input[name="daterange"]').daterangepicker(
     {
       locale: {
         format: gettext("MM/DD/YYYY"),
@@ -170,15 +170,11 @@ $(function () {
     },
     function (startDate, endDate, label) {
       selectedStart = startDate.format("YYYY-MM-DD");
-      selectedEnd = endDate.format("YYYY-MM-DD");
-      // filteredData = filterByDateRange(
-      //   startDate.format("YYYY-MM-DD"),
-      //   endDate.format("YYYY-MM-DD")
-      // );          
-      makeFilteredCharts(filteredData);
+      selectedEnd = endDate.format("YYYY-MM-DD");      
+      makeFilteredCharts();
     }
   );
-});
+
 
 //all conditions event listener - load all conditions data
 document.getElementById("all-btn").addEventListener("click", function () {
@@ -206,8 +202,6 @@ document.getElementById("dm-btn").addEventListener("click", function () {
 
 function filterData(jsondata){
   filteredData = {};
-  console.log(selectedConditions)
-  console.log(selectedStart)
   for (const [key, value] of Object.entries(jsondata)) {
     var filterOut = true;
     // check if condition matches selected condition
@@ -230,12 +224,23 @@ function filterData(jsondata){
 }
 
 function makeFilteredCharts() {
-  filteredData = filterData(jsondata);
-  console.log(filteredData)
-  displayTotalPatients(filteredData)
-  makeAgeChart(filteredData);
-  makeGenderChart(filteredData);
-  makeEthnicityChart(filteredData);
+  console.log("call make charts " + Object.keys(filterData(jsondata)).length);
+  //check if any data is selected if not - display error and open daterangepicker
+  $('input[name="daterange"]').on(
+    "apply.daterangepicker",
+    function (ev, picker) {
+      if (Object.keys(filterData(jsondata)).length === 0) {
+        picker.show();
+        document.getElementById("date-select-error").style.display = "inline-block";
+      } else {
+        document.getElementById("date-select-error").style.display = "none";
+        displayTotalPatients(filteredData);
+        makeAgeChart(filteredData);
+        makeGenderChart(filteredData);
+        makeEthnicityChart(filteredData);
+      }
+    }
+  );
 };
 
 function displayTotalPatients(dateFilteredData){
@@ -473,3 +478,23 @@ function removeOldChart(chartName){
   ChartParent.appendChild(ChartNode)
   return ChartNode
 };
+
+function initializeHelper(){
+  datePickerError();
+}
+
+function datePickerError(){
+  errorDiv = document.createElement("span");
+  // errorDiv.setAttribute("class", "drp-selected");
+  errorDiv.setAttribute("id", "date-select-error");
+  errorDiv.style.display = "none";
+  errorDiv.style.textAlign = "left";
+  errorDiv.style.color = "#EB5B64";
+  errorDiv.style.paddingRight = "40px";
+  errorMsg = document.createTextNode(
+    "Error: No data in selected date range"
+  );
+  datePickerNode = document.getElementsByClassName("drp-buttons")[0];
+  datePickerNode.prepend(errorDiv);
+  errorDiv.appendChild(errorMsg);
+}
