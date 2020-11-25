@@ -18,11 +18,10 @@ window.addEventListener("load", (event) => {
         console.log(jsondata)
         makeCommonConditionsChart();
         initializeHelper();
-        dateRangePicker.data("daterangepicker").show();
-        makeFilteredCharts("date");
+        makeFilteredCharts("condition");
       },
       (error) => {
-        console.log(error);
+        console.log("Error: " + error);
       }
     );
 });
@@ -175,7 +174,6 @@ var dateRangePicker = $('input[name="daterange"]').daterangepicker(
     }
   );
 
-
 //all conditions event listener - load all conditions data
 document.getElementById("all-btn").addEventListener("click", function () {
   let span = document.createTextNode("Displaying: All Conditions");
@@ -197,7 +195,7 @@ document.getElementById("dm-btn").addEventListener("click", function () {
   let span = document.createTextNode("Displaying: Diabetes");
   document.getElementById("display-condition").childNodes[0].replaceWith(span);
   selectedConditions = ["diabetes"];
-  makeFilteredCharts();
+  makeFilteredCharts("condition");
 });
 
 function filterData(jsondata){
@@ -224,11 +222,12 @@ function filterData(jsondata){
 }
 
 function makeFilteredCharts(filterChangeOrigin) {
+  filteredData = filterData(jsondata);
   if(filterChangeOrigin == "date"){
     //check if any data is selected if not - display error and open daterangepicker
     $('input[name="daterange"]').on("apply.daterangepicker",
       function (ev, picker) {
-        if (Object.keys(filterData(jsondata)).length === 0) {
+        if (Object.keys(filteredData).length === 0) {
           picker.show();
           document.getElementById("date-select-error").style.display =
             "inline-block";
