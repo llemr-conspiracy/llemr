@@ -30,13 +30,15 @@ function makeCommonConditionsChart(){
   //map conditions to obj
   commonConditionsPreSort = {};
   Object.values(jsondata).map(function (e) {
-    condition = e.conditions;
-    // for (var i = 0; i < Object.keys(ethnicityData).length; i++) {
-    if (!(condition in commonConditionsPreSort)) {
-      commonConditionsPreSort[condition] = 1;
-    } else {
-      commonConditionsPreSort[condition] += 1;
-    }
+    conditionsList = e.conditions;
+    conditionsList.forEach(condition => {
+      if (!(condition in commonConditionsPreSort)) {
+        commonConditionsPreSort[condition] = 1;
+      } else {
+        commonConditionsPreSort[condition] += 1;
+      }
+    })
+    console.log(commonConditionsPreSort)
   });
 
   // sort by most patients
@@ -207,20 +209,22 @@ function filterData(jsondata){
   for (const [key, value] of Object.entries(jsondata)) {
     var filterOut = true;
     // check if condition matches selected condition
-    if (selectedConditions.includes(value.conditions)) {
-      //check if within selected date range
-      value.wu_dates.map(function (d) {
-        if (
-          Date.parse(d) >= Date.parse(selectedStart) &&
-          Date.parse(d) <= Date.parse(selectedEnd)
-        ) {
-          return (filterOut = false);
-        }
-      });
-    }
-    if (!filterOut) {
-      filteredData[key] = value;
-    }
+    value.conditions.forEach(condition => {
+      if (selectedConditions.includes(condition)) {
+        //check if within selected date range
+        value.wu_dates.map(function (d) {
+          if (
+            Date.parse(d) >= Date.parse(selectedStart) &&
+            Date.parse(d) <= Date.parse(selectedEnd)
+          ) {
+            return (filterOut = false);
+          }
+        });
+      }
+      if (!filterOut) {
+        filteredData[key] = value;
+      }
+    })
   }
   return filteredData;
 }
