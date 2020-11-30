@@ -70,6 +70,10 @@ function makeCommonConditionsChart(){
       ],
     },
     options: {
+      title: {
+        display: true,
+        text: "Most Common Conditions Seen"
+      },
       fullCornerRadius: false,
       cornerRadius: 15,
       scales: {
@@ -326,6 +330,10 @@ function makeAgeChart(dateFilteredData) {
       ],
     },
     options: {
+      title: {
+        display: true,
+        text: "Age Distribution"
+      },
       fullCornerRadius: false,
       cornerRadius: 15,
       scales: {
@@ -406,7 +414,7 @@ function makeGenderChart(dateFilteredData) {
         },
       },
       title: {
-        display: false,
+        display: true,
         text: "Gender Distribution",
       },
     },
@@ -468,7 +476,7 @@ function makeEthnicityChart(dateFilteredData) {
         },
       },
       title: {
-        display: false,
+        display: true,
         text: "Ethinicity Distribution",
       },
     },
