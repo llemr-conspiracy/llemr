@@ -5,7 +5,7 @@ var today = new Date(),
   selectedEnd = today.toLocaleDateString(),
   monthAgo = new Date(today.setMonth(today.getMonth() - 1)),
   selectedStart = monthAgo.toLocaleDateString(),
-  conditionsList = [],
+  allConditions = [],
   selectedConditions = [];
 
 //initial page load - display all-conditions data
@@ -31,14 +31,13 @@ function makeCommonConditionsChart(){
   commonConditionsPreSort = {};
   Object.values(jsondata).map(function (e) {
     conditionsList = e.conditions;
-    conditionsList.forEach(condition => {
+    conditionsList.forEach((condition) => {
       if (!(condition in commonConditionsPreSort)) {
         commonConditionsPreSort[condition] = 1;
       } else {
         commonConditionsPreSort[condition] += 1;
       }
-    })
-    console.log(commonConditionsPreSort)
+    });
   });
 
   // sort by most patients
@@ -53,8 +52,13 @@ function makeCommonConditionsChart(){
   sortable.forEach(
     (condition) => (commonConditions[condition[0]] = condition[1])
   );
-  conditionsList = Object.keys(commonConditions);
-  selectedConditions = conditionsList;
+
+  allConditions = Object.keys(commonConditions)
+  // default display all conditions
+  selectedConditions = Object.keys(commonConditions);
+  for (var i = 0; i < Object.keys(commonConditions).length; i++) {
+    makeFilterByConditionButton(Object.keys(commonConditions)[i]);
+  }
 
   var commonConditionsChartNode = removeOldChart("conditions-chart-div");
   var commonConditionsChart = commonConditionsChartNode.getContext("2d");
@@ -74,7 +78,7 @@ function makeCommonConditionsChart(){
     options: {
       title: {
         display: true,
-        text: "Most Common Conditions Seen"
+        text: "Most Common Conditions Seen",
       },
       fullCornerRadius: false,
       cornerRadius: 15,
@@ -180,27 +184,30 @@ var dateRangePicker = $('input[name="daterange"]').daterangepicker(
     }
   );
 
-//all conditions event listener - load all conditions data
-document.getElementById("all-btn").addEventListener("click", function () {
+function makeFilterByConditionButton(condition) {
+  parent = document.getElementById("condition-filter-btns")
+  conditionSelectorNode = document.createElement("li")
+  conditionSelectorButton = document.createElement("button")
+  conditionSelectorButton.setAttribute("class","btn btn-link btn-link-modern")
+  conditionSelectorButton.setAttribute("id", condition + "-btn");
+  parent.appendChild(conditionSelectorNode)
+  conditionSelectorNode.appendChild(conditionSelectorButton)
+  conditionSelectorButton.appendChild(document.createTextNode(condition));
+
+  conditionSelectorButton.addEventListener("click", function (event) {
+    selectedConditions = condition;
+    // console.log(event.target.getAttribute("name"))
+    console.log("listener "+ selectedConditions)
+    let span = document.createTextNode("Displaying: "+condition);
+    document.getElementById("display-condition").childNodes[0].replaceWith(span);
+    makeFilteredCharts("condition");
+  });
+};
+// all conditions event listener - load all conditions data
+document.getElementById("all-conditions-btn").addEventListener("click", function () {
   let span = document.createTextNode("Displaying: All Conditions");
   document.getElementById("display-condition").childNodes[0].replaceWith(span);
-  selectedConditions = conditionsList;
-  makeFilteredCharts("condition");
-});
-
-//hypertension event listener - load hypertension data
-document.getElementById("htn-btn").addEventListener("click", function () {
-  let span = document.createTextNode("Displaying: Hypertension");
-  document.getElementById("display-condition").childNodes[0].replaceWith(span);
-  selectedConditions = ["hypertension"]
-  makeFilteredCharts("condition");
-});
-
-//diabetes event listener - load diabetes data
-document.getElementById("dm-btn").addEventListener("click", function () {
-  let span = document.createTextNode("Displaying: Diabetes");
-  document.getElementById("display-condition").childNodes[0].replaceWith(span);
-  selectedConditions = ["diabetes"];
+  selectedConditions = allConditions;
   makeFilteredCharts("condition");
 });
 
@@ -231,9 +238,10 @@ function filterData(jsondata){
 
 function makeFilteredCharts(filterChangeOrigin) {
   filteredData = filterData(jsondata);
-  if(filterChangeOrigin == "date"){
+  if (filterChangeOrigin == "date") {
     //check if any data is selected if not - display error and open daterangepicker
-    $('input[name="daterange"]').on("apply.daterangepicker",
+    $('input[name="daterange"]').on(
+      "apply.daterangepicker",
       function (ev, picker) {
         if (Object.keys(filteredData).length === 0) {
           picker.show();
@@ -248,14 +256,12 @@ function makeFilteredCharts(filterChangeOrigin) {
         }
       }
     );
-  }
-  else if(filterChangeOrigin == "condition"){
+  } else if (filterChangeOrigin == "condition") {
     displayTotalPatients(filteredData);
     makeAgeChart(filteredData);
     makeGenderChart(filteredData);
     makeEthnicityChart(filteredData);
   }
-  
 };
 
 function displayTotalPatients(dateFilteredData){
@@ -503,7 +509,6 @@ function initializeHelper(){
 
 function datePickerError(){
   errorDiv = document.createElement("span");
-  // errorDiv.setAttribute("class", "drp-selected");
   errorDiv.setAttribute("id", "date-select-error");
   errorDiv.style.display = "none";
   errorDiv.style.textAlign = "left";
