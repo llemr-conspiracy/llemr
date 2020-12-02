@@ -279,12 +279,16 @@ class Patient(Person):
         pending = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date > now().date()]
 
         if len(overdue) > 0:
-            due_dates = ", ".join([str((now().date()-ai.due_date).days) for ai in overdue])
-            return "Action items " + due_dates + " days past due"
+            oldest = min(overdue, key=lambda k: k.due_date)
+            tdelta = now().date() - oldest.due_date
+            return str(oldest.short_name())+" "+str(tdelta.days)+" days past due"
+
+            # due_dates = ", ".join([str((now().date()-ai.due_date).days) for ai in overdue])
+            # return "Action items " + due_dates + " days past due"
         elif len(pending) > 0:
             next_item = min(pending, key=lambda k: k.due_date)
             tdelta = next_item.due_date - now().date()
-            return "next action in "+str(tdelta.days)+" days"
+            return str(next_item.short_name())+" in "+str(tdelta.days)+" days"
         elif len(done) > 0:
             return "all actions complete"
         else:
@@ -335,7 +339,8 @@ class Patient(Person):
         if self.latest_workup() is not None:
             return self.latest_workup().written_datetime
         else:
-            return self.history.last.history_date
+            #presumably if a patient doesn't have a last workup this is the first time they are being seen?
+            return now().date()
     
     def all_phones(self):
         '''Returns a list of tuples of the form (phone, owner) of all the
