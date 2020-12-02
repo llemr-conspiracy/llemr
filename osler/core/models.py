@@ -331,6 +331,12 @@ class Patient(Person):
 
         return sorted(note_list, key=lambda k: k.written_datetime)
 
+    def last_seen(self):
+        if self.latest_workup() is not None:
+            return self.latest_workup().written_datetime
+        else:
+            return self.history.last.history_date
+    
     def all_phones(self):
         '''Returns a list of tuples of the form (phone, owner) of all the
         phones associated with this patient.'''
