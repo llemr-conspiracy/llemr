@@ -269,7 +269,7 @@ function makeFilteredCharts(filterChangeOrigin) {
             "inline-block";
         } else {
           document.getElementById("date-select-error").style.display = "none";
-          displayTotalPatients(filteredData);
+          displayQuickStats(filteredData);
           makeAgeChart(filteredData);
           makeGenderChart(filteredData);
           makeEthnicityChart(filteredData);
@@ -277,18 +277,25 @@ function makeFilteredCharts(filterChangeOrigin) {
       }
     );
   } else if (filterChangeOrigin == "condition") {
-    displayTotalPatients(filteredData);
+    displayQuickStats(filteredData);
     makeAgeChart(filteredData);
     makeGenderChart(filteredData);
     makeEthnicityChart(filteredData);
   }
 };
 
-function displayTotalPatients(dateFilteredData){
+function displayQuickStats(dateFilteredData){
+  //unique patient count
   ptCount = document.createTextNode(Object.keys(dateFilteredData).length);
   ptCountNode = document.getElementById("unique-patient-count")
   $(ptCountNode).empty();
   ptCountNode.appendChild(ptCount);
+
+  //total workups
+  wuCount = document.createTextNode(countWorkups(dateFilteredData));
+  wuCountNode = document.getElementById("workups-count");
+  $(wuCountNode).empty();
+  wuCountNode.appendChild(wuCount)
 };
 
 //export currently displayed data to csv
@@ -521,6 +528,17 @@ function removeOldChart(chartName){
   var ChartNode = document.createElement("canvas");
   ChartParent.appendChild(ChartNode)
   return ChartNode
+};
+
+function countWorkups(dateFilteredData){
+  wuCount = 0;
+  console.log(Object.entries(dateFilteredData));
+  for (const [key, value] of Object.entries(dateFilteredData)) {
+    
+    wuCount += value.wu_dates.length
+  };
+
+  return wuCount;
 };
 
 function initializeHelper(){
