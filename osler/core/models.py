@@ -528,30 +528,14 @@ class ActionItem(AbstractActionItem):
                          str(self.instruction), "due on", str(self.due_date)])
 
 
-class Encounter(models):
-    class Meta:
-        ordering = ['order']
+# class Encounter(models.Model):
+#     class Meta:
+#         ordering = ['order']
     
-    order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
-    patient = models.ForeignKey(Patient)
-    clinic_day = models.ForeignKey('ClinicDate', on_delete=models.PROTECT)
-    workup = models.OneToOneField('Workup', on_delete=models.PROTECT, null=True)
+#     order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+#     patient = models.ForeignKey(Patient)
+#     clinic_day = models.ForeignKey('ClinicDate', on_delete=models.PROTECT)
+#     workup = models.OneToOneField('Workup', on_delete=models.PROTECT, null=True)
 
-    # https://github.com/alsoicode/django-admin-sortable
+#     # https://github.com/alsoicode/django-admin-sortable
 
-    # prescription
-    # vaccine
-    # labs
-    # status: (waiting room, completed)
-
-    # should we list Encounters for a patient on their patient dashboard
-
-    # when it forces you to make a clinic day, make an encounter
-
-    # prescription should not require an encounter
-    # labs should not require an encounter
-    # basic progress notes should require an encounter
-
-    # prescriptions and labs should be able to be associated with a previous encounter
-
-    # action items should be separate
