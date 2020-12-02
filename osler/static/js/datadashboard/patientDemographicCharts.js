@@ -29,7 +29,8 @@ window.addEventListener("load", (event) => {
 function makeCommonConditionsChart(){
   //map conditions to obj
   commonConditionsPreSort = {};
-  Object.values(jsondata).map(function (e) {
+  dateFilteredData = filterData(false)
+  Object.values(dateFilteredData).map(function (e) {
     conditionsList = e.conditions;
     conditionsList.forEach((condition) => {
       if (!(condition in commonConditionsPreSort)) {
@@ -181,6 +182,7 @@ var dateRangePicker = $('input[name="daterange"]').daterangepicker(
       selectedStart = startDate.format("YYYY-MM-DD");
       selectedEnd = endDate.format("YYYY-MM-DD");      
       makeFilteredCharts("date");
+      makeCommonConditionsChart();
     }
   );
 
@@ -216,14 +218,26 @@ document.getElementById("all-conditions-btn").addEventListener("click", function
   makeFilteredCharts("condition");
 });
 
-function filterData(jsondata){
+function filterData(isByCondition){
   filteredData = {};
   for (const [key, value] of Object.entries(jsondata)) {
     var filterOut = true;
     // check if condition matches selected condition
     value.conditions.forEach(condition => {
-      if (selectedConditions.includes(condition)) {
-        //check if within selected date range
+      if(isByCondition){
+        if (selectedConditions.includes(condition)) {
+          //check if within selected date range
+          value.wu_dates.map(function (d) {
+            if (
+              Date.parse(d) >= Date.parse(selectedStart) &&
+              Date.parse(d) <= Date.parse(selectedEnd)
+            ) {
+              return (filterOut = false);
+            }
+          });
+        }
+      }
+      else{
         value.wu_dates.map(function (d) {
           if (
             Date.parse(d) >= Date.parse(selectedStart) &&
@@ -231,8 +245,9 @@ function filterData(jsondata){
           ) {
             return (filterOut = false);
           }
-        });
+        }); 
       }
+
       if (!filterOut) {
         filteredData[key] = value;
       }
@@ -242,7 +257,7 @@ function filterData(jsondata){
 }
 
 function makeFilteredCharts(filterChangeOrigin) {
-  filteredData = filterData(jsondata);
+  filteredData = filterData(true);
   if (filterChangeOrigin == "date") {
     //check if any data is selected if not - display error and open daterangepicker
     $('input[name="daterange"]').on(
