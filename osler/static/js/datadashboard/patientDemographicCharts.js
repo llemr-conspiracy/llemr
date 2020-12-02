@@ -84,7 +84,7 @@ function makeCommonConditionsChart(){
       fullCornerRadius: false,
       cornerRadius: 15,
       scales: {
-        yAxes: [
+        xAxes: [
           {
             gridLines: {
               display: true,
@@ -102,7 +102,7 @@ function makeCommonConditionsChart(){
             },
           },
         ],
-        xAxes: [
+        yAxes: [
           {
             gridLines: {
               display: false,
