@@ -185,7 +185,25 @@
       flex-wrap: wrap;
     }
   }
+
+  .right-menu {
+    display: inline-block;
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+    /* float:right; */
+  }
 </style>
+
+<script>
+$(document).ready(function(){
+  $('.dropdown-submenu a.prevent-prop').on("click", function(e){
+    $(this).next('ul').toggle();
+    e.stopPropagation();
+    e.preventDefault();
+  });
+});
+</script>
 
 <div class="container">
   <!-- TOOD tryand get these script tags to instead be bundled by webpack -->
@@ -212,14 +230,25 @@
                 aria-haspopup="true" aria-expanded="false">
                 <span class="caret"></span>
               </button>
-              <ul class="dropdown-menu dropdown-menu-modern" id="condition-filter-btns" aria-labelledby="dropdownMenu1">
-                <li><button class="btn btn-link btn-link-modern" id="all-conditions-btn">All Conditions</button></li>
-                <!-- <li><button class="btn btn-link btn-link-modern" id="htn-btn">Hypertension</button></li>
-                <li><button class="btn btn-link btn-link-modern" id="dm-btn">Diabetes</button></li>
-                 -->
+              <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="dropdownMenu1">
+                <div id="condition-filter-btns">
+                  <li><button class="btn btn-link btn-link-modern" id="all-conditions-btn">All Conditions</button></li>
+                  <li role="separator" class="divider"></li>
+                </div>
+                <li role="separator" class="divider"></li>
+                <li class="dropdown-submenu dropdown-menu-modern">
+                  <a class="prevent-prop">See more <span class="caret"></span></a>
+                  <ul class="dropdown-menu dropdown-menu-modern right-menu" id="see-more-conditions">
+                  </ul>
+                </li>
+                
+                <!-- <div class="btn-group">
+                  <div type="button" class="btn btn-modern color-light px-1" id="see-more"><span>See More</span></div>
+                  <button type="button" class="btn btn-modern dropdown-toggle px-1" data-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">
+                  <span class="caret"></span> -->
 
-                <!-- <li><a href="#">Another action</a></li>
-                    <li><a href="#">Something else here</a></li> -->
+  
               </ul>
             </div>
           </div>

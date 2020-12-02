@@ -57,7 +57,7 @@ function makeCommonConditionsChart(){
   // default display all conditions
   selectedConditions = Object.keys(commonConditions);
   for (var i = 0; i < Object.keys(commonConditions).length; i++) {
-    makeFilterByConditionButton(Object.keys(commonConditions)[i]);
+    makeFilterByConditionButton(Object.keys(commonConditions)[i],i);
   }
 
   var commonConditionsChartNode = removeOldChart("conditions-chart-div");
@@ -65,13 +65,13 @@ function makeCommonConditionsChart(){
   conditionsChart = new Chart(commonConditionsChart, {
     type: "horizontalBar",
     data: {
-      labels: Object.keys(commonConditions),
+      labels: Object.keys(commonConditions).slice(0, 5),
       datasets: [
         {
           label: "# Patients with",
           backgroundColor: "#FF9594",
           borderColor: "black",
-          data: Object.values(commonConditions),
+          data: Object.values(commonConditions).slice(0, 5),
         },
       ],
     },
@@ -184,8 +184,13 @@ var dateRangePicker = $('input[name="daterange"]').daterangepicker(
     }
   );
 
-function makeFilterByConditionButton(condition) {
-  parent = document.getElementById("condition-filter-btns")
+function makeFilterByConditionButton(condition,index) {
+  if(index <5){
+    parent = document.getElementById("condition-filter-btns");
+  }
+  else{
+    parent = document.getElementById("see-more-conditions");
+  }
   conditionSelectorNode = document.createElement("li")
   conditionSelectorButton = document.createElement("button")
   conditionSelectorButton.setAttribute("class","btn btn-link btn-link-modern")
@@ -203,7 +208,7 @@ function makeFilterByConditionButton(condition) {
     makeFilteredCharts("condition");
   });
 };
-// all conditions event listener - load all conditions data
+// all conditions button event listener
 document.getElementById("all-conditions-btn").addEventListener("click", function () {
   let span = document.createTextNode("Displaying: All Conditions");
   document.getElementById("display-condition").childNodes[0].replaceWith(span);
