@@ -28,10 +28,3 @@ class ActionItemFollowup(BaseFollowup):
     class Meta(object):
         model = models.ActionItemFollowup
         exclude = ['patient', 'author', 'author_type','action_item']
-
-
-class LabFollowup(BaseFollowup):
-    '''The form instantiation of a followup to communicate lab results.'''
-    class Meta(object):
-        model = models.LabFollowup
-        exclude = ['patient', 'author', 'author_type']
