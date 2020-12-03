@@ -527,15 +527,3 @@ class ActionItem(AbstractActionItem):
         return " ".join(["AI for", str(self.patient) + ":",
                          str(self.instruction), "due on", str(self.due_date)])
 
-
-# class Encounter(models.Model):
-#     class Meta:
-#         ordering = ['order']
-    
-#     order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
-#     patient = models.ForeignKey(Patient)
-#     clinic_day = models.ForeignKey('ClinicDate', on_delete=models.PROTECT)
-#     workup = models.OneToOneField('Workup', on_delete=models.PROTECT, null=True)
-
-#     # https://github.com/alsoicode/django-admin-sortable
-

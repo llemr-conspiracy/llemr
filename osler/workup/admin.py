@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.urls import reverse
 
 from osler.utils import admin as admin_utils
+from adminsortable.admin import SortableAdmin
 from . import models
 
 
@@ -48,10 +49,16 @@ class BasicNoteAdmin(admin_utils.NoteAdmin):
         url = reverse('basic-note-detail', kwargs={'pk': obj.pk})
         return url
 
+
 @admin.register(models.Addendum)
 class AddendumAdmin(admin_utils.NoteAdmin):
     pass
 
 
-for model in [models.ClinicType, models.DiagnosisType]:
+@admin.register(models.Encounter)
+class EncounterAdmin(SortableAdmin):
+    sortable_change_list_template = 'adminsortable/custom_change_list.html'
+
+
+for model in [models.ClinicType, models.DiagnosisType, models.EncounterStatus]:
     admin_utils.simplehistory_aware_register(model)

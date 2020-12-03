@@ -7,8 +7,9 @@ from django.utils.timezone import now
 from django.urls import reverse
 from django.core.validators import MinValueValidator
 from django.conf import settings
+from adminsortable.models import SortableMixin
 
-from osler.core.models import Note, ReferralLocation, ReferralType
+from osler.core.models import Note, ReferralLocation, ReferralType, Patient
 from osler.workup import validators as workup_validators
 
 from osler.users.utils import group_has_perm
@@ -91,6 +92,32 @@ class ClinicDate(models.Model):
             .distinct()
 
         return coordinator_set
+
+
+class EncounterStatus(models.Model):
+    'Different status for encounter, as simple as Active/Inactive or Waiting/Team in Room/Attending etc'
+    name = models.CharField(max_length=100, primary_key=True)
+    is_active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+
+class Encounter(SortableMixin):
+    class Meta:
+        ordering = ['order']
+    
+    order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+    patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
+    clinic_day = models.ForeignKey(ClinicDate, on_delete=models.PROTECT)
+    status = models.ForeignKey(EncounterStatus, on_delete=models.PROTECT)
+
+    sorting_filters = (
+        ('Active Encounters', {'status__in': EncounterStatus.objects.filter(is_active=True)}),
+        )
+
+    def __str__(self):
+        return str(self.patient)+" at "+str(self.clinic_day)
 
 
 class AttestationMixin(models.Model):
