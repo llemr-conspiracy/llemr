@@ -1,29 +1,111 @@
 var jsondata = null;
 
-//generate default date range and define global variables that update with daterangepicker
-var today = new Date(),
-  selectedEnd = today.toLocaleDateString(),
-  monthAgo = new Date(today.setMonth(today.getMonth() - 1)),
-  selectedStart = monthAgo.toLocaleDateString(),
+//generate default date range and define global variables
+  clinicDates = [];
+  selectedEnd = [],
+  selectedStart = [],
   allConditions = [],
   selectedConditions = [];
+var dateRanges = {};
 
-//initial page load - display all-conditions data
+//initial page load - display all-conditions data from latest clinic date
 window.addEventListener("load", (event) => {
-  fetch("all-json/")
+  fetch("context-json-datadashboard/")
     .then((res) => res.json())
     .then(
       (result) => {
-        jsondata = result;
-        console.log(jsondata)
-        makeCommonConditionsChart();
-        initializeHelper();
-        makeFilteredCharts("condition");
+        clinicDates = result["clinic_dates"];
+
+        //load daterangepicker range buttons and default to Latest clinic
+        dateRanges["Latest Clinic"] = [
+          moment(clinicDates[clinicDates.length - 1]),
+          moment(moment(clinicDates[clinicDates.length - 1]).add(1, "days").format()),
+        ];
+        dateRanges["Previous Clinic"] = [
+          moment(clinicDates[clinicDates.length - 2]),
+          moment(moment(clinicDates[clinicDates.length - 2]).add(1, "days").format()
+          ),
+        ];
+        dateRanges["This Month"] = [moment().startOf("month"), moment()];
+        dateRanges["This Year"] = [moment().startOf("year"), moment()];
+        dateRanges["All Time"] = [moment().subtract(20, "years"), moment()];
+        selectedStart = dateRanges["Latest Clinic"][0]._i;
+        selectedEnd = dateRanges["Latest Clinic"][1]._i;
+
+        //load date range picker
+        $('input[name="daterange"]').daterangepicker(
+          {
+            locale: {
+              format: gettext("MM/DD/YYYY"),
+              separator: " - ",
+              applyLabel: gettext("Apply"),
+              cancelLabel: gettext("Cancel"),
+              fromLabel: gettext("From"),
+              toLabel: gettext("To"),
+              customRangeLabel: gettext("Custom Range"),
+              weekLabel: gettext("W"),
+              daysOfWeek: [
+                gettext("Su"),
+                gettext("Mo"),
+                gettext("Tu"),
+                gettext("We"),
+                gettext("Th"),
+                gettext("Fr"),
+                gettext("Sa"),
+              ],
+              monthNames: [
+                gettext("January"),
+                gettext("February"),
+                gettext("March"),
+                gettext("April"),
+                gettext("May"),
+                gettext("June"),
+                gettext("July"),
+                gettext("August"),
+                gettext("September"),
+                gettext("October"),
+                gettext("November"),
+                gettext("December"),
+              ],
+              firstDay: 1,
+            },
+            showDropdowns: true,
+            ranges: dateRanges,
+            linkedCalendars: false,
+            alwaysShowCalendars: true,
+            startDate: moment(selectedStart),
+            endDate: moment(selectedEnd),
+            opens: "right",
+          },
+          function (startDate, endDate, label) {
+            selectedStart = startDate.format("YYYY-MM-DD");
+            selectedEnd = endDate.format("YYYY-MM-DD");
+            makeFilteredCharts("date");
+            makeCommonConditionsChart();
+          }
+        );
+        
+        //load demographic data and generate charts
+        fetch("all-json-datadashboard/")
+          .then((res) => res.json())
+          .then(
+            (result) => {
+              jsondata = result;
+              console.log(jsondata);
+              makeCommonConditionsChart();
+              initializeHelper();
+              makeFilteredCharts("condition");
+            },
+            (error) => {
+              console.log("Error: " + error);
+            }
+          );
       },
       (error) => {
         console.log("Error: " + error);
       }
     );
+
 });
 
 function makeCommonConditionsChart(){
@@ -40,7 +122,6 @@ function makeCommonConditionsChart(){
       }
     });
   });
-
   // sort by most patients
   var sortable = [];
   for (var condition in commonConditionsPreSort) {
@@ -57,11 +138,14 @@ function makeCommonConditionsChart(){
   allConditions = Object.keys(commonConditions)
   // default display all conditions
   selectedConditions = Object.keys(commonConditions);
+  Object.keys(commonConditions).length >= 5 ? $("#see-more-container").show() : $("#see-more-container").hide();
+  $("#condition-filter-btns").empty();
+  $("#more-conditions-btns").empty();
   for (var i = 0; i < Object.keys(commonConditions).length; i++) {
     makeFilterByConditionButton(Object.keys(commonConditions)[i],i);
   }
 
-  var commonConditionsChartNode = removeOldChart("conditions-chart-div");
+  var commonConditionsChartNode = removeOldChart("conditions-chart");
   var commonConditionsChart = commonConditionsChartNode.getContext("2d");
   conditionsChart = new Chart(commonConditionsChart, {
     type: "horizontalBar",
@@ -119,79 +203,24 @@ function makeCommonConditionsChart(){
     },
   });
   // event listeners for filtering by displayed conditions
-  canvas = document.getElementsByTagName("canvas")[0];
+  canvas = document.getElementById("conditions-chart-canvas");
+  console.log(canvas)
   canvas.onclick = function (evt) {
+    console.log("click")
     var firstPoint = conditionsChart.getElementAtEvent(evt)[0];
     selectedConditions = [conditionsChart.data.labels[firstPoint._index]];
     makeFilteredCharts("condition");
   };
 };
 
-//date range picker
-var dateRangePicker = $('input[name="daterange"]').daterangepicker(
-    {
-      locale: {
-        format: gettext("MM/DD/YYYY"),
-        separator: " - ",
-        applyLabel: gettext("Apply"),
-        cancelLabel: gettext("Cancel"),
-        fromLabel: gettext("From"),
-        toLabel: gettext("To"),
-        customRangeLabel: gettext("Custom Range"),
-        weekLabel: gettext("W"),
-        daysOfWeek: [
-          gettext("Su"),
-          gettext("Mo"),
-          gettext("Tu"),
-          gettext("We"),
-          gettext("Th"),
-          gettext("Fr"),
-          gettext("Sa"),
-        ],
-        monthNames: [
-          gettext("January"),
-          gettext("February"),
-          gettext("March"),
-          gettext("April"),
-          gettext("May"),
-          gettext("June"),
-          gettext("July"),
-          gettext("August"),
-          gettext("September"),
-          gettext("October"),
-          gettext("November"),
-          gettext("December"),
-        ],
-        firstDay: 1,
-      },
-      showDropdowns: true,
-      ranges: {
-        Today: [moment(), moment()],
-        "Last 7 Days": [moment().subtract(6, "days"), moment()],
-        "This Month": [moment().startOf("month"), moment()],
-        "This Year": [moment().startOf("year"), moment()],
-        "All Time": [moment().subtract(20, "years"),moment()],
-      },
-      linkedCalendars: false,
-      alwaysShowCalendars: true,
-      startDate: selectedStart,
-      endDate: selectedEnd,
-      opens: "right",
-    },
-    function (startDate, endDate, label) {
-      selectedStart = startDate.format("YYYY-MM-DD");
-      selectedEnd = endDate.format("YYYY-MM-DD");      
-      makeFilteredCharts("date");
-      makeCommonConditionsChart();
-    }
-  );
-
+//dynamically create buttons to display data related to conditions 
+// - only makes buttons for conditions represented in date range filtered data
 function makeFilterByConditionButton(condition,index) {
   if(index <5){
     parent = document.getElementById("condition-filter-btns");
   }
   else{
-    parent = document.getElementById("see-more-conditions");
+    parent = document.getElementById("more-conditions-btns");
   }
   conditionSelectorNode = document.createElement("li")
   conditionSelectorButton = document.createElement("button")
@@ -201,15 +230,14 @@ function makeFilterByConditionButton(condition,index) {
   conditionSelectorNode.appendChild(conditionSelectorButton)
   conditionSelectorButton.appendChild(document.createTextNode(condition));
 
-  conditionSelectorButton.addEventListener("click", function (event) {
+  conditionSelectorButton.addEventListener("click", function(){
     selectedConditions = condition;
-    // console.log(event.target.getAttribute("name"))
-    console.log("listener "+ selectedConditions)
     let span = document.createTextNode("Displaying: "+condition);
     document.getElementById("display-condition").childNodes[0].replaceWith(span);
     makeFilteredCharts("condition");
   });
 };
+
 // all conditions button event listener
 document.getElementById("all-conditions-btn").addEventListener("click", function () {
   let span = document.createTextNode("Displaying: All Conditions");
@@ -218,6 +246,7 @@ document.getElementById("all-conditions-btn").addEventListener("click", function
   makeFilteredCharts("condition");
 });
 
+//filter all workups data by selected condition and date range
 function filterData(isByCondition){
   filteredData = {};
   for (const [key, value] of Object.entries(jsondata)) {
@@ -350,7 +379,7 @@ function makeAgeChart(dateFilteredData) {
     sortedAges.push(range["value"]);
   });
 
-  var ageChartNode = removeOldChart("ageChartDiv");
+  var ageChartNode = removeOldChart("age-chart");
   var ageChart = ageChartNode.getContext("2d");
   return (chart = new Chart(ageChart, {
     responsive: "true",
@@ -426,7 +455,7 @@ function makeGenderChart(dateFilteredData) {
     }
   });
 
-  var genderChartNode = removeOldChart("genderChartDiv");
+  var genderChartNode = removeOldChart("gender-chart");
   genderChart = genderChartNode.getContext("2d");
   return (pieChart = new Chart(genderChart, {
     type: "doughnut",
@@ -479,7 +508,7 @@ function makeEthnicityChart(dateFilteredData) {
     });
   });
 
-  var ethnicityChartNode = removeOldChart("ethnicityChartDiv");
+  var ethnicityChartNode = removeOldChart("ethnicity-chart");
   ethnicityChart = ethnicityChartNode.getContext("2d");
   return (pieChart = new Chart(ethnicityChart, {
     responsive: "true",
@@ -523,16 +552,17 @@ function makeEthnicityChart(dateFilteredData) {
 
 //helper functions
 function removeOldChart(chartName){
+  // and add a fresh canvas node
   var ChartParent = document.getElementById(chartName);
   $(ChartParent).empty()
   var ChartNode = document.createElement("canvas");
+  ChartNode.setAttribute("id",chartName+"-canvas")
   ChartParent.appendChild(ChartNode)
   return ChartNode
 };
 
 function countWorkups(dateFilteredData){
   wuCount = 0;
-  console.log(Object.entries(dateFilteredData));
   for (const [key, value] of Object.entries(dateFilteredData)) {
     
     wuCount += value.wu_dates.length

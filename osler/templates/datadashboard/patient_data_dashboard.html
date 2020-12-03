@@ -231,24 +231,18 @@ $(document).ready(function(){
                 <span class="caret"></span>
               </button>
               <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="dropdownMenu1">
-                <div id="condition-filter-btns">
                   <li><button class="btn btn-link btn-link-modern" id="all-conditions-btn">All Conditions</button></li>
                   <li role="separator" class="divider"></li>
+                <div id="condition-filter-btns"></div>
+                <div id="see-more-container">
+                  <li role="separator" class="divider"></li>
+                  <li class="dropdown-submenu dropdown-menu-modern">
+                    <a class="prevent-prop">See more <span class="caret"></span></a>
+                    <ul class="dropdown-menu dropdown-menu-modern right-menu" id="more-conditions-btns">
+                    </ul>
+                  </li>
                 </div>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-submenu dropdown-menu-modern">
-                  <a class="prevent-prop">See more <span class="caret"></span></a>
-                  <ul class="dropdown-menu dropdown-menu-modern right-menu" id="see-more-conditions">
-                  </ul>
-                </li>
-                
-                <!-- <div class="btn-group">
-                  <div type="button" class="btn btn-modern color-light px-1" id="see-more"><span>See More</span></div>
-                  <button type="button" class="btn btn-modern dropdown-toggle px-1" data-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false">
-                  <span class="caret"></span> -->
 
-  
               </ul>
             </div>
           </div>
@@ -335,19 +329,19 @@ $(document).ready(function(){
           <p class="color-primary text-xlarge">Demographics summary</p>
           <div class="row equal">
             <div class="col-lg-8 col-md-6 col-sm-12 equal px-1">
-              <div class="col-lg-12 panel-light equal px-3" id="ageChartDiv"></div>
+              <div class="col-lg-12 panel-light equal px-3" id="age-chart"></div>
             </div>
 
             <div class="col-lg-4 col-md-6 col-sm-12 equal px-1">
-              <div class="col-lg-12 panel-light vertical-align equal px-3" id="genderChartDiv">
+              <div class="col-lg-12 panel-light vertical-align equal px-3" id="gender-chart">
               </div>
             </div>
             <div class="col-lg-4 col-md-6 col-sm-12 equal px-1 ">
-              <div class="col-lg-12 panel-light vertical-align equal px-3 height-25" id="ethnicityChartDiv">
+              <div class="col-lg-12 panel-light vertical-align equal px-3 height-25" id="ethnicity-chart">
               </div>
             </div>
             <div class="col-lg-8 col-md-6 col-sm-12 equal px-1 ">
-              <div class="col-lg-12 panel-light vertical-align equal px-3 height-25" id="conditions-chart-div">
+              <div class="col-lg-12 panel-light vertical-align equal px-3 height-25" id="conditions-chart">
               </div>
             </div>
           </div>

@@ -4,11 +4,19 @@ from django.utils.timezone import now
 from django.views.generic import TemplateView
 from django.http import JsonResponse
 from osler.demographics.models import Demographics
-from osler.workup.models import Workup
+from osler.workup.models import Workup,ClinicDate
 from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
 
 class DataDashboardView(TemplateView):
     template_name = 'datadashboard/patient_data_dashboard.html'        
+
+def query_clinic_dates_model():
+    raw_clinic_dates = ClinicDate.objects.all()
+    dates = []
+    for clinic in raw_clinic_dates:
+        dates.append(datetime.datetime.strftime(getattr(clinic, "clinic_date"),"%Y-%m-%d"))
+    dates.sort()
+    return dates
 
 def query_workups_model():
     '''Queries all workups'''
@@ -54,12 +62,19 @@ def extract_demographic_data(workups,demo):
             existing_wu_dates.append(str(wu.written_datetime.date()))
     return dashboard_data
 
-
 def send_all_json(request):
+    '''Sends patient and workup related data to be used in main dashboard data charts'''
     all_workups = query_workups_model()
     all_demographics = query_demographics_model()
     dashboard_data = extract_demographic_data(all_workups,all_demographics)
     return JsonResponse(dashboard_data)
+
+def send_context_json(request):
+    '''Sends extra data to be used in quick stats displays'''
+    clinics = query_clinic_dates_model()
+    context_data = {}
+    context_data['clinic_dates'] = clinics
+    return JsonResponse(context_data)
 
 # @active_permission_required('inventory.export_csv', raise_exception=True)
 def export_csv(request):
