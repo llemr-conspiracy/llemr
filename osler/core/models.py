@@ -296,7 +296,6 @@ class Patient(Person):
 
     def followup_set(self):
         followups = []
-        followups.extend(self.labfollowup_set.all())
         followups.extend(self.actionitemfollowup_set.all())
 
         return followups

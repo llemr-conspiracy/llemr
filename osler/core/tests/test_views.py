@@ -174,7 +174,6 @@ class ViewsExistTest(TestCase):
         pt_urls = ['core:patient-detail',
                    'core:new-action-item',
                    'core:patient-update',
-                   'followup-choice',
                    'new-clindate',
         ]
 
