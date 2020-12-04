@@ -468,6 +468,82 @@
         }
     },
     {
+        "model": "core.patient",
+        "pk": 2,
+        "fields": {
+            "first_name": "Vincent",
+            "last_name": "Peng",
+            "middle_name": "Pent",
+            "phone": "123-233-1234",
+            "gender": "Male",
+            "outcome": null,
+            "address": "6310 Scott Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1999-08-11",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 3,
+        "fields": {
+            "first_name": "Lime",
+            "last_name": "Lemon",
+            "middle_name": "Orange",
+            "phone": "501-333-1234",
+            "gender": "Female",
+            "outcome": null,
+            "address": "6310 Scott Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1970-09-09",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White"
+            ]
+        }
+    },
+    {
         "model": "core.documenttype",
         "pk": "Silly picture",
         "fields": {}

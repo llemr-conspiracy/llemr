@@ -117,7 +117,7 @@ Osler: {{ title | default:"All Patients"}}
 
                 // build "Next AI Due" column
                 $(patientRow).append(
-                    $("<td>").text(patient.status)
+                    $("<td>").text(patient.actionitem_status)
                 );
 
                 // build "attested by" column

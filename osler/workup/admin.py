@@ -3,7 +3,6 @@ from django.contrib import admin
 from django.urls import reverse
 
 from osler.utils import admin as admin_utils
-from adminsortable.admin import SortableAdmin
 from . import models
 
 
@@ -55,10 +54,5 @@ class AddendumAdmin(admin_utils.NoteAdmin):
     pass
 
 
-@admin.register(models.Encounter)
-class EncounterAdmin(SortableAdmin):
-    sortable_change_list_template = 'adminsortable/custom_change_list.html'
-
-
-for model in [models.ClinicType, models.DiagnosisType, models.EncounterStatus]:
+for model in [models.ClinicType, models.DiagnosisType]:
     admin_utils.simplehistory_aware_register(model)

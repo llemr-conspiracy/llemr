@@ -54,7 +54,7 @@ Osler: {{ title | default:"All Patients"}}
                               <a href="{% url 'core:patient-update' pk=patient.id %}">Intake</a>: {{patient.history.last.history_date}}
                           {% endif %}
                       </td>
-                      <td>{{patient.status}}</td>
+                      <td>{{patient.actionitem_status}}</td>
                       <td>
                           {% if not latest_workup %}
                               No Note

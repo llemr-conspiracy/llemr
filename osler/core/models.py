@@ -10,6 +10,7 @@ from django.utils.text import slugify
 from django.urls import reverse
 
 from simple_history.models import HistoricalRecords
+from adminsortable.models import SortableMixin
 
 from osler.core import validators
 from osler.core import utils
@@ -260,7 +261,7 @@ class Patient(Person):
                 .filter(due_date__gt=now().date()),
             key=lambda ai: ai.due_date)
 
-    def status(self):
+    def actionitem_status(self):
         # The active_action_items, done_action_items, and inactive_action_items
         # aren't a big deal to use when getting just one patient
         # For the all_patients page though (one of the pages that use status),
@@ -350,6 +351,13 @@ class Patient(Person):
             self.needs_workup = not self.needs_workup
         else:
             raise ValueError("Special permissions are required to change active status.")
+
+    def get_status(self):
+        if Encounter.objects.filter(patient=self.pk).exists():
+            last_encounter = Encounter.objects.filter(patient=self.pk).order_by('clinic_day').last()
+            return last_encounter.status
+        else:
+            return None
 
     def detail_url(self):
         return reverse('core:patient-detail', args=(self.pk,))
@@ -526,4 +534,31 @@ class ActionItem(AbstractActionItem):
     def __str__(self):
         return " ".join(["AI for", str(self.patient) + ":",
                          str(self.instruction), "due on", str(self.due_date)])
+
+
+class EncounterStatus(models.Model):
+    'Different status for encounter, as simple as Active/Inactive or Waiting/Team in Room/Attending etc'
+    name = models.CharField(max_length=100, primary_key=True)
+    is_active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+
+class Encounter(SortableMixin):
+    class Meta:
+        ordering = ['order']
+    
+    order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+    patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
+    clinic_day = models.ForeignKey('workup.ClinicDate', on_delete=models.PROTECT)
+    status = models.ForeignKey(EncounterStatus, on_delete=models.PROTECT)
+
+    sorting_filters = (
+        ('Active Encounters', {'status__in': EncounterStatus.objects.filter(is_active=True)}),
+        )
+
+    def __str__(self):
+        return str(self.patient)+" at "+str(self.clinic_day)
+
 

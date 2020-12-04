@@ -13,7 +13,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
     <h2> <a href="{% url 'core:patient-update' pk=patient.id %}">{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
       </a></h2>
     <p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
-    <p class="lead"><strong>Status:</strong> {{ patient.status }}</p>
+    <p class="lead"><strong>Status:</strong> {{ patient.actionitem_status }}</p>
     {% if settings.OSLER_DISPLAY_REFERRALS %}
       <p class="lead"><strong>FQHC Referral Status:</strong> {{ referral_status }}</p>
       <p class="lead"><strong>Referrals:</strong> {{ referrals.iterator | join:", " }}</p>
