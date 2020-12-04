@@ -1,5 +1,11 @@
 # Custom settings for umkc deploy
 # -----------------------------------------------------------------------------
+
+OSLER_ROLE_DASHBOARDS = {
+    'Attending': 'dashboard-attending',
+    'Physician': 'dashboard-attending',
+}
+
 OSLER_DISPLAY_REFERRALS = False
 OSLER_DISPLAY_APPOINTMENTS = False
 OSLER_DISPLAY_CASE_MANAGERS = False
