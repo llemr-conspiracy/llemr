@@ -31,6 +31,13 @@ def get_clindates():
     return clindates
 
 
+def needs_encounter(pt_id, clinic_id):
+    '''Returns 1 encounter associated with this pt and clindate'''
+    #did I need to make a function for this idk
+    encounter, created = Encounter.objects.get_or_create(patient=pt_id, clinic_day=clinic_id)
+    return encounter
+
+
 def new_note_dispatch(request, pt_id):
 
     note_types = {
@@ -115,13 +122,8 @@ class WorkupCreate(NoteFormView):
         elif len(clindates) == 1:
             # dispatch to our own view, since we know there's a ClinicDate
             # for today
-
-            #is there an encounter for this pt and clinic day?
-            if not Encounter.objects.filter(patient=pt).filter(clinic_day__in=clindates):
-                Encounter.objects.create(
-                    patient=pt,
-                    clinic_day=clindates[0],
-                    status=default_status())
+            #make an encounter if it doesn't already exist
+            encounter = needs_encounter(pt, clindates[0])
 
             kwargs['pt_id'] = pt.id
             return super(WorkupCreate,
@@ -196,7 +198,7 @@ class WorkupCreate(NoteFormView):
         wu.patient = pt
         wu.author = self.request.user
         wu.author_type = active_role
-        wu.encounter = Encounter.objects.filter(patient=pt).filter(clinic_day=wu.clinic_day).first()
+        wu.encounter = needs_encounter(pt, wu.clinic_day)
 
         if not wu.is_pending and self.model.group_can_sign(active_role):
             wu.sign(self.request.user, active_role)

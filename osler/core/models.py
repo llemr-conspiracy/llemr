@@ -352,8 +352,8 @@ class Patient(Person):
         else:
             raise ValueError("Special permissions are required to change active status.")
 
-    def get_encounters(self):
-        return Encounter.objects.filter(patient=self.pk).order_by('clinic_day')
+    # def get_encounters(self):
+    #     return Encounter.objects.filter(patient=self.pk).order_by('clinic_day')
 
     # def get_status(self):
     #     if Encounter.objects.filter(patient=self.pk).exists():
@@ -549,12 +549,10 @@ class EncounterStatus(models.Model):
 
 #I hate myself what am I doing
 def default_status():
-    if len(EncounterStatus.objects.all())==0:
-        EncouterStatus.objects.create(name=settings.OSLER_DEFAULT_ENCOUNTER_STATUS[0], 
-            is_active=settings.OSLER_DEFAULT_ENCOUNTER_STATUS[1])
-    return EncounterStatus.objects.filter(name=settings.OSLER_DEFAULT_ENCOUNTER_STATUS[0]).filter(
+    status, created = EncounterStatus.objects.get_or_create(
+        name=settings.OSLER_DEFAULT_ENCOUNTER_STATUS[0],
         is_active=settings.OSLER_DEFAULT_ENCOUNTER_STATUS[1])
-
+    return status
 
 class Encounter(SortableMixin):
     class Meta:
@@ -563,7 +561,7 @@ class Encounter(SortableMixin):
     order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
     patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
     clinic_day = models.ForeignKey('workup.ClinicDate', on_delete=models.PROTECT)
-    status = models.ForeignKey(EncounterStatus, on_delete=models.PROTECT)
+    status = models.ForeignKey(EncounterStatus, on_delete=models.PROTECT,default=default_status())
 
     sorting_filters = (
         ('Active Encounters', {'status__is_active': True}),
