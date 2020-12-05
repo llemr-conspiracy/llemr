@@ -109,7 +109,7 @@ class WorkupCreate(NoteFormView):
     #         # dispatch to our own view, since we know there's a ClinicDate
     #         # for today
     #         #make an encounter if it doesn't already exist
-    #         encounter = needs_encounter(pt, clindates[0])
+    #         encounter = get_or_create_encounter(pt, clindates[0])
 
     #         kwargs['pt_id'] = pt.id
     #         return super(WorkupCreate,
