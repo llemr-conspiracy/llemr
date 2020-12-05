@@ -377,5 +377,6 @@ OSLER_ATTENDANCE_URL = env(
     default="https://www.wustl.edu",
 )
 
-#Default Encounter Status Name and is_active upon initializing an Encounter
-OSLER_DEFAULT_ENCOUNTER_STATUS = ('Active', True)
+#Default Encounter Status 
+OSLER_DEFAULT_ACTIVE_STATUS = ('Active', True)
+OSLER_DEFAULT_INACTIVE_STATUS = ('Inactive', False)

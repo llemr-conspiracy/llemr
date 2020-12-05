@@ -12,8 +12,8 @@ from django.views.generic.edit import FormView
 from django.urls import reverse
 from django.utils.timezone import now
 
-from osler.core.views import NoteFormView, NoteUpdate
-from osler.core.models import Patient, Encounter, EncounterStatus, default_status
+from osler.core.views import NoteFormView, NoteUpdate, get_clindates, get_or_create_encounter
+from osler.core.models import Patient, Encounter, EncounterStatus, default_active_status
 
 from osler.workup import models
 from osler.workup import forms
@@ -22,20 +22,6 @@ from osler.users.utils import get_active_role, group_has_perm
 from osler.users.decorators import active_permission_required
 
 from django.utils.translation import gettext_lazy as _
-
-
-def get_clindates():
-    '''Get the clinic dates associated with today.'''
-    clindates = models.ClinicDate.objects.filter(
-        clinic_date=now().date())
-    return clindates
-
-
-def needs_encounter(pt_id, clinic_id):
-    '''Returns 1 encounter associated with this pt and clindate'''
-    #did I need to make a function for this idk
-    encounter, created = Encounter.objects.get_or_create(patient=pt_id, clinic_day=clinic_id)
-    return encounter
 
 
 def new_note_dispatch(request, pt_id):
@@ -109,32 +95,32 @@ class WorkupCreate(NoteFormView):
     model = models.Workup
     note_type = 'Workup'
 
-    def get(self, *args, **kwargs):
-        """Check that we have an instantiated ClinicDate today,
-        then dispatch to get() of the superclass view."""
+    # def get(self, *args, **kwargs):
+    #     """Check that we have an instantiated ClinicDate today,
+    #     then dispatch to get() of the superclass view."""
 
-        clindates = get_clindates()
-        pt = get_object_or_404(Patient, pk=kwargs['pt_id'])
+    #     clindates = get_clindates()
+    #     pt = get_object_or_404(Patient, pk=kwargs['pt_id'])
 
-        if len(clindates) == 0:
-            # dispatch to ClinicDateCreate because the ClinicDate doesn't exist
-            return HttpResponseRedirect(reverse("new-clindate", args=(pt.id,)))
-        elif len(clindates) == 1:
-            # dispatch to our own view, since we know there's a ClinicDate
-            # for today
-            #make an encounter if it doesn't already exist
-            encounter = needs_encounter(pt, clindates[0])
+    #     if len(clindates) == 0:
+    #         # dispatch to ClinicDateCreate because the ClinicDate doesn't exist
+    #         return HttpResponseRedirect(reverse("new-clindate", args=(pt.id,)))
+    #     elif len(clindates) == 1:
+    #         # dispatch to our own view, since we know there's a ClinicDate
+    #         # for today
+    #         #make an encounter if it doesn't already exist
+    #         encounter = needs_encounter(pt, clindates[0])
 
-            kwargs['pt_id'] = pt.id
-            return super(WorkupCreate,
-                         self).get(self, *args, **kwargs)
-        else:  # we have >1 clindate today.
-            return HttpResponseServerError(
-                'There are two or more "clinic day" entries in the database '
-                'for today. Since notes are associated with one and only one '
-                'clinic day, one clinic day has to be deleted. This can be '
-                'done in the admin panel by a user with sufficient ',
-                'privileges (e.g. coordinator).')
+    #         kwargs['pt_id'] = pt.id
+    #         return super(WorkupCreate,
+    #                      self).get(self, *args, **kwargs)
+    #     else:  # we have >1 clindate today.
+    #         return HttpResponseServerError(
+    #             'There are two or more "clinic day" entries in the database '
+    #             'for today. Since notes are associated with one and only one '
+    #             'clinic day, one clinic day has to be deleted. This can be '
+    #             'done in the admin panel by a user with sufficient ',
+    #             'privileges (e.g. coordinator).')
 
     def get_initial(self):
         initial = super(WorkupCreate, self).get_initial()
@@ -198,7 +184,7 @@ class WorkupCreate(NoteFormView):
         wu.patient = pt
         wu.author = self.request.user
         wu.author_type = active_role
-        wu.encounter = needs_encounter(pt, wu.clinic_day)
+        wu.encounter = get_or_create_encounter(pt, wu.clinic_day)
 
         if not wu.is_pending and self.model.group_can_sign(active_role):
             wu.sign(self.request.user, active_role)
@@ -340,11 +326,11 @@ class ClinicDateCreate(FormView):
     def form_valid(self, form):
         '''Add today's date to the ClinicDate form and submit the form.'''
 
-        # determine from our URL which patient we wanted to work up before we
+        # determine from our URL which patient we were on before we
         # got redirected to create a clinic date
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
 
-        # if there's already a clindate for today, redirect to workup create
+        # if there's already a clindate for today, redirect back to pt-detail
         if len(get_clindates()) == 0:
             clindate = form.save(commit=False)
 
@@ -356,9 +342,9 @@ class ClinicDateCreate(FormView):
             Encounter.objects.create(
                 patient=pt,
                 clinic_day=clindate,
-                status=default_status())
+                status=default_active_status())
 
-        return HttpResponseRedirect(reverse("new-workup", args=(pt.id,)))
+        return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
 
 
 def clinic_date_list(request):

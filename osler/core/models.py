@@ -219,9 +219,8 @@ class Patient(Person):
 
     email = models.EmailField(blank=True, null=True)
 
-    # If the patient is in clinic and needs a workup, that is specified by
-    # needs_workup. Default value is false for all the previous patients
-
+    # Not used any more, replaced by EncounterStatus of last Encounter
+    #left behind just in case
     needs_workup = models.BooleanField(default=True)
 
     history = HistoricalRecords()
@@ -343,24 +342,18 @@ class Patient(Person):
 
         return phones
 
-    def toggle_active_status(self, user, group):
-        ''' Will Activate or Inactivate the Patient'''
-
-        user_has_group = user.groups.filter(pk=group.pk).exists()
-        if user_has_group and self.group_can_activate(group):
-            self.needs_workup = not self.needs_workup
+    def last_encounter(self):
+        if Encounter.objects.filter(patient=self.pk).exists():
+            last_encounter = Encounter.objects.filter(patient=self.pk).order_by('clinic_day').first()
+            return last_encounter
         else:
-            raise ValueError("Special permissions are required to change active status.")
+            return None
 
-    # def get_encounters(self):
-    #     return Encounter.objects.filter(patient=self.pk).order_by('clinic_day')
-
-    # def get_status(self):
-    #     if Encounter.objects.filter(patient=self.pk).exists():
-    #         last_encounter = Encounter.objects.filter(patient=self.pk).order_by('clinic_day').last()
-    #         return last_encounter.status
-    #     else:
-    #         return None
+    def get_status(self):
+        if self.last_encounter() is not None:
+            return self.last_encounter().status
+        else:
+            return default_inactive_status()
 
     def detail_url(self):
         return reverse('core:patient-detail', args=(self.pk,))
@@ -493,6 +486,7 @@ class CompletableMixin(models.Model):
 
 
 class AbstractActionItem(Note, CompletableMixin):
+    '''Abstract class for completable tasks, inherit from this for app-specific tasks'''
     class Meta(object):
         abstract = True
 
@@ -540,28 +534,40 @@ class ActionItem(AbstractActionItem):
 
 
 class EncounterStatus(models.Model):
-    'Different status for encounter, as simple as Active/Inactive or Waiting/Team in Room/Attending etc'
+    '''Different status for encounter, as simple as Active/Inactive 
+    or Waiting/Team in Room/Attending etc'''
     name = models.CharField(max_length=100, primary_key=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
 
-#I hate myself what am I doing
-def default_status():
+
+def default_active_status():
     status, created = EncounterStatus.objects.get_or_create(
-        name=settings.OSLER_DEFAULT_ENCOUNTER_STATUS[0],
-        is_active=settings.OSLER_DEFAULT_ENCOUNTER_STATUS[1])
+        name=settings.OSLER_DEFAULT_ACTIVE_STATUS[0],
+        is_active=settings.OSLER_DEFAULT_ACTIVE_STATUS[1])
     return status
 
+
+def default_inactive_status():
+    status, created = EncounterStatus.objects.get_or_create(
+        name=settings.OSLER_DEFAULT_INACTIVE_STATUS[0],
+        is_active=settings.OSLER_DEFAULT_INACTIVE_STATUS[1])
+    return status
+
+
 class Encounter(SortableMixin):
+    '''Encounter for a given patient on a given clinic day
+    Holds all associated notes, labs, etc performed on that clinic day
+    Can reoder in admin panel for Active Patients page'''
     class Meta:
         ordering = ['order']
     
     order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
     patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
     clinic_day = models.ForeignKey('workup.ClinicDate', on_delete=models.PROTECT)
-    status = models.ForeignKey(EncounterStatus, on_delete=models.PROTECT,default=default_status())
+    status = models.ForeignKey(EncounterStatus, on_delete=models.PROTECT)
 
     sorting_filters = (
         ('Active Encounters', {'status__is_active': True}),

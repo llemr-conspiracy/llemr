@@ -17,5 +17,6 @@ admin.site.register(models.ActionItem, admin_utils.ActionItemAdmin)
 
 @admin.register(models.Encounter)
 class EncounterAdmin(SortableAdmin):
-    #made a custom so I could javascript fix the url idk why
-    sortable_change_list_template = 'adminsortable/custom_change_list.html'
+	list_display = ('__str__', 'status')
+	#made a custom so I could javascript fix the url idk why
+	sortable_change_list_template = 'adminsortable/custom_change_list.html'

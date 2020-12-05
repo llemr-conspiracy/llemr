@@ -281,6 +281,7 @@ class Workup(Note, AttestationMixin):
 
     # Please note that these are no longer shown on the form and will not
     # be filled out because the referral app handles this functionality
+    #Any reason why we can't just trash these fields then???
     referral_type = models.ManyToManyField(ReferralType, blank=True)
     referral_location = models.ManyToManyField(ReferralLocation, blank=True)
 
