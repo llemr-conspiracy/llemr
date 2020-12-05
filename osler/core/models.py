@@ -352,12 +352,15 @@ class Patient(Person):
         else:
             raise ValueError("Special permissions are required to change active status.")
 
-    def get_status(self):
-        if Encounter.objects.filter(patient=self.pk).exists():
-            last_encounter = Encounter.objects.filter(patient=self.pk).order_by('clinic_day').last()
-            return last_encounter.status
-        else:
-            return None
+    def get_encounters(self):
+        return Encounter.objects.filter(patient=self.pk).order_by('clinic_day')
+
+    # def get_status(self):
+    #     if Encounter.objects.filter(patient=self.pk).exists():
+    #         last_encounter = Encounter.objects.filter(patient=self.pk).order_by('clinic_day').last()
+    #         return last_encounter.status
+    #     else:
+    #         return None
 
     def detail_url(self):
         return reverse('core:patient-detail', args=(self.pk,))
@@ -539,10 +542,18 @@ class ActionItem(AbstractActionItem):
 class EncounterStatus(models.Model):
     'Different status for encounter, as simple as Active/Inactive or Waiting/Team in Room/Attending etc'
     name = models.CharField(max_length=100, primary_key=True)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
+
+#I hate myself what am I doing
+def default_status():
+    if len(EncounterStatus.objects.all())==0:
+        EncouterStatus.objects.create(name=settings.OSLER_DEFAULT_ENCOUNTER_STATUS[0], 
+            is_active=settings.OSLER_DEFAULT_ENCOUNTER_STATUS[1])
+    return EncounterStatus.objects.filter(name=settings.OSLER_DEFAULT_ENCOUNTER_STATUS[0]).filter(
+        is_active=settings.OSLER_DEFAULT_ENCOUNTER_STATUS[1])
 
 
 class Encounter(SortableMixin):
@@ -555,10 +566,9 @@ class Encounter(SortableMixin):
     status = models.ForeignKey(EncounterStatus, on_delete=models.PROTECT)
 
     sorting_filters = (
-        ('Active Encounters', {'status__in': EncounterStatus.objects.filter(is_active=True)}),
+        ('Active Encounters', {'status__is_active': True}),
         )
 
     def __str__(self):
         return str(self.patient)+" at "+str(self.clinic_day)
-
 

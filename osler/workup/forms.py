@@ -153,7 +153,7 @@ class WorkupForm(ModelForm):
     class Meta(object):
         model = models.Workup
         exclude = ['patient', 'author', 'signer', 'author_type',
-                   'signed_date', 'referral_location', 'referral_type']
+                   'signed_date', 'referral_location', 'referral_type','encounter']
 
     # limit the options for the attending, other_volunteer field by
     # checking the signs charts permission.

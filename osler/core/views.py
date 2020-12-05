@@ -10,7 +10,7 @@ from django.views.generic.edit import FormView, UpdateView
 from django.views.generic.list import ListView
 from django.urls import reverse
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import Prefetch
+from django.db.models import Prefetch, FilteredRelation, Q
 from django.utils.http import url_has_allowed_host_and_scheme
 
 from osler.workup import models as workupmodels
@@ -431,7 +431,12 @@ def all_patients(request, title='All Patients', active=False):
     """
     patient_list = core_models.Patient.objects.all()
     if active:
-        patient_list = patient_list.filter(needs_workup=True)
+        #if a patient has two open encounters, they will appear twice because of 
+        #ordering by encounter, distinct() doesn't work
+        #I decided was ok because you should be inactivating encounters
+        patient_list = core_models.Patient.objects.filter(encounter__status__is_active=True)\
+            .order_by('encounter__order')
+    
     patient_list = patient_list \
         .select_related('gender') \
         .prefetch_related('case_managers') \

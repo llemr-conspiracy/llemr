@@ -29,6 +29,7 @@ def dashboard_dispatch(request):
 
 def dashboard_active(request):
     """Calls active patient dashboard filtered by patients needing workups."""
+    
 
     return all_patients(request, title='Active Patients', active=True)
 

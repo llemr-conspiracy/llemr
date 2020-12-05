@@ -3,7 +3,7 @@ import datetime
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
-from osler.core.models import (Patient)
+from osler.core.models import (Patient, Encounter)
 
 
 class LabType(models.Model):
@@ -28,6 +28,8 @@ class Lab(models.Model):
 	lab_time = models.DateTimeField(default=timezone.now)
 
 	lab_type = models.ForeignKey(LabType, on_delete=models.PROTECT)
+
+	encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE, blank=True, null=True)
 
 	class Meta:
 		ordering = ['-lab_time']
@@ -184,7 +186,7 @@ class DiscreteResultType(models.Model):
 
 class DiscreteMeasurement(Measurement):
 	"""
-	object of a continuous measurement
+	object of a discrete measurement
 	"""
 	measurement_type = models.ForeignKey(DiscreteMeasurementType, on_delete=models.PROTECT)
 	value = models.ForeignKey(DiscreteResultType, on_delete=models.PROTECT)

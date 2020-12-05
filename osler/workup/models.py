@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.core.validators import MinValueValidator
 from django.conf import settings
 
-from osler.core.models import Note, ReferralLocation, ReferralType
+from osler.core.models import Note, ReferralLocation, ReferralType, Encounter
 from osler.workup import validators as workup_validators
 
 from osler.users.utils import group_has_perm
@@ -137,6 +137,7 @@ class AbstractBasicNote(Note):
 
     title = models.CharField(max_length=200)
     text = models.TextField()
+    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         abstract = True
@@ -204,6 +205,9 @@ class Workup(Note, AttestationMixin):
         ClinicDate,
         on_delete=models.PROTECT,
         help_text="When was the patient seen?")
+
+    #did not WANT to make this null=True but the db migration...
+    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE, blank=True, null=True)
 
     chief_complaint = models.CharField(max_length=1000, verbose_name="CC", blank=True)
     diagnosis = models.CharField(max_length=1000, verbose_name="Dx", blank=True, null=True)

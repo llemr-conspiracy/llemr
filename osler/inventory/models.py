@@ -1,6 +1,6 @@
 from django.db import models
 from osler.core.validators import validate_name
-from osler.core.models import Note
+from osler.core.models import Note, Encounter
 import datetime
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
@@ -92,6 +92,7 @@ class DispenseHistory(Note):
     dispense = models.PositiveSmallIntegerField(blank=False, null=False)
 
     drug = models.ForeignKey(Drug, on_delete=models.PROTECT)
+    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.drug.lot_number

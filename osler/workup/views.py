@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 
 from osler.core.views import NoteFormView, NoteUpdate
-from osler.core.models import Patient
+from osler.core.models import Patient, Encounter, EncounterStatus, default_status
 
 from osler.workup import models
 from osler.workup import forms
@@ -115,6 +115,14 @@ class WorkupCreate(NoteFormView):
         elif len(clindates) == 1:
             # dispatch to our own view, since we know there's a ClinicDate
             # for today
+
+            #is there an encounter for this pt and clinic day?
+            if not Encounter.objects.filter(patient=pt).filter(clinic_day__in=clindates):
+                Encounter.objects.create(
+                    patient=pt,
+                    clinic_day=clindates[0],
+                    status=default_status())
+
             kwargs['pt_id'] = pt.id
             return super(WorkupCreate,
                          self).get(self, *args, **kwargs)
@@ -188,6 +196,7 @@ class WorkupCreate(NoteFormView):
         wu.patient = pt
         wu.author = self.request.user
         wu.author_type = active_role
+        wu.encounter = Encounter.objects.filter(patient=pt).filter(clinic_day=wu.clinic_day).first()
 
         if not wu.is_pending and self.model.group_can_sign(active_role):
             wu.sign(self.request.user, active_role)
@@ -340,6 +349,12 @@ class ClinicDateCreate(FormView):
             today = now().date()
             clindate.clinic_date = today
             clindate.save()
+            
+            #make an encounter for this pt and clinic date too!
+            Encounter.objects.create(
+                patient=pt,
+                clinic_day=clindate,
+                status=default_status())
 
         return HttpResponseRedirect(reverse("new-workup", args=(pt.id,)))
 
