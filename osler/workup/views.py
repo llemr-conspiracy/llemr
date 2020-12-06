@@ -100,7 +100,6 @@ class WorkupCreate(NoteFormView):
         initial = super(WorkupCreate, self).get_initial()
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
 
-        #why do we give them the option? What's wrong with auto populating after?
         initial['clinic_day'] = get_clindates().first()
 
         initial['ros'] = _(
@@ -204,6 +203,24 @@ class AttestableBasicNoteCreate(NoteFormView):
     form_class = forms.AttestableBasicNoteForm
     note_type = 'Attestable Basic Note'
 
+    def get_form_kwargs(self):
+        kwargs = super(AttestableBasicNoteCreate, self).get_form_kwargs()
+
+        pt_id = self.kwargs['pt_id']
+        kwargs['pt'] = get_object_or_404(Patient, pk=pt_id)
+
+        return kwargs
+
+    def get_initial(self):
+        initial = super(AttestableBasicNoteCreate, self).get_initial()
+
+        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        clinic_day = get_clindates().first()
+        #if encounter for today's clinic day, select as initial
+        if Encounter.objects.filter(patient=pt, clinic_day=clinic_day).exists():
+            initial['encounter'] = Encounter.objects.get(patient=pt, clinic_day=clinic_day)
+        return initial
+
     def form_valid(self, form):
         note = form.save(commit=False)
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
@@ -216,8 +233,6 @@ class AttestableBasicNoteCreate(NoteFormView):
 
         if models.AttestableBasicNote.group_can_sign(active_role):
             note.sign(self.request.user, active_role)
-        
-        note.encounter = get_or_create_encounter(pt, get_clindates().first())
 
         note.save()
         form.save_m2m()

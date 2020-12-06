@@ -15,6 +15,7 @@ from crispy_forms.bootstrap import (
 from crispy_forms.utils import TEMPLATE_PACK, render_field
 
 from osler.workup import models
+from osler.core.models import Encounter
 
 from past.utils import old_div
 
@@ -345,9 +346,15 @@ class AttestableBasicNoteForm(ModelForm):
         model = models.AttestableBasicNote
         fields = ['title', 'text']
 
+    #made false for now while Eshwar still has to make clinic dates, encounters in the past
+    encounter = ModelChoiceField(queryset=None, required=False)
+
     def __init__(self, *args, **kwargs):
+        pt = kwargs.pop('pt')
         super(AttestableBasicNoteForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
+        self.fields['encounter'].queryset = Encounter.objects\
+            .filter(patient=pt)
         self.helper.add_input(Submit('submit', 'Submit'))
 
 
