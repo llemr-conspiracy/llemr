@@ -17,6 +17,7 @@ from osler.referral.forms import PatientContactForm
 
 from osler.core.tests import factories
 from osler.users.tests import factories as user_factories
+from osler.workup.tests import factories as workup_factories
 
 
 def build_user(group_factories=None, username=None, password=None):
@@ -444,36 +445,48 @@ class ActionItemTest(TestCase):
         assert (now() - new_ai.last_modified).total_seconds() <= 10
 
 
-class ToggleStatusTest(TestCase):
+class PatientStatusTest(TestCase):
 
     def setUp(self):
         self.coordinator = build_user([user_factories.CaseManagerGroupFactory])
         log_in_user(self.client, self.coordinator)
+
 
     def test_activate_urls(self):
         pt = factories.PatientFactory()
 
         response = self.client.get(reverse('core:patient-activate-detail', args=(pt.id,)))
         assert response.status_code == 302
+        #redirects to make new clinic date to activate patient
+        self.assertRedirects(response, reverse('new-clindate', args=(pt.id,)))
 
         response = self.client.get(reverse('core:patient-activate-home', args=(pt.id,)))
         assert response.status_code == 302
 
     def test_activate_perms(self):
         pt = factories.PatientFactory()
-        assert pt.needs_workup
+        status = pt.get_status()
+        assert not status.is_active
 
-        pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
-        assert not pt.needs_workup
+        #need to make a clinic day today so the patient can be activated bc the redirect
+        clinic_day = workup_factories.ClinicDateFactory()
+
+        response = self.client.get(reverse('core:patient-activate-detail', args=(pt.id,)))
+        status = pt.get_status()
+        assert status.is_active
 
         attending = build_user([user_factories.AttendingGroupFactory])
+        log_in_user(self.client, attending)
         with self.assertRaises(ValueError):
-            pt.toggle_active_status(attending, attending.groups.first())
-        assert not pt.needs_workup
+            response = self.client.get(reverse('core:patient-activate-detail', args=(pt.id,)))
+        status = pt.get_status()
+        assert status.is_active
 
         volunteer = build_user([user_factories.VolunteerGroupFactory])
+        log_in_user(self.client, attending)
         with self.assertRaises(ValueError):
-            pt.toggle_active_status(volunteer, volunteer.groups.first())
-        assert not pt.needs_workup
+            response = self.client.get(reverse('core:patient-activate-detail', args=(pt.id,)))
+        status = pt.get_status()
+        assert status.is_active
         
 

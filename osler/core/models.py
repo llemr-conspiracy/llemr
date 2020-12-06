@@ -537,7 +537,7 @@ class EncounterStatus(models.Model):
     '''Different status for encounter, as simple as Active/Inactive 
     or Waiting/Team in Room/Attending etc'''
     name = models.CharField(max_length=100, primary_key=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

@@ -136,7 +136,7 @@ class LiveTesting(SeleniumLiveTestCase):
 
         # build a provider and log in.
         user = build_user(password='password',
-            group_factories=[user_factories.AttendingGroupFactory])
+            group_factories=[user_factories.CaseManagerGroupFactory])
         self.get_homepage()
         self.submit_login(user.username, 'password')
 
@@ -213,8 +213,6 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         # log_in_provider(self.client, build_user(["Attending"]))
 
         pt1 = models.Patient.objects.get(pk=1)
-        pt1.toggle_active_status(coordinator, coordinator.groups.first())
-        pt1.save()
         self.pt1 = pt1
 
         pt_prototype = {

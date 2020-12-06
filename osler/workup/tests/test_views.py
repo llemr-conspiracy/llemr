@@ -32,21 +32,6 @@ class ViewsExistTest(TestCase):
 
         self.wu = models.Workup.objects.create(**wu_dict(user=self.user))
 
-    def test_clindate_create_redirect(self):
-        '''Verify that if no clindate exists, we're properly redirected to a
-        clindate create page.'''
-
-        # First delete clindate that's created in setUp.
-        models.Workup.objects.all().delete()
-        models.ClinicDate.objects.all().delete()
-
-        pt = Patient.objects.first()
-
-        pt_url = 'new-workup'
-        response = self.client.get(reverse(pt_url, args=(pt.id,)))
-        assert response.status_code == 302
-        self.assertRedirects(response, reverse('new-clindate', args=(pt.id,)))
-
     def test_new_workup_view(self):
         """Test that user can successfully access new workup page."""
 

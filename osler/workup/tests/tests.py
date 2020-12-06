@@ -140,14 +140,14 @@ class TestClinDateViews(TestCase):
             reverse('new-clindate', args=(pt.id,)),
             {'clinic_type': models.ClinicType.objects.first().pk})
 
-        self.assertRedirects(r, reverse('new-workup', args=(pt.id,)))
+        self.assertRedirects(r, reverse('core:patient-detail', args=(pt.id,)))
         self.assertEqual(models.ClinicDate.objects.count(), 1)
 
         # what happens if we submit twice?
         r = self.client.post(
             reverse('new-clindate', args=(pt.id,)),
             {'clinic_type': models.ClinicType.objects.first().pk})
-        self.assertRedirects(r, reverse('new-workup', args=(pt.id,)))
+        self.assertRedirects(r, reverse('core:patient-detail', args=(pt.id,)))
         self.assertEqual(models.ClinicDate.objects.count(), 1)
 
 

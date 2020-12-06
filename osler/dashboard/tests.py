@@ -62,6 +62,7 @@ class TestAttendingDashboard(TestCase):
     def test_pt_without_note(self):
         response = self.client.get(reverse('dashboard-attending'))
 
+        #since there is 1 pt without a workup loaded in fixtures/core
         self.assertEqual(
             len(response.context['no_note_patients']),
             1)

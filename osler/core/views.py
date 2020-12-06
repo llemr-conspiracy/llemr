@@ -474,7 +474,7 @@ def get_or_create_encounter(pt_id, clinic_id):
     return encounter
     
 
-def patient_activate_detail(request, pk):
+def patient_activate_detail(request, pk, home=False):
     '''Toggle status to default active/inactive'''
     pt = get_object_or_404(core_models.Patient, pk=pk)
     active_role = get_active_role(request)
@@ -509,21 +509,15 @@ def patient_activate_detail(request, pk):
     else:
         raise ValueError("Special permissions are required to change active status.")
 
-    return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
+    if home:
+        return HttpResponseRedirect(reverse("home"))
+    else:
+        return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
 
 
 def patient_activate_home(request, pk):
-    pt = get_object_or_404(core_models.Patient, pk=pk)
-    active_role = get_active_role(request)
-
-    can_activate = pt.group_can_activate(active_role)
-
-    if can_activate:
-        pt.toggle_active_status(request.user, active_role)
-
-    pt.save()
-
-    return HttpResponseRedirect(reverse("home"))
+    '''Toggle active status then redirect to home'''
+    return patient_activate_detail(request, pk, home=True)
 
 
 def done_action_item(request, ai_id):

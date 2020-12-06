@@ -250,6 +250,14 @@ class AttestableBasicNoteUpdate(NoteUpdate):
     form_class = AttestableBasicNoteCreate.form_class
     note_type = AttestableBasicNoteCreate.note_type
 
+    def get_form_kwargs(self):
+        kwargs = super(AttestableBasicNoteUpdate, self).get_form_kwargs()
+
+        note = get_object_or_404(models.AttestableBasicNote, pk=self.kwargs['pk'])
+        kwargs['pt'] = note.patient
+        
+        return kwargs
+
     def get_success_url(self):
         note = self.object
         return reverse("attestable-basic-note-detail", args=(note.id, ))
@@ -302,6 +310,14 @@ class BasicNoteUpdate(NoteUpdate):
     model = models.BasicNote
     form_class = BasicNoteCreate.form_class
     note_type = BasicNoteCreate.note_type
+
+    def get_form_kwargs(self):
+        kwargs = super(BasicNoteUpdate, self).get_form_kwargs()
+
+        note = get_object_or_404(models.BasicNote, pk=self.kwargs['pk'])
+        kwargs['pt'] = note.patient
+        
+        return kwargs
 
     def get_success_url(self):
         note = self.object
