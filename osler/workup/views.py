@@ -69,6 +69,7 @@ def basicnote_detail(request, pk, model):
             }
         )
 
+
 def workup_detail(request, pk):
 
     workup = get_object_or_404(models.Workup, pk=pk)
@@ -95,37 +96,11 @@ class WorkupCreate(NoteFormView):
     model = models.Workup
     note_type = 'Workup'
 
-    # def get(self, *args, **kwargs):
-    #     """Check that we have an instantiated ClinicDate today,
-    #     then dispatch to get() of the superclass view."""
-
-    #     clindates = get_clindates()
-    #     pt = get_object_or_404(Patient, pk=kwargs['pt_id'])
-
-    #     if len(clindates) == 0:
-    #         # dispatch to ClinicDateCreate because the ClinicDate doesn't exist
-    #         return HttpResponseRedirect(reverse("new-clindate", args=(pt.id,)))
-    #     elif len(clindates) == 1:
-    #         # dispatch to our own view, since we know there's a ClinicDate
-    #         # for today
-    #         #make an encounter if it doesn't already exist
-    #         encounter = get_or_create_encounter(pt, clindates[0])
-
-    #         kwargs['pt_id'] = pt.id
-    #         return super(WorkupCreate,
-    #                      self).get(self, *args, **kwargs)
-    #     else:  # we have >1 clindate today.
-    #         return HttpResponseServerError(
-    #             'There are two or more "clinic day" entries in the database '
-    #             'for today. Since notes are associated with one and only one '
-    #             'clinic day, one clinic day has to be deleted. This can be '
-    #             'done in the admin panel by a user with sufficient ',
-    #             'privileges (e.g. coordinator).')
-
     def get_initial(self):
         initial = super(WorkupCreate, self).get_initial()
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
 
+        #why do we give them the option? What's wrong with auto populating after?
         initial['clinic_day'] = get_clindates().first()
 
         initial['ros'] = _(
@@ -231,15 +206,18 @@ class AttestableBasicNoteCreate(NoteFormView):
 
     def form_valid(self, form):
         note = form.save(commit=False)
+        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
 
-        note.patient = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        note.patient = pt
         note.author = self.request.user
 
         active_role = get_active_role(self.request)
         note.author_type = active_role
 
         if models.AttestableBasicNote.group_can_sign(active_role):
-            note.sign(self.request.user)
+            note.sign(self.request.user, active_role)
+        
+        note.encounter = get_or_create_encounter(pt, get_clindates().first())
 
         note.save()
         form.save_m2m()

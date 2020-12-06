@@ -472,7 +472,7 @@ def get_or_create_encounter(pt_id, clinic_id):
         raise ValueError("Somehow there are multiple encounters for this patient and "
             "clinc day. Please delete one in the admin panel or cry for help.")
     return encounter
-
+    
 
 def patient_activate_detail(request, pk):
     '''Toggle status to default active/inactive'''

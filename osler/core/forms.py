@@ -165,3 +165,4 @@ class DocumentForm(ModelForm):
         super(DocumentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
+
