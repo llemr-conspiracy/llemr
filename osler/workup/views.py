@@ -208,7 +208,7 @@ class AttestableBasicNoteCreate(NoteFormView):
 
         pt_id = self.kwargs['pt_id']
         kwargs['pt'] = get_object_or_404(Patient, pk=pt_id)
-
+        
         return kwargs
 
     def get_initial(self):
@@ -219,6 +219,7 @@ class AttestableBasicNoteCreate(NoteFormView):
         #if encounter for today's clinic day, select as initial
         if Encounter.objects.filter(patient=pt, clinic_day=clinic_day).exists():
             initial['encounter'] = Encounter.objects.get(patient=pt, clinic_day=clinic_day)
+        
         return initial
 
     def form_valid(self, form):
@@ -230,6 +231,8 @@ class AttestableBasicNoteCreate(NoteFormView):
 
         active_role = get_active_role(self.request)
         note.author_type = active_role
+        #really should do this automatically? but wouldn't save so I manually did it
+        note.encounter = form.cleaned_data['encounter']
 
         if models.AttestableBasicNote.group_can_sign(active_role):
             note.sign(self.request.user, active_role)
@@ -257,11 +260,32 @@ class BasicNoteCreate(NoteFormView):
     form_class = forms.BasicNoteForm
     note_type = 'Basic Note'
 
+    def get_form_kwargs(self):
+        kwargs = super(BasicNoteCreate, self).get_form_kwargs()
+
+        pt_id = self.kwargs['pt_id']
+        kwargs['pt'] = get_object_or_404(Patient, pk=pt_id)
+
+        return kwargs
+
+    def get_initial(self):
+        initial = super(BasicNoteCreate, self).get_initial()
+
+        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        clinic_day = get_clindates().first()
+        #if encounter for today's clinic day, select as initial
+        if Encounter.objects.filter(patient=pt, clinic_day=clinic_day).exists():
+            initial['encounter'] = Encounter.objects.get(patient=pt, clinic_day=clinic_day)
+        
+        return initial
+
     def form_valid(self, form):
         note = form.save(commit=False)
 
         note.patient = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         note.author = self.request.user
+        #same here
+        note.encounter = form.cleaned_data['encounter']
 
         active_role = get_active_role(self.request)
         note.author_type = active_role

@@ -354,7 +354,7 @@ class AttestableBasicNoteForm(ModelForm):
         super(AttestableBasicNoteForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.fields['encounter'].queryset = Encounter.objects\
-            .filter(patient=pt)
+            .filter(patient=pt).order_by('clinic_day')
         self.helper.add_input(Submit('submit', 'Submit'))
 
 
@@ -363,9 +363,14 @@ class BasicNoteForm(ModelForm):
         model = models.BasicNote
         fields = ['title', 'text']
 
+    encounter = ModelChoiceField(queryset=None, required=False)
+
     def __init__(self, *args, **kwargs):
+        pt = kwargs.pop('pt')
         super(BasicNoteForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
+        self.fields['encounter'].queryset = Encounter.objects\
+            .filter(patient=pt).order_by('clinic_day')
         self.helper.add_input(Submit('submit', 'Submit'))
 
 
