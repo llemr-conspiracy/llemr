@@ -24,12 +24,20 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('order', models.PositiveIntegerField(db_index=True, default=0, editable=False)),
-                ('clinic_day', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='workup.clinicdate')),
                 ('patient', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.patient')),
                 ('status', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='core.encounterstatus')),
+                ('clinic_day', models.DateField()),
             ],
             options={
                 'ordering': ['order'],
             },
+        ),
+        migrations.RemoveField(
+            model_name='historicalpatient',
+            name='needs_workup',
+        ),
+        migrations.RemoveField(
+            model_name='patient',
+            name='needs_workup',
         ),
     ]

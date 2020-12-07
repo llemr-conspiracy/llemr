@@ -562,7 +562,7 @@ class Encounter(SortableMixin):
     
     order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
     patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
-    clinic_day = models.ForeignKey('workup.ClinicDate', on_delete=models.PROTECT)
+    clinic_day = models.DateField()
     status = models.ForeignKey(EncounterStatus, on_delete=models.PROTECT)
 
     sorting_filters = (
