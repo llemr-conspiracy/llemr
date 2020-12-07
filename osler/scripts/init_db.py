@@ -42,12 +42,6 @@ for (lname, can_sign, part_staff) in [("Attending Physician", True, False),
                             signs_charts=can_sign, staff_view=part_staff)
     p.save()
 
-
-for clintype in ["Basic Care Clinic", "Depression & Anxiety Clinic",
-                 "Dermatology Clinic", "Muscle and Joint Pain Clinic"]:
-    t = workup.ClinicType(name=clintype)
-    t.save()
-
 for ai_type in ["Vaccine Reminder", "Lab Follow-Up", "PCP Follow-Up", "Other"]:
     i = core.ActionInstruction(instruction=ai_type)
     i.save()

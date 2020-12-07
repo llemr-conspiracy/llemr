@@ -29,7 +29,7 @@ class Lab(models.Model):
 
 	lab_type = models.ForeignKey(LabType, on_delete=models.PROTECT)
 
-	encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE, blank=True, null=True)
+	encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE)
 
 	class Meta:
 		ordering = ['-lab_time']

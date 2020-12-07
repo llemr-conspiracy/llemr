@@ -92,7 +92,7 @@ class DispenseHistory(Note):
     dispense = models.PositiveSmallIntegerField(blank=False, null=False)
 
     drug = models.ForeignKey(Drug, on_delete=models.PROTECT)
-    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE, blank=True, null=True)
+    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.drug.lot_number

@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.conf import settings
 
-from osler.workup.models import ClinicDate
+from osler.workup.models import Encounter
 from osler.core.models import Patient
 from osler.core.views import all_patients
 
@@ -36,7 +36,7 @@ def dashboard_active(request):
 
 def dashboard_attending(request):
     
-    clinic_list = ClinicDate.objects.filter(workup__attending=request.user)
+    clinic_list = Encounter.objects.filter(workup__attending=request.user)
 
     paginator = Paginator(clinic_list, settings.OSLER_CLINIC_DAYS_PER_PAGE,
                           allow_empty_first_page=True)
@@ -51,7 +51,7 @@ def dashboard_attending(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         clinics = paginator.page(paginator.num_pages)
 
-    no_note_patients = Patient.objects.filter(workup=None).order_by('-pk')[:20]
+    no_note_patients = Patient.objects.filter(workup=None, encounter__status__is_active=True).order_by('-pk')[:20]
 
     return render(request,
                   'dashboard/dashboard-attending.html',

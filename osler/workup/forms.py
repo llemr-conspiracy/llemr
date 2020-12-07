@@ -154,7 +154,7 @@ class WorkupForm(ModelForm):
     class Meta(object):
         model = models.Workup
         exclude = ['patient', 'author', 'signer', 'author_type',
-                   'signed_date', 'referral_location', 'referral_type','encounter']
+                   'signed_date', 'referral_location', 'referral_type']
 
     # limit the options for the attending, other_volunteer field by
     # checking the signs charts permission.
@@ -172,17 +172,23 @@ class WorkupForm(ModelForm):
         queryset=get_user_model().objects.all()
     )
 
+    encounter = ModelChoiceField(queryset=None)
+
     def __init__(self, *args, **kwargs):
         super(WorkupForm, self).__init__(*args, **kwargs)
+        pt = kwargs.pop('pt')
 
         self.helper = FormHelper()
         self.helper.form_method = 'post'
+
+        self.fields['encounter'].queryset = Encounter.objects\
+            .filter(patient=pt).order_by('clinic_day')
 
         self.helper.layout = Layout(
             Row(HTML('<h3>Clinical Team</h3>'),
                 Div('attending', css_class='col-sm-6'),
                 Div('other_volunteer', css_class='col-sm-6'),
-                Div('clinic_day', css_class='col-sm-12')
+                Div('encounter', css_class='col-sm-12')
                 ),
 
             Row(HTML('<h3>History</h3>'),
@@ -346,8 +352,7 @@ class AttestableBasicNoteForm(ModelForm):
         model = models.AttestableBasicNote
         fields = ['title', 'text']
 
-    #made false for now while Eshwar still has to make clinic dates, encounters in the past
-    encounter = ModelChoiceField(queryset=None, required=False)
+    encounter = ModelChoiceField(queryset=None)
 
     def __init__(self, *args, **kwargs):
         pt = kwargs.pop('pt')
@@ -363,7 +368,7 @@ class BasicNoteForm(ModelForm):
         model = models.BasicNote
         fields = ['title', 'text']
 
-    encounter = ModelChoiceField(queryset=None, required=False)
+    encounter = ModelChoiceField(queryset=None)
 
     def __init__(self, *args, **kwargs):
         pt = kwargs.pop('pt')
@@ -384,20 +389,3 @@ class AddendumForm(ModelForm):
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
 
-
-class ClinicDateForm(ModelForm):
-    '''Form for the creation of a clinic date.'''
-    class Meta(object):
-        model = models.ClinicDate
-        exclude = ['clinic_date']
-
-    def __init__(self, *args, **kwargs):
-        super(ClinicDateForm, self).__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-lg-2'
-        self.helper.field_class = 'col-lg-8'
-
-        self.helper.add_input(Submit('submit', 'Submit'))

@@ -456,13 +456,6 @@ def all_patients(request, title='All Patients', active=False):
                   })
 
 
-def get_clindates():
-    '''Get the clinic dates associated with today.'''
-    clindates = workupmodels.ClinicDate.objects.filter(
-        clinic_date=now().date())
-    return clindates
-
-
 def get_or_create_encounter(pt_id, clinic_id):
     '''Returns 1 active encounter associated with this pt and clindate'''
     try:
@@ -482,32 +475,7 @@ def patient_activate_detail(request, pk, home=False):
     can_activate = pt.group_can_activate(active_role)
 
     if can_activate:
-        #moved out of core/models because needed all this stuff
-        if pt.get_status().is_active:
-            encounter = pt.last_encounter()
-            encounter.status = core_models.default_inactive_status()
-            encounter.save()
-        else: #if pt is inactive, will need to make new active encounter
-            clindates = get_clindates()
-            if len(clindates) == 0:
-                #dispatch to ClinicDateCreate because the ClinicDate for today doesn't exist
-                #after making the ClinicDate will auto make new encounter for this pt
-                return HttpResponseRedirect(reverse("new-clindate", args=(pt.id,)))
-            elif len(clindates) == 1:
-                #ClinicDate exists so make new active encounter or activate existing one for today
-                encounter = get_or_create_encounter(pt, clindates[0])
-                if not encounter.status.is_active:
-                    encounter.status = core_models.default_active_status()
-                    encounter.save()
-            else:  # we have >1 clindate today.
-                return HttpResponseServerError(
-                    'There are two or more "clinic day" entries in the database '
-                    'for today. Since notes are associated with one and only one '
-                    'clinic day, one clinic day has to be deleted. This can be '
-                    'done in the admin panel by a user with sufficient ',
-                    'privileges (e.g. coordinator).')
-    else:
-        raise ValueError("Special permissions are required to change active status.")
+        pt.toggle_active_status(request.user, active_role)
 
     if home:
         return HttpResponseRedirect(reverse("home"))

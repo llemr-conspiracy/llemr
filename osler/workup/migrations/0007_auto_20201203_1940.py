@@ -25,17 +25,17 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='historicalattestablebasicnote',
             name='encounter',
-            field=models.ForeignKey(db_constraint=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.encounter'),
+            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.encounter'),
         ),
         migrations.AddField(
             model_name='historicalbasicnote',
             name='encounter',
-            field=models.ForeignKey(db_constraint=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.encounter'),
+            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.encounter'),
         ),
         migrations.AddField(
             model_name='historicalworkup',
             name='encounter',
-            field=models.ForeignKey(db_constraint=False, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.encounter'),
+            field=models.ForeignKey(blank=True, db_constraint=False, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='core.encounter'),
         ),
         migrations.AddField(
             model_name='workup',

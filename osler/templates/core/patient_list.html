@@ -102,7 +102,7 @@ Osler: {{ title | default:"All Patients"}}
                         $("<td>").append(
                             $("<a>").attr({
                                 href :patient.latest_workup.url
-                            }).text("Seen "+patient.latest_workup.clinic_day.clinic_date),
+                            }).text("Seen "+patient.latest_workup.encounter.clinic_day),
                             $("<span>").text(": "+patient.latest_workup.chief_complaint))
                         );
                 } else{

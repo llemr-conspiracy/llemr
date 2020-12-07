@@ -40,7 +40,7 @@ class LabCreationForm(ModelForm):
 # Fill in corresponding measurements in a lab object
 class MeasurementsCreationForm(Form):
 
-    encounter=ModelChoiceField(queryset=None,required=False)
+    encounter=ModelChoiceField(queryset=None)
 
     def __init__(self, *args, **kwargs):
         self.new_lab_type = kwargs.pop('new_lab_type')

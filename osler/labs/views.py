@@ -15,7 +15,6 @@ from datetime import datetime, timedelta
 from django.utils.decorators import method_decorator
 from osler.users.utils import get_active_role, group_has_perm
 from osler.users.decorators import active_permission_required
-from osler.core.views import get_clindates
 
 
 class LabListView(ListView):
@@ -104,10 +103,9 @@ class MeasurementsCreate(FormView):
         initial = super(MeasurementsCreate, self).get_initial()
 
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
-        clinic_day = get_clindates().first()
         #if encounter for today's clinic day, select as initial
-        if Encounter.objects.filter(patient=pt, clinic_day=clinic_day).exists():
-            initial['encounter'] = Encounter.objects.get(patient=pt, clinic_day=clinic_day)
+        if Encounter.objects.filter(patient=pt, clinic_day=timezone.now()).exists():
+            initial['encounter'] = Encounter.objects.get(patient=pt, clinic_day=timezone.now())
         
         return initial
 

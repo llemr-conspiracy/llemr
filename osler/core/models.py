@@ -1,5 +1,6 @@
 '''The datamodels for the Osler core'''
 from itertools import chain
+import datetime
 
 from django.db import models
 from django.conf import settings
@@ -351,6 +352,24 @@ class Patient(Person):
         else:
             return default_inactive_status()
 
+    def toggle_active_status(self, user, group):
+        ''' Will Activate or Inactivate the Patient'''
+        user_has_group = user.groups.filter(pk=group.pk).exists()
+        if user_has_group and self.group_can_activate(group):
+            #active encounter then inactivate
+            if pt.get_status().is_active:
+                encounter = pt.last_encounter()
+                encounter.status = core_models.default_inactive_status()
+                encounter.save()
+            else:
+                #no active encounter today, get today's encounter and activate or make new active
+                encounter = get_or_create_encounter(pt, now().date())
+                if not encounter.status.is_active:
+                    encounter.status = core_models.default_active_status()
+                    encounter.save()
+        else:
+            raise ValueError("Special permissions are required to change active status.")
+
     def detail_url(self):
         return reverse('core:patient-detail', args=(self.pk,))
 
@@ -570,5 +589,5 @@ class Encounter(SortableMixin):
         )
 
     def __str__(self):
-        return str(self.patient)+" at "+str(self.clinic_day)
+        return str(self.patient)+" on "+datetime.datetime.strftime(self.clinic_day, '%A, %B %d, %Y')
 

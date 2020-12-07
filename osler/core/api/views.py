@@ -170,7 +170,7 @@ class PtList(generics.ListAPIView):  # read only
             if latestwu is None:
                 latestdate = pt.history.last().history_date.date()
             else:
-                latestdate = latestwu.clinic_day.clinic_date
+                latestdate = latestwu.encounter.clinic_day
             return latestdate
 
         queryset = core_models.Patient.objects

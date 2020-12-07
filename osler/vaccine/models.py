@@ -78,7 +78,7 @@ class VaccineDose(Note):
     series = models.ForeignKey(VaccineSeries, on_delete=models.CASCADE,
         help_text='Which vaccine is this?')
     which_dose = models.ForeignKey(VaccineDoseType, on_delete=models.PROTECT)
-    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE, blank=True, null=True)
+    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE)
 
     def is_last(self):
         '''Return True if this dose is last dose in the series'''

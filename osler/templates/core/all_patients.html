@@ -48,7 +48,7 @@ Osler: {{ title | default:"All Patients"}}
                             {% if latest_workup.is_pending %}
                                 <a href="{% url 'workup' pk=latest_workup.pk %}"> Pending </a>: {{ latest_workup.chief_complaint | default:"no chief complaint provided" }}
                             {% else %}
-                              <a href="{% url 'workup' pk=latest_workup.pk %}">Seen {{ latest_workup.clinic_day.clinic_date }}</a>: {{latest_workup.chief_complaint}}
+                              <a href="{% url 'workup' pk=latest_workup.pk %}">Seen {{ latest_workup.encounter.clinic_day }}</a>: {{latest_workup.chief_complaint}}
                             {% endif %}
                           {% else %}
                               <a href="{% url 'core:patient-update' pk=patient.id %}">Intake</a>: {{patient.history.last.history_date}}

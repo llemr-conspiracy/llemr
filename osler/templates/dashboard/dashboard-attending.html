@@ -12,8 +12,8 @@ Recent Clinic Dates
 
 <div class="container">
 
-	{% for clinic_date in clinics %}
-		<h3>{{clinic_date.clinic_type}} &mdash; {{clinic_date.clinic_date}}</h3>
+	{% for encounter in clinics %}
+		<h3>{{encounter.clinic_day}}</h3>
 		<table class="table table-striped">
 	    <tr>
 		    <th>Patient</th>
@@ -23,7 +23,7 @@ Recent Clinic Dates
 		    <th>Note Author</th>
 		    <th>Attestation</th>
 		</tr>
-		{% for wu in clinic_date.workup_set.all %}
+		{% for wu in encounter.workup_set.all %}
 			<tr {% if wu.signer == None %} class="warning" {% endif %}>
 				<td><a href="{% url 'core:patient-detail' pk=wu.patient.id %}">{{ wu.patient }}</a></td>
 				<td><a href="{% url 'workup' pk=wu.id %}">{{ wu.chief_complaint }}</a></td>
@@ -36,7 +36,7 @@ Recent Clinic Dates
 		</table>	
 	{% endfor %}
 
-	<h3>Patients without Notes</h3>
+	<h3>Active Patients without Notes</h3>
 	<table class="table table-striped">
 		<tr>
 		    <th>Patient</th>

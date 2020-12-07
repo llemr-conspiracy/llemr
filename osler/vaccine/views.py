@@ -1,9 +1,10 @@
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
+from django.utils.timezone import now
 
 from osler.core.models import Patient, Encounter
-from osler.core.views import NoteFormView, get_clindates
+from osler.core.views import NoteFormView
 from osler.core.utils import get_due_date_from_url_query_dict
 from osler.users.utils import get_active_role
 from osler.followup.views import FollowupCreate
@@ -70,10 +71,9 @@ class VaccineDoseCreate(NoteFormView):
         initial = super(VaccineDoseCreate, self).get_initial()
 
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
-        clinic_day = get_clindates().first()
         #if encounter for today's clinic day, select as initial
-        if Encounter.objects.filter(patient=pt, clinic_day=clinic_day).exists():
-            initial['encounter'] = Encounter.objects.get(patient=pt, clinic_day=clinic_day)
+        if Encounter.objects.filter(patient=pt, clinic_day=now()).exists():
+            initial['encounter'] = Encounter.objects.get(patient=pt, clinic_day=now())
             
         return initial
 
