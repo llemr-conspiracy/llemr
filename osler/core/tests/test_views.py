@@ -326,8 +326,8 @@ class IntakeTest(TestCase):
                                 getattr(new_pt, param).all()):
                     self.assertEqual(x, y)
 
-        # new patients should be marked as active by default
-        assert new_pt.needs_workup
+        # new patients should be marked as inactive
+        assert not new_pt.get_status().is_active
 
 
 class ActionItemTest(TestCase):

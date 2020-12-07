@@ -219,10 +219,6 @@ class Patient(Person):
 
     email = models.EmailField(blank=True, null=True)
 
-    # Not used any more, replaced by EncounterStatus of last Encounter
-    #left behind just in case
-    needs_workup = models.BooleanField(default=True)
-
     history = HistoricalRecords()
 
     def age(self):
