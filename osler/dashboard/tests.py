@@ -9,9 +9,9 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.conf import settings
 
-from osler.core.models import (Gender, Patient, ContactMethod)
+from osler.core.models import (Gender, Patient, ContactMethod, Encounter, EncounterStatus)
 
-from osler.workup.models import ClinicDate, ClinicType, Workup
+from osler.workup.models import Workup
 
 from osler.core.tests.test_views import log_in_user, build_user
 from osler.users.tests import factories as user_factories
@@ -39,9 +39,6 @@ class TestAttendingDashboard(TestCase):
 
         # prepare a patient with an unsigned wu today, in addition to
         # what comes in in the fixture
-        self.clinic_today = ClinicDate.objects.create(
-            clinic_type=ClinicType.objects.first(),
-            clinic_date=now().date())
 
         self.pt2 = Patient.objects.create(
             first_name="Arthur", last_name="Miller", middle_name="",
@@ -52,8 +49,17 @@ class TestAttendingDashboard(TestCase):
             patient_comfortable_with_english=False,
             preferred_contact_method=ContactMethod.objects.first(),
         )
+
+        EncounterStatus.objects.create(name="Active",is_active=True)
+
+        self.encounter_info = dict(
+            clinic_day=now().date(),
+            status=EncounterStatus.objects.first())
+
         self.wu2 = Workup.objects.create(
-            clinic_day=self.clinic_today,
+            encounter=Encounter.objects.create(
+                patient=self.pt2,
+                **self.encounter_info),
             author=self.clinical_student,
             author_type=self.clinical_student.groups.first(),
             patient=self.pt2,
@@ -88,7 +94,9 @@ class TestAttendingDashboard(TestCase):
             preferred_contact_method=ContactMethod.objects.first(),
         )
         wu3 = Workup.objects.create(
-            clinic_day=self.clinic_today,
+            encounter=Encounter.objects.create(
+                patient=pt3,
+                **self.encounter_info),
             author=self.clinical_student,
             author_type=self.clinical_student.groups.first(),
             patient=pt3,
@@ -155,9 +163,6 @@ class TestAttendingDashboard(TestCase):
             response, '<a href="?page=', count=1)
 
         for i in range(5):
-            cd = ClinicDate.objects.create(
-                clinic_date=datetime.date(2001, i + 1, 1),
-                clinic_type=ClinicType.objects.first())
             pt = Patient.objects.create(
                 first_name="John", last_name="Doe", middle_name="",
                 phone='454545', gender=Gender.objects.first(),
@@ -167,9 +172,13 @@ class TestAttendingDashboard(TestCase):
                 patient_comfortable_with_english=False,
                 preferred_contact_method=ContactMethod.objects.first(),
             )
+            e = Encounter.objects.create(
+                clinic_day=datetime.date(2001, i + 1, 1),
+                patient=pt,
+                status=EncounterStatus.objects.first())
             Workup.objects.create(
                 attending=self.attending,
-                clinic_day=cd,
+                encounter=e,
                 author=self.clinical_student,
                 author_type=self.clinical_student.groups.first(),
                 patient=pt,
@@ -201,9 +210,6 @@ class TestAttendingDashboard(TestCase):
     def test_dashboard_page_out_of_range(self):
 
         for i in range(10):
-            cd = ClinicDate.objects.create(
-                clinic_date=datetime.date(2001, i + 1, 1),
-                clinic_type=ClinicType.objects.first())
             pt = Patient.objects.create(
                 first_name="John", last_name="Doe", middle_name="",
                 phone='454545', gender=Gender.objects.first(),
@@ -213,9 +219,13 @@ class TestAttendingDashboard(TestCase):
                 patient_comfortable_with_english=False,
                 preferred_contact_method=ContactMethod.objects.first(),
             )
+            e = Encounter.objects.create(
+                clinic_day=datetime.date(2001, i + 1, 1),
+                patient=pt,
+                status=EncounterStatus.objects.first())
             Workup.objects.create(
                 attending=self.attending,
-                clinic_day=cd,
+                encounter=e,
                 author=self.clinical_student,
                 author_type=self.clinical_student.groups.first(),
                 patient=pt,
@@ -224,7 +234,7 @@ class TestAttendingDashboard(TestCase):
         response = self.client.get(reverse('dashboard-attending') +
                                    '?page=999')
 
-        n_pages = (ClinicDate.objects.count() //
+        n_pages = (Encounter.objects.count() //
                    settings.OSLER_CLINIC_DAYS_PER_PAGE)
 
         # since we're on the last page, the "back" pagination button

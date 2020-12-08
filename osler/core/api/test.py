@@ -20,16 +20,7 @@ class APITest(APITestCase):
     fixtures = [BASIC_FIXTURE]
 
     def setUp(self):
-        workupModels.ClinicType.objects.create(name="Basic Care Clinic")
-        workupModels.ClinicDate.objects.create(
-            clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=now().date() + datetime.timedelta(days=1))
-        workupModels.ClinicDate.objects.create(
-            clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=now().date() - datetime.timedelta(days=1))
-        workupModels.ClinicDate.objects.create(
-            clinic_type=workupModels.ClinicType.objects.first(),
-            clinic_date=now().date() - datetime.timedelta(days=5))
+        models.EncounterStatus.objects.create(name="Active",is_active=True)
         log_in_provider(self.client, build_provider(["Attending"]))
 
         pt1 = models.Patient.objects.get(pk=1)
@@ -83,8 +74,12 @@ class APITest(APITestCase):
         )
 
         # Give pt2 a workup one day later.
+        e1 = models.Encounter.objects.create(
+            patient=pt2,
+            clinic_day=now().date() + datetime.timedelta(days=1),
+            status=models.EncounterStatus.objects.first())
         workupModels.Workup.objects.create(
-            clinic_day=workupModels.ClinicDate.objects.first(), # one day later
+            encounter=e1, # one day later
             chief_complaint="SOB",
             diagnosis="MI",
             hpi="", pmh="", psh="", meds="", allergies="", fam_hx="", soc_hx="",
@@ -94,8 +89,12 @@ class APITest(APITestCase):
             patient=pt2)
 
         # Give pt3 a workup one day ago.
+        e2 = models.Encounter.objects.create(
+            patient=pt3,
+            clinic_day=now().date() - datetime.timedelta(days=1),
+            status=models.EncounterStatus.objects.first())
         workupModels.Workup.objects.create(
-            clinic_day=workupModels.ClinicDate.objects.all()[1], # one day ago
+            encounter=e2, # one day ago
             chief_complaint="SOB",
             diagnosis="MI",
             hpi="", pmh="", psh="", meds="", allergies="", fam_hx="", soc_hx="",
@@ -106,8 +105,12 @@ class APITest(APITestCase):
 
 
         # Give pt1 a signed workup five days ago.
+        e3 = models.Encounter.objects.create(
+            patient=pt1,
+            clinic_day=now().date() - datetime.timedelta(days=5),
+            status=models.EncounterStatus.objects.first())
         workupModels.Workup.objects.create(
-            clinic_day=workupModels.ClinicDate.objects.all()[2], # five days ago
+            encounter=e3, # five days ago
             chief_complaint="SOB",
             diagnosis="MI",
             hpi="", pmh="", psh="", meds="", allergies="", fam_hx="", soc_hx="",

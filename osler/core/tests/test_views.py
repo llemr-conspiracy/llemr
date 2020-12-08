@@ -457,8 +457,6 @@ class PatientStatusTest(TestCase):
 
         response = self.client.get(reverse('core:patient-activate-detail', args=(pt.id,)))
         assert response.status_code == 302
-        #redirects to make new clinic date to activate patient
-        self.assertRedirects(response, reverse('new-clindate', args=(pt.id,)))
 
         response = self.client.get(reverse('core:patient-activate-home', args=(pt.id,)))
         assert response.status_code == 302
@@ -467,9 +465,6 @@ class PatientStatusTest(TestCase):
         pt = factories.PatientFactory()
         status = pt.get_status()
         assert not status.is_active
-
-        #need to make a clinic day today so the patient can be activated bc the redirect
-        clinic_day = workup_factories.ClinicDateFactory()
 
         response = self.client.get(reverse('core:patient-activate-detail', args=(pt.id,)))
         status = pt.get_status()

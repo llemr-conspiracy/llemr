@@ -193,27 +193,14 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
             'volunteer': volunteer,
         }
 
-        workup_models.ClinicType.objects.create(name="Basic Care Clinic")
-
         # various time references used in object creation
         tomorrow = now().date() + datetime.timedelta(days=1)
         yesterday = now().date() - datetime.timedelta(days=1)
         earlier_this_week = now().date() - datetime.timedelta(days=5)
         last_week = now().date() - datetime.timedelta(days=15)
 
-        tomorrow_clindate = workup_models.ClinicDate.objects.create(
-            clinic_type=workup_models.ClinicType.objects.first(),
-            clinic_date=tomorrow)
-        yesterday_clindate = workup_models.ClinicDate.objects.create(
-            clinic_type=workup_models.ClinicType.objects.first(),
-            clinic_date=yesterday)
-        last_week_clindate = workup_models.ClinicDate.objects.create(
-            clinic_type=workup_models.ClinicType.objects.first(),
-            clinic_date=earlier_this_week)
         # log_in_provider(self.client, build_user(["Attending"]))
-
-        pt1 = models.Patient.objects.get(pk=1)
-        self.pt1 = pt1
+        self.pt1 = models.Patient.objects.get(pk=1)
 
         pt_prototype = {
             'phone': '+49 178 236 5288',
@@ -260,18 +247,29 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         # use default values
         wu_prototype = wu_dict()
 
+        models.EncounterStatus.objects.create(name="Active", is_active=True)
+
         # Give self.pt2 a workup one day later.
-        wu_prototype['clinic_day'] = tomorrow_clindate
+        wu_prototype['encounter'] = models.Encounter.objects.create(
+            patient=self.pt2,
+            clinic_day=tomorrow,
+            status=models.EncounterStatus.objects.first())
         wu_prototype['patient'] = self.pt2
         workup_models.Workup.objects.create(**wu_prototype)
 
         # Give pt3 a workup one day ago.
-        wu_prototype['clinic_day'] = yesterday_clindate
+        wu_prototype['encounter'] = models.Encounter.objects.create(
+            patient=self.pt3,
+            clinic_day=yesterday,
+            status=models.EncounterStatus.objects.first())
         wu_prototype['patient'] = self.pt3
         workup_models.Workup.objects.create(**wu_prototype)
 
         # Give pt1 a signed workup five days ago.
-        wu_prototype['clinic_day'] = yesterday_clindate
+        wu_prototype['encounter'] = models.Encounter.objects.create(
+            patient=self.pt1,
+            clinic_day=earlier_this_week,
+            status=models.EncounterStatus.objects.first())
         wu_prototype['patient'] = self.pt1
         wu_prototype['signer'] = self.users['attending']
         workup_models.Workup.objects.create(**wu_prototype)

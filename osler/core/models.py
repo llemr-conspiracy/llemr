@@ -267,6 +267,8 @@ class Patient(Person):
         # for a patient, then sorting them in memory.
 
         # Combine action items with referral followup requests for status
+        
+        #TODO: Change this into OSLER_TODO_LIST_MANAGERS
         patient_action_items = self.actionitem_set.all()
         referral_followup_requests = self.followuprequest_set.all()
         vaccine_action_items = self.vaccineactionitem_set.all()

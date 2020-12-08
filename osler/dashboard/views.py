@@ -10,6 +10,7 @@ from osler.core.models import Patient
 from osler.core.views import all_patients
 
 from osler.users.utils import get_active_role
+from osler.core.utils import get_clindates
 
 
 def dashboard_dispatch(request):
@@ -36,9 +37,10 @@ def dashboard_active(request):
 
 def dashboard_attending(request):
     
-    clinic_list = Encounter.objects.filter(workup__attending=request.user)
+    encounter_list = Encounter.objects.filter(workup__attending=request.user).order_by('clinic_day')
+    clinic_list = get_clindates(encounter_list)
 
-    paginator = Paginator(clinic_list, settings.OSLER_CLINIC_DAYS_PER_PAGE,
+    paginator = Paginator(encounter_list, settings.OSLER_CLINIC_DAYS_PER_PAGE,
                           allow_empty_first_page=True)
 
     page = request.GET.get('page')
@@ -56,5 +58,6 @@ def dashboard_attending(request):
     return render(request,
                   'dashboard/dashboard-attending.html',
                   {'clinics': clinics,
+                  'clinic_list':clinic_list,
                    'no_note_patients': no_note_patients
                    })
