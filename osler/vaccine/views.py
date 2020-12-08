@@ -72,8 +72,8 @@ class VaccineDoseCreate(NoteFormView):
 
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         #if encounter for today's clinic day, select as initial
-        if Encounter.objects.filter(patient=pt, clinic_day=now()).exists():
-            initial['encounter'] = Encounter.objects.get(patient=pt, clinic_day=now())
+        if Encounter.objects.filter(patient=pt, clinic_day=now().date()).exists():
+            initial['encounter'] = Encounter.objects.get(patient=pt, clinic_day=now().date())
             
         return initial
 

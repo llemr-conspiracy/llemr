@@ -9,8 +9,8 @@ from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.views.generic.edit import FormView, UpdateView
 from django.views.generic.list import ListView
 from django.urls import reverse
-from django.core.exceptions import ImproperlyConfigured, MultipleObjectsReturned
-from django.db.models import Prefetch, FilteredRelation, Q
+from django.core.exceptions import ImproperlyConfigured
+from django.db.models import Prefetch
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.timezone import now
 
@@ -454,17 +454,6 @@ def all_patients(request, title='All Patients', active=False):
                     'object_list': patient_list,
                     'title': title
                   })
-
-
-def get_or_create_encounter(pt_id, clinic_id):
-    '''Returns 1 active encounter associated with this pt and clindate'''
-    try:
-        encounter, created = core_models.Encounter.objects.get_or_create(patient=pt_id, clinic_day=clinic_id,
-            defaults={'status': core_models.default_active_status()})
-    except MultipleObjectsReturned:
-        raise ValueError("Somehow there are multiple encounters for this patient and "
-            "clinc day. Please delete one in the admin panel or cry for help.")
-    return encounter
     
 
 def patient_activate_detail(request, pk, home=False):

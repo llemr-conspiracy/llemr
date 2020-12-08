@@ -9,6 +9,7 @@ from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from django.utils.text import slugify
 from django.urls import reverse
+from django.core.exceptions import MultipleObjectsReturned
 
 from simple_history.models import HistoricalRecords
 from adminsortable.models import SortableMixin
@@ -268,8 +269,10 @@ class Patient(Person):
         # Combine action items with referral followup requests for status
         patient_action_items = self.actionitem_set.all()
         referral_followup_requests = self.followuprequest_set.all()
+        vaccine_action_items = self.vaccineactionitem_set.all()
         patient_action_items = list(chain(patient_action_items,
-                                          referral_followup_requests))
+                                          referral_followup_requests,
+                                          vaccine_action_items))
 
         done = [ai for ai in patient_action_items if ai.completion_author is not None]
         overdue = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date <= now().date()]
@@ -341,7 +344,7 @@ class Patient(Person):
 
     def last_encounter(self):
         if Encounter.objects.filter(patient=self.pk).exists():
-            last_encounter = Encounter.objects.filter(patient=self.pk).order_by('clinic_day').first()
+            last_encounter = Encounter.objects.filter(patient=self.pk).order_by('clinic_day').last()
             return last_encounter
         else:
             return None
@@ -357,16 +360,21 @@ class Patient(Person):
         user_has_group = user.groups.filter(pk=group.pk).exists()
         if user_has_group and self.group_can_activate(group):
             #active encounter then inactivate
-            if pt.get_status().is_active:
-                encounter = pt.last_encounter()
-                encounter.status = core_models.default_inactive_status()
+            if self.get_status().is_active:
+                encounter = self.last_encounter()
+                encounter.status = default_inactive_status()
                 encounter.save()
             else:
                 #no active encounter today, get today's encounter and activate or make new active
-                encounter = get_or_create_encounter(pt, now().date())
-                if not encounter.status.is_active:
-                    encounter.status = core_models.default_active_status()
-                    encounter.save()
+                try:
+                    encounter, created = Encounter.objects.get_or_create(patient=self, clinic_day=now().date(),
+                        defaults={'status': default_active_status()})
+                    if not encounter.status.is_active:
+                        encounter.status = default_active_status()
+                        encounter.save()
+                except MultipleObjectsReturned:
+                    raise ValueError("Somehow there are multiple encounters for this patient and "
+                        "clinc day. Please delete one in the admin panel or cry for help.")
         else:
             raise ValueError("Special permissions are required to change active status.")
 
@@ -472,7 +480,7 @@ class CompletableMixin(models.Model):
         return self.completion_date is not None
 
     def mark_done(self, user):
-        self.completion_date = now()
+        self.completion_date = now().date()
         self.completion_author = user
 
     def clear_done(self):

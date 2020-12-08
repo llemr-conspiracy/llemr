@@ -104,8 +104,8 @@ class MeasurementsCreate(FormView):
 
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         #if encounter for today's clinic day, select as initial
-        if Encounter.objects.filter(patient=pt, clinic_day=timezone.now()).exists():
-            initial['encounter'] = Encounter.objects.get(patient=pt, clinic_day=timezone.now())
+        if Encounter.objects.filter(patient=pt, clinic_day=timezone.now().date()).exists():
+            initial['encounter'] = Encounter.objects.get(patient=pt, clinic_day=timezone.now().date())
         
         return initial
 

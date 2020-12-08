@@ -172,11 +172,9 @@ class WorkupForm(ModelForm):
         queryset=get_user_model().objects.all()
     )
 
-    encounter = ModelChoiceField(queryset=None)
-
     def __init__(self, *args, **kwargs):
-        super(WorkupForm, self).__init__(*args, **kwargs)
         pt = kwargs.pop('pt')
+        super(WorkupForm, self).__init__(*args, **kwargs)
 
         self.helper = FormHelper()
         self.helper.form_method = 'post'
@@ -350,9 +348,7 @@ class WorkupForm(ModelForm):
 class AttestableBasicNoteForm(ModelForm):
     class Meta(object):
         model = models.AttestableBasicNote
-        fields = ['title', 'text']
-
-    encounter = ModelChoiceField(queryset=None)
+        fields = ['title', 'text','encounter']
 
     def __init__(self, *args, **kwargs):
         pt = kwargs.pop('pt')
@@ -366,7 +362,7 @@ class AttestableBasicNoteForm(ModelForm):
 class BasicNoteForm(ModelForm):
     class Meta(object):
         model = models.BasicNote
-        fields = ['title', 'text']
+        fields = ['title', 'text','encounter']
 
     encounter = ModelChoiceField(queryset=None)
 

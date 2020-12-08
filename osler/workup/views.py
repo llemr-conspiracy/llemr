@@ -12,8 +12,8 @@ from django.views.generic.edit import FormView
 from django.urls import reverse
 from django.utils.timezone import now
 
-from osler.core.views import NoteFormView, NoteUpdate, get_or_create_encounter
-from osler.core.models import Patient, Encounter, EncounterStatus, default_active_status
+from osler.core.views import NoteFormView, NoteUpdate
+from osler.core.models import Patient, Encounter
 
 from osler.workup import models
 from osler.workup import forms
