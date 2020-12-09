@@ -11,12 +11,6 @@ from osler.followup import forms
 from osler.followup import models
 
 
-def followup_choice(request, pt_id):
-    '''Prompt the user to choose a follow up type.'''
-    pt = get_object_or_404(Patient, pk=pt_id)
-    return render(request, 'core/followup-choice.html', {'patient': pt})
-
-
 class FollowupUpdate(NoteUpdate):
     template_name = "core/form-update.html"
 
@@ -29,12 +23,6 @@ class ActionItemFollowupUpdate(FollowupUpdate):
     model = models.ActionItemFollowup
     form_class = forms.ActionItemFollowup
     note_type = "Action Item Followup"
-
-
-class LabFollowupUpdate(FollowupUpdate):
-    model = models.LabFollowup
-    form_class = forms.LabFollowup
-    note_type = "Lab Followup"
 
 
 class FollowupCreate(NoteFormView):

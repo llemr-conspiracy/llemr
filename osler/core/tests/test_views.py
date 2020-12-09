@@ -173,8 +173,7 @@ class ViewsExistTest(TestCase):
     def test_pt_urls(self):
         pt_urls = ['core:patient-detail',
                    'core:new-action-item',
-                   'core:patient-update',
-                   'followup-choice'
+                   'core:patient-update'
         ]
 
         pt = models.Patient.objects.first()

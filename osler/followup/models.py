@@ -100,20 +100,3 @@ class ActionItemFollowup(Followup):
 
     def type(self):
         return "Action Item"
-
-
-class LabFollowup(Followup):
-    '''Datamodel for a follow up for lab results.'''
-
-    # Template relies on following variable to render Admin Edit. If you change the variable here, you must edit patient_detail.html
-    CS_HELP = "Were you able to communicate the results?"
-    communication_success = models.BooleanField(help_text=CS_HELP)
-
-    history = HistoricalRecords()
-
-    def type(self):
-        return "Lab"
-
-    def short_text(self):
-        return ("successfully reached" if self.communication_success else
-                "failed to reach") + " patient regarding lab results."

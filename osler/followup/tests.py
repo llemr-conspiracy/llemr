@@ -10,8 +10,6 @@ from osler.core.models import Gender, Patient, ActionItem, ActionInstruction
 
 from osler.core.tests.test_views import log_in_user, build_user
 
-FU_TYPES = ["labs"]
-
      
 class FollowupTest(TestCase):
     fixtures = ['followup', 'core']
@@ -31,7 +29,6 @@ class FollowupTest(TestCase):
             patient=Patient.objects.all()[0])
 
     def tearDown(self):
-        models.LabFollowup.objects.all().delete()
         models.ActionItemFollowup.objects.all().delete()
 
     def test_followup_view_urls(self):
@@ -48,19 +45,6 @@ class FollowupTest(TestCase):
             name="better things to do")
 
         for i in range(101):
-            # Lab Followup
-            lf = models.LabFollowup.objects.create(
-                contact_method=method,
-                contact_resolution=res,
-                author=self.user,
-                author_type=self.user.groups.first(),
-                patient=pt,
-                communication_success=True)
-
-            url = reverse('followup', kwargs={"pk": lf.id, "model": 'Lab'})
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
-
             aif = models.ActionItemFollowup.objects.create(
                 contact_method=method,
                 contact_resolution=res,
@@ -80,13 +64,6 @@ class FollowupTest(TestCase):
         pt = Patient.objects.all()[0]
         ai = ActionItem.objects.all()[0]
 
-        for fu_type in FU_TYPES:
-            url = reverse("new-followup",
-                          kwargs={"pt_id": pt.id, 'ftype': fu_type.lower()})
-
-            response = self.client.get(url)
-            self.assertEqual(response.status_code, 200)
-
         response = self.client.get(reverse("new-actionitem-followup",
             kwargs={'pt_id': pt.id, 'ai_id': ai.id}))
         self.assertEqual(response.status_code, 200)
@@ -104,12 +81,6 @@ class FollowupTest(TestCase):
                 "comments": "",
                 button_clicked: True
                 }
-
-            submitted_lab_fu = dict(submitted_gen_fu)
-            submitted_lab_fu["communication_success"] = True
-
-            self.verify_fu(models.LabFollowup, 'labs',
-                           submitted_lab_fu)
 
             ai = ActionItem.objects.all()[0]
             submitted_ai_fu = dict(submitted_gen_fu)
