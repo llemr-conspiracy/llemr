@@ -17,7 +17,6 @@ from osler.referral.forms import PatientContactForm
 
 from osler.core.tests import factories
 from osler.users.tests import factories as user_factories
-from osler.workup.tests import factories as workup_factories
 
 
 def build_user(group_factories=None, username=None, password=None):
@@ -175,8 +174,7 @@ class ViewsExistTest(TestCase):
         pt_urls = ['core:patient-detail',
                    'core:new-action-item',
                    'core:patient-update',
-                   'followup-choice',
-                   'new-clindate',
+                   'followup-choice'
         ]
 
         pt = models.Patient.objects.first()
@@ -463,25 +461,19 @@ class PatientStatusTest(TestCase):
 
     def test_activate_perms(self):
         pt = factories.PatientFactory()
-        status = pt.get_status()
-        assert not status.is_active
+        assert not pt.get_status().is_active
 
-        response = self.client.get(reverse('core:patient-activate-detail', args=(pt.id,)))
-        status = pt.get_status()
-        assert status.is_active
+        pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
+        assert pt.get_status().is_active
 
         attending = build_user([user_factories.AttendingGroupFactory])
-        log_in_user(self.client, attending)
         with self.assertRaises(ValueError):
-            response = self.client.get(reverse('core:patient-activate-detail', args=(pt.id,)))
-        status = pt.get_status()
-        assert status.is_active
+            pt.toggle_active_status(attending, attending.groups.first())
+        assert pt.get_status().is_active
 
         volunteer = build_user([user_factories.VolunteerGroupFactory])
-        log_in_user(self.client, attending)
         with self.assertRaises(ValueError):
-            response = self.client.get(reverse('core:patient-activate-detail', args=(pt.id,)))
-        status = pt.get_status()
-        assert status.is_active
+            pt.toggle_active_status(volunteer, volunteer.groups.first())
+        assert pt.get_status().is_active
         
 

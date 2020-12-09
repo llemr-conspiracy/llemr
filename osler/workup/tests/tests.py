@@ -8,9 +8,10 @@ from django.core.management import call_command
 from django.utils.timezone import now
 
 from osler.core.tests.test_views import build_user, log_in_user
-from osler.core.models import Patient
+from osler.core.models import Patient, Encounter, EncounterStatus
 
 import osler.users.tests.factories as user_factories
+import osler.core.tests.factories as core_factories
 
 from osler.workup import validators
 from osler.workup import models
@@ -18,14 +19,22 @@ from osler.workup import models
 import factory
 
 
-def wu_dict(user=None, units=False, clinic_day_pk=False, dx_category=False):
+def wu_dict(user=None, units=False, dx_category=False):
 
     if not user:
         user = build_user()
 
     fake_text = 'abc'
 
-    wu = {'clinic_day': models.ClinicDate.objects.first(),
+    pt = core_factories.PatientFactory()
+    status = core_factories.EncounterStatusFactory()
+
+    e = Encounter.objects.create(
+        patient=pt,
+        clinic_day=now().date(),
+        status=status)
+
+    wu = {'encounter': e,
           'chief_complaint': "SOB",
           'diagnosis': "MI",
           'hpi': fake_text,
@@ -40,10 +49,9 @@ def wu_dict(user=None, units=False, clinic_day_pk=False, dx_category=False):
           'labs_ordered_internal': 'f', 'labs_ordered_external': 'f',
           'got_voucher': False,
           'got_imaging_voucher': False,
-          'will_return': True,
           'author': user,
           'author_type': user.groups.first(),
-          'patient': Patient.objects.first()
+          'patient': pt
           }
 
     if units:
@@ -51,15 +59,15 @@ def wu_dict(user=None, units=False, clinic_day_pk=False, dx_category=False):
         wu['weight_units'] = 'lbs'
         wu['height_units'] = 'in'
 
-    if clinic_day_pk:
-        wu['clinic_day'] = wu['clinic_day'].pk
-
     if dx_category:
         wu['diagnosis_categories'] = [models.DiagnosisType.objects.first().pk]
 
     return wu
 
-def note_dict(user=None):
+def note_dict(user=None, encounter_pk=True):
+
+    pt = core_factories.PatientFactory()
+    status = core_factories.EncounterStatusFactory()
 
     if not user:
         user = build_user()
@@ -69,8 +77,14 @@ def note_dict(user=None):
         'text': 'boy',
         'author': user,
         'author_type': user.groups.first(),
-        'patient': Patient.objects.first()
+        'patient': pt
     }
+
+    if encounter_pk:
+        pn['encounter'] = Encounter.objects.create(
+            patient=pt,
+            clinic_day=now().date(),
+            status=status)
 
     return pn
 
@@ -83,14 +97,9 @@ class TestEmailForUnsignedNotes(TestCase):
         self.user = build_user([user_factories.AttendingGroupFactory])
         log_in_user(self.client, self.user)
 
-        models.ClinicType.objects.create(name="Basic Care Clinic")
-        models.ClinicDate.objects.create(
-            clinic_type=models.ClinicType.objects.first(),
-            clinic_date=now().date())
-
     def test_unsigned_email(self):
 
-        pt = Patient.objects.first()
+        pt = core_factories.PatientFactory()
 
         wu_data = wu_dict(user=self.user)
         wu_data['attending'] = self.user
@@ -114,41 +123,6 @@ class TestEmailForUnsignedNotes(TestCase):
         # self.assertIn(
         #     'https://osler.wustl.edu/workup/%s/' % wu_unsigned.pk,
         #     mail.outbox[0].body)
-
-
-class TestClinDateViews(TestCase):
-
-    fixtures = ['workup', 'core']
-
-    def setUp(self):
-        self.provider = log_in_user(
-            self.client,
-            build_user())
-
-    def test_create_clindate(self):
-
-        pt = Patient.objects.first()
-
-        # First delete clindate that's created in the fixtures.
-        models.ClinicDate.objects.all().delete()
-        self.assertEqual(models.ClinicDate.objects.count(), 0)
-
-        r = self.client.get(reverse('new-clindate', args=(pt.id,)))
-        self.assertEqual(r.status_code, 200)
-
-        r = self.client.post(
-            reverse('new-clindate', args=(pt.id,)),
-            {'clinic_type': models.ClinicType.objects.first().pk})
-
-        self.assertRedirects(r, reverse('core:patient-detail', args=(pt.id,)))
-        self.assertEqual(models.ClinicDate.objects.count(), 1)
-
-        # what happens if we submit twice?
-        r = self.client.post(
-            reverse('new-clindate', args=(pt.id,)),
-            {'clinic_type': models.ClinicType.objects.first().pk})
-        self.assertRedirects(r, reverse('core:patient-detail', args=(pt.id,)))
-        self.assertEqual(models.ClinicDate.objects.count(), 1)
 
 
 class TestWorkupFieldValidators(TestCase):

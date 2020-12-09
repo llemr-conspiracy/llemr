@@ -3,6 +3,7 @@ import os
 
 from django.conf import settings
 from django.db.models.signals import post_save
+from django.utils.timezone import now
 
 import factory
 from factory.django import DjangoModelFactory, mute_signals
@@ -48,6 +49,7 @@ class ContactMethodFactory(DjangoModelFactory):
 
     class Meta:
         model = models.ContactMethod
+        django_get_or_create = ('name',)
 
     name = factory.Iterator(["Telephone", "Banana Phone",
                              "Telekinesis", "Carrier Pidgeon",
@@ -60,6 +62,18 @@ class EthnicityFactory(DjangoModelFactory):
         model = models.Ethnicity
 
     name = factory.Sequence(lambda n: "Ethnicity %03d" % n)
+
+
+class EncounterStatusFactory(DjangoModelFactory):
+
+    class Meta:
+        model = models.EncounterStatus
+        django_get_or_create = ('name',)
+
+    name = factory.Iterator(["Arrived", "Team in Room",
+                             "Awaiting Attending", "Checkout",
+                             "Awaiting Labs", "Other teams"])
+    is_active = True
 
 
 class PatientFactory(DjangoModelFactory):
@@ -152,3 +166,11 @@ class ActionItemFactory(DjangoModelFactory):
     # if those things aren't specified (maybe with a post_generation hook)
     # but I can't figure out how to make that work. -JRP
 
+class EncounterFactory(DjangoModelFactory):
+
+    class Meta:
+        model = models.Encounter
+
+    patient = factory.SubFactory(PatientFactory)
+    status = factory.SubFactory(EncounterStatusFactory)
+    clinic_day = now().date()

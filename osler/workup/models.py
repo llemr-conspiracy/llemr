@@ -139,7 +139,6 @@ class Workup(Note, AttestationMixin):
         related_name="other_volunteer",
         help_text="Which other volunteer(s) did you work with (if any)?")
 
-    #did not WANT to make this null=True but the db migration...
     encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE)
 
     chief_complaint = models.CharField(max_length=1000, verbose_name="CC", blank=True)
@@ -211,15 +210,6 @@ class Workup(Note, AttestationMixin):
     patient_pays_imaging = models.DecimalField(
         max_digits=6, decimal_places=2, blank=True, null=True,
         validators=[MinValueValidator(0)])
-
-    # Please note that these are no longer shown on the form and will not
-    # be filled out because the referral app handles this functionality
-    #Any reason why we can't just trash these fields then???
-    referral_type = models.ManyToManyField(ReferralType, blank=True)
-    referral_location = models.ManyToManyField(ReferralLocation, blank=True)
-
-    will_return = models.BooleanField(default=False,
-                                      help_text="Will the pt. return to SNHC?")
 
     a_and_p = models.TextField(verbose_name="A and P", blank=True)
 

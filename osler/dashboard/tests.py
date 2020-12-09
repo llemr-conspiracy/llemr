@@ -56,6 +56,8 @@ class TestAttendingDashboard(TestCase):
             clinic_day=now().date(),
             status=EncounterStatus.objects.first())
 
+        Encounter.objects.create(patient=Patient.objects.first(), **self.encounter_info)
+
         self.wu2 = Workup.objects.create(
             encounter=Encounter.objects.create(
                 patient=self.pt2,
@@ -112,23 +114,22 @@ class TestAttendingDashboard(TestCase):
             response.context['no_note_patients'][0],
             Patient.objects.get(pk=1))
 
-        # and one clinic day
+        # and one encounter with workup assigned to our attending
         self.assertEqual(len(response.context['clinics']), 1)
-        # with two patients
+        # with one patient
         self.assertContains(response, reverse('core:patient-detail',
                                               args=(self.pt2.pk,)))
-        self.assertContains(response, reverse('core:patient-detail',
-                                              args=(pt3.pk,)))
-        # both of which are marked as unattested
-        self.assertContains(response, '<tr  class="warning" >', count=2)
+        # which is marked as unattested
+        self.assertContains(response, '<tr  class="warning" >', count=1)
 
+        wu3.attending = self.attending
         wu3.sign(self.attending, self.attending.groups.first())
         wu3.save()
 
         response = self.client.get(reverse('dashboard-attending'))
 
-        # still one clinic day
-        self.assertEqual(len(response.context['clinics']), 1)
+        # now two encounters with workup assigned to our attending
+        self.assertEqual(len(response.context['clinics']), 2)
         # with two patients
         self.assertContains(response, reverse('core:patient-detail',
                                               args=(self.pt2.pk,)))
@@ -175,7 +176,7 @@ class TestAttendingDashboard(TestCase):
             e = Encounter.objects.create(
                 clinic_day=datetime.date(2001, i + 1, 1),
                 patient=pt,
-                status=EncounterStatus.objects.first())
+                status=EncounterStatus.objects.first(),)
             Workup.objects.create(
                 attending=self.attending,
                 encounter=e,
@@ -215,14 +216,11 @@ class TestAttendingDashboard(TestCase):
                 phone='454545', gender=Gender.objects.first(),
                 address='A', city='B', state='C',
                 zip_code='12345', pcp_preferred_zip='12345',
-                date_of_birth=datetime.date(1992, i + 3, 22),
+                date_of_birth=datetime.date(1992, i + 1, 22),
                 patient_comfortable_with_english=False,
                 preferred_contact_method=ContactMethod.objects.first(),
             )
-            e = Encounter.objects.create(
-                clinic_day=datetime.date(2001, i + 1, 1),
-                patient=pt,
-                status=EncounterStatus.objects.first())
+            e = Encounter.objects.create(patient=pt, **self.encounter_info)
             Workup.objects.create(
                 attending=self.attending,
                 encounter=e,
@@ -232,10 +230,12 @@ class TestAttendingDashboard(TestCase):
                 **self.wu_info)
 
         response = self.client.get(reverse('dashboard-attending') +
-                                   '?page=999')
+                                   '?page=99')
 
+        #Making 10 encounters with 3 per page, should make 4 pages
+        #So the previous button should go towards the page before
         n_pages = (Encounter.objects.count() //
-                   settings.OSLER_CLINIC_DAYS_PER_PAGE)
+                   settings.OSLER_CLINIC_DAYS_PER_PAGE)-1
 
         # since we're on the last page, the "back" pagination button
         # should be enabled (i.e. no 'class="disabled"')

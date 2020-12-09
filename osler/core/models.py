@@ -482,7 +482,7 @@ class CompletableMixin(models.Model):
         return self.completion_date is not None
 
     def mark_done(self, user):
-        self.completion_date = now().date()
+        self.completion_date = now()
         self.completion_author = user
 
     def clear_done(self):

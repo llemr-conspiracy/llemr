@@ -67,6 +67,7 @@ class MeasurementsCreationForm(Form):
         self.fields_display.append(Field('lab_time'))
         if self.lab_pk is not None:
             self.fields['lab_time'].initial = models.Lab.objects.get(pk=self.lab_pk).lab_time
+            self.fields['encounter'].initial = models.Lab.objects.get(pk=self.lab_pk).encounter
 
         self.measurements_list = []
         if self.lab_pk is not None:
