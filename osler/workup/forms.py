@@ -20,6 +20,9 @@ from past.utils import old_div
 
 from django.utils.translation import gettext_lazy as _
 
+from dal import autocomplete
+from osler.inventory.models import Drug
+
 
 def form_required_if(form, conditional, fields):
     """Adds an error to the form if conditional is truthy-false and any
@@ -166,10 +169,14 @@ class WorkupForm(ModelForm):
         ).distinct()
     )
 
-    other_volunteer = ModelMultipleChoiceField(
-        required=False,
-        queryset=get_user_model().objects.all()
-    )
+    # other_volunteer = ModelMultipleChoiceField(
+    #     required=False,
+    #     queryset=get_user_model().objects.all()
+    # )
+
+    other_volunteer = ModelChoiceField(
+        queryset=Drug.objects.all(),
+        widget=autocomplete.ModelSelect2(url='medications-autocomplete'))
 
     def __init__(self, *args, **kwargs):
         super(WorkupForm, self).__init__(*args, **kwargs)

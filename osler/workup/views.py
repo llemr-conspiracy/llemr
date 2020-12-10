@@ -23,6 +23,25 @@ from osler.users.decorators import active_permission_required
 
 from django.utils.translation import gettext_lazy as _
 
+from dal import autocomplete
+from osler.inventory.models import Drug
+
+
+class MedicationsAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        # if not self.request.user.is_authenticated():
+            
+        #     return Drug.objects.none()
+
+        qs = Drug.objects.all()
+        print(qs)
+
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+
+        return qs
+
 
 def get_clindates():
     '''Get the clinic dates associated with today.'''

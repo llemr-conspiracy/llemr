@@ -40,6 +40,10 @@ unwrapped_urlconf = [
         r'^(?P<pk>[0-9]+)/pdf/$',
         views.pdf_workup,
         name="workup-pdf"),
+    re_path(
+        r'^medications-autocomplete/$',
+        views.MedicationsAutocomplete.as_view(),
+        name='medications-autocomplete'),
 
     # ATTESTABLE BASIC NOTES
     re_path(
