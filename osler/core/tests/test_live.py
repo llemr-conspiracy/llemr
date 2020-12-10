@@ -173,7 +173,7 @@ class LiveTesting(SeleniumLiveTestCase):
                               " to have a jumbotron element."]))
 
 
-class LiveTestPatientLists(SeleniumLiveTestCase):
+class LiveTestAllPatients(SeleniumLiveTestCase):
     fixtures = BASIC_FIXTURES
 
     def setUp(self):
@@ -471,3 +471,4 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         assert str(self.pt2) not in present_pt_names
         assert str(self.pt3) not in present_pt_names
         assert str(self.pt5) in present_pt_names
+

@@ -15,6 +15,7 @@ from osler.workup.models import Workup
 
 from osler.core.tests.test_views import log_in_user, build_user
 from osler.users.tests import factories as user_factories
+from osler.core.tests import factories as core_factories
 
 
 def dewhitespace(s):
@@ -253,3 +254,40 @@ class TestAttendingDashboard(TestCase):
                     <span aria-hidden="true">&raquo;</span>
                 </a> </li>'''),
             dewhitespace(response.content.decode('utf-8')))
+
+
+class TestActiveDashboard(TestCase):
+
+    def setUp(self):
+        self.coordinator = build_user([user_factories.CaseManagerGroupFactory])
+        log_in_user(self.client, self.coordinator)
+
+        self.pt1 = core_factories.PatientFactory()
+        self.pt2 = core_factories.PatientFactory()
+        self.pt3 = core_factories.PatientFactory()
+
+        #pt1 has an active encounter today
+        self.encounter1 = core_factories.EncounterFactory(patient=self.pt1)
+        self.encounter1.order = 1
+        #pt2 has an active encounter today
+        self.encounter2 = core_factories.EncounterFactory(patient=self.pt2)
+        self.encounter2.order = 2
+        #pt3 has an inactive encounter today
+        self.encounter3 = core_factories.EncounterFactory(patient=self.pt3,
+            status=core_factories.EncounterStatusFactory(name="Nope",is_active=False))
+        self.encounter3.order = 3
+
+    def test_active_pts_reorder(self):
+        response = self.client.get(reverse('dashboard-active'))
+        #only 2 active patients
+        assert len(response.context['object_list'])==2
+        assert response.context['object_list'][0] == self.pt1
+        
+        self.encounter1.order = 2
+        self.encounter1.save()
+        self.encounter2.order =1
+        self.encounter2.save()
+
+        #now pt2 should be first
+        response = self.client.get(reverse('dashboard-active'))
+        assert response.context['object_list'][0] == self.pt2

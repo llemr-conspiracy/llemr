@@ -474,5 +474,25 @@ class PatientStatusTest(TestCase):
         with self.assertRaises(ValueError):
             pt.toggle_active_status(volunteer, volunteer.groups.first())
         assert pt.get_status().is_active
-        
 
+    def test_activate_encounter_logic(self):
+        pt = factories.PatientFactory()
+        #new patient should have no encounters
+        assert not models.Encounter.objects.filter(patient=pt).exists()
+
+        pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
+        #now one encounter today that is active
+        assert len(models.Encounter.objects.filter(patient=pt)) == 1
+        encounter = models.Encounter.objects.get(patient=pt)
+        assert encounter.clinic_day == now().date()
+        assert encounter.status.is_active
+        
+        pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
+        #inactivates that encounter
+        assert not models.Encounter.objects.get(patient=pt).status.is_active
+
+        pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
+        #reactivates that encounter but doesn't make a new one
+        assert models.Encounter.objects.get(patient=pt).status.is_active
+        assert len(models.Encounter.objects.filter(patient=pt)) == 1
+        
