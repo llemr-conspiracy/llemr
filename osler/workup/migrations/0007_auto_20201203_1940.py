@@ -15,12 +15,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='attestablebasicnote',
             name='encounter',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.encounter'),
+            field=models.ForeignKey(null=True,on_delete=django.db.models.deletion.CASCADE, to='core.encounter'),
         ),
         migrations.AddField(
             model_name='basicnote',
             name='encounter',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.encounter'),
+            field=models.ForeignKey(null=True,on_delete=django.db.models.deletion.CASCADE, to='core.encounter'),
         ),
         migrations.AddField(
             model_name='historicalattestablebasicnote',
@@ -40,6 +40,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='workup',
             name='encounter',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.encounter'),
+            field=models.ForeignKey(null=True,on_delete=django.db.models.deletion.CASCADE, to='core.encounter'),
         ),
     ]

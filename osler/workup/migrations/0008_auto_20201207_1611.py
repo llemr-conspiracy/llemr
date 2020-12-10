@@ -30,4 +30,35 @@ class Migration(migrations.Migration):
         migrations.DeleteModel(
             name='ClinicType',
         ),
+        migrations.AlterField(
+            model_name='workup',
+            name='encounter',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.encounter'),
+        ),
+        migrations.AlterField(
+            model_name='basicnote',
+            name='encounter',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.encounter'),
+        ),
+        migrations.AlterField(
+            model_name='attestablebasicnote',
+            name='encounter',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='core.encounter'),
+        ),
+        migrations.RemoveField(
+            model_name='historicalworkup',
+            name='will_return',
+        ),
+        migrations.RemoveField(
+            model_name='workup',
+            name='referral_location',
+        ),
+        migrations.RemoveField(
+            model_name='workup',
+            name='referral_type',
+        ),
+        migrations.RemoveField(
+            model_name='workup',
+            name='will_return',
+        ),
     ]
