@@ -1,0 +1,4 @@
+.select2-selection__choice ,.select2-search__field{
+  margin-top: 0 !important;
+  margin-bottom: 5px !important;
+}

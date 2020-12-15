@@ -25,22 +25,7 @@ from django.utils.translation import gettext_lazy as _
 
 from dal import autocomplete
 from osler.inventory.models import Drug
-
-
-class MedicationsAutocomplete(autocomplete.Select2QuerySetView):
-    def get_queryset(self):
-        # Don't forget to filter out results depending on the visitor !
-        # if not self.request.user.is_authenticated():
-            
-        #     return Drug.objects.none()
-
-        qs = Drug.objects.all()
-        print(qs)
-
-        if self.q:
-            qs = qs.filter(name__istartswith=self.q)
-
-        return qs
+from django.utils.html import format_html
 
 
 def get_clindates():
@@ -212,11 +197,21 @@ class WorkupCreate(NoteFormView):
             wu.sign(self.request.user, active_role)
 
         wu.save()
+        # create prescriptions based on form submissions  
 
         form.save_m2m()
 
         return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
 
+class MedicationsAutocomplete(autocomplete.Select2QuerySetView):
+    def get_result_label(self, item):
+        return format_html(' {} Dose:<input class="med-input" type="text" >', item.name, item.name)
+
+    def get_queryset(self):
+        qs = Drug.objects.all()
+        if self.q:
+            qs = qs.filter(name__istartswith=self.q)
+        return qs
 
 class WorkupUpdate(NoteUpdate):
     template_name = "core/form-update.html"
@@ -231,7 +226,6 @@ class WorkupUpdate(NoteUpdate):
         '''
         active_role = get_active_role(self.request)
         wu = get_object_or_404(models.Workup, pk=kwargs['pk'])
-
         # if it's an attending, we allow updates.  
         if self.model.group_can_sign(active_role) or not wu.signed():
             return super(WorkupUpdate, self).dispatch(*args, **kwargs)

@@ -69,7 +69,7 @@
             <strong>PSH:</strong> {{workup.psh | linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>Medications:</strong> {{workup.meds | linebreaksbr }}
+            <strong>Medications:</strong> {{workup.meds.iterator | join:", " }}
         </div>
         <div class="col-md-12">
             <strong>Allergies:</strong> {{workup.allergies | linebreaksbr }}

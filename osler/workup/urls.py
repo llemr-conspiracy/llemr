@@ -42,7 +42,7 @@ unwrapped_urlconf = [
         name="workup-pdf"),
     re_path(
         r'^medications-autocomplete/$',
-        views.MedicationsAutocomplete.as_view(),
+        views.MedicationsAutocomplete.as_view(create_field='name'),
         name='medications-autocomplete'),
 
     # ATTESTABLE BASIC NOTES

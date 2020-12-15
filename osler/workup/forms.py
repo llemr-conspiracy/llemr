@@ -169,14 +169,23 @@ class WorkupForm(ModelForm):
         ).distinct()
     )
 
-    # other_volunteer = ModelMultipleChoiceField(
-    #     required=False,
-    #     queryset=get_user_model().objects.all()
-    # )
+    other_volunteer = ModelMultipleChoiceField(
+        required=False,
+        queryset=get_user_model().objects.all()
+    )
 
-    other_volunteer = ModelChoiceField(
+    meds = ModelMultipleChoiceField(
         queryset=Drug.objects.all(),
-        widget=autocomplete.ModelSelect2(url='medications-autocomplete'))
+        widget=autocomplete.ModelSelect2Multiple(
+            url='medications-autocomplete',
+            attrs={
+                'data-placeholder': 'Search medications and enter prescriptions',
+                'data-html': True,
+                'data-minimum-input-length': 1,
+                'data-maximum-selection-length': 4,
+                # 'data-template-selection': function(argSelection){return $.parseHTML('<span class="tag">'+(argSelection.name | | argSelection.text)+'<input type="text" value="" /></span>')}
+            }
+    ))
 
     def __init__(self, *args, **kwargs):
         super(WorkupForm, self).__init__(*args, **kwargs)
@@ -201,7 +210,7 @@ class WorkupForm(ModelForm):
                 Div('psh', css_class='col-md-6'),
                 Div('fam_hx', css_class='col-md-6'),
                 Div('soc_hx', css_class='col-md-6'),
-                Div('meds', css_class='col-md-6'),
+                Div('meds', css_class='col-md-6 h-100'),
                 Div('allergies', css_class='col-md-6'),
                 Div('ros', css_class='col-xs-12')),
 

@@ -17,6 +17,8 @@ from simple_history.models import HistoricalRecords
 
 from django.utils.translation import gettext_lazy as _
 
+from osler.inventory.models import Drug
+
 
 class DiagnosisType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
@@ -212,7 +214,8 @@ class Workup(Note, AttestationMixin):
     hpi = models.TextField(verbose_name="HPI", blank=True)
     pmh = models.TextField(verbose_name="PMH", blank=True)
     psh = models.TextField(verbose_name="PSH", blank=True)
-    meds = models.TextField(verbose_name="Medications", blank=True)
+    # meds = models.TextField(verbose_name="Medications", blank=True)
+    meds = models.ManyToManyField(Drug, blank=True)
     allergies = models.TextField(blank=True)
     fam_hx = models.TextField(verbose_name="Family History", blank=True)
     soc_hx = models.TextField(verbose_name="Social History", blank=True)
