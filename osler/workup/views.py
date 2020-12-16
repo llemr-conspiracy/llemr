@@ -204,8 +204,12 @@ class WorkupCreate(NoteFormView):
         return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
 
 class MedicationsAutocomplete(autocomplete.Select2QuerySetView):
-    def get_result_label(self, item):
-        return format_html(' {} Dose:<input class="med-input" type="text" >', item.name, item.name)
+    # def get_result_label(self, item):
+    #     return format_html(' {} <span>Dose: <input class="med-input" name="dose" type="text" ></span>\
+    #         <span> Route: <input class="med-input" name="route" type="text" ></span>\
+    #         <span> Freq: <input class="med-input" name="freq" type="text" ></span>\
+    #         <span> <input class="med-input" type="button" value="save" onclick="saveMed()";></span>',
+    #         item.name, item.name)
 
     def get_queryset(self):
         qs = Drug.objects.all()

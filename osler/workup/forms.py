@@ -179,13 +179,38 @@ class WorkupForm(ModelForm):
         widget=autocomplete.ModelSelect2Multiple(
             url='medications-autocomplete',
             attrs={
-                'data-placeholder': 'Search medications and enter prescriptions',
-                'data-html': True,
-                'data-minimum-input-length': 1,
+                'data-placeholder': 'Search meds',
+                # 'data-html': True,
+                # 'data-minimum-input-length': 1,
                 'data-maximum-selection-length': 4,
                 # 'data-template-selection': function(argSelection){return $.parseHTML('<span class="tag">'+(argSelection.name | | argSelection.text)+'<input type="text" value="" /></span>')}
             }
     ))
+
+    meds2 = ModelMultipleChoiceField(
+        queryset=Drug.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(
+            url='medications-autocomplete',
+            attrs={
+                'data-placeholder': 'Search meds',
+                # 'data-html': True,
+                # 'data-minimum-input-length': 1,
+                'data-maximum-selection-length': 4,
+                # 'data-template-selection': function(argSelection){return $.parseHTML('<span class="tag">'+(argSelection.name | | argSelection.text)+'<input type="text" value="" /></span>')}
+            }
+        ))
+    meds3 = ModelMultipleChoiceField(
+        queryset=Drug.objects.all(),
+        widget=autocomplete.ModelSelect2Multiple(
+            url='medications-autocomplete',
+            attrs={
+                'data-placeholder': 'Search meds',
+                # 'data-html': True,
+                # 'data-minimum-input-length': 1,
+                'data-maximum-selection-length': 4,
+                # 'data-template-selection': function(argSelection){return $.parseHTML('<span class="tag">'+(argSelection.name | | argSelection.text)+'<input type="text" value="" /></span>')}
+            }
+        ))
 
     def __init__(self, *args, **kwargs):
         super(WorkupForm, self).__init__(*args, **kwargs)
@@ -210,9 +235,12 @@ class WorkupForm(ModelForm):
                 Div('psh', css_class='col-md-6'),
                 Div('fam_hx', css_class='col-md-6'),
                 Div('soc_hx', css_class='col-md-6'),
-                Div('meds', css_class='col-md-6 h-100'),
-                Div('allergies', css_class='col-md-6'),
+                Div('allergies', css_class='col-md-12'),
                 Div('ros', css_class='col-xs-12')),
+            Row(HTML('<h3>Prescriptions</h3>'),
+                Div('meds', css_class='col-md-4'),
+                Div('meds2', css_class='col-md-4'),
+                Div('meds3', css_class='col-md-4')),
 
             Row(HTML('<h3>Physical Exam</h3>'),
                 HTML('<h4>Vital Signs</h4>'),

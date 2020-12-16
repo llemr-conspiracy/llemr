@@ -21,30 +21,97 @@
 	<script src={% static "js/jquery-1.11.2.min.js" %}></script>
   <script src={% static "js/bootstrap.min.js" %}></script>
 <script>  
+//prevent med options from loading when click on prescription input fields
 $(document).ready(function() {
-  console.log( "ready!" );
-// $eventSelect.on("select2:open", function (e) { log("select2:open", e); });
-  $("#div_id_meds").click(function(event){
     
+  $('#id_allergies').on('input', function() {
+      let $this = $(this)
+      let $clone = $this.clone()
 
-      console.log(( "clicked: " + event.target.className )); 
-      if(event.target.className == "med-input"){
-          $(this).find("input.med-input").focus();
+    //       let name = $clone.attr('name')
+    // let n = parseInt(name.split('_')[1]) + 1
+    // name = 'interest_' + n
+    // $clone.val('')
+    // $clone.attr('name', name)
+    $clone.appendTo($this.parent())
+    // $this.removeClass('interest-list-new')
+    $this.off('input', arguments.callee)
+    $clone.on('input', arguments.callee)
+})
+
+
+  $("#div_id_meds").click(function(event){
+      // console.log(( "clicked: " + event.target.className )); 
+      var selectedElement = event.target
+      if(selectedElement.className == "med-input"){  
+          selectedElement.focus();
+          // console.log($(event.target))
+          $(selectedElement).focusout(function() {
+            //save input values to data holder on click out
+            // console.log($("option:contains('Alfentanil')").text())
+            saveInput(selectedElement,selectedElement.name)
+          })
           $(document).on('select2:opening', function (e) {
-            console.log("opening")
             e.preventDefault();
             $(document).off('select2:opening');
-
-
           });
-        // });
       }
-
-    
+      else{
+        // repopulate input fields from dataHolder
+        $(document).on('select2:select', function (e) {
+          console.log("render")
+          $(".select2-selection__choice").each(function(){
+              dataHolderElement = $("option:contains('"+this.title+"')")
+              $(this).children().children().each(function(){
+                inputAttribute = $(this).children().attr('name')
+                inputElement = $(this).children().get(0)
+                inputElement.value = dataHolderElement.attr(inputAttribute);
+                // console.log($(this).children().get(0))
+                console.log('filling')
+              })
+          });
+        });
+      }
+    });
   });
 
-})
+function saveInput(inputElement){
+  element = inputElement.parentElement.parentElement.parentElement
+  dataHolderElement = $("option:contains('"+element.title+"')")
+  if(inputElement.name == "dose"){
+    dataHolderElement.attr('dose', $(inputElement).val());
+  }  
+  else if(inputElement.name == "route"){
+    dataHolderElement.attr('route', $(inputElement).val());
+  }
+  else if(inputElement.name == "freq"){
+    dataHolderElement.attr('freq', $(inputElement).val());
+  }  
+}
+
+function saveMed(){
+  console.log("saved")
+  option = document.createElement("option")
+  option.setAttribute("value","3")
+  option.innerHTML = "hacky, hack"
+  document.getElementById("id_allergies").appendChild(option)
+}
+
+              // console.log(dataHolderElement)
+
+              // // console.log($(this).find("input[name*='dose']"))
+              // fn = $(this).find("input[name*='dose']").get(0);
+              // if(fn){
+              //   console.log("works")
+              //   fn.placeholder = "stirng"
+              // }
+
+              // console.log(dataHolderElement.attr('dose'))
+              // console.log(fn)
 </script>
+
+
+
 
   <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
