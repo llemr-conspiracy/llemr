@@ -22,6 +22,7 @@ from django.utils.translation import gettext_lazy as _
 
 from dal import autocomplete
 from osler.inventory.models import Drug
+from osler.prescriptions.models import PrescriptionName, PrescriptionDose
 
 
 def form_required_if(form, conditional, fields):
@@ -174,43 +175,10 @@ class WorkupForm(ModelForm):
         queryset=get_user_model().objects.all()
     )
 
-    meds = ModelMultipleChoiceField(
-        queryset=Drug.objects.all(),
-        widget=autocomplete.ModelSelect2Multiple(
-            url='medications-autocomplete',
-            attrs={
-                'data-placeholder': 'Search meds',
-                # 'data-html': True,
-                # 'data-minimum-input-length': 1,
-                'data-maximum-selection-length': 4,
-                # 'data-template-selection': function(argSelection){return $.parseHTML('<span class="tag">'+(argSelection.name | | argSelection.text)+'<input type="text" value="" /></span>')}
-            }
-    ))
-
-    meds2 = ModelMultipleChoiceField(
-        queryset=Drug.objects.all(),
-        widget=autocomplete.ModelSelect2Multiple(
-            url='medications-autocomplete',
-            attrs={
-                'data-placeholder': 'Search meds',
-                # 'data-html': True,
-                # 'data-minimum-input-length': 1,
-                'data-maximum-selection-length': 4,
-                # 'data-template-selection': function(argSelection){return $.parseHTML('<span class="tag">'+(argSelection.name | | argSelection.text)+'<input type="text" value="" /></span>')}
-            }
-        ))
-    meds3 = ModelMultipleChoiceField(
-        queryset=Drug.objects.all(),
-        widget=autocomplete.ModelSelect2Multiple(
-            url='medications-autocomplete',
-            attrs={
-                'data-placeholder': 'Search meds',
-                # 'data-html': True,
-                # 'data-minimum-input-length': 1,
-                'data-maximum-selection-length': 4,
-                # 'data-template-selection': function(argSelection){return $.parseHTML('<span class="tag">'+(argSelection.name | | argSelection.text)+'<input type="text" value="" /></span>')}
-            }
-        ))
+    meds = fields.SelectMultiple(
+        choices=Drug.objects.all()
+    )
+    # dose = PrescriptionDose
 
     def __init__(self, *args, **kwargs):
         super(WorkupForm, self).__init__(*args, **kwargs)
@@ -238,10 +206,9 @@ class WorkupForm(ModelForm):
                 Div('allergies', css_class='col-md-12'),
                 Div('ros', css_class='col-xs-12')),
             Row(HTML('<h3>Prescriptions</h3>'),
-                Div('meds', css_class='col-md-4'),
-                Div('meds2', css_class='col-md-4'),
-                Div('meds3', css_class='col-md-4')),
-
+                Div('meds', css_class='col-md-12')
+                # Div('dose', css_class='col-md-6')
+            ),
             Row(HTML('<h3>Physical Exam</h3>'),
                 HTML('<h4>Vital Signs</h4>'),
                 Div(AppendedText('bp_sys', 'mmHg'),
@@ -317,7 +284,6 @@ class WorkupForm(ModelForm):
             'hpi', 
             'pmh',
             'psh',
-            'meds',
             'allergies',
             'fam_hx',
             'soc_hx',
