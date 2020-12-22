@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block header %}
-    <h1>{% if workup.is_pending %}{% trans 'Pending' %} {% endif %} {% trans 'Workup on' %} <a href="{% url 'core:patient-detail' pk=workup.patient.id %}">{{ workup.patient.name }}</a></h1>
+    <h1>{% if workup.is_pending %}{% trans 'Pending' %} {% endif %} {% trans 'Workup on ' %} <a href="{% url 'core:patient-detail' pk=workup.patient.id %}"> {{ workup.patient.name }}</a></h1>
     <p class="lead">{% trans 'Seen on' %} {{ workup.clinic_day.clinic_date }}</p>
     {% if workup.signed %}
     <p class="lead">{% blocktrans %}Attested by {{workup.signer}} on {{workup.signed_date}} {% endblocktrans %}</p>

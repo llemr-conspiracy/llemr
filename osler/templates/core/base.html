@@ -71,8 +71,8 @@
           {% endif %}
            <li><a href="{% url 'about' %}" target="_blank">{{settings.OSLER_ABOUT_NAME}} </a></li>
         </ul>
-				{% if user.is_authenticated %}
-				<ul class="nav navbar-nav pull-right">
+		{% if user.is_authenticated %}
+		<ul class="nav navbar-nav pull-right">
             {% if user.is_superuser %}
             <li><a href="{% url 'admin:index' %}">{% trans 'Admin' %}</a></li>
             {% endif %}
