@@ -60,8 +60,6 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # "django.contrib.humanize", # Handy template tags
-    "dal", #django-autocomplete-light, must be installed before django.contrib.admin to function
-    "dal_select2",  # https://django-autocomplete-light.readthedocs.io/en/3.5.1/install.html
     "django.contrib.admin",
     "django.forms",
 ]

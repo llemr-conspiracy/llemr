@@ -23,7 +23,6 @@ from osler.users.decorators import active_permission_required
 
 from django.utils.translation import gettext_lazy as _
 
-from dal import autocomplete
 from osler.inventory.models import Drug
 from django.utils.html import format_html
 
@@ -202,20 +201,6 @@ class WorkupCreate(NoteFormView):
         form.save_m2m()
 
         return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
-
-class MedicationsAutocomplete(autocomplete.Select2QuerySetView):
-    # def get_result_label(self, item):
-    #     return format_html(' {} <span>Dose: <input class="med-input" name="dose" type="text" ></span>\
-    #         <span> Route: <input class="med-input" name="route" type="text" ></span>\
-    #         <span> Freq: <input class="med-input" name="freq" type="text" ></span>\
-    #         <span> <input class="med-input" type="button" value="save" onclick="saveMed()";></span>',
-    #         item.name, item.name)
-
-    def get_queryset(self):
-        qs = Drug.objects.all()
-        if self.q:
-            qs = qs.filter(name__istartswith=self.q)
-        return qs
 
 class WorkupUpdate(NoteUpdate):
     template_name = "core/form-update.html"

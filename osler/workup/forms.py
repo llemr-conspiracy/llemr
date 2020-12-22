@@ -20,9 +20,8 @@ from past.utils import old_div
 
 from django.utils.translation import gettext_lazy as _
 
-from dal import autocomplete
 from osler.inventory.models import Drug
-from osler.prescriptions.models import PrescriptionName, PrescriptionDose
+from osler.prescriptions.models import Prescription
 
 
 def form_required_if(form, conditional, fields):
