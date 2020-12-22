@@ -408,6 +408,7 @@ class Document(Note):
                   "Delete all files after upload!"),
         upload_to=utils.make_filepath,
         verbose_name=_("PDF File or Image Upload")
+    )
     comments = models.TextField()
     document_type = models.ForeignKey(DocumentType, on_delete=models.PROTECT)
 
