@@ -15,6 +15,7 @@ from osler.core import validators
 from osler.core import utils
 
 from osler.users.utils import group_has_perm
+from django.utils.translation import gettext_lazy as _
 
 class Language(models.Model):
     """A natural language, spoken by a provider or patient.
@@ -107,19 +108,19 @@ class Person(models.Model):
         abstract = True
 
     first_name = models.CharField(
-        max_length=100, validators=[validators.validate_name])
+        max_length=100, validators=[validators.validate_name], verbose_name=_('first name'))
     last_name = models.CharField(
-        max_length=100, validators=[validators.validate_name])
+        max_length=100, validators=[validators.validate_name], verbose_name=_('last name'))
     middle_name = models.CharField(
-        max_length=100, blank=True, validators=[validators.validate_name])
+        max_length=100, blank=True, validators=[validators.validate_name], verbose_name=_('middle name'))
 
-    phone = models.CharField(max_length=40, null=True, blank=True)
+    phone = models.CharField(max_length=40, null=True, blank=True, verbose_name=_('phone'))
     languages = models.ManyToManyField(
-        Language, help_text="Specify here languages that are spoken at a "
+        Language, verbose_name=_('languages'), help_text=_("Specify here languages that are spoken at a "
                             "level sufficient to be used for medical "
-                            "communication.")
+                            "communication."))
 
-    gender = models.ForeignKey(Gender, on_delete=models.PROTECT)
+    gender = models.ForeignKey(Gender, on_delete=models.PROTECT, verbose_name=_('gender'))
 
     def name(self, reverse=True, middle_short=True):
         if self.middle_name:
@@ -173,27 +174,31 @@ class Patient(Person):
     case_managers = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
     outcome = models.ForeignKey(Outcome, null=True, blank=True,
-                                on_delete=models.PROTECT)
+                                on_delete=models.PROTECT, verbose_name=_('outcome'))
 
-    address = models.CharField(max_length=200)
-    city = models.CharField(max_length=50)
-    state = models.CharField(max_length=3)
+    address = models.CharField(max_length=200, verbose_name=_('address'))
+
+    city = models.CharField(max_length=50,
+                            default=_("St. Louis"), verbose_name=_('city'))
+    state = models.CharField(max_length=2,
+                             default=_("MO"), verbose_name=_('state'))
     zip_code = models.CharField(max_length=5,
-                                validators=[validators.validate_zip])
-    country = models.CharField(max_length=100)
+                                validators=[validators.validate_zip], verbose_name=_('zip code'))
+    country = models.CharField(max_length=100,
+                               default=_("USA"), verbose_name=_('country'))
 
     pcp_preferred_zip = models.CharField(max_length=5,
                                          validators=[validators.validate_zip],
                                          blank=True,
-                                         null=True)
+                                         null=True, verbose_name=_('pcp preferred zip'))
 
     date_of_birth = models.DateField(
-        help_text='MM/DD/YYYY',
-        validators=[validators.validate_birth_date])
+        help_text=_('MM/DD/YYYY'),
+        validators=[validators.validate_birth_date], verbose_name=_('date of birth'))
 
-    patient_comfortable_with_english = models.BooleanField(default=True)
+    patient_comfortable_with_english = models.BooleanField(default=True, verbose_name=_('patient comfortable with english'))
 
-    ethnicities = models.ManyToManyField(Ethnicity)
+    ethnicities = models.ManyToManyField(Ethnicity, verbose_name=_('ethnicities'))
 
     # Alternative phone numbers have up to 4 fields and each one is associated
     # with the person that owns phone
@@ -201,27 +206,27 @@ class Patient(Person):
     # TODO: we should really come up with a better way of representing these
     # data
 
-    alternate_phone_1_owner = models.CharField(max_length=40, blank=True, null=True)
-    alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True)
+    alternate_phone_1_owner = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone owner 1'))
+    alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone 1'))
 
-    alternate_phone_2_owner = models.CharField(max_length=40, blank=True, null=True)
-    alternate_phone_2 = models.CharField(max_length=40, blank=True, null=True)
+    alternate_phone_2_owner = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone owner 2'))
+    alternate_phone_2 = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone 2'))
 
-    alternate_phone_3_owner = models.CharField(max_length=40, blank=True, null=True)
-    alternate_phone_3 = models.CharField(max_length=40, blank=True, null=True)
+    alternate_phone_3_owner = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone owner 3'))
+    alternate_phone_3 = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone 3'))
 
-    alternate_phone_4_owner = models.CharField(max_length=40, blank=True, null=True)
-    alternate_phone_4 = models.CharField(max_length=40, blank=True, null=True)
+    alternate_phone_4_owner = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone owner 4'))
+    alternate_phone_4 = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone 4'))
 
     preferred_contact_method = models.ForeignKey(
-        ContactMethod, blank=True, null=True, on_delete=models.PROTECT)
+        ContactMethod, blank=True, null=True, on_delete=models.PROTECT, verbose_name=_('preferred cotact method'))
 
-    email = models.EmailField(blank=True, null=True)
+    email = models.EmailField(blank=True, null=True, verbose_name=_('email'))
 
     # If the patient is in clinic and needs a workup, that is specified by
     # needs_workup. Default value is false for all the previous patients
 
-    needs_workup = models.BooleanField(default=True)
+    needs_workup = models.BooleanField(default=True, verbose_name=_('needs workup'))
 
     history = HistoricalRecords()
 
@@ -281,18 +286,18 @@ class Patient(Person):
         if len(overdue) > 0:
             oldest = min(overdue, key=lambda k: k.due_date)
             tdelta = now().date() - oldest.due_date
-            return str(oldest.short_name())+" "+str(tdelta.days)+" days past due"
+            return str(oldest.short_name())+" "+str(tdelta.days)+_(" days past due")
 
             # due_dates = ", ".join([str((now().date()-ai.due_date).days) for ai in overdue])
             # return "Action items " + due_dates + " days past due"
         elif len(pending) > 0:
             next_item = min(pending, key=lambda k: k.due_date)
             tdelta = next_item.due_date - now().date()
-            return str(next_item.short_name())+" in "+str(tdelta.days)+" days"
+            return str(next_item.short_name())+" in "+str(tdelta.days)+_(" days")
         elif len(done) > 0:
-            return "all actions complete"
+            return _("all actions complete")
         else:
-            return "no pending actions"
+            return _("no pending actions")
 
     def followup_set(self):
         followups = []
@@ -397,12 +402,12 @@ class DocumentType(models.Model):
 
 
 class Document(Note):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, verbose_name=_('title'))
     image = models.FileField(
-        help_text="Please deidentify all file names before upload! "
-                  "Delete all files after upload!",
+        help_text=_("Please deidentify all file names before upload! "
+                  "Delete all files after upload!"),
         upload_to=utils.make_filepath,
-        verbose_name="PDF File or Image Upload")
+        verbose_name=_("PDF File or Image Upload")
     comments = models.TextField()
     document_type = models.ForeignKey(DocumentType, on_delete=models.PROTECT)
 
@@ -450,13 +455,13 @@ class CompletableMixin(models.Model):
 
     objects = CompletableManager()
 
-    completion_date = models.DateTimeField(blank=True, null=True)
+    completion_date = models.DateTimeField(blank=True, null=True, verbose_name=_('completion date'))
     completion_author = models.ForeignKey(
         get_user_model(),
         blank=True, null=True,
         related_name="%(app_label)s_%(class)s_completed",
-        on_delete=models.PROTECT)
-    due_date = models.DateField(help_text="MM/DD/YYYY")
+        on_delete=models.PROTECT, verbose_name=_('completion author'))
+    due_date = models.DateField(help_text=_("MM/DD/YYYY"))
 
     def done(self):
         """Return true if this ActionItem has been marked as done."""
@@ -477,8 +482,7 @@ class CompletableMixin(models.Model):
         For example, ReferralFollowup has "Referral".
         """
         raise NotImplementedError(
-            "All Completables must have an 'short_name' property that "
-            "is indicates what one has to do of completable this is ")
+            _("All Completables must have an 'short_name' property that is indicates what one has to do of completable this is "))
 
     def summary(self):
         """Text that should be displayed on the core:patient-detail view to
@@ -487,8 +491,7 @@ class CompletableMixin(models.Model):
         For example, this is the comments for of ActionItem.
         """
         raise NotImplementedError(
-            "All Completables must have an 'summary' method that provides "
-            "a summary of the action that must be undertaken.")
+            _("All Completables must have an 'summary' method that provides a summary of the action that must be undertaken."))
 
 
 class AbstractActionItem(Note, CompletableMixin):
@@ -510,10 +513,10 @@ class AbstractActionItem(Note, CompletableMixin):
 
     def attribution(self):
         if self.done():
-            return " ".join(["Marked done by", self.completion_author.name,
-                             "on", str(self.completion_date.date())])
+            return " ".join([_("Marked done by"), str(self.completion_author),
+                             _("on"), str(self.completion_date.date())])
         else:
-            return " ".join(["Added by", self.author.name, "on",
+            return " ".join([_("Added by"), str(self.author), _("on"),
                              str(self.written_datetime.date())])
 
 
@@ -534,5 +537,5 @@ class ActionItem(AbstractActionItem):
                        args=(self.id,))
 
     def __str__(self):
-        return " ".join(["AI for", str(self.patient) + ":",
-                         str(self.instruction), "due on", str(self.due_date)])
+        return " ".join([_("AI for"), str(self.patient) + ":",
+                         str(self.instruction), _("due on"), str(self.due_date)])

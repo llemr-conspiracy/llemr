@@ -9,6 +9,7 @@ from osler.users.utils import get_active_role
 
 from osler.followup import forms
 from osler.followup import models
+from django.utils.translation import gettext_lazy as _
 
 
 class FollowupUpdate(NoteUpdate):
@@ -22,13 +23,13 @@ class FollowupUpdate(NoteUpdate):
 class ActionItemFollowupUpdate(FollowupUpdate):
     model = models.ActionItemFollowup
     form_class = forms.ActionItemFollowup
-    note_type = "Action Item Followup"
+    note_type = _("Action Item Followup")
 
 
 class FollowupCreate(NoteFormView):
     '''A view for creating a new Followup'''
     template_name = 'core/form_submission.html'
-    note_type = "Followup"
+    note_type = _("Followup")
 
     def get_form_class(self, **kwargs):
 

@@ -1,11 +1,13 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block title %}
-Create a New Note
+{% trans 'Create a New Note' %}
 {% endblock %}
 
 {% block header %}
-<h2>Create a New Note</h2>
+<h2>{% trans 'Create a New Note' %}</h2>
 {% endblock %}
 
 {% block content %}
@@ -16,7 +18,7 @@ Create a New Note
     <table class="table table-striped" style="text-align: center">
       <tr>
         <th style="text-align: center">
-          <h4>Note Type</h4>
+          <h4>{% trans 'Note Type' %}</h4>
         </th>
       </tr>
 

@@ -13,6 +13,7 @@ from osler.core.models import Patient
 from osler.demographics.models import Demographics
 from osler.demographics.forms import DemographicsForm
 
+from django.utils.translation import gettext_lazy as _
 
 class DemographicsCreate(FormView):
 
@@ -73,14 +74,14 @@ class DemographicsCreate(FormView):
 
                     form_old.add_error(
                         field,
-                        "Clash in this field. Database entry is '%s'" %
+                        _("Clash in this field. Database entry is '%s'") %
                         old_val
                         # (old_val if old_val is not None else 'Not Answered')
                     )
 
                     form_new.add_error(
                         field,
-                        "Clash in this field. You entered '%s'" %
+                        _("Clash in this field. You entered '%s'") %
                         new_val
                         # (new_val if new_val is not None else 'Not Answered')
                     )

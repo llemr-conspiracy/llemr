@@ -1,165 +1,168 @@
 {% block content %}
 
+{% load i18n %}
+
 <div class="container">
     <div class="row">
-        <h4>Workup on {{ workup.patient.name }}</h4>
+        <h4>{% trans 'Workup on' %} {{ workup.patient.name }}</h4>
         <div class="col-md-4">
-            <strong>DOB:</strong> {{workup.patient.date_of_birth}} 
+            <strong>{% trans 'DOB' %}:</strong> {{workup.patient.date_of_birth}} 
         </div>
         <div class="col-md-4">
-            <strong>Seen on:</strong> {{ workup.clinic_day.clinic_date }}
+            <strong>{% trans 'Seen on' %}:</strong> {{ workup.clinic_day.clinic_date }}
         </div>
         {% if workup.signed %}
         <div class="col-md-4">
-            <strong>Attested by</strong> {{workup.signer}} <strong>on:</strong> {{workup.signed_date}} 
+            <strong>{% blocktrans %}Attested by</strong> {{workup.signer}} <strong>on:</strong> {{workup.signed_date}}{% endblocktrans %}
         </div>
         {% else %}
         <div class="col-md-4">
-            <strong>Workup unattested. Attending:</strong> {{ workup.attending }}
+            <strong>{% blocktrans %}Workup unattested. Attending:</strong> {{ workup.attending }}{% endblocktrans %}
         </div>
         {% endif%}
     </div>
     <div class="row">
         <div class="col-md-4">
-            <strong>Age: </strong> {{workup.patient.age}} 
+            <strong>{% trans 'Age' %}: </strong> {{workup.patient.age}} 
         </div>
         <div class="col-md-4">
-            <strong>Gender: </strong> {{ workup.patient.gender }}
+            <strong>{% trans 'Gender' %}: </strong> {{ workup.patient.gender }}
         </div>
         <div class="col-md-4">
-            <strong>Ethnicity: </strong> {{ workup.patient.ethnicities.iterator | join:", " }}
+            <strong>{% trans 'Ethnicity' %}: </strong> {{ workup.patient.ethnicities.iterator | join:", " }}
         </div>
     </div>
     <div class="row">
-        <h4>At a Glance</h4>
+        <h4>{% trans 'At a Glance' %}</h4>
         <div class="col-md-4">
-            <strong>Chief Complaint:</strong> {{workup.chief_complaint}}
+            <strong>{% trans 'Chief Complaint' %}:</strong> {{workup.chief_complaint}}
         </div>
         <div class="col-md-4">
-            <strong>Author:</strong> {{ workup.author }} ({{ workup.author_type }})
+            <strong>{% trans 'Author' %}:</strong> {{ workup.author }} ({{ workup.author_type }})
         </div>
         <div class="col-md-4">
-            <strong>Other Volunteer(s):</strong> {{ workup.other_volunteer.iterator | join:"; "}}
+            <strong>{% trans 'Other Volunteer(s)' %}:</strong> {{ workup.other_volunteer.iterator | join:"; "}}
         </div>
     </div>
     <div class="row">
         {% if settings.OSLER_DISPLAY_DIAGNOSIS %}
         <div class="col-md-4">
-            <strong>Diagnosis:</strong> {{ workup.diagnosis }}
+            <strong>{% trans 'Diagnosis' %}:</strong> {{ workup.diagnosis }}
         </div>
         <div class="col-md-4">
-            <strong>Dx Category:</strong> {{ workup.diagnosis_categories.iterator | join:", " }}
+            <strong>{% trans 'Dx Category' %}:</strong> {{ workup.diagnosis_categories.iterator | join:", " }}
         </div>
         {% endif %}
         {% if settings.OSLER_DISPLAY_WILL_RETURN %}
         <div class="col-md-4">
-            <strong>Patient will Return:</strong> {{ workup.will_return | yesno }}
+            <strong>{% trans 'Patient will Return' %}:</strong> {{ workup.will_return | yesno }}
         </div>
         {% endif %}
     </div>
     <div class="row">
-        <h4>H and P</h4>
+        <h4>{% trans 'H and P' %}</h4>
         <div class="col-md-12">
-            <strong>HPI:</strong> {{workup.hpi| linebreaksbr }}
+            <strong>{% trans 'HPI' %}:</strong> {{workup.hpi| linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>PMH:</strong> {{workup.pmh | linebreaksbr }}
+            <strong>{% trans 'PMH' %}:</strong> {{workup.pmh | linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>PSH:</strong> {{workup.psh | linebreaksbr }}
+            <strong>{% trans 'PSH' %}:</strong> {{workup.psh | linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>Medications:</strong> {{workup.meds | linebreaksbr }}
+            <strong>{% trans 'Medications' %}:</strong> {{workup.meds | linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>Allergies:</strong> {{workup.allergies | linebreaksbr }}
+            <strong>{% trans 'Allergies' %}:</strong> {{workup.allergies | linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>FamHx:</strong> {{workup.fam_hx | linebreaksbr }}
+            <strong>{% trans 'FamHx' %}:</strong> {{workup.fam_hx | linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>SocHx:</strong> {{workup.soc_hx | linebreaksbr }}
+            <strong>{% trans 'SocHx' %}:</strong> {{workup.soc_hx | linebreaksbr }}
         </div>
         <div class="col-md-12">
-            <strong>ROS:</strong> {{workup.ros | linebreaksbr }}
+            <strong>{% trans 'ROS' %}:</strong> {{workup.ros | linebreaksbr }}
         </div>
     </div>
+  </div>
+
+  <div class="row">
+    <h4>{% trans 'Physical Exam' %}</h4>
+    <div class="col-md-12">
+      <h5>{% trans 'Vital Signs' %}</h5>
+    </div>
+    <div class="col-md-2">
+      <strong>{% trans 'HR' %}:</strong> {{workup.hr}} bpm
+    </div>
+    <div class="col-md-2">
+      <strong>{% trans 'BP' %}:</strong> {{workup.bp_sys}} / {{workup.bp_dia}} mmHg
+    </div>
+    <div class="col-md-2">
+      <strong>{% trans 'RR' %}:</strong> {{workup.rr}} per min
+    </div>
+    <div class="col-md-2">
+      <strong>{% trans 'T' %}:</strong> {{workup.t}} &deg;C
+    </div>
+    <div class="col-md-2">
+      <strong>{% trans 'Height' %}:</strong> {{workup.height}} cm
+    </div>
+    <div class="col-md-2">
+      <strong>{% trans 'Weight' %}:</strong> {{workup.weight}} kg
+    </div>
+  </div>
 
     <div class="row">
-        <h4>Physical Exam</h4>
         <div class="col-md-12">
-            <h5>Vital Signs</h5>
-        </div>
-        <div class="col-md-2">
-            <strong>HR:</strong> {{workup.hr}} bpm
-        </div>
-        <div class="col-md-2">
-            <strong>BP:</strong> {{workup.bp_sys}} / {{workup.bp_dia}} mmHg
-        </div>
-        <div class="col-md-2">
-            <strong>RR:</strong> {{workup.rr}} per min
-        </div>
-        <div class="col-md-2">
-            <strong>T:</strong> {{workup.t}} &deg;C
-        </div>
-        <div class="col-md-2">
-            <strong>Height:</strong> {{workup.height}} cm
-        </div>
-        <div class="col-md-2">
-            <strong>Weight:</strong> {{workup.weight}} kg
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <strong>Physical Exam:</strong> {{workup.pe | linebreaksbr }}
+            <strong>{% trans 'Physical Exam' %}}:</strong> {{workup.pe | linebreaksbr }}
         </div>
         <div class="col-md-6">
-            <strong>Labs (Internal):</strong> {{workup.labs_ordered_internal | linebreaksbr }}
+            <strong>{% trans 'Labs (Internal)' %}:</strong> {{workup.labs_ordered_internal | linebreaksbr }}
         </div>
         <div class="col-md-6">
-            <strong>Labs (External):</strong> {{workup.labs_ordered_external | linebreaksbr }}
+            <strong>{% trans 'Labs (External)' %}:</strong> {{workup.labs_ordered_external | linebreaksbr }}
         </div>
     </div>
     <div class="row">
-        <h4>Discharge</h4>
+        <h4>{% trans 'Discharge' %}</h4>
     </div>
     <div class="row">
         <div class="col-md-12">
-            <strong>A and P:</strong> {{workup.a_and_p | linebreaksbr }}
+            <strong>{% trans 'A and P' %}:</strong> {{workup.a_and_p | linebreaksbr }}
         </div>
     </div>
     <div class="row">
         {% if settings.OSLER_DISPLAY_VOUCHERS %}
         <div class="col-md-4">
-            <strong>Patient got Voucher:</strong> {{workup.got_voucher | yesno }}
+            <strong>{% trans 'Patient got Voucher' %}:</strong> {{workup.got_voucher | yesno }}
         </div>
         {% if workup.got_voucher %}
         <div class="col-md-4">
-            <strong>Voucher Amount:</strong> {{workup.voucher_amount}}
+            <strong>{% trans 'Voucher Amount' %}:</strong> {{workup.voucher_amount}}
         </div>
         <div class="col-md-4">
-            <strong>Pt Pays:</strong> {{workup.patient_pays | default_if_none:"n/a" }}
+            <strong>{% trans 'Pt Pays' %}:</strong> {{workup.patient_pays | default_if_none:"n/a" }}
         </div>
         {% endif %}
         {% if workup.got_imaging_voucher %}
         <div class="col-md-4">
-            <strong>Voucher Amount:</strong> {{workup.imaging_voucher_amount}}
+            <strong>{% trans 'Voucher Amount' %}:</strong> {{workup.imaging_voucher_amount}}
         </div>
         <div class="col-md-4">
-            <strong>Pt Pays:</strong> {{workup.patient_pays_imaging | default_if_none:"n/a" }}
+            <strong>{% trans 'Pt Pays' %}:</strong> {{workup.patient_pays_imaging | default_if_none:"n/a" }}
         </div>
         {% endif %}
         {% endif %}
         {% if settings.OSLER_DISPLAY_REFERRALS %}
         <div class="col-md-4">
-            <strong>Referral Type:</strong> 
+            <strong>{% trans 'Referral Type' %}:</strong> 
             {% for type in workup.referral_type.all %}
              {{ type.name }}
             {% endfor %}
         </div>
         <div class="col-md-4">
-            <strong>Referral Location:</strong>
+            <strong>{% trans 'Referral Location' %}:</strong>
             {% for location in workup.referral_location.all %}
              {{ location.name }}
             {% endfor %}
@@ -168,11 +171,11 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <strong>Rx:</strong> <mark style="background-color:yellow">{{workup.rx | linebreaksbr }}</mark>
+            <strong>{% trans 'Rx' %}:</strong> <mark style="background-color:yellow">{{workup.rx | linebreaksbr }}</mark>
         </div>
     </div>
     <div class="row">
-        <h4>Addenda</h4>
+        <h4>{% trans 'Addenda' %}</h4>
     </div>
     {% for addendum in workup.addendum_set.all reversed %}
     <div class="row">

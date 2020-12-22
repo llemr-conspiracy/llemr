@@ -1,0 +1,20 @@
+{% extends "core/base.html" %}
+
+{% load i18n %}
+
+{% block title %}
+{% trans 'Update Provider' %}: {{ object.name }}
+{% endblock %}
+
+{% block header %}
+<h2>{% blocktrans %}We're seeing a lot of new faces in the hospital...{% endblocktrans %}</h2>
+<p class="lead">{% blocktrans%}Are you one of them? Take this opportunity to let us know if anything has changed, especially if you're now a clinical student!{% endblocktrans %}</p>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	{% load crispy_forms_tags %}
+	{% crispy form %}
+</div>
+{% endblock %}

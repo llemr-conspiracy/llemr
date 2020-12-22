@@ -1,27 +1,29 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block title %}
-New followup request
+{% trans 'New followup request' %}
 {% endblock %}
 
 {% block header %}
-<h1>Request referral followup</h1>
-<p class="lead">Referral to 
-{% for ref in referral.location.all %}
+<h1>{% trans 'Request referral followup' %}</h1>
+<p class="lead">{% trans 'Referral to' %}
+	{% for ref in referral.location.all %}
 	{{ref.name}}
 	{% if forloop.last %}
 	{% else %}
-	or
+	{% trans 'or' %}
 	{% endif %}
-{% endfor %}
+	{% endfor %}
 </p>
 {% endblock %}
 
 {% block content %}
 
 <div class="container">
-  {% load crispy_forms_tags %}
-  {% crispy form %}
+	{% load crispy_forms_tags %}
+	{% crispy form %}
 </div>
 
 {% endblock %}

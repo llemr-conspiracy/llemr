@@ -17,6 +17,8 @@ from crispy_forms.bootstrap import InlineCheckboxes
 from osler.core import models
 from osler.users.models import User
 
+from django.utils.translation import gettext_lazy as _
+
 
 class CustomCheckbox(Field):
     template = 'core/custom_checkbox.html'
@@ -25,14 +27,14 @@ class CustomCheckbox(Field):
 
 
 class DuplicatePatientForm(Form):
-    first_name = CharField(label='First Name')
-    last_name = CharField(label='Last Name')
+    first_name = CharField(label=_('First Name'))
+    last_name = CharField(label=_('Last Name'))
 
     def __init__(self, *args, **kwargs):
         super(DuplicatePatientForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.fields['first_name'].widget.attrs['autofocus'] = True
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
 
 class PatientForm(ModelForm):
@@ -62,7 +64,7 @@ class PatientForm(ModelForm):
         self.fields['phone'].widget.attrs['autofocus'] = True
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['ethnicities'].wrap(InlineCheckboxes)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
         self.fields['address'].widget.attrs = {'placeholder': settings.OSLER_DEFAULT_ADDRESS}
 
     def clean(self):
@@ -79,14 +81,12 @@ class PatientForm(ModelForm):
             if cleaned_data.get(alt_owner) and not cleaned_data.get(alt_phone):
                 self.add_error(
                     alt_phone,
-                    "An Alternate Phone is required" +
-                    " if a Alternate Phone Owner is specified")
+                    _("An Alternate Phone is required if a Alternate Phone Owner is specified"))
 
             if cleaned_data.get(alt_phone) and not cleaned_data.get(alt_owner):
                 self.add_error(
                     alt_owner,
-                    "An Alternate Phone Owner is required" +
-                    " if a Alternate Phone is specified")
+                    _("An Alternate Phone Owner is required if a Alternate Phone is specified"))
 
 
 class AbstractActionItemForm(ModelForm):
@@ -107,7 +107,7 @@ class AbstractActionItemForm(ModelForm):
 
         self.fields['instruction'].queryset = models.ActionInstruction\
             .objects.filter(active=True)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
 
 class ActionItemForm(AbstractActionItemForm):
@@ -143,7 +143,7 @@ class UserInitForm(ModelForm):
         self.helper.field_class = 'col-lg-8'
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['groups'].wrap(InlineCheckboxes)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
         required_fields = [
             'first_name', 
@@ -164,4 +164,13 @@ class DocumentForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(DocumentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
+
+
+class CrispyAuthenticationForm(AuthenticationForm):
+
+    def __init__(self, *args, **kwargs):
+        super(CrispyAuthenticationForm, self).__init__(*args, **kwargs)
+
+        self.helper = FormHelper(self)
+        self.helper.add_input(Submit('submit', _('Login')))

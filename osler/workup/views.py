@@ -100,7 +100,7 @@ class WorkupCreate(NoteFormView):
     template_name = 'workup/workup_create.html'
     form_class = forms.WorkupForm
     model = models.Workup
-    note_type = 'Workup'
+    note_type = _('Workup')
 
     def get(self, *args, **kwargs):
         """Check that we have an instantiated ClinicDate today,
@@ -120,11 +120,11 @@ class WorkupCreate(NoteFormView):
                          self).get(self, *args, **kwargs)
         else:  # we have >1 clindate today.
             return HttpResponseServerError(
-                'There are two or more "clinic day" entries in the database '
+                _('There are two or more "clinic day" entries in the database '
                 'for today. Since notes are associated with one and only one '
                 'clinic day, one clinic day has to be deleted. This can be '
                 'done in the admin panel by a user with sufficient ',
-                'privileges (e.g. coordinator).')
+                'privileges (e.g. coordinator).'))
 
     def get_initial(self):
         initial = super(WorkupCreate, self).get_initial()
@@ -297,7 +297,7 @@ class BasicNoteUpdate(NoteUpdate):
 class AddendumCreate(NoteFormView):
     template_name = 'core/form_submission.html'
     form_class = forms.AddendumForm
-    note_type = 'Addendum'
+    note_type = _('Addendum')
 
     def form_valid(self, form):
         note = form.save(commit=False)

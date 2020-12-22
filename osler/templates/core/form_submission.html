@@ -1,12 +1,14 @@
 {% extends "core/base-form.html" %}
 
+{% load i18n %}
+
 {% block title %}
 {{ note_type }} {{ patient.name }}
 {% endblock %}
 
 {% block header %}
-<h2>New {{ note_type }} </h2>
-<p class="lead">Add a new {{ note_type | lower }} for <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
+<h2>{% trans 'New' %} {{ note_type }} </h2>
+<p class="lead">{% blocktrans %}Add a new {{ note_type | lower }} for{% endblocktrans %} <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
 {% endblock %}
 
 <h1>New {{ note_type }} </h1>

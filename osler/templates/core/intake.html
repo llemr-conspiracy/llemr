@@ -1,12 +1,14 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block title %}
-Patient Intake
+{% trans 'Patient Intake' %}
 {% endblock %}
 
 {% block header %}
-<h1>Patient Intake</h1>
-<p class="lead">Create a new patient in the database</p>
+<h1>{% trans 'Patient Intake' %}</h1>
+<p class="lead">{% trans 'Create a new patient in the database' %}</p>
 {% endblock %}
 
 {% block content %}
