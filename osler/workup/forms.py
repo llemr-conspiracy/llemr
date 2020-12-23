@@ -177,7 +177,6 @@ class WorkupForm(ModelForm):
     meds = fields.SelectMultiple(
         choices=Drug.objects.all()
     )
-    # dose = PrescriptionDose
 
     def __init__(self, *args, **kwargs):
         super(WorkupForm, self).__init__(*args, **kwargs)
@@ -273,6 +272,7 @@ class WorkupForm(ModelForm):
         given)."""
 
         cleaned_data = super(WorkupForm, self).clean()
+        # print(cleaned_data.pt)
 
         if 'pending' in self.data:
             cleaned_data['is_pending'] = True

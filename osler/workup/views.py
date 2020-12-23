@@ -23,9 +23,6 @@ from osler.users.decorators import active_permission_required
 
 from django.utils.translation import gettext_lazy as _
 
-from osler.inventory.models import Drug
-from django.utils.html import format_html
-
 
 def get_clindates():
     '''Get the clinic dates associated with today.'''
@@ -203,10 +200,15 @@ class WorkupCreate(NoteFormView):
         return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
 
 class WorkupUpdate(NoteUpdate):
-    template_name = "core/form-update.html"
+    template_name = "workup/workup_update.html"
     model = models.Workup
     form_class = forms.WorkupForm
     note_type = "Workup"
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkupUpdate, self).get_context_data(**kwargs)
+        context['workup_form'] = context.get('form')
+        return context
 
     def dispatch(self, *args, **kwargs):
         '''

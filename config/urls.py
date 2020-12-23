@@ -29,6 +29,7 @@ urlpatterns = [
     path('vaccine/', include('osler.vaccine.urls')),
     path('labs/', include('osler.labs.urls')),
     path('inventory/', include('osler.inventory.urls')),
+    path('prescriptions/', include('osler.prescriptions.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
