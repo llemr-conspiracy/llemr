@@ -8,7 +8,7 @@ from django.forms import (
 )
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Div, Row, HTML
+from crispy_forms.layout import Submit, Layout, Div, Row, HTML, Fieldset
 from crispy_forms.layout import Field as CrispyField
 from crispy_forms.bootstrap import (
     InlineCheckboxes, AppendedText, PrependedText)
@@ -20,8 +20,10 @@ from past.utils import old_div
 
 from django.utils.translation import gettext_lazy as _
 
-from osler.inventory.models import Drug
 from osler.prescriptions.models import Prescription
+from django.forms import modelformset_factory
+from osler.prescriptions.forms import PrescriptionForm
+from .custom_layout_object import Formset
 
 
 def form_required_if(form, conditional, fields):
@@ -152,7 +154,11 @@ class WorkupForm(ModelForm):
     height_units = fields.ChoiceField(
         label='', widget=RadioSelect,
         choices=[('cm', 'cm'), ('in', 'in')], required=False)
-
+    
+    # prescription_name = fields.CharField(max_length=100)
+    # prescription_dose = fields.CharField(max_length=100)
+    # prescription_freq = fields.CharField(max_length=100)
+    # prescription_route = fields.CharField(max_length=100)
     class Meta(object):
         model = models.Workup
         exclude = ['patient', 'author', 'signer', 'author_type',
@@ -174,10 +180,6 @@ class WorkupForm(ModelForm):
         queryset=get_user_model().objects.all()
     )
 
-    meds = fields.SelectMultiple(
-        choices=Drug.objects.all()
-    )
-
     def __init__(self, *args, **kwargs):
         super(WorkupForm, self).__init__(*args, **kwargs)
 
@@ -190,7 +192,6 @@ class WorkupForm(ModelForm):
                 Div('other_volunteer', css_class='col-sm-6'),
                 Div('clinic_day', css_class='col-sm-12')
                 ),
-
             Row(HTML('<h3>History</h3>'),
                 Div('chief_complaint', css_class='col-sm-6'),
                 Div('diagnosis', css_class='col-sm-6'),
@@ -203,10 +204,10 @@ class WorkupForm(ModelForm):
                 Div('soc_hx', css_class='col-md-6'),
                 Div('allergies', css_class='col-md-12'),
                 Div('ros', css_class='col-xs-12')),
-            Row(HTML('<h3>Prescriptions</h3>'),
-                Div('meds', css_class='col-md-12')
-                # Div('dose', css_class='col-md-6')
-            ),
+
+            
+            Row(Fieldset('Prescriptions', Formset('prescriptions'))),
+
             Row(HTML('<h3>Physical Exam</h3>'),
                 HTML('<h4>Vital Signs</h4>'),
                 Div(AppendedText('bp_sys', 'mmHg'),
@@ -250,6 +251,13 @@ class WorkupForm(ModelForm):
             Submit('complete', 'Submit', css_class='btn btn-success')
         )
 
+        # self.helper.layout[2].extend([
+        #     HTML('<h3>Prescriptions</h3>'),
+        #     Div('prescription_name', css_class='col-md-3'),
+        #     Div('prescription_dose', css_class='col-md-3'),
+        #     Div('prescription_freq', css_class='col-md-3'),
+        #     Div('prescription_route', css_class='col-md-3')])
+
         self.fields['ros'].widget.attrs['rows'] = 15
         self.fields['pe'].widget.attrs['rows'] = 14
 
@@ -272,7 +280,6 @@ class WorkupForm(ModelForm):
         given)."""
 
         cleaned_data = super(WorkupForm, self).clean()
-        # print(cleaned_data.pt)
 
         if 'pending' in self.data:
             cleaned_data['is_pending'] = True

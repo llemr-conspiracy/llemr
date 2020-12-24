@@ -1,5 +1,5 @@
 from django.forms import (
-    fields, formset_factory, ModelForm, ModelChoiceField, ModelMultipleChoiceField, RadioSelect
+    fields, inlineformset_factory, ModelForm, ModelChoiceField, ModelMultipleChoiceField, RadioSelect
 )
 
 from crispy_forms.helper import FormHelper
@@ -9,30 +9,21 @@ from crispy_forms.bootstrap import (
     InlineCheckboxes, AppendedText, PrependedText)
 from crispy_forms.utils import TEMPLATE_PACK, render_field
 from osler.prescriptions.models import Prescription
+from osler.inventory.models import Drug
 
+from django.forms import ChoiceField
 
 class PrescriptionForm(ModelForm):
 
+    drug = ModelChoiceField(queryset=Drug.objects.all())
+
     class Meta(object):
         model = Prescription
-        fields = ['name','dose','frequency','route']
-
-    def __init__(self, *args, **kwargs):
-        super(PrescriptionForm, self).__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
-
-        self.helper.layout = Layout(
-            Row(HTML('<h4>Prescripiton</h4>'),
-                Div('name',css_class='col-md-3 col-sm-3 col-xs-6'),
-                Div('dose', css_class='col-md-3 col-sm-3 col-xs-6'),
-                Div('frequency', css_class='col-md-3 col-sm-3 col-xs-6'),
-                Div('route', css_class='col-md-3 col-sm-3 col-xs-6'))
-        )
+        fields = ['dose','frequency','route']
 
 
-PrescriptionFormSet = formset_factory(
-    PrescriptionForm,
-    extra=4,
+
+PrescriptionFormSet = inlineformset_factory(
+    Drug, Prescription, form=PrescriptionForm,
+    fields=['drug', 'dose','frequency','route'], extra=1, can_delete=True
 )

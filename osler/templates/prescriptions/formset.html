@@ -1,0 +1,17 @@
+<!-- allows for inline formsets, from https://dev.to/zxenia/django-inline-formsets-with-class-based-views-and-crispy-forms-14o6 -->
+{% load crispy_forms_tags %}
+
+<!-- {{ formset.management_form|crispy }} -->
+
+    {% for form in formset.forms %}
+            <tr class="{% cycle 'row1' 'row2' %} formset_row-{{ formset.prefix }}">
+                {% for field in form %}
+
+                    <span class="col-md-3 col-sm-3 col-xs-6">{{ field|as_crispy_field }}</span>
+                </td>
+                {% endfor %}
+            </tr>
+    {% endfor %}
+
+</table>
+<br>

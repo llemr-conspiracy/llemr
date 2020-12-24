@@ -23,6 +23,8 @@ from osler.users.decorators import active_permission_required
 
 from django.utils.translation import gettext_lazy as _
 
+from osler.prescriptions.forms import PrescriptionFormSet
+
 
 def get_clindates():
     '''Get the clinic dates associated with today.'''
@@ -102,6 +104,18 @@ class WorkupCreate(NoteFormView):
     model = models.Workup
     note_type = 'Workup'
 
+        #     context = super(WorkupUpdate, self).get_context_data(**kwargs)
+        # context['workup_form'] = context.get('form')
+        # return context
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkupCreate, self).get_context_data(**kwargs)
+        if self.request.POST:
+            context['prescriptions'] = PrescriptionFormSet(self.request.POST)
+        else:
+            context['prescriptions'] = PrescriptionFormSet()
+        return context
+
     def get(self, *args, **kwargs):
         """Check that we have an instantiated ClinicDate today,
         then dispatch to get() of the superclass view."""
@@ -127,6 +141,7 @@ class WorkupCreate(NoteFormView):
                 'privileges (e.g. coordinator).')
 
     def get_initial(self):
+        print("sssss")
         initial = super(WorkupCreate, self).get_initial()
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
 
@@ -181,6 +196,8 @@ class WorkupCreate(NoteFormView):
         return initial
 
     def form_valid(self, form):
+        context = self.get_context_data()
+        prescriptions = context['prescriptions']
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         active_role = get_active_role(self.request)
 

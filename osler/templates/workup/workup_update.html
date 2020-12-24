@@ -19,10 +19,8 @@ Edit {{ note_type }}
 <div class="container">
   <form action="" method="post" {% if note_type == "Document" %} enctype="multipart/form-data" {% endif %} >
     {% load crispy_forms_tags %}
-    {% crispy workup_form %}
-    
+    {% crispy form %}
   </form>
-  {% include "prescriptions/prescription_create.html" %}
 </div>
 
 {% endblock %}
