@@ -1,0 +1,21 @@
+<!-- allows for inline formsets, from https://dev.to/zxenia/django-inline-formsets-with-class-based-views-and-crispy-forms-14o6 -->
+
+
+{% load crispy_forms_tags %}
+{{ formset.management_form|crispy }}
+{% for form in formset.forms %}  
+
+    {% for field in form.visible_fields %}
+    
+        {% if forloop.first %}
+            <span class="col-md-4 col-sm-4 col-xs-6">{{ field|as_crispy_field }}</span>
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+        {% else %}
+            <span class="col-md-2 col-sm-2 col-xs-6">{{ field|as_crispy_field }}</span>
+        {% endif %} 
+                            
+    {% endfor %}   
+{% endfor %}
+

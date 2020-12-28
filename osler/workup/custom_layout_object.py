@@ -5,7 +5,7 @@ from osler.prescriptions.forms import PrescriptionFormSet
 
 
 class Formset(LayoutObject):
-    template = "prescriptions/formset.html"
+    template = "prescriptions/prescription_formset.html"
 
     def __init__(self, formset_name_in_context, template=None):
         self.formset_name_in_context = formset_name_in_context
@@ -15,7 +15,8 @@ class Formset(LayoutObject):
             self.template = template
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK):
-        # print(self.fields)
-        # formset = context[self.formset_name_in_context]
-        # print(context)
-        return render_to_string(self.template, {'formset': PrescriptionFormSet})
+        '''Render formset passed in the Formset Layout object argument by referencing a dictionary of existing formsets'''
+        formsets = {
+            'PrescriptionFormSet': PrescriptionFormSet
+        }
+        return render_to_string(self.template, {'formset': formsets[self.formset_name_in_context]})

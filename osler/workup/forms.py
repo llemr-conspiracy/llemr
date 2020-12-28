@@ -25,6 +25,10 @@ from django.forms import modelformset_factory
 from osler.prescriptions.forms import PrescriptionForm
 from .custom_layout_object import Formset
 
+from osler.inventory.models import Drug
+
+from django.shortcuts import get_object_or_404
+
 
 def form_required_if(form, conditional, fields):
     """Adds an error to the form if conditional is truthy-false and any
@@ -204,9 +208,9 @@ class WorkupForm(ModelForm):
                 Div('soc_hx', css_class='col-md-6'),
                 Div('allergies', css_class='col-md-12'),
                 Div('ros', css_class='col-xs-12')),
-
-            
-            Row(Fieldset('Prescriptions', Formset('prescriptions'))),
+  
+            Row(HTML('<h3>Prescriptions</h3>'), 
+                Fieldset('Add titles', Formset('PrescriptionFormSet'))),
 
             Row(HTML('<h3>Physical Exam</h3>'),
                 HTML('<h4>Vital Signs</h4>'),
@@ -251,13 +255,6 @@ class WorkupForm(ModelForm):
             Submit('complete', 'Submit', css_class='btn btn-success')
         )
 
-        # self.helper.layout[2].extend([
-        #     HTML('<h3>Prescriptions</h3>'),
-        #     Div('prescription_name', css_class='col-md-3'),
-        #     Div('prescription_dose', css_class='col-md-3'),
-        #     Div('prescription_freq', css_class='col-md-3'),
-        #     Div('prescription_route', css_class='col-md-3')])
-
         self.fields['ros'].widget.attrs['rows'] = 15
         self.fields['pe'].widget.attrs['rows'] = 14
 
@@ -280,6 +277,16 @@ class WorkupForm(ModelForm):
         given)."""
 
         cleaned_data = super(WorkupForm, self).clean()
+
+        if self.data['prescription_set-0-drug']: #this should be more general
+            cleaned_data['prescription_set-TOTAL_FORMS'] = int(self.data['prescription_set-TOTAL_FORMS'])
+            for i in range(int(self.data['prescription_set-TOTAL_FORMS'])):
+                
+                cleaned_data[f"prescription_set-{i}-drug"] = get_object_or_404(
+                    Drug, pk=self.data[f"prescription_set-{i}-drug"])
+                cleaned_data[f"prescription_set-{i}-dose"] = self.data[f"prescription_set-{i}-dose"],
+                cleaned_data[f"prescription_set-{i}-frequency"] = self.data[f"prescription_set-{i}-frequency"],
+                cleaned_data[f"prescription_set-{i}-route"] = self.data[f"prescription_set-{i}-route"]        
 
         if 'pending' in self.data:
             cleaned_data['is_pending'] = True
@@ -343,8 +350,8 @@ class WorkupForm(ModelForm):
             if not user_input:
                 continue
             cleaned_data[field] = user_input.strip()
-            if "UPDATE" in cleaned_data.get(field):
-                self.add_error(field, _("Please delete the heading and update contents as necessary"))
+            # if "UPDATE" in cleaned_data.get(field):
+            #     self.add_error(field, _("Please delete the heading and update contents as necessary"))
         
         form_require_together(self, ['bp_sys', 'bp_dia'])
         if cleaned_data.get('bp_sys') and cleaned_data.get('bp_dia'):

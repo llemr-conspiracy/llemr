@@ -22,8 +22,7 @@ class PrescriptionForm(ModelForm):
         fields = ['dose','frequency','route']
 
 
-
 PrescriptionFormSet = inlineformset_factory(
     Drug, Prescription, form=PrescriptionForm,
-    fields=['drug', 'dose','frequency','route'], extra=1, can_delete=True
+    fields=['drug','dose','frequency','route'], extra=2, can_delete=True
 )

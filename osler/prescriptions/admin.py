@@ -8,4 +8,4 @@ from . import models
 
 @admin.register(models.Prescription)
 class PrescriptionAdmin(admin.ModelAdmin):
-    list_display = ('drug_name','dose', 'frequency', 'route')
+    list_display = ('drug_name','dose', 'frequency', 'route','patient')

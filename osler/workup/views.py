@@ -24,6 +24,8 @@ from osler.users.decorators import active_permission_required
 from django.utils.translation import gettext_lazy as _
 
 from osler.prescriptions.forms import PrescriptionFormSet
+from osler.prescriptions.models import Prescription
+from osler.inventory.models import Drug
 
 
 def get_clindates():
@@ -104,10 +106,6 @@ class WorkupCreate(NoteFormView):
     model = models.Workup
     note_type = 'Workup'
 
-        #     context = super(WorkupUpdate, self).get_context_data(**kwargs)
-        # context['workup_form'] = context.get('form')
-        # return context
-
     def get_context_data(self, **kwargs):
         context = super(WorkupCreate, self).get_context_data(**kwargs)
         if self.request.POST:
@@ -141,7 +139,6 @@ class WorkupCreate(NoteFormView):
                 'privileges (e.g. coordinator).')
 
     def get_initial(self):
-        print("sssss")
         initial = super(WorkupCreate, self).get_initial()
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
 
@@ -196,8 +193,10 @@ class WorkupCreate(NoteFormView):
         return initial
 
     def form_valid(self, form):
-        context = self.get_context_data()
-        prescriptions = context['prescriptions']
+        context = self.get_context_data() #delete this?
+
+
+
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
         active_role = get_active_role(self.request)
 
@@ -213,6 +212,17 @@ class WorkupCreate(NoteFormView):
         # create prescriptions based on form submissions  
 
         form.save_m2m()
+
+
+        #save prescripitons
+        for i in range(int(form.cleaned_data['prescription_set-TOTAL_FORMS'])):
+            prescription = Prescription.objects.create(
+                drug_name=form.cleaned_data[f"prescription_set-{i}-drug"],
+                dose=form.cleaned_data[f"prescription_set-{i}-dose"],
+                frequency=form.cleaned_data[f"prescription_set-{i}-frequency"],
+                route=form.cleaned_data[f"prescription_set-{i}-route"],
+                patient=pt
+            )
 
         return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
 
