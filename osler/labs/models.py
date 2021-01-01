@@ -3,7 +3,7 @@ import datetime
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
-from osler.core.models import (Patient, Encounter)
+from osler.core.models import Patient, Encounter
 
 
 class LabType(models.Model):
