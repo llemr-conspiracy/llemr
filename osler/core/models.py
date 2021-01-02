@@ -1,6 +1,5 @@
 '''The datamodels for the Osler core'''
 from itertools import chain
-import datetime
 
 from django.db import models
 from django.conf import settings
@@ -609,5 +608,4 @@ class Encounter(SortableMixin):
         )
 
     def __str__(self):
-        return str(self.patient)+" on "+datetime.datetime.strftime(self.clinic_day, '%A, %B %d, %Y')
-
+        return str(self.patient) + " on " + self.clinic_day.strftime('%A, %B %d, %Y')
