@@ -1,5 +1,3 @@
-import datetime
-
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Q
@@ -83,7 +81,7 @@ class AbstractBasicNote(Note):
     def __str__(self):
         u = '{} on at {} by {}'.format(
             self.title,
-            datetime.datetime.strftime(self.written_datetime, '%c'),
+            self.written_datetime.strftime('%c'),
             self.author)
         return u
 
@@ -234,7 +232,10 @@ class Workup(Note, AttestationMixin):
         return reverse('workup', args=[str(self.id)])
 
     def __str__(self):
-        return self.patient.name() + " on " + str(self.encounter.clinic_day)
+        return " ".join(
+            (self.patient.name(), "on",
+             self.encounter.clinic_day.strftime('%A, %B %d, %Y'))
+        )
 
     def sign(self, user, group):
         if not self.is_pending:
