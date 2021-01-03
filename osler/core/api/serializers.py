@@ -31,7 +31,7 @@ class PatientSerializer(serializers.ModelSerializer):
     age = serializers.StringRelatedField(read_only=True)
     name = serializers.StringRelatedField(read_only=True)
     pk = serializers.StringRelatedField(read_only=True)
-    status = serializers.StringRelatedField(read_only=True)
+    actionitem_status = serializers.StringRelatedField(read_only=True)
     case_managers = CaseManagerSerializer(many=True)
 
     # Put urls as model properties because unable to do:

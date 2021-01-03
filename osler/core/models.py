@@ -8,8 +8,10 @@ from django.contrib.auth import get_user_model
 from django.utils.timezone import now
 from django.utils.text import slugify
 from django.urls import reverse
+from django.core.exceptions import MultipleObjectsReturned
 
 from simple_history.models import HistoricalRecords
+from adminsortable.models import SortableMixin
 
 from osler.core import validators
 from osler.core import utils
@@ -218,11 +220,6 @@ class Patient(Person):
 
     email = models.EmailField(blank=True, null=True)
 
-    # If the patient is in clinic and needs a workup, that is specified by
-    # needs_workup. Default value is false for all the previous patients
-
-    needs_workup = models.BooleanField(default=True)
-
     history = HistoricalRecords()
 
     def age(self):
@@ -260,7 +257,7 @@ class Patient(Person):
                 .filter(due_date__gt=now().date()),
             key=lambda ai: ai.due_date)
 
-    def status(self):
+    def actionitem_status(self):
         # The active_action_items, done_action_items, and inactive_action_items
         # aren't a big deal to use when getting just one patient
         # For the all_patients page though (one of the pages that use status),
@@ -269,10 +266,14 @@ class Patient(Person):
         # for a patient, then sorting them in memory.
 
         # Combine action items with referral followup requests for status
+        
+        #TODO: Change this into OSLER_TODO_LIST_MANAGERS
         patient_action_items = self.actionitem_set.all()
         referral_followup_requests = self.followuprequest_set.all()
+        vaccine_action_items = self.vaccineactionitem_set.all()
         patient_action_items = list(chain(patient_action_items,
-                                          referral_followup_requests))
+                                          referral_followup_requests,
+                                          vaccine_action_items))
 
         done = [ai for ai in patient_action_items if ai.completion_author is not None]
         overdue = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date <= now().date()]
@@ -352,12 +353,39 @@ class Patient(Person):
 
         return phones
 
+    def last_encounter(self):
+        if Encounter.objects.filter(patient=self.pk).exists():
+            last_encounter = Encounter.objects.filter(patient=self.pk).order_by('clinic_day').last()
+            return last_encounter
+        else:
+            return None
+
+    def get_status(self):
+        if self.last_encounter() is not None:
+            return self.last_encounter().status
+        else:
+            return default_inactive_status()
+
     def toggle_active_status(self, user, group):
         ''' Will Activate or Inactivate the Patient'''
-
         user_has_group = user.groups.filter(pk=group.pk).exists()
         if user_has_group and self.group_can_activate(group):
-            self.needs_workup = not self.needs_workup
+            #active encounter then inactivate
+            if self.get_status().is_active:
+                encounter = self.last_encounter()
+                encounter.status = default_inactive_status()
+                encounter.save()
+            else:
+                #no active encounter today, get today's encounter and activate or make new active
+                try:
+                    encounter, created = Encounter.objects.get_or_create(patient=self, clinic_day=now().date(),
+                        defaults={'status': default_active_status()})
+                    if not encounter.status.is_active:
+                        encounter.status = default_active_status()
+                        encounter.save()
+                except MultipleObjectsReturned:
+                    raise ValueError("Somehow there are multiple encounters for this patient and "
+                        "clinc day. Please delete one in the admin panel or cry for help.")
         else:
             raise ValueError("Special permissions are required to change active status.")
 
@@ -492,6 +520,7 @@ class CompletableMixin(models.Model):
 
 
 class AbstractActionItem(Note, CompletableMixin):
+    '''Abstract class for completable tasks, inherit from this for app-specific tasks'''
     class Meta(object):
         abstract = True
 
@@ -536,3 +565,47 @@ class ActionItem(AbstractActionItem):
     def __str__(self):
         return " ".join(["AI for", str(self.patient) + ":",
                          str(self.instruction), "due on", str(self.due_date)])
+
+
+class EncounterStatus(models.Model):
+    '''Different status for encounter, as simple as Active/Inactive 
+    or Waiting/Team in Room/Attending etc'''
+    name = models.CharField(max_length=100, primary_key=True)
+    is_active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+
+def default_active_status():
+    status, created = EncounterStatus.objects.get_or_create(
+        name=settings.OSLER_DEFAULT_ACTIVE_STATUS[0],
+        is_active=settings.OSLER_DEFAULT_ACTIVE_STATUS[1])
+    return status
+
+
+def default_inactive_status():
+    status, created = EncounterStatus.objects.get_or_create(
+        name=settings.OSLER_DEFAULT_INACTIVE_STATUS[0],
+        is_active=settings.OSLER_DEFAULT_INACTIVE_STATUS[1])
+    return status
+
+
+class Encounter(SortableMixin):
+    '''Encounter for a given patient on a given clinic day
+    Holds all associated notes, labs, etc performed on that clinic day
+    Can reoder in admin panel for Active Patients page'''
+    class Meta:
+        ordering = ['order']
+    
+    order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+    patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
+    clinic_day = models.DateField()
+    status = models.ForeignKey(EncounterStatus, on_delete=models.PROTECT)
+
+    sorting_filters = (
+        ('Active Encounters', {'status__is_active': True}),
+        )
+
+    def __str__(self):
+        return str(self.patient) + " on " + self.clinic_day.strftime('%A, %B %d, %Y')

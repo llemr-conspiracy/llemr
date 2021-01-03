@@ -15,6 +15,7 @@ from crispy_forms.bootstrap import (
 from crispy_forms.utils import TEMPLATE_PACK, render_field
 
 from osler.workup import models
+from osler.core.models import Encounter
 
 from past.utils import old_div
 
@@ -172,16 +173,20 @@ class WorkupForm(ModelForm):
     )
 
     def __init__(self, *args, **kwargs):
+        pt = kwargs.pop('pt')
         super(WorkupForm, self).__init__(*args, **kwargs)
 
         self.helper = FormHelper()
         self.helper.form_method = 'post'
 
+        self.fields['encounter'].queryset = Encounter.objects\
+            .filter(patient=pt).order_by('clinic_day')
+
         self.helper.layout = Layout(
             Row(HTML('<h3>Clinical Team</h3>'),
                 Div('attending', css_class='col-sm-6'),
                 Div('other_volunteer', css_class='col-sm-6'),
-                Div('clinic_day', css_class='col-sm-12')
+                Div('encounter', css_class='col-sm-12')
                 ),
 
             Row(HTML('<h3>History</h3>'),
@@ -343,22 +348,30 @@ class WorkupForm(ModelForm):
 class AttestableBasicNoteForm(ModelForm):
     class Meta(object):
         model = models.AttestableBasicNote
-        fields = ['title', 'text']
+        fields = ['title', 'text','encounter']
 
     def __init__(self, *args, **kwargs):
+        pt = kwargs.pop('pt')
         super(AttestableBasicNoteForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
+        self.fields['encounter'].queryset = Encounter.objects\
+            .filter(patient=pt).order_by('clinic_day')
         self.helper.add_input(Submit('submit', 'Submit'))
 
 
 class BasicNoteForm(ModelForm):
     class Meta(object):
         model = models.BasicNote
-        fields = ['title', 'text']
+        fields = ['title', 'text','encounter']
+
+    encounter = ModelChoiceField(queryset=None)
 
     def __init__(self, *args, **kwargs):
+        pt = kwargs.pop('pt')
         super(BasicNoteForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
+        self.fields['encounter'].queryset = Encounter.objects\
+            .filter(patient=pt).order_by('clinic_day')
         self.helper.add_input(Submit('submit', 'Submit'))
 
 
@@ -372,20 +385,3 @@ class AddendumForm(ModelForm):
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
 
-
-class ClinicDateForm(ModelForm):
-    '''Form for the creation of a clinic date.'''
-    class Meta(object):
-        model = models.ClinicDate
-        exclude = ['clinic_date']
-
-    def __init__(self, *args, **kwargs):
-        super(ClinicDateForm, self).__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.form_method = 'post'
-        self.helper.form_class = 'form-horizontal'
-        self.helper.label_class = 'col-lg-2'
-        self.helper.field_class = 'col-lg-8'
-
-        self.helper.add_input(Submit('submit', 'Submit'))

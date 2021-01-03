@@ -36,6 +36,8 @@ class TestDrugList(TestCase):
 
         self.pt = core_factories.PatientFactory()
 
+        self.encounter = core_factories.EncounterFactory(patient=self.pt)
+
     def test_drug_list_view(self):
         url = reverse('inventory:drug-list')
         response = self.client.get(url)
@@ -61,7 +63,7 @@ class TestDrugList(TestCase):
         dispense = drug_initial.stock
         remain = drug_initial.stock - dispense
         url = reverse('inventory:drug-dispense')
-        response = self.client.post(url, {'pk':self.drug.pk, 'num':str(dispense), 'patient_pk':self.pt.pk}, follow=True)
+        response = self.client.post(url, {'pk':self.drug.pk, 'num':str(dispense), 'patient_pk':self.pt.pk, 'encounter': self.encounter.id }, follow=True)
         drug_final = Drug.objects.get(pk=self.drug.pk)
 
         self.assertEqual(response.status_code, 200)

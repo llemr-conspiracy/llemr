@@ -23,8 +23,6 @@ import csv
 import datetime
 from django.utils import timezone
 
-# Create your views here.
-
 class DrugListView(ListView):
     template_name = 'inventory/inventory-main.html'
     def get_queryset(self):
@@ -38,7 +36,8 @@ class DrugListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(DrugListView, self).get_context_data(**kwargs)
-        context['patients'] = Patient.objects.filter(needs_workup=True).order_by('last_name').select_related('gender')
+        context['patients'] = Patient.objects.filter(encounter__status__is_active=True)\
+            .order_by('last_name').select_related('gender')
 
         active_role = get_active_role(self.request)
         context['can_export_csv'] = group_has_perm(active_role, 'inventory.export_csv')
@@ -142,7 +141,8 @@ def drug_dispense(request):
                                               dispense=num,
                                               author=request.user,
                                               author_type=get_active_role(request),
-                                              patient=patient)
+                                              patient=patient,
+                                              encounter=patient.last_encounter())
         drug.dispense(int(num))
     else:
         return HttpResponseNotFound('<h1>Cannot dispense more drugs than in stock!</h1>')

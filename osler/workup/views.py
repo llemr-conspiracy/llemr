@@ -13,7 +13,7 @@ from django.urls import reverse
 from django.utils.timezone import now
 
 from osler.core.views import NoteFormView, NoteUpdate
-from osler.core.models import Patient
+from osler.core.models import Patient, Encounter
 
 from osler.workup import models
 from osler.workup import forms
@@ -22,13 +22,6 @@ from osler.users.utils import get_active_role, group_has_perm
 from osler.users.decorators import active_permission_required
 
 from django.utils.translation import gettext_lazy as _
-
-
-def get_clindates():
-    '''Get the clinic dates associated with today.'''
-    clindates = models.ClinicDate.objects.filter(
-        clinic_date=now().date())
-    return clindates
 
 
 def new_note_dispatch(request, pt_id):
@@ -76,6 +69,7 @@ def basicnote_detail(request, pk, model):
             }
         )
 
+
 def workup_detail(request, pk):
 
     workup = get_object_or_404(models.Workup, pk=pk)
@@ -102,35 +96,20 @@ class WorkupCreate(NoteFormView):
     model = models.Workup
     note_type = 'Workup'
 
-    def get(self, *args, **kwargs):
-        """Check that we have an instantiated ClinicDate today,
-        then dispatch to get() of the superclass view."""
+    def get_form_kwargs(self):
+        kwargs = super(WorkupCreate, self).get_form_kwargs()
 
-        clindates = get_clindates()
-        pt = get_object_or_404(Patient, pk=kwargs['pt_id'])
+        pt_id = self.kwargs['pt_id']
+        kwargs['pt'] = get_object_or_404(Patient, pk=pt_id)
 
-        if len(clindates) == 0:
-            # dispatch to ClinicDateCreate because the ClinicDate doesn't exist
-            return HttpResponseRedirect(reverse("new-clindate", args=(pt.id,)))
-        elif len(clindates) == 1:
-            # dispatch to our own view, since we know there's a ClinicDate
-            # for today
-            kwargs['pt_id'] = pt.id
-            return super(WorkupCreate,
-                         self).get(self, *args, **kwargs)
-        else:  # we have >1 clindate today.
-            return HttpResponseServerError(
-                'There are two or more "clinic day" entries in the database '
-                'for today. Since notes are associated with one and only one '
-                'clinic day, one clinic day has to be deleted. This can be '
-                'done in the admin panel by a user with sufficient ',
-                'privileges (e.g. coordinator).')
+        return kwargs
 
     def get_initial(self):
         initial = super(WorkupCreate, self).get_initial()
         pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
 
-        initial['clinic_day'] = get_clindates().first()
+        if Encounter.objects.filter(patient=pt, clinic_day=now().date()).exists():
+            initial['encounter'] = Encounter.objects.get(patient=pt, clinic_day=now().date())
 
         initial['ros'] = _(
             "Please UPDATE with pertinent positives and negatives and then delete this line.\n\n"
@@ -220,6 +199,14 @@ class WorkupUpdate(NoteUpdate):
             return HttpResponseRedirect(reverse('workup',
                                         args=(kwargs['pk'],)))
 
+    def get_form_kwargs(self):
+        kwargs = super(WorkupUpdate, self).get_form_kwargs()
+
+        note = get_object_or_404(models.Workup, pk=self.kwargs['pk'])
+        kwargs['pt'] = note.patient
+        
+        return kwargs
+
     def get_success_url(self):
         if self.object.is_pending:
             return reverse('core:patient-detail', args=(self.object.patient.id,))
@@ -232,17 +219,36 @@ class AttestableBasicNoteCreate(NoteFormView):
     form_class = forms.AttestableBasicNoteForm
     note_type = 'Attestable Basic Note'
 
+    def get_form_kwargs(self):
+        kwargs = super(AttestableBasicNoteCreate, self).get_form_kwargs()
+
+        pt_id = self.kwargs['pt_id']
+        kwargs['pt'] = get_object_or_404(Patient, pk=pt_id)
+        
+        return kwargs
+
+    def get_initial(self):
+        initial = super(AttestableBasicNoteCreate, self).get_initial()
+
+        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        #if encounter for today's clinic day, select as initial
+        if Encounter.objects.filter(patient=pt, clinic_day=now().date()).exists():
+            initial['encounter'] = Encounter.objects.get(patient=pt, clinic_day=now().date())
+        
+        return initial
+
     def form_valid(self, form):
         note = form.save(commit=False)
+        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
 
-        note.patient = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        note.patient = pt
         note.author = self.request.user
 
         active_role = get_active_role(self.request)
         note.author_type = active_role
 
         if models.AttestableBasicNote.group_can_sign(active_role):
-            note.sign(self.request.user)
+            note.sign(self.request.user, active_role)
 
         note.save()
         form.save_m2m()
@@ -257,6 +263,14 @@ class AttestableBasicNoteUpdate(NoteUpdate):
     form_class = AttestableBasicNoteCreate.form_class
     note_type = AttestableBasicNoteCreate.note_type
 
+    def get_form_kwargs(self):
+        kwargs = super(AttestableBasicNoteUpdate, self).get_form_kwargs()
+
+        note = get_object_or_404(models.AttestableBasicNote, pk=self.kwargs['pk'])
+        kwargs['pt'] = note.patient
+        
+        return kwargs
+
     def get_success_url(self):
         note = self.object
         return reverse("attestable-basic-note-detail", args=(note.id, ))
@@ -266,6 +280,24 @@ class BasicNoteCreate(NoteFormView):
     template_name = 'core/form_submission.html'
     form_class = forms.BasicNoteForm
     note_type = 'Basic Note'
+
+    def get_form_kwargs(self):
+        kwargs = super(BasicNoteCreate, self).get_form_kwargs()
+
+        pt_id = self.kwargs['pt_id']
+        kwargs['pt'] = get_object_or_404(Patient, pk=pt_id)
+
+        return kwargs
+
+    def get_initial(self):
+        initial = super(BasicNoteCreate, self).get_initial()
+
+        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
+        #if encounter for today's clinic day, select as initial
+        if Encounter.objects.filter(patient=pt, clinic_day=now().date()).exists():
+            initial['encounter'] = Encounter.objects.get(patient=pt, clinic_day=now().date())
+        
+        return initial
 
     def form_valid(self, form):
         note = form.save(commit=False)
@@ -288,6 +320,14 @@ class BasicNoteUpdate(NoteUpdate):
     model = models.BasicNote
     form_class = BasicNoteCreate.form_class
     note_type = BasicNoteCreate.note_type
+
+    def get_form_kwargs(self):
+        kwargs = super(BasicNoteUpdate, self).get_form_kwargs()
+
+        note = get_object_or_404(models.BasicNote, pk=self.kwargs['pk'])
+        kwargs['pt'] = note.patient
+        
+        return kwargs
 
     def get_success_url(self):
         note = self.object
@@ -318,56 +358,6 @@ class AddendumCreate(NoteFormView):
 
         return HttpResponseRedirect(reverse("workup",
                                             args=(self.kwargs['wu_id'],)))
-
-
-class ClinicDateCreate(FormView):
-    '''A view for creating a new ClinicDate. On submission, it redirects to
-    the new-workup view.'''
-    template_name = 'core/clindate.html'
-    form_class = forms.ClinicDateForm
-
-    def form_valid(self, form):
-        '''Add today's date to the ClinicDate form and submit the form.'''
-
-        # determine from our URL which patient we wanted to work up before we
-        # got redirected to create a clinic date
-        pt = get_object_or_404(Patient, pk=self.kwargs['pt_id'])
-
-        # if there's already a clindate for today, redirect to workup create
-        if len(get_clindates()) == 0:
-            clindate = form.save(commit=False)
-
-            today = now().date()
-            clindate.clinic_date = today
-            clindate.save()
-
-        return HttpResponseRedirect(reverse("new-workup", args=(pt.id,)))
-
-
-def clinic_date_list(request):
-
-    qs = models.ClinicDate.objects.prefetch_related(
-        'workup_set',
-        'clinic_type',
-        'workup_set__attending',
-        'workup_set__signer',
-    )
-
-    paginator = Paginator(qs, per_page=10)
-    page = request.GET.get('page')
-
-    try:
-        clinic_days = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        clinic_days = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        clinic_days = paginator.page(paginator.num_pages)
-
-    return render(request, 'workup/clindate-list.html',
-                  {'object_list': clinic_days,
-                   'page_range': paginator.page_range})
 
 
 def sign_attestable_note(request, pk, attestable):
@@ -414,9 +404,9 @@ def pdf_workup(request, pk):
     initials = ''.join(name[0].upper() for name in wu.patient.name(
         reverse=False, middle_short=False).split())
     formatdate = '.'.join(
-        [str(wu.clinic_day.clinic_date.month).zfill(2),
-         str(wu.clinic_day.clinic_date.day).zfill(2),
-         str(wu.clinic_day.clinic_date.year)])
+        [str(wu.encounter.clinic_day.month).zfill(2),
+         str(wu.encounter.clinic_day.day).zfill(2),
+         str(wu.encounter.clinic_day.year)])
     filename = ''.join([initials, ' (', formatdate, ')'])
 
     response = HttpResponse(pdf, 'application/pdf')

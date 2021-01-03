@@ -38,7 +38,7 @@ class Command(BaseCommand):
             for wu in wu_list:
                 message_lines.append(" ".join([
                     '-', str(wu.patient),
-                    '(seen %s):' % wu.clinic_day.clinic_date,
+                    '(seen %s):' % wu.encounter.clinic_day,
                     'https://osler.wustl.edu' + \
                         reverse('workup', kwargs={'pk': wu.pk})
                     ]))

@@ -1,5 +1,3 @@
-import datetime
-
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Q
@@ -8,7 +6,7 @@ from django.urls import reverse
 from django.core.validators import MinValueValidator
 from django.conf import settings
 
-from osler.core.models import Note, ReferralLocation, ReferralType
+from osler.core.models import Note, ReferralLocation, ReferralType, Encounter
 from osler.workup import validators as workup_validators
 
 from osler.users.utils import group_has_perm
@@ -29,68 +27,6 @@ class DiagnosisType(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class ClinicType(models.Model):
-
-    class Meta(object):
-        ordering = ["name"]
-
-    name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
-
-
-class ClinicDate(models.Model):
-
-    class Meta(object):
-        ordering = ["-clinic_date"]
-
-    clinic_type = models.ForeignKey(
-        ClinicType, on_delete=models.PROTECT)
-
-    clinic_date = models.DateField()
-
-    def __str__(self):
-        return (str(self.clinic_type) + " on " +
-                datetime.datetime.strftime(self.clinic_date, '%A, %B %d, %Y'))
-
-    def number_of_notes(self):
-        return self.workup_set.count()
-
-    def infer_attendings(self):
-        qs = get_user_model().objects.filter(
-            Q(attending_physician__clinic_day=self) |
-            Q(signed_workups_workup__clinic_day=self)).distinct()
-
-        return qs
-
-    def infer_volunteers(self):
-        return get_user_model().objects.filter(Q(workup__clinic_day=self) |
-                                       Q(other_volunteer__clinic_day=self)) \
-                               .distinct()
-
-    def infer_coordinators(self):
-        cd = self.clinic_date
-
-        written_timeframe = (
-            Q(actionitem__written_datetime__lte=cd) &
-            Q(actionitem__written_datetime__gte=cd -
-              datetime.timedelta(days=1))
-        )
-
-        cleared_timeframe = (
-            Q(core_actionitem_completed__completion_date__lte=cd) &
-            Q(core_actionitem_completed__completion_date__gte=cd -
-              datetime.timedelta(days=1))
-        )
-
-        coordinator_set = get_user_model().objects \
-            .filter(written_timeframe | cleared_timeframe)\
-            .distinct()
-
-        return coordinator_set
 
 
 class AttestationMixin(models.Model):
@@ -137,6 +73,7 @@ class AbstractBasicNote(Note):
 
     title = models.CharField(max_length=200)
     text = models.TextField()
+    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
@@ -144,7 +81,7 @@ class AbstractBasicNote(Note):
     def __str__(self):
         u = '{} on at {} by {}'.format(
             self.title,
-            datetime.datetime.strftime(self.written_datetime, '%c'),
+            self.written_datetime.strftime('%c'),
             self.author)
         return u
 
@@ -185,7 +122,7 @@ class Workup(Note, AttestationMixin):
             ('export_pdf_Workup', 'Can export note PDF'),
             ('sign_Workup', "Can sign note")
             ]
-        ordering = ['-clinic_day__clinic_date']
+        ordering = ['-encounter__clinic_day']
 
     attending = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -200,10 +137,7 @@ class Workup(Note, AttestationMixin):
         related_name="other_volunteer",
         help_text="Which other volunteer(s) did you work with (if any)?")
 
-    clinic_day = models.ForeignKey(
-        ClinicDate,
-        on_delete=models.PROTECT,
-        help_text="When was the patient seen?")
+    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE)
 
     chief_complaint = models.CharField(max_length=1000, verbose_name="CC", blank=True)
     diagnosis = models.CharField(max_length=1000, verbose_name="Dx", blank=True, null=True)
@@ -275,14 +209,6 @@ class Workup(Note, AttestationMixin):
         max_digits=6, decimal_places=2, blank=True, null=True,
         validators=[MinValueValidator(0)])
 
-    # Please note that these are no longer shown on the form and will not
-    # be filled out because the referral app handles this functionality
-    referral_type = models.ManyToManyField(ReferralType, blank=True)
-    referral_location = models.ManyToManyField(ReferralLocation, blank=True)
-
-    will_return = models.BooleanField(default=False,
-                                      help_text="Will the pt. return to SNHC?")
-
     a_and_p = models.TextField(verbose_name="A and P", blank=True)
 
     is_pending = models.BooleanField(default=False)
@@ -300,13 +226,16 @@ class Workup(Note, AttestationMixin):
         '''
         Returns the date (not datetime) this workup was written on.
         '''
-        return self.clinic_day.clinic_date
+        return self.encounter.clinic_day
 
     def get_absolute_url(self):
         return reverse('workup', args=[str(self.id)])
 
     def __str__(self):
-        return self.patient.name() + " on " + str(self.clinic_day.clinic_date)
+        return " ".join(
+            (self.patient.name(), "on",
+             self.encounter.clinic_day.strftime('%A, %B %d, %Y'))
+        )
 
     def sign(self, user, group):
         if not self.is_pending:

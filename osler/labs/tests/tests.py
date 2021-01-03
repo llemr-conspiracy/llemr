@@ -150,13 +150,17 @@ class TestMeasurementsCreationForm(TestCase):
         self.disc_result_pos.measurement_type.set([self.ua_blood])
 
         self.pt = core_factories.PatientFactory()
+        self.encounter = core_factories.EncounterFactory(
+            patient=self.pt,
+            status=core_factories.EncounterStatusFactory(name="Active",is_active=True))
 
         self.form_data = {
             'lab_time': now(),
             'patient': self.pt,
             'pH': 5,
             'glucose': 1,
-            'blood': self.disc_result_neg
+            'blood': self.disc_result_neg,
+            'encounter': self.encounter
         }
 
 
@@ -283,7 +287,8 @@ class TestLabView(TestCase):
             'lab_time': now().strftime("%Y-%m-%d %H:%M:%S"),
             'pH': '5',
             'glucose': '1',
-            'blood': self.disc_result_neg.name
+            'blood': self.disc_result_neg.name,
+            'encounter': self.lab.encounter.id
         }
 
 
@@ -325,6 +330,7 @@ class TestLabView(TestCase):
 
         url = reverse('labs:new-lab', kwargs={'pt_id':self.pt.id})
         response = self.client.get(url)
+        assert response.status_code == 200
 
         response = self.client.post(url, self.submitted_form_step1)
         assert response.status_code == 302

@@ -102,7 +102,7 @@ Osler: {{ title | default:"All Patients"}}
                         $("<td>").append(
                             $("<a>").attr({
                                 href :patient.latest_workup.url
-                            }).text("Seen "+patient.latest_workup.clinic_day.clinic_date),
+                            }).text("Seen "+patient.latest_workup.encounter.clinic_day),
                             $("<span>").text(": "+patient.latest_workup.chief_complaint))
                         );
                 } else{
@@ -117,7 +117,7 @@ Osler: {{ title | default:"All Patients"}}
 
                 // build "Next AI Due" column
                 $(patientRow).append(
-                    $("<td>").text(patient.status)
+                    $("<td>").text(patient.actionitem_status)
                 );
 
                 // build "attested by" column
@@ -141,14 +141,14 @@ Osler: {{ title | default:"All Patients"}}
                     })
                     .append(
                         $("<span>").text(function(){
-                            return patient.needs_workup ? "Active " : "Inactive ";
+                            return patient.get_status().is_active ? "Active " : "Inactive ";
                         }),
                         $("<a>").attr({
                             href : patient.activate_url
                         }).append(
                             $("<span>").attr({
                                 class :function(){
-                                    return patient.needs_workup ? "glyphicon glyphicon-remove-circle" : "glyphicon glyphicon-play-circle";
+                                    return patient.get_status().is_active ? "glyphicon glyphicon-remove-circle" : "glyphicon glyphicon-play-circle";
                                 },
                                 'aria-hidden' : "true"
                             })
