@@ -38,6 +38,7 @@ class VaccineDoseFactory(DjangoModelFactory):
 	series = factory.SubFactory(VaccineSeriesFactory)
 	which_dose = factory.SubFactory(VaccineDoseTypeFactory)
 	patient = factory.SubFactory(core_factories.PatientFactory)
+	encounter = factory.SubFactory(core_factories.EncounterFactory)
 
 
 

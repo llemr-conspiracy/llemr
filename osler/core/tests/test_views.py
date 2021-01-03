@@ -173,9 +173,7 @@ class ViewsExistTest(TestCase):
     def test_pt_urls(self):
         pt_urls = ['core:patient-detail',
                    'core:new-action-item',
-                   'core:patient-update',
-                   'followup-choice',
-                   'new-clindate',
+                   'core:patient-update'
         ]
 
         pt = models.Patient.objects.first()
@@ -325,8 +323,8 @@ class IntakeTest(TestCase):
                                 getattr(new_pt, param).all()):
                     self.assertEqual(x, y)
 
-        # new patients should be marked as active by default
-        assert new_pt.needs_workup
+        # new patients should be marked as inactive
+        assert not new_pt.get_status().is_active
 
 
 class ActionItemTest(TestCase):
@@ -444,11 +442,12 @@ class ActionItemTest(TestCase):
         assert (now() - new_ai.last_modified).total_seconds() <= 10
 
 
-class ToggleStatusTest(TestCase):
+class PatientStatusTest(TestCase):
 
     def setUp(self):
         self.coordinator = build_user([user_factories.CaseManagerGroupFactory])
         log_in_user(self.client, self.coordinator)
+
 
     def test_activate_urls(self):
         pt = factories.PatientFactory()
@@ -461,19 +460,39 @@ class ToggleStatusTest(TestCase):
 
     def test_activate_perms(self):
         pt = factories.PatientFactory()
-        assert pt.needs_workup
+        assert not pt.get_status().is_active
 
         pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
-        assert not pt.needs_workup
+        assert pt.get_status().is_active
 
         attending = build_user([user_factories.AttendingGroupFactory])
         with self.assertRaises(ValueError):
             pt.toggle_active_status(attending, attending.groups.first())
-        assert not pt.needs_workup
+        assert pt.get_status().is_active
 
         volunteer = build_user([user_factories.VolunteerGroupFactory])
         with self.assertRaises(ValueError):
             pt.toggle_active_status(volunteer, volunteer.groups.first())
-        assert not pt.needs_workup
-        
+        assert pt.get_status().is_active
 
+    def test_activate_encounter_logic(self):
+        pt = factories.PatientFactory()
+        #new patient should have no encounters
+        assert not models.Encounter.objects.filter(patient=pt).exists()
+
+        pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
+        #now one encounter today that is active
+        assert len(models.Encounter.objects.filter(patient=pt)) == 1
+        encounter = models.Encounter.objects.get(patient=pt)
+        assert encounter.clinic_day == now().date()
+        assert encounter.status.is_active
+        
+        pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
+        #inactivates that encounter
+        assert not models.Encounter.objects.get(patient=pt).status.is_active
+
+        pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
+        #reactivates that encounter but doesn't make a new one
+        assert models.Encounter.objects.get(patient=pt).status.is_active
+        assert len(models.Encounter.objects.filter(patient=pt)) == 1
+        

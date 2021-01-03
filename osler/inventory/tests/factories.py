@@ -48,3 +48,4 @@ class DispenseHistoryFactory(DjangoModelFactory):
     dispense = 5
     drug = factory.SubFactory(DrugFactory)
     patient = factory.SubFactory(core_factories.PatientFactory)
+    encounter = factory.SubFactory(core_factories.EncounterFactory)

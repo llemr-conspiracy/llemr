@@ -1,0 +1,21 @@
+{% extends 'adminsortable/change_list.html' %}
+
+<!-- I kept getting this weird bug where the return url would still have
+the ?sort_filter= part attached so I did this just to fix that -->
+
+{% block extrahead %}
+    {{ block.super }}
+    <script type="text/javascript">
+    (function($) {
+        $(document).ready(function($) {
+            var url = window.location.href;
+            var urlParts = url.split('?');
+            var changeListUrl = $('a#return-to-changelist').attr('href');
+
+            if (urlParts.length === 2) {
+                $('a#return-to-changelist').attr('href', changeListUrl.split('?')[0]);
+            }
+        });
+    })(django.jQuery);
+    </script>
+{% endblock %}

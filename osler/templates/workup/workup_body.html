@@ -7,7 +7,7 @@
             <strong>DOB:</strong> {{workup.patient.date_of_birth}} 
         </div>
         <div class="col-md-4">
-            <strong>Seen on:</strong> {{ workup.clinic_day.clinic_date }}
+            <strong>Seen on:</strong> {{ workup.encounter.clinic_day }}
         </div>
         {% if workup.signed %}
         <div class="col-md-4">
@@ -168,7 +168,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <strong>Rx:</strong> {{workup.rx | linebreaksbr }}
+            <strong>Rx:</strong> <mark style="background-color:yellow">{{workup.rx | linebreaksbr }}</mark>
         </div>
     </div>
     <div class="row">

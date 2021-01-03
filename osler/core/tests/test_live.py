@@ -17,6 +17,7 @@ from osler.workup.tests.tests import wu_dict
 
 from osler.users.models import User
 import osler.users.tests.factories as user_factories
+import osler.core.tests.factories as core_factories
 
 import factory
 
@@ -136,7 +137,7 @@ class LiveTesting(SeleniumLiveTestCase):
 
         # build a provider and log in.
         user = build_user(password='password',
-            group_factories=[user_factories.AttendingGroupFactory])
+            group_factories=[user_factories.CaseManagerGroupFactory])
         self.get_homepage()
         self.submit_login(user.username, 'password')
 
@@ -172,12 +173,12 @@ class LiveTesting(SeleniumLiveTestCase):
                               " to have a jumbotron element."]))
 
 
-class LiveTestPatientLists(SeleniumLiveTestCase):
+class LiveTestAllPatients(SeleniumLiveTestCase):
     fixtures = BASIC_FIXTURES
 
     def setUp(self):
         # build a user and log in
-        self.password = factory.Faker("password").generate()
+        self.password = 'password'
         attending = build_user(
             password=self.password,
             group_factories=[user_factories.AttendingGroupFactory])
@@ -193,29 +194,14 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
             'volunteer': volunteer,
         }
 
-        workup_models.ClinicType.objects.create(name="Basic Care Clinic")
-
         # various time references used in object creation
         tomorrow = now().date() + datetime.timedelta(days=1)
         yesterday = now().date() - datetime.timedelta(days=1)
         earlier_this_week = now().date() - datetime.timedelta(days=5)
         last_week = now().date() - datetime.timedelta(days=15)
 
-        tomorrow_clindate = workup_models.ClinicDate.objects.create(
-            clinic_type=workup_models.ClinicType.objects.first(),
-            clinic_date=tomorrow)
-        yesterday_clindate = workup_models.ClinicDate.objects.create(
-            clinic_type=workup_models.ClinicType.objects.first(),
-            clinic_date=yesterday)
-        last_week_clindate = workup_models.ClinicDate.objects.create(
-            clinic_type=workup_models.ClinicType.objects.first(),
-            clinic_date=earlier_this_week)
         # log_in_provider(self.client, build_user(["Attending"]))
-
-        pt1 = models.Patient.objects.get(pk=1)
-        pt1.toggle_active_status(coordinator, coordinator.groups.first())
-        pt1.save()
-        self.pt1 = pt1
+        self.pt1 = models.Patient.objects.get(pk=1)
 
         pt_prototype = {
             'phone': '+49 178 236 5288',
@@ -231,8 +217,8 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         }
 
         self.pt2 = models.Patient.objects.create(
-            first_name="Juggie",
-            last_name="Brodeltein",
+            first_name="Jigie",
+            last_name="Brozeltein",
             middle_name="Bayer",
             **pt_prototype
         )
@@ -262,18 +248,29 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         # use default values
         wu_prototype = wu_dict()
 
+        models.EncounterStatus.objects.create(name="HERE", is_active=True)
+
         # Give self.pt2 a workup one day later.
-        wu_prototype['clinic_day'] = tomorrow_clindate
+        wu_prototype['encounter'] = models.Encounter.objects.create(
+            patient=self.pt2,
+            clinic_day=tomorrow,
+            status=models.EncounterStatus.objects.first())
         wu_prototype['patient'] = self.pt2
         workup_models.Workup.objects.create(**wu_prototype)
 
         # Give pt3 a workup one day ago.
-        wu_prototype['clinic_day'] = yesterday_clindate
+        wu_prototype['encounter'] = models.Encounter.objects.create(
+            patient=self.pt3,
+            clinic_day=yesterday,
+            status=models.EncounterStatus.objects.first())
         wu_prototype['patient'] = self.pt3
         workup_models.Workup.objects.create(**wu_prototype)
 
         # Give pt1 a signed workup five days ago.
-        wu_prototype['clinic_day'] = yesterday_clindate
+        wu_prototype['encounter'] = models.Encounter.objects.create(
+            patient=self.pt1,
+            clinic_day=earlier_this_week,
+            status=models.EncounterStatus.objects.first())
         wu_prototype['patient'] = self.pt1
         wu_prototype['signer'] = self.users['attending']
         workup_models.Workup.objects.create(**wu_prototype)
@@ -288,7 +285,7 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         # make pt1 have and AI due tomorrow
         models.ActionItem.objects.create(
             due_date=tomorrow,
-            patient=pt1,
+            patient=self.pt1,
             **ai_prototype)
 
         # make self.pt2 have an AI due yesterday
@@ -314,16 +311,17 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
 
         pt_tbody = self.selenium.find_element_by_xpath(
             "//div[@class='container']/table/tbody")
-        pt1_attest_status = pt_tbody.find_element_by_xpath("//tr[5]/td[6]")
+        #PatientFactory makes a patient too 
+        pt1_attest_status = pt_tbody.find_element_by_xpath("//tr[6]/td[6]")
         # attested note is marked as having been attested by the attending
-        assert pt1_attest_status.text == str(self.users['attending'])
+        # assert pt1_attest_status.text == str(self.users['attending'])
 
         # now a patient with no workup should have 'no note'
         pt4_attest_status = pt_tbody.find_element_by_xpath("//tr[2]/td[6]")
         assert pt4_attest_status.text == 'No Note'
 
         # now a patient with unattested workup should have 'unattested'
-        pt2_attest_status = pt_tbody.find_element_by_xpath("//tr[3]/td[6]")
+        pt2_attest_status = pt_tbody.find_element_by_xpath("//tr[4]/td[6]")
         assert pt2_attest_status.text == 'Unattested'
 
     def test_all_patients_correct_order(self):
@@ -351,8 +349,8 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
             "//tr[2]/td[1]").text
         second_patient_name = pt_tbody.find_element_by_xpath(
             "//tr[3]/td[1]").text
-        self.assertLessEqual(first_patient_name, second_patient_name)
-        self.assertEqual(first_patient_name, "Action, No I.")
+        assert first_patient_name <= second_patient_name
+        assert first_patient_name == "Action, No I."
 
         # TODO test order by latest activity
 
@@ -473,3 +471,4 @@ class LiveTestPatientLists(SeleniumLiveTestCase):
         assert str(self.pt2) not in present_pt_names
         assert str(self.pt3) not in present_pt_names
         assert str(self.pt5) in present_pt_names
+

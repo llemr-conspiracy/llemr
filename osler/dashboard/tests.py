@@ -9,12 +9,13 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.conf import settings
 
-from osler.core.models import (Gender, Patient, ContactMethod)
+from osler.core.models import (Gender, Patient, ContactMethod, Encounter, EncounterStatus)
 
-from osler.workup.models import ClinicDate, ClinicType, Workup
+from osler.workup.models import Workup
 
 from osler.core.tests.test_views import log_in_user, build_user
 from osler.users.tests import factories as user_factories
+from osler.core.tests import factories as core_factories
 
 
 def dewhitespace(s):
@@ -39,9 +40,6 @@ class TestAttendingDashboard(TestCase):
 
         # prepare a patient with an unsigned wu today, in addition to
         # what comes in in the fixture
-        self.clinic_today = ClinicDate.objects.create(
-            clinic_type=ClinicType.objects.first(),
-            clinic_date=now().date())
 
         self.pt2 = Patient.objects.create(
             first_name="Arthur", last_name="Miller", middle_name="",
@@ -52,8 +50,19 @@ class TestAttendingDashboard(TestCase):
             patient_comfortable_with_english=False,
             preferred_contact_method=ContactMethod.objects.first(),
         )
+
+        EncounterStatus.objects.create(name="Active",is_active=True)
+
+        self.encounter_info = dict(
+            clinic_day=now().date(),
+            status=EncounterStatus.objects.first())
+
+        Encounter.objects.create(patient=Patient.objects.first(), **self.encounter_info)
+
         self.wu2 = Workup.objects.create(
-            clinic_day=self.clinic_today,
+            encounter=Encounter.objects.create(
+                patient=self.pt2,
+                **self.encounter_info),
             author=self.clinical_student,
             author_type=self.clinical_student.groups.first(),
             patient=self.pt2,
@@ -62,6 +71,7 @@ class TestAttendingDashboard(TestCase):
     def test_pt_without_note(self):
         response = self.client.get(reverse('dashboard-attending'))
 
+        #since there is 1 pt without a workup loaded in fixtures/core
         self.assertEqual(
             len(response.context['no_note_patients']),
             1)
@@ -87,7 +97,9 @@ class TestAttendingDashboard(TestCase):
             preferred_contact_method=ContactMethod.objects.first(),
         )
         wu3 = Workup.objects.create(
-            clinic_day=self.clinic_today,
+            encounter=Encounter.objects.create(
+                patient=pt3,
+                **self.encounter_info),
             author=self.clinical_student,
             author_type=self.clinical_student.groups.first(),
             patient=pt3,
@@ -101,25 +113,24 @@ class TestAttendingDashboard(TestCase):
             1)
         self.assertEqual(
             response.context['no_note_patients'][0],
-            Patient.objects.first())
+            Patient.objects.get(pk=1))
 
-        # and one clinic day
+        # and one encounter with workup assigned to our attending
         self.assertEqual(len(response.context['clinics']), 1)
-        # with two patients
+        # with one patient
         self.assertContains(response, reverse('core:patient-detail',
                                               args=(self.pt2.pk,)))
-        self.assertContains(response, reverse('core:patient-detail',
-                                              args=(pt3.pk,)))
-        # both of which are marked as unattested
-        self.assertContains(response, '<tr  class="warning" >', count=2)
+        # which is marked as unattested
+        self.assertContains(response, '<tr  class="warning" >', count=1)
 
+        wu3.attending = self.attending
         wu3.sign(self.attending, self.attending.groups.first())
         wu3.save()
 
         response = self.client.get(reverse('dashboard-attending'))
 
-        # still one clinic day
-        self.assertEqual(len(response.context['clinics']), 1)
+        # now two encounters with workup assigned to our attending
+        self.assertEqual(len(response.context['clinics']), 2)
         # with two patients
         self.assertContains(response, reverse('core:patient-detail',
                                               args=(self.pt2.pk,)))
@@ -154,9 +165,6 @@ class TestAttendingDashboard(TestCase):
             response, '<a href="?page=', count=1)
 
         for i in range(5):
-            cd = ClinicDate.objects.create(
-                clinic_date=datetime.date(2001, i + 1, 1),
-                clinic_type=ClinicType.objects.first())
             pt = Patient.objects.create(
                 first_name="John", last_name="Doe", middle_name="",
                 phone='454545', gender=Gender.objects.first(),
@@ -166,9 +174,13 @@ class TestAttendingDashboard(TestCase):
                 patient_comfortable_with_english=False,
                 preferred_contact_method=ContactMethod.objects.first(),
             )
+            e = Encounter.objects.create(
+                clinic_day=datetime.date(2001, i + 1, 1),
+                patient=pt,
+                status=EncounterStatus.objects.first(),)
             Workup.objects.create(
                 attending=self.attending,
-                clinic_day=cd,
+                encounter=e,
                 author=self.clinical_student,
                 author_type=self.clinical_student.groups.first(),
                 patient=pt,
@@ -200,31 +212,31 @@ class TestAttendingDashboard(TestCase):
     def test_dashboard_page_out_of_range(self):
 
         for i in range(10):
-            cd = ClinicDate.objects.create(
-                clinic_date=datetime.date(2001, i + 1, 1),
-                clinic_type=ClinicType.objects.first())
             pt = Patient.objects.create(
                 first_name="John", last_name="Doe", middle_name="",
                 phone='454545', gender=Gender.objects.first(),
                 address='A', city='B', state='C',
                 zip_code='12345', pcp_preferred_zip='12345',
-                date_of_birth=datetime.date(1992, i + 3, 22),
+                date_of_birth=datetime.date(1992, i + 1, 22),
                 patient_comfortable_with_english=False,
                 preferred_contact_method=ContactMethod.objects.first(),
             )
+            e = Encounter.objects.create(patient=pt, **self.encounter_info)
             Workup.objects.create(
                 attending=self.attending,
-                clinic_day=cd,
+                encounter=e,
                 author=self.clinical_student,
                 author_type=self.clinical_student.groups.first(),
                 patient=pt,
                 **self.wu_info)
 
         response = self.client.get(reverse('dashboard-attending') +
-                                   '?page=999')
+                                   '?page=99')
 
-        n_pages = (ClinicDate.objects.count() //
-                   settings.OSLER_CLINIC_DAYS_PER_PAGE)
+        #Making 10 encounters with 3 per page, should make 4 pages
+        #So the previous button should go towards the page before
+        n_pages = (Encounter.objects.count() //
+                   settings.OSLER_CLINIC_DAYS_PER_PAGE)-1
 
         # since we're on the last page, the "back" pagination button
         # should be enabled (i.e. no 'class="disabled"')
@@ -242,3 +254,40 @@ class TestAttendingDashboard(TestCase):
                     <span aria-hidden="true">&raquo;</span>
                 </a> </li>'''),
             dewhitespace(response.content.decode('utf-8')))
+
+
+class TestActiveDashboard(TestCase):
+
+    def setUp(self):
+        self.coordinator = build_user([user_factories.CaseManagerGroupFactory])
+        log_in_user(self.client, self.coordinator)
+
+        self.pt1 = core_factories.PatientFactory()
+        self.pt2 = core_factories.PatientFactory()
+        self.pt3 = core_factories.PatientFactory()
+
+        #pt1 has an active encounter today
+        self.encounter1 = core_factories.EncounterFactory(patient=self.pt1)
+        self.encounter1.order = 1
+        #pt2 has an active encounter today
+        self.encounter2 = core_factories.EncounterFactory(patient=self.pt2)
+        self.encounter2.order = 2
+        #pt3 has an inactive encounter today
+        self.encounter3 = core_factories.EncounterFactory(patient=self.pt3,
+            status=core_factories.EncounterStatusFactory(name="Nope",is_active=False))
+        self.encounter3.order = 3
+
+    def test_active_pts_reorder(self):
+        response = self.client.get(reverse('dashboard-active'))
+        #only 2 active patients
+        assert len(response.context['object_list'])==2
+        assert response.context['object_list'][0] == self.pt1
+        
+        self.encounter1.order = 2
+        self.encounter1.save()
+        self.encounter2.order =1
+        self.encounter2.save()
+
+        #now pt2 should be first
+        response = self.client.get(reverse('dashboard-active'))
+        assert response.context['object_list'][0] == self.pt2

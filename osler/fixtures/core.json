@@ -419,7 +419,6 @@
             "alternate_phone_4_owner": null,
             "alternate_phone_4": null,
             "email": null,
-            "needs_workup": true,
             "gender": "Male",
             "outcome": null,
             "preferred_contact_method": null,
@@ -457,7 +456,6 @@
             "alternate_phone_4": null,
             "preferred_contact_method": null,
             "email": null,
-            "needs_workup": true,
             "languages": [
                 "English"
             ],

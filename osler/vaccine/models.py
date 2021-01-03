@@ -3,7 +3,7 @@
 from django.db import models
 from django.urls import reverse
 
-from osler.core.models import (Note, AbstractActionItem)
+from osler.core.models import (Note, AbstractActionItem, Encounter)
 from osler.followup.models import (Followup)
 
 
@@ -78,6 +78,7 @@ class VaccineDose(Note):
     series = models.ForeignKey(VaccineSeries, on_delete=models.CASCADE,
         help_text='Which vaccine is this?')
     which_dose = models.ForeignKey(VaccineDoseType, on_delete=models.PROTECT)
+    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE)
 
     def is_last(self):
         '''Return True if this dose is last dose in the series'''

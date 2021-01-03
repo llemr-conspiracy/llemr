@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser, Group
 from django.db import models
 from django.urls import reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from simple_history.models import HistoricalRecords
 
@@ -9,6 +9,9 @@ from osler.core import validators
 
 
 class User(AbstractUser):
+
+    class Meta:
+        ordering = ["last_name",]
 
     # more inclusive of name patterns around the world
     name = models.CharField(_("Preferred name"), blank=True, max_length=255)

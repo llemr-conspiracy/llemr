@@ -72,6 +72,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     'bootstrap3',
     'simple_history',
+    'adminsortable',
 ]
 
 LOCAL_APPS = [
@@ -225,7 +226,7 @@ FIXTURE_DIRS = (str(APPS_DIR / "fixtures"),)
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
 SESSION_COOKIE_HTTPONLY = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
-CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
 SECURE_BROWSER_XSS_FILTER = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
@@ -277,7 +278,7 @@ LOGGING = {
 
 # django-allauth
 # -----------------------------------------------------------------------------
-ACCOUNT_ALLOW_REGISTRATION = True
+ACCOUNT_ALLOW_REGISTRATION = False
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_AUTHENTICATION_METHOD = "username"
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
@@ -355,6 +356,9 @@ OSLER_ROLE_DASHBOARDS = {
 # List of IP addresses to exclude from audit
 OSLER_AUDIT_BLACK_LIST = []
 
+# Name of about link in top bar
+OSLER_ABOUT_NAME = "About"
+
 # Display app settings - allows you to hide template components by passing settings variables through tmeplate render context
 #overrided in umkc.py
 # -----------------------------------------------------------------------------
@@ -366,9 +370,14 @@ OSLER_DISPLAY_DIAGNOSIS = True
 OSLER_DISPLAY_VOUCHERS = True
 OSLER_DISPLAY_WILL_RETURN = True
 OSLER_DISPLAY_ATTENDANCE = False
+OSLER_DISPLAY_FOLLOWUP = True
+OSLER_DISPLAY_VACCINE = True
 
 OSLER_ATTENDANCE_URL = env(
     "OSLER_ATTENDANCE_URL",
     default="https://www.wustl.edu",
 )
 
+#Default Encounter Status 
+OSLER_DEFAULT_ACTIVE_STATUS = ('Active', True)
+OSLER_DEFAULT_INACTIVE_STATUS = ('Inactive', False)

@@ -55,6 +55,7 @@
         <ul class="nav navbar-nav">
           <li><a href="{% url 'core:preintake' %}">New Patient</a></li>
           <li><a href="{% url 'core:all-patients' %}">All Patients</a></li>
+          <li><a href="{% url 'dashboard-active' %}">Active Patients</a></li>
           <li><a href="{% url 'inventory:drug-list' %}">Drug Inventory</a></li>
           {% if settings.OSLER_DISPLAY_APPOINTMENTS %}
             <li><a href="{% url 'appointment-list' %}">Appointments</a></li>
@@ -62,7 +63,7 @@
           {% if settings.OSLER_DISPLAY_ATTENDANCE %}
             <li><a href={{ settings.OSLER_ATTENDANCE_URL }} target="_blank">Attendance</a></li>
           {% endif %}
-          <li><a href="{% url 'about' %}" target="_blank">About</a></li>
+           <li><a href="{% url 'about' %}" target="_blank">{{settings.OSLER_ABOUT_NAME}} </a></li>
         </ul>
 				{% if user.is_authenticated %}
 				<ul class="nav navbar-nav pull-right">
@@ -103,7 +104,7 @@
   {% endblock %}
 
   <footer class="container" style="padding-top: 5%">
-    <p class="text-muted">Osler is free and open source software built by WashU students. To learn more or contribute, find us on <a src="https://github.com/oslerproject/osler">GitHub</a>.</p>
+    <p class="text-muted">Osler is free and open source software built by friends. To learn more or contribute, find us on <a src="https://github.com/oslerproject/osler">GitHub</a>.</p>
   </footer>
 
   </body>

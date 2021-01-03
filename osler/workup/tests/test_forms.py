@@ -9,13 +9,14 @@ from django.test import TestCase
 
 from osler.core.models import Gender
 
-from osler.workup.models import DiagnosisType, ClinicDate, ClinicType, Workup
+from osler.workup.models import DiagnosisType, Workup
 from osler.workup.forms import WorkupForm
 
 from osler.workup.tests.tests import wu_dict, note_dict
 
 from osler.core.tests.test_views import build_user
 import osler.users.tests.factories as user_factories
+import osler.core.tests.factories as core_factories
 
 from itertools import chain, combinations
 
@@ -39,13 +40,9 @@ class TestWorkupFormUnitAwareFields(TestCase):
 
     def setUp(self):
         DiagnosisType.objects.create(name='Cardiovascular')
-        ClinicType.objects.create(name='Main Clinic')
-        ClinicDate.objects.create(
-            clinic_date='2018-08-26', clinic_type=ClinicType.objects.first())
 
         wu_data = wu_dict()
         wu_data['diagnosis_categories'] = [DiagnosisType.objects.first().pk]
-        wu_data['clinic_day'] = wu_data['clinic_day'].pk
         wu_data['got_imaging_voucher'] = False
         wu_data['got_voucher'] = False
 
@@ -54,6 +51,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         # this wu_data object should have specified _none_ of the fields
         # for unit-aware vital signs
         self.wu_data = wu_data
+        self.pt = wu_data['patient']
 
     def test_vitals_no_units_error(self):
         """If vitals measurement w/o units, raise error"""
@@ -65,7 +63,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
             wu_data = self.wu_data.copy()
             wu_data[field] = value
 
-            form = WorkupForm(data=wu_data)
+            form = WorkupForm(pt=self.pt,data=wu_data)
             self.assertFalse(
                 form.is_valid(),
                 msg='Failed to raise error if only %s specified' % field)
@@ -74,7 +72,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
     def test_vitals_no_value_no_units_ok(self):
         """Units are required only when vitals are provided."""
 
-        form = WorkupForm(data=self.wu_data)
+        form = WorkupForm(pt=self.pt,data=self.wu_data)
         self.assertTrue(form.is_valid(), msg=form.errors)
 
     def test_note_temp_conversion(self):
@@ -85,7 +83,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         wu_data['temperature_units'] = 'C'
         wu_data['t'] = 37
 
-        form = WorkupForm(data=wu_data)
+        form = WorkupForm(pt=self.pt,data=wu_data)
 
         self.assertTrue(form.is_valid(), msg=form.errors)
         self.assertEqual(
@@ -95,7 +93,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         # temperatures given centigrade should be converted
         wu_data['temperature_units'] = 'F'
         wu_data['t'] = 98
-        form = WorkupForm(data=wu_data)
+        form = WorkupForm(pt=self.pt,data=wu_data)
 
         self.assertTrue(form.is_valid(), msg=form.errors)
         self.assertEqual(
@@ -110,7 +108,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         wu_data['height_units'] = 'cm'
         wu_data['height'] = 180
 
-        form = WorkupForm(data=wu_data)
+        form = WorkupForm(pt=self.pt,data=wu_data)
 
         self.assertTrue(form.is_valid(), msg=form.errors)
         self.assertEqual(
@@ -121,7 +119,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         wu_data['height_units'] = 'in'
         wu_data['height'] = 71
 
-        form = WorkupForm(data=wu_data)
+        form = WorkupForm(pt=self.pt,data=wu_data)
 
         self.assertTrue(form.is_valid(), msg=form.errors)
         self.assertEqual(
@@ -136,7 +134,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         wu_data['weight_units'] = 'kg'
         wu_data['weight'] = 81
 
-        form = WorkupForm(data=wu_data)
+        form = WorkupForm(pt=self.pt,data=wu_data)
 
         self.assertTrue(form.is_valid(), msg=form.errors)
         self.assertEqual(
@@ -146,7 +144,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         # weights given lbs should be converted
         wu_data['weight_units'] = 'lbs'
 
-        form = WorkupForm(data=wu_data)
+        form = WorkupForm(pt=self.pt,data=wu_data)
 
         self.assertTrue(form.is_valid(), msg=form.errors)
         self.assertEqual(
@@ -160,6 +158,7 @@ class TestWorkupFormValidators(TestCase):
 
     def setUp(self):
         self.valid_wu_dict = wu_dict()
+        self.pt = self.valid_wu_dict['patient']
 
     def test_blood_pressure_together(self):
         """Systolic and diastolic bp must be specified together."""
@@ -167,37 +166,37 @@ class TestWorkupFormValidators(TestCase):
         form_data = self.valid_wu_dict.copy()
         del form_data['bp_sys']
 
-        form = WorkupForm(data=form_data)
+        form = WorkupForm(pt=self.pt,data=form_data)
         self.assertFalse(form.is_valid())
 
         form_data = self.valid_wu_dict.copy()
         del form_data['bp_dia']
 
-        form = WorkupForm(data=form_data)
+        form = WorkupForm(pt=self.pt,data=form_data)
         self.assertFalse(form.is_valid())
 
     def test_blood_pressure(self):
 
         form_data = self.valid_wu_dict
-        form = WorkupForm(data=form_data)
+        form = WorkupForm(pt=self.pt,data=form_data)
 
         self.assertEqual(len(form['bp_sys'].errors), 0)
         self.assertEqual(len(form['bp_dia'].errors), 0)
 
         form_data['bp_sys'] = '800'
 
-        form = WorkupForm(data=form_data)
+        form = WorkupForm(pt=self.pt,data=form_data)
         self.assertNotEqual(len(form['bp_sys'].errors), 0)
 
         form_data['bp_sys'] = '120'
         form_data['bp_dia'] = '30'
 
-        form = WorkupForm(data=form_data)
+        form = WorkupForm(pt=self.pt,data=form_data)
         self.assertNotEqual(len(form['bp_dia'].errors), 0)
 
         # the systolic < diastolic error is a bp_sys error not bp_dia
         form_data['bp_dia'] = '130'
-        form = WorkupForm(data=form_data)
+        form = WorkupForm(pt=self.pt,data=form_data)
         self.assertNotEqual(len(form['bp_sys'].errors), 0)
 
     def test_missing_voucher_amount(self):
@@ -206,7 +205,7 @@ class TestWorkupFormValidators(TestCase):
         form_data['got_voucher'] = True
         form_data['got_imaging_voucher'] = True
 
-        form = WorkupForm(data=form_data)
+        form = WorkupForm(pt=self.pt,data=form_data)
 
         self.assertNotEqual(len(form['voucher_amount'].errors), 0)
         self.assertNotEqual(len(form['patient_pays'].errors), 0)
@@ -214,7 +213,7 @@ class TestWorkupFormValidators(TestCase):
         form_data['voucher_amount'] = '40'
         form_data['patient_pays'] = '40'
 
-        form = WorkupForm(data=form_data)
+        form = WorkupForm(pt=self.pt,data=form_data)
         self.assertEqual(len(form['voucher_amount'].errors), 0)
         self.assertEqual(len(form['patient_pays'].errors), 0)
 
@@ -224,7 +223,7 @@ class TestWorkupFormValidators(TestCase):
         form_data['imaging_voucher_amount'] = '40'
         form_data['patient_pays_imaging'] = '40'
 
-        form = WorkupForm(data=form_data)
+        form = WorkupForm(pt=self.pt,data=form_data)
         self.assertEqual(len(form['imaging_voucher_amount'].errors), 0)
         self.assertEqual(len(form['patient_pays_imaging'].errors), 0)
 
@@ -241,20 +240,21 @@ class TestWorkupFormProviderChoices(TestCase):
         for role_tuple in role_powerset:
             for _ in range(3):
                 self.users.append(build_user(list(role_tuple)))
+        self.pt = core_factories.PatientFactory()
 
     def test_form_attending_options(self):
         """WorkupForm offers only attending users for 'attending'"""
 
-        form = WorkupForm()
+        form = WorkupForm(pt=self.pt)
 
         # find all users able to attest
-        attending_users = [u.pk for u in filter(
+        attending_users = [u for u in filter(
             lambda u: u.has_perm(Workup.get_sign_perm()), 
             self.users)]
 
         # c[0] is the pk of each, [1:] indexing required because element 0
         # is the "blank" option.
-        attending_options = [c[0] for c in form['attending'].field.choices][1:]
+        attending_options = form['attending'].field.queryset
 
         # ensure that options are the same
         assert set(attending_options) == set(attending_users)
@@ -266,9 +266,9 @@ class TestWorkupFormProviderChoices(TestCase):
     def test_form_other_volunteer_options(self):
         """WorkupForm offers only non-attendings for 'other volunteers'"""
 
-        form = WorkupForm()
-        user_pks = [u.pk for u in self.users]
-        other_vol_options = [c[0] for c in form['other_volunteer'].field.choices]
+        form = WorkupForm(pt=self.pt)
+        user_pks = [u for u in self.users]
+        other_vol_options = form['other_volunteer'].field.queryset
 
         # check that any user can be the other volunteer
         assert set(user_pks) == set(other_vol_options)
@@ -280,13 +280,14 @@ class TestWorkupFormProviderChoices(TestCase):
         non_attending = build_user()
 
         form_data = wu_dict()
+        pt = form_data['patient']
         form_data['attending'] = attending
         form_data['other_volunteer'] = [non_attending, attending]
-        form = WorkupForm(data=form_data)
+        form = WorkupForm(pt=pt,data=form_data)
         assert form['other_volunteer'].errors
 
         # and that no error is thrown if they are different
         form_data['other_volunteer'] = [non_attending]
-        form = WorkupForm(data=form_data)
+        form = WorkupForm(pt=pt,data=form_data)
         assert not form['other_volunteer'].errors
 

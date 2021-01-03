@@ -11,41 +11,44 @@ Recent Clinic Dates
 {% block content %}
 
 <div class="container">
-
-	{% for clinic_date in clinics %}
-		<h3>{{clinic_date.clinic_type}} &mdash; {{clinic_date.clinic_date}}</h3>
+	{% for clinic in clinic_list %}
+		<h3>{{ clinic }}</h3>
 		<table class="table table-striped">
-	    <tr>
-		    <th>Patient</th>
-		    <th>Chief Complaint</th>
-		    <th>First Seen</th>
-		    <th>Attending</th> 
-		    <th>Note Author</th>
-		    <th>Attestation</th>
-		</tr>
-		{% for wu in clinic_date.workup_set.all %}
-			<tr {% if wu.signer == None %} class="warning" {% endif %}>
-				<td><a href="{% url 'core:patient-detail' pk=wu.patient.id %}">{{ wu.patient }}</a></td>
-				<td><a href="{% url 'workup' pk=wu.id %}">{{ wu.chief_complaint }}</a></td>
-				<td>{{ wu.patient.history.last.history_date | date:"D d M Y" }}</td>
-				<td>{{ wu.attending }}</td>
-				<td>{{ wu.author }}</td>
-				<td>{{ wu.signer | default_if_none:"unattested" }}</td>
+			<tr>
+			    <th>Patient</th>
+			    <th>Chief Complaint</th>
+			    <th>Last Seen</th>
+			    <th>Attending</th> 
+			    <th>Note Author</th>
+			    <th>Attestation</th>
 			</tr>
+		{% for encounter in clinics %}
+			{% if encounter.clinic_day == clinic %}
+				{% for wu in encounter.workup_set.all %}
+					<tr {% if wu.signer == None %} class="warning" {% endif %}>
+						<td><a href="{% url 'core:patient-detail' pk=wu.patient.id %}">{{ wu.patient }}</a></td>
+						<td><a href="{% url 'workup' pk=wu.id %}">{{ wu.chief_complaint }}</a></td>
+						<td>{{ wu.patient.last_seen | date:"D d M Y" }}</td>
+						<td>{{ wu.attending }}</td>
+						<td>{{ wu.author }}</td>
+						<td>{{ wu.signer | default_if_none:"unattested" }}</td>
+					</tr>
+				{% endfor %}
+			{% endif %}	
 		{% endfor %}
-		</table>	
+		</table>
 	{% endfor %}
 
-	<h3>Patients without Notes</h3>
+	<h3>Active Patients without Notes</h3>
 	<table class="table table-striped">
 		<tr>
 		    <th>Patient</th>
-		    <th>First Seen</th>
+		    <th>Last Seen</th>
 		</tr>
 		{% for patient in no_note_patients.all %}
 		<tr>
 			<td><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient }}</a></td>
-			<td>{{ patient.history.last.history_date | date:"D d M Y" }}</td>
+			<td>{{ patient.last_seen | date:"D d M Y" }}</td>
 		</tr>
 		{% endfor %}
 		<tr>

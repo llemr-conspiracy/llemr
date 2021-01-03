@@ -17,10 +17,6 @@ class TestAttestations(TestCase):
 
     def setUp(self):
 
-        models.ClinicDate.objects.create(
-            clinic_type=models.ClinicType.objects.first(),
-            clinic_date=now().date())
-
         self.wu = models.Workup.objects.create(**wu_dict())
         self.note = models.AttestableBasicNote.objects.create(**note_dict())
 

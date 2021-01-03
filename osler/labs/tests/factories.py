@@ -48,6 +48,7 @@ class LabFactory(DjangoModelFactory):
 	patient = factory.SubFactory(core_factories.PatientFactory)
 	lab_time = now()
 	lab_type = factory.SubFactory(LabTypeFactory)
+	encounter = factory.SubFactory(core_factories.EncounterFactory)
 
 
 class ContinuousMeasurementFactory(DjangoModelFactory):

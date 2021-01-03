@@ -5,6 +5,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from osler.core.models import Patient
 
+
 class DrugForm(ModelForm):
     class Meta:
         model = models.Drug

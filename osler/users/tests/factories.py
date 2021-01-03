@@ -97,7 +97,7 @@ class UserFactory(factory.django.DjangoModelFactory):
         self.username = (
             extracted
             if extracted
-            else factory.Faker("user_name").generate(extra_kwargs={})
+            else factory.Faker("user_name").generate({'locale':'en-us'})
         )
 
     @factory.post_generation
@@ -105,14 +105,7 @@ class UserFactory(factory.django.DjangoModelFactory):
         password = (
             extracted
             if extracted
-            else factory.Faker(
-                "password",
-                length=42,
-                special_chars=True,
-                digits=True,
-                upper_case=True,
-                lower_case=True,
-            ).generate(extra_kwargs={})
+            else 'password'
         )
         self.set_password(password)
 

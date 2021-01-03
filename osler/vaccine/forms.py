@@ -1,12 +1,12 @@
 from django.forms import (ModelForm, ModelChoiceField)
 from django import forms
-from . import models
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 
 from osler.vaccine import models
 from osler.core.forms import AbstractActionItemForm
 from osler.followup.forms import BaseFollowup
+from osler.core.models import Encounter
 
 
 class VaccineSeriesForm(ModelForm):
@@ -24,13 +24,16 @@ class VaccineSeriesForm(ModelForm):
 class VaccineDoseForm(ModelForm):
     class Meta(object):
         model = models.VaccineDose
-        fields = ['which_dose']
+        fields = ['which_dose','encounter']
 
     def __init__(self, series_type, *args, **kwargs):
+        pt = kwargs.pop('pt')
         super(VaccineDoseForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.fields['which_dose'].queryset = models.VaccineDoseType.objects\
             .filter(kind=series_type).order_by('time_from_first')
+        self.fields['encounter'].queryset = Encounter.objects\
+            .filter(patient=pt).order_by('clinic_day')
         self.helper.add_input(Submit('submit', 'Log vaccine dose'))
 
 

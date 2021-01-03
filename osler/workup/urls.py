@@ -73,16 +73,6 @@ unwrapped_urlconf = [
         partial(views.basicnote_detail, model=models.BasicNote),
         name="basic-note-detail"),
 
-    # CLINIC DATES
-    re_path(
-        r'^(?P<pt_id>[0-9]+)/clindate/$',
-        views.ClinicDateCreate.as_view(),
-        name="new-clindate"),
-    re_path(
-        r'^clindates/$',
-        views.clinic_date_list,
-        name="clindate-list"),
-
     # ADDENDA
     re_path(
         r'^(?P<wu_id>[0-9]+)/addendum/(?P<pt_id>[0-9]+)/$',
