@@ -13,7 +13,21 @@ from osler.referral import models as referrals
 
 from osler.workup.api import serializers
 
+from osler.core.api.serializers import PatientSerializer
+from osler.core.models import Patient
 
+from rest_framework import status
+# from rest_framework.decorators import action
+from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, UpdateModelMixin
+from rest_framework.response import Response
+from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, ListModelMixin
+from rest_framework.viewsets import GenericViewSet
+
+class PatientViewSet(CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,ListModelMixin,GenericViewSet):
+    serializer_class = PatientSerializer
+    queryset = Patient.objects.all()
+
+"""    
 def active_patients_filter(qs):
     '''Filter a queryset of patients for those that are listed as
     active. This is used to display a subset of patients for voluneers
@@ -188,3 +202,4 @@ class PtList(generics.ListAPIView):  # read only
         queryset = filter_funcs[filter_name](queryset)
 
         return queryset
+"""
