@@ -1,9 +1,27 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./osler/assets/index.js", // path to our input file
-  output: {
-    filename: "index-bundle.js", // output bundle file name
-    path: path.resolve(__dirname, "./osler/static"), // path to our Django static directory
+  entry: {
+    data_dashboard: "./osler/assets/datadashboard/patient-data-dashboard/index.js",
+    all_patients: "./osler/assets/core/all-patients/index.js",
   },
+  output: {
+    filename: "[name].js", // output bundle file name
+    chunkFilename: "[id]-[chunkhash].js",
+    path: path.resolve(__dirname, "./osler/static"), // path to our Django static directory
+    publicPath: "osler/static/",
+  },
+  devServer: {
+    writeToDisk: true, // Write files to disk in dev mode, so Django can serve the assets
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        loader: "babel-loader",
+        options: { presets: ["@babel/preset-env", "@babel/preset-react"] }
+      },
+    ]
+  }
 };

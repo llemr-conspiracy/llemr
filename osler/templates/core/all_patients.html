@@ -1,5 +1,7 @@
 {% extends "core/base.html" %}
 
+{% load static %}
+
 {% block title %}
 Osler: {{ title | default:"All Patients"}}
 {% endblock %}
@@ -9,6 +11,10 @@ Osler: {{ title | default:"All Patients"}}
 {% endblock %}
 
 {% block content %}
+
+
+  <div id="root"> </div>
+
    <div class="container">
       <div class="form-group">
           <label for="all-patients-filter-input"  class="sr-only" >Filter</label>
@@ -71,8 +77,10 @@ Osler: {{ title | default:"All Patients"}}
 	</div>
 {% endblock %}
 
-
 {% block extra_js %}
+
+<script src="{% static 'all_patients.js' %}"></script>
+
 <script>
 {# adapted from "https://www.w3schools.com/howto/howto_js_filter_table.asp" #}
 function filterAllPatientsTable() {
