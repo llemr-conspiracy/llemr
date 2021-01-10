@@ -6,9 +6,9 @@ module.exports = {
     all_patients: "./osler/assets/core/all-patients/index.js",
   },
   output: {
-    filename: "[name].js", // output bundle file name
+    filename: "[name].bundle.js", // output bundle file name
     chunkFilename: "[id]-[chunkhash].js",
-    path: path.resolve(__dirname, "./osler/static"), // path to our Django static directory
+    path: path.resolve(__dirname, "./osler/static/js"), // path to our Django static directory
     publicPath: "osler/static/",
   },
   devServer: {

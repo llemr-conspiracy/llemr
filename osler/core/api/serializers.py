@@ -26,7 +26,7 @@ class PatientSerializer(serializers.ModelSerializer):
         exclude = ['case_managers']
 
     # history = HistorySerializer()
-    # latest_workup = WorkupSerializer()
+    latest_workup = WorkupSerializer()
     # gender = serializers.StringRelatedField(read_only=True)
     age = serializers.StringRelatedField(read_only=True)
     name = serializers.StringRelatedField(read_only=True)

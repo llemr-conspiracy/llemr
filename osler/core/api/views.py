@@ -1,33 +1,65 @@
 from __future__ import unicode_literals
 from builtins import str
 from functools import partial
+from django.db.models.query import Prefetch
 
 import django.utils.timezone
 from django.db.models import Min
 
-from rest_framework import generics
+from osler import workup,referral
+from osler.core import models
 
-from osler.core import models as core_models
-from osler.workup import models as workup_models
-from osler.referral import models as referrals
+from osler.core.api import serializers
 
-from osler.workup.api import serializers
-
-from osler.core.api.serializers import PatientSerializer
-from osler.core.models import Patient
-
-from rest_framework import status
-# from rest_framework.decorators import action
-from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, UpdateModelMixin
-from rest_framework.response import Response
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, ListModelMixin
 from rest_framework.viewsets import GenericViewSet
 
 class PatientViewSet(CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,ListModelMixin,GenericViewSet):
-    serializer_class = PatientSerializer
-    queryset = Patient.objects.all()
+    serializer_class = serializers.PatientSerializer
+    queryset = models.Patient.objects
 
-"""    
+    def get_queryset(self):
+        '''
+        Restricts returned patients according to query params
+        '''
+
+        filter_funcs = {
+            None: lambda x: x,
+            'active': active_patients_filter,
+            'ai_active': active_ai_patients_filter,
+            'ai_inactive': inactive_ai_patients_filter,
+            'unsigned_workup': unsigned_workup_patients_filter,
+            'user_cases': partial(user_cases, self.request.user),
+            'ai_priority': priority_ai_patients_filter
+        }
+
+        # This doesn't sort by latest time, just latest date
+        def by_latest_key(pt):
+            latest_wu = pt.latest_workup()
+            if latest_wu is None:
+                latest_date = pt.history.last().history_date.date()
+            else:
+                latest_date = latest_wu.encounter.clinic_day
+            return latest_date
+
+        queryset = models.Patient.objects
+        sort = self.request.query_params.get('sort', None)
+        filter_name = self.request.query_params.get('filter', None)
+
+        if sort is not None:
+            if str(sort) == 'latest_workup':
+                pt_list_latest = list(models.Patient.objects.all())
+                pt_list_latest.sort(key=by_latest_key, reverse=True)
+                queryset = pt_list_latest
+            else:
+                queryset = queryset.order_by(sort)
+
+        queryset = filter_funcs[filter_name](queryset) \
+            .prefetch_related('workup_set')
+
+        return queryset
+
+   
 def active_patients_filter(qs):
     '''Filter a queryset of patients for those that are listed as
     active. This is used to display a subset of patients for voluneers
@@ -35,7 +67,7 @@ def active_patients_filter(qs):
     pts).
     '''
 
-    return qs.filter(encounter__status__is_active=True).order_by('last_name')
+    return qs.filter(encounter__status__is_active=True)
 
 
 def merge_pt_querysets_by_soonest_date(qs1, qs2):
@@ -67,26 +99,26 @@ def active_ai_patients_filter(qs):
     items.
     '''
 
-    ai_qs = core_models.ActionItem.objects \
+    ai_qs = models.ActionItem.objects \
         .filter(due_date__lte=django.utils.timezone.now().date()) \
         .filter(completion_date=None) \
         .select_related('patient')
 
-    pts_with_active_ais = core_models.Patient.objects \
+    pts_with_active_ais = models.Patient.objects \
         .filter(actionitem__in=ai_qs) \
         .distinct().annotate(soonest_due_date=Min('actionitem__due_date'))
 
-    referral_qs = referrals.FollowupRequest.objects \
+    referral_qs = referral.models.FollowupRequest.objects \
         .filter(due_date__lte=django.utils.timezone.now().date()) \
         .filter(completion_date=None) \
         .select_related('patient')
 
-    pts_with_active_referrals = core_models.Patient.objects \
+    pts_with_active_referral_models = models.Patient.objects \
         .filter(followuprequest__in=referral_qs) \
         .distinct().annotate(soonest_due_date=Min('followuprequest__due_date'))
 
     out_list = merge_pt_querysets_by_soonest_date(
-        pts_with_active_ais, pts_with_active_referrals)
+        pts_with_active_ais, pts_with_active_referral_models)
 
     return out_list
 
@@ -96,15 +128,15 @@ def inactive_ai_patients_filter(qs):
     items due in the future.
     '''
 
-    future_ai_pts = core_models.Patient.objects.filter(
-        actionitem__in=core_models.ActionItem.objects
+    future_ai_pts = models.Patient.objects.filter(
+        actionitem__in=models.ActionItem.objects
             .filter(due_date__gt=django.utils.timezone.now().date())
             .filter(completion_date=None)
             .select_related('patient')
     ).annotate(soonest_due_date=Min('actionitem__due_date'))
 
-    future_referral_pts = core_models.Patient.objects.filter(
-        followuprequest__in=referrals.FollowupRequest.objects
+    future_referral_pts = models.Patient.objects.filter(
+        followuprequest__in=referral.models.FollowupRequest.objects
             .filter(due_date__gt=django.utils.timezone.now().date())
             .filter(completion_date=None)
             .select_related('patient')
@@ -121,12 +153,12 @@ def unsigned_workup_patients_filter(qs):
     workup.
     '''
 
-    wu_qs = workup_models.Workup.objects \
+    wu_qs = workup.models.Workup.objects \
         .filter(signer__isnull=True) \
         .order_by('last_name') \
         .select_related('patient')  # optimization only
 
-    return core_models.Patient.objects.filter(workup__in=wu_qs)
+    return models.Patient.objects.filter(workup__in=wu_qs)
 
 
 def priority_ai_patients_filter(qs):
@@ -134,8 +166,8 @@ def priority_ai_patients_filter(qs):
     action item.
     '''
 
-    priority_ai_pts = core_models.Patient.objects.filter(
-        actionitem__in=core_models.ActionItem.objects
+    priority_ai_pts = models.Patient.objects.filter(
+        actionitem__in=models.ActionItem.objects
         .filter(priority=True)
         .filter(completion_date=None)
         .select_related('patient')
@@ -149,57 +181,8 @@ def user_cases(user, qs):
     manager for
     '''
 
-    qs = core_models.Patient.objects.filter(
+    qs = models.Patient.objects.filter(
         case_managers=user
     )
 
     return qs
-
-
-class PtList(generics.ListAPIView):  # read only
-    '''
-    List patients
-    '''
-
-    serializer_class = serializers.PatientSerializer
-
-    def get_queryset(self):
-        '''
-        Restricts returned patients according to query params
-        '''
-
-        filter_funcs = {
-            None: lambda x: x,
-            'active': active_patients_filter,
-            'ai_active': active_ai_patients_filter,
-            'ai_inactive': inactive_ai_patients_filter,
-            'unsigned_workup': unsigned_workup_patients_filter,
-            'user_cases': partial(user_cases, self.request.user),
-            'ai_priority': priority_ai_patients_filter
-        }
-
-        # This doesn't sort by latest time, just latest date
-        def bylatestKey(pt):
-            latestwu = pt.latest_workup()
-            if latestwu is None:
-                latestdate = pt.history.last().history_date.date()
-            else:
-                latestdate = latestwu.encounter.clinic_day
-            return latestdate
-
-        queryset = core_models.Patient.objects
-        sort = self.request.query_params.get('sort', None)
-        filter_name = self.request.query_params.get('filter', None)
-
-        if sort is not None:
-            if str(sort) == 'latest_workup':
-                pt_list_latest = list(core_models.Patient.objects.all())
-                pt_list_latest.sort(key=bylatestKey, reverse=True)
-                queryset = pt_list_latest
-            else:
-                queryset = queryset.order_by(sort)
-
-        queryset = filter_funcs[filter_name](queryset)
-
-        return queryset
-"""

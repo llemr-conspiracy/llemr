@@ -307,18 +307,20 @@ class Patient(Person):
     def completed_workup_set(self):
         return self.workup_set.filter(is_pending=False)
 
-    def latest_workup(self):
-        """
-        Keeping this method because it is used by WorkupCreate.get_initial in
-            workup/views
-        However, this is not used in all_patients in core/views, because it
-            gets all patients in prefetch_related instead of requesting for
-            latest_workup individually.
-        """
-        if self.completed_workup_set().exists():
-            return self.completed_workup_set().first()
-        else:
+    def _latest_workup_helper(self, qs):
+        try:
+            return qs.all()[0]
+        except IndexError:
             return None
+
+    def latest_pending_workup(self):
+        return self._latest_workup_helper(self.pending_workup_set())
+
+    def latest_completed_workup(self):
+        return self._latest_workup_helper(self.completed_workup_set())
+
+    def latest_workup(self):
+        return self._latest_workup_helper(self.workup_set)
 
     def notes(self):
         '''Returns a list of all the notes (workups and followups) associated
@@ -336,10 +338,11 @@ class Patient(Person):
         return sorted(note_list, key=lambda k: k.written_datetime)
 
     def last_seen(self):
-        if self.latest_workup() is not None:
-            return self.latest_workup().written_datetime
+        latest_wu = self.latest_completed_workup()
+        if latest_wu:
+            return latest_wu.written_datetime
         else:
-            #presumably if a patient doesn't have a last workup this is the first time they are being seen?
+            # presumably if a patient doesn't have a last workup this is the first time they are being seen?
             return now().date()
     
     def all_phones(self):
@@ -360,7 +363,7 @@ class Patient(Person):
         else:
             return None
 
-    def get_status(self):
+    def status(self):
         if self.last_encounter() is not None:
             return self.last_encounter().status
         else:
@@ -371,7 +374,7 @@ class Patient(Person):
         user_has_group = user.groups.filter(pk=group.pk).exists()
         if user_has_group and self.group_can_activate(group):
             #active encounter then inactivate
-            if self.get_status().is_active:
+            if self.status().is_active:
                 encounter = self.last_encounter()
                 encounter.status = default_inactive_status()
                 encounter.save()

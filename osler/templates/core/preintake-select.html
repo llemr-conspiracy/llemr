@@ -25,10 +25,10 @@ Patient Intake
             {% for patient in object_list %}
                 <tr>
                     <td>
-                        {% if patient.get_status.is_active %}
+                        {% if patient.status.is_active %}
                             Patient already active
                         {% endif %}
-                        {% if not patient.get_status.is_active %}
+                        {% if not patient.status.is_active %}
                             <button class="btn btn-success" onclick="location.href ='{% url "core:patient-activate-detail" pk=patient.id %}'">Activate Patient</button>
                         {% endif %}
                     </td>

@@ -324,7 +324,7 @@ class IntakeTest(TestCase):
                     self.assertEqual(x, y)
 
         # new patients should be marked as inactive
-        assert not new_pt.get_status().is_active
+        assert not new_pt.status().is_active
 
 
 class ActionItemTest(TestCase):
@@ -460,20 +460,20 @@ class PatientStatusTest(TestCase):
 
     def test_activate_perms(self):
         pt = factories.PatientFactory()
-        assert not pt.get_status().is_active
+        assert not pt.status().is_active
 
         pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
-        assert pt.get_status().is_active
+        assert pt.status().is_active
 
         attending = build_user([user_factories.AttendingGroupFactory])
         with self.assertRaises(ValueError):
             pt.toggle_active_status(attending, attending.groups.first())
-        assert pt.get_status().is_active
+        assert pt.status().is_active
 
         volunteer = build_user([user_factories.VolunteerGroupFactory])
         with self.assertRaises(ValueError):
             pt.toggle_active_status(volunteer, volunteer.groups.first())
-        assert pt.get_status().is_active
+        assert pt.status().is_active
 
     def test_activate_encounter_logic(self):
         pt = factories.PatientFactory()

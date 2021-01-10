@@ -33,11 +33,14 @@
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
     "chart.js": "^2.9.4",
+    "core-js": "^3.8.2",
     "daterangepicker": "^3.1.0",
     "jquery": "^3.5.1",
     "moment": "^2.29.1",
     "popper.js": "^1.16.1",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1"
+    "react-dom": "^17.0.1",
+    "react-table": "^7.6.2",
+    "regenerator-runtime": "^0.13.7"
   }
 }

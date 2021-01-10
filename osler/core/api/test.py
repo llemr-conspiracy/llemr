@@ -200,7 +200,7 @@ class APITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
         for patient in response.data:
-            self.assertEqual(patient['get_status.is_active'], True)
+            self.assertEqual(patient['status.is_active'], True)
         self.assertLessEqual(response.data[0]['last_name'],response.data[1]['last_name']) # check that sorting is correct
 
     def test_api_list_patients_with_priority_action_item(self):

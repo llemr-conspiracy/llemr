@@ -9,8 +9,8 @@ if settings.DEBUG:
 else:
     router = SimpleRouter()
 
-router.register("users", UserViewSet)
-router.register("patients",PatientViewSet)
+router.register("user", UserViewSet)
+router.register("patient", PatientViewSet)
 
 app_name = "api"
 urlpatterns = router.urls
