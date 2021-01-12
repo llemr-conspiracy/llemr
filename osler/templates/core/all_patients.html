@@ -80,6 +80,12 @@ Osler: {{ title | default:"All Patients"}}
 {% block extra_js %}
 
 <script src="{% static 'js/all_patients.bundle.js' %}"></script>
+<script>
+  all_patients.render({
+    'activePatients': true,
+    'displayCaseManagers': {{ settings.OSLER_DISPLAY_CASE_MANAGERS|yesno:'true,false' }},
+  })
+</script>
 
 <script>
 // adapted from "https://www.w3schools.com/howto/howto_js_filter_table.asp"

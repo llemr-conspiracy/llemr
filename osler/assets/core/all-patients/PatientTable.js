@@ -3,8 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Table from './Table';
 
 
-
-function PatientTable() {
+function PatientTable(props) {
 
   const columns = React.useMemo(
     () => [
@@ -19,17 +18,17 @@ function PatientTable() {
       {
         Header: 'Latest Activity',
         accessor: (row) => {
-          const wu = row.latest_workup
+          const wu = row.latest_workup;
           if (wu == null) {
-            return 'Intake'
+            return 'Intake';
           }
           else {
-            const date = new Date(wu.written_datetime)
+            const date = new Date(wu.written_datetime);
             const options = {
               year: 'numeric', month: 'short', day: 'numeric'
             }
             // should default to current locale
-            const dateString = date.toLocaleDateString(undefined,options)
+            const dateString = date.toLocaleDateString(undefined,options);
             return (
               // wrap in div to combine string and href
               <div>
@@ -43,13 +42,17 @@ function PatientTable() {
     []
   )
   
-  const [loading, setLoading] = useState(true)
-  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
+    let apiUrl = "/api/patient/?fields=name,age,gender,detail_url,latest_workup";
+    if (props.activePatients) {
+      apiUrl += "&filter=active";
+    }
     async function getData() {
       await axios
-        .get("/api/patient/?fields=name,age,gender,detail_url,latest_workup")
+        .get(apiUrl)
         .then((response) => {
           setData(response.data);
           setLoading(false);
@@ -62,7 +65,6 @@ function PatientTable() {
 
   return (
     <div className='container'>
-      {/* here you check if the state is loading otherwise if you will not call that you will get a blank page because the data is an empty array at the moment of mounting */}
       {loading ? (
         <p>Loading, please wait...</p>
       ) : (
