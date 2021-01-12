@@ -231,6 +231,9 @@ class Workup(Note, AttestationMixin):
     def get_absolute_url(self):
         return reverse('workup', args=[str(self.id)])
 
+    def detail_url(self):
+        return self.get_absolute_url()
+
     def __str__(self):
         return " ".join(
             (self.patient.name(), "on",

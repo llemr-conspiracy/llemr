@@ -9,38 +9,35 @@ function PatientTable() {
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Name',
-        columns: [
-          {
-            Header: 'First Name',
-            accessor: 'firstName',
-          },
-          {
-            Header: 'Last Name',
-            accessor: 'lastName',
-          },
-        ],
+        Header: 'Patient Name',
+        accessor: (row) => <a href={row.detail_url}>{row.name}</a>,
       },
       {
-        Header: 'Info',
-        columns: [
-          {
-            Header: 'Age',
-            accessor: 'age',
-          },
-          {
-            Header: 'Visits',
-            accessor: 'visits',
-          },
-          {
-            Header: 'Status',
-            accessor: 'status',
-          },
-          {
-            Header: 'Profile Progress',
-            accessor: 'progress',
-          },
-        ],
+        Header: 'Age/Gender',
+        accessor: (row) => `${row.age}/${row.gender}`
+      },
+      {
+        Header: 'Latest Activity',
+        accessor: (row) => {
+          const wu = row.latest_workup
+          if (wu == null) {
+            return 'Intake'
+          }
+          else {
+            const date = new Date(wu.written_datetime)
+            const options = {
+              year: 'numeric', month: 'short', day: 'numeric'
+            }
+            // should default to current locale
+            const dateString = date.toLocaleDateString(undefined,options)
+            return (
+              // wrap in div to combine string and
+              <div>
+                <a href={wu.detail_url}>Seen {dateString}:</a> {wu.chief_complaint}
+              </div>
+            );
+          }
+        }
       },
     ],
     []
@@ -52,7 +49,7 @@ function PatientTable() {
   useEffect(() => {
     async function getData() {
       await axios
-        .get("/api/patient/?fields=name,age,gender,latest_workup")
+        .get("/api/patient/?fields=name,age,gender,detail_url,latest_workup")
         .then((response) => {
           // check if the data is populated
           console.log(response.data);
@@ -68,10 +65,10 @@ function PatientTable() {
   }, []);
 
   return (
-    <div>
+    <div className='container'>
       {/* here you check if the state is loading otherwise if you will not call that you will get a blank page because the data is an empty array at the moment of mounting */}
       {loading ? (
-        <p>Loading Please wait...</p>
+        <p>Loading, please wait...</p>
       ) : (
         <Table columns={columns} data={data} />
       )}
