@@ -31,7 +31,7 @@ function PatientTable() {
             // should default to current locale
             const dateString = date.toLocaleDateString(undefined,options)
             return (
-              // wrap in div to combine string and
+              // wrap in div to combine string and href
               <div>
                 <a href={wu.detail_url}>Seen {dateString}:</a> {wu.chief_complaint}
               </div>
@@ -51,15 +51,11 @@ function PatientTable() {
       await axios
         .get("/api/patient/?fields=name,age,gender,detail_url,latest_workup")
         .then((response) => {
-          // check if the data is populated
-          console.log(response.data);
           setData(response.data);
-          // you tell it that you had the result
           setLoading(false);
         });
     }
     if (loading) {
-      // if the result is not ready so you make the axios call
       getData();
     }
   }, []);

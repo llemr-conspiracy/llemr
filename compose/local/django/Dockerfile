@@ -8,6 +8,10 @@ RUN apt-get update \
   && apt-get install -y build-essential \
   # psycopg2 dependencies
   && apt-get install -y libpq-dev \
+  # necessary for crytography
+  && apt-get install -y libffi-dev libssl-dev \
+  # necessary for Pillow
+  && apt-get install -y zlib1g-dev libjpeg62-turbo-dev \
   # Translations dependencies
   && apt-get install -y gettext \
   # cleaning up unused files
@@ -17,6 +21,7 @@ RUN apt-get update \
 # Requirements are installed here to ensure they will be cached.
 COPY ./requirements /requirements
 RUN pip install --upgrade pip
+
 RUN pip install -r /requirements/local.txt
 
 COPY ./compose/production/django/entrypoint /entrypoint
