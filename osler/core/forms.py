@@ -2,7 +2,7 @@
 
 from django.forms import (
     Form, CharField, ModelForm, EmailField, CheckboxSelectMultiple,
-    ModelMultipleChoiceField, CheckboxInput)
+    ModelMultipleChoiceField, CheckboxInput, TypedChoiceField)
 from django.contrib.auth.forms import AuthenticationForm
 
 from django.conf import settings
@@ -50,6 +50,14 @@ class PatientForm(ModelForm):
                 .distinct()
                 .order_by("last_name")
         )
+    
+    if settings.OSLER_HOMELESS_OPTION:
+        homeless = TypedChoiceField(
+                required=False,
+                label="Homeless", 
+                choices=((0,'')),
+                widget=CheckboxInput,
+            )
 
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
@@ -63,7 +71,21 @@ class PatientForm(ModelForm):
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['ethnicities'].wrap(InlineCheckboxes)
         self.helper.add_input(Submit('submit', 'Submit'))
-        self.fields['address'].widget.attrs = {'placeholder': settings.OSLER_DEFAULT_ADDRESS}
+        self.fields['address'].widget.attrs = {'placeholder': settings.OSLER_DEFAULT_ADDRESS,
+                                                'id': 'address'}
+        self.fields['city'].widget.attrs = {'id': 'city'}
+        self.fields['state'].widget.attrs = {'id': 'state'}
+        self.fields['zip_code'].widget.attrs = {'id': 'zip code'}
+        self.fields['country'].widget.attrs = {'id': 'country'}
+        self.fields['pcp_preferred_zip'].widget.attrs = {'id': 'pcp preferred zip'}
+        if settings.OSLER_HOMELESS_OPTION:
+            self.helper.layout.remove('homeless')
+            self.helper.layout.insert(14,'homeless')
+            self.fields["homeless"].widget.attrs = {'id':'homeless_checkbox',
+                                                    'onclick':'homeless_checked()'}
+        if not settings.OSLER_PHONE_NUMBER_OPTION:
+            self.helper.layout.remove('phone')
+
 
     def clean(self):
 
@@ -87,6 +109,7 @@ class PatientForm(ModelForm):
                     alt_owner,
                     "An Alternate Phone Owner is required" +
                     " if a Alternate Phone is specified")
+
 
 
 class AbstractActionItemForm(ModelForm):

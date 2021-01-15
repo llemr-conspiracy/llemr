@@ -189,6 +189,8 @@ class Patient(Person):
         help_text='MM/DD/YYYY',
         validators=[validators.validate_birth_date])
 
+    
+
     patient_comfortable_with_english = models.BooleanField(default=True)
 
     ethnicities = models.ManyToManyField(Ethnicity)
