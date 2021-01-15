@@ -2,7 +2,6 @@ const path = require("path");
 
 module.exports = {
   entry: {
-    data_dashboard: "./osler/assets/datadashboard/patient-data-dashboard/index.js",
     all_patients: "./osler/assets/core/all-patients/index.js",
   },
   output: {

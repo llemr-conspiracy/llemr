@@ -12,69 +12,8 @@ Osler: {{ title | default:"All Patients"}}
 
 {% block content %}
 
-
   <div id="root"> </div>
 
-   <div class="container">
-      <div class="form-group">
-          <label for="all-patients-filter-input"  class="sr-only" >Filter</label>
-          <div class="input-group">
-              <div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
-              {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
-                <input type="text" id="all-patients-filter-input" placeholder="Filter by patient or case manager name" class="form-control" onkeyup="filterAllPatientsTable()">
-              {% else %}
-                <input type="text" id="all-patients-filter-input" placeholder="Filter by patient name" class="form-control" onkeyup="filterAllPatientsTable()">
-              {% endif %}
-          </div>
-      </div>
-
-      <table class="table" id="all-patients-table">
-          <tr>
-              <th>Patient Name</th>
-              <th>Age/Gender</th>
-              {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
-                <th>Case Managers</th>
-              {% endif%}
-              <th>Latest Activity</th>
-              <th>Next AI Due</th>
-              <th>Attestation</th>
-          </td>
-
-          {% for patient in object_list %}
-              {% with latest_workup=patient.workup_set.all.0 %}
-              {# .0 must be used instead of .first; .first induces additional queries because it is a "different" query (limit 1) and so doesn't use the prefetch_related cache #}
-                  <tr>
-                      <td><a href="{% url 'core:patient-detail' pk=patient.pk %}">{{ patient.name }}</a></td>
-                      <td>{{ patient.age }}/{{patient.gender}}</td>
-                      {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
-                        <td>{{ patient.case_managers.all | join:"; " }}</td>
-                      {% endif%}
-                      <td>
-                          {% if latest_workup %}
-                            {% if latest_workup.is_pending %}
-                                <a href="{% url 'workup' pk=latest_workup.pk %}"> Pending </a>: {{ latest_workup.chief_complaint | default:"no chief complaint provided" }}
-                            {% else %}
-                              <a href="{% url 'workup' pk=latest_workup.pk %}">Seen {{ latest_workup.encounter.clinic_day }}</a>: {{latest_workup.chief_complaint}}
-                            {% endif %}
-                          {% else %}
-                              <a href="{% url 'core:patient-update' pk=patient.id %}">Intake</a>: {{patient.history.last.history_date}}
-                          {% endif %}
-                      </td>
-                      <td>{{patient.actionitem_status}}</td>
-                      <td>
-                          {% if not latest_workup %}
-                              No Note
-                          {% elif not latest_workup.signer %}
-                              Unattested
-                          {% else %}
-                              {{ latest_workup.signer }}
-                          {% endif %}
-                      </td>
-                  </tr>
-              {% endwith %}
-          {% endfor %}
-        </table>
-	</div>
 {% endblock %}
 
 {% block extra_js %}
@@ -82,7 +21,7 @@ Osler: {{ title | default:"All Patients"}}
 <script src="{% static 'js/all_patients.bundle.js' %}"></script>
 <script>
   all_patients.render({
-    'activePatients': true,
+    'activePatients': {{ active|yesno:'true,false' }},
     'displayCaseManagers': {{ settings.OSLER_DISPLAY_CASE_MANAGERS|yesno:'true,false' }},
   })
 </script>

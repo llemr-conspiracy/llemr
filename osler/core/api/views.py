@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 from builtins import str
 from functools import partial
-from django.db.models.query import Prefetch
 
 import django.utils.timezone
 from django.db.models import Min
@@ -13,6 +12,7 @@ from osler.core.api import serializers
 
 from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, ListModelMixin
 from rest_framework.viewsets import GenericViewSet
+
 
 class PatientViewSet(CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,ListModelMixin,GenericViewSet):
     serializer_class = serializers.PatientSerializer
@@ -55,7 +55,11 @@ class PatientViewSet(CreateModelMixin,RetrieveModelMixin,UpdateModelMixin,ListMo
                 queryset = queryset.order_by(sort)
 
         queryset = filter_funcs[filter_name](queryset) \
-            .prefetch_related('workup_set')
+            .select_related('gender') \
+            .prefetch_related('workup_set') \
+            .prefetch_related('actionitem_set') \
+            .prefetch_related('followuprequest_set') \
+            .prefetch_related('vaccineactionitem_set')
 
         return queryset
 

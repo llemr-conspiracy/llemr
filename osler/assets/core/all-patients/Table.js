@@ -1,8 +1,28 @@
 import React from 'react';
-import { useTable } from 'react-table'
+import { useTable, useGlobalFilter } from 'react-table'
+import SearchBar from './SearchBar'
 
-function Table({ columns, data }) {
-    // Use the state and functions returned from useTable to build your UI
+
+function globalFilter(rows, columnIds, globalFilterValue) {
+  // ignore required columnsIds argument
+  return rows.filter((row) => {
+    const name = row.original.name;
+    if (name.includes(globalFilterValue)) {
+      return true;
+    }
+    else if (row.original.hasOwnProperty('case_managers')) {
+      const case_managers = row.original.case_managers;
+      for (const case_manager of case_managers) {
+        if (case_manager.includes(globalFilterValue)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  });
+}
+
+function Table({ columns, data, id }) {
 
     const {
       getTableProps,
@@ -10,14 +30,23 @@ function Table({ columns, data }) {
       headerGroups,
       rows,
       prepareRow,
+      state,
+      setGlobalFilter,
     } = useTable({
       columns,
       data,
-    })
+      'globalFilter': globalFilter,
+    },
+      useGlobalFilter,
+    );
   
-    // Render the UI for your table
     return (
-      <table {...getTableProps()} className='table'>
+      <>
+      <SearchBar
+        globalFilter={state.globalFilter}
+        setGlobalFilter={setGlobalFilter}
+      />
+      <table {...getTableProps()} className='table' id={id}>
         <thead>
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -40,6 +69,7 @@ function Table({ columns, data }) {
           })}
         </tbody>
       </table>
+      </>
     )
 }
 

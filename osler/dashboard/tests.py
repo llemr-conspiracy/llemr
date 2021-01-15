@@ -285,7 +285,7 @@ class TestActiveDashboard(TestCase):
         
         self.encounter1.order = 2
         self.encounter1.save()
-        self.encounter2.order =1
+        self.encounter2.order = 1
         self.encounter2.save()
 
         #now pt2 should be first

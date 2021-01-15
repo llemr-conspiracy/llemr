@@ -427,32 +427,14 @@ def patient_detail(request, pk):
 
 def all_patients(request, title='All Patients', active=False):
     """
-    Query is written to minimize hits to the database; number of db hits can be
-        see on the django debug toolbar.
+    Render via React
     """
-    patient_list = core_models.Patient.objects.all()
-    if active:
-        #if a patient has two open encounters, they will appear twice because of 
-        #ordering by encounter, distinct() doesn't work
-        #I decided was ok because you should be inactivating encounters
-        patient_list = core_models.Patient.objects.filter(encounter__status__is_active=True)\
-            .order_by('encounter__order')
-    
-    patient_list = patient_list \
-        .select_related('gender') \
-        .prefetch_related('case_managers') \
-        .prefetch_related('workup_set') \
-        .prefetch_related('actionitem_set')
-
-    # Don't know how to prefetch history
-    # https://stackoverflow.com/questions/45713517/use-prefetch-related-in-django-simple-history
-    # Source code is https://github.com/treyhunner/django-simple-history/blob/master/simple_history/models.py if we want to try to figure out
 
     return render(request,
                   'core/all_patients.html',
                   {
-                    'object_list': patient_list,
-                    'title': title
+                    'title': title,
+                    'active': active
                   })
     
 

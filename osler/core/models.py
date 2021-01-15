@@ -223,7 +223,9 @@ class Patient(Person):
     history = HistoricalRecords()
 
     def age(self):
-        return (now().date() - self.date_of_birth).days // 365
+        today = now().date()
+        born = self.date_of_birth
+        return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
     def __str__(self):
         return self.name()
@@ -276,22 +278,22 @@ class Patient(Person):
                                           vaccine_action_items))
 
         done = [ai for ai in patient_action_items if ai.completion_author is not None]
-        overdue = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date <= now().date()]
-        pending = [ai for ai in patient_action_items if ai.completion_author is None and ai.due_date > now().date()]
 
+        overdue = [ai for ai in done if ai.due_date <= now().date()]
         if len(overdue) > 0:
             oldest = min(overdue, key=lambda k: k.due_date)
-            tdelta = now().date() - oldest.due_date
-            return str(oldest.short_name())+" "+str(tdelta.days)+" days past due"
+            time_delta = now().date() - oldest.due_date
+            return f'{oldest.short_name()} {time_delta.days} days past due'
 
-            # due_dates = ", ".join([str((now().date()-ai.due_date).days) for ai in overdue])
-            # return "Action items " + due_dates + " days past due"
-        elif len(pending) > 0:
+        pending = [ai for ai in done if ai.due_date > now().date()]
+        if len(pending) > 0:
             next_item = min(pending, key=lambda k: k.due_date)
-            tdelta = next_item.due_date - now().date()
-            return str(next_item.short_name())+" in "+str(tdelta.days)+" days"
-        elif len(done) > 0:
+            time_delta = next_item.due_date - now().date()
+            return f'{next_item.short_name()} due in {time_delta.days} days'
+
+        if len(done) > 0:
             return "all actions complete"
+
         else:
             return "no pending actions"
 
@@ -307,20 +309,20 @@ class Patient(Person):
     def completed_workup_set(self):
         return self.workup_set.filter(is_pending=False)
 
-    def _latest_workup_helper(self, qs):
+    def latest_workup_helper(self, qs):
         try:
             return qs.all()[0]
         except IndexError:
             return None
 
     def latest_pending_workup(self):
-        return self._latest_workup_helper(self.pending_workup_set())
+        return self.latest_workup_helper(self.pending_workup_set())
 
     def latest_completed_workup(self):
-        return self._latest_workup_helper(self.completed_workup_set())
+        return self.latest_workup_helper(self.completed_workup_set())
 
     def latest_workup(self):
-        return self._latest_workup_helper(self.workup_set)
+        return self.latest_workup_helper(self.workup_set)
 
     def notes(self):
         '''Returns a list of all the notes (workups and followups) associated
