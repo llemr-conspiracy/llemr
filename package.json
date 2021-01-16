@@ -39,7 +39,9 @@
     "moment": "^2.29.1",
     "popper.js": "^1.16.1",
     "react": "^17.0.1",
+    "react-bootstrap": "^1.4.3",
     "react-dom": "^17.0.1",
+    "react-icons": "^4.1.0",
     "react-table": "^7.6.2",
     "regenerator-runtime": "^0.13.7"
   }

@@ -1,10 +1,11 @@
 import React from 'react';
-import { useTable, useGlobalFilter } from 'react-table'
-import SearchBar from './SearchBar'
+import { useTable, useGlobalFilter, usePagination } from 'react-table';
+import SearchBar from './SearchBar';
+import NavigationBar from './NavigationBar';
+import Table from 'react-bootstrap/Table';
 
 
-function globalFilter(rows, columnIds, globalFilterValue) {
-  // ignore required columnsIds argument
+function globalFilter(rows, columnIds, globalFilterValue) { 
   return rows.filter((row) => {
     const name = row.original.name;
     if (name.includes(globalFilterValue)) {
@@ -22,31 +23,41 @@ function globalFilter(rows, columnIds, globalFilterValue) {
   });
 }
 
-function Table({ columns, data, id }) {
+function TableManager({ columns, data, id }) {
 
+    // mainly follow official example from react-table
     const {
       getTableProps,
       getTableBodyProps,
       headerGroups,
-      rows,
       prepareRow,
+      page,
       state,
       setGlobalFilter,
+      canPreviousPage,
+      canNextPage,
+      pageOptions,
+      pageCount,
+      gotoPage,
+      nextPage,
+      previousPage,
     } = useTable({
       columns,
       data,
-      'globalFilter': globalFilter,
+      globalFilter: globalFilter,
+      initialState: { pageIndex: 0 },
     },
       useGlobalFilter,
+      usePagination,
     );
   
     return (
-      <>
+      <div>
       <SearchBar
         globalFilter={state.globalFilter}
         setGlobalFilter={setGlobalFilter}
       />
-      <table {...getTableProps()} className='table' id={id}>
+      <Table {...getTableProps()} id={id}>
         <thead>
           {headerGroups.map(headerGroup => (
             <tr {...headerGroup.getHeaderGroupProps()}>
@@ -57,7 +68,7 @@ function Table({ columns, data, id }) {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {rows.map((row, i) => {
+          {page.map((row, i) => {
             prepareRow(row)
             return (
               <tr {...row.getRowProps()}>
@@ -65,12 +76,22 @@ function Table({ columns, data, id }) {
                   return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
                 })}
               </tr>
-            )
+            );
           })}
         </tbody>
-      </table>
-      </>
+      </Table>
+      <NavigationBar
+        gotoPage={gotoPage}
+        previousPage={previousPage}
+        nextPage={nextPage}
+        pageIndex={state.pageIndex}
+        canPreviousPage={canPreviousPage}
+        canNextPage={canNextPage}
+        pageOptions={pageOptions}
+        pageCount={pageCount}
+      />
+      </div>
     )
 }
 
-export default Table;
+export default TableManager;

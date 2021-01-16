@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import Table from './Table';
+import TableManager from './TableManager';
 
 
 function PatientTable(props) {
@@ -14,7 +14,6 @@ function PatientTable(props) {
         },
         {
           Header: 'Age/Gender',
-          disableGlobalFilter: true,
           accessor: (row) => `${row.age}/${row.gender}`,
         },
         {
@@ -23,7 +22,6 @@ function PatientTable(props) {
         },
         {
           Header: 'Latest Activity',
-          disableGlobalFilter: true,
           accessor: (row) => {
             const wu = row.latest_workup;
             if (wu == null) {
@@ -45,12 +43,10 @@ function PatientTable(props) {
         },
         {
           Header: 'Next AI Due',
-          disableGlobalFilter: true,
           accessor: 'actionitem_status',
         },
         {
           Header: 'Attestation',
-          disableGlobalFilter: true,
           accessor: (row) => {
             const wu = row.latest_workup;
             if (wu == null) {
@@ -102,7 +98,7 @@ function PatientTable(props) {
       {loading ? (
         <span>Loading...</span>
       ) : (
-        <Table columns={columns} data={data} id='all-patients-table'/>
+        <TableManager columns={columns} data={data} id='all-patients-table'/>
       )}
     </div>
   );

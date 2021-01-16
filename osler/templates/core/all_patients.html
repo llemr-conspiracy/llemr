@@ -12,7 +12,7 @@ Osler: {{ title | default:"All Patients"}}
 
 {% block content %}
 
-  <div id="root"> </div>
+<div id="root"> </div>
 
 {% endblock %}
 
@@ -23,53 +23,7 @@ Osler: {{ title | default:"All Patients"}}
   all_patients.render({
     'activePatients': {{ active|yesno:'true,false' }},
     'displayCaseManagers': {{ settings.OSLER_DISPLAY_CASE_MANAGERS|yesno:'true,false' }},
-  })
+  });
 </script>
 
-<script>
-// adapted from "https://www.w3schools.com/howto/howto_js_filter_table.asp"
-function filterAllPatientsTable() {
-  // Declare variables 
-  var input, filter, table, tr, td, i;
-  input = document.getElementById("all-patients-filter-input");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("all-patients-table");
-  tr = table.getElementsByTagName("tr");
-
-  // Loop through all table rows, and hide those who don't match the search query
-  // Start at one to avoid hitting table header
-  for (i = 1; i < tr.length; i++) {
-    var match = 0;
-    td = tr[i].getElementsByTagName("td")[0];
-    if (td) {
-        // need additional indexing because patient's name is a link
-        if (check(td.getElementsByTagName("a")[0], filter)) {
-            match = 1;
-        }
-    }
-    td = tr[i].getElementsByTagName("td")[2];
-    if (td) {
-        if (check(td, filter)) {
-            match = 1;
-        } 
-    }
-    if (match == 1) {
-      tr[i].style.display = "";
-    } else {
-      tr[i].style.display = "none";
-    }
-  }
-}
-
-function check(haystack_element, needle){
-    var haystack = haystack_element.innerHTML.toUpperCase()
-    if (!needle) {return 1}
-    if (haystack && haystack.indexOf(needle) > -1) {
-        return 1
-    } else {
-        return 0
-    }
-}
-
-</script>
 {% endblock %}

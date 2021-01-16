@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAsyncDebounce} from 'react-table'
+import { BsSearch } from "react-icons/bs";
 
 
 function SearchBar({
@@ -12,10 +13,10 @@ function SearchBar({
     }, 200)
   
     return (
-    <div className="form-group">
+    <div>
         <label htmlFor="all-patients-filter-input"  className="sr-only" >Filter</label>
         <div className="input-group">
-            <div className="input-group-addon"><span className="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+            <div className="input-group-addon"><BsSearch /></div>
             <input 
                 value={value || ""}
                 onChange={e => {
