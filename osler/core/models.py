@@ -277,19 +277,20 @@ class Patient(Person):
                                           referral_followup_requests,
                                           vaccine_action_items))
 
-        done = [ai for ai in patient_action_items if ai.completion_author is not None]
 
-        overdue = [ai for ai in done if ai.due_date <= now().date()]
+        overdue = [ai for ai in patient_action_items if ai.due_date <= now().date() and ai.completion_author is None]
         if len(overdue) > 0:
             oldest = min(overdue, key=lambda k: k.due_date)
             time_delta = now().date() - oldest.due_date
             return f'{oldest.short_name()} {time_delta.days} days past due'
 
-        pending = [ai for ai in done if ai.due_date > now().date()]
+        pending = [ai for ai in patient_action_items if ai.due_date > now().date() and ai.completion_author is None]
         if len(pending) > 0:
             next_item = min(pending, key=lambda k: k.due_date)
             time_delta = next_item.due_date - now().date()
             return f'{next_item.short_name()} due in {time_delta.days} days'
+
+        done = [ai for ai in patient_action_items if ai.completion_author is not None]
 
         if len(done) > 0:
             return "all actions complete"

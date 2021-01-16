@@ -67,20 +67,19 @@ function PatientTable(props) {
     ,
     []
   );
-
-  let apiUrl = "/api/patient/?fields=name,age,gender,detail_url,latest_workup,actionitem_status";
-  if (props.displayCaseManagers) {
-    apiUrl += ",case_managers";
-  }
-  if (props.activePatients) {
-    apiUrl += "&filter=active&sort=encounter__order";
-  }
   
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
   useEffect(() => {
     async function getData() {
+      let apiUrl = "/api/patient/?fields=name,age,gender,detail_url,latest_workup,actionitem_status";
+      if (props.displayCaseManagers) {
+        apiUrl += ",case_managers";
+      }
+      if (props.activePatients) {
+        apiUrl += "&filter=active&sort=encounter__order";
+      }
       await axios
         .get(apiUrl)
         .then((response) => {
