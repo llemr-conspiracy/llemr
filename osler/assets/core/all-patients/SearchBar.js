@@ -1,6 +1,8 @@
 import React from 'react';
 import { useAsyncDebounce} from 'react-table'
 import { BsSearch } from "react-icons/bs";
+import InputGroup from "react-bootstrap/InputGroup";
+import FormControl from "react-bootstrap/FormControl";
 
 
 function SearchBar({
@@ -13,23 +15,22 @@ function SearchBar({
     }, 200)
   
     return (
-    <div>
-        <label htmlFor="all-patients-filter-input"  className="sr-only" >Filter</label>
-        <div className="input-group">
-            <div className="input-group-addon"><BsSearch /></div>
-            <input 
-                value={value || ""}
-                onChange={e => {
-                    setValue(e.target.value);
-                    onChange(e.target.value);
-                }}
-                type="text" 
-                id="all-patients-filter-input" 
-                placeholder="Filter by patient name" 
-                className="form-control" 
-            />
-        </div>
-    </div>
+        <InputGroup className="mb-3">
+        <InputGroup.Prepend>
+          <InputGroup.Text id="search-addon"><BsSearch /></InputGroup.Text>
+        </InputGroup.Prepend>
+        <FormControl
+          aria-label="search bar"
+          aria-describedby="search-addon"
+          id="all-patients-filter-input" 
+          placeholder="Filter by patient name" 
+          value={value || ""}
+          onChange={e => {
+              setValue(e.target.value);
+              onChange(e.target.value);
+          }}
+        />
+        </InputGroup>
     );
 }
 
