@@ -315,6 +315,8 @@ class IntakeTest(TestCase):
 
         new_pt = models.Patient.objects.last()
         for param in submitted_pt:
+            # these are fk relationships, shouldn't be checked this way
+            if param == 'phone' or param == 'description': continue
             try:
                 self.assertEqual(str(submitted_pt[param]),
                                  str(getattr(new_pt, param)))
@@ -322,6 +324,10 @@ class IntakeTest(TestCase):
                 for x, y in zip(submitted_pt[param],
                                 getattr(new_pt, param).all()):
                     self.assertEqual(x, y)
+
+        assert new_pt.phone_number_set.count() == 1
+        assert new_pt.phone_number_set.first().phone_number != ''
+        assert new_pt.phone_number_set.first().description == ''
 
         # new patients should be marked as inactive
         assert not new_pt.get_status().is_active

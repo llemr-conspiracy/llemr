@@ -224,11 +224,17 @@ class PatientCreate(FormView):
         pt = form.save()
         pt.save()
 
-        PatientPhoneNumber.objects.create(
-            patient=pt,
-            phone_number=form['phone'],
-            description=form['description']
-        )
+        if form.cleaned_data['phone']:
+            if form.cleaned_data['description']:
+                kwargs = {'description': form.cleaned_data['description']}
+            else:
+                kwargs = {}
+
+            core_models.PatientPhoneNumber.objects.create(
+                patient=pt,
+                phone_number=form.cleaned_data['phone'],
+                **kwargs
+            )
 
         return HttpResponseRedirect(reverse("demographics-create",
                                             args=(pt.id,)))

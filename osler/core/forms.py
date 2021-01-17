@@ -90,7 +90,7 @@ class PatientForm(ModelForm):
 
         cleaned_data = super(ModelForm, self).clean()
 
-        if cleaned_data.get(description) and not cleaned_data.get(phone):
+        if cleaned_data.get('description') and not cleaned_data.get('phone'):
             self.add_error(
                 description,
                 "Phone number is required if a description is provided."

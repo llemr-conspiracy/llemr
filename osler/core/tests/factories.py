@@ -84,8 +84,8 @@ class PatientFactory(DjangoModelFactory):
     first_name = "Juggie"
     last_name = "Brodeltein"
     middle_name = "Bayer"
-    phone = '+49 178 236 5288',
-    languages = factory.SubFactory(LanguageFactory),
+    phone = factory.Faker('phone_number')
+    languages = factory.SubFactory(LanguageFactory)
     gender = factory.SubFactory(GenderFactory)
     address = 'Schulstrasse 9'
     city = 'Munich'
