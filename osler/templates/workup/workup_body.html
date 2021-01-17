@@ -100,7 +100,7 @@
       <strong>{% trans 'BP' %}:</strong> {{workup.bp_sys}} / {{workup.bp_dia}} mmHg
     </div>
     <div class="col-md-2">
-      <strong>{% trans 'RR' %}:</strong> {{workup.rr}} per min
+      <strong>{% trans 'RR' %}:</strong> {{workup.rr}} {% trans 'per min' %}
     </div>
     <div class="col-md-2">
       <strong>{% trans 'T' %}:</strong> {{workup.t}} &deg;C
@@ -180,7 +180,7 @@
     {% for addendum in workup.addendum_set.all reversed %}
     <div class="row">
         <div class="col-md-12">
-            <strong>{{ addendum.author }} ({{ addendum.author_type }}) at {{ addendum.written_datetime }}:</strong> {{addendum.text| linebreaksbr }}
+            <strong>{{ addendum.author }} ({{ addendum.author_type }}) {% trans 'at' %} {{ addendum.written_datetime }}:</strong> {{addendum.text| linebreaksbr }}
         </div>
     </div>
     {% endfor %}

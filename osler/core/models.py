@@ -17,6 +17,7 @@ from osler.core import utils
 from osler.users.utils import group_has_perm
 from django.utils.translation import gettext_lazy as _
 
+
 class Language(models.Model):
     """A natural language, spoken by a provider or patient.
     """
@@ -79,7 +80,7 @@ class Ethnicity(models.Model):
     """
 
     class Meta:
-        verbose_name_plural = "ethnicities"
+        verbose_name_plural = _("ethnicities")
 
     name = models.CharField(max_length=50, primary_key=True)
 
@@ -88,8 +89,8 @@ class Ethnicity(models.Model):
 
 
 class ActionInstruction(models.Model):
-    instruction = models.CharField(max_length=50, primary_key=True)
-    active = models.BooleanField(default=True)
+    instruction = models.CharField(max_length=50, primary_key=True, verbose_name=_("instruction"))
+    active = models.BooleanField(default=True, verbose_name=_("active"))
 
     def __str__(self):
         return self.instruction
@@ -117,8 +118,8 @@ class Person(models.Model):
     phone = models.CharField(max_length=40, null=True, blank=True, verbose_name=_('phone'))
     languages = models.ManyToManyField(
         Language, verbose_name=_('languages'), help_text=_("Specify here languages that are spoken at a "
-                            "level sufficient to be used for medical "
-                            "communication."))
+                                                           "level sufficient to be used for medical "
+                                                           "communication."))
 
     gender = models.ForeignKey(Gender, on_delete=models.PROTECT, verbose_name=_('gender'))
 
@@ -149,7 +150,7 @@ class Provider(Person):
     """
 
     # Users should be made inactive rather than deleted in almost all cases
-    user = models.OneToOneField(get_user_model(), on_delete=models.PROTECT)
+    user = models.OneToOneField(get_user_model(), on_delete=models.PROTECT, verbose_name=_("user"))
 
     def first_name(self):
         return self.user.first_name
@@ -165,11 +166,10 @@ class Patient(Person):
 
     class Meta:
         permissions = [
-            ('case_manage_Patient', "Can act as a case manager."),
-            ('activate_Patient', "Can in/activate patients")
+            ('case_manage_Patient', _("Can act as a case manager.")),
+            ('activate_Patient', _("Can in/activate patients"))
         ]
-        ordering = ["last_name",]
-
+        ordering = ["last_name", ]
 
     case_managers = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
@@ -196,7 +196,8 @@ class Patient(Person):
         help_text=_('MM/DD/YYYY'),
         validators=[validators.validate_birth_date], verbose_name=_('date of birth'))
 
-    patient_comfortable_with_english = models.BooleanField(default=True, verbose_name=_('patient comfortable with english'))
+    patient_comfortable_with_english = models.BooleanField(
+        default=True, verbose_name=_('patient comfortable with english'))
 
     ethnicities = models.ManyToManyField(Ethnicity, verbose_name=_('ethnicities'))
 
@@ -206,16 +207,20 @@ class Patient(Person):
     # TODO: we should really come up with a better way of representing these
     # data
 
-    alternate_phone_1_owner = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone owner 1'))
+    alternate_phone_1_owner = models.CharField(
+        max_length=40, blank=True, null=True, verbose_name=_('alternate phone owner 1'))
     alternate_phone_1 = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone 1'))
 
-    alternate_phone_2_owner = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone owner 2'))
+    alternate_phone_2_owner = models.CharField(
+        max_length=40, blank=True, null=True, verbose_name=_('alternate phone owner 2'))
     alternate_phone_2 = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone 2'))
 
-    alternate_phone_3_owner = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone owner 3'))
+    alternate_phone_3_owner = models.CharField(
+        max_length=40, blank=True, null=True, verbose_name=_('alternate phone owner 3'))
     alternate_phone_3 = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone 3'))
 
-    alternate_phone_4_owner = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone owner 4'))
+    alternate_phone_4_owner = models.CharField(
+        max_length=40, blank=True, null=True, verbose_name=_('alternate phone owner 4'))
     alternate_phone_4 = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone 4'))
 
     preferred_contact_method = models.ForeignKey(
@@ -241,9 +246,9 @@ class Patient(Person):
         2) due today or before. The list is sorted by due_date'''
 
         return sorted(
-            ActionItem.objects.filter(patient=self.pk) \
-                .filter(completion_author=None) \
-                .filter(due_date__lte=now().date()),
+            ActionItem.objects.filter(patient=self.pk)
+            .filter(completion_author=None)
+            .filter(due_date__lte=now().date()),
             key=lambda ai: ai.due_date)
 
     def done_action_items(self):
@@ -251,8 +256,8 @@ class Patient(Person):
         by completion date'''
 
         return sorted(
-            ActionItem.objects.filter(patient=self.pk)\
-                .exclude(completion_author=None),
+            ActionItem.objects.filter(patient=self.pk)
+            .exclude(completion_author=None),
             key=lambda ai: ai.completion_date)
 
     def inactive_action_items(self):
@@ -260,9 +265,9 @@ class Patient(Person):
         due yet either, sorted by due date.'''
 
         return sorted(
-            ActionItem.objects.filter(patient=self.pk)\
-                .filter(completion_author=None)\
-                .filter(due_date__gt=now().date()),
+            ActionItem.objects.filter(patient=self.pk)
+            .filter(completion_author=None)
+            .filter(due_date__gt=now().date()),
             key=lambda ai: ai.due_date)
 
     def status(self):
@@ -307,7 +312,7 @@ class Patient(Person):
 
     def pending_workup_set(self):
         return self.workup_set.filter(is_pending=True)
-    
+
     def completed_workup_set(self):
         return self.workup_set.filter(is_pending=False)
 
@@ -343,9 +348,9 @@ class Patient(Person):
         if self.latest_workup() is not None:
             return self.latest_workup().written_datetime
         else:
-            #presumably if a patient doesn't have a last workup this is the first time they are being seen?
+            # presumably if a patient doesn't have a last workup this is the first time they are being seen?
             return now().date()
-    
+
     def all_phones(self):
         '''Returns a list of tuples of the form (phone, owner) of all the
         phones associated with this patient.'''
@@ -386,12 +391,12 @@ class Note(models.Model):
         abstract = True
         ordering = ["-written_datetime", "-last_modified"]
 
-    author = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
-    author_type = models.ForeignKey(Group, on_delete=models.PROTECT)
-    patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
+    author = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, verbose_name=_("author"))
+    author_type = models.ForeignKey(Group, on_delete=models.PROTECT, verbose_name=_("author type"))
+    patient = models.ForeignKey(Patient, on_delete=models.PROTECT, verbose_name=_("patient"))
 
-    written_datetime = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    written_datetime = models.DateTimeField(auto_now_add=True, verbose_name=_("written_datetime"))
+    last_modified = models.DateTimeField(auto_now=True, verbose_name=_("last modified"))
 
 
 class DocumentType(models.Model):
@@ -405,12 +410,12 @@ class Document(Note):
     title = models.CharField(max_length=200, verbose_name=_('title'))
     image = models.FileField(
         help_text=_("Please deidentify all file names before upload! "
-                  "Delete all files after upload!"),
+                    "Delete all files after upload!"),
         upload_to=utils.make_filepath,
         verbose_name=_("PDF File or Image Upload")
     )
-    comments = models.TextField()
-    document_type = models.ForeignKey(DocumentType, on_delete=models.PROTECT)
+    comments = models.TextField(verbose_name=_("comments"))
+    document_type = models.ForeignKey(DocumentType, on_delete=models.PROTECT, verbose_name=_("document type"))
 
     history = HistoricalRecords()
 
@@ -462,7 +467,7 @@ class CompletableMixin(models.Model):
         blank=True, null=True,
         related_name="%(app_label)s_%(class)s_completed",
         on_delete=models.PROTECT, verbose_name=_('completion author'))
-    due_date = models.DateField(help_text=_("MM/DD/YYYY"))
+    due_date = models.DateField(verbose_name=_("due date"), help_text=_("MM/DD/YYYY"))
 
     def done(self):
         """Return true if this ActionItem has been marked as done."""
@@ -500,8 +505,8 @@ class AbstractActionItem(Note, CompletableMixin):
         abstract = True
 
     instruction = models.ForeignKey(ActionInstruction,
-                                    on_delete=models.PROTECT)
-    comments = models.TextField()
+                                    on_delete=models.PROTECT, verbose_name=_("instruction"))
+    comments = models.TextField(verbose_name=_("comments"))
 
     def class_name(self):
         return self.__class__.__name__
@@ -524,6 +529,7 @@ class AbstractActionItem(Note, CompletableMixin):
 class ActionItem(AbstractActionItem):
     priority = models.BooleanField(
         default=False,
+        verbose_name=_("priority"),
         help_text='Check this box if this action item is high priority')
 
     MARK_DONE_URL_NAME = 'done-action-item'

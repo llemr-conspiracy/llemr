@@ -3,10 +3,11 @@ from django.db import models
 from django.urls import reverse
 
 from osler.core.models import (ReferralType, ReferralLocation, Note,
-                                  ContactMethod, CompletableMixin,)
+                               ContactMethod, CompletableMixin,)
 from osler.followup.models import ContactResult, NoAptReason, NoShowReason
 
 from django.utils.translation import gettext_lazy as _
+
 
 class Referral(Note):
     """A record of a particular patient's referral to a particular center."""
@@ -43,11 +44,11 @@ class Referral(Note):
 
         formatted_date = self.written_datetime.strftime("%D")
         if self.kind.is_fqhc:
-            return _("%s referral on %s") % (self.kind, formatted_date)
+            return _("%(kind)s referral on %(formatted_date)s") % {'kind': self.kind, 'formatted_date': formatted_date}
         else:
             location_names = [loc.name for loc in self.location.all()]
             locations = " ,".join(location_names)
-            return _("Referral to %s on %s") % (locations, formatted_date)
+            return _("Referral to %(locations)s on %(formatted_date)s") % {'locations': locations, 'formatted_date': formatted_date}
 
     @staticmethod
     def aggregate_referral_status(referrals):
@@ -101,9 +102,9 @@ class FollowupRequest(Note, CompletableMixin):
 
     def __str__(self):
         formatted_date = self.due_date.strftime("%D")
-        return _('Followup with %s on %s about %s') % (self.patient,
-                                                    formatted_date,
-                                                    self.referral)
+        return _('Followup with %(patient)s on %(formatted_date)s about %(referral)s') % {'patient': self.patient,
+                                                                                          'formatted_date': formatted_date,
+                                                                                          'referral': self.referral}
 
 
 class PatientContact(Note):
@@ -118,7 +119,7 @@ class PatientContact(Note):
 
     contact_method = models.ForeignKey(
         ContactMethod,
-        verbose_name=_("Contact method") ,null=False, blank=False,
+        verbose_name=_("Contact method"), null=False, blank=False,
         on_delete=models.PROTECT,
         help_text=_("What was the method of contact?"))
 

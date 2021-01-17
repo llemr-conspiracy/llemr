@@ -6,7 +6,7 @@ Select vaccine series
 
 {% block header %}
 <h1>Select Vaccine Series</h1>
-<p class="lead">Specify which vaccine you would like to give</p>
+<p class="lead">{% trans 'Specify which vaccine you would like to give' %}</p>
 {% endblock %}
 
 {% block content %}
@@ -18,10 +18,10 @@ Select vaccine series
 	</div>
 {% else %}
 	<div class="container"/>
-		<h3>Oops! There aren't any existing vaccine series for this patient yet...</h3>
+		<h3>{%blocktrans%}Oops! There aren't any existing vaccine series for this patient yet...{%endblocktrans%}</h3>
 	</div>
 {% endif %}
 <div class="container">
-	<h4>Can't find what you're looking for? <a href="{% url 'new-vaccine-series' pt_id=pt_id %}">Create new vaccine series</a></h4>
+	<h4>{%blocktrans%}Can't find what you're looking for?{%endblocktrans%} <a href="{% url 'new-vaccine-series' pt_id=pt_id %}">{%blocktrans%}Create new vaccine series{%endblocktrans%}</a></h4>
 </div>
 {% endblock %}

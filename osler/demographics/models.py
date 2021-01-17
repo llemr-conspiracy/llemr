@@ -5,6 +5,7 @@ from osler.core.models import Patient
 
 from django.utils.translation import gettext_lazy as _
 
+
 class IncomeRange(models.Model):
     name = models.CharField(max_length=50, primary_key=True)
 
@@ -22,7 +23,7 @@ class EducationLevel(models.Model):
 class WorkStatus(models.Model):
 
     class Meta:
-        verbose_name_plural = "Work statuses"
+        verbose_name_plural = _("Work statuses")
 
     name = models.CharField(max_length=50, primary_key=True)
 
@@ -33,7 +34,7 @@ class WorkStatus(models.Model):
 class ResourceAccess(models.Model):
 
     class Meta:
-        verbose_name_plural = "Resource accesses"
+        verbose_name_plural = _("Resource accesses")
 
     name = models.CharField(max_length=50, primary_key=True)
 
