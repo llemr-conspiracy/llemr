@@ -73,6 +73,7 @@ THIRD_PARTY_APPS = [
     'bootstrap3',
     'simple_history',
     'adminsortable',
+    'phonenumber_field',
 ]
 
 LOCAL_APPS = [
@@ -317,6 +318,11 @@ MESSAGE_TAGS = {
 # crispy_forms
 # -----------------------------------------------------------------------------
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+
+# django-phonenumber-field
+PHONENUMBER_DB_FORMAT = 'E164'
+PHONENUMBER_DEFAULT_REGION = 'US'
 
 # osler
 # -----------------------------------------------------------------------------

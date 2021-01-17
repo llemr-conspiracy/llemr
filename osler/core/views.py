@@ -223,6 +223,13 @@ class PatientCreate(FormView):
     def form_valid(self, form):
         pt = form.save()
         pt.save()
+
+        PatientPhoneNumber.objects.create(
+            patient=pt,
+            phone_number=form['phone'],
+            description=form['description']
+        )
+
         return HttpResponseRedirect(reverse("demographics-create",
                                             args=(pt.id,)))
 
@@ -230,6 +237,10 @@ class PatientCreate(FormView):
         initial = super(PatientCreate, self).get_initial()
         initial.update(utils.get_names_from_url_query_dict(self.request))
 
+        # these have to be populated here rather than as defaults in the
+        # model or in the default parameters of the form fields because
+        # that code gets executed only once, which means it is not responsive
+        # to changes in the settings.
         initial['city'] = settings.OSLER_DEFAULT_CITY
         initial['state'] = settings.OSLER_DEFAULT_STATE
         initial['zip_code'] = settings.OSLER_DEFAULT_ZIP_CODE

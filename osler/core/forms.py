@@ -1,5 +1,4 @@
 '''Forms for the Oser core components.'''
-
 from django.forms import (
     Form, CharField, ModelForm, EmailField, CheckboxSelectMultiple,
     ModelMultipleChoiceField, CheckboxInput)
@@ -9,6 +8,9 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group, Permission
+
+from phonenumber_field.formfields import PhoneNumberField
+from phonenumber_field.widgets import PhoneNumberInternationalFallbackWidget
 
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Field, Layout, Row, Column
@@ -20,8 +22,6 @@ from osler.users.models import User
 
 class CustomCheckbox(Field):
     template = 'core/custom_checkbox.html'
-
-# pylint: disable=I0011,E1305
 
 
 class DuplicatePatientForm(Form):
@@ -35,12 +35,22 @@ class DuplicatePatientForm(Form):
         self.helper.add_input(Submit('submit', 'Submit'))
 
 
+class PatientPhoneNumberForm(ModelForm):
+
+    class Meta:
+        model = models.PatientPhoneNumber
+        exclude = ['patient']
+
+
 class PatientForm(ModelForm):
     class Meta(object):
         model = models.Patient
-        exclude = ['demographics']
-        if not settings.OSLER_DISPLAY_CASE_MANAGERS:
-            exclude.append('case_managers')
+        exclude = (
+            ['demographics', 'phone'] +
+            [f'alternate_phone_{i}' for i in range(1,5)] +
+            [f'alternate_phone_{i}_owner' for i in range(1,5)] +
+            ['case_managers'] if settings.OSLER_DISPLAY_CASE_MANAGERS else []
+        )
 
     if settings.OSLER_DISPLAY_CASE_MANAGERS:
         case_managers = ModelMultipleChoiceField(
@@ -51,6 +61,16 @@ class PatientForm(ModelForm):
                 .order_by("last_name")
         )
 
+    phone = PhoneNumberField(
+        widget=PhoneNumberInternationalFallbackWidget,
+        required=False
+    )
+
+    description = CharField(
+        label='Phone Label',
+        required=False
+    )
+
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
 
@@ -59,34 +79,22 @@ class PatientForm(ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
-        self.fields['phone'].widget.attrs['autofocus'] = True
+        self.fields['middle_name'].widget.attrs['autofocus'] = True
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['ethnicities'].wrap(InlineCheckboxes)
         self.helper.add_input(Submit('submit', 'Submit'))
         self.fields['address'].widget.attrs = {'placeholder': settings.OSLER_DEFAULT_ADDRESS}
 
+
     def clean(self):
 
         cleaned_data = super(ModelForm, self).clean()
 
-        N_ALTS = 5
-
-        alt_phones = ["alternate_phone_" + str(i) for i in range(1, N_ALTS)]
-        alt_owners = [phone + "_owner" for phone in alt_phones]
-
-        for (alt_phone, alt_owner) in zip(alt_phones, alt_owners):
-
-            if cleaned_data.get(alt_owner) and not cleaned_data.get(alt_phone):
-                self.add_error(
-                    alt_phone,
-                    "An Alternate Phone is required" +
-                    " if a Alternate Phone Owner is specified")
-
-            if cleaned_data.get(alt_phone) and not cleaned_data.get(alt_owner):
-                self.add_error(
-                    alt_owner,
-                    "An Alternate Phone Owner is required" +
-                    " if a Alternate Phone is specified")
+        if cleaned_data.get(description) and not cleaned_data.get(phone):
+            self.add_error(
+                description,
+                "Phone number is required if a description is provided."
+            )
 
 
 class AbstractActionItemForm(ModelForm):
@@ -125,13 +133,14 @@ class UserInitForm(ModelForm):
         model = User
         fields = [
             'name',
-            'first_name', 
-            'last_name', 
-            'phone', 
-            'languages', 
-            'gender', 
+            'first_name',
+            'last_name',
+            'phone',
+            'languages',
+            'gender',
             'groups'
             ]
+        widgets = {'phone': PhoneNumberInternationalFallbackWidget}
 
     def __init__(self, *args, **kwargs):
         super(UserInitForm, self).__init__(*args, **kwargs)
