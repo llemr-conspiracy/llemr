@@ -1,7 +1,7 @@
 '''Forms for the Oser core components.'''
 from django.forms import (
     Form, CharField, ModelForm, EmailField, CheckboxSelectMultiple,
-    ModelMultipleChoiceField, CheckboxInput)
+    ModelMultipleChoiceField, CheckboxInput, HiddenInput)
 from django.contrib.auth.forms import AuthenticationForm
 
 from django.conf import settings
@@ -39,7 +39,18 @@ class PatientPhoneNumberForm(ModelForm):
 
     class Meta:
         model = models.PatientPhoneNumber
-        exclude = ['patient']
+        fields = ['phone_number', 'description', 'patient']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # self.fields['patient'].widget = HiddenInput()
+
+        self.helper = FormHelper(self)
+        self.helper.form_method = 'post'
+        self.helper.form_class = 'form-horizontal'
+        self.helper.label_class = 'col-lg-2'
+        self.helper.field_class = 'col-lg-4'
+        self.helper.add_input(Submit('submit', 'Submit'))
 
 
 class PatientForm(ModelForm):

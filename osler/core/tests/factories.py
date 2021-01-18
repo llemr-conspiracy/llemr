@@ -42,7 +42,7 @@ class LanguageFactory(DjangoModelFactory):
     class Meta:
         model = models.Language
 
-    name = factory.Iterator(["English", "German", "Spanish", "Klingon"])
+    name = factory.Faker('language_name')
 
 
 class ContactMethodFactory(DjangoModelFactory):
@@ -130,6 +130,20 @@ class PatientFactory(DjangoModelFactory):
             # A list of case_managers were passed in, use them
             for manager in extracted:
                 self.case_managers.add(manager)
+
+
+class PatientPhoneNumberFactory(DjangoModelFactory):
+
+    class Meta:
+        model = models.PatientPhoneNumber
+
+    # frustratingly, PhoneNumberField doesn't support very varied input
+    # formats, like those produced by faker. We should probably fix this.
+    # phone_number = factory.Faker('phone_number')
+    phone_number = '425 243 9115'
+
+    patient = factory.SubFactory(PatientFactory)
+    description = factory.Faker('text', max_nb_chars=15)
 
 
 class DocumentTypeFactory(DjangoModelFactory):

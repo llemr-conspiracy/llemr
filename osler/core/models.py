@@ -64,7 +64,7 @@ class PatientPhoneNumber(models.Model):
         max_length=256, blank=True)
 
     def __str__(self):
-        return "%s (%s)" % (self.phone_number, description)
+        return "%s (%s)" % (self.phone_number, self.description)
 
 
 class ContactMethod(models.Model):
@@ -373,13 +373,11 @@ class Patient(Person):
             return now().date()
     
     def all_phones(self):
-        '''Returns a list of tuples of the form (phone, owner) of all the
-        phones associated with this patient.'''
+        """Returns a list of tuples of the form (phone, owner) of all the
+        phones associated with this patient."""
 
-        phones = [(self.phone, '')]
-        phones.extend([(getattr(self, 'alternate_phone_'+str(i)),
-                        getattr(self, 'alternate_phone_'+str(i)+'_owner'))
-                       for i in range(1, 5)])
+        phones = [(p.phone_number, p.description)
+                  for p in self.phone_number_set.all()]
 
         return phones
 

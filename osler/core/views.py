@@ -2,15 +2,16 @@ from builtins import zip
 import collections
 import datetime
 
-from django.conf import settings
 from django.apps import apps
+from django.conf import settings
+from django.db.models import Prefetch
+from django.forms import modelformset_factory
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponseServerError
 from django.views.generic.edit import FormView, UpdateView
 from django.views.generic.list import ListView
 from django.urls import reverse
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import Prefetch
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.utils.timezone import now
 
@@ -284,6 +285,37 @@ class DocumentCreate(NoteFormView):
 
         return HttpResponseRedirect(reverse("core:patient-detail",
                                             args=(pt.id,)))
+
+
+class PhoneNumberCreate(FormView):
+    """Create a new phone number for a patient"""
+    template_name = 'core/form_submission.html'
+    form_class = forms.PatientPhoneNumberForm
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['patient'] = self.kwargs['pk']
+        return initial
+
+    def get_context_data(self, *args, **kwargs):
+
+        context = super().get_context_data(*args, **kwargs)
+        context['note_type'] = 'Phone Number'
+
+        if 'pk' in self.kwargs:
+            context['patient'] = core_models.Patient.objects. \
+                get(pk=self.kwargs['pk'])
+
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        pt = get_object_or_404(core_models.Patient, pk=self.kwargs['pk'])
+
+        return reverse("core:patient-detail", args=(pt.id, ))
 
 
 def choose_role(request):
