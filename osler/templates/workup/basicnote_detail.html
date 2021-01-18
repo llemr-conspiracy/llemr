@@ -32,9 +32,9 @@
       <h3>{{ note.title}}</h3>
       <div class="col-md-12">
           {% if note.signed %}
-          <strong>Attested by</strong> {{note.signer}} <strong>on:</strong> {{note.signed_date}} 
+          <strong>{% trans 'Attested by' %}</strong> {{note.signer}} <strong>on:</strong> {{note.signed_date}} 
           {% else %}
-          <strong>Workup unattested. Attending:</strong> {{ note.attending }}
+          <strong>{%trans 'Workup unattested. Attending' %}:</strong> {{ note.attending }}
           {% endif%}
       </div>
     </div> 
@@ -42,9 +42,9 @@
   <div class="row" style="padding: 20px">
     <div class="col-md-12"> {{note.text}}</div>
     <div class="col-md-12">
-    <small class="text-muted">written by {{ note.author }} on {{ note.written_datetime }}</small>
+    <small class="text-muted">{% blocktranslate %}written by {{ note.author }} on {{ note.written_datetime }}{% endblocktranslate %}</small>
     {% if note.last_modified != note.written_datetime %}
-    <br><small class="text-muted">last modified {{note.last_modified}}</small>
+    <br><small class="text-muted">{% blocktranslate %}last modified {{note.last_modified}}{% endblocktranslate %}</small>
     {% endif %}
     </div>     
   </div>

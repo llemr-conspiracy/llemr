@@ -1,14 +1,14 @@
 {% extends "core/base.html" %}
 
 {% block title %}
-Recent Labs
+{% trans 'Recent Labs' %}
 {% endblock %}
 
 {% block header%}
-<h1>Recent Labs</h1>
+<h1>{% trans 'Recent Labs' %}</h1>
 <div class="row text">  
 	<div class="col-mb-2">
-		<h2>Patient: <a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }} </a></h2>
+		<h2>{% trans 'Patient'%}: <a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }} </a></h2>
 	</div>
 </div>
 {% endblock %}
@@ -23,11 +23,11 @@ Recent Labs
 <div class="container">
 	<div class="container text-center">
 		<div class="btn-group">
-		    <a class="btn btn-dark" href="{% url 'core:patient-detail' patient.id %}" role="button">Back to Patient Detail</a>
+		    <a class="btn btn-dark" href="{% url 'core:patient-detail' patient.id %}" role="button">{% trans 'Back to Patient Detail' %}</a>
 		    {% if add_lab %}
-		    	<a class="btn btn-primary" href="{% url 'labs:new-lab' patient.id %}" role="button">New Lab</a>
+		    	<a class="btn btn-primary" href="{% url 'labs:new-lab' patient.id %}" role="button">{% trans 'New Lab'%}</a>
 		    {% endif %}
-		    <a class="btn btn-warning" href="{% url 'labs:all-labs' patient.id %}" role="button">All Labs</a>
+		    <a class="btn btn-warning" href="{% url 'labs:all-labs' patient.id %}" role="button">{% trans 'All Labs'%}</a>
 		</div>
 	</div>
 </div>
@@ -36,16 +36,16 @@ Recent Labs
 	<div class="container col-md-6">
 		<form method="GET" class="form-inline">
 		  <div class="form-group mb-2", style="font-weight:bold">
-		    Lab date:
+		    {% trans 'Lab date'%}:
 		  </div>
 		  <div class="form-group mx-sm-3 mb-2">
 		  	<form method='get' action="{% url 'labs:all-labs-table' patient.id %}">
 					<select class="form-control" name="select">
-					<option value="" selected disabled hidden>Choose here</option>
-			    	<option value="6">Last 6 months</option>
-			    	<option value="12">Last year</option>
-			    	<option value="24">Last 2 years</option>
-			    	<option value="6000">All</option>
+					<option value="" selected disabled hidden>{% trans 'Choose here'%}</option>
+			    	<option value="6">{% trans 'Last 6 months'%}</option>
+			    	<option value="12">{% trans 'Last year'%}</option>
+			    	<option value="24">{% trans 'Last 2 years'%}</option>
+			    	<option value="6000">{% trans 'All'%}</option>
 				    </select>
 				    <input type="submit" value="Filter">
 			</form>
@@ -57,7 +57,7 @@ Recent Labs
 
 {% if no_lab_bool %}
 	<div class="container"/>
-		<h3>Oops! The patient does not have any labs in your selected time frame. </h3>
+		<h3>{%blocktrans%}Oops! The patient does not have any labs in your selected time frame.{%endblocktrans%}</h3>
 	</div>
 
 {% else %}
@@ -67,8 +67,8 @@ Recent Labs
 <div class="container">
 	<div class="alert alert-warning" role="alert">
       <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
-      <strong>Warning!</strong>
-      Multiple labs exist for the date(s) with *. The latest values on that day are displayed here. Please check All Labs page for details.
+      <strong>{% trans 'Warning' %}!</strong>
+      {%blocktrans%}Multiple labs exist for the date(s) with *. The latest values on that day are displayed here. Please check All Labs page for details.{%endblocktrans%}
   </div>
  </div>
 {% endif %}
