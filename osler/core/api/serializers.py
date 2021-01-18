@@ -29,7 +29,7 @@ class PatientSerializer(DynamicFieldsModelSerializer):
     latest_workup = WorkupSerializer(read_only=True, 
         fields=('chief_complaint', 'detail_url', 'signer', 'written_datetime', 'is_pending'))
     gender = serializers.StringRelatedField(read_only=True)
-    age = serializers.StringRelatedField(read_only=True)
+    age = serializers.IntegerField(read_only=True)
     name = serializers.StringRelatedField(read_only=True)
     status = serializers.StringRelatedField(read_only=True)
     case_managers = serializers.StringRelatedField(many=True)

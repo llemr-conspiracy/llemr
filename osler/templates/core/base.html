@@ -47,6 +47,7 @@
     <script src="{% static 'js/nav_bar.bundle.js' %}"></script>
     <script>
       const props = {
+        'homeUrl': "{% url 'home' %}",
         'newPatientUrl': "{% url 'core:preintake' %}",
         'allPatientsUrl': "{% url 'core:all-patients' %}",
         'activePatientsUrl': "{% url 'dashboard-active' %}",

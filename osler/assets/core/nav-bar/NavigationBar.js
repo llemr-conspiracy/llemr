@@ -7,7 +7,7 @@ function NavigationBar(props) {
 
     return (
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-        <Navbar.Brand href="#home">Osler Home</Navbar.Brand>
+        <Navbar.Brand href={props.homeUrl}>Osler Home</Navbar.Brand>
         <Navbar.Collapse>
         <Nav className="mr-auto">
             <Nav.Link href={props.newPatientUrl}>New Patient</Nav.Link>
