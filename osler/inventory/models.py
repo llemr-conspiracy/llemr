@@ -97,8 +97,12 @@ class DispenseHistory(Note):
     dispense = models.PositiveSmallIntegerField(
         blank=False, null=False, verbose_name=_("dispense"))
 
+<<<<<<< HEAD
     drug = models.ForeignKey(
         Drug, on_delete=models.PROTECT, verbose_name=_("drug"))
+=======
+    drug = models.ForeignKey(Drug, on_delete=models.PROTECT)
+>>>>>>> master
     encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE)
 
     def __str__(self):

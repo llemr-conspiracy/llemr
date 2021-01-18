@@ -4,8 +4,11 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
 from osler.core.models import Patient, Encounter
+<<<<<<< HEAD
 
 from django.utils.translation import gettext_lazy as _
+=======
+>>>>>>> master
 
 
 class LabType(models.Model):
@@ -34,6 +37,13 @@ class Lab(models.Model):
     class Meta:
         ordering = ['-lab_time']
 
+<<<<<<< HEAD
+=======
+	encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE)
+
+	class Meta:
+		ordering = ['-lab_time']
+>>>>>>> master
 
     patient = models.ForeignKey(
         Patient, on_delete=models.CASCADE, verbose_name=_("patient"))
@@ -194,6 +204,7 @@ class DiscreteResultType(models.Model):
 
 
 class DiscreteMeasurement(Measurement):
+<<<<<<< HEAD
     """Model representing a discrete measurement.
     """
     measurement_type = models.ForeignKey(
@@ -219,3 +230,29 @@ class DiscreteMeasurement(Measurement):
         """Returns the value of the measurement"""
         return self.value
 
+=======
+	"""
+	object of a discrete measurement
+	"""
+	measurement_type = models.ForeignKey(DiscreteMeasurementType, on_delete=models.PROTECT)
+	value = models.ForeignKey(DiscreteResultType, on_delete=models.PROTECT)
+
+	def __str__(self):
+		value_name = DiscreteResultType.objects.get(pk=self.value)
+		return '%s: %s' %(self.measurement_type, value_name.name)
+
+	def panic(self):
+		"""Returns True if the value is not normal"""
+		if self.value.is_panic == 'T':
+			return True
+		return False
+
+	def panic_low(self):
+		"""Panic because the value is too low. 
+		To display in a different color than normal panic."""
+		return False
+
+	def get_value(self):
+		"""Returns the value of the measurement"""
+		return self.value
+>>>>>>> master

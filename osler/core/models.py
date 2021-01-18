@@ -226,9 +226,15 @@ class Patient(Person):
     alternate_phone_4 = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone 4'))
 
     preferred_contact_method = models.ForeignKey(
+<<<<<<< HEAD
         ContactMethod, blank=True, null=True, on_delete=models.PROTECT, verbose_name=_('preferred cotact method'))
 
     email = models.EmailField(blank=True, null=True, verbose_name=_('email'))
+=======
+        ContactMethod, blank=True, null=True, on_delete=models.PROTECT)
+
+    email = models.EmailField(blank=True, null=True)
+>>>>>>> master
 
     history = HistoricalRecords()
 
@@ -573,8 +579,13 @@ class ActionItem(AbstractActionItem):
                        args=(self.id,))
 
     def __str__(self):
+<<<<<<< HEAD
         return " ".join([_("AI for"), str(self.patient) + ":",
                          str(self.instruction), _("due on"), str(self.due_date)])
+=======
+        return " ".join(["AI for", str(self.patient) + ":",
+                         str(self.instruction), "due on", str(self.due_date)])
+>>>>>>> master
 
 
 class EncounterStatus(models.Model):

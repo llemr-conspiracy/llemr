@@ -74,7 +74,7 @@ class AbstractBasicNote(Note):
 
     title = models.CharField(max_length=200)
     text = models.TextField()
-    encounter = models.ForeignKey(Encounter, null=True, on_delete=models.CASCADE)
+    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE)
 
     class Meta:
         abstract = True

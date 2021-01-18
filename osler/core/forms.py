@@ -164,6 +164,7 @@ class DocumentForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(DocumentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
+<<<<<<< HEAD
         self.helper.add_input(Submit('submit', _('Submit')))
 
 
@@ -174,3 +175,7 @@ class CrispyAuthenticationForm(AuthenticationForm):
 
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', _('Login')))
+=======
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+>>>>>>> master

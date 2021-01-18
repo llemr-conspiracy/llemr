@@ -29,7 +29,7 @@
         <td>
             {% with latest_workup=patient.workup_set.all.0 %}
             {% if latest_workup %}
-                <a href="{% url 'workup' pk=latest_workup.pk %}">{% blocktrans %}Seen {{ latest_workup.encounter.clinic_day }}</a>: {{latest_workup.chief_complaint}}{% endblocktrans %}
+                <a href="{% url 'workup' pk=latest_workup.pk %}">Seen {{ latest_workup.encounter.clinic_day }}</a>: {{latest_workup.chief_complaint}}
             {% else %}
                 <a href="{% url 'core:patient-update' pk=patient.id %}">{% blocktrans %}Intake</a>: {{patient.history.last.history_date}}{% endblocktrans %}
             {% endif %}
