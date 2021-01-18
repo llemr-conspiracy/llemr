@@ -1,5 +1,7 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block title %}
 {{ title }}: {{ note.patient.name }}
 {% endblock %}
@@ -34,8 +36,8 @@
           {% if note.signed %}
           <strong>{% trans 'Attested by' %}</strong> {{note.signer}} <strong>on:</strong> {{note.signed_date}} 
           {% else %}
-          <strong>{%trans 'Workup unattested. Attending' %}:</strong> {{ note.attending }}
-          {% endif%}
+          <strong>{% trans 'Workup unattested. Attending' %}:</strong> {{ note.attending }}
+          {% endif %}
       </div>
     </div> 
   {% endif %}

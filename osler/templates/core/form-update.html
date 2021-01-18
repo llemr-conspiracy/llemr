@@ -1,6 +1,6 @@
 {% extends "core/base-form.html" %}
 
-{% load i18n%}
+{% load i18n %}
 
 {% block title %}
 {% trans 'Edit' %} {{ note_type }}
@@ -8,7 +8,7 @@
 
 {% block header %}
 <h2><a href="{% url 'core:patient-detail' pk=object.patient.id %}"><small><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></small></a>
-{% trans 'Edit' %} { {{ note_type }}
+{% trans 'Edit' %} {{ note_type }}
 </h2>
 <p class="lead">{% blocktrans %}Edit {{ note_type | lower }} for {% endblocktrans %} <em><a href="{% url 'core:patient-detail' pk=object.patient.id %}">{{ object.patient.name }}</a></em></p>
 {% endblock %}

@@ -163,8 +163,11 @@ class PatientContactForm(ModelForm):
                 if cleaned_data.get(param):
                     self.add_error(
                         param,
-                        _("You can't give a ") + param_verbose +
-                        _(" value if contact was unsuccessful"))
+                        '%s %s %s' % (
+                            _("You can't give a "),
+                            param_verbose,
+                            _(" value if contact was unsuccessful")
+                        ))
 
         # Each submission button has specific rules for which fields
         # can be selected. For example, for a referral to be successful,

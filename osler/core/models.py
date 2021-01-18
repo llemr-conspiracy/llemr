@@ -292,14 +292,19 @@ class Patient(Person):
         if len(overdue) > 0:
             oldest = min(overdue, key=lambda k: k.due_date)
             tdelta = now().date() - oldest.due_date
-            return str(oldest.short_name())+" "+str(tdelta.days)+_(" days past due")
+            return "%s %s %s" % (str(oldest.short_name()),
+                                 str(tdelta.days),
+                                 _(" days past due"))
 
-            # due_dates = ", ".join([str((now().date()-ai.due_date).days) for ai in overdue])
-            # return "Action items " + due_dates + " days past due"
         elif len(pending) > 0:
             next_item = min(pending, key=lambda k: k.due_date)
             tdelta = next_item.due_date - now().date()
-            return str(next_item.short_name())+" in "+str(tdelta.days)+_(" days")
+            return "%s %s %s %s" % (
+                str(next_item.short_name()),
+                _("in"),
+                str(tdelta.days),
+                _("days")
+            )
         elif len(done) > 0:
             return _("all actions complete")
         else:
@@ -548,18 +553,26 @@ class AbstractActionItem(Note, CompletableMixin):
 
     def attribution(self):
         if self.done():
-            return " ".join([_("Marked done by"), str(self.completion_author),
-                             _("on"), str(self.completion_date.date())])
+            return "%s %s %s %s" % (
+                _("Marked done by"),
+                self.completion_author.name,
+                _("on"),
+                self.completion_date.date()
+            )
         else:
-            return " ".join([_("Added by"), str(self.author), _("on"),
-                             str(self.written_datetime.date())])
+            return "%s %s %s %s" % (
+                _("Added by"),
+                self.author.name,
+                _("on"),
+                self.written_datetime.date()
+            )
 
 
 class ActionItem(AbstractActionItem):
     priority = models.BooleanField(
         default=False,
         verbose_name=_("priority"),
-        help_text='Check this box if this action item is high priority')
+        help_text=_('Check this box if this action item is high priority'))
 
     MARK_DONE_URL_NAME = 'done-action-item'
 
@@ -573,8 +586,13 @@ class ActionItem(AbstractActionItem):
                        args=(self.id,))
 
     def __str__(self):
-        return " ".join([_("AI for"), str(self.patient) + ":",
-                         str(self.instruction), _("due on"), str(self.due_date)])
+        return "%s %s: %s %s %s" % (
+            _("AI for"),
+            self.patient,
+            self.instruction,
+            _("due on"),
+            self.due_date
+        )
 
 
 class EncounterStatus(models.Model):
@@ -615,7 +633,7 @@ class Encounter(SortableMixin):
 
     sorting_filters = (
         ('Active Encounters', {'status__is_active': True}),
-        )
+    )
 
     def __str__(self):
         return str(self.patient) + " on " + self.clinic_day.strftime('%A, %B %d, %Y')

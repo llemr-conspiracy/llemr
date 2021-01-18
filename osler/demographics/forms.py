@@ -27,7 +27,7 @@ class DemographicsForm(ModelForm):
                          'has_insurance',
                          'ER_visit_last_year',
                          'last_date_physician_visit',
-                         'chronic_condition'),
+                         'chronic_conditions'),
                 Fieldset(_('Social'),
                          'lives_alone',
                          'dependents',

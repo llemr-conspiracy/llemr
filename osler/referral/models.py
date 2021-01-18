@@ -181,8 +181,11 @@ class PatientContact(Note):
             text = _("Patient went to appointment at ") + locations + "."
         else:
             if self.has_appointment == self.PTSHOW_YES:
-                text = (_("Patient made appointment at ") + locations +
-                        _("but has not yet gone."))
+                text = '%s %s %s' % (
+                    _("Patient made appointment at "),
+                    locations,
+                    _("but has not yet gone.")
+                )
             else:
                 if self.contact_status.patient_reached:
                     text = (_("Successfully contacted patient but the patient has not made an appointment yet."))
