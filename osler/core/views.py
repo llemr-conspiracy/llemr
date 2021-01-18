@@ -12,6 +12,7 @@ from django.urls import reverse
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Prefetch
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.utils.timezone import now
 
 from osler.workup import models as workupmodels
 from osler.referral.models import Referral, FollowupRequest, PatientContact
@@ -431,7 +432,12 @@ def all_patients(request, title='All Patients', active=False):
     """
     patient_list = core_models.Patient.objects.all()
     if active:
-        patient_list = patient_list.filter(needs_workup=True)
+        #if a patient has two open encounters, they will appear twice because of 
+        #ordering by encounter, distinct() doesn't work
+        #I decided was ok because you should be inactivating encounters
+        patient_list = core_models.Patient.objects.filter(encounter__status__is_active=True)\
+            .order_by('encounter__order')
+    
     patient_list = patient_list \
         .select_related('gender') \
         .prefetch_related('case_managers') \
@@ -448,9 +454,10 @@ def all_patients(request, title='All Patients', active=False):
                     'object_list': patient_list,
                     'title': title
                   })
+    
 
-
-def patient_activate_detail(request, pk):
+def patient_activate_detail(request, pk, home=False):
+    '''Toggle status to default active/inactive'''
     pt = get_object_or_404(core_models.Patient, pk=pk)
     active_role = get_active_role(request)
 
@@ -459,23 +466,15 @@ def patient_activate_detail(request, pk):
     if can_activate:
         pt.toggle_active_status(request.user, active_role)
 
-    pt.save()
-
-    return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
+    if home:
+        return HttpResponseRedirect(reverse("home"))
+    else:
+        return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
 
 
 def patient_activate_home(request, pk):
-    pt = get_object_or_404(core_models.Patient, pk=pk)
-    active_role = get_active_role(request)
-
-    can_activate = pt.group_can_activate(active_role)
-
-    if can_activate:
-        pt.toggle_active_status(request.user, active_role)
-
-    pt.save()
-
-    return HttpResponseRedirect(reverse("home"))
+    '''Toggle active status then redirect to home'''
+    return patient_activate_detail(request, pk, home=True)
 
 
 def done_action_item(request, ai_id):

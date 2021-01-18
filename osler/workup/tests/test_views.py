@@ -9,6 +9,8 @@ from osler.core.models import Patient
 from osler.core.tests.test_views import build_user, log_in_user
 
 import osler.users.tests.factories as user_factories
+import osler.workup.tests.factories as workup_factories
+import osler.core.tests.factories as core_factories
 
 from osler.workup import models
 from osler.workup.tests.tests import wu_dict, note_dict
@@ -18,39 +20,20 @@ class ViewsExistTest(TestCase):
     """
     Verify that views involving the workup are functioning.
     """
-    fixtures = ['workup', 'core']
+    fixtures = ['workup']
 
 
     def setUp(self):
-
-        models.ClinicDate.objects.create(
-            clinic_type=models.ClinicType.objects.first(),
-            clinic_date=now().date())
 
         self.user = build_user()
         log_in_user(self.client, self.user)
 
         self.wu = models.Workup.objects.create(**wu_dict(user=self.user))
 
-    def test_clindate_create_redirect(self):
-        '''Verify that if no clindate exists, we're properly redirected to a
-        clindate create page.'''
-
-        # First delete clindate that's created in setUp.
-        models.Workup.objects.all().delete()
-        models.ClinicDate.objects.all().delete()
-
-        pt = Patient.objects.first()
-
-        pt_url = 'new-workup'
-        response = self.client.get(reverse(pt_url, args=(pt.id,)))
-        assert response.status_code == 302
-        self.assertRedirects(response, reverse('new-clindate', args=(pt.id,)))
-
     def test_new_workup_view(self):
         """Test that user can successfully access new workup page."""
 
-        pt = Patient.objects.first()
+        pt = core_factories.PatientFactory()
         response = self.client.get(reverse('new-workup', args=(pt.id,)))
         assert response.status_code == 200
 
@@ -60,15 +43,11 @@ class ViewsExistTest(TestCase):
         wu_urls = ['workup',
                    'workup-update']
 
-        for i in range(5):
-            models.Workup.objects.bulk_create(
-                [models.Workup(**wu_dict()) for i in range(5)])
-            wu = models.Workup.objects.last()
-
-            wu.diagnosis_categories.add(models.DiagnosisType.objects.first())
-
+        workups = workup_factories.WorkupFactory.create_batch(size=5,author=self.user, 
+            author_type=self.user.groups.first())
+        for workup in workups:
             for wu_url in wu_urls:
-                response = self.client.get(reverse(wu_url, args=(wu.id,)))
+                response = self.client.get(reverse(wu_url, args=(workup.id,)))
                 assert response.status_code == 200
 
     def test_workup_initial(self):
@@ -149,19 +128,25 @@ class ViewsExistTest(TestCase):
         for role in user_factories.all_roles:
             user = build_user([role])
             log_in_user(self.client, user)
-            pt_id = Patient.objects.first().pk
 
             wu_count = models.Workup.objects.all().count()
-            wu_data = wu_dict(units=True, clinic_day_pk=True, dx_category=True)
+            wu_data = wu_dict(units=True, dx_category=True)
+            pt = wu_data['patient']
+            wu_data['patient'] = pt.id
+            wu_data['author'] = user.id
+            wu_data['author_type'] = user.groups.first().id
+            e = wu_data['encounter']
+            wu_data['encounter'] = e.id
 
             response = self.client.post(
-                reverse('new-workup', args=(pt_id,)),
+                reverse('new-workup', args=(pt.id,)),
                 data=wu_data)
-            self.assertRedirects(response, reverse("core:patient-detail", args=(pt_id,)))
+            self.assertRedirects(response, reverse("core:patient-detail", args=(pt.id,)))
 
             can_attest = role in user_factories.attesting_roles
             assert models.Workup.objects.all().count() == wu_count + 1
-            assert models.Workup.objects.last().signed() == can_attest
+            new = models.Workup.objects.get(patient=pt)
+            assert new.signed() == can_attest
 
     def test_invalid_workup_submit_preserves_units(self):
 
@@ -169,10 +154,10 @@ class ViewsExistTest(TestCase):
         # diagnosis categories, so that it will fail to be accepted.
         wu_data = wu_dict(units=True)
         del wu_data['chief_complaint']
-        pt_id = Patient.objects.first().pk
+        pt = core_factories.PatientFactory()
 
         response = self.client.post(
-            reverse('new-workup', args=(pt_id,)),
+            reverse('new-workup', args=(pt.id,)),
             data=wu_data)
 
         # verify we're bounced back to workup_create
@@ -189,11 +174,15 @@ class ViewsExistTest(TestCase):
     def test_pending_note_submit(self):
 
         # pull standard workup data, but delete required field
-        wu_data = wu_dict(units=True, clinic_day_pk=True, dx_category=True)
+        wu_data = wu_dict(units=True, dx_category=True)
         wu_data['pending'] = ''
         del wu_data['chief_complaint']
+        for field in ['encounter','author','author_type']:
+            thing = wu_data[field]
+            wu_data[field] = thing.id
 
-        pt = Patient.objects.first()
+        pt = wu_data['patient']
+        wu_data['patient'] = pt.id
 
         prev_count = pt.workup_set.count()
         prev_completed_count = pt.completed_workup_set().count()
@@ -226,10 +215,6 @@ class TestBasicNoteViews(TestCase):
 
         self.note_data = note_dict(user=self.user)
 
-        models.ClinicDate.objects.create(
-            clinic_type=models.ClinicType.objects.first(),
-            clinic_date=now().date())
-
     def urls_test(self, model):
 
         if model == models.BasicNote:
@@ -253,6 +238,8 @@ class TestBasicNoteViews(TestCase):
         response = self.client.get(note_url)
         assert response.status_code == 200
 
+        e = self.note_data['encounter']
+        self.note_data['encounter'] = e.id
         response = self.client.post(note_url, self.note_data)
         self.assertRedirects(response,
                              reverse('core:patient-detail', args=(pt.id,)))
@@ -324,12 +311,8 @@ class TestAddendum(TestCase):
 
         self.note_data = note_dict(user=self.user)
 
-        models.ClinicDate.objects.create(
-            clinic_type=models.ClinicType.objects.first(),
-            clinic_date=now().date())
-
         self.wu = models.Workup.objects.create(**wu_dict(user=self.user))
-        self.form_data = note_dict(user=self.user)
+        self.form_data = note_dict(user=self.user, encounter_pk=False)
 
     def test_urls(self):
 

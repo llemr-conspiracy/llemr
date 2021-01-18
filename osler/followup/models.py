@@ -64,7 +64,7 @@ class Followup(Note):
 
         # in a brutally ugly turn of events, there doesn't appear to be a good
         # way to overridde this method in subclasses. Behold the hacky result:
-        for child in ["labfollowup","actionitemfollowup"]:
+        for child in ["actionitemfollowup"]:
             # you may ask "where did those strings come from?" or "how do you
             # know that it's all lower case?"... MYSTERIES FOR THE AGES.
             if hasattr(self, child):

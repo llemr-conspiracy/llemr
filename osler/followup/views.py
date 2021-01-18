@@ -35,7 +35,7 @@ class FollowupCreate(NoteFormView):
 
         ftype = self.kwargs['ftype']
 
-        futypes = {'labs': forms.LabFollowup}
+        futypes = {}
 
         return futypes[ftype]
 

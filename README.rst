@@ -6,9 +6,6 @@ A free, open-source EHR for free clinics.
 .. image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg
      :target: https://github.com/pydanny/cookiecutter-django/
      :alt: Built with Cookiecutter Django
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-     :target: https://github.com/ambv/black
-     :alt: Black code style
 
 
 :License: GPLv3
@@ -16,7 +13,16 @@ A free, open-source EHR for free clinics.
 Getting Started
 ---------------
 
-Follow the django-cookiecutter instructions for `running locally with Docker`_.
+* First, build the docker images with::
+
+    $ docker-compose -f local.yml build
+
+* To run the test server, then run::
+
+    $ docker-compose -f local.yml up
+
+
+For more info, have a look at the django-cookiecutter instructions for `running locally with Docker`_.
 
 .. _`running locally with Docker`: https://cookiecutter-django.readthedocs.io/en/latest/developing-locally-docker.html#getting-up-and-running-locally-with-docker
 
@@ -34,41 +40,22 @@ Setting Up Your Users
 
 For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
 
-Type checks
-^^^^^^^^^^^
+Running tests with py.test
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Running type checks with mypy:
+Once you have a working build of the docker containers::
 
-::
+  $ docker-compose -f local.yml run --rm django coverage run -m pytest
 
-  $ mypy osler
 
 Test coverage
 ^^^^^^^^^^^^^
 
 To run the tests, check your test coverage, and generate an HTML coverage report::
 
-    $ coverage run -m pytest
-    $ coverage html
+    $ docker-compose -f local.yml run --rm django coverage run -m pytest
+    $ docker-compose -f local.yml run --rm django coverage html
     $ open htmlcov/index.html
-
-Running tests with py.test
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-::
-
-  $ pytest
-
-Live reloading and Sass CSS compilation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Moved to `Live reloading and SASS compilation`_.
-
-.. _`Live reloading and SASS compilation`: http://cookiecutter-django.readthedocs.io/en/latest/live-reloading-and-sass-compilation.html
-
-
-
-
 
 Deployment
 ----------

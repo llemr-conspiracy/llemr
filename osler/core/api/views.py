@@ -21,7 +21,7 @@ def active_patients_filter(qs):
     pts).
     '''
 
-    return qs.filter(needs_workup__exact=True).order_by('last_name')
+    return qs.filter(encounter__status__is_active=True).order_by('last_name')
 
 
 def merge_pt_querysets_by_soonest_date(qs1, qs2):
@@ -170,7 +170,7 @@ class PtList(generics.ListAPIView):  # read only
             if latestwu is None:
                 latestdate = pt.history.last().history_date.date()
             else:
-                latestdate = latestwu.clinic_day.clinic_date
+                latestdate = latestwu.encounter.clinic_day
             return latestdate
 
         queryset = core_models.Patient.objects

@@ -1,6 +1,6 @@
 from django.db import models
 from osler.core.validators import validate_name
-from osler.core.models import Note
+from osler.core.models import Note, Encounter
 import datetime
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
@@ -94,9 +94,12 @@ class DispenseHistory(Note):
         verbose_name_plural = _("dispense history")
         ordering = ['written_datetime', ]
 
-    dispense = models.PositiveSmallIntegerField(blank=False, null=False, verbose_name=_("dispense"))
+    dispense = models.PositiveSmallIntegerField(
+        blank=False, null=False, verbose_name=_("dispense"))
 
-    drug = models.ForeignKey(Drug, on_delete=models.PROTECT, verbose_name=_("drug"))
+    drug = models.ForeignKey(
+        Drug, on_delete=models.PROTECT, verbose_name=_("drug"))
+    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.drug.lot_number

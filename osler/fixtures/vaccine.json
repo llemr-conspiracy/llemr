@@ -1,0 +1,21 @@
+[
+	{
+		"model":"vaccine.vaccineseriestype",
+		"pk":"Hepatitis A",
+		"fields": {}
+	},
+	{
+		"model":"vaccine.vaccinedosetype",
+		"pk":1,
+		"fields":{
+			"kind":"Hepatitis A",
+			"time_from_first":"0"}
+	},
+	{
+		"model":"vaccine.vaccinedosetype",
+		"pk":2,
+		"fields":{
+			"kind":"Hepatitis A",
+			"time_from_first":"180 days"}
+	}
+]

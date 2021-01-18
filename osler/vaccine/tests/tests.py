@@ -146,6 +146,8 @@ class TestVaccineDoseCreate(TestCase):
         self.pt = core_factories.PatientFactory(
             case_managers=[self.user])
 
+        self.encounter = core_factories.EncounterFactory(patient=self.pt)
+
         self.series_type = factories.VaccineSeriesTypeFactory()
 
         self.series = factories.VaccineSeriesFactory(
@@ -180,13 +182,13 @@ class TestVaccineDoseCreate(TestCase):
 
         #Submit form for last dose, redirect to patient detail
         response = self.client.post(url,
-            {'which_dose': dosetype2.pk})
+            {'which_dose': dosetype2.pk, 'encounter': self.encounter.id})
         self.assertRedirects(response,
             reverse('core:patient-detail',args=(self.pt.id,)))
 
         #Submit form for first dose, redirect to action item with correct due date url
         response = self.client.post(url,
-            {'which_dose': dosetype1.pk})
+            {'which_dose': dosetype1.pk, 'encounter': self.encounter.id})
 
         new_dose = models.VaccineDose.objects.all()[0]
         formatted_date = new_dose.next_due_date().strftime("%D")

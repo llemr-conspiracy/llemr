@@ -15,7 +15,7 @@
     <h2> <a href="{% url 'core:patient-update' pk=patient.id %}">{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
       </a></h2>
     <p class="lead">{{ patient.age }} {% trans 'y/o' %} {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
-    <p class="lead"><strong>{% trans 'Status' %}:</strong> {{ patient.status }}</p>
+    <p class="lead"><strong>{% trans 'Action Items%}:</strong> {{ patient.actionitem_status }}</p>
     {% if settings.OSLER_DISPLAY_REFERRALS %}
       <p class="lead"><strong>{% trans 'FQHC Referral Status' %}:</strong> {{ referral_status }}</p>
       <p class="lead"><strong>{% trans 'Referrals' %}:</strong> {{ referrals.iterator | join:", " }}</p>
@@ -23,17 +23,11 @@
     {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
       <p class="lead"><strong>{% trans 'Case Manager' %}:</strong> {{patient.case_managers.iterator | join:"; "}}
     {% endif %}
-      {% if patient.needs_workup %}
-      <p class="lead"> {% trans 'Patient is Active' %}
+
+      <p class="lead"> <strong>{% trans 'Status' %}:</strong> {{ patient.get_status.name }}
         {% if can_activate %}
           <a href="{% url 'core:patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a>
         {% endif %}</p>
-      {% else %}
-      <p class="lead"> {% trans 'Patient is Inactive' %}
-        {% if can_activate %}
-          <a href="{% url 'core:patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-play-circle" aria-hidden="true"></span></a>
-        {% endif %}</p>
-      {% endif %}
       {% if patient.pending_workup_set.exists %}
       {% with workup=patient.pending_workup_set.first %}
         <div class="alert alert-danger" role="alert">

@@ -40,7 +40,7 @@ class DuplicatePatientForm(Form):
 class PatientForm(ModelForm):
     class Meta(object):
         model = models.Patient
-        exclude = ['needs_workup', 'demographics']
+        exclude = ['demographics']
         if not settings.OSLER_DISPLAY_CASE_MANAGERS:
             exclude.append('case_managers')
 

@@ -48,15 +48,15 @@
                       <td>
                           {% if latest_workup %}
                             {% if latest_workup.is_pending %}
-                                <a href="{% url 'workup' pk=latest_workup.pk %}">{% blocktrans %} Pending </a>: {{ latest_workup.chief_complaint | default:"no chief complaint provided" }}{% endblocktrans %}
+                                <a href="{% url 'workup' pk=latest_workup.pk %}">{% blocktrans %}  Pending from {{ latest_workup.encounter.clinic_day }} </a>: {{ latest_workup.chief_complaint | default:"no chief complaint provided" }}{% endblocktrans %}
                             {% else %}
-                              <a href="{% url 'workup' pk=latest_workup.pk %}">{% blocktrans %} Seen {{ latest_workup.clinic_day.clinic_date }}</a>: {{latest_workup.chief_complaint}}{% endblocktrans %}
+                              <a href="{% url 'workup' pk=latest_workup.pk %}">{% blocktrans %} Seen {{ latest_workup.encounter.clinic_day }}</a>: {{latest_workup.chief_complaint}}{% endblocktrans %}
                             {% endif %}
                           {% else %}
                               <a href="{% url 'core:patient-update' pk=patient.id %}">{% blocktrans %} Intake</a>: {{patient.history.last.history_date}}{% endblocktrans %}
                           {% endif %}
                       </td>
-                      <td>{{patient.status}}</td>
+                      <td>{{patient.actionitem_status}}</td>
                       <td>
                           {% if not latest_workup %}
                               {% trans 'No Note' %}

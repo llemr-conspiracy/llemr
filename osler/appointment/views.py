@@ -86,10 +86,6 @@ class AppointmentCreate(NoteFormView):
 
         date = self.request.GET.get('date', None)
         if date is not None:
-            # If appointment attribute clindate = workup.models.ClinicDate,
-            # default date could be next clindate.
-            # For now, the default value will be the next Saturday
-            # (including day of)
             initial['clindate'] = date
 
         return initial

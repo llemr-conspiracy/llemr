@@ -9,7 +9,7 @@
             <strong>{% trans 'DOB' %}:</strong> {{workup.patient.date_of_birth}} 
         </div>
         <div class="col-md-4">
-            <strong>{% trans 'Seen on' %}:</strong> {{ workup.clinic_day.clinic_date }}
+            <strong>{% trans 'Seen on' %}:</strong> {{ workup.encounter.clinic_day }}
         </div>
         {% if workup.signed %}
         <div class="col-md-4">

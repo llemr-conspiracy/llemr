@@ -3,7 +3,7 @@ import datetime
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
-from osler.core.models import (Patient)
+from osler.core.models import Patient, Encounter
 
 from django.utils.translation import gettext_lazy as _
 
@@ -14,7 +14,8 @@ class LabType(models.Model):
     e.g. BMP, A1c, CBC, etc.
     """
     name = models.CharField(max_length=30)
-    order_index = models.PositiveIntegerField(default=0, blank=False, null=False, verbose_name=_("order index"))
+    order_index = models.PositiveIntegerField(
+        default=0, blank=False, null=False, verbose_name=_("order index"))
 
     class Meta:
         ordering = ['order_index']
@@ -24,15 +25,26 @@ class LabType(models.Model):
 
 
 class Lab(models.Model):
-    """object of a lab panel"""
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, verbose_name=_("patient"))
+    """Model for a group of lab measurments.
 
-    lab_time = models.DateTimeField(default=timezone.now, verbose_name=_("lab time"))
-
-    lab_type = models.ForeignKey(LabType, on_delete=models.PROTECT, verbose_name=_("lab type"))
+    Stores a patient, timestamp, type, and encounter. Is pointed to by
+    ForeignKey relationships from the Measurement object.
+    """
 
     class Meta:
         ordering = ['-lab_time']
+
+
+    patient = models.ForeignKey(
+        Patient, on_delete=models.CASCADE, verbose_name=_("patient"))
+
+    lab_time = models.DateTimeField(
+        default=timezone.now, verbose_name=_("lab time"))
+
+    lab_type = models.ForeignKey(
+        LabType, on_delete=models.PROTECT, verbose_name=_("lab type"))
+
+    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE)
 
     def __str__(self):
         to_tz = timezone.get_default_timezone()
@@ -182,10 +194,10 @@ class DiscreteResultType(models.Model):
 
 
 class DiscreteMeasurement(Measurement):
+    """Model representing a discrete measurement.
     """
-    object of a continuous measurement
-    """
-    measurement_type = models.ForeignKey(DiscreteMeasurementType, on_delete=models.PROTECT)
+    measurement_type = models.ForeignKey(
+        DiscreteMeasurementType, on_delete=models.PROTECT)
     value = models.ForeignKey(DiscreteResultType, on_delete=models.PROTECT)
 
     def __str__(self):
@@ -206,3 +218,4 @@ class DiscreteMeasurement(Measurement):
     def get_value(self):
         """Returns the value of the measurement"""
         return self.value
+
