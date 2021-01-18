@@ -3,6 +3,7 @@ const path = require("path");
 module.exports = {
   entry: {
     all_patients: "./osler/assets/core/all-patients/index.js",
+    nav_bar: "./osler/assets/core/nav-bar/index.js",
   },
   output: {
     filename: "[name].bundle.js", // output bundle file name

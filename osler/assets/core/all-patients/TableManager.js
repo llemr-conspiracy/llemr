@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTable, useGlobalFilter, usePagination } from 'react-table';
 import SearchBar from './SearchBar';
-import NavigationBar from './NavigationBar';
+import PaginationBar from './PaginationBar';
 import Table from 'react-bootstrap/Table';
 
 
@@ -80,7 +80,7 @@ function TableManager({ columns, data, id }) {
           })}
         </tbody>
       </Table>
-      <NavigationBar
+      <PaginationBar
         gotoPage={gotoPage}
         previousPage={previousPage}
         nextPage={nextPage}

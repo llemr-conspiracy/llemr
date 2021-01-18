@@ -2,7 +2,7 @@ import React from 'react';
 import Pagination from 'react-bootstrap/Pagination'
 
 
-function NavigationBar({
+function PaginationBar({
     canPreviousPage,
     canNextPage,
     pageOptions,
@@ -63,4 +63,4 @@ function NavigationBar({
     );
 }
 
-export default NavigationBar;
+export default PaginationBar;
