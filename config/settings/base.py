@@ -316,7 +316,7 @@ MESSAGE_TAGS = {
 
 # crispy_forms
 # -----------------------------------------------------------------------------
-CRISPY_TEMPLATE_PACK = 'bootstrap3'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 # osler
 # -----------------------------------------------------------------------------
@@ -377,6 +377,7 @@ OSLER_ATTENDANCE_URL = env(
     "OSLER_ATTENDANCE_URL",
     default="https://www.wustl.edu",
 )
+OSLER_ABOUT_URL = "https://github.com/oslerproject/osler"
 
 #Default Encounter Status 
 OSLER_DEFAULT_ACTIVE_STATUS = ('Active', True)

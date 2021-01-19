@@ -3,14 +3,16 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 from django.views import defaults as default_views
-from django.views.generic import TemplateView, RedirectView
+from django.views.generic import RedirectView
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('', RedirectView.as_view(pattern_name="dashboard-dispatch", permanent=False),
          name="home"),
-    path("about/", RedirectView.as_view(url="http://www.sojournerhealthclinic.com/?page_id=1755", permanent=False),
+    path("about/", RedirectView.as_view(url=settings.OSLER_ABOUT_URL, permanent=False),
          name="about"),
+    path("attendance/", RedirectView.as_view(url=settings.OSLER_ATTENDANCE_URL, permanent=False),
+         name="attendance"),
 
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
