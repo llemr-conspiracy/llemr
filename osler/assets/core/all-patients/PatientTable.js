@@ -73,7 +73,7 @@ function PatientTable(props) {
 
   useEffect(() => {
     async function getData() {
-      let apiUrl = "/api/patient/?fields=name,age,gender,detail_url,latest_workup,actionitem_status";
+      let apiUrl = "/api/patients/?fields=name,age,gender,detail_url,latest_workup,actionitem_status";
       if (props.displayCaseManagers) {
         apiUrl += ",case_managers";
       }

@@ -13,11 +13,11 @@ if settings.DEBUG:
 else:
     router = SimpleRouter()
 
-router.register("user", UserViewSet)
-router.register("patient", PatientViewSet)
-router.register("appointment", AppointmentViewSet)
+router.register("users", UserViewSet)
+router.register("patients", PatientViewSet)
+router.register("appointments", AppointmentViewSet)
 router.register("demographics", DemographicsViewSet)
-router.register("referral", ReferralViewSet)
+router.register("referrals", ReferralViewSet)
 router.register("labs", LabViewSet)
 
 app_name = "api"
