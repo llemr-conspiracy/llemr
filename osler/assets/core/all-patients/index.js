@@ -7,7 +7,7 @@ import PatientTable from './PatientTable';
 
 export function render(props) {
     ReactDOM.render(
-        <PatientTable {...props}/>,
+        <PatientTable {...props} />,
         document.getElementById('root')
     );
 }

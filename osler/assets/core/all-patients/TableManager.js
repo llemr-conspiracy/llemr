@@ -1,20 +1,19 @@
-import React from 'react';
-import { useTable, useGlobalFilter, usePagination } from 'react-table';
-import SearchBar from './SearchBar';
-import PaginationBar from './PaginationBar';
-import Table from 'react-bootstrap/Table';
+import React from "react";
+import { useTable, useGlobalFilter, usePagination } from "react-table";
+import SearchBar from "./SearchBar";
+import PaginationBar from "./PaginationBar";
+import Table from "react-bootstrap/Table";
 
-
-function globalFilter(rows, columnIds, globalFilterValue) { 
+function globalFilter(rows, columnIds, globalFilterValue) {
+  const filterValue = globalFilterValue.toLowerCase();
   return rows.filter((row) => {
-    const name = row.original.name;
-    if (name.includes(globalFilterValue)) {
+    const name = row.original.name.toLowerCase();
+    if (name.includes(filterValue)) {
       return true;
-    }
-    else if (row.original.hasOwnProperty('case_managers')) {
+    } else if (row.original.hasOwnProperty("case_managers")) {
       const case_managers = row.original.case_managers;
       for (const case_manager of case_managers) {
-        if (case_manager.includes(globalFilterValue)) {
+        if (case_manager.toLowerCase().includes(filterValue)) {
           return true;
         }
       }
@@ -24,56 +23,58 @@ function globalFilter(rows, columnIds, globalFilterValue) {
 }
 
 function TableManager({ columns, data, id }) {
-
-    // mainly follow official example from react-table
-    const {
-      getTableProps,
-      getTableBodyProps,
-      headerGroups,
-      prepareRow,
-      page,
-      state,
-      setGlobalFilter,
-      canPreviousPage,
-      canNextPage,
-      pageOptions,
-      pageCount,
-      gotoPage,
-      nextPage,
-      previousPage,
-    } = useTable({
+  // mainly follow official example from react-table
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    prepareRow,
+    page,
+    state,
+    setGlobalFilter,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+  } = useTable(
+    {
       columns,
       data,
       globalFilter: globalFilter,
       initialState: { pageIndex: 0 },
     },
-      useGlobalFilter,
-      usePagination,
-    );
-  
-    return (
-      <div>
+    useGlobalFilter,
+    usePagination
+  );
+
+  return (
+    <div>
       <SearchBar
         globalFilter={state.globalFilter}
         setGlobalFilter={setGlobalFilter}
       />
       <Table {...getTableProps()} id={id}>
         <thead>
-          {headerGroups.map(headerGroup => (
+          {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+              {headerGroup.headers.map((column) => (
+                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
               ))}
             </tr>
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
           {page.map((row, i) => {
-            prepareRow(row)
+            prepareRow(row);
             return (
               <tr {...row.getRowProps()}>
-                {row.cells.map(cell => {
-                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                {row.cells.map((cell) => {
+                  return (
+                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  );
                 })}
               </tr>
             );
@@ -90,8 +91,8 @@ function TableManager({ columns, data, id }) {
         pageOptions={pageOptions}
         pageCount={pageCount}
       />
-      </div>
-    )
+    </div>
+  );
 }
 
 export default TableManager;

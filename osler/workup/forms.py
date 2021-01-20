@@ -163,7 +163,7 @@ class WorkupForm(ModelForm):
         required=False,
         queryset=get_user_model().objects.filter(
             groups__in=Group.objects.filter(
-            permissions__codename=can_sign_perm_codename)
+                permissions__codename=can_sign_perm_codename)
         ).distinct()
     )
 
@@ -182,51 +182,59 @@ class WorkupForm(ModelForm):
         self.fields['encounter'].queryset = Encounter.objects\
             .filter(patient=pt).order_by('clinic_day')
 
+        full_column = 'col-md-12'
+        half_column = 'col-md-6'
+        third_column = 'col-md-4'
+        quarter_column = 'col-md-3'
+
         self.helper.layout = Layout(
-            Row(HTML('<h3>Clinical Team</h3>'),
-                Div('attending', css_class='col-sm-6'),
-                Div('other_volunteer', css_class='col-sm-6'),
-                Div('encounter', css_class='col-sm-12')
-                ),
+            Row(HTML('<h3>Clinical Team</h3>')),
+            Row(
+                Div('attending', css_class=half_column),
+                Div('other_volunteer', css_class=half_column),
+                Div('encounter', css_class=full_column)
+            ),
 
-            Row(HTML('<h3>History</h3>'),
-                Div('chief_complaint', css_class='col-sm-6'),
-                Div('diagnosis', css_class='col-sm-6'),
+            Row(HTML('<h3>History</h3>')),
+            Row(
+                Div('chief_complaint', css_class=half_column),
+                Div('diagnosis', css_class=half_column),
                 Div(InlineCheckboxes('diagnosis_categories'),
-                    css_class='col-sm-12'),
-                Div('hpi', css_class='col-xs-12'),
-                Div('pmh', css_class='col-md-6'),
-                Div('psh', css_class='col-md-6'),
-                Div('fam_hx', css_class='col-md-6'),
-                Div('soc_hx', css_class='col-md-6'),
-                Div('meds', css_class='col-md-6'),
-                Div('allergies', css_class='col-md-6'),
-                Div('ros', css_class='col-xs-12')),
+                    css_class=full_column),
+                Div('hpi', css_class=full_column),
+                Div('pmh', css_class=half_column),
+                Div('psh', css_class=half_column),
+                Div('fam_hx', css_class=half_column),
+                Div('soc_hx', css_class=half_column),
+                Div('meds', css_class=half_column),
+                Div('allergies', css_class=half_column),
+                Div('ros', css_class=full_column)),
 
-            Row(HTML('<h3>Physical Exam</h3>'),
-                HTML('<h4>Vital Signs</h4>'),
+            Row(HTML('<h3>Physical Exam</h3>')),
+            Row(
                 Div(AppendedText('bp_sys', 'mmHg'),
-                    css_class='col-md-3 col-sm-3 col-xs-6'),
+                    css_class=quarter_column),
                 Div(AppendedText('bp_dia', 'mmHg'),
-                    css_class='col-md-3 col-sm-3 col-xs-6'),
+                    css_class=quarter_column),
                 Div(AppendedText('hr', 'bpm'),
-                    css_class='col-md-3 col-sm-3 col-xs-6'),
+                    css_class=quarter_column),
                 Div(AppendedText('rr', '/min'),
-                    css_class='col-md-3 col-sm-3 col-xs-6')),
-
-            Row(Div(AppendedRadios('t', 'temperature_units'),
-                    css_class='col-md-3 col-sm-3 col-xs-6'),
+                    css_class=quarter_column),
+                Div(AppendedRadios('t', 'temperature_units'),
+                    css_class=quarter_column),
                 Div(AppendedRadios('weight', 'weight_units'),
-                    css_class='col-md-3 col-sm-4 col-xs-6'),
+                    css_class=quarter_column),
                 Div(AppendedRadios('height', 'height_units'),
-                    css_class='col-md-3 col-sm-4 col-xs-6'),
-                Div('pe', css_class='col-xs-12')),
+                    css_class=quarter_column)),
+            Row(
+                Div('pe', css_class=full_column)),
 
-            Row(HTML('<h3>Assessment, Plan, & Orders</h3>'),
-                Div('a_and_p', css_class='col-xs-12'),
-                Div('rx', css_class='col-md-4'),
-                Div('labs_ordered_internal', css_class='col-md-4'),
-                Div('labs_ordered_external', css_class='col-md-4')
+            Row(HTML('<h3>Assessment, Plan, & Orders</h3>')),
+            Row(
+                Div('a_and_p', css_class=full_column),
+                Div('rx', css_class=third_column),
+                Div('labs_ordered_internal', css_class=third_column),
+                Div('labs_ordered_external', css_class=third_column)
             ),
 
             Row(
@@ -234,13 +242,13 @@ class WorkupForm(ModelForm):
                     'got_voucher',
                     PrependedText('voucher_amount', '$'),
                     PrependedText('patient_pays', '$'),
-                    css_class='col-xs-6',),
+                    css_class=half_column,),
                 Div(HTML('<h4>Imaging Voucher</h4>'),
                     'got_imaging_voucher',
                     PrependedText('imaging_voucher_amount', '$'),
                     PrependedText('patient_pays_imaging', '$'),
-                    css_class='col-xs-6')
-                ),
+                    css_class=half_column)
+            ),
 
             Submit('pending', 'Save for Later', css_class='btn btn-warning'),
             Submit('complete', 'Submit', css_class='btn btn-success')
@@ -251,16 +259,15 @@ class WorkupForm(ModelForm):
 
         if not settings.OSLER_DISPLAY_DIAGNOSIS:
             # delete diagnosis
-            self.helper.layout[1].pop(2)
+            self.helper.layout[3].pop(1)
             # delete diagnosis category
-            self.helper.layout[1].pop(2)
+            self.helper.layout[3].pop(1)
 
         if not settings.OSLER_DISPLAY_VOUCHERS:
             # delete medication voucher
-            self.helper.layout[5].pop()
+            self.helper.layout[9].pop()
             # # delete imaging voucher
-            self.helper.layout[5].pop()
-            
+            self.helper.layout[9].pop()
 
     def clean(self):
         """Use form's clean hook to verify that fields in Workup are
@@ -274,8 +281,8 @@ class WorkupForm(ModelForm):
             return
 
         required_fields = [
-            'chief_complaint', 
-            'hpi', 
+            'chief_complaint',
+            'hpi',
             'pmh',
             'psh',
             'meds',
@@ -285,7 +292,7 @@ class WorkupForm(ModelForm):
             'ros',
             'pe',
             'a_and_p'
-            ]
+        ]
         for field in required_fields:
             if not cleaned_data.get(field):
                 self.add_error(field, _("This field is required."))
@@ -305,9 +312,9 @@ class WorkupForm(ModelForm):
 
         attending = cleaned_data.get('attending')
         if attending and attending in cleaned_data.get('other_volunteer'):
-            self.add_error('other_volunteer', 
-            'Attending physician must be different from other volunteers.')
-        
+            self.add_error('other_volunteer',
+                           'Attending physician must be different from other volunteers.')
+
         if 't' in cleaned_data and cleaned_data.get('t') is not None:
             if cleaned_data.get('temperature_units') == 'F':
                 c = Decimal(fahrenheit2centigrade(
@@ -334,7 +341,7 @@ class WorkupForm(ModelForm):
             cleaned_data[field] = user_input.strip()
             if "UPDATE" in cleaned_data.get(field):
                 self.add_error(field, _("Please delete the heading and update contents as necessary"))
-        
+
         form_require_together(self, ['bp_sys', 'bp_dia'])
         if cleaned_data.get('bp_sys') and cleaned_data.get('bp_dia'):
             if cleaned_data.get('bp_sys') <= cleaned_data.get('bp_dia'):
@@ -348,7 +355,7 @@ class WorkupForm(ModelForm):
 class AttestableBasicNoteForm(ModelForm):
     class Meta(object):
         model = models.AttestableBasicNote
-        fields = ['title', 'text','encounter']
+        fields = ['title', 'text', 'encounter']
 
     def __init__(self, *args, **kwargs):
         pt = kwargs.pop('pt')
@@ -362,7 +369,7 @@ class AttestableBasicNoteForm(ModelForm):
 class BasicNoteForm(ModelForm):
     class Meta(object):
         model = models.BasicNote
-        fields = ['title', 'text','encounter']
+        fields = ['title', 'text', 'encounter']
 
     encounter = ModelChoiceField(queryset=None)
 
@@ -384,4 +391,3 @@ class AddendumForm(ModelForm):
         super(AddendumForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
-

@@ -32,7 +32,7 @@ function PatientTable(props) {
               year: 'numeric', month: 'short', day: 'numeric'
             }
             // should default to current locale
-            const dateString = date.toLocaleDateString(undefined,options);
+            const dateString = date.toLocaleDateString(undefined, options);
             const infoString = wu.is_pending ? "Pending from" : "Seen";
             return (
               <div>
@@ -67,7 +67,7 @@ function PatientTable(props) {
     ,
     []
   );
-  
+
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
@@ -97,8 +97,8 @@ function PatientTable(props) {
       {loading ? (
         <span>Loading...</span>
       ) : (
-        <TableManager columns={columns} data={data} id='all-patients-table'/>
-      )}
+          <TableManager columns={columns} data={data} id='all-patients-table' />
+        )}
     </div>
   );
 }
