@@ -71,13 +71,9 @@ class PatientForm(ModelForm):
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['ethnicities'].wrap(InlineCheckboxes)
         self.helper.add_input(Submit('submit', 'Submit'))
-        self.fields['address'].widget.attrs = {'placeholder': settings.OSLER_DEFAULT_ADDRESS,
-                                                'id': 'address'}
-        self.fields['city'].widget.attrs = {'id': 'city'}
-        self.fields['state'].widget.attrs = {'id': 'state'}
-        self.fields['zip_code'].widget.attrs = {'id': 'zip code'}
-        self.fields['country'].widget.attrs = {'id': 'country'}
-        self.fields['pcp_preferred_zip'].widget.attrs = {'id': 'pcp preferred zip'}
+        self.fields['address'].widget.attrs = {'placeholder': settings.OSLER_DEFAULT_ADDRESS}
+        for fname in ['address', 'city', 'state', 'zip_code', 'country', 'pcp_preferred_zip']:
+            self.fields[fname].widget.attrs = {'id': fname} 
         if settings.OSLER_HOMELESS_OPTION:
             self.helper.layout.remove('homeless')
             self.helper.layout.insert(14,'homeless')
@@ -109,7 +105,6 @@ class PatientForm(ModelForm):
                     alt_owner,
                     "An Alternate Phone Owner is required" +
                     " if a Alternate Phone is specified")
-
 
 
 class AbstractActionItemForm(ModelForm):
