@@ -367,6 +367,10 @@ OSLER_DISPLAY_VOUCHERS = True
 OSLER_DISPLAY_WILL_RETURN = True
 OSLER_DISPLAY_ATTENDANCE = False
 
+#overrided in stupoli.py
+OSLER_HOMELESS_OPTION = False
+OSLER_PHONE_NUMBER_OPTION = True
+
 OSLER_ATTENDANCE_URL = env(
     "OSLER_ATTENDANCE_URL",
     default="https://www.wustl.edu",

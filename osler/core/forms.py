@@ -2,7 +2,7 @@
 
 from django.forms import (
     Form, CharField, ModelForm, EmailField, CheckboxSelectMultiple,
-    ModelMultipleChoiceField, CheckboxInput, TypedChoiceField)
+    ModelMultipleChoiceField, CheckboxInput, BooleanField)
 from django.contrib.auth.forms import AuthenticationForm
 
 from django.conf import settings
@@ -52,10 +52,9 @@ class PatientForm(ModelForm):
         )
     
     if settings.OSLER_HOMELESS_OPTION:
-        homeless = TypedChoiceField(
+        homeless = BooleanField(
                 required=False,
                 label="Homeless", 
-                choices=((0,'')),
                 widget=CheckboxInput,
             )
 
