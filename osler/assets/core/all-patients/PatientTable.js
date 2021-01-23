@@ -1,6 +1,7 @@
-import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import TableManager from './TableManager';
+import Container from 'react-bootstrap/Container';
 
 
 function PatientTable(props) {
@@ -93,13 +94,13 @@ function PatientTable(props) {
   }, []);
 
   return (
-    <div className='container'>
+    <Container>
       {loading ? (
         <span>Loading...</span>
       ) : (
           <TableManager columns={columns} data={data} id='all-patients-table' />
         )}
-    </div>
+    </Container>
   );
 }
 

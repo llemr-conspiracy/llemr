@@ -1,5 +1,7 @@
 {% extends "core/base.html" %}
 
+{% load static %}
+
 {% block title %}
 Workup: {{ workup.patient.name }}
 {% endblock %}
@@ -39,7 +41,19 @@ Workup: {{ workup.patient.name }}
         </div>
         {% endif %}
     </div>
+
+    <div id='root'></div>
+
 </div>
 
 {% include "workup/workup_body.html" with workup=workup %}
 {% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/workup_detail.bundle.js' %}"></script>
+<script>
+  workup_detail.render({
+      pk: {{ pk }},
+  });
+</script>
+{% endblock extra_js %}

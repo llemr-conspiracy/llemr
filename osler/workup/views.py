@@ -82,7 +82,8 @@ def workup_detail(request, pk):
             {
             'workup': workup,
             'can_sign': can_sign,
-            'can_export_pdf': can_export_pdf
+            'can_export_pdf': can_export_pdf,
+            'pk': pk,
             }
         )
 
