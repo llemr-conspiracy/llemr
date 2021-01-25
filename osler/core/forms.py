@@ -2,7 +2,7 @@
 
 from django.forms import (
     Form, CharField, ModelForm, EmailField, CheckboxSelectMultiple,
-    ModelMultipleChoiceField, CheckboxInput)
+    ModelMultipleChoiceField, CheckboxInput, BooleanField)
 from django.contrib.auth.forms import AuthenticationForm
 
 from django.conf import settings
@@ -50,6 +50,13 @@ class PatientForm(ModelForm):
                 .distinct()
                 .order_by("last_name")
         )
+    
+    if settings.OSLER_HOMELESS_OPTION:
+        homeless = BooleanField(
+                required=False,
+                label="Homeless", 
+                widget=CheckboxInput,
+            )
 
     def __init__(self, *args, **kwargs):
         super(PatientForm, self).__init__(*args, **kwargs)
@@ -64,6 +71,16 @@ class PatientForm(ModelForm):
         self.helper['ethnicities'].wrap(InlineCheckboxes)
         self.helper.add_input(Submit('submit', 'Submit'))
         self.fields['address'].widget.attrs = {'placeholder': settings.OSLER_DEFAULT_ADDRESS}
+        for fname in ['address', 'city', 'state', 'zip_code', 'country', 'pcp_preferred_zip']:
+            self.fields[fname].widget.attrs = {'id': fname} 
+        if settings.OSLER_HOMELESS_OPTION:
+            self.helper.layout.remove('homeless')
+            self.helper.layout.insert(14,'homeless')
+            self.fields["homeless"].widget.attrs = {'id':'homeless_checkbox',
+                                                    'onclick':'homeless_checked()'}
+        if not settings.OSLER_PHONE_NUMBER_OPTION:
+            self.helper.layout.remove('phone')
+
 
     def clean(self):
 

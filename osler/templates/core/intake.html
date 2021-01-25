@@ -9,6 +9,36 @@ Patient Intake
 <p class="lead">Create a new patient in the database</p>
 {% endblock %}
 
+{% block extra_js %}
+<script>
+function homeless_checked() {
+	var checkbox = document.getElementById("homeless_checkbox");
+	var address = document.getElementById("address");
+	var city = document.getElementById("city");
+	var states = document.getElementById("state");
+	var country = document.getElementById("country");
+	var zip_code = document.getElementById("zip_code");
+	var pcp = document.getElementById("pcp_preferred_zip")
+	
+	if(checkbox.checked==true){
+		address.disabled = true;
+		city.disabled = true;
+		states.disabled = true;
+		country.disabled = true;
+		zip_code.disabled = true;
+		pcp.disabled = true;
+	} else {
+		address.disabled = false;
+		city.disabled = false;
+		states.disabled = false;
+		country.disabled = false;
+		zip_code.disabled = false;
+		pcp.disabled = false;
+	}
+}
+</script>
+{% endblock %}
+
 {% block content %}
 <div class="container">
 	{% load crispy_forms_tags %}
