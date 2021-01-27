@@ -2,7 +2,7 @@
 
 from django.forms import (
     Form, CharField, ModelForm, EmailField, CheckboxSelectMultiple,
-    ModelMultipleChoiceField, CheckboxInput)
+    ModelMultipleChoiceField, CheckboxInput, TextInput)
 from django.contrib.auth.forms import AuthenticationForm
 
 from django.conf import settings
@@ -41,14 +41,17 @@ class PatientForm(ModelForm):
         exclude = ['demographics']
         if not settings.OSLER_DISPLAY_CASE_MANAGERS:
             exclude.append('case_managers')
+        widgets = {
+            'date_of_birth': TextInput(attrs={'type': 'date'}),
+        }
 
     if settings.OSLER_DISPLAY_CASE_MANAGERS:
         case_managers = ModelMultipleChoiceField(
             required=False,
             queryset=get_user_model().objects
-                .filter(groups__permissions__codename='case_manage_Patient')
-                .distinct()
-                .order_by("last_name")
+            .filter(groups__permissions__codename='case_manage_Patient')
+            .distinct()
+            .order_by("last_name")
         )
 
     def __init__(self, *args, **kwargs):
@@ -125,13 +128,13 @@ class UserInitForm(ModelForm):
         model = User
         fields = [
             'name',
-            'first_name', 
-            'last_name', 
-            'phone', 
-            'languages', 
-            'gender', 
+            'first_name',
+            'last_name',
+            'phone',
+            'languages',
+            'gender',
             'groups'
-            ]
+        ]
 
     def __init__(self, *args, **kwargs):
         super(UserInitForm, self).__init__(*args, **kwargs)
@@ -146,10 +149,10 @@ class UserInitForm(ModelForm):
         self.helper.add_input(Submit('submit', 'Submit'))
 
         required_fields = [
-            'first_name', 
-            'last_name', 
+            'first_name',
+            'last_name',
             'groups'
-            ]
+        ]
         for field in required_fields:
             self.fields[field].required = True
 
@@ -165,4 +168,3 @@ class DocumentForm(ModelForm):
         super(DocumentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
-
