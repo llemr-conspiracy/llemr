@@ -72,7 +72,10 @@ def basicnote_detail(request, pk, model):
 
 def workup_detail(request, pk):
 
+    # would prefer not to make extra query, but having link to patient
+    # detail within template header is useful for clinics
     workup = get_object_or_404(models.Workup, pk=pk)
+    patient = workup.patient
     active_role = get_active_role(request)
     can_sign = models.Workup.group_can_sign(active_role)
     can_export_pdf = group_has_perm(active_role, 'workup.export_pdf_Workup')
@@ -81,6 +84,7 @@ def workup_detail(request, pk):
         'workup/workup_detail.html', 
             {
             'workup': workup,
+            'patient': patient,
             'can_sign': can_sign,
             'can_export_pdf': can_export_pdf,
             'pk': pk,

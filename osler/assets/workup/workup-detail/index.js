@@ -2,7 +2,7 @@ import "regenerator-runtime/runtime";
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import WorkupDetail from './WorkupDetail';
+import WorkupDetail from './components/WorkupDetail';
 
 
 export function render(props) {

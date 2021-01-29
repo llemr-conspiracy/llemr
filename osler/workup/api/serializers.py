@@ -9,22 +9,32 @@
 from rest_framework import serializers
 from osler.workup import models
 from osler.core.api.common import DynamicFieldsModelSerializer
-from osler.core.models import ReferralType, ReferralLocation
-from django.shortcuts import get_object_or_404
+from osler.core.api.serializers import PatientSerializer, EncounterSerializer
 
-class ReferralLocationSerializer(DynamicFieldsModelSerializer):
+
+class AddendumSerializer(DynamicFieldsModelSerializer):
     class Meta:
-        model = ReferralLocation
+        model = models.Addendum
+        exclude = []
+
+    author = serializers.StringRelatedField(read_only=True)
+    author_type = serializers.StringRelatedField(read_only=True)
     
 class WorkupSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = models.Workup
         exclude = []
 
-    detail_url = serializers.StringRelatedField(read_only=True)
+    author = serializers.StringRelatedField(read_only=True)
+    author_type = serializers.StringRelatedField(read_only=True)
     signer = serializers.StringRelatedField(read_only=True)
     other_volunteer = serializers.StringRelatedField(read_only=True, many=True)
     diagnosis_categories = serializers.StringRelatedField(read_only=True, many=True)
+    encounter = EncounterSerializer()
+    addendum_set = AddendumSerializer(read_only=True, many=True)
+    patient = PatientSerializer(read_only=True, 
+        fields=('age','gender','ethnicities','date_of_birth','detail_url'))
+    detail_url = serializers.StringRelatedField(read_only=True)
 
     # def create(self, validated_data):
     #     #These fields all needed to be popped because they require foreign keys or many to many relationships.

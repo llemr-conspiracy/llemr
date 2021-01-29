@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from osler.core import models
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
     """
@@ -14,9 +15,10 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
         super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
 
         if fields is None:
-            fields = self.context['request'].query_params.get('fields')
-            if fields:
-                fields = fields.split(',')
+            if 'request' in self.context:
+                fields = self.context['request'].query_params.get('fields')
+                if fields:
+                    fields = fields.split(',')
 
         if fields is not None:
             # Drop any fields that are not specified in the `fields` argument.
