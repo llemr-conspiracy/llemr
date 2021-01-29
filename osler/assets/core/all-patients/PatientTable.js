@@ -1,6 +1,8 @@
-import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import TableManager from './TableManager';
+import Container from 'react-bootstrap/Container';
+import globalFilter from './globalFilter';
 
 
 function PatientTable(props) {
@@ -72,34 +74,34 @@ function PatientTable(props) {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    async function getData() {
-      let apiUrl = "/api/patients/?fields=name,age,gender,detail_url,latest_workup,actionitem_status";
-      if (props.displayCaseManagers) {
-        apiUrl += ",case_managers";
-      }
-      if (props.activePatients) {
-        apiUrl += "&filter=active&sort=encounter__order";
-      }
-      await axios
-        .get(apiUrl)
-        .then((response) => {
-          setData(response.data);
-          setLoading(false);
-        });
+    let apiUrl = "/api/patients/?fields=name,age,gender,detail_url,latest_workup,actionitem_status";
+    if (props.displayCaseManagers) {
+      apiUrl += ",case_managers";
     }
-    if (loading) {
-      getData();
+    if (props.activePatients) {
+      apiUrl += "&filter=active&sort=encounter__order";
     }
+    axios
+      .get(apiUrl)
+      .then((response) => {
+        setData(response.data);
+        setLoading(false);
+      });
   }, []);
 
   return (
-    <div className='container'>
+    <Container>
       {loading ? (
         <span>Loading...</span>
       ) : (
-          <TableManager columns={columns} data={data} id='all-patients-table' />
+          <TableManager 
+            columns={columns} 
+            data={data}
+            globalFilter={globalFilter}
+            id='all-patients-table' 
+          />
         )}
-    </div>
+    </Container>
   );
 }
 

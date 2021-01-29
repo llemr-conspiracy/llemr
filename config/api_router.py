@@ -8,6 +8,8 @@ from osler.demographics.api.views import DemographicsViewSet
 from osler.referral.api.views import ReferralViewSet
 from osler.labs.api.views import LabViewSet
 from osler.inventory.api.views import DrugViewSet
+from osler.workup.api.views import WorkupViewSet
+from osler.core.api.views import PatientViewSet
 
 if settings.DEBUG:
     router = DefaultRouter()
@@ -16,6 +18,7 @@ else:
 
 router.register("users", UserViewSet)
 router.register("patients", PatientViewSet)
+router.register("workups",WorkupViewSet)
 router.register("appointments", AppointmentViewSet)
 router.register("demographics", DemographicsViewSet)
 router.register("referrals", ReferralViewSet)

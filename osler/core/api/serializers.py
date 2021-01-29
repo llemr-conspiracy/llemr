@@ -1,9 +1,10 @@
 from rest_framework import serializers
 from osler.core import models
-from osler.workup.api.serializers import WorkupSerializer
+from osler.workup.api.common import BasicWorkupSerializer
 from osler.core.api.common import DynamicFieldsModelSerializer
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+
 
 class LastHistorySerializer(serializers.Serializer):
     history_date = serializers.DateTimeField()
@@ -21,16 +22,31 @@ class CaseManagerSerializer(serializers.ModelSerializer):
     name = serializers.StringRelatedField(read_only=True)
 
 
+class EncounterStatusSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.EncounterStatus
+        exclude = []
+    
+
+class EncounterSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = models.Encounter
+        exclude = []
+
+    status = EncounterStatusSerializer()
+
+
 class PatientSerializer(DynamicFieldsModelSerializer):
     class Meta(object):
         model = models.Patient
         exclude = []
 
-    latest_workup = WorkupSerializer(read_only=True, 
-        fields=('chief_complaint', 'detail_url', 'signer', 'written_datetime', 'is_pending'))
+    latest_workup = BasicWorkupSerializer(read_only=True, 
+       fields=('chief_complaint', 'detail_url', 'signer', 'written_datetime', 'is_pending'))
     gender = serializers.StringRelatedField(read_only=True)
     age = serializers.IntegerField(read_only=True)
     name = serializers.StringRelatedField(read_only=True)
+    ethnicities = serializers.StringRelatedField(many=True)
     status = serializers.StringRelatedField(read_only=True)
     case_managers = serializers.StringRelatedField(many=True)
     actionitem_status = serializers.StringRelatedField(read_only=True)
@@ -53,7 +69,7 @@ class PatientSerializer(DynamicFieldsModelSerializer):
         return patient
     
     def update(self, instance, validated_data):
-        languages =  validated_data.pop('languages')
+        languages = validated_data.pop('languages')
         
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -67,8 +83,9 @@ class PatientSerializer(DynamicFieldsModelSerializer):
 
     def get_extra_kwargs(self):
         extra_kwargs = super(PatientSerializer, self).get_extra_kwargs()
+        if 'view' not in self.context.keys():
+            return extra_kwargs
         action = self.context['view'].action
-
         #this makes certain fields read-only for update and partial_update
         read_only_fields = ['first_name','middle_name','last_name','date_of_birth']
         if action in ['update', 'partial_update']:
