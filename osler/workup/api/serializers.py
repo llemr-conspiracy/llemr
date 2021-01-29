@@ -1,4 +1,4 @@
-#TO DO OTHER VOLUNTEER, LIST ORDERING
+# TODO OTHER VOLUNTEER, LIST ORDERING
 #IGNORE REFERRAL STUFF FOR NOW
 
 #FIELDS THAT ARE NOT WORKING PROPERLY
@@ -35,6 +35,8 @@ class WorkupSerializer(DynamicFieldsModelSerializer):
     patient = PatientSerializer(read_only=True, 
         fields=('age','gender','ethnicities','date_of_birth','detail_url'))
     detail_url = serializers.StringRelatedField(read_only=True)
+
+    # TODO fix the below. Works well enough rn for get
 
     # def create(self, validated_data):
     #     #These fields all needed to be popped because they require foreign keys or many to many relationships.

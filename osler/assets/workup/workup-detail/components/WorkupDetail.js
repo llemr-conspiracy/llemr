@@ -8,6 +8,9 @@ import SectionTitle from './SectionTitle';
 import AddendaGroup from './AddendaGroup';
 
 
+/*  TODO account for settings. Current idea is to
+ *  have a layout setting returned by API call
+ */
 function WorkupDetail(props) {
 
     const [loading, setLoading] = useState(true);
@@ -21,7 +24,6 @@ function WorkupDetail(props) {
             .get(apiUrl)
             .then((response) => {
                 const data = response.data;
-                console.log(data);
                 setFields(defineFields(data));
                 setAddenda(data.addendum_set);
                 setLoading(false);
@@ -45,8 +47,7 @@ function WorkupDetail(props) {
             <SectionTitle title={'At a Glance'} />
             <SmallFieldGroup 
                 fieldSet={[
-                    'cc','author','other_vol','dx',
-                    'dx_cat','will_return'
+                    'cc','author','other_vol',
                 ]}
                 fields={fields}
             />

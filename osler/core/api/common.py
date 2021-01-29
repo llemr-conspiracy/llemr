@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from osler.core import models
 
+
+# TODO specify fields for children serializers
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
     """
     A ModelSerializer that takes an additional `fields` argument that

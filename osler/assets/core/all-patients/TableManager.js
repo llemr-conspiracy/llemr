@@ -4,25 +4,8 @@ import SearchBar from "./SearchBar";
 import PaginationBar from "./PaginationBar";
 import Table from "react-bootstrap/Table";
 
-function globalFilter(rows, columnIds, globalFilterValue) {
-  const filterValue = globalFilterValue.toLowerCase();
-  return rows.filter((row) => {
-    const name = row.original.name.toLowerCase();
-    if (name.includes(filterValue)) {
-      return true;
-    } else if (row.original.hasOwnProperty("case_managers")) {
-      const case_managers = row.original.case_managers;
-      for (const case_manager of case_managers) {
-        if (case_manager.toLowerCase().includes(filterValue)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  });
-}
 
-function TableManager({ columns, data, id }) {
+function TableManager({ columns, data, globalFilter, id }) {
   // mainly follow official example from react-table
   const {
     getTableProps,
