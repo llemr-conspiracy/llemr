@@ -16,6 +16,7 @@ from osler.workup import models
 from osler.workup.tests.tests import wu_dict, note_dict
 
 
+
 class ViewsExistTest(TestCase):
     """
     Verify that views involving the workup are functioning.
@@ -28,7 +29,7 @@ class ViewsExistTest(TestCase):
         self.user = build_user()
         log_in_user(self.client, self.user)
 
-        self.wu = models.Workup.objects.create(**wu_dict(user=self.user))
+        self.wu = workup_factories.WorkupFactory()
 
     def test_new_workup_view(self):
         """Test that user can successfully access new workup page."""
@@ -130,7 +131,8 @@ class ViewsExistTest(TestCase):
             log_in_user(self.client, user)
 
             wu_count = models.Workup.objects.all().count()
-            wu_data = wu_dict(units=True, dx_category=True)
+            wu_data = model_to_dict(workup_factories.WorkupFactory(units = True, diagnosis_category = True))
+            
             pt = wu_data['patient']
             wu_data['patient'] = pt.id
             wu_data['author'] = user.id
@@ -152,7 +154,8 @@ class ViewsExistTest(TestCase):
 
         # first, craft a workup that has units, but fail to set the
         # diagnosis categories, so that it will fail to be accepted.
-        wu_data = wu_dict(units=True)
+        wu_data = model_to_dict(workup_factories.WorkupFactory(units = True))
+
         del wu_data['chief_complaint']
         pt = core_factories.PatientFactory()
 
@@ -174,7 +177,8 @@ class ViewsExistTest(TestCase):
     def test_pending_note_submit(self):
 
         # pull standard workup data, but delete required field
-        wu_data = wu_dict(units=True, dx_category=True)
+        wu_data = model_to_dict(workup_factories.WorkupFactory(units = True, diangosis_category = True))
+  
         wu_data['pending'] = ''
         del wu_data['chief_complaint']
         for field in ['encounter','author','author_type']:
@@ -311,7 +315,8 @@ class TestAddendum(TestCase):
 
         self.note_data = note_dict(user=self.user)
 
-        self.wu = models.Workup.objects.create(**wu_dict(user=self.user))
+        self.wu = workup_factories.WorkupFactory(user = self.user)
+        #self.wu = models.Workup.objects.create(**wu_dict(user=self.user))
         self.form_data = note_dict(user=self.user, encounter_pk=False)
 
     def test_urls(self):

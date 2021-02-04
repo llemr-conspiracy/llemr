@@ -10,6 +10,8 @@ from osler.workup.tests.tests import wu_dict, note_dict
 
 import osler.users.tests.factories as user_factories
 
+from osler.workup import factories as workup_factories
+
 
 class TestAttestations(TestCase):
 
@@ -17,7 +19,9 @@ class TestAttestations(TestCase):
 
     def setUp(self):
 
-        self.wu = models.Workup.objects.create(**wu_dict())
+        self.wu = workup_factories.WorkupFactory()
+       
+
         self.note = models.AttestableBasicNote.objects.create(**note_dict())
 
     def test_wu_signing(self):

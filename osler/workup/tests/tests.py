@@ -15,6 +15,7 @@ import osler.core.tests.factories as core_factories
 
 from osler.workup import validators
 from osler.workup import models
+from osler.workup import factories as workup_factories
 
 import factory
 
@@ -99,17 +100,17 @@ class TestEmailForUnsignedNotes(TestCase):
 
     def test_unsigned_email(self):
 
+
+
         pt = core_factories.PatientFactory()
+    
+        wu_signed = workup_factories.WorkupFactory(attending = self.user)
 
-        wu_data = wu_dict(user=self.user)
-        wu_data['attending'] = self.user
-
-        wu_signed = models.Workup.objects.create(**wu_data)
         wu_signed.sign(self.user, self.user.groups.first())
         wu_signed.save()
 
-        wu_unsigned = models.Workup.objects.create(**wu_data)
-
+        wu_unsigned = workup_factories.WorkupFactory(attending = self.user)
+       
         call_command('unsigned_wu_notify')
 
         assert len(mail.outbox) == 1
@@ -119,11 +120,6 @@ class TestEmailForUnsignedNotes(TestCase):
 
 
         # TODO make this universal
-
-        # self.assertIn(
-        #     'https://osler.wustl.edu/workup/%s/' % wu_unsigned.pk,
-        #     mail.outbox[0].body)
-
 
 class TestWorkupFieldValidators(TestCase):
     '''

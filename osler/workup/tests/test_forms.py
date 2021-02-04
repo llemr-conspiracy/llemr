@@ -6,6 +6,7 @@ from past.utils import old_div
 import decimal
 
 from django.test import TestCase
+from django.forms.models import model_to_dict
 
 from osler.core.models import Gender
 
@@ -13,10 +14,12 @@ from osler.workup.models import DiagnosisType, Workup
 from osler.workup.forms import WorkupForm
 
 from osler.workup.tests.tests import wu_dict, note_dict
+from osler.workup import factories as workup_factories
 
 from osler.core.tests.test_views import build_user
 import osler.users.tests.factories as user_factories
 import osler.core.tests.factories as core_factories
+
 
 from itertools import chain, combinations
 
@@ -36,53 +39,48 @@ class TestHelperFunctions(TestCase):
 
 class TestWorkupFormUnitAwareFields(TestCase):
 
-    # fixtures = ['core', 'workup']
-
     def setUp(self):
         DiagnosisType.objects.create(name='Cardiovascular')
 
-        wu_data = wu_dict()
-        wu_data['diagnosis_categories'] = [DiagnosisType.objects.first().pk]
-        wu_data['got_imaging_voucher'] = False
-        wu_data['got_voucher'] = False
+        wu = workup_factories.WorkupFactory(diagnosis_categories = DiagnosisType.objects.first().pk, got_imaging_voucher = False, got_voucher = False)
 
-        del wu_data['t']
+        del workup.t
 
-        # this wu_data object should have specified _none_ of the fields
-        # for unit-aware vital signs
-        self.wu_data = wu_data
-        self.pt = wu_data['patient']
+        self.wu = wu
+
+        self.pt = wu.patient
 
     def test_vitals_no_units_error(self):
         """If vitals measurement w/o units, raise error"""
 
-        for field, value in [('t', 98.6),
-                             ('height', 100),
-                             ('weight', 180)]:
+        wu_data = model_to_dict(self.wu.copy())
+        
+        wu_data['t'] = 98.6
+        wu_data['height'] = 100
+        wu_data['weight'] = 180
 
-            wu_data = self.wu_data.copy()
-            wu_data[field] = value
+        form = WorkupForm(pt = self.pt, data = wu_data)
 
-            form = WorkupForm(pt=self.pt,data=wu_data)
-            self.assertFalse(
-                form.is_valid(),
-                msg='Failed to raise error if only %s specified' % field)
-            self.assertNotEqual(len(form[field].errors), 0)
+        self.assertFalse(
+            form.is_valid(),
+            msg = 'Failed to raise error if only %s specified' % field)
+        self.assertNotEqual(len(form[field].errors),0)
 
     def test_vitals_no_value_no_units_ok(self):
         """Units are required only when vitals are provided."""
 
-        form = WorkupForm(pt=self.pt,data=self.wu_data)
-        self.assertTrue(form.is_valid(), msg=form.errors)
+        wu_data = model_to_dict(self.wu)
+        form = WorkupForm(pt = self.pt, data = wu_data)
+        self.assertTrue(form.is_valid(), msg = form.errors)
 
     def test_note_temp_conversion(self):
 
-        wu_data = self.wu_data
-
-        # temperatures with centigrade should be the same
+        wu_data = model_to_dict(self.wu) 
+       
         wu_data['temperature_units'] = 'C'
         wu_data['t'] = 37
 
+        
         form = WorkupForm(pt=self.pt,data=wu_data)
 
         self.assertTrue(form.is_valid(), msg=form.errors)
@@ -102,7 +100,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
 
     def test_note_height_conversion(self):
 
-        wu_data = self.wu_data
+        wu_data = model_to_dict(self.wu)
 
         # heights with cm should be the same
         wu_data['height_units'] = 'cm'
@@ -128,7 +126,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
 
     def test_note_weight_conversion(self):
 
-        wu_data = self.wu_data
+        wu_data = model_to_dict(self.wu)
 
         # weights with kilograms should be the same
         wu_data['weight_units'] = 'kg'
@@ -154,11 +152,14 @@ class TestWorkupFormUnitAwareFields(TestCase):
 
 class TestWorkupFormValidators(TestCase):
 
+
     fixtures = ['workup', 'core']
 
     def setUp(self):
-        self.valid_wu_dict = wu_dict()
-        self.pt = self.valid_wu_dict['patient']
+        self.wu = workup_factories.WorkupFactory()
+        self.valid_wu_dict = model_to_dict(self.wu)
+        self.pt = self.wu.patient
+
 
     def test_blood_pressure_together(self):
         """Systolic and diastolic bp must be specified together."""
@@ -252,8 +253,6 @@ class TestWorkupFormProviderChoices(TestCase):
             lambda u: u.has_perm(Workup.get_sign_perm()), 
             self.users)]
 
-        # c[0] is the pk of each, [1:] indexing required because element 0
-        # is the "blank" option.
         attending_options = form['attending'].field.queryset
 
         # ensure that options are the same
@@ -279,7 +278,8 @@ class TestWorkupFormProviderChoices(TestCase):
         attending = build_user([user_factories.AttendingGroupFactory])
         non_attending = build_user()
 
-        form_data = wu_dict()
+        form_data = model_to_dict(workup_factories.WorkupFactory)
+
         pt = form_data['patient']
         form_data['attending'] = attending
         form_data['other_volunteer'] = [non_attending, attending]
