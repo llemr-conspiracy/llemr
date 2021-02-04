@@ -26,18 +26,8 @@ class WorkupFactory(DjangoModelFactory):
 	encounter = factory.SubFactory(core_factories.EncounterFactory)
 	patient = factory.SubFactory(core_factories.PatientFactory)
 	chief_complaint = factory.Iterator(["SOB", "Headache", "Chest pain", "Fatigue"])
-	#diagnosis is a multiple choice foreign key to the DiagnosisType model
 	diagnosis = factory.Iterator(["Influenza", "MI", "COPD", "Ulcer"])
 	diagnosis_categories = factory.SubFactory(DiagnosisTypeFactory)
-	#ok so justin said he wanted a multiple foreign key, but this is me copying the format of languages in the factories.py in core
-	#which seems like relatively the same scenario... seems wrong though because it doesn't mention manytomany or foreign key
-	#but neither does the core factory
-	#or do i want it to be many to many!!!!!!
-	#should probably ask just not 100% sure about this foreign key here... but must move forward!
-	#PROBLEM: wanted the models from the django database but instead we are using models from workup?
-	#diagnosis = factory.Iterator(["MI", "Influenza", "COPD", "Ulcer"])
-	# want this to be a multiple choice foreign key to the diagnosis type model...
-	#factory faker to look at documentation online
 	hpi = factory.Faker('paragraph')
 	pmh = factory.Faker('paragraph')
 	psh = factory.Faker('paragraph')
