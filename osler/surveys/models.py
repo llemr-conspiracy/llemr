@@ -38,6 +38,9 @@ class Response(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     # TODO: link patient/encounter information
 
+    class Meta:
+        get_latest_by = "created_at"
+
 
 class Answer(models.Model):
     response = models.ForeignKey(Response, on_delete=models.CASCADE, related_name='answers')
