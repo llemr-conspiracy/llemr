@@ -12,14 +12,17 @@ class Survey(models.Model):
 class Question(models.Model):
 
     class QuestionType(models.TextChoices):
-        TEXT = 'FREE_RESPONSE'
-        MC = 'MULTIPLE_CHOICE'
-        DATE = 'DATE_RESPONSE'
+        TEXT = 'Short Answer'  # includes  all other special input fields (num,date,time...)
+        CHECKBOXES = 'Select Many'
+        RADIOS = 'Multiple Choice'
+        TEXTAREA = 'Paragraph'
 
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='questions')
     question = models.CharField(max_length=200)
     question_type = models.CharField(max_length=20, choices=QuestionType.choices, default=QuestionType.TEXT)
     required = models.BooleanField()
+    allow_other = models.BooleanField(default=False)  # will put 'other' option for checkboxes/radios
+    input_type = models.CharField(default='text', max_length=20)  # for text: <input type={{ input_type }} ..>
 
     def __str__(self):
         return self.question

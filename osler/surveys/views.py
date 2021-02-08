@@ -2,11 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import generic
 from django.http import HttpResponse
 
-from osler.surveys.models import Survey
-
-
-def test(request):
-    return HttpResponse("survey test page")
+from osler.surveys.models import Survey, Question
 
 
 def create(request):
@@ -18,3 +14,8 @@ def create(request):
 
 class SurveyTemplateListView(generic.ListView):
     model = Survey
+
+
+def fill(request, id):
+    survey = Survey.objects.get(id=id)
+    return render(request, 'surveys/fill.html', {'survey': survey, 'QuestionType': Question.QuestionType})

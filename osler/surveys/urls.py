@@ -7,12 +7,16 @@ from . import views
 
 app_name = 'surveys'
 unwrapped_urlpatterns = [
-    path('test/', views.test, name='test'),
     path('', views.SurveyTemplateListView.as_view(), name='surveys'),
-    re_path(r'^(?P<id>[0-9]+)/edit/?$', views.SurveyTemplateListView.as_view(), name='edit'),
     path('create/', views.create, name='create'),
+    re_path(r'^(?P<id>[0-9]+)/edit/?$', views.SurveyTemplateListView.as_view(), name='edit'),
+    re_path(r'^(?P<id>[0-9]+)/fill/?$', views.fill, name='fill'),
 
 ]
 
+wrap_config = {
+    'user_init_only': ['create', 'surveys', 'edit', 'fill']
+}
+
 # see core/urls.py if you want to remove login restrictions for certian views
-urlpatterns = [wrap_url(u) for u in unwrapped_urlpatterns]
+urlpatterns = [wrap_url(u, **wrap_config) for u in unwrapped_urlpatterns]
