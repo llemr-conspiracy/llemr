@@ -14,7 +14,6 @@ unwrapped_urlpatterns = [
     re_path(r'^(?P<id>[0-9]+)/submit/?$', views.submit, name='submit'),
     re_path(r'^(?P<id>[0-9]+)/responses/?$', views.ResponsesListView.as_view(), name='responses'),
     path('responses/', views.AllResponsesListView.as_view(), name='all_responses'),
-
 ]
 
 wrap_config = {

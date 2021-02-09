@@ -20,7 +20,7 @@ class Question(models.Model):
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='questions')
     question = models.CharField(max_length=200)
     question_type = models.CharField(max_length=20, choices=QuestionType.choices, default=QuestionType.TEXT)
-    required = models.BooleanField()
+    required = models.BooleanField(default=False)
     allow_other = models.BooleanField(default=False)  # will put 'other' option for checkboxes/radios
     input_type = models.CharField(default='text', max_length=20)  # for text: <input type={{ input_type }} ..>
 
