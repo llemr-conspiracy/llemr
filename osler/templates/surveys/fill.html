@@ -23,7 +23,7 @@ Osler: Surveys
       <hr>
   </div>
   <div class="row">
-  <form method='POST'>
+  <form action="{%  url 'surveys:submit' id=survey.id %}" method='POST'>
     {% csrf_token %}
     {% for question in survey.questions.all %}
     <div class="form-group">

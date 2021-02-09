@@ -32,7 +32,11 @@ Osler: Surveys
       <tr>
         <td><a href="{% url 'surveys:edit' id=survey.id %}">{{ survey.title }}</a></td>
         <td>{{ survey.description }}</td>
-        <td>{{ survey.responses.count }}</td>
+        <td>{{ survey.responses.count }}
+          {% if survey.responses.count > 0 %}
+            <a href="{% url 'surveys:responses' id=survey.id %}">(view)</a>
+          {% endif %}
+        </td>
         <td>{{ survey.responses.latest.created_at }}</td>
       </tr>
     {% endfor %}

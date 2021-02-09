@@ -1,0 +1,54 @@
+{% extends "core/base.html" %}
+{% load bootstrap3 %}
+
+{% block title %}
+Osler: Survey Responses
+{% endblock %}
+
+{% block header %}
+
+{% comment %}
+This view is used for the survey:responeses and surveys:all_responses views
+if the survey object exists, then this is survey:responses, otherwise its surveys:all_responses
+{% endcomment %}
+
+<div class="container">
+	<h1>Responses 
+    {% if survey %}
+    to <a href="{% url 'surveys:edit' id=survey.id %}"> {{survey}}</a>
+    {% endif %}
+  </h1>
+  {% if survey %}
+    <h3><a href="{% url 'surveys:all_responses' %}">All Survey Responses</a></h3>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <table class="table" id="all-patients-table">
+      <tr>
+          <th>Date</th>
+          {% if not survey %}
+          <th>Survey</th>
+          {% endif %}
+          <th>Patient</th>
+          <th>Filled By</th>
+      </td>
+    </tr>
+    {% for response in object_list %}
+      <tr>
+        <td>{{ response.created_at }}</td>
+        {% if not survey %}
+        <td><a href="{% url 'surveys:edit' id=response.survey.id %}">{{response.survey}}</a></td>
+        {% endif %}
+        <td></td>
+        <td></td>
+      </tr>
+    {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}
