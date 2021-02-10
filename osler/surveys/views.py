@@ -37,6 +37,20 @@ class ResponsesListView(generic.ListView):
         return context
 
 
+def response(request, id):
+    response = Response.objects.get(id=id)
+    # get answers into a dict of lists
+    answer_dict = {}
+    for ans in response.answers.all():
+        qid = ans.question.question
+        if qid not in answer_dict.keys():
+            answer_dict[qid] = [ans.text]
+        else:
+            answer_dict[qid] = answer_dict[qid] + [ans.text]
+    ctx = {'response': response, 'answer_dict': answer_dict}
+    return render(request, 'surveys/response_detail.html', ctx)
+
+
 def fill(request, id):
     survey = Survey.objects.get(id=id)
     return render(request, 'surveys/fill.html', {'survey': survey, 'QuestionType': Question.QuestionType})

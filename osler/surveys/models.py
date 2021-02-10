@@ -37,7 +37,7 @@ class Choice(models.Model):
 
 
 class Response(models.Model):
-    survey = models.ForeignKey(Survey, on_delete=models.SET_NULL, null=True, related_name='responses')
+    survey = models.ForeignKey(Survey, on_delete=models.PROTECT, null=True, related_name='responses')
     created_at = models.DateTimeField(auto_now_add=True)
     # TODO: link patient/encounter information
 
@@ -48,9 +48,7 @@ class Response(models.Model):
 class Answer(models.Model):
     response = models.ForeignKey(Response, on_delete=models.CASCADE, related_name='answers')
     text = models.CharField(max_length=1000)  # if mc/checkboxes, this is the string given in the post request
-    question = models.ForeignKey(Question, on_delete=models.SET_NULL, null=True)
+    question = models.ForeignKey(Question, on_delete=models.PROTECT, null=True)
 
     def __str__(self):
-        if self.question:
-            return f"{self.text} - {self.question.question}"
-        return f"{self.text} - <question deleted>"
+        return f"{self.text} - {self.question.question}"

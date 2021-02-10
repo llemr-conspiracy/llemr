@@ -40,7 +40,7 @@ if the survey object exists, then this is survey:responses, otherwise its survey
     </tr>
     {% for response in object_list %}
       <tr>
-        <td>{{ response.created_at }}</td>
+        <td> <a href="{% url 'surveys:response' id=response.id%}">{{response.created_at}}</a></td>
         {% if not survey %}
         <td><a href="{% url 'surveys:edit' id=response.survey.id %}">{{response.survey}}</a></td>
         {% endif %}
