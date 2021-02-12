@@ -24,6 +24,9 @@ Osler: Surveys
   </div>
   <div class="row">
   <form action="{%  url 'surveys:submit' id=survey.id %}" method='POST'>
+  {% if readonly%}
+    <fieldset disabled>
+  {% endif %}
     {% csrf_token %}
     {% for question in survey.questions.all %}
     <div class="form-group">
@@ -75,7 +78,12 @@ Osler: Surveys
       {% endif %}
     </div>
     {% endfor # questions %} 
-    <button type="submit" class="btn btn-primary">Submit</button>
+    {% if not readonly%}
+      <button type="submit" class="btn btn-primary">Submit</button>
+    {% endif %}
+  {% if readonly%}
+    </fieldset>
+  {% endif %}
   </form>
 </div>
 

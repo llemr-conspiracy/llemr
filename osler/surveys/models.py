@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 
 
 class Survey(models.Model):
@@ -39,7 +41,9 @@ class Choice(models.Model):
 class Response(models.Model):
     survey = models.ForeignKey(Survey, on_delete=models.PROTECT, null=True, related_name='responses')
     created_at = models.DateTimeField(auto_now_add=True)
-    # TODO: link patient/encounter information
+    author = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
+    author_role = models.ForeignKey(Group, on_delete=models.PROTECT)
+    # patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
 
     class Meta:
         get_latest_by = "created_at"

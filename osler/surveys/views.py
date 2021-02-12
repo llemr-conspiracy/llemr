@@ -3,7 +3,7 @@ from django.views import generic
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-
+from osler.users.utils import get_active_role
 from osler.surveys.models import Survey, Question, Response, Answer
 
 
@@ -53,7 +53,21 @@ def response(request, id):
 
 def fill(request, id):
     survey = Survey.objects.get(id=id)
-    return render(request, 'surveys/fill.html', {'survey': survey, 'QuestionType': Question.QuestionType})
+    ctx = {'survey': survey,
+           'QuestionType': Question.QuestionType
+           }
+
+    return render(request, 'surveys/fill.html', ctx)
+
+
+def view(request, id):
+    survey = Survey.objects.get(id=id)
+    ctx = {'survey': survey,
+           'QuestionType': Question.QuestionType,
+           'readonly': True
+           }
+
+    return render(request, 'surveys/fill.html', ctx)
 
 
 def submit(request, id):
@@ -63,6 +77,8 @@ def submit(request, id):
 
     survey = get_object_or_404(Survey, id=id)
     response = Response(survey=survey)
+    response.author = request.user
+    response.author_role = get_active_role(request)
     response.save()
 
     for question_id in request.POST:

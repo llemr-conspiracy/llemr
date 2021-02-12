@@ -30,7 +30,7 @@ Osler: Surveys
     </tr>
     {% for survey in object_list %}
       <tr>
-        <td><a href="{% url 'surveys:edit' id=survey.id %}">{{ survey.title }}</a></td>
+        <td><a href="{% url 'surveys:view' id=survey.id %}">{{ survey.title }}</a></td>
         <td>{{ survey.description }}</td>
         <td>{{ survey.responses.count }}
           {% if survey.responses.count > 0 %}

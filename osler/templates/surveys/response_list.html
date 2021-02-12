@@ -13,9 +13,13 @@ if the survey object exists, then this is survey:responses, otherwise its survey
 {% endcomment %}
 
 <div class="container">
-	<h1>Responses 
+	<h1>
+    {% if not survey %}
+    Survey
+    {% endif %}
+    Responses 
     {% if survey %}
-    to <a href="{% url 'surveys:edit' id=survey.id %}"> {{survey}}</a>
+    to <a href="{% url 'surveys:view' id=survey.id %}"> {{survey}}</a>
     {% endif %}
   </h1>
   {% if survey %}
@@ -32,7 +36,7 @@ if the survey object exists, then this is survey:responses, otherwise its survey
       <tr>
           <th>Date</th>
           {% if not survey %}
-          <th>Survey</th>
+            <th>Survey</th>
           {% endif %}
           <th>Patient</th>
           <th>Filled By</th>
@@ -42,10 +46,10 @@ if the survey object exists, then this is survey:responses, otherwise its survey
       <tr>
         <td> <a href="{% url 'surveys:response' id=response.id%}">{{response.created_at}}</a></td>
         {% if not survey %}
-        <td><a href="{% url 'surveys:edit' id=response.survey.id %}">{{response.survey}}</a></td>
+        <td><a href="{% url 'surveys:view' id=response.survey.id %}">{{response.survey}}</a></td>
         {% endif %}
         <td></td>
-        <td></td>
+        <td>{{response.author}} ({{response.author_role}})</td>
       </tr>
     {% endfor %}
     </table>
