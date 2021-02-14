@@ -6,7 +6,7 @@
     <div class="row">
         <h4>{% trans 'Workup on' %} {{ workup.patient.name }}</h4>
         <div class="col-md-4">
-            <strong>{% trans 'DOB' %}:</strong> {{workup.patient.date_of_birth}} 
+            <strong>{% trans 'DOB' %}:</strong> {{workup.patient.date_of_birth}}
         </div>
         <div class="col-md-4">
             <strong>{% trans 'Seen on' %}:</strong> {{ workup.encounter.clinic_day }}
@@ -23,7 +23,7 @@
     </div>
     <div class="row">
         <div class="col-md-4">
-            <strong>{% trans 'Age' %}: </strong> {{workup.patient.age}} 
+            <strong>{% trans 'Age' %}: </strong> {{workup.patient.age}}
         </div>
         <div class="col-md-4">
             <strong>{% trans 'Gender' %}: </strong> {{ workup.patient.gender }}
@@ -86,32 +86,31 @@
             <strong>{% trans 'ROS' %}:</strong> {{workup.ros | linebreaksbr }}
         </div>
     </div>
-  </div>
 
-  <div class="row">
-    <h4>{% trans 'Physical Exam' %}</h4>
-    <div class="col-md-12">
-      <h5>{% trans 'Vital Signs' %}</h5>
+    <div class="row">
+        <h4>{% trans 'Physical Exam' %}</h4>
+        <div class="col-md-12">
+            <h5>{% trans 'Vital Signs' %}</h5>
+        </div>
+        <div class="col-md-2">
+            <strong>{% trans 'HR' %}:</strong> {{workup.hr}} bpm
+        </div>
+        <div class="col-md-2">
+            <strong>{% trans 'BP' %}:</strong> {{workup.bp_sys}} / {{workup.bp_dia}} mmHg
+        </div>
+        <div class="col-md-2">
+            <strong>{% trans 'RR' %}:</strong> {{workup.rr}} {% trans 'per min' %}
+        </div>
+        <div class="col-md-2">
+            <strong>{% trans 'T' %}:</strong> {{workup.t}} &deg;C
+        </div>
+        <div class="col-md-2">
+            <strong>{% trans 'Height' %}:</strong> {{workup.height}} cm
+        </div>
+        <div class="col-md-2">
+            <strong>{% trans 'Weight' %}:</strong> {{workup.weight}} kg
+        </div>
     </div>
-    <div class="col-md-2">
-      <strong>{% trans 'HR' %}:</strong> {{workup.hr}} bpm
-    </div>
-    <div class="col-md-2">
-      <strong>{% trans 'BP' %}:</strong> {{workup.bp_sys}} / {{workup.bp_dia}} mmHg
-    </div>
-    <div class="col-md-2">
-      <strong>{% trans 'RR' %}:</strong> {{workup.rr}} {% trans 'per min' %}
-    </div>
-    <div class="col-md-2">
-      <strong>{% trans 'T' %}:</strong> {{workup.t}} &deg;C
-    </div>
-    <div class="col-md-2">
-      <strong>{% trans 'Height' %}:</strong> {{workup.height}} cm
-    </div>
-    <div class="col-md-2">
-      <strong>{% trans 'Weight' %}:</strong> {{workup.weight}} kg
-    </div>
-  </div>
 
     <div class="row">
         <div class="col-md-12">
@@ -156,22 +155,22 @@
         {% endif %}
         {% if settings.OSLER_DISPLAY_REFERRALS %}
         <div class="col-md-4">
-            <strong>{% trans 'Referral Type' %}:</strong> 
+            <strong>{% trans 'Referral Type' %}:</strong>
             {% for type in workup.referral_type.all %}
-             {{ type.name }}
+            {{ type.name }}
             {% endfor %}
         </div>
         <div class="col-md-4">
             <strong>{% trans 'Referral Location' %}:</strong>
             {% for location in workup.referral_location.all %}
-             {{ location.name }}
+            {{ location.name }}
             {% endfor %}
         </div>
         {% endif %}
     </div>
     <div class="row">
         <div class="col-md-12">
-            <strong>{% trans 'Rx' %}:</strong> <mark style="background-color:yellow">{{workup.rx | linebreaksbr }}</mark>
+            <strong>{% trans 'Rx' %}:</strong> <mark style="background-color:yellow">{{workup.rx | linebreaksbr}}</mark>
         </div>
     </div>
     <div class="row">

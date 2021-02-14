@@ -149,7 +149,7 @@
     <div class="panel-group">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">{% blocktrans %}Completed Workups ({{ patient.completed_workup_set.count }}){% endblocktrans %}</a></h4>
+          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">{% blocktrans %}Completed Workups{% endblocktrans %} ({{ patient.completed_workup_set.count }})</a></h4>
         </div>
         <div id="collapse1" class="panel-collapse collapse">
           {% for note in patient.completed_workup_set %}

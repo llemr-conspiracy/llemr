@@ -3,11 +3,11 @@
 {% load i18n %}
 
 {% block title %}
-{% blocktrans %}Osler: {{ title | default:"All Patients"}}{% endblocktrans %}
+{% blocktrans %}Osler: {{ title }}{% endblocktrans %}
 {% endblock %}
 
 {% block header %}
-<h1>{% blocktrans %}{{ title | default:"All Patients" }}{% endblocktrans %}</h1>
+<h1>{{ title }}</h1>
 {% endblock %}
 
 {% block content %}
@@ -48,9 +48,9 @@
                       <td>
                           {% if latest_workup %}
                             {% if latest_workup.is_pending %}
-                                <a href="{% url 'workup' pk=latest_workup.pk %}">{% blocktrans %}  Pending from {{ latest_workup.encounter.clinic_day }} </a>: {{ latest_workup.chief_complaint | default:"no chief complaint provided" }}{% endblocktrans %}
+                                <a href="{% url 'workup' pk=latest_workup.pk %}">{% blocktrans with clinic_day=latest_workup.encounter.clinic_day chief_complaint=latest_workup.chief_complaint %} Pending from {{ clinic_day }} </a>: {{ chief_complaint }}{% endblocktrans %}
                             {% else %}
-                              <a href="{% url 'workup' pk=latest_workup.pk %}">{% blocktrans %} Seen {{ latest_workup.encounter.clinic_day }}</a>: {{latest_workup.chief_complaint}}{% endblocktrans %}
+                              <a href="{% url 'workup' pk=latest_workup.pk %}">{% blocktrans with clinic_day=latest_workup.encounter.clinic_day chief_complaint=latest_workup.chief_complaint %} Seen {{ clinic_day }}</a>: {{chief_complaint}}{% endblocktrans %}
                             {% endif %}
                           {% else %}
                               <a href="{% url 'core:patient-update' pk=patient.id %}">{% blocktrans %} Intake</a>: {{patient.history.last.history_date}}{% endblocktrans %}

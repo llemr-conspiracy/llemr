@@ -110,7 +110,7 @@
 	{% endblock %}
 
   <footer class="container" style="padding-top: 5%">
-    <p class="text-muted">{% blocktrans %}Osler is free and open source software built by friends. To learn more or contribute, find us on <a src="https://github.com/oslerproject/osler">GitHub</a>.{% endblocktrans %}</p>
+    <p class="text-muted">{% blocktrans with github_url=settings.OSLER_GITHUB_URL %}Osler is free and open source software built by friends. To learn more or contribute, find us on <a ="{{github_url}}">GitHub</a>.{% endblocktrans %}</p>
   </footer>
 
 </html>
