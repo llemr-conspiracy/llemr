@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-14 02:34-0600\n"
+"POT-Creation-Date: 2021-02-17 17:07-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -269,7 +269,6 @@ msgid "in"
 msgstr ""
 
 #: osler/core/models.py:306
-#, fuzzy
 #| msgid " days"
 msgid "days"
 msgstr " Tagen"
@@ -283,7 +282,6 @@ msgid "no pending actions"
 msgstr "keine ausstehende Aufgaben"
 
 #: osler/core/models.py:427
-#, fuzzy
 #| msgid "Author"
 msgid "author"
 msgstr "Autor"
@@ -816,10 +814,10 @@ msgstr ""
 "Die Art der Behandlung, die der Patient bei der Überweisung erhalten soll."
 
 #: osler/referral/models.py:47
-#, fuzzy, python-format
+#,  python-format
 #| msgid "%s referral on %s"
 msgid "%(kind)s referral on %(formatted_date)s"
-msgstr "%s Überweisung am %s"
+msgstr "%(kind)s Überweisung am %(formatted_date)s"
 
 #: osler/referral/models.py:51
 #, python-format
@@ -827,10 +825,10 @@ msgid "Referral to %(locations)s on %(formatted_date)s"
 msgstr "Überweisung an %(locations)s am %(formatted_date)s"
 
 #: osler/referral/models.py:105
-#, fuzzy, python-format
+#,  python-format
 #| msgid "Followup with %s on %s about %s"
 msgid "Followup with %(patient)s on %(formatted_date)s about %(referral)s"
-msgstr "Folgeuntersuchung mit %s am %s wegen %s"
+msgstr "Folgeuntersuchung mit %(patient)s am %(formatted_date)s wegen %(referral)s"
 
 #: osler/referral/models.py:124
 msgid "What was the method of contact?"
@@ -1289,7 +1287,7 @@ msgid "Are you a programmer?"
 msgstr "Bist du ein Programmierer?"
 
 #: osler/templates/core/about.html:19
-#, fuzzy, python-format
+#,  python-format
 #| msgid ""
 #| "We're on <a href=\"https://github.com/SaturdayNeighborhoodHealthClinic"
 #| "\">Github</a> and we're always looking for smart folks with new ideas!"
@@ -1297,8 +1295,7 @@ msgid ""
 "We're on <a href=\"%(github_url)s\">Github</a> and we're always looking for "
 "smart folks with new ideas!"
 msgstr ""
-"Wir sind auf <a href=\"https://github.com/SaturdayNeighborhoodHealthClinic"
-"\">Github</a> und suchen immer nach Leuten, die uns bei der "
+"Wir sind auf <a href=\"%(github_url)s\">Github</a> und suchen immer nach Leuten, die uns bei der "
 "Weiterentwicklung von Osler helfen!"
 
 #: osler/templates/core/about.html:22
@@ -1362,25 +1359,25 @@ msgid "Attestation"
 msgstr "Bestätigung"
 
 #: osler/templates/core/all_patients.html:51
-#, fuzzy, python-format
+#, python-format
 #| msgid ""
 #| "Seen %(latest_workup.encounter.clinic_day)s</a>: "
 #| "%(latest_workup.chief_complaint)s"
 msgid " Pending from %(clinic_day)s </a>: %(chief_complaint)s"
-msgstr " Pending from %(clinic_day)s </a>: %(chief_complaint)s"
+msgstr " Ausstehend für %(clinic_day)s </a>: %(chief_complaint)s"
 
 #: osler/templates/core/all_patients.html:53
-#, fuzzy, python-format
+#,  python-format
 #| msgid ""
 #| "Seen %(latest_workup.encounter.clinic_day)s</a>: "
 #| "%(latest_workup.chief_complaint)s"
 msgid " Seen %(clinic_day)s</a>: %(chief_complaint)s"
 msgstr ""
-" Seen %(clinic_day)s</a>: %(chief_complaint)s Gesehen am %(clinic_day)s</a>: "
+" Gesehen am %(clinic_day)s</a>: %(chief_complaint)s Gesehen am %(clinic_day)s</a>: "
 "%(chief_complaint)s"
 
 #: osler/templates/core/all_patients.html:56
-#, fuzzy, python-format
+#,  python-format
 #| msgid "Intake</a>: %(patient.history.last.history_date)s"
 msgid " Intake</a>: %(patient.history.last.history_date)s"
 msgstr "Aufnahme</a>: %(patient.history.last.history_date)s"
@@ -1427,7 +1424,7 @@ msgid "Appointments"
 msgstr "Termine"
 
 #: osler/templates/core/base.html:70
-#, fuzzy
+
 #| msgid "Attending"
 msgid "Attendance"
 msgstr "Teilnahme"
@@ -1441,7 +1438,7 @@ msgid "Logout"
 msgstr "Abmelden"
 
 #: osler/templates/core/base.html:113
-#, fuzzy, python-format
+#,  python-format
 #| msgid ""
 #| "Osler is free and open source software built by WashU students. To learn "
 #| "more or contribute, find us on <a src=\"https://github.com/"
@@ -1451,8 +1448,7 @@ msgid ""
 "contribute, find us on <a =\"%(github_url)s\">GitHub</a>."
 msgstr ""
 "Osler ist eine kostenlose Open-Source-Software, die von Studenten der WashU "
-"programmiert wurde. Um mehr zu erfahren besuche uns auf <a src=\"https://"
-"github.com/SaturdayNeighborhoodHealthClinic/osler\">GitHub</a>."
+"programmiert wurde. Um mehr zu erfahren besuche uns auf <a =\"%(github_url)s\">GitHub</a>."
 
 #: osler/templates/core/clindate.html:6
 msgid "Instantiate New Clindate"
@@ -1507,13 +1503,13 @@ msgid "Edit"
 msgstr "Bearbeiten"
 
 #: osler/templates/core/form-update.html:13
-#, fuzzy, python-format
+#,  python-format
 #| msgid " Edit %(note_type | lower)s for"
 msgid "Edit %(note_type | lower)s for "
 msgstr "Bearbeite %(note_type | lower)s für"
 
 #: osler/templates/core/form_submission.html:10
-#, fuzzy
+
 #| msgctxt "New note type"
 #| msgid "New"
 msgid "New"
@@ -1551,7 +1547,7 @@ msgid "y/o"
 msgstr "Jahre alt"
 
 #: osler/templates/core/patient_detail.html:18
-#, fuzzy
+
 #| msgid "Action Item"
 msgid "Action Items"
 msgstr "Aufgabe"
@@ -1575,13 +1571,13 @@ msgid "Status"
 msgstr "Status"
 
 #: osler/templates/core/patient_detail.html:33
-#, fuzzy
+
 #| msgid "Patient pays"
 msgid "Patient has a"
 msgstr "Patient bezahlt"
 
 #: osler/templates/core/patient_detail.html:33
-#, fuzzy
+
 #| msgid "needs workup"
 msgid "pending workup"
 msgstr "braucht Untersuchung"
@@ -1614,7 +1610,7 @@ msgid "Upload Document"
 msgstr "Dokument hochladen"
 
 #: osler/templates/core/patient_detail.html:74
-#, fuzzy
+
 #| msgid "Labs"
 msgid "View Labs"
 msgstr "Labor"
@@ -1679,7 +1675,7 @@ msgid "Submitted Notes (%(patient.notes | length)s Total)"
 msgstr "Anlegte Untersuchungen (%(patient.notes | length)s insgesamt)"
 
 #: osler/templates/core/patient_detail.html:152
-#, fuzzy
+
 #| msgid "Workups"
 msgid "Completed Workups"
 msgstr "Untersuchungen"
@@ -1701,17 +1697,15 @@ msgstr "Untersuchung"
 #: osler/templates/core/patient_detail.html:283
 #: osler/templates/core/patient_detail.html:303
 #: osler/templates/core/patient_detail.html:324
-#, fuzzy, python-format
+#,  python-format
 #| msgid ""
 #| "by %(note.author)s (%(note.author_type)s) at %(note.written_datetime)s"
 msgid ""
 "by %(auth)s (%(authtype)s) at %(written)s\n"
-"            "
 msgstr ""
-"von %(note.author)s (%(note.author_type)s) am %(note.written_datetime)s"
+"von %(auth)s (%(authtype)s) am %(written)s\n"
 
 #: osler/templates/core/patient_detail.html:173
-#, fuzzy
 #| msgid "Pending"
 msgid "Pending Workups"
 msgstr "ausstehend"
@@ -1729,7 +1723,7 @@ msgid "Referral Followup"
 msgstr "Folgeuntersuchung bei Überweisung"
 
 #: osler/templates/core/patient_detail.html:254
-#, fuzzy
+
 #| msgid "Vaccine"
 msgid "Vaccines"
 msgstr "Impfung"
@@ -1752,7 +1746,7 @@ msgid "Basic Notes"
 msgstr "Untersuchung"
 
 #: osler/templates/core/patient_detail.html:301
-#, fuzzy
+
 #| msgid "Write Note"
 msgid "Basic Note"
 msgstr "Untersuchung anlegen"
@@ -1763,7 +1757,7 @@ msgid "Dispensed Drugs"
 msgstr ""
 
 #: osler/templates/core/patient_detail.html:321
-#, fuzzy, python-format
+#,  python-format
 #| msgid ""
 #| "Dispensed %(note.dispense)s %(note.drug.name)s %(note.drug.dose)s "
 #| "%(note.drug.unit)s, Lot: %(note.drug.lot_number)s"
@@ -1772,8 +1766,9 @@ msgid ""
 "              Dispensed %(amount)s %(drugname)s %(dose)s %(unit)s, Lot: "
 "%(lot_number)s"
 msgstr ""
-"Ausgegeben %(note.dispense)s %(note.drug.name)s %(note.drug.dose)s "
-"%(note.drug.unit)s, Schrank: %(note.drug.lot_number)s"
+"\n"
+"              Ausgegeben %(amount)s %(drugname)s %(dose)s %(unit)s, Schrank: "
+"%(lot_number)s"
 
 #: osler/templates/core/patient_detail.html:338
 #, python-format
@@ -1829,7 +1824,7 @@ msgid "Patient already active"
 msgstr "Patient ist bereits aktiv"
 
 #: osler/templates/core/preintake-select.html:36
-#, fuzzy
+
 #| msgid "Active Patients"
 msgid "Activate Patient"
 msgstr "Aktive Patienten"
@@ -1927,7 +1922,7 @@ msgid "St."
 msgstr ""
 
 #: osler/templates/dashboard/dashboard-active.html:19
-#, fuzzy
+
 #| msgid "Age/Gender"
 msgid "Age / Gender"
 msgstr "Alter und Geschlecht"
@@ -1935,7 +1930,7 @@ msgstr "Alter und Geschlecht"
 #: osler/templates/dashboard/dashboard-active.html:20
 #: osler/templates/dashboard/dashboard-attending.html:22
 #: osler/templates/dashboard/dashboard-attending.html:48
-#, fuzzy
+
 #| msgid "First Seen"
 msgid "Last Seen"
 msgstr "zum ersten Mal gesehen am"
@@ -1962,7 +1957,7 @@ msgid "Chief Complaint"
 msgstr "Hauptbeschwerde"
 
 #: osler/templates/dashboard/dashboard-attending.html:23
-#, fuzzy
+
 #| msgid "Attending"
 msgid "Attending<"
 msgstr "Teilnahme"
@@ -2065,7 +2060,7 @@ msgid "Add New Drug"
 msgstr "Neues Medikament hinzufügen"
 
 #: osler/templates/inventory/add_new_drug.html:10
-#, fuzzy
+
 #| msgid "Create a new patient in the database"
 msgid "Create a new drug in the database"
 msgstr "Neuen Patienten in der Datenbank anlegen"
@@ -2084,10 +2079,10 @@ msgid "Select Date Range"
 msgstr "Datumsbereich auswählen"
 
 #: osler/templates/inventory/inventory-main.html:24
-#, fuzzy
+
 #| msgid "Heart Rate"
 msgid "Start Date"
-msgstr "Herzfrequenz"
+msgstr "Startdatum"
 
 #: osler/templates/inventory/inventory-main.html:26
 msgid "End Date"
@@ -2102,14 +2097,14 @@ msgid "Filter"
 msgstr "Filter"
 
 #: osler/templates/inventory/inventory-main.html:53
-#, fuzzy
+
 #| msgid "Dose date"
 msgid "Dose"
 msgstr "Rezept-Datum"
 
 #: osler/templates/inventory/inventory-main.html:54
 #: osler/templates/inventory/predrug-select.html:18
-#, fuzzy
+
 #| msgid "Dx Category"
 msgid "Category"
 msgstr "Diagnse-Kategorie"
@@ -2121,16 +2116,16 @@ msgstr "Vorrat"
 
 #: osler/templates/inventory/inventory-main.html:56
 #: osler/templates/inventory/predrug-select.html:18
-#, fuzzy
+
 #| msgid "Phone Number"
 msgid "Lot Number"
-msgstr "Telefonnummer"
+msgstr "Schranknummer"
 
 #: osler/templates/inventory/inventory-main.html:57
 #, fuzzy
 #| msgid "Creation date"
 msgid "Expiration Date"
-msgstr "Datum der Erstellung"
+msgstr "Ablaufdatum"
 
 #: osler/templates/inventory/inventory-main.html:58
 msgid "Manufacturer"
@@ -2162,10 +2157,10 @@ msgstr "Welcher Patient erhält <b>%(drug.name)s</b>?"
 #, fuzzy
 #| msgid "New Patient"
 msgid "select patient"
-msgstr "Neuer Patient"
+msgstr "Patient aussuchen"
 
 #: osler/templates/inventory/pre_add_new_drug.html:10
-#, fuzzy
+
 #| msgid "Let's check to make sure this patient has not already been added."
 msgid "Let's check to make sure this drug has not already been added."
 msgstr "Lass uns sicher gehen, dass dieser Patient nicht bereits existiert."
@@ -2175,7 +2170,7 @@ msgid "Existing Drug"
 msgstr "Bereits erfasstes Medikament"
 
 #: osler/templates/inventory/predrug-select.html:10
-#, fuzzy
+
 #| msgid ""
 #| "There was one or more simmilar patients already in the database.<br /"
 #| ">Select one or create a new patient."
@@ -2217,7 +2212,7 @@ msgstr "Labor"
 #, fuzzy
 #| msgid "Recent Clinic Dates"
 msgid "Recent Labs"
-msgstr "Aktuelle Termine"
+msgstr "Aktuelle Labore"
 
 #: osler/templates/labs/lab_all.html:26
 #: osler/templates/labs/lab_all_table.html:29
@@ -2237,7 +2232,7 @@ msgstr "Datum des Labors"
 #, fuzzy
 #| msgid "Patient Details"
 msgid "Lab Detail"
-msgstr "Patienten-Details"
+msgstr "Labor-Details"
 
 #: osler/templates/labs/lab_all_table.html:27
 msgid "Back to Patient Detail"
@@ -2322,7 +2317,7 @@ msgid "Create new FQHC referral"
 msgstr ""
 
 #: osler/templates/referral/new-FQHC-referral.html:10
-#, fuzzy
+
 #| msgid "Make Referral"
 msgid "New FQHC Referral"
 msgstr "Überweisung anlegen"
@@ -2339,7 +2334,7 @@ msgid "New followup request"
 msgstr ""
 
 #: osler/templates/referral/new-followup-request.html:10
-#, fuzzy
+
 #| msgid "Referral Followup"
 msgid "Request referral followup"
 msgstr "Folgeuntersuchung bei Überweisung"
@@ -2356,7 +2351,7 @@ msgstr "oder"
 
 #: osler/templates/referral/new-patient-contact.html:6
 #: osler/templates/referral/new-patient-contact.html:10
-#, fuzzy
+
 #| msgid "Referral Followup"
 msgid "New referral followup"
 msgstr "Folgeuntersuchung bei Überweisung"
@@ -2457,13 +2452,13 @@ msgid "Update"
 msgstr "Aktualisieren"
 
 #: osler/templates/vaccine/select-vaccine-series.html:10
-#, fuzzy
+
 #| msgid "Specify which referral you would like to update"
 msgid "Specify which vaccine you would like to give"
 msgstr "Gib an, welche Überweisung du aktualisieren möchtest"
 
 #: osler/templates/vaccine/select-vaccine-series.html:22
-#, fuzzy
+
 #| msgid "Oops! There aren't any active referrals for this patient... "
 msgid "Oops! There aren't any existing vaccine series for this patient yet..."
 msgstr ""
@@ -2477,33 +2472,33 @@ msgstr ""
 #, fuzzy
 #| msgid "Make Referral"
 msgid "Create new vaccine series"
-msgstr "Überweisung anlegen"
+msgstr "Neue Impfserie anlegen"
 
 #: osler/templates/workup/basicnote_detail.html:37
 #, fuzzy
 #| msgid "Attest"
 msgid "Attested by"
-msgstr "Bestätigung"
+msgstr "Bestätigt von"
 
 #: osler/templates/workup/basicnote_detail.html:39
-#, fuzzy
+
 #| msgid "Workup unattested"
 msgid "Workup unattested. Attending"
 msgstr "Untersuchung nicht unterschrieben."
 
 #: osler/templates/workup/basicnote_detail.html:47
-#, fuzzy, python-format
+#,  python-format
 #| msgid ""
 #| "written by %(progressnote.author)s on %(progressnote.written_datetime)s"
 msgid "written by %(note.author)s on %(note.written_datetime)s"
 msgstr ""
-"geschrieben von %(progressnote.author)s am %(progressnote.written_datetime)s"
+"geschrieben von %(note.author)s am %(note.written_datetime)s"
 
 #: osler/templates/workup/basicnote_detail.html:49
-#, fuzzy, python-format
+#,  python-format
 #| msgid "last modified %(progressnote.last_modified)s"
 msgid "last modified %(note.last_modified)s"
-msgstr "zuletzt bearbeitet am %(progressnote.last_modified)s"
+msgstr "zuletzt bearbeitet am %(note.last_modified)s"
 
 #: osler/templates/workup/clindate-list.html:19
 msgid "Attending(s)"
@@ -2551,13 +2546,13 @@ msgid "Age"
 msgstr ""
 
 #: osler/templates/workup/workup_body.html:29
-#, fuzzy
+
 #| msgid "gender"
 msgid "Gender"
 msgstr "Geschlecht"
 
 #: osler/templates/workup/workup_body.html:32
-#, fuzzy
+
 #| msgid "ethnicities"
 msgid "Ethnicity"
 msgstr "Ethnizität"
@@ -2660,7 +2655,7 @@ msgid "Weight"
 msgstr "Gewicht"
 
 #: osler/templates/workup/workup_body.html:120
-#, fuzzy
+
 #| msgid "Labs Ordered Internally"
 msgid "Labs (Internal)"
 msgstr "Labore intern bestellt "
@@ -2681,7 +2676,7 @@ msgstr ""
 #, fuzzy
 #| msgid "Patients without Notes"
 msgid "Patient got Voucher"
-msgstr "Patienten ohne Untersuchung"
+msgstr "Patienten hat Gutschein erhalten"
 
 #: osler/templates/workup/workup_body.html:141
 #: osler/templates/workup/workup_body.html:149
@@ -2694,16 +2689,16 @@ msgid "Pt Pays"
 msgstr ""
 
 #: osler/templates/workup/workup_body.html:158
-#, fuzzy
+
 #| msgid "Referral"
 msgid "Referral Type"
-msgstr "Überweisung"
+msgstr "Überweisungsart"
 
 #: osler/templates/workup/workup_body.html:164
 #, fuzzy
 #| msgid "Referral Followup"
 msgid "Referral Location"
-msgstr "Folgeuntersuchung bei Überweisung"
+msgstr "Überweisungsort"
 
 #: osler/templates/workup/workup_body.html:173
 msgid "Rx"
@@ -2713,14 +2708,14 @@ msgstr "Röntgen"
 #, fuzzy
 #| msgid "Added by"
 msgid "Addenda"
-msgstr "Hinzugefügt von"
+msgstr "Hinzugefügtes"
 
 #: osler/templates/workup/workup_body.html:182
 msgid "at"
 msgstr ""
 
 #: osler/templates/workup/workup_detail.html:11
-#, fuzzy
+
 #| msgid "Workup on"
 msgid "Workup on "
 msgstr "Untersuchung an"
@@ -2802,7 +2797,7 @@ msgstr ""
 #, fuzzy
 #| msgid "country"
 msgid "Encounter"
-msgstr "Land"
+msgstr "Begnenung"
 
 #: osler/workup/models.py:147
 msgid "CC"
@@ -2813,7 +2808,7 @@ msgid "Dx"
 msgstr "Diagnose"
 
 #: osler/workup/models.py:149
-#, fuzzy
+
 #| msgid "Diagnosis"
 msgid "Diagnosis Categories"
 msgstr "Diagnose"
@@ -2854,7 +2849,7 @@ msgstr "Körperliche Untersuchung"
 #, fuzzy
 #| msgid "Labs Ordered Internally"
 msgid "Labs Ordered Externally"
-msgstr "Labore intern bestellt "
+msgstr "Labore extern bestellt "
 
 #: osler/workup/models.py:195
 msgid "Labs Ordered Internally"
@@ -2893,20 +2888,21 @@ msgid "Pending workups cannot be signed."
 msgstr ""
 
 #: osler/workup/validators.py:16
-#, fuzzy, python-format
+#,  python-format
 #| msgid "Systolic BP %s is higher than the maximum allowed value (%s)."
 msgid ""
 "Systolic BP %(value)s is higher than the maximum allowed value "
 "(%(allowed_value)s)."
-msgstr "Systolischer RR %s ist höher als der maximal erlaubte Wert (%s)."
-
+msgstr "Systolischer RR %(value)s ist höher als der maximal erlaubte Wert "
+"(%(allowed_value)s)."
 #: osler/workup/validators.py:23
-#, fuzzy, python-format
+#,  python-format
 #| msgid "Diastolic BP %s is lower than the minimum allowed value (%s)."
 msgid ""
 "Diastolic BP %(value)s is lower than the minimum allowed value "
 "(%(allowed_value)s)."
-msgstr "Diastolischer RR %s ist höher als der maximal erlaubte Wert (%s)."
+msgstr "Diastolischer Wert %(value)s ist niedriger als der niedrigste erlaubte Wert "
+"(%(allowed_value)s)."
 
 #: osler/workup/validators.py:37 osler/workup/validators.py:50
 #: osler/workup/validators.py:76
@@ -2923,13 +2919,13 @@ msgid " is not a decimal value"
 msgstr " ist keine Dezimalzahl"
 
 #: osler/workup/validators.py:80 osler/workup/validators.py:93
-#, fuzzy
+
 #| msgid " is not a positive number"
 msgid "is not a positive number"
 msgstr " ist keine positive Zahl"
 
 #: osler/workup/validators.py:89
-#, fuzzy
+
 #| msgid " is not a integer"
 msgid "is not a integer"
 msgstr " ist keine Zahl"
@@ -2975,7 +2971,7 @@ msgid ""
 msgstr ""
 
 #: osler/workup/views.py:340
-#, fuzzy
+
 #| msgid "Added by"
 msgid "Addendum"
 msgstr "Hinzugefügt von"
