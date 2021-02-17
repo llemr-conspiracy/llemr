@@ -26,6 +26,9 @@ class Question(models.Model):
     allow_other = models.BooleanField(default=False)  # will put 'other' option for checkboxes/radios
     input_type = models.CharField(default='text', max_length=20)  # for text: <input type={{ input_type }} ..>
 
+    def add_choice(self, choiceText):
+        self.choice_set.create(text=choiceText)
+
     def __str__(self):
         return self.question
 
