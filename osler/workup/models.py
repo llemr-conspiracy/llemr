@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Q
 from django.utils.timezone import now
@@ -6,7 +5,7 @@ from django.urls import reverse
 from django.core.validators import MinValueValidator
 from django.conf import settings
 
-from osler.core.models import Note, ReferralLocation, ReferralType, Encounter
+from osler.core.models import Note, Encounter
 from osler.workup import validators as workup_validators
 
 from osler.users.utils import group_has_perm
@@ -80,10 +79,12 @@ class AbstractBasicNote(Note):
         abstract = True
 
     def __str__(self):
-        u = _('{} on at {} by {}').format(
-            self.title,
-            self.written_datetime.strftime('%c'),
-            self.author)
+        u = _('%(title)s on at %(written)s by %(auth)s').format(
+            {
+                'title': self.title,
+                'written': self.written_datetime.strftime('%c'),
+                'auth': self.author
+            })
         return u
 
     def short_text(self):

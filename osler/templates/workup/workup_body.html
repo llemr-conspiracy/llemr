@@ -13,11 +13,11 @@
         </div>
         {% if workup.signed %}
         <div class="col-md-4">
-            <strong>{% blocktrans %}Attested by</strong> {{workup.signer}} <strong>on:</strong> {{workup.signed_date}}{% endblocktrans %}
+            <strong>{% blocktrans with signer=workup.signer signed_date=workup.signed_date %}Attested by</strong> {{ signer }} <strong>on:</strong> {{ signed_date }}{% endblocktrans %}
         </div>
         {% else %}
         <div class="col-md-4">
-            <strong>{% blocktrans %}Workup unattested. Attending:</strong> {{ workup.attending }}{% endblocktrans %}
+            <strong>{% blocktrans with attending=workup.attending %}Workup unattested. Attending:</strong> {{ attending }}{% endblocktrans %}
         </div>
         {% endif%}
     </div>

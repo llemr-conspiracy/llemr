@@ -145,7 +145,7 @@
 
 <div class="container">
   <div class="col-md-6">
-    <h3>{% blocktrans %}Submitted Notes ({{ patient.notes | length }} Total){% endblocktrans %}</h3>
+    <h3>{% trans 'Submitted Notes' %} ({% blocktrans with total=patient.notes|length %}{{ total }} Total{% endblocktrans %})</h3>
     <div class="panel-group">
       <div class="panel panel-default">
         <div class="panel-heading">
@@ -335,7 +335,7 @@
     </div>
   </div>
   <div class="col-md-6">
-    <h3>{% blocktrans %}Action Items ({{ total_ais }} Total){% endblocktrans %}</h3>
+    <h3>{% trans 'Action Items' %} ({% blocktrans with total=total_ais %}{{ total }} Total{% endblocktrans %})</h3>
     <div class="panel-group">
       {% for ai_type in zipped_ai_list %}
       {% with ai_list=ai_type.1 panel_id=ai_type.0 ai_group=ai_type.2 %}
@@ -364,7 +364,7 @@
 {% if settings.OSLER_DISPLAY_APPOINTMENTS %}
   <div class="container">
       <div class="col-md-8">
-          <h3>{% blocktrans %}Appointments ({{ patient.appointment_set.all | length }} Total){% endblocktrans %}</h3>
+          <h3>{% trans 'Appointments' %} ({% blocktrans with total=patient.appointment_set.all|length %}{{ total }} Total{% endblocktrans %})</h3>
           <div class="panel-group">
               {% for apt_type in zipped_apt_list %}
                   <div class="panel panel-default">

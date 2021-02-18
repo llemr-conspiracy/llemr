@@ -44,9 +44,9 @@
   <div class="row" style="padding: 20px">
     <div class="col-md-12"> {{note.text}}</div>
     <div class="col-md-12">
-    <small class="text-muted">{% blocktranslate %}written by {{ note.author }} on {{ note.written_datetime }}{% endblocktranslate %}</small>
+    <small class="text-muted">{% blocktrans with auth=note.author written=note.written_datetime %}written by {{ auth }} on {{ written }}{% endblocktrans %}</small>
     {% if note.last_modified != note.written_datetime %}
-    <br><small class="text-muted">{% blocktranslate %}last modified {{note.last_modified}}{% endblocktranslate %}</small>
+    <br><small class="text-muted">{% blocktrans with modified=note.last_modified %}last modified {{ modified }}{% endblocktrans %}</small>
     {% endif %}
     </div>     
   </div>

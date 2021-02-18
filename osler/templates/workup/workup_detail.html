@@ -12,7 +12,7 @@
     <p class="lead">{% trans 'Seen on' %} {{ workup.encounter.clinic_day }}</p>
 
     {% if workup.signed %}
-    <p class="lead">{% blocktrans %}Attested by {{workup.signer}} on {{workup.signed_date}} {% endblocktrans %}</p>
+    <p class="lead">{% blocktrans with signer=workup.signer signed_date=workup.signed_date %}Attested by {{ signer }} on {{ signed_date }} {% endblocktrans %}</p>
     {% else %}
     <p class="lead">{% trans 'Workup unattested' %}.</p>
     {% endif%}

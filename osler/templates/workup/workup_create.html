@@ -8,7 +8,7 @@
 
 {% block header %}
 <h1>{% trans 'New' context "New note type" %} {{ note_type }} </h1>
-<p class="lead">{% blocktrans %}Add a new {{ note_type | lower }} for {% endblocktrans%}<em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
+<p class="lead">{% blocktrans with type_of_note=note_type|lower %}Add a new {{ type_of_note }} for {% endblocktrans%}<em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
 {% endblock %}
 
 
