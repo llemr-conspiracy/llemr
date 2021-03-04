@@ -15,7 +15,7 @@ import osler.core.tests.factories as core_factories
 
 from osler.workup import validators
 from osler.workup import models
-from osler.workup import factories as workup_factories
+from osler.workup.tests import factories as workup_factories
 
 import factory
 

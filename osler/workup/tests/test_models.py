@@ -10,7 +10,7 @@ from osler.workup.tests.tests import wu_dict, note_dict
 
 import osler.users.tests.factories as user_factories
 
-from osler.workup import factories as workup_factories
+from osler.workup.tests import factories as workup_factories
 
 
 class TestAttestations(TestCase):
