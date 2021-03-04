@@ -1,11 +1,13 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block title %}
-Recent Clinic Dates
+{% trans 'Recent Clinic Dates' %}
 {% endblock %}
 
 {% block header %}
-<h1>Attending Dashboard</h1>
+<h1>{% trans 'Attending Dashboard' %}</h1>
 {% endblock %}
 
 {% block content %}
@@ -15,12 +17,12 @@ Recent Clinic Dates
 		<h3>{{ clinic }}</h3>
 		<table class="table table-striped">
 			<tr>
-			    <th>Patient</th>
-			    <th>Chief Complaint</th>
-			    <th>Last Seen</th>
-			    <th>Attending</th> 
-			    <th>Note Author</th>
-			    <th>Attestation</th>
+			    <th>{% trans 'Patient' %}</th>
+			    <th>{% trans 'Chief Complaint' %}</th>
+			    <th>{% trans 'Last Seen' %}</th>
+			    <th>{% trans 'Attending<' %}/th> 
+			    <th>{% trans 'Note Author' %}</th>
+			    <th>{% trans 'Attestation' %}</th>
 			</tr>
 		{% for encounter in clinics %}
 			{% if encounter.clinic_day == clinic %}
@@ -39,11 +41,11 @@ Recent Clinic Dates
 		</table>
 	{% endfor %}
 
-	<h3>Active Patients without Notes</h3>
+	<h3>{% trans 'Patients without Notes' %}</h3>
 	<table class="table table-striped">
 		<tr>
-		    <th>Patient</th>
-		    <th>Last Seen</th>
+			<th>{% trans 'Patient' %}</th>
+			<th>{% trans 'Last Seen' %}</th>
 		</tr>
 		{% for patient in no_note_patients.all %}
 		<tr>
@@ -57,26 +59,26 @@ Recent Clinic Dates
 	</table>
 
 	<nav aria-label="Page navigation" style='text-align: center;'>
-	  <ul class="pagination">
-	    <li {% if not clinics.has_previous %}class="disabled"{% endif %}>
-	      <a {% if clinics.has_previous %} href="?page={{ clinics.previous_page_number }}" {% endif %} aria-label="Previous">
-	        <span aria-hidden="true">&laquo;</span>
-	      </a>
-	    </li>
+		<ul class="pagination">
+			<li {% if not clinics.has_previous %}class="disabled" {% endif %}>
+				<a {% if clinics.has_previous %} href="?page={{ clinics.previous_page_number }}" {% endif %} aria-label="Previous">
+					<span aria-hidden="true">&laquo;</span>
+				</a>
+			</li>
 
-	    {% for i in clinics.paginator.page_range %}
-		    <li {% if i == clinics.number %}class="active"{% endif %} ><a href="?page={{ i }}">{{ i }}</a></li>
-	    {% endfor %}
+			{% for i in clinics.paginator.page_range %}
+			<li {% if i == clinics.number %}class="active" {% endif %}><a href="?page={{ i }}">{{ i }}</a></li>
+			{% endfor %}
 
-	    <li {% if not clinics.has_next %}class="disabled"{% endif %}>
-	      <a {% if clinics.has_next %} href="?page={{ clinics.next_page_number }}" {% endif %} aria-label="Next">
-	        <span aria-hidden="true">&raquo;</span>
-	      </a>
-	    </li>
-	  </ul>
+			<li {% if not clinics.has_next %}class="disabled" {% endif %}>
+				<a {% if clinics.has_next %} href="?page={{ clinics.next_page_number }}" {% endif %} aria-label="Next">
+					<span aria-hidden="true">&raquo;</span>
+				</a>
+			</li>
+		</ul>
 	</nav>
 	<div>
-		<p style='text-align:center'>Page {{ clinics.number }} of {{ clinics.paginator.num_pages }}</p>
+		<p style='text-align:center'>{% blocktrans %}Page {{ clinics.number }} of {{ clinics.paginator.num_pages }}{% endblocktrans %}</p>
 	</div>
 
 </div>

@@ -1,13 +1,15 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block title %}
-Create new referral
+{% trans 'Create new referral' %}
 {% endblock %}
 
 {% block header %}
-<h1>New Referral</h1>
+<h1>{% trans 'New Referral' %}</h1>
 {% if patient %}
-<p class="lead">Referral for <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
+<p class="lead">{% trans 'Referral for' %} <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
 <p class="lead"><i>{{ rtype }}</i></p>
 {% endif %}
 {% endblock %}

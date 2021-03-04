@@ -1,30 +1,33 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block title %}
-Osler: About
+{% trans 'Osler: About' %}
 {% endblock %}
 
 {% block header %}
-<h1><a href="https://en.wikipedia.org/wiki/William_Osler">Osler</a></h1>
-<p class="lead">Simple patient tracking from Washington University School of Medicine in St. Louis</p>
+<h1><a href="https://en.wikipedia.org/wiki/William_Osler">{% trans 'Osler' %}</a></h1>
+<p class="lead">{% trans 'Simple patient tracking from Washington University School of Medicine in St. Louis' %}</p>
 {% endblock %}
 
 {% block content %}
 
 <div class="container">
   <div class="col-md-4">
-    <h4>Are you a programmer?</h4>
-    <p>We're on <a href="https://github.com/SaturdayNeighborhoodHealthClinic">Github</a> and we're always looking for smart folks with new ideas!</p>
+    <h4>{% trans 'Are you a programmer?' %}</h4>
+    <p>{% blocktrans with github_url=settings.OSLER_GITHUB_URL %}We're on <a href="{{github_url}}">Github</a> and we're always looking for smart folks with new ideas!{% endblocktrans %}</p>
   </div>
   <div class="col-md-4">
-    <h4>Hosted by CloudWUSM, <br> Powered by <a href="https://www.djangoproject.com/">Django</a></h4>
+    <h4>{% blocktrans %}Hosted by CloudWUSM, <br> Powered by <a href="https://www.djangoproject.com/">Django</a>{% endblocktrans %}</h4>
   </div>
   <div class="col-md-4">
-    <h4>By Med Students,<br> For Med Students</h4>
-    <p><strong>Development:</strong> Justin Porter and Lucas Thomas</p>
-    <p><strong>Design:</strong> Justin Porter and Radhika Jain</p>
-    <p></p><em>with substantial contributions from our <a href="https://snhc.wustl.edu/#/contact">board members</a>.</em></div>
+    <h4>{% blocktrans %}By Med Students,<br> For Med Students{% endblocktrans %}</h4>
+    <p><strong>{% blocktrans %}Development:</strong> Justin Porter and Lucas Thomas{% endblocktrans %}</p>
+    <p><strong>{% blocktrans %}Design:</strong> Justin Porter and Radhika Jain{% endblocktrans %}</p>
+    <p></p><em>{% blocktrans %}with substantial contributions from our <a href="https://snhc.wustl.edu/#/contact">board members</a>.{% endblocktrans %}</em>
   </div>
+</div>
 
 </div>
 
