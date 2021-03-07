@@ -2,7 +2,6 @@
 
 Werkzeug==1.0.1 # https://github.com/pallets/werkzeug
 ipdb==0.13.4  # https://github.com/gotcha/ipdb
-Sphinx==3.2.1  # https://github.com/sphinx-doc/sphinx
 psycopg2==2.8.5 --no-binary psycopg2  # https://github.com/psycopg/psycopg2
 
 # Testing
@@ -32,3 +31,8 @@ django-debug-toolbar==3.1.1  # https://github.com/jazzband/django-debug-toolbar
 django-extensions==3.0.9  # https://github.com/django-extensions/django-extensions
 django-coverage-plugin==1.8.0  # https://github.com/nedbat/django_coverage_plugin
 pytest-django==4.0.0  # https://github.com/pytest-dev/pytest-django
+
+# Documentation
+# ------------------------------------------------------------------------------
+sphinx==3.5.1  # https://github.com/sphinx-doc/sphinx
+sphinx-autobuild==2020.9.1 # https://github.com/GaretJax/sphinx-autobuild
