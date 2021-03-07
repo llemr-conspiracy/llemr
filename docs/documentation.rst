@@ -1,10 +1,10 @@
-How To - Project Documentation
+Project Documentation
 ======================================================================
 
 Get Started
 ----------------------------------------------------------------------
 
-Documentation can be written as rst files in the `{{cookiecutter.project_slug}}/docs/_source`.
+Documentation can be written as rst files in the `osler/docs/_source`.
 
 To build and serve docs, use the commands:
     ::
@@ -18,11 +18,14 @@ Changes to files in `docs/_source` will be picked up and reloaded automatically.
 Docstrings to Documentation
 ----------------------------------------------------------------------
 
+.. warning::
+	This functionality is not currently working. It is here for reference in the future only.
+
 The sphinx extension `apidoc <https://www.sphinx-doc.org/en/master/man/sphinx-apidoc.html/>`_ is used to automatically document code using signatures and docstrings.
 
 Numpy or Google style docstrings will be picked up from project files and availble for documentation. See the `Napoleon <https://sphinxcontrib-napoleon.readthedocs.io/en/latest/>`_ extension for details.
 
-For an in-use example, see the `page source <_sources/users.rst.txt>`_ for :ref:`users`.
+For an in-use example, see `django-cookiecutter's` `users.rst.txt` documentation.
 
 To compile all docstrings automatically into documentation source files, use the command:
     ::

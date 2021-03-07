@@ -11,7 +11,8 @@ Welcome to Osler's documentation!
    :caption: Contents:
 
    getting-started/index
-   howto
+   documentation
+   modules/index
    technical-reference/index
 
 
