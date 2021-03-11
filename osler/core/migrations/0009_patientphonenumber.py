@@ -8,7 +8,7 @@ import phonenumber_field.modelfields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('core', '0007_make_encounters'),
+        ('core', '0008_verbose_name_20210118_1256'),
     ]
 
     operations = [
