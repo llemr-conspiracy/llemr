@@ -1,9 +1,10 @@
 '''Forms for the Oser core components.'''
 from django.forms import (
     Form, CharField, ModelForm, EmailField, CheckboxSelectMultiple,
-    ModelMultipleChoiceField, CheckboxInput, HiddenInput)
-from django.contrib.auth.forms import AuthenticationForm
+    ModelMultipleChoiceField, CheckboxInput, TextInput
+)
 
+from django.contrib.auth.forms import AuthenticationForm
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
@@ -19,20 +20,22 @@ from crispy_forms.bootstrap import InlineCheckboxes
 from osler.core import models
 from osler.users.models import User
 
+from django.utils.translation import gettext_lazy as _
+
 
 class CustomCheckbox(Field):
     template = 'core/custom_checkbox.html'
 
 
 class DuplicatePatientForm(Form):
-    first_name = CharField(label='First Name')
-    last_name = CharField(label='Last Name')
+    first_name = CharField(label=_('First Name'))
+    last_name = CharField(label=_('Last Name'))
 
     def __init__(self, *args, **kwargs):
         super(DuplicatePatientForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.fields['first_name'].widget.attrs['autofocus'] = True
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
 
 class PatientPhoneNumberForm(ModelForm):
@@ -59,17 +62,21 @@ class PatientForm(ModelForm):
         exclude = (
             ['demographics', 'phone'] +
             [f'alternate_phone_{i}' for i in range(1,5)] +
-            [f'alternate_phone_{i}_owner' for i in range(1,5)] +
-            ['case_managers'] if settings.OSLER_DISPLAY_CASE_MANAGERS else []
+            [f'alternate_phone_{i}_owner' for i in range(1,5)]
         )
+        if not settings.OSLER_DISPLAY_CASE_MANAGERS:
+            exclude.append('case_managers')
+        widgets = {
+            'date_of_birth': TextInput(attrs={'type': 'date'}),
+        }
 
     if settings.OSLER_DISPLAY_CASE_MANAGERS:
         case_managers = ModelMultipleChoiceField(
             required=False,
             queryset=get_user_model().objects
-                .filter(groups__permissions__codename='case_manage_Patient')
-                .distinct()
-                .order_by("last_name")
+            .filter(groups__permissions__codename='case_manage_Patient')
+            .distinct()
+            .order_by("last_name")
         )
 
     phone = PhoneNumberField(
@@ -93,7 +100,7 @@ class PatientForm(ModelForm):
         self.fields['middle_name'].widget.attrs['autofocus'] = True
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['ethnicities'].wrap(InlineCheckboxes)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
         self.fields['address'].widget.attrs = {'placeholder': settings.OSLER_DEFAULT_ADDRESS}
 
 
@@ -104,7 +111,7 @@ class PatientForm(ModelForm):
         if cleaned_data.get('description') and not cleaned_data.get('phone'):
             self.add_error(
                 description,
-                "Phone number is required if a description is provided."
+                _("Phone number is required if a description is provided.")
             )
 
 
@@ -126,7 +133,7 @@ class AbstractActionItemForm(ModelForm):
 
         self.fields['instruction'].queryset = models.ActionInstruction\
             .objects.filter(active=True)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
 
 class ActionItemForm(AbstractActionItemForm):
@@ -150,7 +157,7 @@ class UserInitForm(ModelForm):
             'languages',
             'gender',
             'groups'
-            ]
+        ]
         widgets = {'phone': PhoneNumberInternationalFallbackWidget}
 
     def __init__(self, *args, **kwargs):
@@ -163,13 +170,13 @@ class UserInitForm(ModelForm):
         self.helper.field_class = 'col-lg-8'
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['groups'].wrap(InlineCheckboxes)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
         required_fields = [
-            'first_name', 
-            'last_name', 
+            'first_name',
+            'last_name',
             'groups'
-            ]
+        ]
         for field in required_fields:
             self.fields[field].required = True
 
@@ -185,4 +192,3 @@ class DocumentForm(ModelForm):
         super(DocumentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
-

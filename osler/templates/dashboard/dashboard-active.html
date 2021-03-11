@@ -1,11 +1,11 @@
 {% extends "core/base.html" %}
 
 {% block title %}
-Active Patients
+{% trans 'Active Patients'%}
 {% endblock %}
 
 {% block header %}
-<h1>Active Patients</h1>
+<h1>{% trans 'Active Patients'%}</h1>
 {% endblock %}
 
 {% block content %}
@@ -14,11 +14,11 @@ Active Patients
 
 	<table class="table table-striped">
     <tr>
-        <th>St.</th>
-	    <th>Patient</th>
-	    <th>Age / Gender</th>
-	    <th>Last Seen</th>
-	    <th>Latest Activity</th>
+        <th>{% trans 'St.'%}</th>
+	    <th>{% trans 'Patient'%}</th>
+	    <th>{% trans 'Age / Gender'%}</th>
+	    <th>{% trans 'Last Seen'%}</th>
+	    <th>{% trans 'Latest Activity'%}</th>
 	</tr>
 	{% for patient in patients %}
 	<tr id="id_pt_{{ patient.id }}">
@@ -31,16 +31,12 @@ Active Patients
             {% if latest_workup %}
                 <a href="{% url 'workup' pk=latest_workup.pk %}">Seen {{ latest_workup.encounter.clinic_day }}</a>: {{latest_workup.chief_complaint}}
             {% else %}
-                <a href="{% url 'core:patient-update' pk=patient.id %}">Intake</a>: {{patient.history.last.history_date}}
+                <a href="{% url 'core:patient-update' pk=patient.id %}">{% blocktrans %}Intake</a>: {{patient.history.last.history_date}}{% endblocktrans %}
             {% endif %}
             {% endwith %}
         </td>
 	<tr>
 	{% endfor %}
 	</table>	
-
 </div>
-
-
-
 {% endblock %}

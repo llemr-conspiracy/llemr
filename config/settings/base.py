@@ -383,6 +383,7 @@ OSLER_ATTENDANCE_URL = env(
     "OSLER_ATTENDANCE_URL",
     default="https://www.wustl.edu",
 )
+OSLER_GITHUB_URL = "https://github.com/oslerproject/osler"
 
 #Default Encounter Status 
 OSLER_DEFAULT_ACTIVE_STATUS = ('Active', True)

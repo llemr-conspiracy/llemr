@@ -1,16 +1,20 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block title %}
-Workup: {{ workup.patient.name }}
+{% trans 'Workup' %}: {{ workup.patient.name }}
 {% endblock %}
 
 {% block header %}
-    <h1>{% if workup.is_pending %}Pending {% endif %}Workup on <a href="{% url 'core:patient-detail' pk=workup.patient.id %}">{{ workup.patient.name }}</a></h1>
-    <p class="lead">Seen on {{ workup.encounter.clinic_day }}</p>
+
+    <h1>{% if workup.is_pending %}{% trans 'Pending' %} {% endif %} {% trans 'Workup on ' %}  <a href="{% url 'core:patient-detail' pk=workup.patient.id %}">{{ workup.patient.name }}</a></h1>
+    <p class="lead">{% trans 'Seen on' %} {{ workup.encounter.clinic_day }}</p>
+
     {% if workup.signed %}
-    <p class="lead">Attested by {{workup.signer}} on {{workup.signed_date}} </p>
+    <p class="lead">{% blocktrans with signer=workup.signer signed_date=workup.signed_date %}Attested by {{ signer }} on {{ signed_date }} {% endblocktrans %}</p>
     {% else %}
-    <p class="lead">Workup unattested.</p>
+    <p class="lead">{% trans 'Workup unattested' %}.</p>
     {% endif%}
 {% endblock %}
 
@@ -20,25 +24,26 @@ Workup: {{ workup.patient.name }}
     <div class="row text-center">
         {% if workup.is_pending %}
         <div class="btn-group">
-            <a class="btn btn-success" href="{% url 'workup-update' pk=workup.pk %}" role="button">Update</a>
+            <a class="btn btn-success" href="{% url 'workup-update' pk=workup.pk %}" role="button">{% trans 'Update' %}</a>
         </div>
         {% else %}
-        <h4>Actions</h4>
+        <h4>{% trans 'Actions' %}</h4>
         <div class="btn-group">
             {% if workup.signed and can_sign or not workup.signed %}
-            <a class="btn btn-primary" href="{% url 'workup-update' pk=workup.pk %}" role="button">Update</a>
+            <a class="btn btn-primary" href="{% url 'workup-update' pk=workup.pk %}" role="button">{% trans 'Update' %}</a>
             {% endif %}
             {% if not workup.signed and can_sign %}
-            <a class="btn btn-danger" href="{% url 'workup-sign' pk=workup.pk %}" role="button">Attest</a>
+            <a class="btn btn-danger" href="{% url 'workup-sign' pk=workup.pk %}" role="button">{% trans 'Attest' %}</a>
             {% endif %}
-            <a class="btn btn-info" href="{% url 'core:new-action-item' pt_id=workup.patient.pk %}" role="button">Add Action Item</a>
-            <a class="btn btn-success" href="{% url 'new-addendum' wu_id=workup.pk pt_id=workup.patient.id %}" role="button">Add Addendum</a>
+            <a class="btn btn-info" href="{% url 'core:new-action-item' pt_id=workup.patient.pk %}" role="button">{% trans 'Add Action Item' %}</a>
+            <a class="btn btn-success" href="{% url 'new-addendum' wu_id=workup.pk pt_id=workup.patient.id %}" role="button">{% trans 'Add Addendum' %}</a>
             {% if can_export_pdf %}
-            <a class="btn btn-warning" href="{% url 'workup-pdf' pk=workup.pk %}" target="_blank" role="button">PDF</a>
+            <a class="btn btn-warning" href="{% url 'workup-pdf' pk=workup.pk %}" target="_blank" role="button">{% trans 'PDF' %}</a>
             {% endif %}
         </div>
         {% endif %}
     </div>
+  </div>
 </div>
 
 {% include "workup/workup_body.html" with workup=workup %}

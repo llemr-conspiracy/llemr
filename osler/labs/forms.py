@@ -9,13 +9,15 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Div, Row, HTML, Field
 from crispy_forms.bootstrap import (AppendedText)
 
+from django.utils.translation import gettext_lazy as _
+
 from . import models
 from . import utils
 from osler.core.models import Encounter
 
 from itertools import chain
 
-# Create a lab object to a patient without any measurements 
+
 class LabCreationForm(ModelForm):
     class Meta:
         model = models.Lab
@@ -28,13 +30,13 @@ class LabCreationForm(ModelForm):
         super(LabCreationForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_method = 'post'
-        
+
         self.helper.layout = Layout(
             Row(
                 HTML('<p>Patient name: <b>%s</b> </p>' %patient_name),
                 Div('lab_type', css_class='col-sm-6')),
 
-            Submit('choose-lab', 'Choose Lab', css_class='btn btn-success')
+            Submit('choose-lab', _('Choose Lab'), css_class='btn btn-success')
         )
 
 # Fill in corresponding measurements in a lab object
@@ -46,14 +48,16 @@ class MeasurementsCreationForm(Form):
         self.new_lab_type = kwargs.pop('new_lab_type')
         self.pt = kwargs.pop('pt')
         self.lab_pk = kwargs.pop('lab_pk') if ('lab_pk' in kwargs) else None
-        
+
         super(MeasurementsCreationForm, self).__init__(*args, **kwargs)
 
         STYLE = 'width:400px;'
 
         pt_info = Row(
-                HTML('<p>Patient name: <b>%s</b> </p>' %self.pt.name()),
-                HTML('<p>Lab type: <b>%s</b> </p>' %self.new_lab_type))
+            HTML('<p>Patient name: <b>%s</b> </p>' %self.pt.name()),
+            HTML('<p>Lab type: <b>%s</b> </p>' %self.new_lab_type)
+        )
+
         self.fields_display = [pt_info]
 
         self.fields['encounter'].queryset = Encounter.objects\
@@ -79,6 +83,7 @@ class MeasurementsCreationForm(Form):
             str_name = measurement_type.short_name
             unit = measurement_type.get_unit()
             value_type = measurement_type.get_value_type()
+
             self.fields_display.append(Div(AppendedText(str_name,unit),style=STYLE))
             
             if value_type=='Continuous': 
@@ -99,16 +104,15 @@ class MeasurementsCreationForm(Form):
 
         self.helper = FormHelper()
         self.helper.form_method = 'post'
-        
         if len(self.fields_display)==0:
+
             button = []
         else:
             button = [Submit('save-lab', 'Save Lab', css_class='btn btn-success')]
 
         self.helper.layout = Layout(
             *(self.fields_display + button)
-            )
-
+        )
 
     def save(self, *args, **kwargs):
         self.lab_pk = kwargs.pop('lab_pk') if ('lab_pk' in kwargs) else None

@@ -7,6 +7,7 @@ from simple_history.models import HistoricalRecords
 
 from osler.core.models import Note
 
+from django.utils.translation import gettext_lazy as _
 
 def generate_default_appointment_time():
     return now().replace(
@@ -26,30 +27,30 @@ class Appointment(Note):
     CHRONIC_CARE = 'CHRONIC_CARE'
     VACCINE = 'VACCINE'
     APPOINTMENT_TYPES = (
-        (PSYCH_NIGHT, 'Psych Night'),
-        (ACUTE_FOLLOWUP, 'Acute Followup'),
-        (CHRONIC_CARE, 'Chronic Care'),
-        (VACCINE, "Vaccine Followup")
+        (PSYCH_NIGHT, _('Psych Night')),
+        (ACUTE_FOLLOWUP, _('Acute Followup')),
+        (CHRONIC_CARE, _('Chronic Care')),
+        (VACCINE, _('Vaccine Followup'))
     )
 
-    clindate = models.DateField(verbose_name="Appointment Date")
+    clindate = models.DateField(verbose_name=_("Appointment Date"))
     clintime = models.TimeField(
-        verbose_name="Time of Appointment",
+        verbose_name=_("Time of Appointment"),
         default=generate_default_appointment_time)
     appointment_type = models.CharField(
         max_length=15, choices=APPOINTMENT_TYPES,
-        verbose_name='Appointment Type', default=CHRONIC_CARE)
+        verbose_name=_('Appointment Type'), default=CHRONIC_CARE)
     comment = models.TextField(
-        help_text="What should happen at this appointment?")
+        help_text=_("What should happen at this appointment?"))
 
     pt_showed = models.BooleanField(
-        verbose_name="Patient Showed",
-        blank=True, null=True, help_text="Did the patient come to this appointment?")
+        verbose_name=_("Patient Showed"),
+        blank=True, null=True, help_text=_("Did the patient come to this appointment?"))
 
     history = HistoricalRecords()
-
+    
     def __str__(self):
-        return "Appointment ({type}) for {name} on {date}".format(
+        return _("Appointment ({type}) for {name} on {date}").format(
             type=self.verbose_appointment_type(),
             name=self.patient.name(),
             date=str(self.clindate))
@@ -67,5 +68,5 @@ class Appointment(Note):
         if (ids.count() >= settings.OSLER_MAX_APPOINTMENTS and
                 self.id not in ids):
             raise ValidationError(
-                "Osler is configured only to allow %s appointments per day" %
+                _("Osler is configured only to allow %s appointments per day") %
                 settings.OSLER_MAX_APPOINTMENTS)

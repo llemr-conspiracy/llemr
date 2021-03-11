@@ -1,14 +1,15 @@
 {% extends "core/base.html" %}
+{% load i18n %}
 
 {% block title %}
-Edit Drug ({{ object.name }})
+{% trans 'Edit Drug'%} ({{ object.name }})
 {% endblock %}
 
 {% block header %}
 <h1><a href="{% url 'inventory:drug-list' %}"><small><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></small></a>
-  Edit Drug
+  {% trans 'Edit Drug'%}
 </h1>
-<p class="lead">Edit <em>{{ object.name }}</em></p>
+<p class="lead">{%blocktrans%}Edit <em>{{ object.name }}{%endblocktrans%}</em></p>
 {% endblock %}
 
 {% block content %}
