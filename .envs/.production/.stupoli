@@ -1,0 +1,33 @@
+# General
+# ------------------------------------------------------------------------------
+DJANGO_SETTINGS_MODULE=config.settings.production
+
+DJANGO_SECRET_KEY='uF0sHMCxlAmPJlxpIY8QLUJElAWigxVdOwC92qe0l7Q7LBMfXNWSWQWxV34D8x53'
+DJANGO_ALLOWED_HOSTS=localhost
+REDIS_URL=redis://redis:6379/0
+
+DJANGO_SECURE_SSL_REDIRECT=False
+DJANGO_ACCOUNT_ALLOW_REGISTRATION=True
+WEB_CONCURRENCY=4
+
+# CONN_MAX_AGE=
+# DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS=
+# DJANGO_SECURE_HSTS_PRELOAD=
+# DJANGO_SECURE_CONTENT_TYPE_NOSNIFF=
+DJANGO_DEFAULT_FROM_EMAIL=Osler <roboter@stupoli-hamburg.de>
+DJANGO_SERVER_EMAIL=roboter@stupoli-hamburg.de
+DJANGO_ADMIN_URL=admin 
+
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=osler
+POSTGRES_USER=stupoli
+POSTGRES_PASSWORD=stupoli
+
+# NGINX_HOST
+# ------------------------------------------------------------------------------
+NGINX_HOST=localhost
+NGINX_PORT=80
+NGINX_REVERSE_PROXY=django:5000

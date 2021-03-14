@@ -1,0 +1,63 @@
+version: "3"
+
+volumes:
+  production_postgres_data: {}
+  production_postgres_data_backups: {}
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: osler_production_django
+    container_name: django
+    ports:
+      - 5000:5000
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - ./.envs/.production/.stupoli
+    command: /start
+    networks:
+      - nginx_network
+      - database_network
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: osler_production_postgres
+    container_name: postgres
+    volumes:
+      - production_postgres_data:/var/lib/postgresql/data
+      - production_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.production/.stupoli
+    networks:
+      - database_network
+
+  nginx:
+    image: nginx:1.19
+    ports:
+      - 80:80
+      - 443:443
+    env_file:
+      - ./.envs/.production/.stupoli
+    volumes:
+      - ./config/nginx/production/templates:/etc/nginx/conf.d
+      - ./config/nginx/production/certs:/etc/nginx/certs
+
+    depends_on:
+      - django
+    networks:
+      - nginx_network
+
+  redis:
+    image: redis:5.0
+
+networks:
+  nginx_network:
+    driver: bridge
+  database_network:
+    driver: bridge
