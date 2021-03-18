@@ -1,2 +1,2 @@
-from .local import *
+from .production import *
 from .stupoli import *

@@ -24,10 +24,3 @@ OSLER_DEFAULT_COUNTRY = "Deutschland"
 OSLER_DEFAULT_ADDRESS = "Seewartenstraße 10"
 
 OSLER_ABOUT_NAME = "wiki.stupoli-hamburg.de"
-
-# EMAIL-Settings
-# EMAIL_HOST =
-# EMAIL_HOST_USER =
-# EMAIL_HOST_PASSWORD =
-# EMAIL_PORT =
-# EMAIL_USE_TLS =

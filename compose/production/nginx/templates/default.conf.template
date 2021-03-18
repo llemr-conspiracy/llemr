@@ -2,25 +2,25 @@
 upstream django_server {
     # docker will automatically resolve this to the correct address
     # because we use the same name as the service: "django"
-    server  django:5000;
+    server  ${NGINX_REVERSE_PROXY};
 }
 
 # now we declare our main server
 server {
-    listen  80;
-    server_name  localhost;
+    listen  ${NGINX_PORT};
+    server_name  ${NGINX_HOST};
     return 301 https://$host$request_uri;
 }
 
 server {
     listen 443 ssl;
-    server_name localhost;
+    server_name ${NGINX_HOST};
 
     ssl_certificate           /etc/nginx/certs/cert.crt;
     ssl_certificate_key       /etc/nginx/certs/cert.key;
 
     ssl_session_cache  builtin:1000  shared:SSL:10m;
-    ssl_protocols  TLSv1 TLSv1.1 TLSv1.2;
+    ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4;
     ssl_prefer_server_ciphers on;
 

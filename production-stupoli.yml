@@ -17,7 +17,7 @@ services:
       - postgres
       - redis
     env_file:
-      - ./.envs/.production/.stupoli
+      - ./.envs/.production/.django
     command: /start
     networks:
       - nginx_network
@@ -33,7 +33,7 @@ services:
       - production_postgres_data:/var/lib/postgresql/data
       - production_postgres_data_backups:/backups
     env_file:
-      - ./.envs/.production/.stupoli
+      - ./.envs/.production/.postgres
     networks:
       - database_network
 
@@ -43,10 +43,10 @@ services:
       - 80:80
       - 443:443
     env_file:
-      - ./.envs/.production/.stupoli
+      - ./.envs/.production/.nginx
     volumes:
-      - ./config/nginx/production/templates:/etc/nginx/conf.d
-      - ./config/nginx/production/certs:/etc/nginx/certs
+      - ./compose/production/nginx/templates:/etc/nginx/conf.d
+      - ./compose/production/nginx/certs:/etc/nginx/certs
 
     depends_on:
       - django
