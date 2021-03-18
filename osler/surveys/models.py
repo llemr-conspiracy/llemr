@@ -46,6 +46,7 @@ class Response(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(get_user_model(), on_delete=models.PROTECT)
     author_role = models.ForeignKey(Group, on_delete=models.PROTECT)
+    encounter = models.ForeignKey(to='core.Encounter', on_delete=models.PROTECT)
     # patient = models.ForeignKey(Patient, on_delete=models.PROTECT)
 
     class Meta:

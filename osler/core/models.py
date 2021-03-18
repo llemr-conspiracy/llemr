@@ -18,6 +18,8 @@ from osler.core import utils
 
 from osler.users.utils import group_has_perm
 
+from osler.surveys.models import Response, Survey
+
 class Language(models.Model):
     """A natural language, spoken by a provider or patient.
     """
@@ -359,6 +361,29 @@ class Patient(Person):
             return last_encounter
         else:
             return None
+
+    def incomplete_surveys(self):
+        ''' Returns a list of all incompleted surveys '''
+        encounters = []
+        if Encounter.objects.filter(patient=self.pk).exists():
+            encounters = Encounter.objects.filter(patient=self.pk)
+        else:
+            return []
+
+        responses = Response.objects.none()
+        for encounter in encounters:
+            if encounter.response_set.all().exists():
+                responses = responses.union(encounter.response_set.all())
+        
+        ## TODO: get list of all surveys and match response survey
+        all_surveys = Survey.objects.all()
+        completed_surveys = Survey.objects.none()
+        for response in responses:
+            completed_surveys = completed_surveys.union(Survey.objects.filter(pk=response.survey.pk))
+
+        return list(all_surveys.difference(completed_surveys))
+
+
 
     def get_status(self):
         if self.last_encounter() is not None:
