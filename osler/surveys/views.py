@@ -75,7 +75,7 @@ def view(request, id):
 
     return render(request, 'surveys/fill.html', ctx)
 
-
+# TODO: for response object check if there is an encounter for patient, if not create encounter
 def submit(request, id):
     '''recieves data from a survey fill and creates a response object'''
     if request.method != "POST":

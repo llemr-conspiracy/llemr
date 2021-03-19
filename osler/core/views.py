@@ -405,6 +405,7 @@ def patient_detail(request, pk):
     can_export_pdf = group_has_perm(active_role, 'workup.export_pdf_Workup')
 
     # list of incompleted surveys for patient
+    # FIXME: is the whole list needed?
     incomplete_surveys = pt.get_incomplete_surveys()
 
     context = {
