@@ -5,6 +5,7 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 from osler.users.utils import get_active_role
 from osler.surveys.models import Survey, Question, Response, Answer
+from osler.core.models import Patient
 
 
 def create(request):
@@ -16,7 +17,6 @@ def create(request):
 
 class SurveyListView(generic.ListView):
     model = Survey
-
 
 class AllResponsesListView(generic.ListView):
     '''list view for responses from all surveys'''
@@ -36,6 +36,12 @@ class ResponsesListView(generic.ListView):
         context['survey'] = Survey.objects.get(id=self.kwargs['id'])
         return context
 
+# surveys is a list of surveys
+def filteredSurveys(request, id):
+    patient = Patient.objects.get(pk=id)
+    incomplete_surveys = patient.get_incomplete_surveys()
+    context = {'surveys': incomplete_surveys}
+    return render(request, 'surveys/filtered_surveys_list.html', context)
 
 def response(request, id):
     response = Response.objects.get(id=id)

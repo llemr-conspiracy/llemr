@@ -404,6 +404,9 @@ def patient_detail(request, pk):
     can_case_manage = group_has_perm(active_role, 'core.case_manage_Patient')
     can_export_pdf = group_has_perm(active_role, 'workup.export_pdf_Workup')
 
+    # list of incompleted surveys for patient
+    incomplete_surveys = pt.get_incomplete_surveys()
+
     context = {
         'zipped_ai_list': zipped_ai_list,
         'total_ais': total_ais,
@@ -417,7 +420,8 @@ def patient_detail(request, pk):
         'zipped_apt_list': zipped_apt_list,
         'can_activate': can_activate,
         'can_case_manage': can_case_manage,
-        'can_export_pdf': can_export_pdf
+        'can_export_pdf': can_export_pdf,
+        'incomplete_surveys': incomplete_surveys
     }
 
     return render(request,

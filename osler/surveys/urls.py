@@ -9,6 +9,7 @@ app_name = 'surveys'
 unwrapped_urlpatterns = [
     path('', views.SurveyListView.as_view(), name='surveys'),
     path('create/', views.create, name='create'),
+    path('incomplete-surveys/<int:id>', views.filteredSurveys, name="filtered_surveys"),
     re_path(r'^(?P<id>[0-9]+)/?$', views.view, name='view'),
     re_path(r'^(?P<id>[0-9]+)/edit/?$', views.SurveyListView.as_view(), name='edit'),
     re_path(r'^(?P<id>[0-9]+)/fill/?$', views.fill, name='fill'),

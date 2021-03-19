@@ -362,7 +362,7 @@ class Patient(Person):
         else:
             return None
 
-    def incomplete_surveys(self):
+    def get_incomplete_surveys(self):
         ''' Returns a list of all incompleted surveys '''
         encounters = []
         if Encounter.objects.filter(patient=self.pk).exists():
