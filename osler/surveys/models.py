@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from osler.core.models import Encounter
 
 
 class Survey(models.Model):
@@ -9,6 +10,26 @@ class Survey(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_incomplete_surveys(pt_id):
+        ''' Returns a list of all incompleted surveys '''
+        if not Encounter.objects.filter(patient=pt_id).exists():
+            return []
+
+        encounters = Encounter.objects.filter(patient=pt_id)
+
+        responses = Response.objects.none()
+        for encounter in encounters:
+            if encounter.response_set.all().exists():
+                responses = responses.union(encounter.response_set.all())
+
+        # TODO: get list of all surveys and match response survey
+        all_surveys = Survey.objects.all()
+        completed_surveys = Survey.objects.none()
+        for response in responses:
+            completed_surveys = completed_surveys.union(Survey.objects.filter(pk=response.survey.pk))
+
+        return list(all_surveys.difference(completed_surveys))
 
 
 class Question(models.Model):

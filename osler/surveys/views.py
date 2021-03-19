@@ -18,6 +18,7 @@ def create(request):
 class SurveyListView(generic.ListView):
     model = Survey
 
+
 class AllResponsesListView(generic.ListView):
     '''list view for responses from all surveys'''
     model = Response
@@ -37,11 +38,13 @@ class ResponsesListView(generic.ListView):
         return context
 
 # surveys is a list of surveys
+
+
 def filteredSurveys(request, id):
-    patient = Patient.objects.get(pk=id)
-    incomplete_surveys = patient.get_incomplete_surveys()
+    incomplete_surveys = Survey.get_incomplete_surveys(id)
     context = {'surveys': incomplete_surveys}
     return render(request, 'surveys/filtered_surveys_list.html', context)
+
 
 def response(request, id):
     response = Response.objects.get(id=id)
@@ -76,6 +79,8 @@ def view(request, id):
     return render(request, 'surveys/fill.html', ctx)
 
 # TODO: for response object check if there is an encounter for patient, if not create encounter
+
+
 def submit(request, id):
     '''recieves data from a survey fill and creates a response object'''
     if request.method != "POST":

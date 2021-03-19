@@ -18,6 +18,7 @@ from osler.workup import models as workupmodels
 from osler.referral.models import Referral, FollowupRequest, PatientContact
 from osler.vaccine.models import VaccineFollowup
 from osler.appointment.models import Appointment
+from osler.surveys.models import Survey
 
 from osler.core import models as core_models
 from osler.core import forms
@@ -406,7 +407,7 @@ def patient_detail(request, pk):
 
     # list of incompleted surveys for patient
     # FIXME: is the whole list needed?
-    incomplete_surveys = pt.get_incomplete_surveys()
+    incomplete_surveys = Survey.get_incomplete_surveys(pt.pk)
 
     context = {
         'zipped_ai_list': zipped_ai_list,
