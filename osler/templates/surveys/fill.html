@@ -23,7 +23,7 @@ Osler: Surveys
       <hr>
   </div>
   <div class="row">
-  <form action="{%  url 'surveys:submit' id=survey.id %}" method='POST'>
+  <form action="{%  url 'surveys:submit' pid=pid id=survey.id %}" method='POST'>
   {% if readonly%}
     <fieldset disabled>
   {% endif %}

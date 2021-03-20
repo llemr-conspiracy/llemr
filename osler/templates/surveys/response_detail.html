@@ -9,7 +9,9 @@ Osler: Survey Responses
 
 <div class="container">
 	<h1>{{ object.survey.title }} Response</h1>
-  <p class="lead">For <a href="#">Lastname, Firstname</a></p>
+  <p class="lead">For <a href="{% url 'core:patient-detail' pk=response.encounter.patient.id %}">
+    {{ response.encounter.patient.first_name }} {{ response.encounter.patient.last_name }}
+  </a></p>
 </div>
 {% endblock %}
 

@@ -48,7 +48,7 @@ if the survey object exists, then this is survey:responses, otherwise its survey
         {% if not survey %}
         <td><a href="{% url 'surveys:view' id=response.survey.id %}">{{response.survey}}</a></td>
         {% endif %}
-        <td></td>
+        <td>{{ response.encounter.patient.first_name }} {{ response.encounter.patient.last_name }}</td>
         <td>{{response.author}} ({{response.author_role}})</td>
       </tr>
     {% endfor %}

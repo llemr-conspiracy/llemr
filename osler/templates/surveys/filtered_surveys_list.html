@@ -23,7 +23,7 @@ Osler: Incompleted Surveys
     </tr>
     {% for survey in surveys %}
       <tr>
-        <td><a href="{% url 'surveys:fill' id=survey.id %}">{{ survey.title }}</a></td>
+        <td><a href="{% url 'surveys:fill' pid=pid id=survey.id %}">{{ survey.title }}</a></td>
         <td>{{ survey.description }}</td>
       </tr>
     {% endfor %}

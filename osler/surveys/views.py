@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.exceptions import PermissionDenied
 from django.views import generic
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
@@ -39,10 +40,9 @@ class ResponsesListView(generic.ListView):
 
 # surveys is a list of surveys
 
-
-def filteredSurveys(request, id):
-    incomplete_surveys = Survey.get_incomplete_surveys(id)
-    context = {'surveys': incomplete_surveys}
+def filteredSurveys(request, pid):
+    incomplete_surveys = Survey.get_incomplete_surveys(pid)
+    context = {'surveys': incomplete_surveys, 'pid': pid}
     return render(request, 'surveys/filtered_surveys_list.html', context)
 
 
@@ -60,10 +60,11 @@ def response(request, id):
     return render(request, 'surveys/response_detail.html', ctx)
 
 
-def fill(request, id):
+def fill(request, pid, id):
     survey = Survey.objects.get(id=id)
     ctx = {'survey': survey,
-           'QuestionType': Question.QuestionType
+           'QuestionType': Question.QuestionType,
+           'pid' : pid
            }
 
     return render(request, 'surveys/fill.html', ctx)
@@ -81,15 +82,34 @@ def view(request, id):
 # TODO: for response object check if there is an encounter for patient, if not create encounter
 
 
-def submit(request, id):
+def submit(request, pid, id):
     '''recieves data from a survey fill and creates a response object'''
     if request.method != "POST":
         return redirect('surveys:fill', id=id)
 
     survey = get_object_or_404(Survey, id=id)
+    patient = get_object_or_404(Patient, id=pid)
+
+    active_role = get_active_role(request)
+    can_activate = patient.group_can_activate(active_role)
+
+    # Check for patient status, if active use encounter property
+    # if not active toggle status then get encounter
+    encounter = None
+    if patient.get_status().is_active:
+        encounter = patient.last_encounter()
+    else:
+        if can_activate:
+            patient.toggle_active_status(request.user, active_role)
+            encounter = patient.last_encounter()
+        else:
+            # FIXME is this the best way to raise error?
+            raise PermissionDenied
+
     response = Response(survey=survey)
     response.author = request.user
     response.author_role = get_active_role(request)
+    response.encounter = encounter
     response.save()
 
     for question_id in request.POST:
