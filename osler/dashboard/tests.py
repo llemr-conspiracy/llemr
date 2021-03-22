@@ -116,7 +116,7 @@ class TestAttendingDashboard(TestCase):
             Patient.objects.get(pk=1))
 
         # and one encounter with workup assigned to our attending
-        self.assertEqual(len(response.context['clinics']), 1)
+        assert len(response.context['wu_page']) == 1
         # with one patient
         self.assertContains(response, reverse('core:patient-detail',
                                               args=(self.pt2.pk,)))
@@ -130,7 +130,7 @@ class TestAttendingDashboard(TestCase):
         response = self.client.get(reverse('dashboard-attending'))
 
         # now two encounters with workup assigned to our attending
-        self.assertEqual(len(response.context['clinics']), 2)
+        assert len(response.context['wu_page']) == 2
         # with two patients
         self.assertContains(response, reverse('core:patient-detail',
                                               args=(self.pt2.pk,)))
@@ -139,7 +139,7 @@ class TestAttendingDashboard(TestCase):
         # ONE of which are marked as unattested
         self.assertContains(response, '<tr  class="warning" >', count=1)
 
-    @override_settings(OSLER_CLINIC_DAYS_PER_PAGE=3)
+    @override_settings(OSLER_WORKUPS_PER_PAGE=3)
     def test_dashboard_pagination(self):
         response = self.client.get(reverse('dashboard-attending'))
 
@@ -208,7 +208,7 @@ class TestAttendingDashboard(TestCase):
               </a></li>'''),
             dewhitespace(response.content.decode('utf-8')))
 
-    @override_settings(OSLER_CLINIC_DAYS_PER_PAGE=3)
+    @override_settings(OSLER_WORKUPS_PER_PAGE=3)
     def test_dashboard_page_out_of_range(self):
 
         for i in range(10):
@@ -236,7 +236,7 @@ class TestAttendingDashboard(TestCase):
         #Making 10 encounters with 3 per page, should make 4 pages
         #So the previous button should go towards the page before
         n_pages = (Encounter.objects.count() //
-                   settings.OSLER_CLINIC_DAYS_PER_PAGE)-1
+                   settings.OSLER_WORKUPS_PER_PAGE)-1
 
         # since we're on the last page, the "back" pagination button
         # should be enabled (i.e. no 'class="disabled"')

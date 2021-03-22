@@ -12,32 +12,40 @@
 
 {% block content %}
 
+{{ wu_list.count }}
+
 <div class="container">
-	{% for clinic in clinic_list %}
-		<h3>{{ clinic }}</h3>
+
+	{% regroup wu_page by encounter.clinic_day as clinic_day_list %}
+	{% for clinic_day in clinic_day_list %}
+		<h3>{{ clinic_day.grouper }}</h3>
 		<table class="table table-striped">
-			<tr>
-			    <th>{% trans 'Patient' %}</th>
-			    <th>{% trans 'Chief Complaint' %}</th>
-			    <th>{% trans 'Last Seen' %}</th>
-			    <th>{% trans 'Attending<' %}/th> 
-			    <th>{% trans 'Note Author' %}</th>
-			    <th>{% trans 'Attestation' %}</th>
-			</tr>
-		{% for encounter in clinics %}
-			{% if encounter.clinic_day == clinic %}
-				{% for wu in encounter.workup_set.all %}
-					<tr {% if wu.signer == None %} class="warning" {% endif %}>
-						<td><a href="{% url 'core:patient-detail' pk=wu.patient.id %}">{{ wu.patient }}</a></td>
-						<td><a href="{% url 'workup' pk=wu.id %}">{{ wu.chief_complaint }}</a></td>
-						<td>{{ wu.patient.last_seen | date:"D d M Y" }}</td>
-						<td>{{ wu.attending }}</td>
-						<td>{{ wu.author }}</td>
-						<td>{{ wu.signer | default_if_none:"unattested" }}</td>
-					</tr>
-				{% endfor %}
-			{% endif %}	
+		<thead>
+		<tr>
+			<th>{% trans 'Patient' %}</th>
+			<th>{% trans 'Chief Complaint' %}</th>
+			<th>{% trans 'Last Seen' %}</th>
+			<th>{% trans 'Attending' %}</th> 
+			<th>{% trans 'Note Author' %}</th>
+			<th>{% trans 'Attestation' %}</th>
+		</tr>
+		</thead>
+		<tbody>
+		{% for wu in clinic_day.list %}
+		<tr {% if wu.signer == None %} class="warning" {% endif %}>
+			<td><a href="{% url 'core:patient-detail' pk=wu.patient.id %}">{{ wu.patient }}</a></td>
+			<td><a href="{% url 'workup' pk=wu.id %}">{{ wu.chief_complaint }}</a></td>
+			<td>{{ wu.patient.last_seen | date:"D d M Y" }}</td>
+			<td>{{ wu.attending }}</td>
+			<td>{{ wu.author }}</td>
+			{% if wu.signer %}
+				<td>{{ wu.signer }}</td>
+			{% else %}
+				<td>{% trans "unattested" %}</td>
+			{% endif %}
+		</tr>
 		{% endfor %}
+		</tbody>
 		</table>
 	{% endfor %}
 
@@ -60,25 +68,25 @@
 
 	<nav aria-label="Page navigation" style='text-align: center;'>
 		<ul class="pagination">
-			<li {% if not clinics.has_previous %}class="disabled" {% endif %}>
-				<a {% if clinics.has_previous %} href="?page={{ clinics.previous_page_number }}" {% endif %} aria-label="Previous">
+			<li {% if not wu_page.has_previous %}class="disabled" {% endif %}>
+				<a {% if wu_page.has_previous %} href="?page={{ wu_page.previous_page_number }}" {% endif %} aria-label="Previous">
 					<span aria-hidden="true">&laquo;</span>
 				</a>
 			</li>
 
-			{% for i in clinics.paginator.page_range %}
-			<li {% if i == clinics.number %}class="active" {% endif %}><a href="?page={{ i }}">{{ i }}</a></li>
+			{% for i in wu_page.paginator.page_range %}
+			<li {% if i == wu_page.number %}class="active" {% endif %}><a href="?page={{ i }}">{{ i }}</a></li>
 			{% endfor %}
 
-			<li {% if not clinics.has_next %}class="disabled" {% endif %}>
-				<a {% if clinics.has_next %} href="?page={{ clinics.next_page_number }}" {% endif %} aria-label="Next">
+			<li {% if not wu_page.has_next %}class="disabled" {% endif %}>
+				<a {% if wu_page.has_next %} href="?page={{ wu_page.next_page_number }}" {% endif %} aria-label="Next">
 					<span aria-hidden="true">&raquo;</span>
 				</a>
 			</li>
 		</ul>
 	</nav>
 	<div>
-		<p style='text-align:center'>{% blocktrans %}Page {{ clinics.number }} of {{ clinics.paginator.num_pages }}{% endblocktrans %}</p>
+		<p style='text-align:center'>{% blocktrans %}Page {{ wu_page.number }} of {{ wu_page.paginator.num_pages }}{% endblocktrans %}</p>
 	</div>
 
 </div>
