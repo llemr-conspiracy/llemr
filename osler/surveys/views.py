@@ -55,7 +55,7 @@ class ResponsesListView(generic.ListView):
 # surveys is a list of surveys
 
 
-def filteredSurveys(request, pid):
+def incomplete(request, pid):
     incomplete_surveys = Survey.get_incomplete_surveys(pid)
     patient = Patient.objects.get(pk=pid)
     context = {'surveys': incomplete_surveys, 'patient': patient}
@@ -91,7 +91,7 @@ def fill(request, pid, id):
     if not patient.get_status().is_active and not can_activate:
         messages.add_message(request, messages.ERROR,
                              'You are trying to survey an inactive patient, but do not have permission to activate this patient')
-        return redirect('surveys:filtered_surveys', pid=pid)
+        return redirect('surveys:incomplete', pid=pid)
     return render(request, 'surveys/fill.html', ctx)
 
 
@@ -155,4 +155,4 @@ def submit(request, pid, id):
 
     messages.success(request, "Form Submitted Sucessfully.")
     # TODO: change redirect to individual response view
-    return redirect('surveys:filtered_surveys', pid=pid)
+    return redirect('surveys:incomplete', pid=pid)

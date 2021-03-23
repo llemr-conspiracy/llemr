@@ -52,7 +52,7 @@ if the survey object exists, then this is survey:responses, otherwise its survey
         <td><a href="{% url 'surveys:view' id=response.survey.id %}">{{response.survey}}</a></td>
         {% endif %}
         <td>
-          <a href="{% url 'surveys:filtered_surveys' pid=response.encounter.patient.id %}">
+          <a href="{% url 'surveys:incomplete' pid=response.encounter.patient.id %}">
             {{ response.encounter.patient.first_name }} {{ response.encounter.patient.last_name }}
           </a>
         </td>
