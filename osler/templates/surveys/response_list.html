@@ -24,7 +24,10 @@ if the survey object exists, then this is survey:responses, otherwise its survey
   </h1>
   {% if survey %}
     <h3><a href="{% url 'surveys:all_responses' %}">All Survey Responses</a></h3>
-    {% endif %}
+   {% endif %}
+  {% if patient %}
+   <p class="lead">for <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
+   {% endif %}
 </div>
 {% endblock %}
 
@@ -49,7 +52,7 @@ if the survey object exists, then this is survey:responses, otherwise its survey
         <td><a href="{% url 'surveys:view' id=response.survey.id %}">{{response.survey}}</a></td>
         {% endif %}
         <td>
-          <a href="{% url 'core:patient-detail' pk=response.encounter.patient.id %}">
+          <a href="{% url 'surveys:filtered_surveys' pid=response.encounter.patient.id %}">
             {{ response.encounter.patient.first_name }} {{ response.encounter.patient.last_name }}
           </a>
         </td>

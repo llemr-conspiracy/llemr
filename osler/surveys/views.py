@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.exceptions import PermissionDenied
 from django.views import generic
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 from osler.users.utils import get_active_role
 from osler.surveys.models import Survey, Question, Response, Answer
-from osler.core.models import Patient
+from osler.core.models import Patient, Encounter
 
 
 def create(request):
@@ -24,6 +24,20 @@ class AllResponsesListView(generic.ListView):
     '''list view for responses from all surveys'''
     model = Response
 
+    def get_queryset(self):
+        pt_id = self.request.GET.get('pt_id', None)
+        if pt_id is not None:
+            encounters = Encounter.objects.filter(patient_id=pt_id)
+            return Response.objects.filter(encounter__in=encounters)
+        return Response.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pt_id = self.request.GET.get('pt_id', None)
+        if pt_id is not None:
+            context['patient'] = Patient.objects.get(id=pt_id)
+        return context
+
 
 class ResponsesListView(generic.ListView):
     '''list view for responses from a specific survey'''
@@ -40,9 +54,11 @@ class ResponsesListView(generic.ListView):
 
 # surveys is a list of surveys
 
+
 def filteredSurveys(request, pid):
     incomplete_surveys = Survey.get_incomplete_surveys(pid)
-    context = {'surveys': incomplete_surveys, 'pid': pid}
+    patient = Patient.objects.get(pk=pid)
+    context = {'surveys': incomplete_surveys, 'patient': patient}
     return render(request, 'surveys/filtered_surveys_list.html', context)
 
 
@@ -64,9 +80,18 @@ def fill(request, pid, id):
     survey = Survey.objects.get(id=id)
     ctx = {'survey': survey,
            'QuestionType': Question.QuestionType,
-           'pid' : pid
+           'pid': pid
            }
 
+    patient = get_object_or_404(Patient, id=pid)
+
+    active_role = get_active_role(request)
+    can_activate = patient.group_can_activate(active_role)
+
+    if not patient.get_status().is_active and not can_activate:
+        messages.add_message(request, messages.ERROR,
+                             'You are trying to survey an inactive patient, but do not have permission to activate this patient')
+        return redirect('surveys:filtered_surveys', pid=pid)
     return render(request, 'surveys/fill.html', ctx)
 
 
@@ -130,4 +155,4 @@ def submit(request, pid, id):
 
     messages.success(request, "Form Submitted Sucessfully.")
     # TODO: change redirect to individual response view
-    return redirect('surveys:responses', id=id)
+    return redirect('surveys:filtered_surveys', pid=pid)

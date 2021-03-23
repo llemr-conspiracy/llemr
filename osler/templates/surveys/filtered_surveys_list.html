@@ -9,25 +9,31 @@ Osler: Incompleted Surveys
 <div class="container">
 	<h1>Incompleted Surveys</h1>
 </div>
+<p class="lead">for <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
 {% endblock %}
 
 {% block content %}
 
 <div class="container">
   <div class="row">
-    <table class="table" id="all-patiensts-table">
-      <tr>
-          <th>Title</th>
-          <th>Description</th>
-      </td>
-    </tr>
-    {% for survey in surveys %}
-      <tr>
-        <td><a href="{% url 'surveys:fill' pid=pid id=survey.id %}">{{ survey.title }}</a></td>
-        <td>{{ survey.description }}</td>
+    {% if surveys%}
+      <table class="table" id="all-patiensts-table">
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+        </td>
       </tr>
-    {% endfor %}
-    </table>
+      {% for survey in surveys %}
+        <tr>
+          <td><a href="{% url 'surveys:fill' pid=patient.pk id=survey.id %}">{{ survey.title }}</a></td>
+          <td>{{ survey.description }}</td>
+        </tr>
+      {% endfor %}
+      </table>
+      {% else %}
+        <p>There are no new surveys for this patient to complete</p>
+        <p><a href="{% url 'surveys:all_responses' %}?pt_id={{patient.pk}}">View survey responses from {{ patient.name }}</a></p>
+      {% endif %}
   </div>
 </div>
 {% endblock %}
