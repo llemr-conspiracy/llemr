@@ -12,23 +12,17 @@ class Survey(models.Model):
         return self.title
 
     def get_incomplete_surveys(pt_id):
-        ''' Returns a list of all incompleted surveys '''
+        ''' Returns a list of all incompleted surveys for a given patient'''
         if not Encounter.objects.filter(patient=pt_id).exists():
             return []
 
         encounters = Encounter.objects.filter(patient=pt_id)
-
-        responses = Response.objects.none()
-        for encounter in encounters:
-            if encounter.response_set.all().exists():
-                responses = responses.union(encounter.response_set.all())
+        responses = Response.objects.filter(encounter__in=encounters)
 
         # TODO: get list of all surveys and match response survey
         all_surveys = Survey.objects.all()
-        completed_surveys = Survey.objects.none()
-        for response in responses:
-            completed_surveys = completed_surveys.union(Survey.objects.filter(pk=response.survey.pk))
-
+        completed_survey_ids = responses.values_list('survey', flat=True)
+        completed_surveys = Survey.objects.filter(pk__in=completed_survey_ids)
         return list(all_surveys.difference(completed_surveys))
 
 
