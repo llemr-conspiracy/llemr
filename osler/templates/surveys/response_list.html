@@ -35,6 +35,7 @@ if the survey object exists, then this is survey:responses, otherwise its survey
 
 <div class="container">
   <div class="row">
+    {% if object_list %}
     <table class="table" id="all-patients-table">
       <tr>
           <th>Date</th>
@@ -52,14 +53,21 @@ if the survey object exists, then this is survey:responses, otherwise its survey
         <td><a href="{% url 'surveys:view' id=response.survey.id %}">{{response.survey}}</a></td>
         {% endif %}
         <td>
-          <a href="{% url 'surveys:incomplete' pid=response.encounter.patient.id %}">
-            {{ response.encounter.patient.first_name }} {{ response.encounter.patient.last_name }}
+          <a href="?pt_id={{response.encounter.patient.id}}">
+            {{ response.encounter.patient.name }}
           </a>
         </td>
         <td>{{response.author}} ({{response.author_role}})</td>
       </tr>
     {% endfor %}
     </table>
+    {% else %}
+      {% if patient %}
+        <p>No responses for {{patient.name}} have been submitted.</p>
+      {% else %}
+        <p>No responses have been submitted.</p>
+      {%endif%}
+    {% endif %}
   </div>
 </div>
 {% endblock %}
