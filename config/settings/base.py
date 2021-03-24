@@ -346,7 +346,7 @@ OSLER_WORKUP_COPY_FORWARD_MESSAGE = (u"Migrated from previous workup on {date}. 
                                      u"the following as necessary:\n\n{contents}")
 
 # Dashboard settings
-OSLER_WORKUPS_PER_PAGE = 20
+OSLER_CLINIC_DAYS_PER_PAGE = 10
 
 OSLER_DEFAULT_DASHBOARD = 'dashboard-active'
 OSLER_ROLE_DASHBOARDS = {

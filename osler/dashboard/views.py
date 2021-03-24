@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, print_function
+from collections import defaultdict
 
 from django.shortcuts import render, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -35,25 +36,32 @@ def dashboard_active(request):
 
 def dashboard_attending(request):
     
-    wu_list = Workup.objects.filter(attending=request.user)
-    paginator = Paginator(wu_list, settings.OSLER_WORKUPS_PER_PAGE,
-                          allow_empty_first_page=True)
+    wu_list = Workup.objects \
+        .filter(attending=request.user) \
+        .exclude(encounter__isnull=True)
+    clindate_map = defaultdict(list)
+    for wu in wu_list:
+        clinic_day = wu.encounter.clinic_day
+        clindate_map[clinic_day].append(wu)
 
+    paginator = Paginator(list(clindate_map.items()), settings.OSLER_CLINIC_DAYS_PER_PAGE,
+                          allow_empty_first_page=True)
     page = request.GET.get('page')
     try:
-        wu_page = paginator.page(page)
+        clindate_page = paginator.page(page)
     except PageNotAnInteger:
         # If page is not an integer, deliver first page.
-        wu_page = paginator.page(1)
+        clindate_page = paginator.page(1)
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
-        wu_page = paginator.page(paginator.num_pages)
+        clindate_page = paginator.page(paginator.num_pages)
 
-
-    no_note_patients = Patient.objects.filter(workup=None, encounter__status__is_active=True).order_by('-pk')
+    no_note_patients = Patient.objects \
+        .filter(workup=None, encounter__status__is_active=True) \
+        .order_by('-encounter__order')
 
     return render(request,
                   'dashboard/dashboard-attending.html',
-                  {'wu_page': wu_page,
+                  {'clindate_page': clindate_page,
                    'no_note_patients': no_note_patients
                    })
