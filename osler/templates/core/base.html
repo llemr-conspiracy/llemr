@@ -69,7 +69,7 @@
           {% if settings.OSLER_DISPLAY_ATTENDANCE %}
             <li><a href={{ settings.OSLER_ATTENDANCE_URL }} target="_blank">{% trans 'Attendance' %}</a></li>
           {% endif %}
-           <li><a href="{% url 'about' %}" target="_blank">{{settings.OSLER_ABOUT_NAME}} </a></li>
+           <li><a href={{ settings.OSLER_ABOUT_URL }} target="_blank">{{settings.OSLER_ABOUT_NAME}} </a></li>
         </ul>
 		{% if user.is_authenticated %}
 		<ul class="nav navbar-nav pull-right">

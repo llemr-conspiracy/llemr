@@ -17,6 +17,7 @@ services:
       - postgres
       - redis
     env_file:
+      - ./.envs/.production/.stupoli
       - ./.envs/.production/.django
     command: /start
     networks:

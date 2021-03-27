@@ -16,7 +16,7 @@ services:
     volumes:
       - .:/app
     env_file:
-      - ./.envs/.local/.django
+      - ./.envs/.local/.stupoli
       - ./.envs/.local/.postgres
     command: /start
     networks:

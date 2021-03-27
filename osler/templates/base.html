@@ -47,7 +47,7 @@
               <a class="nav-link" href="{% url 'home' %}">{% trans 'Home' %} <span class="sr-only">{% trans '(current)' %}</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'about' %}">{% trans 'About' %}</a>
+              <a class="nav-link" href={{ settings.OSLER_ABOUT_URL }} target="_blank">{{settings.OSLER_ABOUT_NAME}}</a>
             </li>
             {% if request.user.is_authenticated %}
               <li class="nav-item">

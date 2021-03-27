@@ -1,5 +1,6 @@
 # Custom settings for umkc deploy
 # -----------------------------------------------------------------------------
+from .base import env
 
 OSLER_ROLE_DASHBOARDS = {
     'Attending': 'dashboard-attending',
@@ -24,3 +25,7 @@ OSLER_DEFAULT_COUNTRY = "USA"
 OSLER_DEFAULT_ADDRESS = "205 East 9th St."
 
 OSLER_ABOUT_NAME = "Help"
+OSLER_ABOUT_URL = env(
+    "OSLER_ABOUT_URL",
+    default="http://www.sojournerhealthclinic.com/?page_id=1755",
+)

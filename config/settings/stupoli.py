@@ -1,5 +1,6 @@
 # Custom settings for stupoli deploy
 # -----------------------------------------------------------------------------
+from .base import env
 
 OSLER_ROLE_DASHBOARDS = {
     'Attending': 'dashboard-attending',
@@ -23,4 +24,8 @@ OSLER_DEFAULT_ZIP_CODE = "20459"
 OSLER_DEFAULT_COUNTRY = "Deutschland"
 OSLER_DEFAULT_ADDRESS = "Seewartenstraße 10"
 
-OSLER_ABOUT_NAME = "wiki.stupoli-hamburg.de"
+OSLER_ABOUT_NAME = "Wiki"
+OSLER_ABOUT_URL = env(
+    "OSLER_ABOUT_URL",
+    default="https://wiki.stupoli-hamburg.de",
+)
