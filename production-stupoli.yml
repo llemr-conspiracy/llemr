@@ -39,15 +39,15 @@ services:
 
   nginx:
     image: nginx:1.19
+    container_name: nginx
     ports:
       - 80:80
       - 443:443
     env_file:
       - ./.envs/.production/.nginx
     volumes:
-      - ./compose/production/nginx/templates:/etc/nginx/conf.d
+      - ./compose/production/nginx/templates:/etc/nginx/templates
       - ./compose/production/nginx/certs:/etc/nginx/certs
-
     depends_on:
       - django
     networks:
