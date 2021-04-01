@@ -131,6 +131,10 @@ def submit(request, pid, id):
             # FIXME is this the best way to raise error?
             raise PermissionDenied
 
+    if Response.objects.filter(encounter=encounter, survey=survey).exists():
+        messages.error(request, 'Error: This form was already filled earlier during this encounter')
+        return redirect('surveys:incomplete', pid=pid)
+
     response = Response(survey=survey)
     response.author = request.user
     response.author_role = get_active_role(request)
