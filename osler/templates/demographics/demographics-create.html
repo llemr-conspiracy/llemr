@@ -1,5 +1,7 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block title %}
 {% if patient %}
 {{ patient.name }}
@@ -9,11 +11,11 @@
 {% endblock %}
 
 {% block header %}
-<h1>New Survey </h1>
+<h1>{% trans 'New Survey' %} </h1>
 {% if patient %}
-<p class="lead">Demographics for <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
+<p class="lead">{% trans 'Demographics for' %} <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
 {% else %}
-<p class="lead">Demographics for <em><a href="{% url 'core:patient-detail' pk=demographics.patient.id %}">{{ demographics.patient.name }}</a></em></p>
+<p class="lead">{% trans 'Demographics for' %} <em><a href="{% url 'core:patient-detail' pk=demographics.patient.id %}">{{ demographics.patient.name }}</a></em></p>
 {% endif %}
 {% endblock %}
 

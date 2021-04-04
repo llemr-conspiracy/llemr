@@ -1,13 +1,14 @@
 {% extends "core/base.html" %}
 
 {% load static %}
+{% load i18n %}
 
 {% block title %}
-Osler: {{ title | default:"All Patients"}}
+{% blocktrans %}Osler: {{ title }}{% endblocktrans %}
 {% endblock %}
 
 {% block header %}
-<h1>{{ title | default:"All Patients" }}</h1>
+<h1>{{ title }}</h1>
 {% endblock %}
 
 {% block content %}

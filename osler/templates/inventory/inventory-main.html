@@ -1,34 +1,35 @@
 {% extends "core/base.html" %}
+{% load i18n %}
 
 {% block title %}
-Drug Inventory
+{% trans 'Drug Inventory'%}
 {% endblock %}
 
 {% block header %}
-<h2>Drug Inventory</h2>
-<a class="btn btn-primary btn-lg" href="{% url 'inventory:pre-drug-add-new' %}" role="button">Add New Drug</a>
+<h2>{% trans 'Drug Inventory'%}</h2>
+<a class="btn btn-primary btn-lg" href="{% url 'inventory:pre-drug-add-new' %}" role="button">{% trans 'Add New Drug'%}</a>
 {% if can_export_csv %}
-  <a class="btn btn-primary btn-lg" href="{% url 'inventory:export-csv' %}" role="button">Export Inventory</a>
-  <a href="#" class="btn btn-primary btn-lg"  data-toggle="modal" data-target="#dispensingHistoryModal" role="button">Export Dispensing History</a>
+  <a class="btn btn-primary btn-lg" href="{% url 'inventory:export-csv' %}" role="button">{% trans 'Export Inventory'%}</a>
+  <a href="#" class="btn btn-primary btn-lg"  data-toggle="modal" data-target="#dispensingHistoryModal" role="button">{% trans 'Export Dispensing History'%}</a>
   <div class="modal fade" id="dispensingHistoryModal" tabindex="-1" role="dialog" aria-labelledby="dispensingHistoryModalLabel" aria-hidden="true">
     <form action="{% url 'inventory:export-dispensing-history' %}" method="post">
       {% csrf_token %}
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h2 class="modal-title" id="dispensingHistoryModalLabel">Select Date Range</h2>
+            <h2 class="modal-title" id="dispensingHistoryModalLabel">{% trans 'Select Date Range'%}</h2>
           </div>
           <div class="modal-body">
             <div class="form-group">
-              Start Date:
+              {% trans 'Start Date'%}:
               <input type="date" class="form-control" name="start_date" id="start_date" required>
-              End Date:
+              {% trans 'End Date'%}:
               <input type="date" class="form-control" name="end_date" id="end_date" required>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Export Dispensing History</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Close'%}</button>
+            <button type="submit" class="btn btn-primary">{% trans 'Export Dispensing History'%}</button>
           </div>
         </div>
       </div>
@@ -40,7 +41,7 @@ Drug Inventory
 {% block content %}
 <div class="container">
     <div class="form-group">
-        <label for="drug-list-filter-input"  class="sr-only" >Filter</label>
+        <label for="drug-list-filter-input"  class="sr-only" >{% trans 'Filter'%}</label>
         <div class="input-group">
             <div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
             <input type="text" id="drug-list-filter-input" placeholder="Filter by drug name or lot number" class="form-control" onkeyup="filterDrugListTable()">
@@ -48,13 +49,13 @@ Drug Inventory
     </div>
     <table class="table" id="drug-list-table">
         <tr>
-          <th>Name</th>
-          <th>Dose</th>
-          <th>Category</th>
-          <th>Stock</th>
-          <th>Lot Number</th>
-          <th>Expiration Date</th>
-          <th>Manufacturer</th>
+          <th>{% trans 'Name'%}</th>
+          <th>{% trans 'Dose'%}</th>
+          <th>{% trans 'Category'%}</th>
+          <th>{% trans 'Stock'%}</th>
+          <th>{% trans 'Lot Number'%}</th>
+          <th>{% trans 'Expiration Date'%}</th>
+          <th>{% trans 'Manufacturer'%}</th>
           <th></th>
         </tr>
         {% for drug in object_list %}
@@ -77,7 +78,7 @@ Drug Inventory
                 <td>
                     <a href="#" class="btn btn-success a-btn-slide-text btn-xs" data-toggle="modal" data-target="#dispenseModal{{ drug.id }}">
                         <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                        <span><strong>Dispense</strong></span>
+                        <span><strong>{% trans 'Dispense'%}</strong></span>
                     </a>
                     <div class="modal fade" id="dispenseModal{{ drug.id }}" tabindex="-1" role="dialog" aria-labelledby="dispenseModal{{ drug.id }}Label" aria-hidden="true">
                     <form action="{% url 'inventory:drug-dispense' %}" method="post">
@@ -85,18 +86,18 @@ Drug Inventory
                       <div class="modal-dialog" role="document">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h2 class="modal-title" id="dispenseModal{{ drug.id }}Label">Dispense Drug</h2>
+                            <h2 class="modal-title" id="dispenseModal{{ drug.id }}Label">{% trans 'Dispense Drug'%}</h2>
                           </div>
                           <div class="modal-body">
-                            How many <b>{{ drug.name }} {% if drug.unit %}{{ drug.dose }}{% endif %} {% if drug.unit %}{{ drug.unit }}{% endif %}</b> would you like to dispense?
+                            {% trans 'How many' %} <b>{{ drug.name }} {% if drug.unit %}{{ drug.dose }}{% endif %} {% if drug.unit %}{{ drug.unit }}{% endif %}</b> {% trans 'would you like to dispense'%}?
                             <div class="form-group">
                               <input type="number" class="form-control" placeholder="1" name="num" id="num" min="1" max="{{ drug.stock }}" required>
                             </div>
                             <input type="hidden" name="pk" id="pk" value="{{ drug.id }}">
-                            For which patient would you like to dispense <b>{{ drug.name }}</b>?
+                            {%blocktrans%}For which patient would you like to dispense <b>{{ drug.name }}</b>?{%endblocktrans%}
                             <div class="form-group">
                               <select class="form-control" name="patient_pk" id="patient_pk">
-                                <option disabled selected value> -- select patient -- </option>
+                                <option disabled selected value> -- {% trans 'select patient'%} -- </option>
                                 {% for patient in patients %}
                                   <option value="{{ patient.pk }}">
                                     {{ patient.name }}  {{ patient.age }}/{{ patient.gender }}</span></option>
@@ -105,8 +106,8 @@ Drug Inventory
                             </div>
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Dispense Drug</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Cancel'%}</button>
+                            <button type="submit" class="btn btn-primary">{% trans 'Dispense Drug'%}</button>
                           </div>
                         </div>
                       </div>

@@ -63,19 +63,29 @@ class TestDrugList(TestCase):
         dispense = drug_initial.stock
         remain = drug_initial.stock - dispense
         url = reverse('inventory:drug-dispense')
-        response = self.client.post(url, {'pk':self.drug.pk, 'num':str(dispense), 'patient_pk':self.pt.pk, 'encounter': self.encounter.id }, follow=True)
+        response = self.client.post(
+            url,
+            {
+                'pk': self.drug.pk,
+                'num': str(dispense),
+                'patient_pk': self.pt.pk,
+                'encounter': self.encounter.id
+            },
+            follow=True
+        )
         drug_final = Drug.objects.get(pk=self.drug.pk)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(remain, drug_final.stock)
+        assert response.status_code == 200
+        assert remain == drug_final.stock
 
         assert DispenseHistory.objects.count() == 1
         url = reverse('core:patient-detail', args=(self.pt.id,))
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.drug.name)
-        self.assertContains(response, self.drug.lot_number)
-        self.assertContains(response, str(dispense))
+
+        assert response.status_code == 200
+        assert self.drug.name in response.content.decode('ascii')
+        assert self.drug.lot_number in response.content.decode('ascii')
+        assert str(dispense) in response.content.decode('ascii')
 
     def test_drug_dispense_cannot_dispense(self):
         assert DispenseHistory.objects.count() == 0
@@ -86,8 +96,8 @@ class TestDrugList(TestCase):
         response = self.client.post(url, {'pk':self.drug.pk, 'num':str(dispense), 'patient_pk':self.pt.pk}, follow=True)
         drug_final = Drug.objects.get(pk=self.drug.pk)
 
-        self.assertEqual(drug_initial.stock, drug_final.stock)
-        self.assertEqual(response.status_code, 404)
+        assert drug_initial.stock == drug_final.stock
+        assert response.status_code == 404
         assert DispenseHistory.objects.count() == 0
 
 class TestDrugAdd(TestCase):

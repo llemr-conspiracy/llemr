@@ -1,12 +1,13 @@
 {% extends "core/base.html" %}
+{% load i18n %}
 
 {% block title %}
-Add New Drug
+{% trans 'Add New Drug'%}
 {% endblock %}
 
 {% block header %}
-<h1>Add New Drug</h1>
-<p class="lead">Create a new drug in the database</p>
+<h1>{% trans 'Add New Drug'%}</h1>
+<p class="lead">{% trans 'Create a new drug in the database'%}</p>
 {% endblock %}
 
 {% block content %}

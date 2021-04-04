@@ -1,5 +1,6 @@
 {% extends "core/base-form.html" %}
 
+{% load i18n %}
 {% load bootstrap4 %}
 
 {% block title %}
@@ -7,7 +8,7 @@
 {% endblock %}
 
 {% block header %}
-<h1>New {{ note_type }} </h1>
+<h1>{% trans 'New' context "New note type" %} {{ note_type }} </h1>
 {% endblock %}
 
 {% block content %}

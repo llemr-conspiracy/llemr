@@ -2,7 +2,7 @@
 
 from django.forms import (
     Form, CharField, ModelForm, EmailField, CheckboxSelectMultiple,
-    ModelMultipleChoiceField, CheckboxInput)
+    ModelMultipleChoiceField, CheckboxInput, TextInput)
 from django.contrib.auth.forms import AuthenticationForm
 
 from django.conf import settings
@@ -17,6 +17,8 @@ from crispy_forms.bootstrap import InlineCheckboxes
 from osler.core import models
 from osler.users.models import User
 
+from django.utils.translation import gettext_lazy as _
+
 
 class CustomCheckbox(Field):
     template = 'core/custom_checkbox.html'
@@ -25,14 +27,14 @@ class CustomCheckbox(Field):
 
 
 class DuplicatePatientForm(Form):
-    first_name = CharField(label='First Name')
-    last_name = CharField(label='Last Name')
+    first_name = CharField(label=_('First Name'))
+    last_name = CharField(label=_('Last Name'))
 
     def __init__(self, *args, **kwargs):
         super(DuplicatePatientForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.fields['first_name'].widget.attrs['autofocus'] = True
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
 
 class PatientForm(ModelForm):
@@ -41,14 +43,17 @@ class PatientForm(ModelForm):
         exclude = ['demographics']
         if not settings.OSLER_DISPLAY_CASE_MANAGERS:
             exclude.append('case_managers')
+        widgets = {
+            'date_of_birth': TextInput(attrs={'type': 'date'}),
+        }
 
     if settings.OSLER_DISPLAY_CASE_MANAGERS:
         case_managers = ModelMultipleChoiceField(
             required=False,
             queryset=get_user_model().objects
-                .filter(groups__permissions__codename='case_manage_Patient')
-                .distinct()
-                .order_by("last_name")
+            .filter(groups__permissions__codename='case_manage_Patient')
+            .distinct()
+            .order_by("last_name")
         )
 
     def __init__(self, *args, **kwargs):
@@ -62,7 +67,7 @@ class PatientForm(ModelForm):
         self.fields['phone'].widget.attrs['autofocus'] = True
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['ethnicities'].wrap(InlineCheckboxes)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
         self.fields['address'].widget.attrs = {'placeholder': settings.OSLER_DEFAULT_ADDRESS}
 
     def clean(self):
@@ -79,14 +84,12 @@ class PatientForm(ModelForm):
             if cleaned_data.get(alt_owner) and not cleaned_data.get(alt_phone):
                 self.add_error(
                     alt_phone,
-                    "An Alternate Phone is required" +
-                    " if a Alternate Phone Owner is specified")
+                    _("An Alternate Phone is required if a Alternate Phone Owner is specified"))
 
             if cleaned_data.get(alt_phone) and not cleaned_data.get(alt_owner):
                 self.add_error(
                     alt_owner,
-                    "An Alternate Phone Owner is required" +
-                    " if a Alternate Phone is specified")
+                    _("An Alternate Phone Owner is required if a Alternate Phone is specified"))
 
 
 class AbstractActionItemForm(ModelForm):
@@ -107,7 +110,7 @@ class AbstractActionItemForm(ModelForm):
 
         self.fields['instruction'].queryset = models.ActionInstruction\
             .objects.filter(active=True)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
 
 class ActionItemForm(AbstractActionItemForm):
@@ -125,13 +128,13 @@ class UserInitForm(ModelForm):
         model = User
         fields = [
             'name',
-            'first_name', 
-            'last_name', 
-            'phone', 
-            'languages', 
-            'gender', 
+            'first_name',
+            'last_name',
+            'phone',
+            'languages',
+            'gender',
             'groups'
-            ]
+        ]
 
     def __init__(self, *args, **kwargs):
         super(UserInitForm, self).__init__(*args, **kwargs)
@@ -143,13 +146,13 @@ class UserInitForm(ModelForm):
         self.helper.field_class = 'col-lg-8'
         self.helper['languages'].wrap(InlineCheckboxes)
         self.helper['groups'].wrap(InlineCheckboxes)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
         required_fields = [
-            'first_name', 
-            'last_name', 
+            'first_name',
+            'last_name',
             'groups'
-            ]
+        ]
         for field in required_fields:
             self.fields[field].required = True
 
@@ -165,4 +168,3 @@ class DocumentForm(ModelForm):
         super(DocumentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
-

@@ -99,7 +99,7 @@ class WorkupCreate(NoteFormView):
     template_name = 'workup/workup_create.html'
     form_class = forms.WorkupForm
     model = models.Workup
-    note_type = 'Workup'
+    note_type = _('Workup')
 
     def get_form_kwargs(self):
         kwargs = super(WorkupCreate, self).get_form_kwargs()
@@ -342,7 +342,7 @@ class BasicNoteUpdate(NoteUpdate):
 class AddendumCreate(NoteFormView):
     template_name = 'core/form_submission.html'
     form_class = forms.AddendumForm
-    note_type = 'Addendum'
+    note_type = _('Addendum')
 
     def form_valid(self, form):
         note = form.save(commit=False)

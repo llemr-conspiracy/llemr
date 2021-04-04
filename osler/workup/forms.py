@@ -250,8 +250,8 @@ class WorkupForm(ModelForm):
                     css_class=half_column)
             ),
 
-            Submit('pending', 'Save for Later', css_class='btn btn-warning'),
-            Submit('complete', 'Submit', css_class='btn btn-success')
+            Submit('pending', _('Save for Later'), css_class='btn btn-warning'),
+            Submit('complete', _('Submit'), css_class='btn btn-success')
         )
 
         self.fields['ros'].widget.attrs['rows'] = 15
@@ -363,7 +363,7 @@ class AttestableBasicNoteForm(ModelForm):
         self.helper = FormHelper(self)
         self.fields['encounter'].queryset = Encounter.objects\
             .filter(patient=pt).order_by('clinic_day')
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
 
 class BasicNoteForm(ModelForm):
@@ -390,4 +390,4 @@ class AddendumForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(AddendumForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))

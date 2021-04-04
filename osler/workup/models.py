@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Q
 from django.utils.timezone import now
@@ -6,7 +5,7 @@ from django.urls import reverse
 from django.core.validators import MinValueValidator
 from django.conf import settings
 
-from osler.core.models import Note, ReferralLocation, ReferralType, Encounter
+from osler.core.models import Note, Encounter
 from osler.workup import validators as workup_validators
 
 from osler.users.utils import group_has_perm
@@ -15,6 +14,7 @@ from simple_history.models import HistoricalRecords
 
 from django.utils.translation import gettext_lazy as _
 
+from django.utils.translation import gettext_lazy as _
 
 class DiagnosisType(models.Model):
     '''Simple text-contiaining class for storing the different kinds of
@@ -48,15 +48,15 @@ class AttestationMixin(models.Model):
             self.signed_date = now()
             self.signer = user
         else:
-            raise ValueError("Special permissions are required to sign notes.")
+            raise ValueError(_("Special permissions are required to sign notes."))
 
     def signed(self):
         """Has this workup been attested? Returns True if yes, False if no."""
         return self.signer is not None
 
     def attribution(self):
-        """Builds an attribution string of the form Doe, John on DATE"""
-        return " ".join([str(self.author), "on", str(self.written_date())])
+        '''Builds an attribution string of the form Doe, John on DATE'''
+        return " ".join([str(self.author), _("on"), str(self.written_date())])
 
     @classmethod
     def get_sign_perm(cls):
@@ -79,10 +79,12 @@ class AbstractBasicNote(Note):
         abstract = True
 
     def __str__(self):
-        u = '{} on at {} by {}'.format(
-            self.title,
-            self.written_datetime.strftime('%c'),
-            self.author)
+        u = _('%(title)s on at %(written)s by %(auth)s').format(
+            {
+                'title': self.title,
+                'written': self.written_datetime.strftime('%c'),
+                'auth': self.author
+            })
         return u
 
     def short_text(self):
@@ -129,7 +131,7 @@ class Workup(Note, AttestationMixin):
         null=True, blank=True,
         related_name="attending_physician",
         on_delete=models.PROTECT,
-        help_text="Which attending saw the patient?")
+        help_text=_("Which attending saw the patient?"))
 
     other_volunteer = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
@@ -137,79 +139,84 @@ class Workup(Note, AttestationMixin):
         related_name="other_volunteer",
         help_text="Which other volunteer(s) did you work with (if any)?")
 
-    encounter = models.ForeignKey(Encounter, on_delete=models.CASCADE)
+    encounter = models.ForeignKey(
+        Encounter,
+        null=True,
+        on_delete=models.CASCADE,
+        verbose_name=_("Encounter"),)
 
-    chief_complaint = models.CharField(max_length=1000, verbose_name="CC", blank=True)
-    diagnosis = models.CharField(max_length=1000, verbose_name="Dx", blank=True, null=True)
-    diagnosis_categories = models.ManyToManyField(DiagnosisType, verbose_name="Diagnosis Categories", blank=True)
+    chief_complaint = models.CharField(max_length=1000, verbose_name=_("CC"), blank=True)
+    diagnosis = models.CharField(max_length=1000, verbose_name=_("Dx"), blank=True, null=True)
+    diagnosis_categories = models.ManyToManyField(DiagnosisType, verbose_name=_("Diagnosis Categories"), blank=True)
 
-    hpi = models.TextField(verbose_name="HPI", blank=True)
-    pmh = models.TextField(verbose_name="PMH", blank=True)
-    psh = models.TextField(verbose_name="PSH", blank=True)
-    meds = models.TextField(verbose_name="Medications", blank=True)
+    hpi = models.TextField(verbose_name=_("HPI"), blank=True)
+    pmh = models.TextField(verbose_name=_("PMH"), blank=True)
+    psh = models.TextField(verbose_name=_("PSH"), blank=True)
+    meds=models.TextField(verbose_name=_("Medications"), blank=True)
     allergies = models.TextField(blank=True)
-    fam_hx = models.TextField(verbose_name="Family History", blank=True)
-    soc_hx = models.TextField(verbose_name="Social History", blank=True)
-    ros = models.TextField(verbose_name="ROS", blank=True)
+    fam_hx=models.TextField(verbose_name=_("Family History"), blank=True)
+    soc_hx=models.TextField(verbose_name=_("Social History"), blank=True)
+    ros=models.TextField(verbose_name=_("ROS"), blank=True)
 
     # represented internally in per min
     hr = models.PositiveSmallIntegerField(
-        blank=True, null=True, verbose_name="Heart Rate")
+        blank=True, null=True, verbose_name=_("Heart Rate"))
 
     # represented internally as mmHg
     bp_sys = models.PositiveSmallIntegerField(
-        blank=True, null=True, verbose_name="Systolic",
+        blank=True, null=True, verbose_name=_("Systolic"),
         validators=[workup_validators.validate_bp_systolic])
     bp_dia = models.PositiveSmallIntegerField(
-        blank=True, null=True, verbose_name="Diastolic",
+        blank=True, null=True, verbose_name=_("Diastolic"),
         validators=[workup_validators.validate_bp_diastolic])
 
     # represented internally in per min
     rr = models.PositiveSmallIntegerField(
-        blank=True, null=True, verbose_name="Respiratory Rate")
+        blank=True, null=True, verbose_name=_("Respiratory Rate"))
 
     # represented internally in Fahrenheit
     t = models.DecimalField(
         max_digits=4, decimal_places=1,
         blank=True, null=True,
-        verbose_name="Temperature")
+        verbose_name=_("Temperature"))
 
     # represented internally as inches
-    height = models.PositiveSmallIntegerField(
+    height = models.PositiveSmallIntegerField(verbose_name=_("Height"),
         blank=True, null=True)
     # represented internally as kg
-    weight = models.DecimalField(
+    weight = models.DecimalField(verbose_name=_("Weight"),
         max_digits=5, decimal_places=1,
         blank=True, null=True)
 
-    pe = models.TextField(verbose_name="Physical Examination", blank=True)
+    pe = models.TextField(verbose_name=_("Physical Examination"), blank=True)
 
     labs_ordered_external = models.TextField(
-        blank=True, null=True, verbose_name="Labs Ordered Externally")
+        blank=True, null=True, verbose_name=_("Labs Ordered Externally"))
     labs_ordered_internal = models.TextField(
-        blank=True, null=True, verbose_name="Labs Ordered Internally")
+        blank=True, null=True, verbose_name=_("Labs Ordered Internally"))
 
     rx = models.TextField(
-        blank=True, verbose_name="Prescription Orders",
+        blank=True, verbose_name=_("Prescription Orders"),
         help_text=_("Ex: Ibuprofen 200mg 1 tab PO PRN Q8H for pain #28"))
 
-    got_voucher = models.BooleanField(default=False)
+    got_voucher = models.BooleanField(default=False, verbose_name=_("Got voucher"))
     voucher_amount = models.DecimalField(
+    verbose_name=_("Voucher amount"),
         max_digits=6, decimal_places=2, blank=True, null=True,
         validators=[MinValueValidator(0)])
-    patient_pays = models.DecimalField(
+    patient_pays = models.DecimalField(verbose_name=_("Patient pays"),
         max_digits=6, decimal_places=2, blank=True, null=True,
         validators=[MinValueValidator(0)])
 
     got_imaging_voucher = models.BooleanField(default=False)
-    imaging_voucher_amount = models.DecimalField(
+    imaging_voucher_amount = models.DecimalField(verbose_name=_("Imaging voucher"),
         max_digits=6, decimal_places=2, blank=True, null=True,
         validators=[MinValueValidator(0)])
-    patient_pays_imaging = models.DecimalField(
+    patient_pays_imaging = models.DecimalField(verbose_name=_("Patient pays imaging"),
         max_digits=6, decimal_places=2, blank=True, null=True,
         validators=[MinValueValidator(0)])
 
-    a_and_p = models.TextField(verbose_name="A and P", blank=True)
+    a_and_p = models.TextField(verbose_name=_("A and P"), blank=True)
 
     is_pending = models.BooleanField(default=False)
 
@@ -244,7 +251,7 @@ class Workup(Note, AttestationMixin):
         if not self.is_pending:
             super().sign(user, group)
         else:
-            raise ValueError("Pending workups cannot be signed.")
+            raise ValueError(_("Pending workups cannot be signed."))
 
 
 class Addendum(Note):

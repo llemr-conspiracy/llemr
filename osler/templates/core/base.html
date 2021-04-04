@@ -1,4 +1,7 @@
-<!DOCTYPE html> {% load static %}
+<!DOCTYPE html>
+
+{% load static %}
+{% load i18n %}
 
 <html class="no-js" lang="">
 
@@ -23,28 +26,28 @@
 
     <div id='top-nav-bar'>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a href="{% url 'home' %}" class="navbar-brand">Osler Home</a>
+      <a href="{% url 'home' %}" class="navbar-brand">{% trans 'Osler Home' %}</a>
         <div class="navbar-collapse collapse">
           <div class="mr-auto navbar-nav">
-            <a href="{% url 'core:preintake' %}" class="nav-link">New Patient</a>
-            <a href="{% url 'core:all-patients' %}" class="nav-link">All Patients</a>
-            <a href="{% url 'dashboard-active' %}" class="nav-link">Active Patients</a>
-            <a href="{% url 'inventory:drug-list' %}" class="nav-link">Drug Inventory</a>
-            {% if settings.OSLER_DISPLAY_ATTENDANCE %}
-              <a href="{% url 'attendance' %}" class="nav-link">Attendance</a>
-            {% endif %}
+            <a href="{% url 'core:preintake' %}" class="nav-link">{% trans 'New Patient' %}</a>
+            <a href="{% url 'core:all-patients' %}" class="nav-link">{% trans 'All Patients' %}</a>
+            <a href="{% url 'dashboard-active' %}" class="nav-link">{% trans 'Active Patients' %}</a>
+            <a href="{% url 'inventory:drug-list' %}" class="nav-link">{% trans 'Drug Inventory' %}</a>
             {% if settings.OSLER_DISPLAY_APPOINTMENTS %}
-              <a href="{% url 'appointment-list' %}" class="nav-link">Appointments</a>
+              <a href="{% url 'appointment-list' %}" class="nav-link">{% trans 'Appointments' %}</a>
+            {% endif %}
+            {% if settings.OSLER_DISPLAY_ATTENDANCE %}
+              <a href="{{ settings.OSLER_ATTENDANCE_URL }}" class="nav-link">{% trans 'Attendance' %}</a>
             {% endif %}
             <a href="{% url 'about' %}" class="nav-link">{{ settings.OSLER_ABOUT_NAME }}</a>
           </div>
           {% if user.is_authenticated %}
           <div class="navbar-nav">
             {% if user.is_superuser %}
-              <a href="{% url 'admin:index' %}" class="nav-link">Admin</a>
+              <a href="{% url 'admin:index' %}" class="nav-link">{% trans 'Admin' %}</a>
             {% endif %}
             <a href="{% url 'account_logout' %}" class="nav-link">
-              Logout {{ request.user }} ({{ request.session.active_role_name | default:"no role" }})
+              {% trans 'Logout' %} {{ request.user }} ({{ request.session.active_role_name | default:"no role" }})
             </a>
           </div>
           {% endif %}
@@ -71,14 +74,12 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
 
-    {% endblock javascript %} 
-    
-    {% block extra_js %}{% endblock extra_js %}
+	{% block extra_js %}
+	{# Override this in templates to add extra javascript #}
+	{% endblock %}
 
-    <footer class="container" style="padding-top: 5%">
-      <p class="text-muted">Osler is free and open source software built by friends. To learn more or contribute, find us on <a href="https://github.com/oslerproject/osler">GitHub</a>.</p>
-    </footer>
-
-  </body>
+  <footer class="container" style="padding-top: 5%">
+    <p class="text-muted">{% blocktrans with github_url=settings.OSLER_GITHUB_URL %}Osler is free and open source software built by friends. To learn more or contribute, find us on <a ="{{github_url}}">GitHub</a>.{% endblocktrans %}</p>
+  </footer>
 
 </html>

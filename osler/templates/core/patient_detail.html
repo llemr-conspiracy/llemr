@@ -1,7 +1,9 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block title %}
-Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
+{% trans 'Patient Details' %}: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
 {% endblock %}
 
 {% block header %}
@@ -12,82 +14,82 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
   <div class="col-md-11">
     <h2> <a href="{% url 'core:patient-update' pk=patient.id %}">{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
       </a></h2>
-    <p class="lead">{{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
-    <p class="lead"><strong>Action Items:</strong> {{ patient.actionitem_status }}</p>
+    <p class="lead">{{ patient.age }} {% trans 'y/o' %} {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
+    <p class="lead"><strong>{% trans 'Action Items' %}:</strong> {{ patient.actionitem_status }}</p>
     {% if settings.OSLER_DISPLAY_REFERRALS %}
-      <p class="lead"><strong>FQHC Referral Status:</strong> {{ referral_status }}</p>
-      <p class="lead"><strong>Referrals:</strong> {{ referrals.iterator | join:", " }}</p>
+      <p class="lead"><strong>{% trans 'FQHC Referral Status' %}:</strong> {{ referral_status }}</p>
+      <p class="lead"><strong>{% trans 'Referrals' %}:</strong> {{ referrals.iterator | join:", " }}</p>
     {% endif %}
     {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
-      <p class="lead"><strong>Case Manager:</strong> {{patient.case_managers.iterator | join:"; "}}
+      <p class="lead"><strong>{% trans 'Case Manager' %}:</strong> {{patient.case_managers.iterator | join:"; "}}
     {% endif %}
-      <p class="lead"> <strong>Status:</strong> {{ patient.status.name }}
+      <p class="lead"> <strong>{% trans 'Status' %}:</strong> {{ patient.get_status.name }}
         {% if can_activate %}
           <a href="{% url 'core:patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a>
         {% endif %}</p>
       {% if patient.pending_workup_set.exists %}
       {% with workup=patient.pending_workup_set.first %}
         <div class="alert alert-danger" role="alert">
-        Patient has a <a class="alert-link" href="{% url 'workup' workup.pk %}">pending workup.</a></div>
+        {% trans 'Patient has a' %} <a class="alert-link" href="{% url 'workup' workup.pk %}">{% trans 'pending workup' %}.</a></div>
       {% endwith %}
       {% endif %}
   </div>
 </div>
 <div class="col-lg-offset-1 col-lg-4 col-sm-6 text-center" style="border: 2px  black">
-  <h3> Actions </h3>
+  <h3>  {% trans 'Actions' %} </h3>
 
   <div class="panel panel-primary">
     <div class="panel-heading">
-      <h3 class="panel-title">Clinic Day</h3>
+      <h3 class="panel-title">{% trans 'Clinic Day' %}</h3>
     </div>
     <ul class="list-group">
       <li class="list-group-item">
         <span class="glyphicon glyphicon-search" aria-hidden="true"></span>&nbsp;
-        <a href="{% url 'new-note-dispatch' pt_id=patient.pk %}"><strong>Write Note</strong></a>
+        <a href="{% url 'new-note-dispatch' pt_id=patient.pk %}"><strong>{% trans 'Write Note' %}</strong></a>
       </li>
       {% if settings.OSLER_DISPLAY_REFERRALS %}
       <li class="list-group-item">
         <span class="glyphicon glyphicon-transfer" aria-hidden="true"></span>&nbsp;
-        <a href="{% url 'select-referral-type' pt_id=patient.pk %}"><strong>Make Referral</strong></a>
+        <a href="{% url 'select-referral-type' pt_id=patient.pk %}"><strong>{% trans 'Make Referral' %}</strong></a>
       </li>
       {% endif %}
       {% if settings.OSLER_DISPLAY_APPOINTMENTS %}
       <li class="list-group-item">
         <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>&nbsp;
-        <a href="{% url 'appointment-new' %}?pt_id={{patient.pk}}"><strong>Make Appointment</strong></a>
+        <a href="{% url 'appointment-new' %}?pt_id={{patient.pk}}"><strong>{% trans 'Make Appointment' %}</strong></a>
       </li>
       {% endif %}
       {% if settings.OSLER_DISPLAY_VACCINE %}
       <li class="list-group-item">
         <span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>&nbsp;
-        <a href="{% url 'select-vaccine-series' pt_id=patient.pk %}"><strong>Give Vaccine</strong></a>
+        <a href="{% url 'select-vaccine-series' pt_id=patient.pk %}"><strong>{% trans 'Upload Document' %}</strong></a>
       </li>
       {% endif %}
       <li class="list-group-item">
         <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>&nbsp;
-        <a href="{% url 'core:new-document' pt_id=patient.pk %}"><strong>Upload Document</strong></a>
+        <a href="{% url 'core:new-document' pt_id=patient.pk %}"><strong>{% trans 'Upload Document' %}</strong></a>
       </li>
       <li class="list-group-item">
         <span class="glyphicon glyphicon-tint" aria-hidden="true"></span>&nbsp;
-          <a href="{% url 'labs:all-labs-table' pt_id=patient.pk %}"><strong>View Labs</strong></a>
+          <a href="{% url 'labs:all-labs-table' pt_id=patient.pk %}"><strong>{% trans 'View Labs' %}</strong></a>
       </li>
     </ul>
   </div>
 
   <div class="panel panel-success">
     <div class="panel-heading">
-      <h3 class="panel-title">Followup</h3>
+      <h3 class="panel-title">{% trans 'Followup' %}</h3>
     </div>
     <ul class="list-group">
       {% if settings.OSLER_DISPLAY_REFERRALS %}
       <li class="list-group-item">
         <span class="glyphicon glyphicon-phone-alt" aria-hidden="true"></span>&nbsp;
-        <a href="{% url 'select-referral' pt_id=patient.pk %}"><strong>Log follow up</strong> (referral)</a>
+        <a href="{% url 'select-referral' pt_id=patient.pk %}"><strong>{% trans 'Log follow up' %}</strong> {% trans '(referral)' %}</a>
       </li>
       {% endif %}
       <li class="list-group-item">
         <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;
-        <a href="{% url 'core:new-action-item' pt_id=patient.pk %}"><strong>New Action Item</strong></a>
+        <a href="{% url 'core:new-action-item' pt_id=patient.pk %}"><strong>{% trans 'New Action Item' %}</strong></a>
       </li>
     </ul>
   </div>
@@ -101,13 +103,13 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 <div class="container">
   <h3>&nbsp;&nbsp;Demographic Information</h3>
   <div class="container col-md-4">
-    <p><strong>&nbsp;&nbsp;Language:</strong> {{ patient.languages.iterator | join:", " }}</p>
-    <p><strong>&nbsp;&nbsp;DOB:</strong> {{patient.date_of_birth}}</p>
-    <p><strong>&nbsp;&nbsp;Email:</strong> {{patient.email | default:"Not Provided"}}</p>
+    <p><strong>&nbsp;&nbsp;{% trans 'Language' %}:</strong> {{ patient.languages.iterator | join:", " }}</p>
+    <p><strong>&nbsp;&nbsp;{% trans 'DOB' %}:</strong> {{patient.date_of_birth}}</p>
+    <p><strong>&nbsp;&nbsp;{% trans 'Email' %}:</strong> {{patient.email | default:"Not Provided"}}</p>
   </div>
   <div class="container col-md-4">
     <p>
-      <strong>Address:</strong><br>
+      <strong>{% trans 'Address' %}:</strong><br>
       {{ patient.address }}<br>
       {{ patient.city }}, {{ patient.state }} {{ patient.zip_code }}
     </p>
@@ -115,8 +117,8 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
   <div class="container col-md-4">
     <table class="table table-condensed">
       <tr>
-        <th>Contact</th>
-        <th>Phone Number</th>
+				<th>{% trans 'Contact' %}</th>
+				<th>{% trans 'Phone Number' %}</th>
       </tr>
       {% for phone, owner in patient.all_phones %}
       {% if phone or owner %}
@@ -133,27 +135,29 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 <div class="container">
   <div class="col-md-8 col-md-offset-2">
     {% if patient.demographics %}
-    <a href="{% url 'demographics-detail' patient.demographics.id %}" class="btn btn-default" role="button">See Patient Survey Data</a>
+    <a href="{% url 'demographics-detail' patient.demographics.id %}" class="btn btn-default" role="button">{% trans 'See Patient Survey Data' %}</a>
     {% else %}
     <div class="alert alert-danger" role="alert">
-      No survey data exists for this patient. Please <a class="alert-link" href="{% url 'demographics-create' patient.id %}">click here <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a> to add it.</div>
+      {% trans 'No survey data exists for this patient. Please' %} <a class="alert-link" href="{% url 'demographics-create' patient.id %}"> {% trans 'click here' %} <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a> {% trans 'add it' %}.</div>
     {% endif %}
   </div>
 </div>
 
 <div class="container">
   <div class="col-md-6">
-    <h3>Submitted Notes ({{ patient.notes | length }} Total)</h3>
+    <h3>{% trans 'Submitted Notes' %} ({% blocktrans with total=patient.notes|length %}{{ total }} Total{% endblocktrans %})</h3>
     <div class="panel-group">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">Completed Workups ({{ patient.completed_workup_set.count }})</a></h4>
+          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse1">{% blocktrans %}Completed Workups{% endblocktrans %} ({{ patient.completed_workup_set.count }})</a></h4>
         </div>
         <div id="collapse1" class="panel-collapse collapse">
           {% for note in patient.completed_workup_set %}
           <div class="panel-body">
-            <p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
-            <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+            <p><a href="{% url 'workup' pk=note.pk %}"><strong>{% trans 'Workup' %}:</strong></a> {{ note.short_text }}</p>
+            <p class="text-muted text-right">
+              {% blocktrans with auth=note.author authtype=note.author_type written=note.written_datetime %}by {{ auth }} ({{ authtype }}) at {{ written }}
+            {% endblocktrans %}</p>
             {% if can_export_pdf %}
             <p class="text-right">
               <a href="{% url 'workup-pdf' pk=note.pk %}" target="_blank"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
@@ -166,13 +170,15 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse13">Pending Workups ({{ patient.pending_workup_set.count }})</a></h4>
+          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse13">{% trans 'Pending Workups' %} ({{ patient.pending_workup_set.count }})</a></h4>
         </div>
         <div id="collapse13" class="panel-collapse collapse">
           {% for note in patient.pending_workup_set %}
           <div class="panel-body">
-            <p><a href="{% url 'workup' pk=note.pk %}"><strong>Workup:</strong></a> {{ note.short_text }}</p>
-            <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+            <p><a href="{% url 'workup' pk=note.pk %}"><strong>{% trans 'Workup' %}:</strong></a> {{ note.short_text }}</p>
+            <p class="text-muted text-right">
+              {% blocktrans with auth=note.author authtype=note.author_type written=note.written_datetime %}by {{ auth }} ({{ authtype }}) at {{ written }}
+            {% endblocktrans %}</p>
           </div>
           {% endfor %}
         </div>
@@ -180,15 +186,17 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
       <div class="panel panel-default">
         {% with patient.document_set.all as note_set %}
         <div class="panel-heading">
-          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">Uploaded Prescriptions and Documents ({{ patient.document_set.all | length }})</a></h4>
+          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse2">{% trans 'Uploaded Prescriptions and Documents' %} ({{ patient.document_set.all | length }})</a></h4>
         </div>
         <div id="collapse2" class="panel-collapse collapse">
           {% for note in patient.document_set.all %}
           <div class="panel-body">
             <p><a href="{% url 'core:document-detail' pk=note.pk %}"><strong>{{ note.document_type | title }}:</strong></a> {{ note.short_text }}</p>
-            <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+            <p class="text-muted text-right">
+              {% blocktrans with auth=note.author authtype=note.author_type written=note.written_datetime %}by {{ auth }} ({{ authtype }}) at {{ written }}
+            {% endblocktrans %}</p>
             {% if can_case_manage %}
-            <p class="text-right"><a href="{% url 'admin:core_document_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+            <p class="text-right"><a href="{% url 'admin:core_document_change' note.id %}" target="_blank"><i>{% trans 'Edit' %}</i></a></p>
             {% endif %}
           </div>
           {% endfor %}
@@ -199,35 +207,41 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
       <div class="panel panel-default">
         {# followup_set is a custom method in the patient object returns a list rather than a queryset, so no .all() #}
         <div class="panel-heading">
-          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse3">Followups ({{ total_followups}})</a></h4>
+          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse3">{% trans 'Followups' %} ({{ total_followups}})</a></h4>
         </div>
         <div id="collapse3" class="panel-collapse collapse">
           {% for note in patient.followup_set %}
           <div class="panel-body">
             {# here, the url takes an arugment to route it to the correct  #}
-            <p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} Followup:</strong></a> {{ note.short_text }}</p>
-            <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+            <p><a href="{% url 'followup' pk=note.pk model=note.type %}"><strong>{{ note.type }} {% trans 'Followup' %}:</strong></a> {{ note.short_text }}</p>
+            <p class="text-muted text-right">
+              {% blocktrans with auth=note.author authtype=note.author_type written=note.written_datetime %}by {{ auth }} ({{ authtype }}) at {{ written }}
+            {% endblocktrans %}</p>
             {% if can_case_manage %}
             {# with multiple note types, will need to define separately, for now only action item fu #}
-            <a href="{% url 'admin:followup_actionitemfollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+            <a href="{% url 'admin:followup_actionitemfollowup_change' note.id %}" target="_blank"><i>{% trans 'Edit' %}</i></a></p>
             {% endif %}
           </div>
           {% endfor %}
           {% for note in vaccine_followups %}
           <div class="panel-body">
-            <p><strong>Vaccine Followup:</strong> {{ note.short_text }}</p>
-            <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+            <p><strong>{% trans 'Vaccine Followup' %}:</strong> {{ note.short_text }}</p>
+            <p class="text-muted text-right">
+              {% blocktrans with auth=note.author authtype=note.author_type written=note.written_datetime %}by {{ auth }} ({{ authtype }}) at {{ written }}
+            {% endblocktrans %}</p>
             {% if can_case_manage %}
-            <a href="{% url 'admin:vaccine_vaccinefollowup_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+            <a href="{% url 'admin:vaccine_vaccinefollowup_change' note.id %}" target="_blank"><i>{% trans 'Edit' %}</i></a></p>
             {% endif %}
           </div>
           {% endfor %}
           {% for note in referral_followups %}
           <div class="panel-body">
-            <p><strong>Referral Followup:</strong> {{ note.short_text }}</p>
-            <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+            <p><strong>{% trans 'Referral Followup' %}:</strong> {{ note.short_text }}</p>
+            <p class="text-muted text-right">
+              {% blocktrans with auth=note.author authtype=note.author_type written=note.written_datetime %}by {{ auth }} ({{ authtype }}) at {{ written }}
+            {% endblocktrans %}</p>
             {% if can_case_manage %}
-            <a href="{% url 'admin:referral_patientcontact_change' note.id %}" target="_blank"><i>Edit</i></a></p>
+            <a href="{% url 'admin:referral_patientcontact_change' note.id %}" target="_blank"><i>{% trans 'Edit' %}</i></a></p>
             {% endif %}
           </div>
           {% endfor %}
@@ -237,16 +251,18 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
       {% if settings.OSLER_DISPLAY_VACCINE %}
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse4">Vaccines ({{ patient.vaccinedose_set.all | length }})</a></h4>
+          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse4">{% trans 'Vaccines' %} ({{ patient.vaccinedose_set.all | length }})</a></h4>
         </div>
         <div id="collapse4" class="panel-collapse collapse">
           {% for note in patient.vaccinedose_set.all %}
           <div class="panel-body">
-            <p><strong>Vaccine:</strong> {{ note }}</p>
-            <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+            <p><strong>{% trans 'Vaccine' %}:</strong> {{ note }}</p>
+            <p class="text-muted text-right">
+              {% blocktrans with auth=note.author authtype=note.author_type written=note.written_datetime %}by {{ auth }} ({{ authtype }}) at {{ written }}
+            {% endblocktrans %}</p>
             {% if can_case_manage %}
             <p class="text-right">
-              <a href="{% url 'admin:vaccine_vaccinedose_change' note.id %}" target="_blank"><i>Edit</i></a>
+              <a href="{% url 'admin:vaccine_vaccinedose_change' note.id %}" target="_blank"><i>{% trans 'Edit' %}</i></a>
             </p>
             {% endif %}
           </div>
@@ -257,15 +273,17 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
       {% if settings.OSLER_DISPLAY_APPOINTMENTS %}
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse5">Attestable Basic Notes ({{ patient.attestablebasicnote_set.all | length }})</a></h4>
+          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse5">{% trans 'Attestable Basic Notes' %} ({{ patient.attestablebasicnote_set.all | length }})</a></h4>
         </div>
         <div id="collapse5" class="panel-collapse collapse">
           {% for note in patient.attestablebasicnote_set.all %}
           <div class="panel-body">
-            <p><a href="{% url 'attestable-basic-note-detail' pk=note.pk %}"><strong>Attestable Basic Note:</strong></a> {{ note.short_text }}</p>
-            <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+            <p><a href="{% url 'attestable-basic-note-detail' pk=note.pk %}"><strong>{% trans 'Attestable Basic Note' %}:</strong></a> {{ note.short_text }}</p>
+            <p class="text-muted text-right">
+              {% blocktrans with auth=note.author authtype=note.author_type written=note.written_datetime %}by {{ auth }} ({{ authtype }}) at {{ written }}
+            {% endblocktrans %}</p>
             {% if can_case_manage %}
-            <p class="text-right"><a href="{% url 'admin:workup_attestablebasicnote_change' note.id %}" target="_blank"><i>Edit</i></a>
+            <p class="text-right"><a href="{% url 'admin:workup_attestablebasicnote_change' note.id %}" target="_blank"><i>{% trans 'Edit' %}</i></a>
             </p>
             {% endif %}
           </div>
@@ -275,15 +293,17 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
       {% endif %}
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse6">Basic Notes ({{ patient.basicnote_set.all | length }})</a></h4>
+          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse6">{% trans 'Basic Notes' %} ({{ patient.basicnote_set.all | length }})</a></h4>
         </div>
         <div id="collapse6" class="panel-collapse collapse">
           {% for note in patient.basicnote_set.all %}
           <div class="panel-body">
-            <p><a href="{% url 'basic-note-detail' pk=note.pk %}"><strong>Basic Note:</strong></a> {{ note.short_text }}</p>
-            <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+            <p><a href="{% url 'basic-note-detail' pk=note.pk %}"><strong>{% trans 'Basic Note' %}:</strong></a> {{ note.short_text }}</p>
+            <p class="text-muted text-right">
+              {% blocktrans with auth=note.author authtype=note.author_type written=note.written_datetime %}by {{ auth }} ({{ authtype }}) at {{ written }}
+            {% endblocktrans %}</p>
             {% if can_case_manage %}
-            <p class="text-right"><a href="{% url 'admin:workup_basicnote_change' note.id %}" target="_blank"><i>Edit</i></a>
+            <p class="text-right"><a href="{% url 'admin:workup_basicnote_change' note.id %}" target="_blank"><i>{% trans 'Edit' %}</i></a>
             </p>
             {% endif %}
           </div>
@@ -292,16 +312,20 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse7">Dispensed Drugs ({{ patient.dispensehistory_set.all|dictsortreversed:"last_modified"|slice:":10" | length }})</a></h4>
+          <h4 class="panel-title"><a data-toggle="collapse" href="#collapse7">{% trans 'Dispensed Drugs' %} ({{ patient.dispensehistory_set.all|dictsortreversed:"last_modified"|slice:":10" | length }})</a></h4>
         </div>
         <div id="collapse7" class="panel-collapse collapse">
           {% for note in patient.dispensehistory_set.all|dictsortreversed:"last_modified"|slice:":10" %}
           <div class="panel-body">
-            <p><strong>Dispensed Drugs:</strong> Dispensed {{ note.dispense }} {{ note.drug.name }} {{ note.drug.dose }} {{ note.drug.unit }}, Lot: {{ note.drug.lot_number }}</p>
-            <p class="text-muted text-right">by {{ note.author }} ({{ note.author_type }}) at {{ note.written_datetime }}</p>
+            <p><strong>{% trans 'Dispensed Drugs' %}:</strong>
+            {% blocktrans with amount=note.dispense drugname=note.drug.name dose=note.drug.dose unit=note.drug.unit lot_number=note.drug.lot_number%}
+              Dispensed {{ amount }} {{ drugname }} {{ dose }} {{ unit }}, Lot: {{ lot_number }}{% endblocktrans %}</p>
+            <p class="text-muted text-right">
+              {% blocktrans with auth=note.author authtype=note.author_type written=note.written_datetime %}by {{ auth }} ({{ authtype }}) at {{ written }}
+            {% endblocktrans %}</p>
             {% if can_case_manage %}
             <p class="text-right">
-              <a href="{% url 'admin:inventory_dispensehistory_change' note.id %}" target="_blank"><i>Edit</i></a>
+              <a href="{% url 'admin:inventory_dispensehistory_change' note.id %}" target="_blank"><i>{% trans 'Edit' %}</i></a>
             </p>
             {% endif %}
           </div>
@@ -311,7 +335,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
     </div>
   </div>
   <div class="col-md-6">
-    <h3>Action Items ({{ total_ais }} Total)</h3>
+    <h3>{% trans 'Action Items' %} ({% blocktrans with total=total_ais %}{{ total }} Total{% endblocktrans %})</h3>
     <div class="panel-group">
       {% for ai_type in zipped_ai_list %}
       {% with ai_list=ai_type.1 panel_id=ai_type.0 ai_group=ai_type.2 %}
@@ -340,7 +364,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
 {% if settings.OSLER_DISPLAY_APPOINTMENTS %}
   <div class="container">
       <div class="col-md-8">
-          <h3>Appointments ({{ patient.appointment_set.all | length }} Total)</h3>
+          <h3>{% trans 'Appointments' %} ({% blocktrans with total=patient.appointment_set.all|length %}{{ total }} Total{% endblocktrans %})</h3>
           <div class="panel-group">
               {% for apt_type in zipped_apt_list %}
                   <div class="panel panel-default">
@@ -361,7 +385,7 @@ Patient Details: {{ patient.last_name }}, {{ patient.first_name }} {{ patient.mi
                                       </div>
                                       <div class="row">
                                           <div class="col-md-8"><i>{{ app.comment }}</i></div>
-                                          <div class="col-md-4"><a href="{% url 'appointment-update' pk=app.id %}">Edit Appointment</a></div>
+                                          <div class="col-md-4"><a href="{% url 'appointment-update' pk=app.id %}">{% trans 'Edit Appointment' %}</a></div>
                                       </div>
                                       <div class="row">
                                           <div class="col-md-9"></br></div>

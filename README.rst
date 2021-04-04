@@ -57,6 +57,15 @@ To run the tests, check your test coverage, and generate an HTML coverage report
     $ docker-compose -f local.yml run --rm django coverage html
     $ open htmlcov/index.html
 
+Building Documentation
+^^^^^^^^^^^^^^^^^^^^^^
+
+Documentation can be built with::
+
+	$ docker-compose -f local.yml up docs
+
+Which serves documentation at `http://0.0.0.0:7000`
+
 Deployment
 ----------
 

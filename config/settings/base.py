@@ -346,7 +346,7 @@ OSLER_WORKUP_COPY_FORWARD_MESSAGE = (u"Migrated from previous workup on {date}. 
                                      u"the following as necessary:\n\n{contents}")
 
 # Dashboard settings
-OSLER_CLINIC_DAYS_PER_PAGE = 20
+OSLER_CLINIC_DAYS_PER_PAGE = 10
 
 OSLER_DEFAULT_DASHBOARD = 'dashboard-active'
 OSLER_ROLE_DASHBOARDS = {
@@ -377,7 +377,7 @@ OSLER_ATTENDANCE_URL = env(
     "OSLER_ATTENDANCE_URL",
     default="https://www.wustl.edu",
 )
-OSLER_ABOUT_URL = "https://github.com/oslerproject/osler"
+OSLER_GITHUB_URL = "https://github.com/oslerproject/osler"
 
 #Default Encounter Status 
 OSLER_DEFAULT_ACTIVE_STATUS = ('Active', True)

@@ -21,6 +21,11 @@ from osler.core.tests import factories as core_factories
 def dewhitespace(s):
     return "".join(s.split())
 
+def get_wu_count(clindate_page):
+    count = 0
+    for _,wu_list in clindate_page:
+        count += len(wu_list)
+    return count
 
 class TestAttendingDashboard(TestCase):
 
@@ -116,7 +121,7 @@ class TestAttendingDashboard(TestCase):
             Patient.objects.get(pk=1))
 
         # and one encounter with workup assigned to our attending
-        self.assertEqual(len(response.context['clinics']), 1)
+        assert get_wu_count(response.context['clindate_page']) == 1
         # with one patient
         self.assertContains(response, reverse('core:patient-detail',
                                               args=(self.pt2.pk,)))
@@ -130,7 +135,7 @@ class TestAttendingDashboard(TestCase):
         response = self.client.get(reverse('dashboard-attending'))
 
         # now two encounters with workup assigned to our attending
-        self.assertEqual(len(response.context['clinics']), 2)
+        assert get_wu_count(response.context['clindate_page']) == 2
         # with two patients
         self.assertContains(response, reverse('core:patient-detail',
                                               args=(self.pt2.pk,)))
@@ -221,7 +226,11 @@ class TestAttendingDashboard(TestCase):
                 patient_comfortable_with_english=False,
                 preferred_contact_method=ContactMethod.objects.first(),
             )
-            e = Encounter.objects.create(patient=pt, **self.encounter_info)
+            e = Encounter.objects.create(
+                patient=pt,
+                clinic_day=now().date() + datetime.timedelta(days=i),
+                status=EncounterStatus.objects.first()
+                )
             Workup.objects.create(
                 attending=self.attending,
                 encounter=e,

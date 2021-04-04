@@ -8,6 +8,7 @@ from crispy_forms.bootstrap import InlineCheckboxes
 
 from . import models
 
+from django.utils.translation import gettext_lazy as _
 
 class DemographicsForm(ModelForm):
 
@@ -22,17 +23,17 @@ class DemographicsForm(ModelForm):
         self.helper.form_method = 'post'
 
         self.helper.layout = Layout(
-                Fieldset('Medical',
+                Fieldset(_('Medical'),
                          'has_insurance',
                          'ER_visit_last_year',
                          'last_date_physician_visit',
                          'chronic_conditions'),
-                Fieldset('Social',
+                Fieldset(_('Social'),
                          'lives_alone',
                          'dependents',
                          'resource_access',
                          'transportation'),
-                Fieldset('Employment',
+                Fieldset(_('Employment'),
                          'currently_employed',
                          'education_level',
                          'work_status',
@@ -42,4 +43,4 @@ class DemographicsForm(ModelForm):
         self.helper['resource_access'].wrap(InlineCheckboxes)
 
 
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))

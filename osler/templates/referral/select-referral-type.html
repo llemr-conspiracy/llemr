@@ -1,24 +1,25 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
 {% load bootstrap4 %}
 
 {% block title %}
-Choose a referral type
+{% trans 'Choose a referral type' %}
 {% endblock %}
 
 {% block header %}
-<h1>Choose a Referral Type</h1>
-<p><i>Each patient should be provided referrals for ongoing care to several FQHCs from a pre-screened list of FQHCs. Specialty referral refers to any non-FQHC referral (e.g., the COH).</i></p>
+<h1>{% trans 'Choose a Referral Type' %}</h1>
+<p><i>{% blocktrans %}Each patient should be provided referrals for ongoing care to several FQHCs from a pre-screened list of FQHCs. Specialty referral refers to any non-FQHC referral (e.g., the COH).{% endblocktrans %}</i></p>
 {% endblock %}
 
 {% block content %}
 
 <div class="container text-center">
 	<div class="btn-group-vertical">
-  	{% for referral_type in referral_types %}
-	    <a class="btn btn-{% cycle 'info' 'success' 'warning' 'danger' %}" href="{% url 'new-referral' rtype=referral_type.slugify pt_id=pt.pk %}" role="button">Create {{referral_type}} referral</a>
-	{% endfor %}
-  
+		{% for referral_type in referral_types %}
+		<a class="btn btn-{% cycle 'info' 'success' 'warning' 'danger' %}" href="{% url 'new-referral' rtype=referral_type.slugify pt_id=pt.pk %}" role="button">{% blocktrans %}Create {{referral_type}} referral{% endblocktrans %}</a>
+		{% endfor %}
+
 	</div>
 </div>
 
