@@ -1,5 +1,9 @@
 from __future__ import unicode_literals
 
+import datetime
+
+import factory
+
 from django.test import TestCase
 from django.utils.timezone import now
 from django.urls import reverse
@@ -13,9 +17,10 @@ import osler.workup.tests.factories as workup_factories
 import osler.core.tests.factories as core_factories
 
 from osler.workup import models
-from osler.workup.tests.tests import wu_dict, note_dict
+#from osler.workup.tests.tests import wu_dict
+from osler.workup.tests.tests import note_dict
 
-
+from django.forms.models import model_to_dict
 
 class ViewsExistTest(TestCase):
     """
@@ -26,9 +31,13 @@ class ViewsExistTest(TestCase):
 
     def setUp(self):
 
+        
+
         self.user = build_user()
         log_in_user(self.client, self.user)
 
+        #just to test to see how this would affect:
+        #author1 = user_factories.UserFactory()
         self.wu = workup_factories.WorkupFactory()
 
     def test_new_workup_view(self):
@@ -126,24 +135,68 @@ class ViewsExistTest(TestCase):
     def test_workup_submit(self):
         """verify we can submit a valid workup as a signer and nonsigner"""
 
+        
+
         for role in user_factories.all_roles:
+            pt = core_factories.PatientFactory()
             user = build_user([role])
             log_in_user(self.client, user)
 
             wu_count = models.Workup.objects.all().count()
-            wu_data = model_to_dict(workup_factories.WorkupFactory(units = True, diagnosis_category = True))
-            
-            pt = wu_data['patient']
-            wu_data['patient'] = pt.id
+            #before:
+            #wu_data = model_to_dict(workup_factories.WorkupFactory(units = True, diagnosis_category = True))
+            #after:
+            #wu_data = model_to_dict(workup_factories.WorkupFactory(patient=pt))
+
+            wu = workup_factories.WorkupFactory(patient = pt)
+            wu_data = model_to_dict(wu)
+            wu.delete()
+
+            #wu_data = factory.build(dict, FACTORY_CLASS=workup_factories.WorkupFactory, patient=pt)
+           
+
+           # pt = core_factories.PatientFactory()
+           # wu_data['patient'] = pt.id
+            pt_id = wu_data['patient']
             wu_data['author'] = user.id
             wu_data['author_type'] = user.groups.first().id
-            e = wu_data['encounter']
-            wu_data['encounter'] = e.id
+           # e = core_factories.EncounterFactory()
+            #wu_data['encounter'] = e.id
+            #this is what i am adding in to make the tests work, not sure if ok!
+            #wu_data['signer'] = self.user
+            #wu_data['signed_date'] = datetime.date(1990,1,2)
+
+            del wu_data['signer']
+            del wu_data['signed_date']
+            del wu_data['attending']
+            #wu_data['attending'] = self.user
+            #wu_data['height'] = ""
+           # wu_data['weight'] = ""
+            #wu_data['voucher_amount'] = ""
+            #wu_data['patient_pays'] = ""
+
+            #old stuff, not really sure what exactly the idea was.. so might have messed this up:
+            #pt = wu_data['patient']
+            #wu_data['patient'] = pt.id
+            #wu_data['author'] = user.id
+            #wu_data['author_type'] = user.groups.first().id
+            #e = wu_data['encounter']
+            #wu_data['encounter'] = e.id
+
+            wu_data["temperature_units"] = "F"
+            wu_data["height_units"] = "cm"
+            wu_data["weight_units"] = "kg"
 
             response = self.client.post(
-                reverse('new-workup', args=(pt.id,)),
+                reverse('new-workup', args=(pt_id,)),
                 data=wu_data)
-            self.assertRedirects(response, reverse("core:patient-detail", args=(pt.id,)))
+            
+            #form = response.context['form']
+            #import pdb
+            #pdb.set_trace()
+            
+
+            self.assertRedirects(response, reverse("core:patient-detail", args=(pt_id,)))
 
             can_attest = role in user_factories.attesting_roles
             assert models.Workup.objects.all().count() == wu_count + 1
@@ -154,10 +207,21 @@ class ViewsExistTest(TestCase):
 
         # first, craft a workup that has units, but fail to set the
         # diagnosis categories, so that it will fail to be accepted.
-        wu_data = model_to_dict(workup_factories.WorkupFactory(units = True))
+        #wu_data = model_to_dict(workup_factories.WorkupFactory(units = True))
+        wu_data = model_to_dict(workup_factories.WorkupFactory())
+        wu_data['units'] = True
 
         del wu_data['chief_complaint']
         pt = core_factories.PatientFactory()
+        
+        del wu_data['signer']
+        del wu_data['signed_date']
+        del wu_data['attending']
+
+        wu_data["temperature_units"] = "F"
+        wu_data["height_units"] = "cm"
+        wu_data["weight_units"] = "kg"
+        
 
         response = self.client.post(
             reverse('new-workup', args=(pt.id,)),
@@ -175,26 +239,42 @@ class ViewsExistTest(TestCase):
             assert response.context['form'][unit].value() == wu_data[unit]
 
     def test_pending_note_submit(self):
-
+        
+        pt = core_factories.PatientFactory()
         # pull standard workup data, but delete required field
-        wu_data = model_to_dict(workup_factories.WorkupFactory(units = True, diangosis_category = True))
+        #wu_data = model_to_dict(workup_factories.WorkupFactory(units = True, diagnosis_category = True))
+        wu = workup_factories.WorkupFactory(patient = pt)
+        wu_data = model_to_dict(wu)
+        wu.delete()
+
+        wu_data['units'] = True
+        wu_data['diagnosis_category'] = True
   
         wu_data['pending'] = ''
         del wu_data['chief_complaint']
-        for field in ['encounter','author','author_type']:
-            thing = wu_data[field]
-            wu_data[field] = thing.id
+        #for field in ['encounter','author','author_type']:
+            #thing = wu_data[field]
+            #wu_data[field] = thing.id
 
-        pt = wu_data['patient']
-        wu_data['patient'] = pt.id
+        #pt = wu_data['patient']
+        #wu_data['patient'] = pt.id
 
         prev_count = pt.workup_set.count()
         prev_completed_count = pt.completed_workup_set().count()
         prev_pending_count = pt.pending_workup_set().count()
 
+        del wu_data['signer']
+        del wu_data['signed_date']
+        del wu_data['attending']
+
         response = self.client.post(
             reverse('new-workup', args=(pt.id,)),
             data=wu_data)
+
+        #form = response.context['form']
+       # import pdb
+        #pdb.set_trace()
+        
 
         self.assertRedirects(response,
                     reverse('core:patient-detail', args=(pt.id,)))
@@ -309,14 +389,22 @@ class TestAddendum(TestCase):
     fixtures = ['workup', 'core']
 
     def setUp(self):
-
         self.user = build_user()
         log_in_user(self.client, self.user)
+        #self.user = build_user()
+        #log_in_user(self.client, self.user)
 
-        self.note_data = note_dict(user=self.user)
+        #self.note_data = note_dict(user=self.user)
 
-        self.wu = workup_factories.WorkupFactory(user = self.user)
-        #self.wu = models.Workup.objects.create(**wu_dict(user=self.user))
+        #wu_data = model_to_dict(workup_factories.WorkupFactory)
+       # wu_data.user = self.user
+
+
+        #before me
+         #self.wu = models.Workup.objects.create(**wu_dict(user=self.user))
+
+         #what i tried
+        self.wu = workup_factories.WorkupFactory()
         self.form_data = note_dict(user=self.user, encounter_pk=False)
 
     def test_urls(self):
@@ -326,6 +414,11 @@ class TestAddendum(TestCase):
         pt = self.wu.patient
 
         n_notes = model.objects.count()
+
+        #import pdb
+        #pdb.set_trace()
+
+        
 
         url = reverse('new-addendum', args=(self.wu.id,pt.id))
         response = self.client.get(url)

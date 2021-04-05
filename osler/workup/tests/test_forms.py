@@ -13,7 +13,8 @@ from osler.core.models import Gender
 from osler.workup.models import DiagnosisType, Workup
 from osler.workup.forms import WorkupForm
 
-from osler.workup.tests.tests import wu_dict, note_dict
+
+from osler.workup.tests.tests import note_dict
 from osler.workup.tests import factories as workup_factories
 
 from osler.core.tests.test_views import build_user
@@ -42,9 +43,12 @@ class TestWorkupFormUnitAwareFields(TestCase):
     def setUp(self):
         DiagnosisType.objects.create(name='Cardiovascular')
 
-        wu = workup_factories.WorkupFactory(diagnosis_categories = DiagnosisType.objects.first().pk, got_imaging_voucher = False, got_voucher = False)
+        #wu = workup_factories.WorkupFactory(diagnosis_categories = DiagnosisType.objects.first().pk, got_imaging_voucher = False, got_voucher = False)
+        #probably can't just change this altogether
+        wu = workup_factories.WorkupFactory()
 
-        del workup.t
+        #not sure what this was doing...
+        #del workup.t
 
         self.wu = wu
 
@@ -53,7 +57,9 @@ class TestWorkupFormUnitAwareFields(TestCase):
     def test_vitals_no_units_error(self):
         """If vitals measurement w/o units, raise error"""
 
-        wu_data = model_to_dict(self.wu.copy())
+        #wu_data = model_to_dict(self.wu.copy())
+
+        wu_data = model_to_dict(self.wu)
         
         wu_data['t'] = 98.6
         wu_data['height'] = 100
@@ -61,15 +67,22 @@ class TestWorkupFormUnitAwareFields(TestCase):
 
         form = WorkupForm(pt = self.pt, data = wu_data)
 
-        self.assertFalse(
-            form.is_valid(),
-            msg = 'Failed to raise error if only %s specified' % field)
+        for field in ['t', 'height', 'weight']:
+            self.assertFalse(form.is_valid(), msg = 'Failed to raise error if only %s specified' % field) 
+        #self.assertFalse(
+            #form.is_valid(),
+            #msg = 'Failed to raise error if only %s specified' % field)
         self.assertNotEqual(len(form[field].errors),0)
 
     def test_vitals_no_value_no_units_ok(self):
         """Units are required only when vitals are provided."""
 
         wu_data = model_to_dict(self.wu)
+
+        del wu_data['height']
+        del wu_data['weight']
+        del wu_data['t']
+
         form = WorkupForm(pt = self.pt, data = wu_data)
         self.assertTrue(form.is_valid(), msg = form.errors)
 
@@ -79,6 +92,14 @@ class TestWorkupFormUnitAwareFields(TestCase):
        
         wu_data['temperature_units'] = 'C'
         wu_data['t'] = 37
+
+        wu_data['height_units'] = 'cm'
+        wu_data['height'] = 180
+        
+        #adding this in but doesn't seem right:
+        wu_data['weight_units'] = 'kg'
+        wu_data['weight'] = 180
+        
 
         
         form = WorkupForm(pt=self.pt,data=wu_data)
@@ -101,10 +122,16 @@ class TestWorkupFormUnitAwareFields(TestCase):
     def test_note_height_conversion(self):
 
         wu_data = model_to_dict(self.wu)
-
+        print(wu_data)
         # heights with cm should be the same
         wu_data['height_units'] = 'cm'
         wu_data['height'] = 180
+        
+        #adding this in but doesn't seem right:
+        wu_data['weight_units'] = 'kg'
+        wu_data['weight'] = 180
+        wu_data['temperature'] = 98
+        wu_data['temperature_units'] = 'F'
 
         form = WorkupForm(pt=self.pt,data=wu_data)
 
@@ -131,6 +158,12 @@ class TestWorkupFormUnitAwareFields(TestCase):
         # weights with kilograms should be the same
         wu_data['weight_units'] = 'kg'
         wu_data['weight'] = 81
+
+         #adding this in but doesn't seem right:
+        wu_data['height_units'] = 'cm'
+        wu_data['height'] = 180
+        wu_data['temperature'] = 98
+        wu_data['temperature_units'] = 'F'
 
         form = WorkupForm(pt=self.pt,data=wu_data)
 
@@ -202,9 +235,14 @@ class TestWorkupFormValidators(TestCase):
 
     def test_missing_voucher_amount(self):
 
+        
         form_data = self.valid_wu_dict
+        del form_data['voucher_amount']
+        del form_data['imaging_voucher_amount']
         form_data['got_voucher'] = True
         form_data['got_imaging_voucher'] = True
+
+        
 
         form = WorkupForm(pt=self.pt,data=form_data)
 
@@ -242,6 +280,8 @@ class TestWorkupFormProviderChoices(TestCase):
             for _ in range(3):
                 self.users.append(build_user(list(role_tuple)))
         self.pt = core_factories.PatientFactory()
+        
+        #self.wu = workup_factories.WorkupFactory()
 
     def test_form_attending_options(self):
         """WorkupForm offers only attending users for 'attending'"""
@@ -265,7 +305,12 @@ class TestWorkupFormProviderChoices(TestCase):
     def test_form_other_volunteer_options(self):
         """WorkupForm offers only non-attendings for 'other volunteers'"""
 
+        
         form = WorkupForm(pt=self.pt)
+
+        #import pdb
+        #pdb.set_trace()
+        
         user_pks = [u for u in self.users]
         other_vol_options = form['other_volunteer'].field.queryset
 
@@ -278,7 +323,12 @@ class TestWorkupFormProviderChoices(TestCase):
         attending = build_user([user_factories.AttendingGroupFactory])
         non_attending = build_user()
 
-        form_data = model_to_dict(workup_factories.WorkupFactory)
+        #wu = workup_factories.WorkupFactory()
+
+        #form_data = model_to_dict(self.wu)
+        #form_data = wu_data
+        DiagnosisType.objects.create(name='Cardiovascular')
+        form_data = model_to_dict(workup_factories.WorkupFactory())
 
         pt = form_data['patient']
         form_data['attending'] = attending

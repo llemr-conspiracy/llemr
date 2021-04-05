@@ -1,15 +1,25 @@
 import datetime
 import os
 
+
+
+#from django.contrib.auth.models import Group as group_model
+
+#from osler.core.tests.test_views import build_user
+
+from django.contrib.auth.models import Group
 from django.conf import settings
 from django.db.models.signals import post_save
 from django.utils.timezone import now
+
 
 import factory
 from factory.django import DjangoModelFactory, mute_signals
 
 from osler.core import models
 from osler.users.tests import factories as user_factories
+
+#fixtures = ['groups']
 
 class ActionInstructionFactory(DjangoModelFactory):
 
@@ -28,7 +38,7 @@ class GenderFactory(DjangoModelFactory):
     name = factory.Sequence(lambda n: "Gender %03d" % n)
 
 
-@mute_signals(post_save)
+#@mute_signals(post_save)
 class ProviderFactory(DjangoModelFactory):
     class Meta:
         model = models.Provider
@@ -174,3 +184,62 @@ class EncounterFactory(DjangoModelFactory):
     patient = factory.SubFactory(PatientFactory)
     status = factory.SubFactory(EncounterStatusFactory)
     clinic_day = now().date()
+
+
+
+class NoteFactory(DjangoModelFactory):
+    class Meta:
+        model = models.Note
+
+    #old:
+    #author = factory.SubFactory(user_factories.UserFactory)
+
+    #author = factory.SubFactory(user_factories.UserFactory.create(groups = (factory.SubFactory(user_factories.NoPermGroupFactory))))
+
+    #import pdb
+    #pdb.set_trace()
+
+    #fixtures = ['groups']
+
+    #groups_to_add = Group.objects.all()
+   
+
+    #author = factory.SubFactory(user_factories.UserFactory(groups = [f() for f in groups_to_add], username = "ahkhe", password = "aoiwhe"))
+    
+    #what is working!
+
+    
+    
+    author_type = factory.SubFactory(user_factories.NoPermGroupFactory)
+    author = factory.SubFactory(user_factories.UserFactory)
+    author.groups = author_type
+    
+
+    #dtype_list = models.DiagnosisType.objects.all()
+    #group_list = Group.objects.all()
+
+    #import pdb
+    #pdb.set_trace()
+    #author = factory.SubFactory(user_factories.UserFactory.create(groups = (group_list)))
+    #author_type= author.groups.first()
+   
+    #author = factory.SubFactory(user_factories.UserFactory(groups = group_model.Group.objects.all()))
+    #patient = factory.SubFactory(core_factories.PatientFactory)
+    
+    #group1 = factory.SubFactory(user_factories.VolunteerGroupFactory())
+    #author = factory.SubFactory(user_factories.UserFactory.create(groups = (factory.SubFactory(user_factories.VolunteerGroupFactory))))
+    #UserFactory.create(groups=(group1, group2, group3))
+    #author = factory.SubFactory(user_factories.UserFactory.create(groups=group_model.objects.all()))
+    #to-do: make the author_type one of the author's groups (specifically tied to each other!!)
+    #author_type = factory.SubFactory(user_factories.GroupFactory)
+    #my thinking with taking this out is I was looking at the user factory and there is a post_generation hook
+    #in the user factory meaning that 
+
+    #group1 = factory.SubFactory(user_factories.GroupFactory())
+    #author = factory.SubFactory(user_factories.UserFactory.create(groups = (group1)))
+    
+    patient = factory.SubFactory(PatientFactory)
+
+    written_datetime = datetime.date(1990, 1, 1)
+    last_modified = datetime.date(1990,1,2)
+
