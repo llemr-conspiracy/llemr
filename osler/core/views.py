@@ -409,6 +409,7 @@ def patient_detail(request, pk):
     # list of incompleted surveys for patient
     # FIXME: is the whole list needed?
     incomplete_surveys = Survey.get_incomplete_surveys(pt.pk)
+    surveys_exist = Survey.objects.exists()
 
     context = {
         'zipped_ai_list': zipped_ai_list,
@@ -424,7 +425,8 @@ def patient_detail(request, pk):
         'can_activate': can_activate,
         'can_case_manage': can_case_manage,
         'can_export_pdf': can_export_pdf,
-        'incomplete_surveys': incomplete_surveys
+        'incomplete_surveys': incomplete_surveys,
+        'surveys_exist': surveys_exist,
     }
 
     return render(request,
