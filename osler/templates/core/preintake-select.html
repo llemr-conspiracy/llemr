@@ -1,39 +1,44 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block title %}
-Patient Intake
+{% trans 'Patient Intake' %}
 {% endblock %}
 
 {% block header %}
-<h1>Patient Intake</h1>
-<p class="lead">There was one or more similar patients already in the database.<br/>Select one or create a new patient.</p>
+<h1>{% trans 'Patient Intake' %}</h1>
+<p class="lead">{% blocktrans %}There was one or more simmilar patients already in the database.<br />Select one or create a new patient.{% endblocktrans %}</p>
 {% endblock %}
 
 {% block content %}
     <div class="container">
-        <h2>For lookup {{last_name}}, {{first_name}} </h2>
+        <h2>{% blocktrans %}For lookup {{last_name}}, {{first_name}} {% endblocktrans %}</h2>
         <table class="table table-striped">
             <tr>
-                <th>Status</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Birthdate</th>
-                <th>Address</th>
-                <th>Last Visit</th>
-                <th>Number of Visits</th>
+              <th>{% trans 'Status' %}</th>
+              <th>{% trans 'Name' %}</th>
+              <th>{% trans 'Description' %}</th>
+              <th>{% trans 'Birthdate' %}</th>
+              <th>{% trans 'Address' %}</th>
+              <th>{% trans 'Last Visit' %}</th>
+              <th>{% trans 'Number of Visits' %}</th>
             </tr>
             {% for patient in object_list %}
                 <tr>
                     <td>
                         {% if patient.get_status.is_active %}
-                            Patient already active
+                        {% trans 'Patient already active' %}
                         {% endif %}
                         {% if not patient.get_status.is_active %}
-                            <button class="btn btn-success" onclick="location.href ='{% url "core:patient-activate-detail" pk=patient.id %}'">Activate Patient</button>
+                            <button class="btn btn-success"
+                                    onclick="location.href ='{% url "core:patient-activate-detail" pk=patient.id %}'">
+                              {% trans 'Activate Patient' %}
+                            </button>
                         {% endif %}
                     </td>
                     <td><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.last_name}}, {{patient.first_name}}</a></td>
-                    <td> {{ patient.age }} y/o {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</td>
+                    <td> {{ patient.age }} {% trans 'y/o' %} {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</td>
                     <td>{{patient.date_of_birth}}</td>
                     <td>{{patient.address}}, {{patient.city}}<br/>{{patient.state}}, {{patient.zip_code}}</td>
                     <td> {{patient.history.last.history_date}}</td>
@@ -41,7 +46,7 @@ Patient Intake
                 </tr>
             {% endfor %}
         </table>
-        <button class="btn btn-warning" onclick="location.href ='{{new_pt_url}}'">New Patient</button>
-        <button class="btn btn-default" onclick="location.href ='{{home}}'">Cancel</button>
+        <button class="btn btn-warning" onclick="location.href ='{{new_pt_url}}'">{% trans 'New Patient' %}</button>
+        <button class="btn btn-default" onclick="location.href ='{{home}}'">{% trans 'Cancel' %}</button>
     </div>
 {% endblock %}

@@ -163,7 +163,7 @@ class WorkupForm(ModelForm):
         required=False,
         queryset=get_user_model().objects.filter(
             groups__in=Group.objects.filter(
-            permissions__codename=can_sign_perm_codename)
+                permissions__codename=can_sign_perm_codename)
         ).distinct()
     )
 
@@ -227,7 +227,7 @@ class WorkupForm(ModelForm):
                 Div('rx', css_class='col-md-4'),
                 Div('labs_ordered_internal', css_class='col-md-4'),
                 Div('labs_ordered_external', css_class='col-md-4')
-            ),
+                ),
 
             Row(
                 Div(HTML('<h4>Medication Voucher</h4>'),
@@ -240,10 +240,10 @@ class WorkupForm(ModelForm):
                     PrependedText('imaging_voucher_amount', '$'),
                     PrependedText('patient_pays_imaging', '$'),
                     css_class='col-xs-6')
-                ),
+            ),
 
-            Submit('pending', 'Save for Later', css_class='btn btn-warning'),
-            Submit('complete', 'Submit', css_class='btn btn-success')
+            Submit('pending', _('Save for Later'), css_class='btn btn-warning'),
+            Submit('complete', _('Submit'), css_class='btn btn-success')
         )
 
         self.fields['ros'].widget.attrs['rows'] = 15
@@ -260,7 +260,6 @@ class WorkupForm(ModelForm):
             self.helper.layout[5].pop()
             # # delete imaging voucher
             self.helper.layout[5].pop()
-            
 
     def clean(self):
         """Use form's clean hook to verify that fields in Workup are
@@ -274,8 +273,8 @@ class WorkupForm(ModelForm):
             return
 
         required_fields = [
-            'chief_complaint', 
-            'hpi', 
+            'chief_complaint',
+            'hpi',
             'pmh',
             'psh',
             'meds',
@@ -285,7 +284,7 @@ class WorkupForm(ModelForm):
             'ros',
             'pe',
             'a_and_p'
-            ]
+        ]
         for field in required_fields:
             if not cleaned_data.get(field):
                 self.add_error(field, _("This field is required."))
@@ -305,9 +304,9 @@ class WorkupForm(ModelForm):
 
         attending = cleaned_data.get('attending')
         if attending and attending in cleaned_data.get('other_volunteer'):
-            self.add_error('other_volunteer', 
-            'Attending physician must be different from other volunteers.')
-        
+            self.add_error('other_volunteer',
+                           'Attending physician must be different from other volunteers.')
+
         if 't' in cleaned_data and cleaned_data.get('t') is not None:
             if cleaned_data.get('temperature_units') == 'F':
                 c = Decimal(fahrenheit2centigrade(
@@ -334,7 +333,7 @@ class WorkupForm(ModelForm):
             cleaned_data[field] = user_input.strip()
             if "UPDATE" in cleaned_data.get(field):
                 self.add_error(field, _("Please delete the heading and update contents as necessary"))
-        
+
         form_require_together(self, ['bp_sys', 'bp_dia'])
         if cleaned_data.get('bp_sys') and cleaned_data.get('bp_dia'):
             if cleaned_data.get('bp_sys') <= cleaned_data.get('bp_dia'):
@@ -356,7 +355,7 @@ class AttestableBasicNoteForm(ModelForm):
         self.helper = FormHelper(self)
         self.fields['encounter'].queryset = Encounter.objects\
             .filter(patient=pt).order_by('clinic_day')
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
 
 
 class BasicNoteForm(ModelForm):
@@ -383,5 +382,4 @@ class AddendumForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(AddendumForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        self.helper.add_input(Submit('submit', 'Submit'))
-
+        self.helper.add_input(Submit('submit', _('Submit')))

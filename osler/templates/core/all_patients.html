@@ -1,11 +1,13 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block title %}
-Osler: {{ title | default:"All Patients"}}
+{% blocktrans %}Osler: {{ title }}{% endblocktrans %}
 {% endblock %}
 
 {% block header %}
-<h1>{{ title | default:"All Patients" }}</h1>
+<h1>{{ title }}</h1>
 {% endblock %}
 
 {% block content %}
@@ -24,14 +26,14 @@ Osler: {{ title | default:"All Patients"}}
 
       <table class="table" id="all-patients-table">
           <tr>
-              <th>Patient Name</th>
-              <th>Age/Gender</th>
-              {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
-                <th>Case Managers</th>
-              {% endif%}
-              <th>Latest Activity</th>
-              <th>Next AI Due</th>
-              <th>Attestation</th>
+            <th>{% trans 'Patient Name' %}</th>
+            <th>{% trans 'Age/Gender' %}</th>
+            {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
+              <th>{% trans 'Case Managers' %}</th>
+            {% endif%}
+            <th>{% trans 'Latest Activity' %}</th>
+            <th>{% trans 'Next AI Due' %}</th>
+            <th>{% trans 'Attestation' %}</th>
           </td>
 
           {% for patient in object_list %}
@@ -46,20 +48,20 @@ Osler: {{ title | default:"All Patients"}}
                       <td>
                           {% if latest_workup %}
                             {% if latest_workup.is_pending %}
-                                <a href="{% url 'workup' pk=latest_workup.pk %}"> Pending from {{ latest_workup.encounter.clinic_day }} </a>: {{ latest_workup.chief_complaint | default:"no chief complaint provided" }}
+                                <a href="{% url 'workup' pk=latest_workup.pk %}">{% blocktrans with clinic_day=latest_workup.encounter.clinic_day chief_complaint=latest_workup.chief_complaint %} Pending from {{ clinic_day }} </a>: {{ chief_complaint }}{% endblocktrans %}
                             {% else %}
-                              <a href="{% url 'workup' pk=latest_workup.pk %}">Seen {{ latest_workup.encounter.clinic_day }}</a>: {{latest_workup.chief_complaint}}
+                              <a href="{% url 'workup' pk=latest_workup.pk %}">{% blocktrans with clinic_day=latest_workup.encounter.clinic_day chief_complaint=latest_workup.chief_complaint %} Seen {{ clinic_day }}</a>: {{chief_complaint}}{% endblocktrans %}
                             {% endif %}
                           {% else %}
-                              <a href="{% url 'core:patient-update' pk=patient.id %}">Intake</a>: {{patient.history.last.history_date}}
+                              <a href="{% url 'core:patient-update' pk=patient.id %}">{% blocktrans %} Intake</a>: {{patient.history.last.history_date}}{% endblocktrans %}
                           {% endif %}
                       </td>
                       <td>{{patient.actionitem_status}}</td>
                       <td>
                           {% if not latest_workup %}
-                              No Note
+                              {% trans 'No Note' %}
                           {% elif not latest_workup.signer %}
-                              Unattested
+                              {% trans 'Unattested' %}
                           {% else %}
                               {{ latest_workup.signer }}
                           {% endif %}
@@ -74,49 +76,50 @@ Osler: {{ title | default:"All Patients"}}
 
 {% block extra_js %}
 <script>
-{# adapted from "https://www.w3schools.com/howto/howto_js_filter_table.asp" #}
-function filterAllPatientsTable() {
-  // Declare variables 
-  var input, filter, table, tr, td, i;
-  input = document.getElementById("all-patients-filter-input");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("all-patients-table");
-  tr = table.getElementsByTagName("tr");
+  //adapted from "https://www.w3schools.com/howto/howto_js_filter_table.asp"#
+  function filterAllPatientsTable() {
+    // Declare variables
+    var input, filter, table, tr, td, i;
+    input = document.getElementById("all-patients-filter-input");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("all-patients-table");
+    tr = table.getElementsByTagName("tr");
 
-  // Loop through all table rows, and hide those who don't match the search query
-  // Start at one to avoid hitting table header
-  for (i = 1; i < tr.length; i++) {
-    var match = 0;
-    td = tr[i].getElementsByTagName("td")[0];
-    if (td) {
+    // Loop through all table rows, and hide those who don't match the search query
+    // Start at one to avoid hitting table header
+    for (i = 1; i < tr.length; i++) {
+      var match = 0;
+      td = tr[i].getElementsByTagName("td")[0];
+      if (td) {
         // need additional indexing because patient's name is a link
         if (check(td.getElementsByTagName("a")[0], filter)) {
-            match = 1;
+          match = 1;
         }
-    }
-    td = tr[i].getElementsByTagName("td")[2];
-    if (td) {
+      }
+      td = tr[i].getElementsByTagName("td")[2];
+      if (td) {
         if (check(td, filter)) {
-            match = 1;
-        } 
-    }
-    if (match == 1) {
-      tr[i].style.display = "";
-    } else {
-      tr[i].style.display = "none";
+          match = 1;
+        }
+      }
+      if (match == 1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
     }
   }
-}
 
-function check(haystack_element, needle){
+  function check(haystack_element, needle) {
     var haystack = haystack_element.innerHTML.toUpperCase()
-    if (!needle) {return 1}
-    if (haystack && haystack.indexOf(needle) > -1) {
-        return 1
-    } else {
-        return 0
+    if (!needle) {
+      return 1
     }
-}
-
+    if (haystack && haystack.indexOf(needle) > -1) {
+      return 1
+    } else {
+      return 0
+    }
+  }
 </script>
 {% endblock %}

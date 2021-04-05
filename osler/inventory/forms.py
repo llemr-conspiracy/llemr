@@ -4,6 +4,7 @@ import django.forms as forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from osler.core.models import Patient
+from django.utils.translation import gettext_lazy as _
 
 
 class DrugForm(ModelForm):
@@ -19,7 +20,8 @@ class DrugForm(ModelForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-2'
         self.helper.field_class = 'col-lg-8'
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))
+
 
 class DuplicateDrugForm(ModelForm):
     class Meta:
@@ -30,4 +32,4 @@ class DuplicateDrugForm(ModelForm):
         super(DuplicateDrugForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.fields['name'].widget.attrs['autofocus'] = True
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))

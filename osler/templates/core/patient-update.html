@@ -1,19 +1,21 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block title %}
-Edit Patient ({{ object.name }})
+{% trans 'Edit Patient' %} ({{ object.name }})
 {% endblock %}
 
 {% block header %}
 <h1><a href="{% url 'core:patient-detail' pk=object.id %}"><small><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></small></a>
-  Edit Patient
+  {% trans 'Edit Patient' %}
 </h1>
-<p class="lead">Edit <em><a href="{% url 'core:patient-detail' pk=object.id %}">{{ object.name }}</a></em></p>
+<p class="lead">{% trans 'Edit' %} <em><a href="{% url 'core:patient-detail' pk=object.id %}">{{ object.name }}</a></em></p>
 {% endblock %}
 
 {% block content %}
 <div class="container">
-	{% load crispy_forms_tags %}
-	{% crispy form %}
+  {% load crispy_forms_tags %}
+  {% crispy form %}
 </div>
 {% endblock %}

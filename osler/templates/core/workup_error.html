@@ -1,24 +1,26 @@
 {% extends "core/base.html" %}
 
+{% load i18n %}
+
 {% block header %}
-    <h1>Error in Submitting Workup</h1>
-    <p>Workup on {{ workup.patient.name }} is already signed and cannot be edited</p>
-    {% if workup.signed %}
-    <p class="lead">Signed by {{workup.signer}} </p>
-    {% else %}
-    <p class="lead">Workup unsigned.</p>
-    {% endif%}
+<h1>{% trans 'Error in Submitting Workup' %}</h1>
+<p>{% blocktrans %}Workup on {{ workup.patient.name }} is already signed and cannot be edited{% endblocktrans %}</p>
+{% if workup.signed %}
+<p class="lead">{% trans 'Signed by' %} {{workup.signer}} </p>
+{% else %}
+<p class="lead">{% trans 'Workup unsigned.' %}</p>
+{% endif%}
 {% endblock %}
 
 {% block content %}
 
 <div class="container">
-    <div class="row text-center">
-        <h4>Actions</h4>
-        <div class="btn-group">
-            <a class="btn btn-primary" href="{% url 'workup' pk=workup.pk %}" role="button">Return to Workup</a>
-        </div>
+  <div class="row text-center">
+    <h4>{% trans 'Actions' %}</h4>
+    <div class="btn-group">
+      <a class="btn btn-primary" href="{% url 'workup' pk=workup.pk %}" role="button">{% trans 'Return to Workup' %}</a>
     </div>
+  </div>
 </div>
 
 {% endblock %}

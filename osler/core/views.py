@@ -281,6 +281,7 @@ def choose_role(request):
     if request.POST:
         active_role_pk = request.POST[RADIO_CHOICE_KEY]
         request.session['active_role_pk'] = active_role_pk
+        print(active_role_pk)
         request.session['active_role_name'] = Group.objects.get(pk=active_role_pk).name
 
         return HttpResponseRedirect(redirect_to)

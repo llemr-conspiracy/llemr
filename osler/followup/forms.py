@@ -7,6 +7,7 @@ from crispy_forms.layout import Submit
 
 from . import models
 
+from django.utils.translation import gettext_lazy as _
 
 class BaseFollowup(ModelForm):
     '''The base class for followup forms'''
@@ -19,8 +20,8 @@ class BaseFollowup(ModelForm):
         self.helper = FormHelper()
         self.helper.form_method = 'post'
 
-        self.helper.add_input(Submit('followup_close', 'Submit and Close Action', css_class = 'btn btn-warning'))
-        self.helper.add_input(Submit('followup_create', 'Submit and Create Action', css_class = 'btn btn-info'))
+        self.helper.add_input(Submit('followup_close', _('Submit and Close Action'), css_class = 'btn btn-warning'))
+        self.helper.add_input(Submit('followup_create', _('Submit and Create Action'), css_class = 'btn btn-info'))
         super(BaseFollowup, self).__init__(*args, **kwargs)
 
 

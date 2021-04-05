@@ -13,7 +13,6 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('core', '0002_auto_20200806_1411'),
         ('auth', '0011_update_proxy_permissions'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]

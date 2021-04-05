@@ -7,6 +7,7 @@ from crispy_forms.layout import Submit
 
 from .models import Appointment
 
+from django.utils.translation import gettext_lazy as _
 
 class AppointmentForm(ModelForm):
 
@@ -23,4 +24,4 @@ class AppointmentForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(AppointmentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
-        self.helper.add_input(Submit('submit', 'Submit'))
+        self.helper.add_input(Submit('submit', _('Submit')))

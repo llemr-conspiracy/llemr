@@ -14,7 +14,7 @@ class User(AbstractUser):
         ordering = ["last_name",]
 
     # more inclusive of name patterns around the world
-    name = models.CharField(_("Preferred name"), blank=True, max_length=255)
+    name = models.CharField("Preferred name", blank=True, max_length=255)
 
     phone = models.CharField(max_length=40, null=True, blank=True)
 

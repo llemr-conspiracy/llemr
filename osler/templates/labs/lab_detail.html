@@ -1,16 +1,17 @@
 {% extends "core/base.html" %}
+{% load i18n %}
 
 {% block title %}
-Lab detail
+{% trans 'Lab detail'%}
 {% endblock %}
 
 {% block header %}
-<h1>Lab Detail</h1>
+<h1>{% trans 'Lab Detail'%}</h1>
 
 <div class="container">
 	<h4>Patient Name: <b><a href="{% url 'core:patient-detail' pk=pt.id %}">{{ pt.name }} </a></b></h4>
-	<h4>Lab Type: <b>{{lab.lab_type}}</b></h4>
-	<h4>Lab Time: <b>{{lab.lab_time}}</b> </h4>
+	<h4>{% trans 'Lab Type'%}: <b>{{lab.lab_type}}</b></h4>
+	<h4>{% trans 'Lab Time'%}: <b>{{lab.lab_time}}</b> </h4>
 </div>
 
 {% endblock %}
@@ -21,10 +22,10 @@ Lab detail
 
 <div class="container text-center">
 	<div class="btn-group">
-	    <a class="btn btn-dark" href="{% url 'labs:all-labs' pt.id %}" role="button">Back to All Labs</a>
-	    <a class="btn btn-info" href="{% url 'labs:all-labs-table' pt.id %}" role="button">Recent Labs</a>
+	    <a class="btn btn-dark" href="{% url 'labs:all-labs' pt.id %}" role="button">{% trans 'Back to All Labs'%}</a>
+	    <a class="btn btn-info" href="{% url 'labs:all-labs-table' pt.id %}" role="button">{% trans 'Recent Labs'%}</a>
 		{% if change_lab %}
-		    <a class="btn btn-warning" href="{% url 'labs:lab-edit' lab.id %}" role="button">Edit Lab</a>
+		    <a class="btn btn-warning" href="{% url 'labs:lab-edit' lab.id %}" role="button">{% trans 'Edit Lab'%}</a>
 		{% endif %}
 	</div>
 </div>
@@ -33,9 +34,9 @@ Lab detail
 <div class="container">
 	<table class="table">
 		<tr>
-			<th>Measurement</th>
-			<th>Reference</th>
-			<th>Value</th>
+			<th>{% trans 'Measurement'%}</th>
+			<th>{% trans 'Reference'%}</th>
+			<th>{% trans 'Value'%}</th>
 		</tr>
 		{% for measurement in measurement_list %}
 			<tr>

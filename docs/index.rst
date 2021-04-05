@@ -10,8 +10,10 @@ Welcome to Osler's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   pycharm/configuration
-
+   getting-started/index
+   documentation
+   modules/index
+   technical-reference/index
 
 
 Indices and tables
