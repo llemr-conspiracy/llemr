@@ -7,8 +7,6 @@ import random
 import decimal
 
 
-fixtures = ['workup']
-
 class WorkupFactory(core_factories.NoteFactory):
 
 	class Meta:
