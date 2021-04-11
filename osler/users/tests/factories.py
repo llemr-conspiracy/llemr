@@ -121,6 +121,18 @@ class UserFactory(factory.django.DjangoModelFactory):
             for group in extracted:
                 self.groups.add(group)
 
+class VolunteerFactory(UserFactory):
+
+    class Meta:
+        model = get_user_model()
+
+    @factory.post_generation
+    def groups(self, create, extracted, **kwargs):
+        self.groups.add(VolunteerGroupFactory())
+        if extracted:
+            for group in extracted:
+                self.groups.add(group)
+
 
 # constants to be used across tests
 attesting_roles = set([AttendingGroupFactory])
