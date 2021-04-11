@@ -22,8 +22,8 @@ function SearchBar({
       <FormControl
         aria-label="search bar"
         aria-describedby="search-addon"
-        id="all-patients-filter-input"
-        placeholder="Filter by patient name"
+        id="search-bar"
+        placeholder="Search"
         value={value || ""}
         onChange={e => {
           setValue(e.target.value);

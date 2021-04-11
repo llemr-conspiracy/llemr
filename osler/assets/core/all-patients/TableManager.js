@@ -6,7 +6,7 @@ import Table from "react-bootstrap/Table";
 
 
 function TableManager({ columns, data, globalFilter, id }) {
-  // mainly follow official example from react-table
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -35,10 +35,10 @@ function TableManager({ columns, data, globalFilter, id }) {
 
   return (
     <div>
-      <SearchBar
+      {<SearchBar
         globalFilter={state.globalFilter}
         setGlobalFilter={setGlobalFilter}
-      />
+      />}
       <Table {...getTableProps()} id={id}>
         <thead>
           {headerGroups.map((headerGroup) => (

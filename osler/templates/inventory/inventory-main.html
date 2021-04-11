@@ -1,5 +1,6 @@
 {% extends "core/base.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}
 {% trans 'Drug Inventory'%}
@@ -39,6 +40,9 @@
 {% endblock %}
 
 {% block content %}
+
+<div id="root"></div>
+
 <div class="container">
     <div class="form-group">
         <label for="drug-list-filter-input"  class="sr-only" >{% trans 'Filter'%}</label>
@@ -125,6 +129,12 @@
 {% endblock %}
 
 {% block extra_js %}
+
+<script src="{% static 'js/drug_list.bundle.js' %}"></script>
+<script>
+  drug_list.render({});
+</script>
+
 <script>
 // {# adapted from "https://www.w3schools.com/howto/howto_js_filter_table.asp" #}
 function filterDrugListTable() {
