@@ -25,7 +25,4 @@ OSLER_DEFAULT_COUNTRY = "Deutschland"
 OSLER_DEFAULT_ADDRESS = "Seewartenstraße 10"
 
 OSLER_ABOUT_NAME = "Wiki"
-OSLER_ABOUT_URL = env(
-    "OSLER_ABOUT_URL",
-    default="https://wiki.stupoli-hamburg.de",
-)
+OSLER_ABOUT_URL = "https://wiki.stupoli-hamburg.de"

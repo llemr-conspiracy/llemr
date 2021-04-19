@@ -25,7 +25,4 @@ OSLER_DEFAULT_COUNTRY = "USA"
 OSLER_DEFAULT_ADDRESS = "205 East 9th St."
 
 OSLER_ABOUT_NAME = "Help"
-OSLER_ABOUT_URL = env(
-    "OSLER_ABOUT_URL",
-    default="http://www.sojournerhealthclinic.com/?page_id=1755",
-)
+OSLER_ABOUT_URL = "http://www.sojournerhealthclinic.com/?page_id=1755"

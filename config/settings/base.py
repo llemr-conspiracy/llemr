@@ -377,10 +377,7 @@ OSLER_ATTENDANCE_URL = env(
     "OSLER_ATTENDANCE_URL",
     default="https://www.wustl.edu",
 )
-OSLER_ABOUT_URL = env(
-    "OSLER_ABOUT_URL",
-    default="https://github.com/oslerproject/osler",
-)
+OSLER_ABOUT_URL = "https://github.com/oslerproject/osler"
 OSLER_GITHUB_URL = "https://github.com/oslerproject/osler"
 
 # Default Encounter Status
