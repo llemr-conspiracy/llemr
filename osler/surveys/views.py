@@ -78,19 +78,15 @@ def response(request, id):
 
 def fill(request, pid, id):
     survey = Survey.objects.get(id=id)
+    patient = get_object_or_404(Patient, id=pid)
     ctx = {'survey': survey,
            'QuestionType': Question.QuestionType,
-           'pid': pid
+           'patient': patient
            }
 
-    patient = get_object_or_404(Patient, id=pid)
-
-    active_role = get_active_role(request)
-    can_activate = patient.group_can_activate(active_role)
-
-    if not patient.get_status().is_active and not can_activate:
+    if not patient.get_status().is_active:
         messages.add_message(request, messages.ERROR,
-                             'You are trying to survey an inactive patient, but do not have permission to activate this patient')
+                             'You are trying to survey an inactive patient. Please activate this patient before continuing.')
         return redirect('surveys:incomplete', pid=pid)
     return render(request, 'surveys/fill.html', ctx)
 
