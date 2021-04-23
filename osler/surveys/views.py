@@ -98,8 +98,8 @@ def fill(request, pid, id):
 def view(request, id):
     survey = Survey.objects.get(id=id)
     ctx = {'survey': survey,
-           'QuestionType': Question.QuestionType,
-           'readonly': True
+           'QuestionType': Question.QuestionType,  # pass enum definition to template
+           'read_only': True
            }
 
     return render(request, 'surveys/fill.html', ctx)

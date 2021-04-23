@@ -53,9 +53,13 @@ if the survey object exists, then this is survey:responses, otherwise its survey
         <td><a href="{% url 'surveys:view' id=response.survey.id %}">{{response.survey}}</a></td>
         {% endif %}
         <td>
-          <a href="?pt_id={{response.encounter.patient.id}}">
+          <a href=" {% url 'core:patient-detail' pk=response.encounter.patient.id %}">
             {{ response.encounter.patient.name }}
           </a>
+          {% if not patient and not survey %}
+          <a href="?pt_id={{response.encounter.patient.id}}"<span class="label label-success">filter</span>
+
+          {%endif%}
         </td>
         <td>{{response.author}} ({{response.author_role}})</td>
       </tr>
