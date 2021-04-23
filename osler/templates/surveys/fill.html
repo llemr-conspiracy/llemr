@@ -22,6 +22,8 @@ Osler: Surveys
       <p>{{ survey.description }}</p>
       {% if read_only%}
           <a href="{% url 'surveys:responses' id=survey.id%}"><p>see responses</p></a>
+      {%elif patient%}
+        <p><em>filling for {{patient.name}}</em></p>
       {% endif %}
       <hr>
   </div>
@@ -30,7 +32,7 @@ Osler: Surveys
     <form action="#" method='POST'>
     <fieldset disabled>
   {% else %}
-    <form action="{%  url 'surveys:submit' pid=pid id=survey.id %}" method='POST'>
+    <form action="{%  url 'surveys:submit' pid=patient.id id=survey.id %}" method='POST'>
   {% endif %}
     {% csrf_token %}
     {% for question in survey.questions.all %}
