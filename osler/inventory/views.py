@@ -23,6 +23,7 @@ import csv
 import datetime
 from django.utils import timezone
 
+order_list = ['name', 'dose', 'expiration_date']
 class DrugListView(ListView):
     template_name = 'inventory/inventory-main.html'
     def get_queryset(self):
@@ -30,7 +31,7 @@ class DrugListView(ListView):
                     select_related('unit').\
                     select_related('category').\
                     select_related('manufacturer').\
-                    order_by('category', 'name', 'dose', 'expiration_date').\
+                    order_by(*order_list).\
                     exclude(stock=0).all()
         return druglist
 
@@ -156,7 +157,7 @@ def export_csv(request):
         select_related('unit').\
         select_related('category').\
         select_related('manufacturer').\
-        order_by('category', 'name', 'dose', 'expiration_date')
+        order_by(*order_list)
 
     day_interval = timezone.make_aware(timezone.datetime.today() - datetime.timedelta(days=6))
     recently_dispensed = models.DispenseHistory.objects.filter(written_datetime__gte=day_interval)
@@ -178,7 +179,7 @@ def export_csv(request):
                  drug.category,
                  drug.stock,
                  drug.lot_number,
-                 drug.expiration_date,                 
+                 drug.expiration_date,
                  drug.manufacturer,
                  dispensed_sum
                  ])
@@ -208,11 +209,11 @@ def export_dispensing_history(request):
     recently_dispensed_drugs.select_related('unit').\
         select_related('category').\
         select_related('manufacturer').\
-        order_by('category', 'name', 'dose', 'expiration_date')
+        order_by(*order_list)
 
     with NamedTemporaryFile(mode='a+') as file:
         writer = csv.writer(file)
-        header = ['Drug Name', f"Doses Dispensed From: {format_date(str(tz_aware_start_date.date()))} - {format_date(str(tz_aware_end_date.date()))}", 
+        header = ['Drug Name', f"Doses Dispensed From: {format_date(str(tz_aware_start_date.date()))} - {format_date(str(tz_aware_end_date.date()))}",
                   'Stock Remaining ', 'Dosage', 'Unit', 'Category', 'Lot Number', 'Expiration Date', 'Manufacturer']
         writer.writerow(header)
         for drug in recently_dispensed_drugs:
@@ -226,7 +227,7 @@ def export_dispensing_history(request):
                 drug.unit,
                 drug.category,
                 drug.lot_number,
-                drug.expiration_date,                
+                drug.expiration_date,
                 drug.manufacturer
                 ])
         file.seek(0)
