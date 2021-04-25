@@ -599,7 +599,7 @@ msgid "stock"
 msgstr "Vorrat"
 
 #: osler/inventory/models.py:62
-msgid "exspiration date"
+msgid "expiration date"
 msgstr "Ablaufdatum"
 
 #: osler/inventory/models.py:64

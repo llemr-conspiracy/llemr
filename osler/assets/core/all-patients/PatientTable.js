@@ -97,7 +97,7 @@ function PatientTable(props) {
             columns={columns} 
             data={data}
             globalFilter={globalFilter}
-            id='all-patients-table' 
+            id='all-patients-table'
           />
         )}
     </Container>

@@ -1,9 +1,9 @@
 import React from "react";
-import { useTable, useGlobalFilter, usePagination } from "react-table";
+import { useTable, useGlobalFilter, usePagination, useSortBy } from "react-table";
 import SearchBar from "./SearchBar";
 import PaginationBar from "./PaginationBar";
 import Table from "react-bootstrap/Table";
-
+import { BsArrowUp, BsArrowDown } from "react-icons/bs"
 
 function TableManager({ columns, data, globalFilter, id }) {
 
@@ -27,10 +27,13 @@ function TableManager({ columns, data, globalFilter, id }) {
       columns,
       data,
       globalFilter: globalFilter,
-      initialState: { pageIndex: 0 },
+      initialState: { 
+        pageIndex: 0,
+      },
     },
     useGlobalFilter,
-    usePagination
+    useSortBy,
+    usePagination,
   );
 
   return (
@@ -44,7 +47,17 @@ function TableManager({ columns, data, globalFilter, id }) {
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  {column.render("Header")}
+                  {column.isSorted &&
+                    <span>
+                      {column.isSortedDesc
+                        ? <BsArrowDown />
+                        : <BsArrowUp />
+                      }
+                    </span>
+                  }
+                </th>
               ))}
             </tr>
           ))}
