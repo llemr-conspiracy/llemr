@@ -1,11 +1,11 @@
-Running Olser in Production
+Running Osler in Production
 ===========================
 
 
 Building Production Containers
 --------------------------
 
-The production containers of Olser are slightly different than their development counterparts, and require a few extra steps to run. It is recommended to remove the local containers before continuing to prevent conflicts or confusion. This guide will use the generic production.yml docker-compose stack, but it is recommend to copy and customize it to your use case.
+The production containers of Osler are slightly different than their development counterparts, and require a few extra steps to run. It is recommended to remove the local containers before continuing to prevent conflicts or confusion. This guide will use the generic production.yml docker-compose stack, but it is recommend to copy and customize it to your use case.
 
 #. Install Docker_ per the Docker instructions for your platform.
 
@@ -24,7 +24,7 @@ The production containers of Olser are slightly different than their development
 		$ tar -xvzf v2.1.0.tar.gz
 
 #. Create the :code:`.secrets` file:
-	This file contains sensitive information about the Olser instance that would allow break confidentailty if exposed. As such, it must be created manually for each unique Osler instance. The file must be placed in :code:`osler/.envs/.production/.secrets`.
+	This file contains sensitive information about the Osler instance that would allow break confidentailty if exposed. As such, it must be created manually for each unique Osler instance. The file must be placed in :code:`osler/.envs/.production/.secrets`.
 	The file should contain database credentials and the django secret key. **Do not use the values below. They are only an example**
 
 	.. code-block::
