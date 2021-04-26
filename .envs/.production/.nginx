@@ -1,0 +1,5 @@
+# NGINX_HOST
+# ------------------------------------------------------------------------------
+NGINX_HOST=localhost
+NGINX_PORT=80
+NGINX_REVERSE_PROXY=django:5000

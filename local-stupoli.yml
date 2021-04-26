@@ -1,0 +1,60 @@
+version: "3"
+
+volumes:
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: osler_local_django
+    container_name: django
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    env_file:
+      - ./.envs/.local/.stupoli
+      - ./.envs/.local/.postgres
+    command: /start
+    networks:
+      - nginx_network
+      - database_network
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: osler_local_postgres
+    container_name: postgres
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+      - local_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.local/.postgres
+    networks:
+      - database_network
+
+  nginx:
+    image: nginx:1.19
+    container_name: nginx
+    ports:
+      - 80:80
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=80
+      - NGINX_REVERSE_PROXY=django:8000
+    volumes:
+      - ./compose/local/nginx/templates:/etc/nginx/templates
+    depends_on:
+      - django
+    networks:
+      - nginx_network
+
+networks:
+  nginx_network:
+    driver: bridge
+  database_network:
+    driver: bridge
