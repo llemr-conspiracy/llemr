@@ -59,7 +59,7 @@ class Drug(models.Model):
     stock = models.PositiveSmallIntegerField(blank=False, null=False, verbose_name=_("stock"))
 
     expiration_date = models.DateField(help_text="MM/DD/YYYY", blank=False,
-                                       null=False, verbose_name=_("exspiration date"))
+                                       null=False, verbose_name=_("expiration date"))
 
     lot_number = models.CharField(max_length=100, blank=False, verbose_name=_("lot number"))
 
