@@ -9,8 +9,6 @@ from rest_framework.authtoken.views import obtain_auth_token
 urlpatterns = [
     path('', RedirectView.as_view(pattern_name="dashboard-dispatch", permanent=False),
          name="home"),
-    path("about/", RedirectView.as_view(url="http://www.sojournerhealthclinic.com/?page_id=1755", permanent=False),
-         name="about"),
 
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),

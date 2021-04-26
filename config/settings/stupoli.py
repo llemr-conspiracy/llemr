@@ -1,4 +1,4 @@
-# Custom settings for umkc deploy
+# Custom settings for stupoli deploy
 # -----------------------------------------------------------------------------
 from .base import env
 
@@ -18,11 +18,11 @@ OSLER_DISPLAY_ATTENDANCE = True
 OSLER_DISPLAY_FOLLOWUP = False
 OSLER_DISPLAY_VACCINE = False
 
-OSLER_DEFAULT_CITY = "Kansas City"
-OSLER_DEFAULT_STATE = "MO"
-OSLER_DEFAULT_ZIP_CODE = "64109"
-OSLER_DEFAULT_COUNTRY = "USA"
-OSLER_DEFAULT_ADDRESS = "3151 Olive St"
+OSLER_DEFAULT_CITY = "Hamburg"
+OSLER_DEFAULT_STATE = "Hamburg"
+OSLER_DEFAULT_ZIP_CODE = "20459"
+OSLER_DEFAULT_COUNTRY = "Deutschland"
+OSLER_DEFAULT_ADDRESS = "Seewartenstraße 10"
 
-OSLER_ABOUT_NAME = "Help"
-OSLER_ABOUT_URL = "http://www.sojournerhealthclinic.com/?page_id=1755"
+OSLER_ABOUT_NAME = "Wiki"
+OSLER_ABOUT_URL = "https://wiki.stupoli-hamburg.de"
