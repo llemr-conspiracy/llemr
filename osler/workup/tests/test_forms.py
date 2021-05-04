@@ -307,9 +307,6 @@ class TestWorkupFormProviderChoices(TestCase):
 
         
         form = WorkupForm(pt=self.pt)
-
-        #import pdb
-        #pdb.set_trace()
         
         user_pks = [u for u in self.users]
         other_vol_options = form['other_volunteer'].field.queryset
@@ -322,11 +319,6 @@ class TestWorkupFormProviderChoices(TestCase):
         # is the attending
         attending = build_user([user_factories.AttendingGroupFactory])
         non_attending = build_user()
-
-        #wu = workup_factories.WorkupFactory()
-
-        #form_data = model_to_dict(self.wu)
-        #form_data = wu_data
         DiagnosisType.objects.create(name='Cardiovascular')
         form_data = model_to_dict(workup_factories.WorkupFactory())
 

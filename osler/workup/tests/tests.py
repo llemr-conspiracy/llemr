@@ -121,7 +121,6 @@ class TestEmailForUnsignedNotes(TestCase):
 
         assert mail.outbox[0].subject == '[OSLER] 1 Unattested Notes'
         
-        #assert str(pt) in mail.outbox[0].body
         assert self.user.last_name in mail.outbox[0].body
 
 
