@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import TableManager from '../../core/all-patients/TableManager';
-import compare from '../../core/all-patients/compare';
-import simpleComparator from '../../core/all-patients/simpleComparator';
+import CSRFToken from '../../util/CSRFToken';
+import compare from '../../util/compare';
+import simpleComparator from '../../util/simpleComparator';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
 import globalFilter from './globalFilter';
 import { DateTime } from 'luxon';
 
@@ -94,16 +96,20 @@ function DrugListTable(props) {
   );
 
   const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
+  const [drugs, setDrugs] = useState([]);
+  const [patients, setPatients] = useState([]);
 
   useEffect(() => {
-    let apiUrl = "/api/drugs";
-    axios
-      .get(apiUrl)
-      .then((response) => {
-        setData(response.data);
-        setLoading(false);
-      });
+    const drugUrl = "/api/drugs";
+    const ptUrl = "/api/patients/?fields=name,age,gender,id&filter=active";
+    Promise.all([
+      axios.get(drugUrl), 
+      axios.get(ptUrl),
+    ]).then(function(res) {
+      setDrugs(res[0].data);
+      setPatients(res[1].data);
+      setLoading(false);
+    });
   }, []);
 
   return (
@@ -114,28 +120,50 @@ function DrugListTable(props) {
         <>
           <TableManager
             columns={columns}
-            data={data}
+            data={drugs}
             globalFilter={globalFilter}
             id='drug-list-table'
           />
           <Modal show={state.show} onHide={handleClose}>
             {state.drug &&
-              <>
+              <Form action="/inventory/drug-dispense/" method="post">
+                <CSRFToken />
                 <Modal.Header closeButton>
                   <Modal.Title>Dispense Drug</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                  How much <strong>{state.drug.name} {state.drug.dose} {state.drug.unit}</strong> would you like to dispense?
+                    <Form.Group>
+                      <Form.Label>
+                        How much <strong>{state.drug.name} {state.drug.dose} {state.drug.unit}</strong> would you like to dispense?
+                      </Form.Label>
+                      <Form.Control type="number" min={1} max={state.drug.stock} placeholder={1} name="num" id="num"/>
+                    </Form.Group>
+                    <Form.Group>
+                      <Form.Control type="hidden" name="pk" id="pk" value={state.drug.id} />
+                    </Form.Group>
+                    <Form.Group>
+                      <Form.Label>
+                        For which patient would you like to dispense <strong>{state.drug.name}</strong>?
+                      </Form.Label>
+                      <Form.Control as="select" name="patient_pk" id="patient_pk">
+                        <option disabled value> -- select patient -- </option>
+                        {patients.map(pt => 
+                          <option value={pt.id} key={pt.id}>
+                            {pt.name} {pt.age}/{pt.gender}
+                          </option>
+                        )}
+                      </Form.Control>
+                    </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>
                     Cancel
                 </Button>
-                <Button variant="primary" onClick={handleClose}>
+                <Button variant="primary" type="submit">
                     Dispense Drug
                 </Button>
                 </Modal.Footer>
-              </>
+              </Form>
             }
           </Modal>
         </>
