@@ -43,12 +43,8 @@ class TestWorkupFormUnitAwareFields(TestCase):
     def setUp(self):
         DiagnosisType.objects.create(name='Cardiovascular')
 
-        #wu = workup_factories.WorkupFactory(diagnosis_categories = DiagnosisType.objects.first().pk, got_imaging_voucher = False, got_voucher = False)
-        #probably can't just change this altogether
+       
         wu = workup_factories.WorkupFactory()
-
-        #not sure what this was doing...
-        #del workup.t
 
         self.wu = wu
 
@@ -56,8 +52,6 @@ class TestWorkupFormUnitAwareFields(TestCase):
 
     def test_vitals_no_units_error(self):
         """If vitals measurement w/o units, raise error"""
-
-        #wu_data = model_to_dict(self.wu.copy())
 
         wu_data = model_to_dict(self.wu)
         
@@ -69,10 +63,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
 
         for field in ['t', 'height', 'weight']:
             self.assertFalse(form.is_valid(), msg = 'Failed to raise error if only %s specified' % field) 
-        #self.assertFalse(
-            #form.is_valid(),
-            #msg = 'Failed to raise error if only %s specified' % field)
-        self.assertNotEqual(len(form[field].errors),0)
+            self.assertNotEqual(len(form[field].errors),0)
 
     def test_vitals_no_value_no_units_ok(self):
         """Units are required only when vitals are provided."""
@@ -96,7 +87,6 @@ class TestWorkupFormUnitAwareFields(TestCase):
         wu_data['height_units'] = 'cm'
         wu_data['height'] = 180
         
-        #adding this in but doesn't seem right:
         wu_data['weight_units'] = 'kg'
         wu_data['weight'] = 180
         
@@ -127,7 +117,6 @@ class TestWorkupFormUnitAwareFields(TestCase):
         wu_data['height_units'] = 'cm'
         wu_data['height'] = 180
         
-        #adding this in but doesn't seem right:
         wu_data['weight_units'] = 'kg'
         wu_data['weight'] = 180
         wu_data['temperature'] = 98
@@ -281,7 +270,6 @@ class TestWorkupFormProviderChoices(TestCase):
                 self.users.append(build_user(list(role_tuple)))
         self.pt = core_factories.PatientFactory()
         
-        #self.wu = workup_factories.WorkupFactory()
 
     def test_form_attending_options(self):
         """WorkupForm offers only attending users for 'attending'"""
