@@ -3,6 +3,8 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from phonenumber_field.modelfields import PhoneNumberField
+
 from simple_history.models import HistoricalRecords
 
 from osler.core import validators
@@ -16,13 +18,14 @@ class User(AbstractUser):
     # more inclusive of name patterns around the world
     name = models.CharField("Preferred name", blank=True, max_length=255)
 
-    phone = models.CharField(max_length=40, null=True, blank=True)
+    phone = PhoneNumberField(null=True, blank=True)
+    phone_old = models.CharField(max_length=40, null=True, blank=True)
 
     languages = models.ManyToManyField(
         "core.Language",
         help_text="Specify here languages that are spoken at a "
-                            "level sufficient to be used for medical "
-                            "communication.")
+                  "level sufficient to be used for medical "
+                  "communication.")
     gender = models.ForeignKey("core.Gender", null=True, on_delete=models.PROTECT)
 
     history = HistoricalRecords()

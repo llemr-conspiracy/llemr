@@ -12,6 +12,7 @@ from django.core.exceptions import MultipleObjectsReturned
 
 from simple_history.models import HistoricalRecords
 from adminsortable.models import SortableMixin
+from phonenumber_field.modelfields import PhoneNumberField
 
 from osler.core import validators
 from osler.core import utils
@@ -37,6 +38,35 @@ class Gender(models.Model):
 
     def short_name(self):
         return self.name[0]
+
+
+class PatientPhoneNumber(models.Model):
+    """A phone number for a patient.
+
+    Tracks a "description" for each phone number, which is a free text
+    field intended to be used for something like "cell" or "home".
+    """
+
+    class Meta:
+        unique_together = (
+            ('patient', 'description'),
+            ('patient', 'phone_number'),
+        )
+
+    patient = models.ForeignKey(
+        'patient',
+        related_name='phone_number_set',
+        on_delete=models.CASCADE
+    )
+
+    # phone number field from django-phonenumber-field
+    phone_number = PhoneNumberField()
+
+    description = models.CharField(
+        max_length=256, blank=True)
+
+    def __str__(self):
+        return "%s (%s)" % (self.phone_number, self.description)
 
 
 class ContactMethod(models.Model):
@@ -358,13 +388,11 @@ class Patient(Person):
             return now().date()
 
     def all_phones(self):
-        '''Returns a list of tuples of the form (phone, owner) of all the
-        phones associated with this patient.'''
+        """Returns a list of tuples of the form (phone, owner) of all the
+        phones associated with this patient."""
 
-        phones = [(self.phone, '')]
-        phones.extend([(getattr(self, 'alternate_phone_'+str(i)),
-                        getattr(self, 'alternate_phone_'+str(i)+'_owner'))
-                       for i in range(1, 5)])
+        phones = [(p.phone_number, p.description)
+                  for p in self.phone_number_set.all()]
 
         return phones
 

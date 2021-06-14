@@ -57,6 +57,14 @@ class TestPatientCreateForms(TestCase):
 
         self.valid_pt_dict = factory.build(
             dict, FACTORY_CLASS=factories.PatientFactory)
+        print(self.valid_pt_dict)
+
+    def phone_description_only_when_phone_provided(self):
+
+        del self.valid_pt_dict['phone']
+        form = forms.PatientForm(data=self.valid_pt_dict)
+        assert len(form['description'].errors) > 0
+
 
     def test_form_casemanager_options(self):
         """PatientForm only offers valid case managers as options.
@@ -105,26 +113,3 @@ class TestPatientCreateForms(TestCase):
         form_data['case_managers'] = [pvds[2].pk]
         form = forms.PatientForm(data=form_data)
         assert len(form['case_managers'].errors) == 0
-
-    def test_missing_alt_phone(self):
-        '''Missing the alternative phone w/o alt phone owner should fail.'''
-        form_data = self.valid_pt_dict
-
-        form_data['alternate_phone_1_owner'] = "Jamal"
-        # omit 'alternate_phone', should get an error
-
-        form = forms.PatientForm(data=form_data)
-
-        # and expect an error to be on the empty altphone field
-        self.assertNotEqual(len(form['alternate_phone_1'].errors), 0)
-
-    def test_missing_alt_phone_owner(self):
-        '''Missing the alt phone owner w/o alt phone should fail.'''
-        form_data = self.valid_pt_dict
-
-        form_data['alternate_phone_1'] = "4258612322"
-        # omit 'alternate_phone', should get an error
-
-        form = forms.PatientForm(data=form_data)
-        # we expect errors on the empty alternate_phone_1_owner field
-        self.assertNotEqual(len(form['alternate_phone_1_owner'].errors), 0)

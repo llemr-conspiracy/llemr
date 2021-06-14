@@ -14,7 +14,7 @@ services:
     depends_on:
       - postgres
     volumes:
-      - .:/app
+      - .:/app:delegated
     env_file:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres
@@ -31,8 +31,8 @@ services:
     image: osler_production_postgres
     container_name: postgres
     volumes:
-      - local_postgres_data:/var/lib/postgresql/data
-      - local_postgres_data_backups:/backups
+      - local_postgres_data:/var/lib/postgresql/data:cached
+      - local_postgres_data_backups:/backups:cached
     env_file:
       - ./.envs/.local/.postgres
 

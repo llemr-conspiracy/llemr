@@ -1,6 +1,7 @@
 import datetime
 import json
 import os
+import factory
 
 from django.test import TestCase
 from django.urls import reverse
@@ -315,6 +316,8 @@ class IntakeTest(TestCase):
 
         new_pt = models.Patient.objects.last()
         for param in submitted_pt:
+            # these are fk relationships, shouldn't be checked this way
+            if param == 'phone' or param == 'description': continue
             try:
                 self.assertEqual(str(submitted_pt[param]),
                                  str(getattr(new_pt, param)))
@@ -323,8 +326,37 @@ class IntakeTest(TestCase):
                                 getattr(new_pt, param).all()):
                     self.assertEqual(x, y)
 
+        assert new_pt.phone_number_set.count() == 1
+        assert new_pt.phone_number_set.first().phone_number != ''
+        assert new_pt.phone_number_set.first().description == ''
+
         # new patients should be marked as inactive
         assert not new_pt.get_status().is_active
+
+    def test_create_phone(self):
+
+        from phonenumber_field.modelfields import PhoneNumber
+
+        pt = factories.PatientFactory()
+        pt.save()
+
+        pn_data = factory.build(
+            dict, FACTORY_CLASS=factories.PatientPhoneNumberFactory)
+        pn_data['patient'] = pt.pk
+
+        url = reverse('core:patient-add-phone',
+                      kwargs={'pk': pt.pk})
+        response = self.client.post(url, pn_data)
+
+        assert response.status_code == 302
+        assert reverse('core:patient-detail', args=(pt.id,)) in response.url
+        assert models.PatientPhoneNumber.objects.count() == 1
+
+        new_pn = models.PatientPhoneNumber.objects.first()
+
+        assert new_pn.patient == pt
+        assert new_pn.description == pn_data['description']
+        assert new_pn.phone_number == pn_data['phone_number']
 
 
 class ActionItemTest(TestCase):

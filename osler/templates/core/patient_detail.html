@@ -121,13 +121,19 @@
 				<th>{% trans 'Phone Number' %}</th>
       </tr>
       {% for phone, owner in patient.all_phones %}
-      {% if phone or owner %}
-      <tr>
-        <td>{{ owner | default:"Primary" }}</td>
-        <td>{{ phone }}</td>
-      </tr>
-      {% endif %}
+        {% if phone or owner %}
+        <tr>
+          <td>{{ owner | default:"Primary" }}</td>
+          <td>{{ phone }}</td>
+        </tr>
+        {% endif %}
       {% endfor %}
+      <tr>
+        <td style="text-align: center;" colspan=2>
+          <a href="{% url 'core:patient-add-phone' patient.id %}">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+        </a></td>
+      </tr>
     </table>
   </div>
 </div>

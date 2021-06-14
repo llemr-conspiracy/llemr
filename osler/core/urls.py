@@ -42,6 +42,10 @@ unwrapped_urlpatterns = [
         r'^patient/activate_home/(?P<pk>[0-9]+)$',
         views.patient_activate_home,
         name='patient-activate-home'),
+    re_path(
+        r'^patient/(?P<pk>[0-9]+)/add-phone$',
+        views.PhoneNumberCreate.as_view(),
+        name='patient-add-phone'),
 
     # USER MANAGEMENT
     re_path(
