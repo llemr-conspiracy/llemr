@@ -26,3 +26,5 @@ OSLER_DEFAULT_ADDRESS = "Seewartenstraße 10"
 
 OSLER_ABOUT_NAME = "Wiki"
 OSLER_ABOUT_URL = "https://wiki.stupoli-hamburg.de"
+
+LANGUAGE_CODE = "de"
