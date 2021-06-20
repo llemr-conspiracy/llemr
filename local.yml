@@ -25,7 +25,6 @@ services:
     networks:
       - selenium_network
       - database_network
-      - nginx_network
 
   postgres:
     build:
