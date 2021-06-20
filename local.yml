@@ -13,7 +13,6 @@ services:
     container_name: django
     depends_on:
       - postgres
-      - selenium
     volumes:
       - .:/app
     env_file:
@@ -22,7 +21,6 @@ services:
     command: /start
     networks:
       - nginx_network
-      - selenium_network
       - database_network
 
   postgres:
@@ -38,15 +36,6 @@ services:
       - ./.envs/.local/.postgres
     networks:
       - database_network
-
-  selenium:
-    container_name: selenium
-    image: selenium/standalone-chrome-debug:3.141
-    ports:
-      - 4444:4444   # Selenium
-      - 5900:5900   # VNC server
-    networks:
-      - selenium_network
 
   nginx:
     image: nginx:1.19
@@ -68,6 +57,4 @@ networks:
   nginx_network:
     driver: bridge
   database_network:
-    driver: bridge
-  selenium_network:
     driver: bridge
