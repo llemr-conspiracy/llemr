@@ -1,0 +1,3783 @@
+[
+    {
+        "model": "core.patient",
+        "pk": 3,
+        "fields": {
+            "first_name": "Annie",
+            "last_name": "Atkins",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1989-08-09",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 4,
+        "fields": {
+            "first_name": "Steve",
+            "last_name": "Johnson",
+            "middle_name": "Phil",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1989-08-09",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 5,
+        "fields": {
+            "first_name": "Bertha",
+            "last_name": "Solari",
+            "middle_name": "Mona",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1989-08-09",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 6,
+        "fields": {
+            "first_name": "Nora",
+            "last_name": "Leonard",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1993-09-25",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 7,
+        "fields": {
+            "first_name": "Vicki",
+            "last_name": "Castro",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2007-08-09",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Black or African American"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 8,
+        "fields": {
+            "first_name": "Everett",
+            "last_name": "Kennedy",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2005-03-23",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian",
+                "Black or African American",
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 9,
+        "fields": {
+            "first_name": "Ervin",
+            "last_name": "Padilla",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1942-08-16",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander",
+                "Hispanic or Latino",
+                "American Indian or Alaska Native"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 10,
+        "fields": {
+            "first_name": "Chad",
+            "last_name": "Boone",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1982-07-16",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "American Indian or Alaska Native"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 11,
+        "fields": {
+            "first_name": "Kelly",
+            "last_name": "Lamb",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1958-10-31",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White",
+                "Native Hawaiian or Other Pacific Islander",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 12,
+        "fields": {
+            "first_name": "Tara",
+            "last_name": "Martinez",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2007-11-10",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 13,
+        "fields": {
+            "first_name": "Erick",
+            "last_name": "Cobb",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1955-06-07",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White",
+                "Other",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 14,
+        "fields": {
+            "first_name": "Eunice",
+            "last_name": "Adkins",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1956-02-22",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other",
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 15,
+        "fields": {
+            "first_name": "Julie",
+            "last_name": "Sims",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1980-06-17",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian",
+                "Black or African American"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 16,
+        "fields": {
+            "first_name": "Blanca",
+            "last_name": "Gonzales",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2003-11-09",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 17,
+        "fields": {
+            "first_name": "Kristin",
+            "last_name": "Henry",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1974-01-15",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 18,
+        "fields": {
+            "first_name": "Amelia",
+            "last_name": "Harper",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2004-05-09",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White",
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 19,
+        "fields": {
+            "first_name": "Terrence",
+            "last_name": "Howard",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1991-02-06",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White",
+                "American Indian or Alaska Native"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 20,
+        "fields": {
+            "first_name": "Leonard",
+            "last_name": "Barnett",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1994-09-14",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 21,
+        "fields": {
+            "first_name": "Winston",
+            "last_name": "Mckenzie",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1986-12-15",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White",
+                "Native Hawaiian or Other Pacific Islander",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 22,
+        "fields": {
+            "first_name": "Armando",
+            "last_name": "Lindsey",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2010-09-19",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 23,
+        "fields": {
+            "first_name": "Virginia",
+            "last_name": "Matthews",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2002-08-21",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 24,
+        "fields": {
+            "first_name": "Phillip",
+            "last_name": "Saunders",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1955-02-27",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Black or African American",
+                "Native Hawaiian or Other Pacific Islander",
+                "White"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 25,
+        "fields": {
+            "first_name": "Leigh",
+            "last_name": "Gilbert",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1977-12-28",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian",
+                "White",
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 26,
+        "fields": {
+            "first_name": "Catherine",
+            "last_name": "Sanchez",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1951-07-15",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other",
+                "Black or African American",
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 27,
+        "fields": {
+            "first_name": "Carol",
+            "last_name": "Weber",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2013-04-20",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Black or African American",
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 28,
+        "fields": {
+            "first_name": "Brett",
+            "last_name": "Palmer",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1977-06-12",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other",
+                "Black or African American",
+                "American Indian or Alaska Native"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 29,
+        "fields": {
+            "first_name": "Paulette",
+            "last_name": "Bass",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2016-05-27",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 30,
+        "fields": {
+            "first_name": "Leroy",
+            "last_name": "West",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2002-10-21",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 31,
+        "fields": {
+            "first_name": "Howard",
+            "last_name": "Ryan",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2014-03-29",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other",
+                "Black or African American",
+                "American Indian or Alaska Native"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 32,
+        "fields": {
+            "first_name": "Rachael",
+            "last_name": "Swanson",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2003-02-08",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 33,
+        "fields": {
+            "first_name": "Amos",
+            "last_name": "Ramsey",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1974-01-25",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian",
+                "American Indian or Alaska Native",
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 34,
+        "fields": {
+            "first_name": "Sergio",
+            "last_name": "Vaughn",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1951-01-13",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White",
+                "Native Hawaiian or Other Pacific Islander",
+                "American Indian or Alaska Native"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 35,
+        "fields": {
+            "first_name": "Pat",
+            "last_name": "Brady",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1997-11-30",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White",
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 36,
+        "fields": {
+            "first_name": "Bernadette",
+            "last_name": "Cruz",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1975-11-27",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Black or African American",
+                "Asian",
+                "American Indian or Alaska Native"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 37,
+        "fields": {
+            "first_name": "Wayne",
+            "last_name": "Thomas",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1990-04-02",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Black or African American",
+                "White"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 38,
+        "fields": {
+            "first_name": "Tyler",
+            "last_name": "Love",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1952-03-10",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 39,
+        "fields": {
+            "first_name": "Claude",
+            "last_name": "Soto",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1973-02-14",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "American Indian or Alaska Native",
+                "Black or African American",
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 40,
+        "fields": {
+            "first_name": "Jacquelyn",
+            "last_name": "Burton",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1954-06-19",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "American Indian or Alaska Native",
+                "Native Hawaiian or Other Pacific Islander",
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 41,
+        "fields": {
+            "first_name": "Kenneth",
+            "last_name": "Zimmerman",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1985-02-11",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 42,
+        "fields": {
+            "first_name": "Hubert",
+            "last_name": "Peterson",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1983-09-03",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Black or African American",
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 43,
+        "fields": {
+            "first_name": "Virgil",
+            "last_name": "Morris",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1950-10-15",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Black or African American",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 44,
+        "fields": {
+            "first_name": "Jacqueline",
+            "last_name": "Miller",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1991-11-15",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 45,
+        "fields": {
+            "first_name": "Rachel",
+            "last_name": "Hanson",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1995-09-29",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 46,
+        "fields": {
+            "first_name": "Danielle",
+            "last_name": "Douglas",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1997-04-15",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White",
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 47,
+        "fields": {
+            "first_name": "Billy",
+            "last_name": "Fleming",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1981-04-09",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander",
+                "Asian",
+                "American Indian or Alaska Native"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 48,
+        "fields": {
+            "first_name": "Enrique",
+            "last_name": "Vega",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1968-11-29",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 49,
+        "fields": {
+            "first_name": "Rosa",
+            "last_name": "Mccarthy",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1953-10-26",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Black or African American",
+                "Hispanic or Latino",
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 50,
+        "fields": {
+            "first_name": "Alison",
+            "last_name": "Henderson",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1972-11-01",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White",
+                "Other",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 51,
+        "fields": {
+            "first_name": "Jeremy",
+            "last_name": "Oliver",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1989-02-08",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander",
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 52,
+        "fields": {
+            "first_name": "Melanie",
+            "last_name": "Marsh",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2017-12-27",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 53,
+        "fields": {
+            "first_name": "Bertha",
+            "last_name": "Garza",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1946-06-06",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other",
+                "Hispanic or Latino",
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 54,
+        "fields": {
+            "first_name": "Alexis",
+            "last_name": "Roberts",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1954-12-09",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 55,
+        "fields": {
+            "first_name": "Andrew",
+            "last_name": "Park",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1990-09-08",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander",
+                "White",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 56,
+        "fields": {
+            "first_name": "Alicia",
+            "last_name": "Ortega",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1963-09-02",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 57,
+        "fields": {
+            "first_name": "Monique",
+            "last_name": "Patterson",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1940-03-20",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "American Indian or Alaska Native",
+                "Black or African American"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 58,
+        "fields": {
+            "first_name": "Delia",
+            "last_name": "Burns",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1989-05-16",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other",
+                "Black or African American"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 59,
+        "fields": {
+            "first_name": "Dewey",
+            "last_name": "Weaver",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2008-01-08",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 60,
+        "fields": {
+            "first_name": "Marsha",
+            "last_name": "Walton",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1983-12-05",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian",
+                "Native Hawaiian or Other Pacific Islander",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 61,
+        "fields": {
+            "first_name": "Willie",
+            "last_name": "Goodwin",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2008-05-07",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 62,
+        "fields": {
+            "first_name": "Geoffrey",
+            "last_name": "Parsons",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1997-02-25",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Black or African American",
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 63,
+        "fields": {
+            "first_name": "Salvador",
+            "last_name": "Morales",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1958-07-12",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "American Indian or Alaska Native",
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 64,
+        "fields": {
+            "first_name": "Susan",
+            "last_name": "Jones",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1968-01-30",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Hispanic or Latino",
+                "American Indian or Alaska Native",
+                "White"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 65,
+        "fields": {
+            "first_name": "Clay",
+            "last_name": "Neal",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1990-12-12",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other",
+                "White",
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 66,
+        "fields": {
+            "first_name": "Craig",
+            "last_name": "Mullins",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1989-11-03",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 67,
+        "fields": {
+            "first_name": "Brandi",
+            "last_name": "Banks",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1941-07-08",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander",
+                "Hispanic or Latino",
+                "Black or African American"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 68,
+        "fields": {
+            "first_name": "Meredith",
+            "last_name": "Gonzalez",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2000-11-20",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian",
+                "Black or African American",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 69,
+        "fields": {
+            "first_name": "Ruben",
+            "last_name": "Holland",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2001-03-21",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Black or African American"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 70,
+        "fields": {
+            "first_name": "Norma",
+            "last_name": "Barton",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1945-02-15",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian",
+                "White",
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 71,
+        "fields": {
+            "first_name": "Adrian",
+            "last_name": "Ramos",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1970-07-14",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "American Indian or Alaska Native",
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 72,
+        "fields": {
+            "first_name": "Jackie",
+            "last_name": "Herrera",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2012-04-23",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 73,
+        "fields": {
+            "first_name": "Henrietta",
+            "last_name": "Lawrence",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2001-03-09",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 74,
+        "fields": {
+            "first_name": "Kimberly",
+            "last_name": "Perkins",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1961-05-15",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "American Indian or Alaska Native",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 75,
+        "fields": {
+            "first_name": "Orville",
+            "last_name": "Franklin",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1981-05-22",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Black or African American",
+                "White"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 76,
+        "fields": {
+            "first_name": "Velma",
+            "last_name": "Gardner",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1981-05-05",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 77,
+        "fields": {
+            "first_name": "Melinda",
+            "last_name": "Watts",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1985-11-21",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 78,
+        "fields": {
+            "first_name": "Christina",
+            "last_name": "Mills",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1966-12-25",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander",
+                "American Indian or Alaska Native",
+                "Black or African American"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 79,
+        "fields": {
+            "first_name": "Heidi",
+            "last_name": "Maxwell",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1994-01-19",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "White"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 80,
+        "fields": {
+            "first_name": "Gregory",
+            "last_name": "Pena",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1975-12-24",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Black or African American",
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 81,
+        "fields": {
+            "first_name": "Melba",
+            "last_name": "Fox",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1999-04-18",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "American Indian or Alaska Native",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 82,
+        "fields": {
+            "first_name": "Bill",
+            "last_name": "Robinson",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1988-02-29",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 83,
+        "fields": {
+            "first_name": "Rudy",
+            "last_name": "Jennings",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1951-03-13",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 84,
+        "fields": {
+            "first_name": "Rudolph",
+            "last_name": "Sandoval",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1998-11-11",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Hispanic or Latino",
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 85,
+        "fields": {
+            "first_name": "Delbert",
+            "last_name": "Olson",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "2005-03-01",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 86,
+        "fields": {
+            "first_name": "Kate",
+            "last_name": "Lucas",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1956-03-21",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "American Indian or Alaska Native",
+                "Native Hawaiian or Other Pacific Islander",
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 87,
+        "fields": {
+            "first_name": "Jamie",
+            "last_name": "Foster",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1990-11-18",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 88,
+        "fields": {
+            "first_name": "Violet",
+            "last_name": "Maldonado",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1951-03-05",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Native Hawaiian or Other Pacific Islander",
+                "American Indian or Alaska Native",
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 89,
+        "fields": {
+            "first_name": "Maxine",
+            "last_name": "Powers",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1980-08-25",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 90,
+        "fields": {
+            "first_name": "Bobbie",
+            "last_name": "Wise",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1964-11-25",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "American Indian or Alaska Native",
+                "Other"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 91,
+        "fields": {
+            "first_name": "Norman",
+            "last_name": "Ball",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1952-03-16",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "American Indian or Alaska Native",
+                "White",
+                "Hispanic or Latino"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 92,
+        "fields": {
+            "first_name": "Gwendolyn",
+            "last_name": "Ellis",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1959-08-01",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian",
+                "White"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 93,
+        "fields": {
+            "first_name": "Ivan",
+            "last_name": "Grant",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1974-01-05",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 94,
+        "fields": {
+            "first_name": "Agnes",
+            "last_name": "Pearson",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1979-01-09",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Hispanic or Latino",
+                "Black or African American"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 95,
+        "fields": {
+            "first_name": "Nettie",
+            "last_name": "Parks",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1943-02-10",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "American Indian or Alaska Native"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 96,
+        "fields": {
+            "first_name": "Elijah",
+            "last_name": "Phelps",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1958-12-25",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Hispanic or Latino",
+                "American Indian or Alaska Native"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 97,
+        "fields": {
+            "first_name": "Kristy",
+            "last_name": "Mason",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1964-09-04",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Hispanic or Latino",
+                "Native Hawaiian or Other Pacific Islander",
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 98,
+        "fields": {
+            "first_name": "Owen",
+            "last_name": "Jensen",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Female",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1997-12-27",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "American Indian or Alaska Native",
+                "Hispanic or Latino",
+                "Asian"
+            ]
+        }
+    },
+    {
+        "model": "core.patient",
+        "pk": 99,
+        "fields": {
+            "first_name": "Kay",
+            "last_name": "Lee",
+            "middle_name": "Zhou",
+            "phone": "541-451-4321",
+            "gender": "Male",
+            "outcome": null,
+            "address": "2410 Park Ave.",
+            "city": "St. Louis",
+            "state": "MO",
+            "zip_code": "",
+            "country": "USA",
+            "pcp_preferred_zip": null,
+            "date_of_birth": "1969-02-15",
+            "patient_comfortable_with_english": true,
+            "alternate_phone_1_owner": null,
+            "alternate_phone_1": null,
+            "alternate_phone_2_owner": null,
+            "alternate_phone_2": null,
+            "alternate_phone_3_owner": null,
+            "alternate_phone_3": null,
+            "alternate_phone_4_owner": null,
+            "alternate_phone_4": null,
+            "preferred_contact_method": null,
+            "email": null,
+            "needs_workup": true,
+            "languages": [
+                "English"
+            ],
+            "case_managers": [],
+            "ethnicities": [
+                "Other",
+                "Asian",
+                "White"
+            ]
+        }
+    }
+]
