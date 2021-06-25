@@ -223,6 +223,11 @@ class PatientCreate(FormView):
     def form_valid(self, form):
         pt = form.save()
         pt.save()
+        
+        group = get_active_role(self.request)
+        if group_has_perm(group, 'core.activate_Patient'):
+            pt.toggle_active_status(self.request.user, get_active_role(self.request))
+
         return HttpResponseRedirect(reverse("demographics-create",
                                             args=(pt.id,)))
 
