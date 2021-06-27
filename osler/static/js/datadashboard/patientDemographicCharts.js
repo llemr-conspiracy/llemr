@@ -16,7 +16,7 @@ window.addEventListener("load", (event) => {
       (result) => {
         clinicDates = result["clinic_dates"];
 
-        //load daterangepicker range buttons and default to Latest clinic
+        // load daterangepicker range buttons and default to Latest clinic
         dateRanges["Latest Clinic"] = [
           moment(clinicDates[clinicDates.length - 1]),
           moment(moment(clinicDates[clinicDates.length - 1]).add(1, "days").format()),
@@ -29,8 +29,8 @@ window.addEventListener("load", (event) => {
         dateRanges["This Month"] = [moment().startOf("month"), moment()];
         dateRanges["This Year"] = [moment().startOf("year"), moment()];
         dateRanges["All Time"] = [moment().subtract(20, "years"), moment()];
-        selectedStart = dateRanges["Latest Clinic"][0]._i;
-        selectedEnd = dateRanges["Latest Clinic"][1]._i;
+        selectedStart = dateRanges["All Time"][0]._d; //***change key back to latest clinic when working
+        selectedEnd = dateRanges["All Time"][1]._d;
 
         //load date range picker
         $('input[name="daterange"]').daterangepicker(
@@ -204,9 +204,7 @@ function makeCommonConditionsChart(){
   });
   // event listeners for filtering by displayed conditions
   canvas = document.getElementById("conditions-chart-canvas");
-  console.log(canvas)
   canvas.onclick = function (evt) {
-    console.log("click")
     var firstPoint = conditionsChart.getElementAtEvent(evt)[0];
     selectedConditions = [conditionsChart.data.labels[firstPoint._index]];
     makeFilteredCharts("condition");
@@ -232,7 +230,7 @@ function makeFilterByConditionButton(condition,index) {
 
   conditionSelectorButton.addEventListener("click", function(){
     selectedConditions = condition;
-    let span = document.createTextNode("Displaying: "+condition);
+    let span = document.createTextNode(condition);
     document.getElementById("display-condition").childNodes[0].replaceWith(span);
     makeFilteredCharts("condition");
   });
@@ -249,11 +247,13 @@ document.getElementById("all-conditions-btn").addEventListener("click", function
 //filter all workups data by selected condition and date range
 function filterData(isByCondition){
   filteredData = {};
+
   for (const [key, value] of Object.entries(jsondata)) {
+    
     var filterOut = true;
     // check if condition matches selected condition
     value.conditions.forEach(condition => {
-      if(isByCondition){
+      if(isByCondition){ 
         if (selectedConditions.includes(condition)) {
           //check if within selected date range
           value.wu_dates.map(function (d) {
@@ -350,7 +350,7 @@ document.getElementById("export-data").addEventListener("click", function () {
 
 function makeAgeChart(dateFilteredData) {
   (ageStepSize = 10), (ageRanges = []), (ageLabels = []), (sortedAges = []);
-
+  console.log("datefiltered" + dateFilteredData[0])
   var ages = Object.values(dateFilteredData).map(function (e) {
     return e.age;
   });

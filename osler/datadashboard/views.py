@@ -4,19 +4,19 @@ from django.utils.timezone import now
 from django.views.generic import TemplateView
 from django.http import JsonResponse
 from osler.demographics.models import Demographics
-from osler.workup.models import Workup,ClinicDate
+from osler.workup.models import Workup
 from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
 
 class DataDashboardView(TemplateView):
     template_name = 'datadashboard/patient_data_dashboard.html'        
 
-def query_clinic_dates_model():
-    raw_clinic_dates = ClinicDate.objects.all()
-    dates = []
-    for clinic in raw_clinic_dates:
-        dates.append(datetime.datetime.strftime(getattr(clinic, "clinic_date"),"%Y-%m-%d"))
-    dates.sort()
-    return dates
+# def query_clinic_dates_model():
+#     raw_clinic_dates = ClinicDate.objects.all()
+#     dates = []
+#     for clinic in raw_clinic_dates:
+#         dates.append(datetime.datetime.strftime(getattr(clinic, "clinic_date"),"%Y-%m-%d"))
+#     dates.sort()
+#     return dates
 
 def query_workups_model():
     '''Queries all workups'''
@@ -36,7 +36,9 @@ def query_demographics_model():
     return formatted_demographics
 
 def extract_demographic_data(workups,demo):
-    '''takes in queryed workups then extracts and formats related demographic data into json friendly format'''
+    '''takes in queryed workups then extracts and formats related demographic data into json friendly format, 
+    also extracts unique clinic dates into a list
+    '''
     dashboard_data = {}
     unique_patient_pk_list = []
     for wu in workups:
@@ -71,9 +73,9 @@ def send_all_json(request):
 
 def send_context_json(request):
     '''Sends extra data to be used in quick stats displays'''
-    clinics = query_clinic_dates_model()
+    # clinics = query_clinic_dates_model()
     context_data = {}
-    context_data['clinic_dates'] = clinics
+    context_data['clinic_dates'] = []
     return JsonResponse(context_data)
 
 # @active_permission_required('inventory.export_csv', raise_exception=True)
