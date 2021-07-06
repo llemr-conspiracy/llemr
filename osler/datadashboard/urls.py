@@ -12,7 +12,6 @@ app_name = 'datadashboard'
 unwrapped_urlconf = [
     re_path(r'^$', views.DataDashboardView.as_view(), name='patient-data-dashboard'),
     re_path(r'^all-json-datadashboard/', views.send_all_json, name='all_json_datadashboard'),
-    re_path(r'^context-json-datadashboard/', views.send_context_json, name='context_json_datadashboard'),
     re_path(r'^jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
     re_path(r'^export-csv/', views.export_csv, name='export-csv'),
 ]

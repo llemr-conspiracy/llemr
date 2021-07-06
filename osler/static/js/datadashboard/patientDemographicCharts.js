@@ -10,22 +10,22 @@ var dateRanges = {};
 
 //initial page load - display all-conditions data from latest clinic date
 window.addEventListener("load", (event) => {
-  fetch("context-json-datadashboard/")
+  fetch("all-json-datadashboard/")
     .then((res) => res.json())
     .then(
       (result) => {
-        clinicDates = result["clinic_dates"];
+        // clinicDates = result["clinic_dates"];
 
         // load daterangepicker range buttons and default to Latest clinic
         dateRanges["Latest Clinic"] = [
           moment(clinicDates[clinicDates.length - 1]),
           moment(moment(clinicDates[clinicDates.length - 1]).add(1, "days").format()),
         ];
-        dateRanges["Previous Clinic"] = [
-          moment(clinicDates[clinicDates.length - 2]),
-          moment(moment(clinicDates[clinicDates.length - 2]).add(1, "days").format()
-          ),
-        ];
+        // dateRanges["Previous Clinic"] = [
+        //   moment(clinicDates[clinicDates.length - 2]),
+        //   moment(moment(clinicDates[clinicDates.length - 2]).add(1, "days").format()
+        //   ),
+        // ];
         dateRanges["This Month"] = [moment().startOf("month"), moment()];
         dateRanges["This Year"] = [moment().startOf("year"), moment()];
         dateRanges["All Time"] = [moment().subtract(20, "years"), moment()];
@@ -84,22 +84,14 @@ window.addEventListener("load", (event) => {
             makeCommonConditionsChart();
           }
         );
-        
+
         //load demographic data and generate charts
-        fetch("all-json-datadashboard/")
-          .then((res) => res.json())
-          .then(
-            (result) => {
-              jsondata = result;
-              console.log(jsondata);
-              makeCommonConditionsChart();
-              initializeHelper();
-              makeFilteredCharts("condition");
-            },
-            (error) => {
-              console.log("Error: " + error);
-            }
-          );
+        jsondata = result;
+        console.log(jsondata);
+        makeCommonConditionsChart();
+        initializeHelper();
+        makeFilteredCharts("condition");
+        
       },
       (error) => {
         console.log("Error: " + error);
@@ -327,26 +319,26 @@ function displayQuickStats(dateFilteredData){
   wuCountNode.appendChild(wuCount)
 };
 
-//export currently displayed data to csv
-document.getElementById("export-data").addEventListener("click", function () {
-  // https://docs.djangoproject.com/en/3.1/ref/csrf/ passing csrf tokens via fetch api
-  const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-  const request = new Request("export-csv/", {
-    headers: { "X-CSRFToken": csrftoken, "Content-Type": "application/json" },
-  });
-  fetch(request, {
-    method: "POST",
-    mode: "same-origin",
-    body: JSON.stringify(filteredData),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Success:", data);
-    })
-    .catch((error) => {
-      // this fetch throws an error but still works so I'm just not logging it
-    });
-});
+// // **not yet functional** export currently displayed data to csv 
+// document.getElementById("export-data").addEventListener("click", function () {
+//   // https://docs.djangoproject.com/en/3.1/ref/csrf/ passing csrf tokens via fetch api
+//   const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+//   const request = new Request("export-csv/", {
+//     headers: { "X-CSRFToken": csrftoken, "Content-Type": "application/json" },
+//   });
+//   fetch(request, {
+//     method: "POST",
+//     mode: "same-origin",
+//     body: JSON.stringify(filteredData),
+//   })
+//     .then((response) => response.json())
+//     .then((data) => {
+//       console.log("Success:", data);
+//     })
+//     .catch((error) => {
+//       // this fetch throws an error but still works so I'm just not logging it
+//     });
+// });
 
 function makeAgeChart(dateFilteredData) {
   (ageStepSize = 10), (ageRanges = []), (ageLabels = []), (sortedAges = []);
