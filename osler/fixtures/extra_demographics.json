@@ -67,8 +67,9 @@
         "fields": {
             "patient": 6,
             "chronic_conditions": [
-                "Hypertension",
-                "High Cholesterol"
+                "Back Pain",
+                "Diabetes",
+                "Back Pain"
             ]
         }
     },
@@ -78,6 +79,7 @@
         "fields": {
             "patient": 7,
             "chronic_conditions": [
+                "Back Pain",
                 "Hypertension",
                 "Back Pain"
             ]
@@ -89,8 +91,7 @@
         "fields": {
             "patient": 8,
             "chronic_conditions": [
-                "Hypertension",
-                "Hypertension"
+                "Back Pain"
             ]
         }
     },
@@ -100,9 +101,7 @@
         "fields": {
             "patient": 9,
             "chronic_conditions": [
-                "Hypertension",
-                "Back Pain",
-                "Diabetes"
+                "High Cholesterol"
             ]
         }
     },
@@ -112,7 +111,8 @@
         "fields": {
             "patient": 10,
             "chronic_conditions": [
-                "Hypertension"
+                "Diabetes",
+                "High Cholesterol"
             ]
         }
     },
@@ -122,7 +122,9 @@
         "fields": {
             "patient": 11,
             "chronic_conditions": [
-                "Arthritis"
+                "Asthma",
+                "Arthritis",
+                "High Cholesterol"
             ]
         }
     },
@@ -132,9 +134,8 @@
         "fields": {
             "patient": 12,
             "chronic_conditions": [
-                "Depression",
-                "Back Pain",
-                "Hypertension"
+                "Hypertension",
+                "High Cholesterol"
             ]
         }
     },
@@ -145,8 +146,8 @@
             "patient": 13,
             "chronic_conditions": [
                 "Hypertension",
-                "High Cholesterol",
-                "High Cholesterol"
+                "Back Pain",
+                "Back Pain"
             ]
         }
     },
@@ -156,8 +157,9 @@
         "fields": {
             "patient": 14,
             "chronic_conditions": [
+                "Back Pain",
                 "Hypertension",
-                "Asthma"
+                "High Cholesterol"
             ]
         }
     },
@@ -167,9 +169,8 @@
         "fields": {
             "patient": 15,
             "chronic_conditions": [
-                "Back Pain",
-                "Back Pain",
-                "Heart Disease"
+                "Heart Disease",
+                "Cancer"
             ]
         }
     },
@@ -179,8 +180,7 @@
         "fields": {
             "patient": 16,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Obesity"
+                "High Cholesterol"
             ]
         }
     },
@@ -191,7 +191,7 @@
             "patient": 17,
             "chronic_conditions": [
                 "High Cholesterol",
-                "Hypertension"
+                "Cancer"
             ]
         }
     },
@@ -201,9 +201,7 @@
         "fields": {
             "patient": 18,
             "chronic_conditions": [
-                "Diabetes",
-                "High Cholesterol",
-                "Depression"
+                "Hypertension"
             ]
         }
     },
@@ -213,8 +211,9 @@
         "fields": {
             "patient": 19,
             "chronic_conditions": [
-                "Back Pain",
-                "Cancer"
+                "Hypertension",
+                "Hypertension",
+                "Hypertension"
             ]
         }
     },
@@ -224,7 +223,8 @@
         "fields": {
             "patient": 20,
             "chronic_conditions": [
-                "Obesity",
+                "Asthma",
+                "Heart Disease",
                 "High Cholesterol"
             ]
         }
@@ -235,8 +235,8 @@
         "fields": {
             "patient": 21,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Back Pain"
+                "Heart Disease",
+                "Depression"
             ]
         }
     },
@@ -246,8 +246,9 @@
         "fields": {
             "patient": 22,
             "chronic_conditions": [
-                "Back Pain",
-                "Obesity"
+                "Arthritis",
+                "Cancer",
+                "Diabetes"
             ]
         }
     },
@@ -257,7 +258,7 @@
         "fields": {
             "patient": 23,
             "chronic_conditions": [
-                "High Cholesterol"
+                "Back Pain"
             ]
         }
     },
@@ -267,9 +268,7 @@
         "fields": {
             "patient": 24,
             "chronic_conditions": [
-                "Diabetes",
-                "Depression",
-                "Cancer"
+                "Back Pain"
             ]
         }
     },
@@ -279,7 +278,8 @@
         "fields": {
             "patient": 25,
             "chronic_conditions": [
-                "Depression"
+                "Obesity",
+                "Back Pain"
             ]
         }
     },
@@ -289,9 +289,7 @@
         "fields": {
             "patient": 26,
             "chronic_conditions": [
-                "Cancer",
-                "High Cholesterol",
-                "Hypertension"
+                "Back Pain"
             ]
         }
     },
@@ -301,7 +299,8 @@
         "fields": {
             "patient": 27,
             "chronic_conditions": [
-                "Hypertension"
+                "Asthma",
+                "High Cholesterol"
             ]
         }
     },
@@ -311,7 +310,9 @@
         "fields": {
             "patient": 28,
             "chronic_conditions": [
-                "Diabetes"
+                "Obesity",
+                "Hypertension",
+                "Back Pain"
             ]
         }
     },
@@ -321,8 +322,8 @@
         "fields": {
             "patient": 29,
             "chronic_conditions": [
-                "Hypertension",
-                "Back Pain"
+                "Back Pain",
+                "Diabetes"
             ]
         }
     },
@@ -332,9 +333,7 @@
         "fields": {
             "patient": 30,
             "chronic_conditions": [
-                "Asthma",
-                "Back Pain",
-                "Diabetes"
+                "High Cholesterol"
             ]
         }
     },
@@ -344,9 +343,7 @@
         "fields": {
             "patient": 31,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Diabetes",
-                "Hypertension"
+                "High Cholesterol"
             ]
         }
     },
@@ -356,9 +353,7 @@
         "fields": {
             "patient": 32,
             "chronic_conditions": [
-                "Hypertension",
-                "Arthritis",
-                "Hypertension"
+                "Back Pain"
             ]
         }
     },
@@ -368,7 +363,7 @@
         "fields": {
             "patient": 33,
             "chronic_conditions": [
-                "Cancer"
+                "Heart Disease"
             ]
         }
     },
@@ -388,7 +383,7 @@
         "fields": {
             "patient": 35,
             "chronic_conditions": [
-                "Back Pain"
+                "Hypertension"
             ]
         }
     },
@@ -398,7 +393,8 @@
         "fields": {
             "patient": 36,
             "chronic_conditions": [
-                "High Cholesterol"
+                "High Cholesterol",
+                "Heart Disease"
             ]
         }
     },
@@ -408,8 +404,8 @@
         "fields": {
             "patient": 37,
             "chronic_conditions": [
-                "Depression",
-                "Back Pain"
+                "High Cholesterol",
+                "Hypertension"
             ]
         }
     },
@@ -419,9 +415,7 @@
         "fields": {
             "patient": 38,
             "chronic_conditions": [
-                "Hypertension",
-                "High Cholesterol",
-                "Hypertension"
+                "Heart Disease"
             ]
         }
     },
@@ -431,7 +425,8 @@
         "fields": {
             "patient": 39,
             "chronic_conditions": [
-                "Arthritis"
+                "Diabetes",
+                "Hypertension"
             ]
         }
     },
@@ -441,8 +436,9 @@
         "fields": {
             "patient": 40,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Hypertension"
+                "Back Pain",
+                "Hypertension",
+                "Back Pain"
             ]
         }
     },
@@ -452,8 +448,7 @@
         "fields": {
             "patient": 41,
             "chronic_conditions": [
-                "Back Pain",
-                "Hypertension"
+                "Diabetes"
             ]
         }
     },
@@ -463,8 +458,7 @@
         "fields": {
             "patient": 42,
             "chronic_conditions": [
-                "Diabetes",
-                "Heart Disease"
+                "Diabetes"
             ]
         }
     },
@@ -484,8 +478,7 @@
         "fields": {
             "patient": 44,
             "chronic_conditions": [
-                "Back Pain",
-                "Depression"
+                "Hypertension"
             ]
         }
     },
@@ -495,8 +488,8 @@
         "fields": {
             "patient": 45,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Arthritis"
+                "Hypertension",
+                "Obesity"
             ]
         }
     },
@@ -506,7 +499,9 @@
         "fields": {
             "patient": 46,
             "chronic_conditions": [
-                "Back Pain"
+                "Hypertension",
+                "Diabetes",
+                "Depression"
             ]
         }
     },
@@ -516,8 +511,9 @@
         "fields": {
             "patient": 47,
             "chronic_conditions": [
-                "Obesity",
-                "Arthritis"
+                "Back Pain",
+                "Back Pain",
+                "Diabetes"
             ]
         }
     },
@@ -527,7 +523,7 @@
         "fields": {
             "patient": 48,
             "chronic_conditions": [
-                "High Cholesterol"
+                "Back Pain"
             ]
         }
     },
@@ -538,7 +534,8 @@
             "patient": 49,
             "chronic_conditions": [
                 "High Cholesterol",
-                "Heart Disease"
+                "Back Pain",
+                "Hypertension"
             ]
         }
     },
@@ -548,9 +545,7 @@
         "fields": {
             "patient": 50,
             "chronic_conditions": [
-                "Obesity",
-                "Hypertension",
-                "Heart Disease"
+                "Diabetes"
             ]
         }
     },
@@ -560,9 +555,8 @@
         "fields": {
             "patient": 51,
             "chronic_conditions": [
-                "Depression",
-                "Obesity",
-                "Heart Disease"
+                "Asthma",
+                "Hypertension"
             ]
         }
     },
@@ -572,9 +566,8 @@
         "fields": {
             "patient": 52,
             "chronic_conditions": [
-                "Back Pain",
-                "High Cholesterol",
-                "Cancer"
+                "Cancer",
+                "Heart Disease"
             ]
         }
     },
@@ -584,7 +577,9 @@
         "fields": {
             "patient": 53,
             "chronic_conditions": [
-                "Cancer"
+                "Hypertension",
+                "Back Pain",
+                "High Cholesterol"
             ]
         }
     },
@@ -594,7 +589,9 @@
         "fields": {
             "patient": 54,
             "chronic_conditions": [
-                "Cancer"
+                "Hypertension",
+                "Asthma",
+                "Arthritis"
             ]
         }
     },
@@ -604,7 +601,9 @@
         "fields": {
             "patient": 55,
             "chronic_conditions": [
-                "Heart Disease"
+                "Hypertension",
+                "Arthritis",
+                "Back Pain"
             ]
         }
     },
@@ -614,8 +613,9 @@
         "fields": {
             "patient": 56,
             "chronic_conditions": [
+                "Back Pain",
                 "High Cholesterol",
-                "Hypertension"
+                "Asthma"
             ]
         }
     },
@@ -625,8 +625,8 @@
         "fields": {
             "patient": 57,
             "chronic_conditions": [
-                "Depression",
-                "Obesity"
+                "High Cholesterol",
+                "Arthritis"
             ]
         }
     },
@@ -636,9 +636,9 @@
         "fields": {
             "patient": 58,
             "chronic_conditions": [
-                "Arthritis",
-                "Back Pain",
-                "Hypertension"
+                "High Cholesterol",
+                "Hypertension",
+                "Depression"
             ]
         }
     },
@@ -648,9 +648,7 @@
         "fields": {
             "patient": 59,
             "chronic_conditions": [
-                "Arthritis",
-                "Hypertension",
-                "Hypertension"
+                "Back Pain"
             ]
         }
     },
@@ -660,7 +658,8 @@
         "fields": {
             "patient": 60,
             "chronic_conditions": [
-                "Asthma"
+                "Back Pain",
+                "High Cholesterol"
             ]
         }
     },
@@ -670,8 +669,8 @@
         "fields": {
             "patient": 61,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Hypertension"
+                "Hypertension",
+                "High Cholesterol"
             ]
         }
     },
@@ -691,8 +690,8 @@
         "fields": {
             "patient": 63,
             "chronic_conditions": [
-                "Hypertension",
-                "Asthma"
+                "Asthma",
+                "Obesity"
             ]
         }
     },
@@ -702,7 +701,8 @@
         "fields": {
             "patient": 64,
             "chronic_conditions": [
-                "Cancer"
+                "Arthritis",
+                "High Cholesterol"
             ]
         }
     },
@@ -712,7 +712,9 @@
         "fields": {
             "patient": 65,
             "chronic_conditions": [
-                "Back Pain"
+                "High Cholesterol",
+                "Back Pain",
+                "Diabetes"
             ]
         }
     },
@@ -722,9 +724,7 @@
         "fields": {
             "patient": 66,
             "chronic_conditions": [
-                "Cancer",
-                "Depression",
-                "Hypertension"
+                "Depression"
             ]
         }
     },
@@ -734,9 +734,7 @@
         "fields": {
             "patient": 67,
             "chronic_conditions": [
-                "Hypertension",
-                "Back Pain",
-                "High Cholesterol"
+                "Asthma"
             ]
         }
     },
@@ -746,9 +744,9 @@
         "fields": {
             "patient": 68,
             "chronic_conditions": [
-                "Arthritis",
                 "Hypertension",
-                "Back Pain"
+                "Back Pain",
+                "Arthritis"
             ]
         }
     },
@@ -758,8 +756,7 @@
         "fields": {
             "patient": 69,
             "chronic_conditions": [
-                "Arthritis",
-                "Obesity"
+                "Heart Disease"
             ]
         }
     },
@@ -769,7 +766,9 @@
         "fields": {
             "patient": 70,
             "chronic_conditions": [
-                "Diabetes"
+                "Hypertension",
+                "Hypertension",
+                "Back Pain"
             ]
         }
     },
@@ -779,9 +778,9 @@
         "fields": {
             "patient": 71,
             "chronic_conditions": [
-                "Asthma",
-                "Depression",
-                "Hypertension"
+                "Arthritis",
+                "Obesity",
+                "Back Pain"
             ]
         }
     },
@@ -791,7 +790,9 @@
         "fields": {
             "patient": 72,
             "chronic_conditions": [
-                "High Cholesterol"
+                "Hypertension",
+                "Hypertension",
+                "Diabetes"
             ]
         }
     },
@@ -801,7 +802,7 @@
         "fields": {
             "patient": 73,
             "chronic_conditions": [
-                "Cancer"
+                "Back Pain"
             ]
         }
     },
@@ -811,7 +812,7 @@
         "fields": {
             "patient": 74,
             "chronic_conditions": [
-                "Back Pain"
+                "High Cholesterol"
             ]
         }
     },
@@ -821,7 +822,9 @@
         "fields": {
             "patient": 75,
             "chronic_conditions": [
-                "High Cholesterol"
+                "Back Pain",
+                "High Cholesterol",
+                "Back Pain"
             ]
         }
     },
@@ -831,7 +834,9 @@
         "fields": {
             "patient": 76,
             "chronic_conditions": [
-                "Obesity"
+                "Back Pain",
+                "Back Pain",
+                "Cancer"
             ]
         }
     },
@@ -841,8 +846,9 @@
         "fields": {
             "patient": 77,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Hypertension"
+                "Diabetes",
+                "Hypertension",
+                "Back Pain"
             ]
         }
     },
@@ -852,9 +858,8 @@
         "fields": {
             "patient": 78,
             "chronic_conditions": [
-                "Hypertension",
-                "Depression",
-                "Back Pain"
+                "Diabetes",
+                "High Cholesterol"
             ]
         }
     },
@@ -864,8 +869,7 @@
         "fields": {
             "patient": 79,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Arthritis"
+                "Asthma"
             ]
         }
     },
@@ -875,8 +879,8 @@
         "fields": {
             "patient": 80,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Hypertension"
+                "Back Pain",
+                "High Cholesterol"
             ]
         }
     },
@@ -886,8 +890,6 @@
         "fields": {
             "patient": 81,
             "chronic_conditions": [
-                "Hypertension",
-                "High Cholesterol",
                 "Back Pain"
             ]
         }
@@ -898,8 +900,7 @@
         "fields": {
             "patient": 82,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Diabetes"
+                "Heart Disease"
             ]
         }
     },
@@ -909,8 +910,9 @@
         "fields": {
             "patient": 83,
             "chronic_conditions": [
+                "High Cholesterol",
                 "Back Pain",
-                "Heart Disease"
+                "Depression"
             ]
         }
     },
@@ -920,9 +922,9 @@
         "fields": {
             "patient": 84,
             "chronic_conditions": [
-                "Back Pain",
                 "Diabetes",
-                "Hypertension"
+                "High Cholesterol",
+                "Depression"
             ]
         }
     },
@@ -932,9 +934,8 @@
         "fields": {
             "patient": 85,
             "chronic_conditions": [
-                "Hypertension",
-                "Arthritis",
-                "Back Pain"
+                "Cancer",
+                "Hypertension"
             ]
         }
     },
@@ -944,7 +945,7 @@
         "fields": {
             "patient": 86,
             "chronic_conditions": [
-                "Back Pain",
+                "Hypertension",
                 "Back Pain"
             ]
         }
@@ -955,7 +956,8 @@
         "fields": {
             "patient": 87,
             "chronic_conditions": [
-                "Cancer"
+                "Heart Disease",
+                "Hypertension"
             ]
         }
     },
@@ -965,7 +967,7 @@
         "fields": {
             "patient": 88,
             "chronic_conditions": [
-                "Obesity"
+                "Heart Disease"
             ]
         }
     },
@@ -975,8 +977,8 @@
         "fields": {
             "patient": 89,
             "chronic_conditions": [
-                "Arthritis",
-                "Back Pain"
+                "Obesity",
+                "High Cholesterol"
             ]
         }
     },
@@ -986,9 +988,9 @@
         "fields": {
             "patient": 90,
             "chronic_conditions": [
-                "Hypertension",
-                "Hypertension",
-                "Depression"
+                "Back Pain",
+                "High Cholesterol",
+                "Cancer"
             ]
         }
     },
@@ -998,9 +1000,7 @@
         "fields": {
             "patient": 91,
             "chronic_conditions": [
-                "Hypertension",
-                "Diabetes",
-                "Back Pain"
+                "Hypertension"
             ]
         }
     },
@@ -1010,7 +1010,8 @@
         "fields": {
             "patient": 92,
             "chronic_conditions": [
-                "Back Pain",
+                "Heart Disease",
+                "Cancer",
                 "Back Pain"
             ]
         }
@@ -1021,8 +1022,8 @@
         "fields": {
             "patient": 93,
             "chronic_conditions": [
-                "Arthritis",
-                "Hypertension"
+                "Hypertension",
+                "Asthma"
             ]
         }
     },
@@ -1032,8 +1033,7 @@
         "fields": {
             "patient": 94,
             "chronic_conditions": [
-                "Arthritis",
-                "Back Pain"
+                "Hypertension"
             ]
         }
     },
@@ -1043,7 +1043,8 @@
         "fields": {
             "patient": 95,
             "chronic_conditions": [
-                "Depression"
+                "Hypertension",
+                "Diabetes"
             ]
         }
     },
@@ -1053,7 +1054,8 @@
         "fields": {
             "patient": 96,
             "chronic_conditions": [
-                "High Cholesterol"
+                "Diabetes",
+                "Arthritis"
             ]
         }
     },
@@ -1064,7 +1066,6 @@
             "patient": 97,
             "chronic_conditions": [
                 "Back Pain",
-                "Hypertension",
                 "Diabetes"
             ]
         }
@@ -1075,7 +1076,7 @@
         "fields": {
             "patient": 98,
             "chronic_conditions": [
-                "Diabetes"
+                "Arthritis"
             ]
         }
     },
@@ -1085,9 +1086,7 @@
         "fields": {
             "patient": 99,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Obesity",
-                "Asthma"
+                "Back Pain"
             ]
         }
     }

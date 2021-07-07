@@ -36,8 +36,7 @@ def query_demographics_model():
     return formatted_demographics
 
 def extract_demographic_data(workups,demo):
-    '''takes in queryed workups then extracts and formats related demographic data into json friendly format, 
-    also extracts unique clinic dates into a list
+    '''takes in queryed workups then extracts and formats related demographic data into json friendly formating
     '''
     dashboard_data = {}
     unique_patient_pk_list = []
@@ -49,7 +48,7 @@ def extract_demographic_data(workups,demo):
                 demographics['conditions'] = demo[wu.patient.pk]
             else:
                 demographics['conditions'] = []
-            demographics['age'] = (now().date() - wu.patient.date_of_birth).days // 365
+            demographics['age'] = (now().date() - wu.patient.date_of_birth).days // 365 #will have to change this since age is relative to workup date
             demographics['gender'] = wu.patient.gender.name
             ethnicities = []
             for ethnicity in list(wu.patient.ethnicities.all()):
@@ -69,4 +68,12 @@ def send_all_json(request):
     all_workups = query_workups_model()
     all_demographics = query_demographics_model()
     dashboard_data = extract_demographic_data(all_workups,all_demographics)
+    return JsonResponse(dashboard_data)
+
+
+def send_context_json(request):
+    '''Sends patient and workup related data to be used in main dashboard data charts'''
+    all_workups = query_workups_model()
+    all_demographics = query_demographics_model()
+    dashboard_data = extract_demographic_data(all_workups, all_demographics)
     return JsonResponse(dashboard_data)
