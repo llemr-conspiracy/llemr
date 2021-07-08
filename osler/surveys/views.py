@@ -8,7 +8,6 @@ from osler.users.utils import get_active_role
 from osler.surveys.models import Survey, Question, Response, Answer
 from osler.core.models import Patient, Encounter
 
-
 def create(request):
     '''create a new survey, and redirect to editing it'''
     new_survey = Survey(title="Untitled Survey")
@@ -59,7 +58,14 @@ def incomplete(request, pid):
     incomplete_surveys = Survey.get_incomplete_surveys(pid)
     patient = Patient.objects.get(pk=pid)
     context = {'surveys': incomplete_surveys, 'patient': patient}
-    return render(request, 'surveys/filtered_surveys_list.html', context)
+
+    status = 200
+    if messages.get_messages(request):
+        for message in messages.get_messages(request):
+            if message.level == messages.ERROR:
+                status = 400
+
+    return render(request, 'surveys/filtered_surveys_list.html', context, status=status)
 
 
 def response(request, id):
@@ -106,7 +112,7 @@ def view(request, id):
 def submit(request, pid, id):
     '''recieves data from a survey fill and creates a response object'''
     if request.method != "POST":
-        return redirect('surveys:fill', id=id)
+        return redirect('surveys:fill', id=id, pid=pid)
 
     survey = get_object_or_404(Survey, id=id)
     patient = get_object_or_404(Patient, id=pid)
@@ -144,7 +150,7 @@ def submit(request, pid, id):
             # a question was present that is not in the survey - abort
             response.delete()
             messages.error(request, 'Error: Form Invalid')
-            return redirect('surveys:fill', id=id)
+            return redirect('surveys:fill', id=id, pid=pid)
 
         for ans in request.POST.getlist(question_id):
             if ans == '':
