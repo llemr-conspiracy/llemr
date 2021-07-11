@@ -3,7 +3,6 @@ version: '3'
 volumes:
   production_postgres_data: {}
   production_postgres_data_backups: {}
-  production_traefik: {}
 
 networks:
   default:
@@ -20,13 +19,17 @@ services:
       dockerfile: ./compose/production/django/Dockerfile
     image: osler_production_django
     depends_on:
-      # - postgres
       - redis
     env_file:
       - ./.envs/.production/.django
-      - ./.envs/.production/.postgres
       - ./.envs/.production/.secrets
       - ./.envs/.production/.umkc
+    environment:
+      - POSTGRES_HOST=kc-med-oslerdb.kc.umkc.edu
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=osler
+      - POSTGRES_USER=django
     command: /start
     ports:
       - "5000:5000"
