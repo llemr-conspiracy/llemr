@@ -1,0 +1,69 @@
+version: "3"
+
+volumes:
+  production_postgres_data: {}
+  production_postgres_data_backups: {}
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: ./compose/production/django/Dockerfile
+    image: llemr_production_django
+    container_name: django
+    ports:
+      - 5000:5000
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.production-demo
+    env_file:
+      - ./.envs/.production/.django
+      - ./.envs/.production/.postgres
+      - ./.envs/.secrets/.postgres
+      - ./.envs/.secrets/.django
+    command: /start
+    networks:
+      - nginx_network
+      - database_network
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: llemr_production_postgres
+    container_name: postgres
+    volumes:
+      - production_postgres_data:/var/lib/postgresql/data
+      - production_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.production/.postgres
+      - ./.envs/.secrets/.postgres
+    networks:
+      - database_network
+
+  nginx:
+    image: nginx:1.21
+    container_name: nginx
+    ports:
+      - 80:80
+      - 443:443
+    env_file:
+      - ./.envs/.production/.nginx
+    volumes:
+      - ./compose/production/nginx/templates:/etc/nginx/templates
+      - ./compose/production/nginx/certs:/etc/nginx/certs
+    depends_on:
+      - django
+    networks:
+      - nginx_network
+
+  redis:
+    image: redis:5.0
+
+networks:
+  nginx_network:
+    driver: bridge
+  database_network:
+    driver: bridge

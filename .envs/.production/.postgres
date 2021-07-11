@@ -1,6 +1,7 @@
 # PostgreSQL
 # ------------------------------------------------------------------------------
-POSTGRES_HOST=kc-med-oslerdb.kc.umkc.edu
+POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
 POSTGRES_DB=osler
 POSTGRES_USER=django
+# the following are missing: POSTGRES_PASSWORD
