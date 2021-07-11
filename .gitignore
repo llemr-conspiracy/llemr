@@ -278,4 +278,7 @@ osler/media/
 !.envs/.local/
 !.envs/.production/
 
+# secrets has a .gitignore file that ignores everything inside it
+!.envs/.secrets/
+
 .vscode/*
