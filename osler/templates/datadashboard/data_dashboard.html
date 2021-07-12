@@ -240,47 +240,38 @@ $(document).ready(function(){
     </div>
   </div>
 
-  <div class="row panel panel-body panel-default panel-modern">
-    <div class="col-md-6">
-      <div class="row vertical-align">
-        <div class="col-md-4">Displaying data from: </div>
-        <div class="col-md-8  mt-1 mb-1 align-left">
-          <div class="control-input">
-            <span class="glyphicon glyphicon-calendar small-icon ml-1 mr-1" aria-hidden="true"></span>
-            <input class="control-input px-1 color-light" type="text" name="daterange" />
-          </div>
-        </div>    
+  <div class="row panel panel-body panel-default panel-modern vertical-align horizontal-align">
+    <div class="align-right mr-1 text-xlarge">Displaying data from: </div>
+    <div class="mt-1 mb-1 mr-3 align-left">
+      <div class="control-input">
+        <span class="glyphicon glyphicon-calendar small-icon ml-1 mr-1" aria-hidden="true"></span>
+        <input class="control-input px-1 color-light" type="text" name="daterange" />
       </div>
-      <div class="row vertical-align">
-        <div class="col-md-4">of patients presenting: </div>
-        <div class="col-md-6 vertical-align horizontal-align align-left mt-1 mb-1">
-          <div class="btn-group">
-            <div type="button" class="btn btn-modern color-light px-1" id="display-condition"><span><span
-                  class="glyphicon glyphicon-tags small-icon mr-1" aria-hidden="true"></span>All
-                Conditions</span></div>
-            <button type="button" class="btn btn-modern dropdown-toggle px-1" data-toggle="dropdown"
-              aria-haspopup="true" aria-expanded="false">
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="dropdownMenu">
-                <li><button class="btn btn-link btn-link-modern" id="all-conditions-btn">Any Condition</button></li>
-                <li role="separator" class="divider"></li>
-              <div id="condition-filter-btns"></div>
-              <div id="see-more-container">
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-submenu dropdown-menu-modern">
-                  <a class="prevent-prop">See more <span class="caret"></span></a>
-                  <ul class="dropdown-menu dropdown-menu-modern right-menu" id="more-conditions-btns"></ul>
-                </li>
-              </div>
-            </ul>
+    </div>    
+    <div class="align-left mr-1 text-xlarge">of patients presenting: </div>
+    <div class="vertical-align horizontal-align align-left mt-1 mb-1">
+      <div class="btn-group">
+        <div type="button" class="btn btn-modern color-light px-1" id="display-condition"><span><span
+              class="glyphicon glyphicon-tags small-icon mr-1" aria-hidden="true"></span>All
+            Conditions</span></div>
+        <button type="button" class="btn btn-modern dropdown-toggle px-1" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="dropdownMenu">
+            <li><button class="btn btn-link btn-link-modern" id="all-conditions-btn">Any Condition</button></li>
+            <li role="separator" class="divider"></li>
+          <div id="condition-filter-btns"></div>
+          <div id="see-more-container">
+            <li role="separator" class="divider"></li>
+            <li class="dropdown-submenu dropdown-menu-modern">
+              <a class="prevent-prop">See more <span class="caret"></span></a>
+              <ul class="dropdown-menu dropdown-menu-modern right-menu" id="more-conditions-btns"></ul>
+            </li>
           </div>
-        </div>     
+        </ul>
       </div>
-    </div>
-    <div class="col-lg-6">  
-        <div class="col-lg-12 panel-light vertical-align equal px-3" id="conditions-chart"></div>
-    </div>
+    </div>     
   </div>
 
   <div class="row">
