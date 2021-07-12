@@ -5,9 +5,13 @@ from django.views.generic import TemplateView
 from django.http import JsonResponse
 from osler.core.models import Encounter
 from osler.demographics.models import Demographics
+from osler.users.decorators import active_permission_required
 from osler.workup.models import Workup
 from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
+from django.utils.decorators import method_decorator
 
+
+@method_decorator(active_permission_required('users.view_clinic_datadashboard', raise_exception=True), name='dispatch')
 class DataDashboardView(TemplateView):
     template_name = 'datadashboard/data_dashboard.html'        
 

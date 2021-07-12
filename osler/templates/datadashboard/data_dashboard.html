@@ -85,6 +85,7 @@
 
   .horizontal-align {
     display: flex;
+    align-items: center;
     justify-content: center;
   }
 
@@ -261,7 +262,7 @@ $(document).ready(function(){
               aria-haspopup="true" aria-expanded="false">
               <span class="caret"></span>
             </button>
-            <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="dropdownMenu1">
+            <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="dropdownMenu">
                 <li><button class="btn btn-link btn-link-modern" id="all-conditions-btn">Any Condition</button></li>
                 <li role="separator" class="divider"></li>
               <div id="condition-filter-btns"></div>
@@ -284,18 +285,22 @@ $(document).ready(function(){
 
   <div class="row">
     <div class="col-sm-3">
-      <div class="panel panel-default panel-modern">
-        <div class="panel-body">
-          <div class="row vertical-align">
-            <div class="col-xs-2 text-center">
-              <span class="glyphicon glyphicon-user big-icon" aria-hidden="true"></span>
-            </div>
+      <div class="panel panel-default panel-modern dropdown horizontal-align">
+        <button class="panel-body btn btn-link btn-link-modern dropdown-toggle" id="____" type="button" data-toggle="dropdown">
+          <div class="row vertical-align horizontal-align">
+              <span class="glyphicon glyphicon-user big-icon" ></span>
             <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge" id="unique-patient-count">#</div>
-              <div class="col-12 color-light">Unique patient count</div>
+              <div class="col-12 color-primary text-xlarge align-left" id="unique-patient-count">#</div>
+              <div class="col-12 color-light">Unique Patients</div>
             </div>
-          </div>
-        </div>
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </div> 
+        </button>
+        <ul class="dropdown-menu">
+          <li><a href="#">HTML</a></li>
+          <li><a href="#">CSS</a></li>
+          <li><a href="#">JavaScript</a></li>
+        </ul>
       </div>
     </div>
     <div class="col-sm-3">
