@@ -9,10 +9,10 @@ from osler.workup.models import Workup
 from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
 
 class DataDashboardView(TemplateView):
-    template_name = 'datadashboard/patient_data_dashboard.html'        
+    template_name = 'datadashboard/data_dashboard.html'        
 
 
-def send_all_json(request):
+def send_patientdata_json(request):
     '''Sends patient and workup related data to be used in main dashboard data charts'''
     all_workups = query_workups_model()
     all_demographics = query_demographics_model()
@@ -49,7 +49,7 @@ def extract_demographic_data(workups,demo):
                 demographics['conditions'] = demo[wu.patient.pk]
             else:
                 demographics['conditions'] = []
-            demographics['age'] = (now().date() - wu.patient.date_of_birth).days // 365 #will have to change this since age is relative to workup date
+            demographics['age'] = (wu.written_datetime.date() - wu.patient.date_of_birth).days // 365
             demographics['gender'] = wu.patient.gender.name
             ethnicities = []
             for ethnicity in list(wu.patient.ethnicities.all()):

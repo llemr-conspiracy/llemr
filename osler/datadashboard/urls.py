@@ -10,9 +10,9 @@ js_info_dict = {
 
 app_name = 'datadashboard'
 unwrapped_urlconf = [
-    re_path(r'^$', views.DataDashboardView.as_view(), name='patient-data-dashboard'),
-    re_path(r'^all-json-datadashboard/', views.send_all_json, name='all_json_datadashboard'),
-    re_path(r'^context-json-datadashboard/', views.send_context_json, name='context_json_datadashboard'),
+    re_path(r'^$', views.DataDashboardView.as_view(), name='clinic-data-dashboard'),
+    re_path(r'^patientdata-json-datadashboard/', views.send_patientdata_json, name='patientdata-json-datadashboard'),
+    re_path(r'^context-json-datadashboard/', views.send_context_json, name='context-json-datadashboard'),
     re_path(r'^jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),
 ]
 

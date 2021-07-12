@@ -262,7 +262,7 @@ $(document).ready(function(){
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="dropdownMenu1">
-                <li><button class="btn btn-link btn-link-modern" id="all-conditions-btn">All Conditions</button></li>
+                <li><button class="btn btn-link btn-link-modern" id="all-conditions-btn">Any Condition</button></li>
                 <li role="separator" class="divider"></li>
               <div id="condition-filter-btns"></div>
               <div id="see-more-container">
@@ -384,6 +384,6 @@ $(document).ready(function(){
 
   <script type="text/javascript" src="{% url 'datadashboard:javascript-catalog' %}"></script>
 
-  <script type="text/javascript" charset="utf-8" src="{% static 'js/datadashboard/patientDemographicCharts.js' %}">
+  <script type="text/javascript" charset="utf-8" src="{% static 'js/datadashboard/dataDashboard.js' %}">
   </script>
   {% endblock %}

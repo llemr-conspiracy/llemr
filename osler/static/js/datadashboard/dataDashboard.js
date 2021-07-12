@@ -5,11 +5,11 @@ let jsondata = null;
   selectedStart = [],
   allConditions = [],
   selectedConditions = [],
-  commonConditions = {};
+  commonConditions = {},
   dateRanges = {},
   defaultDateRange = "All Time"; //options include: "Current/Latest Clinic", "This Month", "This Year", "All Time"
 
-const urls = ["all-json-datadashboard/","context-json-datadashboard/"]
+const urls = ["patientdata-json-datadashboard/","context-json-datadashboard/"]
 
 async function fetchJsonData(urls) {
   try {
@@ -55,6 +55,7 @@ function dateRangePicker(){
   dateRanges["All Time"] = [moment().subtract(20, "years"), moment()];
   selectedStart = dateRanges[defaultDateRange][0]._d;
   selectedEnd = dateRanges[defaultDateRange][1]._d;
+  console.log("called dates")
 
   //date range picker logic
   $('input[name="daterange"]').daterangepicker(
@@ -97,6 +98,7 @@ function dateRangePicker(){
       ranges: dateRanges,
       linkedCalendars: false,
       alwaysShowCalendars: true,
+      showCustomRangeLabel: false,
       startDate: moment(selectedStart),
       endDate: moment(selectedEnd),
       opens: "right",
@@ -153,7 +155,7 @@ function makeFilterByConditionButton(condition,index) {
 
 // all conditions button event listener
 document.getElementById("all-conditions-btn").addEventListener("click", function () {
-  let span = document.createTextNode("All Conditions");
+  let span = document.createTextNode("Any Condition");
   document.getElementById("display-condition").childNodes[0].replaceWith(span);
   selectedConditions = allConditions;
   makeFilteredCharts("condition");
@@ -289,8 +291,6 @@ function makeFilteredCharts(filterChangeOrigin) {
     $("#flipFlop").modal();
   }
   else{
-    console.log("making")
-
     displayQuickStats(filteredData);
     makeAgeChart(filteredData);
     makeGenderChart(filteredData);
@@ -508,8 +508,6 @@ function makeEthnicityChart(filteredData) {
 //filter all clinic data (jsondata) by selected condition and date range
 function filterData(filterByCondition){
   filteredData = {};
-  console.log(selectedConditions)
-  // console.log(selectedEnd)
   for (const [key, value] of Object.entries(jsondata)) {    
     var filterOut = true;
     // check if condition matches selected condition
@@ -534,7 +532,6 @@ function filterData(filterByCondition){
           Date.parse(d) >= Date.parse(selectedStart) &&
           Date.parse(d) <= Date.parse(selectedEnd)                          
         ) {
-          // console.log(value)
           return (filterOut = false);
         }
       }); 
@@ -544,7 +541,6 @@ function filterData(filterByCondition){
       filteredData[key] = value;
     }
   }
-  // console.log("Filtered:  " + Object.keys(filteredData).length)
   return filteredData;
 }
 
