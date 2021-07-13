@@ -1,5 +1,6 @@
 //generate default date range and define global variables
-let jsondata = null;
+let jsondata = null,
+  ptCount = null,
   clinicDates = [],
   selectedEnd = [],
   selectedStart = [],
@@ -34,10 +35,9 @@ window.addEventListener("load", (event) => {
     jsondata = responses[0]
     clinicDates = JSON.parse(responses[1].clinic_dates)
     dateRangePicker()
-    //load demographic data and generate charts
-    console.log(jsondata);
-    makeCommonConditionsChart();
+    //load demographic data and generate charts  
     makeFilteredCharts("date");
+    sortCommonConditions();
   
   })();
 });
@@ -55,7 +55,6 @@ function dateRangePicker(){
   dateRanges["All Time"] = [moment().subtract(20, "years"), moment()];
   selectedStart = dateRanges[defaultDateRange][0]._d;
   selectedEnd = dateRanges[defaultDateRange][1]._d;
-  console.log("called dates")
 
   //date range picker logic
   $('input[name="daterange"]').daterangepicker(
@@ -107,36 +106,67 @@ function dateRangePicker(){
     function (startDate, endDate) {
       selectedStart = startDate.format("YYYY-MM-DD");
       selectedEnd = endDate.format("YYYY-MM-DD");
-      makeCommonConditionsChart();  
       makeFilteredCharts("condition");
+      sortCommonConditions();  
       
     }
   );
 };
 
 function displayQuickStats(filteredData){
-  //unique patient count
-  ptCount = document.createTextNode(Object.keys(filteredData).length);
-  ptCountNode = document.getElementById("unique-patient-count")
-  $(ptCountNode).empty();
-  ptCountNode.appendChild(ptCount);
+  displayPatientVisitStats();
 
-  //total workups
-  wuCount = document.createTextNode(countWorkups(filteredData));
+};
+
+function displayPatientVisitStats(){
+  //append total workups to DOM
+  wuCount = countWorkups(filteredData)
+  wuCountText = document.createTextNode(wuCount);
   wuCountNode = document.getElementById("workups-count");
   $(wuCountNode).empty();
-  wuCountNode.appendChild(wuCount)
-};
+  wuCountNode.appendChild(wuCountText)
+
+  //append unique patient count to DOM
+  ptCount = Object.keys(filteredData).length
+  ptPercent = percentage(ptCount, wuCount)
+  ptCountText = document.createTextNode(ptCount + " (" + ptPercent + "%)");
+  ptCountNode = document.getElementById("unique-patient-count")
+  $(ptCountNode).empty();
+  ptCountNode.appendChild(ptCountText);
+
+  //sort patients by number of workups (visits)
+  var visits = {}
+  visits["1"] = 0
+  visits["2"] = 0
+  visits["3"] = 0
+  visits["more"] = 0
+
+  Object.values(filteredData).map(function (e) {
+    if(e.wu_dates.length > 3){
+        visits["more"] += 1
+    } 
+    else{
+      for (const visitNum in visits){
+        if(e.wu_dates.length == parseInt(visitNum)){
+          visits[visitNum] += 1
+        }
+      }
+    }
+  });
+
+  //append sorted workup number counts to DOM
+  for (const visitNum in visits){
+    percentVisits = percentage(visits[visitNum], ptCount)
+    countNode = document.getElementById(visitNum+"-workup-count")
+    countNode.innerHTML = visits[visitNum] + " (" + percentVisits + "%)"  
+  }
+}
 
 //dynamically create buttons to display data related to conditions 
 //only makes buttons for conditions represented in date range filtered data
 function makeFilterByConditionButton(condition,index) {
-  if(index <5){
-    parent = document.getElementById("condition-filter-btns");
-  }
-  else{
-    parent = document.getElementById("more-conditions-btns");
-  }
+  parent = document.getElementById("condition-filter-btns");
+
   conditionSelectorNode = document.createElement("li")
   conditionSelectorButton = document.createElement("button")
   conditionSelectorButton.setAttribute("class","btn btn-link btn-link-modern")
@@ -155,24 +185,24 @@ function makeFilterByConditionButton(condition,index) {
 
 // all conditions button event listener
 document.getElementById("all-conditions-btn").addEventListener("click", function () {
-  let span = document.createTextNode("Any Condition");
+  let span = document.createTextNode("Any Conditions");
   document.getElementById("display-condition").childNodes[0].replaceWith(span);
   selectedConditions = allConditions;
   makeFilteredCharts("condition");
 });
 
-function makeCommonConditionsChart(){
+function sortCommonConditions(){
   //map conditions to obj
-  commonConditionsPreSort = {};
+  var commonConditionsPreSort = {};
   var filteredData
+  commonConditions = {}
   //on first load, don't filter by condition
   if(Object.keys(commonConditions).length === 0){
     filteredData = filterData(false)
   }
   else{
     filteredData = filterData(true)
-  }
-  
+  }  
   if(Object.keys(filteredData).length != 0){
     Object.values(filteredData).map(function (e) {
       conditionsList = e.conditions;
@@ -191,8 +221,7 @@ function makeCommonConditionsChart(){
     }
     sortable.sort(function (a, b) {
       return b[1] - a[1];
-    });
-    
+    });    
     sortable.forEach(
       (condition) => (commonConditions[condition[0]] = condition[1])
     );
@@ -209,7 +238,48 @@ function makeCommonConditionsChart(){
       makeFilterByConditionButton(Object.keys(commonConditions)[i],i);
     }
   }
+
+  displayCommonConditionsStats(commonConditions)
 };
+
+function displayCommonConditionsStats(commonConditions){
+  //append chronic condtion number counts to DOM
+  var conditionsCountNode = document.getElementById("conditions-count")
+  conditionsCountNode.innerHTML = Object.keys(commonConditions).length
+  var counter = 1
+  var dropdown = document.getElementById("conditions-dropdown");
+  dropdown.innerHTML = '';
+  for(const condition in commonConditions){
+    var li = document.createElement('li')
+    li.setAttribute("class","pt-1")
+    dropdown.appendChild(li)
+
+    var strong = document.createElement('strong')
+    li.appendChild(strong)
+
+    var spanNum = document.createElement('span')
+    spanNum.setAttribute("class","ml-2")
+    spanNum.setAttribute("id",counter+"-condition") 
+    strong.appendChild(spanNum)
+
+    var have = document.createElement('span')
+    have.innerHTML = "&nbsp;patients with&nbsp;"
+    li.appendChild(have)
+
+    var spanName = document.createElement('span')
+    spanName.setAttribute("class","mr-1")
+    spanName.setAttribute("id",counter+"-condition-name")
+    li.appendChild(spanName) 
+
+    percentWithCondition = percentage(`${commonConditions[condition]}`, ptCount)
+    conditionRankNode = document.getElementById(counter+"-condition")
+    conditionRankNode.innerHTML = `${commonConditions[condition]}` + " (" + percentWithCondition + "%)"  
+    conditionNameNode = document.getElementById(counter+"-condition-name")
+    conditionNameNode.innerHTML = "<b>"+(`${condition}`)+"</b>"
+    
+    counter++
+  }
+}
 
 function makeFilteredCharts(filterChangeOrigin) {
   var filteredData 
@@ -240,10 +310,6 @@ function makeAgeChart(filteredData) {
     ageDict = {};
   const ageStepSize = 10,
     maxAge = 100;
-
-  var ages = Object.values(filteredData).map(function (e) {
-    return e.age;
-  });
 
   // note: currently infants less than 1 years old are still counted and are displayed under the 1-ageStepSize range
   for (var i = 0; i < maxAge; i += ageStepSize) {
@@ -495,6 +561,12 @@ function countWorkups(filteredData){
   };
   return wuCount;
 };
+
+//returns a percentage of two numbers rounded to 1 decimal place, as a string
+function percentage(portion, whole){
+  return ((portion/whole)*100).toFixed(1);
+}
+
 
 // // **not yet functional** export currently displayed data to csv 
 // document.getElementById("export-data").addEventListener("click", function () {

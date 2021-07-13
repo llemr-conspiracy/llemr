@@ -24,6 +24,11 @@
     top: 12%;
     
   }
+  .dropdown-content{
+    white-space: nowrap;
+    max-height: 17rem; 
+    overflow: scroll;
+  }
   .panel-modern {
     background-color: #F1F3FB;
     box-shadow: none;
@@ -133,11 +138,14 @@
   }
 
   .color-light {
-    color: #969DB5
+    color: #969DB5;
   }
 
   .ml-1 {
     margin-left: 1rem;
+  }
+  .ml-2 {
+    margin-left: 2rem;
   }
 
   .ml-3 {
@@ -182,6 +190,9 @@
 
   .height-25 {
     min-height: 40vh !important;
+  }
+  .pointer{
+    cursor: pointer;
   }
 
   .control-input {
@@ -240,38 +251,27 @@ $(document).ready(function(){
     </div>
   </div>
 
-  <div class="row panel panel-body panel-default panel-modern vertical-align horizontal-align">
+  <div class="row panel panel-body panel-default panel-modern vertical-align horizontal-align ">
     <div class="align-right mr-1 text-xlarge">Displaying data from: </div>
     <div class="mt-1 mb-1 mr-3 align-left">
       <div class="control-input">
-        <span class="glyphicon glyphicon-calendar small-icon ml-1 mr-1" aria-hidden="true"></span>
-        <input class="control-input px-1 color-light" type="text" name="daterange" />
+        <span class="glyphicon glyphicon-calendar small-icon ml-1" aria-hidden="true"></span>
+        <input class="control-input pointer px-1 color-light" type="text" name="daterange" />
       </div>
     </div>    
     <div class="align-left mr-1 text-xlarge">of patients presenting: </div>
-    <div class="vertical-align horizontal-align align-left mt-1 mb-1">
-      <div class="btn-group">
-        <div type="button" class="btn btn-modern color-light px-1" id="display-condition"><span><span
-              class="glyphicon glyphicon-tags small-icon mr-1" aria-hidden="true"></span>All
-            Conditions</span></div>
-        <button type="button" class="btn btn-modern dropdown-toggle px-1" data-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false">
-          <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="dropdownMenu">
-            <li><button class="btn btn-link btn-link-modern" id="all-conditions-btn">Any Condition</button></li>
-            <li role="separator" class="divider"></li>
-          <div id="condition-filter-btns"></div>
-          <div id="see-more-container">
-            <li role="separator" class="divider"></li>
-            <li class="dropdown-submenu dropdown-menu-modern">
-              <a class="prevent-prop">See more <span class="caret"></span></a>
-              <ul class="dropdown-menu dropdown-menu-modern right-menu" id="more-conditions-btns"></ul>
-            </li>
-          </div>
-        </ul>
-      </div>
-    </div>     
+    <div class="dropdown">
+      <button class="vertical-align btn btn-modern dropdown-toggle" data-toggle="dropdown">
+        <span class="mt-1 mb-1 glyphicon glyphicon-tags small-icon mr-1"></span>
+        <span class="mr-1 mt-1 mb-1 color-light" id="display-condition">Any Conditions</span>
+        <span class="mt-1 mb-1 caret"></span>
+      </button> 
+      <ul class="dropdown-menu dropdown-content" aria-labelledby="dropdownMenu">
+        <li class="mt-1 ml-1"><span class="pointer" id="all-conditions-btn">Any Conditions</span></li>
+        <li role="separator" class="divider"></li>
+        <div id="condition-filter-btns"></div>
+      </ul>   
+    </div>
   </div>
 
   <div class="row">
@@ -281,16 +281,51 @@ $(document).ready(function(){
           <div class="row vertical-align horizontal-align">
               <span class="glyphicon glyphicon-user big-icon" ></span>
             <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge align-left" id="unique-patient-count">#</div>
-              <div class="col-12 color-light">Unique Patients</div>
+              <div class="col-12 color-primary text-xlarge align-left" id="workups-count">#</div>
+              <div class="col-12 color-light">Total Workups</div>
             </div>
             <span class="glyphicon glyphicon-chevron-down"></span>
           </div> 
         </button>
-        <ul class="dropdown-menu">
-          <li><a href="#">HTML</a></li>
-          <li><a href="#">CSS</a></li>
-          <li><a href="#">JavaScript</a></li>
+        <ul class="dropdown-menu dropdown-content">
+          <li class="pt-1">
+            <strong><span class="ml-2" id="unique-patient-count"></span></strong>  
+            <span class="mr-1">&nbsp;Unique Patients</span>
+          </li>
+          <li role="separator" class="divider"></li>
+          <li>
+            <strong><span class="ml-2" id="1-workup-count"></span></strong>  
+            <span class="mr-1" >&nbsp;received <b>1</b> workup</span>
+          </li>
+          <li class="pt-1">
+            <strong><span class="ml-2" id="2-workup-count"></span></strong>  
+            <span class="mr-1">&nbsp;received <b>2</b> workups</span>
+          </li>
+          <li class="pt-1">
+            <strong><span class="ml-2" id="3-workup-count"></span></strong>  
+            <spa class="mr-1"n>&nbsp;received <b>3</b> workups</span>
+          </li>
+          <li class="pt-1">
+            <strong><span class="ml-2" id="more-workup-count"></span></strong>  
+            <span class="mr-1">&nbsp;received <b>4+</b> workups</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="panel panel-default panel-modern dropdown horizontal-align">
+        <button class="panel-body btn btn-link btn-link-modern dropdown-toggle" id="____" type="button" data-toggle="dropdown">
+          <div class="row vertical-align horizontal-align">
+              <span class="glyphicon glyphicon-heart big-icon" ></span>
+            <div class="col-xs-10">
+              <div class="col-12 color-primary text-xlarge align-left" id="conditions-count">#</div>
+              <div class="col-12 color-light">Chronic Conditions</div>
+            </div>
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </div> 
+        </button>
+        <ul class="dropdown-menu dropdown-content" id="conditions-dropdown">
+          <!-- condition count li items appended here -->
         </ul>
       </div>
     </div>
@@ -299,22 +334,7 @@ $(document).ready(function(){
         <div class="panel-body">
           <div class="row vertical-align">
             <div class="col-xs-2 text-center">
-              <span class="glyphicon glyphicon-refresh big-icon" aria-hidden="true"></span>
-            </div>
-            <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge" id="workups-count">#</div>
-              <div class="col-12 color-light">Total Workups</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-3">
-      <div class="panel panel-default panel-modern">
-        <div class="panel-body">
-          <div class="row vertical-align">
-            <div class="col-xs-2 text-center">
-              <span class="glyphicon glyphicon-record big-icon" aria-hidden="true"></span>
+              <span class="glyphicon glyphicon-list-alt big-icon" aria-hidden="true"></span>
             </div>
             <div class="col-xs-10">
               <div class="col-12 color-primary text-xlarge">#</div>
@@ -329,7 +349,7 @@ $(document).ready(function(){
         <div class="panel-body">
           <div class="row vertical-align">
             <div class="col-xs-2 text-center">
-              <span class="glyphicon glyphicon-record big-icon" aria-hidden="true"></span>
+              <span class="glyphicon glyphicon-pushpin big-icon" aria-hidden="true"></span>
             </div>
             <div class="col-xs-10">
               <div class="col-12 color-primary text-xlarge">#</div>
