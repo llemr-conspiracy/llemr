@@ -11,6 +11,9 @@ from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
 from django.utils.decorators import method_decorator
 
 
+homeless_address = '3151 Olive St.'
+ethnicity_list = []
+zip_code_list = []
 @method_decorator(active_permission_required('users.view_clinic_datadashboard', raise_exception=True), name='dispatch')
 class DataDashboardView(TemplateView):
     template_name = 'datadashboard/data_dashboard.html'        
@@ -55,8 +58,16 @@ def extract_demographic_data(workups,demo):
                 demographics['conditions'] = []
             demographics['age'] = (wu.written_datetime.date() - wu.patient.date_of_birth).days // 365
             demographics['gender'] = wu.patient.gender.name
+            if(wu.patient.address != homeless_address):
+                demographics['zip_code'] = wu.patient.zip_code
+            else:
+                demographics['zip_code'] = None
+            if(wu.patient.zip_code not in zip_code_list):
+              zip_code_list.append(wu.patient.zip_code)
             ethnicities = []
             for ethnicity in list(wu.patient.ethnicities.all()):
+                if(ethnicity not in ethnicity_list):
+                  ethnicity_list.append(ethnicity)
                 ethnicities.append(getattr(ethnicity, 'name'))
             demographics['ethnicities'] = ethnicities
             demographics['name'] = wu.patient.name()
@@ -68,10 +79,13 @@ def extract_demographic_data(workups,demo):
             existing_wu_dates.append(str(wu.written_datetime.date()))
     return dashboard_data
 
+
 def send_context_json(request):
     ''' Formats context data such as clinic dates for json '''
     context = {}
     context["clinic_dates"] = json.dumps(list_clinic_dates())
+    context["num_ethnicities"] = len(ethnicity_list)
+    context["num_zipcodes"] = len(zip_code_list)
     return JsonResponse(context)
 
 def list_clinic_dates():

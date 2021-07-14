@@ -1,0 +1,7212 @@
+[
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 1,
+        "fields": {
+            "dispense": 3,
+            "drug": 1,
+            "encounter": 1,
+            "written_datetime": "2019-03-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 5,
+        "fields": {
+            "dispense": 4,
+            "drug": 13,
+            "encounter": 5,
+            "written_datetime": "2019-08-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 6,
+        "fields": {
+            "dispense": 3,
+            "drug": 12,
+            "encounter": 6,
+            "written_datetime": "2020-09-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 7,
+        "fields": {
+            "dispense": 1,
+            "drug": 10,
+            "encounter": 7,
+            "written_datetime": "2020-04-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 8,
+        "fields": {
+            "dispense": 1,
+            "drug": 13,
+            "encounter": 8,
+            "written_datetime": "2019-07-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 9,
+        "fields": {
+            "dispense": 1,
+            "drug": 13,
+            "encounter": 9,
+            "written_datetime": "2018-11-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 10,
+        "fields": {
+            "dispense": 3,
+            "drug": 7,
+            "encounter": 10,
+            "written_datetime": "2018-12-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 11,
+        "fields": {
+            "dispense": 1,
+            "drug": 9,
+            "encounter": 11,
+            "written_datetime": "2018-08-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 12,
+        "fields": {
+            "dispense": 5,
+            "drug": 5,
+            "encounter": 12,
+            "written_datetime": "2019-09-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 13,
+        "fields": {
+            "dispense": 0,
+            "drug": 4,
+            "encounter": 13,
+            "written_datetime": "2020-07-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 14,
+        "fields": {
+            "dispense": 0,
+            "drug": 8,
+            "encounter": 14,
+            "written_datetime": "2018-09-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 15,
+        "fields": {
+            "dispense": 1,
+            "drug": 9,
+            "encounter": 15,
+            "written_datetime": "2018-09-15",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 16,
+        "fields": {
+            "dispense": 4,
+            "drug": 13,
+            "encounter": 16,
+            "written_datetime": "2020-07-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 17,
+        "fields": {
+            "dispense": 3,
+            "drug": 2,
+            "encounter": 17,
+            "written_datetime": "2020-12-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 18,
+        "fields": {
+            "dispense": 3,
+            "drug": 4,
+            "encounter": 18,
+            "written_datetime": "2020-12-31",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 19,
+        "fields": {
+            "dispense": 3,
+            "drug": 4,
+            "encounter": 19,
+            "written_datetime": "2019-12-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 20,
+        "fields": {
+            "dispense": 5,
+            "drug": 7,
+            "encounter": 20,
+            "written_datetime": "2018-01-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 21,
+        "fields": {
+            "dispense": 3,
+            "drug": 1,
+            "encounter": 21,
+            "written_datetime": "2020-12-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 22,
+        "fields": {
+            "dispense": 1,
+            "drug": 2,
+            "encounter": 22,
+            "written_datetime": "2019-10-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 23,
+        "fields": {
+            "dispense": 3,
+            "drug": 4,
+            "encounter": 23,
+            "written_datetime": "2019-11-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 24,
+        "fields": {
+            "dispense": 4,
+            "drug": 12,
+            "encounter": 24,
+            "written_datetime": "2018-08-24",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 25,
+        "fields": {
+            "dispense": 0,
+            "drug": 4,
+            "encounter": 25,
+            "written_datetime": "2019-07-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 26,
+        "fields": {
+            "dispense": 1,
+            "drug": 1,
+            "encounter": 26,
+            "written_datetime": "2020-03-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 27,
+        "fields": {
+            "dispense": 5,
+            "drug": 8,
+            "encounter": 27,
+            "written_datetime": "2019-01-15",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 28,
+        "fields": {
+            "dispense": 4,
+            "drug": 8,
+            "encounter": 28,
+            "written_datetime": "2019-11-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 29,
+        "fields": {
+            "dispense": 4,
+            "drug": 5,
+            "encounter": 29,
+            "written_datetime": "2018-06-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 30,
+        "fields": {
+            "dispense": 2,
+            "drug": 1,
+            "encounter": 30,
+            "written_datetime": "2018-04-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 31,
+        "fields": {
+            "dispense": 1,
+            "drug": 3,
+            "encounter": 31,
+            "written_datetime": "2019-08-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 32,
+        "fields": {
+            "dispense": 0,
+            "drug": 10,
+            "encounter": 32,
+            "written_datetime": "2020-04-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 33,
+        "fields": {
+            "dispense": 4,
+            "drug": 1,
+            "encounter": 33,
+            "written_datetime": "2021-01-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 34,
+        "fields": {
+            "dispense": 1,
+            "drug": 6,
+            "encounter": 34,
+            "written_datetime": "2020-05-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 35,
+        "fields": {
+            "dispense": 2,
+            "drug": 14,
+            "encounter": 35,
+            "written_datetime": "2020-05-02",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 36,
+        "fields": {
+            "dispense": 2,
+            "drug": 9,
+            "encounter": 36,
+            "written_datetime": "2019-11-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 37,
+        "fields": {
+            "dispense": 5,
+            "drug": 8,
+            "encounter": 37,
+            "written_datetime": "2019-02-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 38,
+        "fields": {
+            "dispense": 1,
+            "drug": 13,
+            "encounter": 38,
+            "written_datetime": "2021-05-28",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 39,
+        "fields": {
+            "dispense": 4,
+            "drug": 3,
+            "encounter": 39,
+            "written_datetime": "2021-02-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 40,
+        "fields": {
+            "dispense": 0,
+            "drug": 11,
+            "encounter": 40,
+            "written_datetime": "2020-04-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 41,
+        "fields": {
+            "dispense": 1,
+            "drug": 13,
+            "encounter": 41,
+            "written_datetime": "2020-01-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 42,
+        "fields": {
+            "dispense": 5,
+            "drug": 6,
+            "encounter": 42,
+            "written_datetime": "2018-07-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 43,
+        "fields": {
+            "dispense": 2,
+            "drug": 4,
+            "encounter": 43,
+            "written_datetime": "2019-12-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 44,
+        "fields": {
+            "dispense": 3,
+            "drug": 3,
+            "encounter": 44,
+            "written_datetime": "2020-03-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 45,
+        "fields": {
+            "dispense": 1,
+            "drug": 4,
+            "encounter": 45,
+            "written_datetime": "2021-03-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 46,
+        "fields": {
+            "dispense": 5,
+            "drug": 8,
+            "encounter": 46,
+            "written_datetime": "2019-06-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 47,
+        "fields": {
+            "dispense": 4,
+            "drug": 8,
+            "encounter": 47,
+            "written_datetime": "2019-10-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 48,
+        "fields": {
+            "dispense": 2,
+            "drug": 9,
+            "encounter": 48,
+            "written_datetime": "2020-02-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 49,
+        "fields": {
+            "dispense": 5,
+            "drug": 15,
+            "encounter": 49,
+            "written_datetime": "2019-02-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 50,
+        "fields": {
+            "dispense": 0,
+            "drug": 11,
+            "encounter": 50,
+            "written_datetime": "2018-04-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 51,
+        "fields": {
+            "dispense": 1,
+            "drug": 13,
+            "encounter": 51,
+            "written_datetime": "2019-03-22",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 52,
+        "fields": {
+            "dispense": 0,
+            "drug": 7,
+            "encounter": 52,
+            "written_datetime": "2018-10-11",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 53,
+        "fields": {
+            "dispense": 1,
+            "drug": 11,
+            "encounter": 53,
+            "written_datetime": "2021-06-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 54,
+        "fields": {
+            "dispense": 4,
+            "drug": 3,
+            "encounter": 54,
+            "written_datetime": "2019-10-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 55,
+        "fields": {
+            "dispense": 4,
+            "drug": 7,
+            "encounter": 55,
+            "written_datetime": "2018-08-28",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 56,
+        "fields": {
+            "dispense": 2,
+            "drug": 4,
+            "encounter": 56,
+            "written_datetime": "2019-06-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 57,
+        "fields": {
+            "dispense": 2,
+            "drug": 14,
+            "encounter": 57,
+            "written_datetime": "2019-05-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 58,
+        "fields": {
+            "dispense": 1,
+            "drug": 10,
+            "encounter": 58,
+            "written_datetime": "2018-12-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 59,
+        "fields": {
+            "dispense": 5,
+            "drug": 10,
+            "encounter": 59,
+            "written_datetime": "2018-07-21",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 60,
+        "fields": {
+            "dispense": 1,
+            "drug": 8,
+            "encounter": 60,
+            "written_datetime": "2018-12-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 61,
+        "fields": {
+            "dispense": 4,
+            "drug": 15,
+            "encounter": 61,
+            "written_datetime": "2020-08-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 62,
+        "fields": {
+            "dispense": 1,
+            "drug": 1,
+            "encounter": 62,
+            "written_datetime": "2021-01-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 63,
+        "fields": {
+            "dispense": 4,
+            "drug": 12,
+            "encounter": 63,
+            "written_datetime": "2019-04-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 64,
+        "fields": {
+            "dispense": 3,
+            "drug": 11,
+            "encounter": 64,
+            "written_datetime": "2020-04-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 65,
+        "fields": {
+            "dispense": 4,
+            "drug": 2,
+            "encounter": 65,
+            "written_datetime": "2020-02-24",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 66,
+        "fields": {
+            "dispense": 1,
+            "drug": 11,
+            "encounter": 66,
+            "written_datetime": "2018-09-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 67,
+        "fields": {
+            "dispense": 5,
+            "drug": 6,
+            "encounter": 67,
+            "written_datetime": "2021-05-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 68,
+        "fields": {
+            "dispense": 5,
+            "drug": 8,
+            "encounter": 68,
+            "written_datetime": "2020-11-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 69,
+        "fields": {
+            "dispense": 0,
+            "drug": 9,
+            "encounter": 69,
+            "written_datetime": "2021-06-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 70,
+        "fields": {
+            "dispense": 3,
+            "drug": 10,
+            "encounter": 70,
+            "written_datetime": "2019-02-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 71,
+        "fields": {
+            "dispense": 3,
+            "drug": 3,
+            "encounter": 71,
+            "written_datetime": "2019-11-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 72,
+        "fields": {
+            "dispense": 3,
+            "drug": 13,
+            "encounter": 72,
+            "written_datetime": "2020-03-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 73,
+        "fields": {
+            "dispense": 2,
+            "drug": 11,
+            "encounter": 73,
+            "written_datetime": "2019-12-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 74,
+        "fields": {
+            "dispense": 5,
+            "drug": 1,
+            "encounter": 74,
+            "written_datetime": "2020-12-31",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 75,
+        "fields": {
+            "dispense": 5,
+            "drug": 1,
+            "encounter": 75,
+            "written_datetime": "2021-05-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 76,
+        "fields": {
+            "dispense": 5,
+            "drug": 15,
+            "encounter": 76,
+            "written_datetime": "2020-04-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 77,
+        "fields": {
+            "dispense": 5,
+            "drug": 10,
+            "encounter": 77,
+            "written_datetime": "2019-12-28",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 78,
+        "fields": {
+            "dispense": 5,
+            "drug": 9,
+            "encounter": 78,
+            "written_datetime": "2018-03-20",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 79,
+        "fields": {
+            "dispense": 4,
+            "drug": 1,
+            "encounter": 79,
+            "written_datetime": "2019-11-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 80,
+        "fields": {
+            "dispense": 2,
+            "drug": 9,
+            "encounter": 80,
+            "written_datetime": "2018-12-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 81,
+        "fields": {
+            "dispense": 4,
+            "drug": 5,
+            "encounter": 81,
+            "written_datetime": "2018-08-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 82,
+        "fields": {
+            "dispense": 2,
+            "drug": 1,
+            "encounter": 82,
+            "written_datetime": "2021-07-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 83,
+        "fields": {
+            "dispense": 1,
+            "drug": 5,
+            "encounter": 83,
+            "written_datetime": "2019-08-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 84,
+        "fields": {
+            "dispense": 0,
+            "drug": 1,
+            "encounter": 84,
+            "written_datetime": "2018-09-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 85,
+        "fields": {
+            "dispense": 0,
+            "drug": 2,
+            "encounter": 85,
+            "written_datetime": "2021-03-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 86,
+        "fields": {
+            "dispense": 3,
+            "drug": 6,
+            "encounter": 86,
+            "written_datetime": "2021-06-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 87,
+        "fields": {
+            "dispense": 4,
+            "drug": 1,
+            "encounter": 87,
+            "written_datetime": "2019-01-31",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 88,
+        "fields": {
+            "dispense": 2,
+            "drug": 6,
+            "encounter": 88,
+            "written_datetime": "2021-04-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 89,
+        "fields": {
+            "dispense": 3,
+            "drug": 10,
+            "encounter": 89,
+            "written_datetime": "2021-06-15",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 90,
+        "fields": {
+            "dispense": 0,
+            "drug": 9,
+            "encounter": 90,
+            "written_datetime": "2020-11-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 91,
+        "fields": {
+            "dispense": 2,
+            "drug": 10,
+            "encounter": 91,
+            "written_datetime": "2020-03-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 92,
+        "fields": {
+            "dispense": 0,
+            "drug": 8,
+            "encounter": 92,
+            "written_datetime": "2019-11-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 93,
+        "fields": {
+            "dispense": 2,
+            "drug": 11,
+            "encounter": 93,
+            "written_datetime": "2019-09-16",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 94,
+        "fields": {
+            "dispense": 5,
+            "drug": 2,
+            "encounter": 94,
+            "written_datetime": "2021-04-11",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 95,
+        "fields": {
+            "dispense": 4,
+            "drug": 10,
+            "encounter": 95,
+            "written_datetime": "2021-04-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 96,
+        "fields": {
+            "dispense": 2,
+            "drug": 8,
+            "encounter": 96,
+            "written_datetime": "2019-07-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 97,
+        "fields": {
+            "dispense": 1,
+            "drug": 7,
+            "encounter": 97,
+            "written_datetime": "2019-05-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 98,
+        "fields": {
+            "dispense": 3,
+            "drug": 4,
+            "encounter": 98,
+            "written_datetime": "2021-01-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 99,
+        "fields": {
+            "dispense": 2,
+            "drug": 14,
+            "encounter": 99,
+            "written_datetime": "2018-11-20",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 100,
+        "fields": {
+            "dispense": 2,
+            "drug": 15,
+            "encounter": 100,
+            "written_datetime": "2019-03-21",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 101,
+        "fields": {
+            "dispense": 1,
+            "drug": 2,
+            "encounter": 101,
+            "written_datetime": "2019-12-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 102,
+        "fields": {
+            "dispense": 3,
+            "drug": 9,
+            "encounter": 102,
+            "written_datetime": "2018-04-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 103,
+        "fields": {
+            "dispense": 0,
+            "drug": 14,
+            "encounter": 103,
+            "written_datetime": "2018-01-11",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 104,
+        "fields": {
+            "dispense": 3,
+            "drug": 1,
+            "encounter": 104,
+            "written_datetime": "2018-10-16",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 105,
+        "fields": {
+            "dispense": 4,
+            "drug": 4,
+            "encounter": 105,
+            "written_datetime": "2019-08-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 106,
+        "fields": {
+            "dispense": 4,
+            "drug": 12,
+            "encounter": 106,
+            "written_datetime": "2020-02-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 107,
+        "fields": {
+            "dispense": 2,
+            "drug": 7,
+            "encounter": 107,
+            "written_datetime": "2019-11-15",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 108,
+        "fields": {
+            "dispense": 2,
+            "drug": 4,
+            "encounter": 108,
+            "written_datetime": "2018-01-11",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 109,
+        "fields": {
+            "dispense": 2,
+            "drug": 7,
+            "encounter": 109,
+            "written_datetime": "2020-11-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 110,
+        "fields": {
+            "dispense": 4,
+            "drug": 1,
+            "encounter": 110,
+            "written_datetime": "2018-06-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 111,
+        "fields": {
+            "dispense": 2,
+            "drug": 6,
+            "encounter": 111,
+            "written_datetime": "2020-05-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 112,
+        "fields": {
+            "dispense": 3,
+            "drug": 9,
+            "encounter": 112,
+            "written_datetime": "2018-05-15",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 113,
+        "fields": {
+            "dispense": 0,
+            "drug": 7,
+            "encounter": 113,
+            "written_datetime": "2019-04-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 114,
+        "fields": {
+            "dispense": 2,
+            "drug": 11,
+            "encounter": 114,
+            "written_datetime": "2019-05-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 115,
+        "fields": {
+            "dispense": 0,
+            "drug": 5,
+            "encounter": 115,
+            "written_datetime": "2019-11-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 116,
+        "fields": {
+            "dispense": 2,
+            "drug": 13,
+            "encounter": 116,
+            "written_datetime": "2021-05-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 117,
+        "fields": {
+            "dispense": 5,
+            "drug": 2,
+            "encounter": 117,
+            "written_datetime": "2018-11-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 118,
+        "fields": {
+            "dispense": 4,
+            "drug": 14,
+            "encounter": 118,
+            "written_datetime": "2020-05-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 119,
+        "fields": {
+            "dispense": 3,
+            "drug": 6,
+            "encounter": 119,
+            "written_datetime": "2020-12-02",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 120,
+        "fields": {
+            "dispense": 1,
+            "drug": 10,
+            "encounter": 120,
+            "written_datetime": "2019-01-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 121,
+        "fields": {
+            "dispense": 4,
+            "drug": 8,
+            "encounter": 121,
+            "written_datetime": "2018-12-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 122,
+        "fields": {
+            "dispense": 4,
+            "drug": 7,
+            "encounter": 122,
+            "written_datetime": "2018-05-15",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 123,
+        "fields": {
+            "dispense": 3,
+            "drug": 2,
+            "encounter": 123,
+            "written_datetime": "2018-07-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 124,
+        "fields": {
+            "dispense": 0,
+            "drug": 15,
+            "encounter": 124,
+            "written_datetime": "2019-11-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 125,
+        "fields": {
+            "dispense": 1,
+            "drug": 10,
+            "encounter": 125,
+            "written_datetime": "2020-12-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 126,
+        "fields": {
+            "dispense": 5,
+            "drug": 13,
+            "encounter": 126,
+            "written_datetime": "2019-05-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 127,
+        "fields": {
+            "dispense": 2,
+            "drug": 1,
+            "encounter": 127,
+            "written_datetime": "2020-08-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 128,
+        "fields": {
+            "dispense": 5,
+            "drug": 14,
+            "encounter": 128,
+            "written_datetime": "2018-08-21",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 129,
+        "fields": {
+            "dispense": 3,
+            "drug": 14,
+            "encounter": 129,
+            "written_datetime": "2021-05-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 130,
+        "fields": {
+            "dispense": 0,
+            "drug": 9,
+            "encounter": 130,
+            "written_datetime": "2019-05-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 131,
+        "fields": {
+            "dispense": 1,
+            "drug": 14,
+            "encounter": 131,
+            "written_datetime": "2020-10-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 132,
+        "fields": {
+            "dispense": 3,
+            "drug": 8,
+            "encounter": 132,
+            "written_datetime": "2018-12-24",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 133,
+        "fields": {
+            "dispense": 0,
+            "drug": 4,
+            "encounter": 133,
+            "written_datetime": "2019-11-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 134,
+        "fields": {
+            "dispense": 0,
+            "drug": 10,
+            "encounter": 134,
+            "written_datetime": "2019-01-28",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 135,
+        "fields": {
+            "dispense": 5,
+            "drug": 7,
+            "encounter": 135,
+            "written_datetime": "2018-02-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 136,
+        "fields": {
+            "dispense": 3,
+            "drug": 10,
+            "encounter": 136,
+            "written_datetime": "2019-01-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 137,
+        "fields": {
+            "dispense": 4,
+            "drug": 7,
+            "encounter": 137,
+            "written_datetime": "2018-07-28",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 138,
+        "fields": {
+            "dispense": 4,
+            "drug": 13,
+            "encounter": 138,
+            "written_datetime": "2019-11-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 139,
+        "fields": {
+            "dispense": 1,
+            "drug": 6,
+            "encounter": 139,
+            "written_datetime": "2019-02-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 140,
+        "fields": {
+            "dispense": 4,
+            "drug": 7,
+            "encounter": 140,
+            "written_datetime": "2021-04-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 141,
+        "fields": {
+            "dispense": 1,
+            "drug": 11,
+            "encounter": 141,
+            "written_datetime": "2019-08-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 142,
+        "fields": {
+            "dispense": 0,
+            "drug": 5,
+            "encounter": 142,
+            "written_datetime": "2019-08-31",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 143,
+        "fields": {
+            "dispense": 5,
+            "drug": 11,
+            "encounter": 143,
+            "written_datetime": "2018-11-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 144,
+        "fields": {
+            "dispense": 2,
+            "drug": 12,
+            "encounter": 144,
+            "written_datetime": "2018-10-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 145,
+        "fields": {
+            "dispense": 5,
+            "drug": 2,
+            "encounter": 145,
+            "written_datetime": "2018-09-16",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 146,
+        "fields": {
+            "dispense": 2,
+            "drug": 8,
+            "encounter": 146,
+            "written_datetime": "2020-10-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 147,
+        "fields": {
+            "dispense": 0,
+            "drug": 9,
+            "encounter": 147,
+            "written_datetime": "2019-02-20",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 148,
+        "fields": {
+            "dispense": 2,
+            "drug": 14,
+            "encounter": 148,
+            "written_datetime": "2020-04-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 149,
+        "fields": {
+            "dispense": 0,
+            "drug": 2,
+            "encounter": 149,
+            "written_datetime": "2021-01-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 150,
+        "fields": {
+            "dispense": 4,
+            "drug": 7,
+            "encounter": 150,
+            "written_datetime": "2019-04-28",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 151,
+        "fields": {
+            "dispense": 2,
+            "drug": 8,
+            "encounter": 151,
+            "written_datetime": "2019-06-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 152,
+        "fields": {
+            "dispense": 2,
+            "drug": 12,
+            "encounter": 152,
+            "written_datetime": "2020-04-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 153,
+        "fields": {
+            "dispense": 1,
+            "drug": 2,
+            "encounter": 153,
+            "written_datetime": "2018-07-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 154,
+        "fields": {
+            "dispense": 0,
+            "drug": 4,
+            "encounter": 154,
+            "written_datetime": "2019-10-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 155,
+        "fields": {
+            "dispense": 3,
+            "drug": 11,
+            "encounter": 155,
+            "written_datetime": "2019-04-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 156,
+        "fields": {
+            "dispense": 4,
+            "drug": 10,
+            "encounter": 156,
+            "written_datetime": "2021-01-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 157,
+        "fields": {
+            "dispense": 3,
+            "drug": 15,
+            "encounter": 157,
+            "written_datetime": "2020-02-11",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 158,
+        "fields": {
+            "dispense": 4,
+            "drug": 10,
+            "encounter": 158,
+            "written_datetime": "2020-06-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 159,
+        "fields": {
+            "dispense": 0,
+            "drug": 1,
+            "encounter": 159,
+            "written_datetime": "2019-12-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 160,
+        "fields": {
+            "dispense": 5,
+            "drug": 1,
+            "encounter": 160,
+            "written_datetime": "2020-08-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 161,
+        "fields": {
+            "dispense": 5,
+            "drug": 5,
+            "encounter": 161,
+            "written_datetime": "2020-08-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 162,
+        "fields": {
+            "dispense": 0,
+            "drug": 2,
+            "encounter": 162,
+            "written_datetime": "2020-04-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 163,
+        "fields": {
+            "dispense": 2,
+            "drug": 11,
+            "encounter": 163,
+            "written_datetime": "2019-01-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 164,
+        "fields": {
+            "dispense": 2,
+            "drug": 3,
+            "encounter": 164,
+            "written_datetime": "2019-09-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 165,
+        "fields": {
+            "dispense": 4,
+            "drug": 11,
+            "encounter": 165,
+            "written_datetime": "2020-09-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 166,
+        "fields": {
+            "dispense": 3,
+            "drug": 10,
+            "encounter": 166,
+            "written_datetime": "2020-03-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 167,
+        "fields": {
+            "dispense": 1,
+            "drug": 15,
+            "encounter": 167,
+            "written_datetime": "2019-08-20",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 168,
+        "fields": {
+            "dispense": 5,
+            "drug": 12,
+            "encounter": 168,
+            "written_datetime": "2018-01-21",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 169,
+        "fields": {
+            "dispense": 4,
+            "drug": 2,
+            "encounter": 169,
+            "written_datetime": "2020-08-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 170,
+        "fields": {
+            "dispense": 1,
+            "drug": 9,
+            "encounter": 170,
+            "written_datetime": "2019-03-22",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 171,
+        "fields": {
+            "dispense": 0,
+            "drug": 15,
+            "encounter": 171,
+            "written_datetime": "2021-05-20",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 172,
+        "fields": {
+            "dispense": 5,
+            "drug": 3,
+            "encounter": 172,
+            "written_datetime": "2019-08-02",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 173,
+        "fields": {
+            "dispense": 2,
+            "drug": 13,
+            "encounter": 173,
+            "written_datetime": "2019-04-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 174,
+        "fields": {
+            "dispense": 0,
+            "drug": 5,
+            "encounter": 174,
+            "written_datetime": "2018-12-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 175,
+        "fields": {
+            "dispense": 3,
+            "drug": 12,
+            "encounter": 175,
+            "written_datetime": "2020-02-21",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 176,
+        "fields": {
+            "dispense": 0,
+            "drug": 6,
+            "encounter": 176,
+            "written_datetime": "2018-06-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 177,
+        "fields": {
+            "dispense": 5,
+            "drug": 6,
+            "encounter": 177,
+            "written_datetime": "2019-09-02",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 178,
+        "fields": {
+            "dispense": 5,
+            "drug": 6,
+            "encounter": 178,
+            "written_datetime": "2020-05-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 179,
+        "fields": {
+            "dispense": 0,
+            "drug": 10,
+            "encounter": 179,
+            "written_datetime": "2019-04-28",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 180,
+        "fields": {
+            "dispense": 3,
+            "drug": 4,
+            "encounter": 180,
+            "written_datetime": "2020-07-20",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 181,
+        "fields": {
+            "dispense": 4,
+            "drug": 12,
+            "encounter": 181,
+            "written_datetime": "2019-11-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 182,
+        "fields": {
+            "dispense": 3,
+            "drug": 5,
+            "encounter": 182,
+            "written_datetime": "2019-04-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 183,
+        "fields": {
+            "dispense": 3,
+            "drug": 5,
+            "encounter": 183,
+            "written_datetime": "2020-05-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 184,
+        "fields": {
+            "dispense": 5,
+            "drug": 5,
+            "encounter": 184,
+            "written_datetime": "2018-08-20",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 185,
+        "fields": {
+            "dispense": 1,
+            "drug": 11,
+            "encounter": 185,
+            "written_datetime": "2020-02-22",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 186,
+        "fields": {
+            "dispense": 0,
+            "drug": 3,
+            "encounter": 186,
+            "written_datetime": "2019-08-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 187,
+        "fields": {
+            "dispense": 2,
+            "drug": 4,
+            "encounter": 187,
+            "written_datetime": "2019-04-11",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 188,
+        "fields": {
+            "dispense": 3,
+            "drug": 4,
+            "encounter": 188,
+            "written_datetime": "2020-04-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 189,
+        "fields": {
+            "dispense": 4,
+            "drug": 3,
+            "encounter": 189,
+            "written_datetime": "2021-03-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 190,
+        "fields": {
+            "dispense": 5,
+            "drug": 13,
+            "encounter": 190,
+            "written_datetime": "2020-09-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 191,
+        "fields": {
+            "dispense": 3,
+            "drug": 10,
+            "encounter": 191,
+            "written_datetime": "2021-04-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 192,
+        "fields": {
+            "dispense": 0,
+            "drug": 13,
+            "encounter": 192,
+            "written_datetime": "2021-05-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 193,
+        "fields": {
+            "dispense": 0,
+            "drug": 9,
+            "encounter": 193,
+            "written_datetime": "2020-08-24",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 194,
+        "fields": {
+            "dispense": 4,
+            "drug": 13,
+            "encounter": 194,
+            "written_datetime": "2019-12-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 195,
+        "fields": {
+            "dispense": 3,
+            "drug": 5,
+            "encounter": 195,
+            "written_datetime": "2020-02-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 196,
+        "fields": {
+            "dispense": 3,
+            "drug": 9,
+            "encounter": 196,
+            "written_datetime": "2020-01-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 197,
+        "fields": {
+            "dispense": 5,
+            "drug": 4,
+            "encounter": 197,
+            "written_datetime": "2019-10-16",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 198,
+        "fields": {
+            "dispense": 1,
+            "drug": 7,
+            "encounter": 198,
+            "written_datetime": "2020-04-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 199,
+        "fields": {
+            "dispense": 0,
+            "drug": 2,
+            "encounter": 199,
+            "written_datetime": "2020-03-24",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 200,
+        "fields": {
+            "dispense": 3,
+            "drug": 9,
+            "encounter": 200,
+            "written_datetime": "2020-01-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 201,
+        "fields": {
+            "dispense": 5,
+            "drug": 14,
+            "encounter": 201,
+            "written_datetime": "2019-06-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 202,
+        "fields": {
+            "dispense": 0,
+            "drug": 15,
+            "encounter": 202,
+            "written_datetime": "2019-09-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 203,
+        "fields": {
+            "dispense": 5,
+            "drug": 6,
+            "encounter": 203,
+            "written_datetime": "2019-09-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 204,
+        "fields": {
+            "dispense": 4,
+            "drug": 12,
+            "encounter": 204,
+            "written_datetime": "2018-09-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 205,
+        "fields": {
+            "dispense": 3,
+            "drug": 12,
+            "encounter": 205,
+            "written_datetime": "2021-06-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 206,
+        "fields": {
+            "dispense": 4,
+            "drug": 2,
+            "encounter": 206,
+            "written_datetime": "2019-11-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 207,
+        "fields": {
+            "dispense": 4,
+            "drug": 3,
+            "encounter": 207,
+            "written_datetime": "2018-08-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 208,
+        "fields": {
+            "dispense": 2,
+            "drug": 15,
+            "encounter": 208,
+            "written_datetime": "2018-09-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 209,
+        "fields": {
+            "dispense": 0,
+            "drug": 4,
+            "encounter": 209,
+            "written_datetime": "2018-07-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 210,
+        "fields": {
+            "dispense": 0,
+            "drug": 2,
+            "encounter": 210,
+            "written_datetime": "2019-12-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 211,
+        "fields": {
+            "dispense": 1,
+            "drug": 2,
+            "encounter": 211,
+            "written_datetime": "2018-01-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 212,
+        "fields": {
+            "dispense": 3,
+            "drug": 5,
+            "encounter": 212,
+            "written_datetime": "2019-09-21",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 213,
+        "fields": {
+            "dispense": 3,
+            "drug": 11,
+            "encounter": 213,
+            "written_datetime": "2019-01-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 214,
+        "fields": {
+            "dispense": 5,
+            "drug": 9,
+            "encounter": 214,
+            "written_datetime": "2019-02-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 215,
+        "fields": {
+            "dispense": 2,
+            "drug": 2,
+            "encounter": 215,
+            "written_datetime": "2019-01-02",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 216,
+        "fields": {
+            "dispense": 0,
+            "drug": 5,
+            "encounter": 216,
+            "written_datetime": "2018-03-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 217,
+        "fields": {
+            "dispense": 3,
+            "drug": 4,
+            "encounter": 217,
+            "written_datetime": "2019-07-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 218,
+        "fields": {
+            "dispense": 2,
+            "drug": 1,
+            "encounter": 218,
+            "written_datetime": "2020-05-31",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 219,
+        "fields": {
+            "dispense": 2,
+            "drug": 10,
+            "encounter": 219,
+            "written_datetime": "2019-12-31",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 220,
+        "fields": {
+            "dispense": 0,
+            "drug": 6,
+            "encounter": 220,
+            "written_datetime": "2020-01-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 221,
+        "fields": {
+            "dispense": 4,
+            "drug": 7,
+            "encounter": 221,
+            "written_datetime": "2021-05-24",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 222,
+        "fields": {
+            "dispense": 5,
+            "drug": 7,
+            "encounter": 222,
+            "written_datetime": "2020-10-22",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 223,
+        "fields": {
+            "dispense": 3,
+            "drug": 12,
+            "encounter": 223,
+            "written_datetime": "2020-07-24",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 224,
+        "fields": {
+            "dispense": 0,
+            "drug": 7,
+            "encounter": 224,
+            "written_datetime": "2018-05-22",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 225,
+        "fields": {
+            "dispense": 2,
+            "drug": 3,
+            "encounter": 225,
+            "written_datetime": "2019-06-20",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 226,
+        "fields": {
+            "dispense": 4,
+            "drug": 11,
+            "encounter": 226,
+            "written_datetime": "2019-07-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 227,
+        "fields": {
+            "dispense": 3,
+            "drug": 10,
+            "encounter": 227,
+            "written_datetime": "2018-08-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 228,
+        "fields": {
+            "dispense": 3,
+            "drug": 1,
+            "encounter": 228,
+            "written_datetime": "2018-12-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 229,
+        "fields": {
+            "dispense": 0,
+            "drug": 6,
+            "encounter": 229,
+            "written_datetime": "2019-08-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 230,
+        "fields": {
+            "dispense": 2,
+            "drug": 6,
+            "encounter": 230,
+            "written_datetime": "2020-04-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 231,
+        "fields": {
+            "dispense": 3,
+            "drug": 15,
+            "encounter": 231,
+            "written_datetime": "2019-08-02",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 232,
+        "fields": {
+            "dispense": 5,
+            "drug": 11,
+            "encounter": 232,
+            "written_datetime": "2020-07-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 233,
+        "fields": {
+            "dispense": 5,
+            "drug": 5,
+            "encounter": 233,
+            "written_datetime": "2019-01-22",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 234,
+        "fields": {
+            "dispense": 2,
+            "drug": 5,
+            "encounter": 234,
+            "written_datetime": "2019-08-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 235,
+        "fields": {
+            "dispense": 3,
+            "drug": 3,
+            "encounter": 235,
+            "written_datetime": "2021-01-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 236,
+        "fields": {
+            "dispense": 1,
+            "drug": 8,
+            "encounter": 236,
+            "written_datetime": "2018-05-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 237,
+        "fields": {
+            "dispense": 3,
+            "drug": 5,
+            "encounter": 237,
+            "written_datetime": "2018-07-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 238,
+        "fields": {
+            "dispense": 1,
+            "drug": 2,
+            "encounter": 238,
+            "written_datetime": "2019-08-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 239,
+        "fields": {
+            "dispense": 0,
+            "drug": 5,
+            "encounter": 239,
+            "written_datetime": "2019-04-21",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 240,
+        "fields": {
+            "dispense": 4,
+            "drug": 7,
+            "encounter": 240,
+            "written_datetime": "2018-07-31",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 241,
+        "fields": {
+            "dispense": 3,
+            "drug": 9,
+            "encounter": 241,
+            "written_datetime": "2021-06-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 242,
+        "fields": {
+            "dispense": 2,
+            "drug": 9,
+            "encounter": 242,
+            "written_datetime": "2018-04-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 243,
+        "fields": {
+            "dispense": 2,
+            "drug": 9,
+            "encounter": 243,
+            "written_datetime": "2021-05-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 244,
+        "fields": {
+            "dispense": 0,
+            "drug": 9,
+            "encounter": 244,
+            "written_datetime": "2018-02-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 245,
+        "fields": {
+            "dispense": 2,
+            "drug": 5,
+            "encounter": 245,
+            "written_datetime": "2019-04-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 246,
+        "fields": {
+            "dispense": 5,
+            "drug": 13,
+            "encounter": 246,
+            "written_datetime": "2019-07-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 247,
+        "fields": {
+            "dispense": 1,
+            "drug": 15,
+            "encounter": 247,
+            "written_datetime": "2020-08-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 248,
+        "fields": {
+            "dispense": 3,
+            "drug": 4,
+            "encounter": 248,
+            "written_datetime": "2021-02-15",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 249,
+        "fields": {
+            "dispense": 3,
+            "drug": 13,
+            "encounter": 249,
+            "written_datetime": "2019-04-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 250,
+        "fields": {
+            "dispense": 3,
+            "drug": 4,
+            "encounter": 250,
+            "written_datetime": "2018-06-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 251,
+        "fields": {
+            "dispense": 3,
+            "drug": 7,
+            "encounter": 251,
+            "written_datetime": "2020-08-24",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 252,
+        "fields": {
+            "dispense": 3,
+            "drug": 8,
+            "encounter": 252,
+            "written_datetime": "2018-06-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 253,
+        "fields": {
+            "dispense": 4,
+            "drug": 14,
+            "encounter": 253,
+            "written_datetime": "2020-09-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 254,
+        "fields": {
+            "dispense": 5,
+            "drug": 2,
+            "encounter": 254,
+            "written_datetime": "2019-03-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 255,
+        "fields": {
+            "dispense": 5,
+            "drug": 10,
+            "encounter": 255,
+            "written_datetime": "2018-05-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 256,
+        "fields": {
+            "dispense": 1,
+            "drug": 5,
+            "encounter": 256,
+            "written_datetime": "2020-11-02",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 257,
+        "fields": {
+            "dispense": 4,
+            "drug": 8,
+            "encounter": 257,
+            "written_datetime": "2019-02-24",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 258,
+        "fields": {
+            "dispense": 2,
+            "drug": 15,
+            "encounter": 258,
+            "written_datetime": "2020-02-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 259,
+        "fields": {
+            "dispense": 1,
+            "drug": 14,
+            "encounter": 259,
+            "written_datetime": "2021-03-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 260,
+        "fields": {
+            "dispense": 0,
+            "drug": 9,
+            "encounter": 260,
+            "written_datetime": "2020-07-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 261,
+        "fields": {
+            "dispense": 4,
+            "drug": 12,
+            "encounter": 261,
+            "written_datetime": "2019-02-11",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 262,
+        "fields": {
+            "dispense": 3,
+            "drug": 12,
+            "encounter": 262,
+            "written_datetime": "2021-04-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 263,
+        "fields": {
+            "dispense": 4,
+            "drug": 11,
+            "encounter": 263,
+            "written_datetime": "2021-02-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 264,
+        "fields": {
+            "dispense": 2,
+            "drug": 4,
+            "encounter": 264,
+            "written_datetime": "2021-06-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 265,
+        "fields": {
+            "dispense": 2,
+            "drug": 8,
+            "encounter": 265,
+            "written_datetime": "2019-04-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 266,
+        "fields": {
+            "dispense": 3,
+            "drug": 9,
+            "encounter": 266,
+            "written_datetime": "2020-05-22",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 267,
+        "fields": {
+            "dispense": 4,
+            "drug": 4,
+            "encounter": 267,
+            "written_datetime": "2018-01-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 268,
+        "fields": {
+            "dispense": 5,
+            "drug": 2,
+            "encounter": 268,
+            "written_datetime": "2021-04-16",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 269,
+        "fields": {
+            "dispense": 3,
+            "drug": 11,
+            "encounter": 269,
+            "written_datetime": "2019-06-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 270,
+        "fields": {
+            "dispense": 3,
+            "drug": 8,
+            "encounter": 270,
+            "written_datetime": "2020-01-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 271,
+        "fields": {
+            "dispense": 1,
+            "drug": 9,
+            "encounter": 271,
+            "written_datetime": "2019-06-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 272,
+        "fields": {
+            "dispense": 2,
+            "drug": 13,
+            "encounter": 272,
+            "written_datetime": "2019-05-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 273,
+        "fields": {
+            "dispense": 4,
+            "drug": 7,
+            "encounter": 273,
+            "written_datetime": "2020-06-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 274,
+        "fields": {
+            "dispense": 4,
+            "drug": 3,
+            "encounter": 274,
+            "written_datetime": "2020-11-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 275,
+        "fields": {
+            "dispense": 4,
+            "drug": 4,
+            "encounter": 275,
+            "written_datetime": "2018-09-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 276,
+        "fields": {
+            "dispense": 1,
+            "drug": 14,
+            "encounter": 276,
+            "written_datetime": "2018-01-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 277,
+        "fields": {
+            "dispense": 4,
+            "drug": 8,
+            "encounter": 277,
+            "written_datetime": "2019-06-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 278,
+        "fields": {
+            "dispense": 1,
+            "drug": 8,
+            "encounter": 278,
+            "written_datetime": "2018-08-02",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 279,
+        "fields": {
+            "dispense": 4,
+            "drug": 8,
+            "encounter": 279,
+            "written_datetime": "2021-05-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 280,
+        "fields": {
+            "dispense": 1,
+            "drug": 11,
+            "encounter": 280,
+            "written_datetime": "2018-01-22",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 281,
+        "fields": {
+            "dispense": 1,
+            "drug": 13,
+            "encounter": 281,
+            "written_datetime": "2020-05-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 282,
+        "fields": {
+            "dispense": 4,
+            "drug": 9,
+            "encounter": 282,
+            "written_datetime": "2021-03-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 283,
+        "fields": {
+            "dispense": 1,
+            "drug": 8,
+            "encounter": 283,
+            "written_datetime": "2019-05-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 284,
+        "fields": {
+            "dispense": 0,
+            "drug": 7,
+            "encounter": 284,
+            "written_datetime": "2020-11-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 285,
+        "fields": {
+            "dispense": 2,
+            "drug": 3,
+            "encounter": 285,
+            "written_datetime": "2019-06-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 286,
+        "fields": {
+            "dispense": 4,
+            "drug": 7,
+            "encounter": 286,
+            "written_datetime": "2018-05-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 287,
+        "fields": {
+            "dispense": 3,
+            "drug": 14,
+            "encounter": 287,
+            "written_datetime": "2018-03-28",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 288,
+        "fields": {
+            "dispense": 1,
+            "drug": 7,
+            "encounter": 288,
+            "written_datetime": "2018-01-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 289,
+        "fields": {
+            "dispense": 2,
+            "drug": 1,
+            "encounter": 289,
+            "written_datetime": "2018-03-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 290,
+        "fields": {
+            "dispense": 3,
+            "drug": 1,
+            "encounter": 290,
+            "written_datetime": "2020-02-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 291,
+        "fields": {
+            "dispense": 3,
+            "drug": 3,
+            "encounter": 291,
+            "written_datetime": "2021-02-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 292,
+        "fields": {
+            "dispense": 0,
+            "drug": 7,
+            "encounter": 292,
+            "written_datetime": "2018-03-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 293,
+        "fields": {
+            "dispense": 3,
+            "drug": 4,
+            "encounter": 293,
+            "written_datetime": "2021-01-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 294,
+        "fields": {
+            "dispense": 3,
+            "drug": 13,
+            "encounter": 294,
+            "written_datetime": "2019-10-15",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 295,
+        "fields": {
+            "dispense": 2,
+            "drug": 12,
+            "encounter": 295,
+            "written_datetime": "2020-06-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 296,
+        "fields": {
+            "dispense": 3,
+            "drug": 14,
+            "encounter": 296,
+            "written_datetime": "2019-12-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 297,
+        "fields": {
+            "dispense": 1,
+            "drug": 7,
+            "encounter": 297,
+            "written_datetime": "2020-03-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 298,
+        "fields": {
+            "dispense": 1,
+            "drug": 15,
+            "encounter": 298,
+            "written_datetime": "2019-02-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 299,
+        "fields": {
+            "dispense": 0,
+            "drug": 4,
+            "encounter": 299,
+            "written_datetime": "2020-08-24",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 300,
+        "fields": {
+            "dispense": 0,
+            "drug": 13,
+            "encounter": 300,
+            "written_datetime": "2019-08-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 301,
+        "fields": {
+            "dispense": 3,
+            "drug": 5,
+            "encounter": 301,
+            "written_datetime": "2019-03-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 302,
+        "fields": {
+            "dispense": 4,
+            "drug": 10,
+            "encounter": 302,
+            "written_datetime": "2021-05-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 303,
+        "fields": {
+            "dispense": 1,
+            "drug": 9,
+            "encounter": 303,
+            "written_datetime": "2019-09-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 304,
+        "fields": {
+            "dispense": 0,
+            "drug": 12,
+            "encounter": 304,
+            "written_datetime": "2019-07-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 305,
+        "fields": {
+            "dispense": 2,
+            "drug": 5,
+            "encounter": 305,
+            "written_datetime": "2019-09-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 306,
+        "fields": {
+            "dispense": 5,
+            "drug": 13,
+            "encounter": 306,
+            "written_datetime": "2018-08-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 307,
+        "fields": {
+            "dispense": 2,
+            "drug": 2,
+            "encounter": 307,
+            "written_datetime": "2018-11-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 308,
+        "fields": {
+            "dispense": 5,
+            "drug": 14,
+            "encounter": 308,
+            "written_datetime": "2020-03-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 309,
+        "fields": {
+            "dispense": 2,
+            "drug": 1,
+            "encounter": 309,
+            "written_datetime": "2019-01-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 310,
+        "fields": {
+            "dispense": 4,
+            "drug": 9,
+            "encounter": 310,
+            "written_datetime": "2019-04-02",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 311,
+        "fields": {
+            "dispense": 1,
+            "drug": 14,
+            "encounter": 311,
+            "written_datetime": "2019-09-28",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 312,
+        "fields": {
+            "dispense": 3,
+            "drug": 8,
+            "encounter": 312,
+            "written_datetime": "2019-03-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 313,
+        "fields": {
+            "dispense": 0,
+            "drug": 5,
+            "encounter": 313,
+            "written_datetime": "2019-07-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 314,
+        "fields": {
+            "dispense": 5,
+            "drug": 5,
+            "encounter": 314,
+            "written_datetime": "2018-11-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 315,
+        "fields": {
+            "dispense": 0,
+            "drug": 12,
+            "encounter": 315,
+            "written_datetime": "2021-06-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 316,
+        "fields": {
+            "dispense": 0,
+            "drug": 14,
+            "encounter": 316,
+            "written_datetime": "2019-04-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 317,
+        "fields": {
+            "dispense": 5,
+            "drug": 3,
+            "encounter": 317,
+            "written_datetime": "2020-11-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 318,
+        "fields": {
+            "dispense": 2,
+            "drug": 6,
+            "encounter": 318,
+            "written_datetime": "2019-08-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 319,
+        "fields": {
+            "dispense": 2,
+            "drug": 15,
+            "encounter": 319,
+            "written_datetime": "2019-02-02",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 320,
+        "fields": {
+            "dispense": 5,
+            "drug": 9,
+            "encounter": 320,
+            "written_datetime": "2020-12-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 321,
+        "fields": {
+            "dispense": 1,
+            "drug": 11,
+            "encounter": 321,
+            "written_datetime": "2018-08-28",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 322,
+        "fields": {
+            "dispense": 5,
+            "drug": 5,
+            "encounter": 322,
+            "written_datetime": "2018-11-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 323,
+        "fields": {
+            "dispense": 0,
+            "drug": 1,
+            "encounter": 323,
+            "written_datetime": "2019-03-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 324,
+        "fields": {
+            "dispense": 0,
+            "drug": 2,
+            "encounter": 324,
+            "written_datetime": "2018-08-11",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 325,
+        "fields": {
+            "dispense": 3,
+            "drug": 6,
+            "encounter": 325,
+            "written_datetime": "2018-05-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 326,
+        "fields": {
+            "dispense": 1,
+            "drug": 10,
+            "encounter": 326,
+            "written_datetime": "2020-06-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 327,
+        "fields": {
+            "dispense": 4,
+            "drug": 15,
+            "encounter": 327,
+            "written_datetime": "2020-11-15",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 328,
+        "fields": {
+            "dispense": 3,
+            "drug": 1,
+            "encounter": 328,
+            "written_datetime": "2019-04-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 329,
+        "fields": {
+            "dispense": 2,
+            "drug": 6,
+            "encounter": 329,
+            "written_datetime": "2021-05-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 330,
+        "fields": {
+            "dispense": 3,
+            "drug": 4,
+            "encounter": 330,
+            "written_datetime": "2018-07-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 331,
+        "fields": {
+            "dispense": 4,
+            "drug": 14,
+            "encounter": 331,
+            "written_datetime": "2020-08-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 332,
+        "fields": {
+            "dispense": 5,
+            "drug": 9,
+            "encounter": 332,
+            "written_datetime": "2020-11-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 333,
+        "fields": {
+            "dispense": 3,
+            "drug": 6,
+            "encounter": 333,
+            "written_datetime": "2021-04-11",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 334,
+        "fields": {
+            "dispense": 0,
+            "drug": 9,
+            "encounter": 334,
+            "written_datetime": "2020-05-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 335,
+        "fields": {
+            "dispense": 1,
+            "drug": 13,
+            "encounter": 335,
+            "written_datetime": "2019-07-11",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 336,
+        "fields": {
+            "dispense": 0,
+            "drug": 10,
+            "encounter": 336,
+            "written_datetime": "2019-10-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 337,
+        "fields": {
+            "dispense": 1,
+            "drug": 6,
+            "encounter": 337,
+            "written_datetime": "2018-02-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 338,
+        "fields": {
+            "dispense": 4,
+            "drug": 8,
+            "encounter": 338,
+            "written_datetime": "2021-02-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 339,
+        "fields": {
+            "dispense": 3,
+            "drug": 12,
+            "encounter": 339,
+            "written_datetime": "2021-01-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 340,
+        "fields": {
+            "dispense": 5,
+            "drug": 5,
+            "encounter": 340,
+            "written_datetime": "2020-03-15",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 341,
+        "fields": {
+            "dispense": 1,
+            "drug": 6,
+            "encounter": 341,
+            "written_datetime": "2019-09-28",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 342,
+        "fields": {
+            "dispense": 5,
+            "drug": 15,
+            "encounter": 342,
+            "written_datetime": "2018-08-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 343,
+        "fields": {
+            "dispense": 1,
+            "drug": 5,
+            "encounter": 343,
+            "written_datetime": "2019-02-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 344,
+        "fields": {
+            "dispense": 4,
+            "drug": 14,
+            "encounter": 344,
+            "written_datetime": "2019-02-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 345,
+        "fields": {
+            "dispense": 1,
+            "drug": 10,
+            "encounter": 345,
+            "written_datetime": "2019-11-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 346,
+        "fields": {
+            "dispense": 4,
+            "drug": 5,
+            "encounter": 346,
+            "written_datetime": "2019-11-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 347,
+        "fields": {
+            "dispense": 5,
+            "drug": 2,
+            "encounter": 347,
+            "written_datetime": "2018-02-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 348,
+        "fields": {
+            "dispense": 1,
+            "drug": 9,
+            "encounter": 348,
+            "written_datetime": "2019-04-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 349,
+        "fields": {
+            "dispense": 0,
+            "drug": 1,
+            "encounter": 349,
+            "written_datetime": "2019-05-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 350,
+        "fields": {
+            "dispense": 0,
+            "drug": 9,
+            "encounter": 350,
+            "written_datetime": "2019-11-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 351,
+        "fields": {
+            "dispense": 4,
+            "drug": 11,
+            "encounter": 351,
+            "written_datetime": "2018-12-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 352,
+        "fields": {
+            "dispense": 1,
+            "drug": 3,
+            "encounter": 352,
+            "written_datetime": "2019-09-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 353,
+        "fields": {
+            "dispense": 4,
+            "drug": 13,
+            "encounter": 353,
+            "written_datetime": "2020-04-15",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 354,
+        "fields": {
+            "dispense": 3,
+            "drug": 6,
+            "encounter": 354,
+            "written_datetime": "2021-05-11",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 355,
+        "fields": {
+            "dispense": 2,
+            "drug": 15,
+            "encounter": 355,
+            "written_datetime": "2019-10-15",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 356,
+        "fields": {
+            "dispense": 0,
+            "drug": 3,
+            "encounter": 356,
+            "written_datetime": "2020-09-24",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 357,
+        "fields": {
+            "dispense": 4,
+            "drug": 5,
+            "encounter": 357,
+            "written_datetime": "2018-04-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 358,
+        "fields": {
+            "dispense": 3,
+            "drug": 8,
+            "encounter": 358,
+            "written_datetime": "2020-01-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 359,
+        "fields": {
+            "dispense": 5,
+            "drug": 14,
+            "encounter": 359,
+            "written_datetime": "2020-09-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 360,
+        "fields": {
+            "dispense": 3,
+            "drug": 5,
+            "encounter": 360,
+            "written_datetime": "2020-10-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 361,
+        "fields": {
+            "dispense": 0,
+            "drug": 12,
+            "encounter": 361,
+            "written_datetime": "2019-01-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 362,
+        "fields": {
+            "dispense": 2,
+            "drug": 14,
+            "encounter": 362,
+            "written_datetime": "2019-02-16",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 363,
+        "fields": {
+            "dispense": 1,
+            "drug": 7,
+            "encounter": 363,
+            "written_datetime": "2018-03-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 364,
+        "fields": {
+            "dispense": 2,
+            "drug": 14,
+            "encounter": 364,
+            "written_datetime": "2020-12-22",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 365,
+        "fields": {
+            "dispense": 4,
+            "drug": 8,
+            "encounter": 365,
+            "written_datetime": "2018-08-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 366,
+        "fields": {
+            "dispense": 3,
+            "drug": 9,
+            "encounter": 366,
+            "written_datetime": "2018-10-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 367,
+        "fields": {
+            "dispense": 2,
+            "drug": 12,
+            "encounter": 367,
+            "written_datetime": "2021-04-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 368,
+        "fields": {
+            "dispense": 3,
+            "drug": 1,
+            "encounter": 368,
+            "written_datetime": "2020-06-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 369,
+        "fields": {
+            "dispense": 2,
+            "drug": 2,
+            "encounter": 369,
+            "written_datetime": "2020-03-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 370,
+        "fields": {
+            "dispense": 2,
+            "drug": 15,
+            "encounter": 370,
+            "written_datetime": "2020-08-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 371,
+        "fields": {
+            "dispense": 1,
+            "drug": 11,
+            "encounter": 371,
+            "written_datetime": "2018-10-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 372,
+        "fields": {
+            "dispense": 4,
+            "drug": 12,
+            "encounter": 372,
+            "written_datetime": "2018-06-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 373,
+        "fields": {
+            "dispense": 5,
+            "drug": 4,
+            "encounter": 373,
+            "written_datetime": "2018-06-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 374,
+        "fields": {
+            "dispense": 2,
+            "drug": 8,
+            "encounter": 374,
+            "written_datetime": "2019-06-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 375,
+        "fields": {
+            "dispense": 4,
+            "drug": 15,
+            "encounter": 375,
+            "written_datetime": "2020-04-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 376,
+        "fields": {
+            "dispense": 1,
+            "drug": 10,
+            "encounter": 376,
+            "written_datetime": "2021-02-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 377,
+        "fields": {
+            "dispense": 3,
+            "drug": 4,
+            "encounter": 377,
+            "written_datetime": "2018-01-21",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 378,
+        "fields": {
+            "dispense": 0,
+            "drug": 1,
+            "encounter": 378,
+            "written_datetime": "2020-04-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 379,
+        "fields": {
+            "dispense": 2,
+            "drug": 4,
+            "encounter": 379,
+            "written_datetime": "2021-02-21",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 380,
+        "fields": {
+            "dispense": 4,
+            "drug": 15,
+            "encounter": 380,
+            "written_datetime": "2019-08-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 381,
+        "fields": {
+            "dispense": 3,
+            "drug": 6,
+            "encounter": 381,
+            "written_datetime": "2020-10-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 382,
+        "fields": {
+            "dispense": 4,
+            "drug": 5,
+            "encounter": 382,
+            "written_datetime": "2018-08-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 383,
+        "fields": {
+            "dispense": 0,
+            "drug": 15,
+            "encounter": 383,
+            "written_datetime": "2018-09-11",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 384,
+        "fields": {
+            "dispense": 4,
+            "drug": 7,
+            "encounter": 384,
+            "written_datetime": "2019-03-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 385,
+        "fields": {
+            "dispense": 1,
+            "drug": 8,
+            "encounter": 385,
+            "written_datetime": "2018-08-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 386,
+        "fields": {
+            "dispense": 4,
+            "drug": 14,
+            "encounter": 386,
+            "written_datetime": "2019-08-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 387,
+        "fields": {
+            "dispense": 5,
+            "drug": 11,
+            "encounter": 387,
+            "written_datetime": "2020-11-15",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 388,
+        "fields": {
+            "dispense": 2,
+            "drug": 8,
+            "encounter": 388,
+            "written_datetime": "2019-04-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 389,
+        "fields": {
+            "dispense": 2,
+            "drug": 9,
+            "encounter": 389,
+            "written_datetime": "2020-08-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 390,
+        "fields": {
+            "dispense": 0,
+            "drug": 3,
+            "encounter": 390,
+            "written_datetime": "2018-12-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 391,
+        "fields": {
+            "dispense": 4,
+            "drug": 10,
+            "encounter": 391,
+            "written_datetime": "2020-07-22",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 392,
+        "fields": {
+            "dispense": 1,
+            "drug": 1,
+            "encounter": 392,
+            "written_datetime": "2019-03-02",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 393,
+        "fields": {
+            "dispense": 2,
+            "drug": 9,
+            "encounter": 393,
+            "written_datetime": "2019-09-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 394,
+        "fields": {
+            "dispense": 0,
+            "drug": 13,
+            "encounter": 394,
+            "written_datetime": "2018-07-16",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 395,
+        "fields": {
+            "dispense": 2,
+            "drug": 14,
+            "encounter": 395,
+            "written_datetime": "2019-11-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 396,
+        "fields": {
+            "dispense": 0,
+            "drug": 12,
+            "encounter": 396,
+            "written_datetime": "2020-02-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 397,
+        "fields": {
+            "dispense": 3,
+            "drug": 8,
+            "encounter": 397,
+            "written_datetime": "2019-05-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 398,
+        "fields": {
+            "dispense": 0,
+            "drug": 6,
+            "encounter": 398,
+            "written_datetime": "2018-06-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 399,
+        "fields": {
+            "dispense": 1,
+            "drug": 9,
+            "encounter": 399,
+            "written_datetime": "2019-12-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 400,
+        "fields": {
+            "dispense": 5,
+            "drug": 7,
+            "encounter": 400,
+            "written_datetime": "2021-01-28",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 401,
+        "fields": {
+            "dispense": 4,
+            "drug": 15,
+            "encounter": 401,
+            "written_datetime": "2018-06-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 402,
+        "fields": {
+            "dispense": 4,
+            "drug": 5,
+            "encounter": 402,
+            "written_datetime": "2021-03-31",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 403,
+        "fields": {
+            "dispense": 1,
+            "drug": 1,
+            "encounter": 403,
+            "written_datetime": "2019-09-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 404,
+        "fields": {
+            "dispense": 0,
+            "drug": 2,
+            "encounter": 404,
+            "written_datetime": "2018-02-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 405,
+        "fields": {
+            "dispense": 5,
+            "drug": 9,
+            "encounter": 405,
+            "written_datetime": "2019-04-22",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 406,
+        "fields": {
+            "dispense": 0,
+            "drug": 6,
+            "encounter": 406,
+            "written_datetime": "2020-05-24",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 407,
+        "fields": {
+            "dispense": 1,
+            "drug": 5,
+            "encounter": 407,
+            "written_datetime": "2019-11-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 408,
+        "fields": {
+            "dispense": 5,
+            "drug": 4,
+            "encounter": 408,
+            "written_datetime": "2020-01-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 409,
+        "fields": {
+            "dispense": 2,
+            "drug": 2,
+            "encounter": 409,
+            "written_datetime": "2020-11-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 410,
+        "fields": {
+            "dispense": 0,
+            "drug": 11,
+            "encounter": 410,
+            "written_datetime": "2019-10-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 411,
+        "fields": {
+            "dispense": 5,
+            "drug": 3,
+            "encounter": 411,
+            "written_datetime": "2019-07-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 412,
+        "fields": {
+            "dispense": 2,
+            "drug": 10,
+            "encounter": 412,
+            "written_datetime": "2021-06-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 413,
+        "fields": {
+            "dispense": 0,
+            "drug": 7,
+            "encounter": 413,
+            "written_datetime": "2021-04-28",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 414,
+        "fields": {
+            "dispense": 2,
+            "drug": 12,
+            "encounter": 414,
+            "written_datetime": "2020-09-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 415,
+        "fields": {
+            "dispense": 0,
+            "drug": 2,
+            "encounter": 415,
+            "written_datetime": "2019-05-11",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 416,
+        "fields": {
+            "dispense": 4,
+            "drug": 14,
+            "encounter": 416,
+            "written_datetime": "2018-06-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 417,
+        "fields": {
+            "dispense": 0,
+            "drug": 10,
+            "encounter": 417,
+            "written_datetime": "2019-07-11",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 418,
+        "fields": {
+            "dispense": 0,
+            "drug": 5,
+            "encounter": 418,
+            "written_datetime": "2018-04-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 419,
+        "fields": {
+            "dispense": 1,
+            "drug": 7,
+            "encounter": 419,
+            "written_datetime": "2018-03-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 420,
+        "fields": {
+            "dispense": 0,
+            "drug": 1,
+            "encounter": 420,
+            "written_datetime": "2018-02-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 421,
+        "fields": {
+            "dispense": 1,
+            "drug": 7,
+            "encounter": 421,
+            "written_datetime": "2018-12-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 422,
+        "fields": {
+            "dispense": 0,
+            "drug": 3,
+            "encounter": 422,
+            "written_datetime": "2020-08-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 423,
+        "fields": {
+            "dispense": 3,
+            "drug": 9,
+            "encounter": 423,
+            "written_datetime": "2020-05-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 424,
+        "fields": {
+            "dispense": 5,
+            "drug": 14,
+            "encounter": 424,
+            "written_datetime": "2020-07-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 425,
+        "fields": {
+            "dispense": 1,
+            "drug": 9,
+            "encounter": 425,
+            "written_datetime": "2018-01-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 426,
+        "fields": {
+            "dispense": 3,
+            "drug": 8,
+            "encounter": 426,
+            "written_datetime": "2018-03-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 427,
+        "fields": {
+            "dispense": 1,
+            "drug": 13,
+            "encounter": 427,
+            "written_datetime": "2021-06-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 428,
+        "fields": {
+            "dispense": 4,
+            "drug": 1,
+            "encounter": 428,
+            "written_datetime": "2020-08-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 429,
+        "fields": {
+            "dispense": 5,
+            "drug": 8,
+            "encounter": 429,
+            "written_datetime": "2019-11-03",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 430,
+        "fields": {
+            "dispense": 4,
+            "drug": 14,
+            "encounter": 430,
+            "written_datetime": "2018-08-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 431,
+        "fields": {
+            "dispense": 5,
+            "drug": 6,
+            "encounter": 431,
+            "written_datetime": "2020-12-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 432,
+        "fields": {
+            "dispense": 3,
+            "drug": 11,
+            "encounter": 432,
+            "written_datetime": "2019-02-16",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 433,
+        "fields": {
+            "dispense": 4,
+            "drug": 14,
+            "encounter": 433,
+            "written_datetime": "2020-08-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 434,
+        "fields": {
+            "dispense": 4,
+            "drug": 13,
+            "encounter": 434,
+            "written_datetime": "2018-08-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 435,
+        "fields": {
+            "dispense": 3,
+            "drug": 1,
+            "encounter": 435,
+            "written_datetime": "2021-01-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 436,
+        "fields": {
+            "dispense": 2,
+            "drug": 8,
+            "encounter": 436,
+            "written_datetime": "2020-01-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 437,
+        "fields": {
+            "dispense": 5,
+            "drug": 2,
+            "encounter": 437,
+            "written_datetime": "2021-02-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 438,
+        "fields": {
+            "dispense": 1,
+            "drug": 9,
+            "encounter": 438,
+            "written_datetime": "2018-10-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 439,
+        "fields": {
+            "dispense": 4,
+            "drug": 9,
+            "encounter": 439,
+            "written_datetime": "2019-09-16",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 440,
+        "fields": {
+            "dispense": 3,
+            "drug": 7,
+            "encounter": 440,
+            "written_datetime": "2020-09-02",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 441,
+        "fields": {
+            "dispense": 4,
+            "drug": 3,
+            "encounter": 441,
+            "written_datetime": "2018-08-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 442,
+        "fields": {
+            "dispense": 0,
+            "drug": 8,
+            "encounter": 442,
+            "written_datetime": "2019-05-02",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 443,
+        "fields": {
+            "dispense": 5,
+            "drug": 1,
+            "encounter": 443,
+            "written_datetime": "2021-05-31",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 444,
+        "fields": {
+            "dispense": 1,
+            "drug": 6,
+            "encounter": 444,
+            "written_datetime": "2020-11-16",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 445,
+        "fields": {
+            "dispense": 1,
+            "drug": 9,
+            "encounter": 445,
+            "written_datetime": "2021-06-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 446,
+        "fields": {
+            "dispense": 1,
+            "drug": 9,
+            "encounter": 446,
+            "written_datetime": "2020-11-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 447,
+        "fields": {
+            "dispense": 3,
+            "drug": 8,
+            "encounter": 447,
+            "written_datetime": "2019-11-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 448,
+        "fields": {
+            "dispense": 5,
+            "drug": 2,
+            "encounter": 448,
+            "written_datetime": "2019-11-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 449,
+        "fields": {
+            "dispense": 4,
+            "drug": 8,
+            "encounter": 449,
+            "written_datetime": "2018-09-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 450,
+        "fields": {
+            "dispense": 4,
+            "drug": 13,
+            "encounter": 450,
+            "written_datetime": "2019-08-31",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 451,
+        "fields": {
+            "dispense": 5,
+            "drug": 15,
+            "encounter": 451,
+            "written_datetime": "2019-08-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 452,
+        "fields": {
+            "dispense": 1,
+            "drug": 8,
+            "encounter": 452,
+            "written_datetime": "2020-12-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 453,
+        "fields": {
+            "dispense": 2,
+            "drug": 3,
+            "encounter": 453,
+            "written_datetime": "2019-05-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 454,
+        "fields": {
+            "dispense": 0,
+            "drug": 3,
+            "encounter": 454,
+            "written_datetime": "2020-01-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 455,
+        "fields": {
+            "dispense": 2,
+            "drug": 14,
+            "encounter": 455,
+            "written_datetime": "2019-09-22",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 456,
+        "fields": {
+            "dispense": 0,
+            "drug": 2,
+            "encounter": 456,
+            "written_datetime": "2020-12-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 457,
+        "fields": {
+            "dispense": 1,
+            "drug": 5,
+            "encounter": 457,
+            "written_datetime": "2019-02-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 458,
+        "fields": {
+            "dispense": 4,
+            "drug": 3,
+            "encounter": 458,
+            "written_datetime": "2018-01-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 459,
+        "fields": {
+            "dispense": 2,
+            "drug": 11,
+            "encounter": 459,
+            "written_datetime": "2019-04-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 460,
+        "fields": {
+            "dispense": 0,
+            "drug": 2,
+            "encounter": 460,
+            "written_datetime": "2019-04-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 461,
+        "fields": {
+            "dispense": 4,
+            "drug": 14,
+            "encounter": 461,
+            "written_datetime": "2021-04-22",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 462,
+        "fields": {
+            "dispense": 5,
+            "drug": 8,
+            "encounter": 462,
+            "written_datetime": "2020-06-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 463,
+        "fields": {
+            "dispense": 4,
+            "drug": 11,
+            "encounter": 463,
+            "written_datetime": "2020-07-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 464,
+        "fields": {
+            "dispense": 3,
+            "drug": 5,
+            "encounter": 464,
+            "written_datetime": "2019-05-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 465,
+        "fields": {
+            "dispense": 0,
+            "drug": 8,
+            "encounter": 465,
+            "written_datetime": "2020-12-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 466,
+        "fields": {
+            "dispense": 3,
+            "drug": 15,
+            "encounter": 466,
+            "written_datetime": "2018-07-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 467,
+        "fields": {
+            "dispense": 1,
+            "drug": 1,
+            "encounter": 467,
+            "written_datetime": "2020-01-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 468,
+        "fields": {
+            "dispense": 4,
+            "drug": 14,
+            "encounter": 468,
+            "written_datetime": "2019-05-16",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 469,
+        "fields": {
+            "dispense": 3,
+            "drug": 5,
+            "encounter": 469,
+            "written_datetime": "2021-04-18",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 470,
+        "fields": {
+            "dispense": 3,
+            "drug": 5,
+            "encounter": 470,
+            "written_datetime": "2018-06-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 471,
+        "fields": {
+            "dispense": 0,
+            "drug": 10,
+            "encounter": 471,
+            "written_datetime": "2021-06-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 472,
+        "fields": {
+            "dispense": 3,
+            "drug": 3,
+            "encounter": 472,
+            "written_datetime": "2021-06-16",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 473,
+        "fields": {
+            "dispense": 2,
+            "drug": 6,
+            "encounter": 473,
+            "written_datetime": "2018-10-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 474,
+        "fields": {
+            "dispense": 3,
+            "drug": 1,
+            "encounter": 474,
+            "written_datetime": "2019-07-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 475,
+        "fields": {
+            "dispense": 4,
+            "drug": 13,
+            "encounter": 475,
+            "written_datetime": "2018-11-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 476,
+        "fields": {
+            "dispense": 3,
+            "drug": 11,
+            "encounter": 476,
+            "written_datetime": "2018-04-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 477,
+        "fields": {
+            "dispense": 1,
+            "drug": 6,
+            "encounter": 477,
+            "written_datetime": "2018-07-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 478,
+        "fields": {
+            "dispense": 2,
+            "drug": 1,
+            "encounter": 478,
+            "written_datetime": "2020-01-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 479,
+        "fields": {
+            "dispense": 3,
+            "drug": 8,
+            "encounter": 479,
+            "written_datetime": "2019-01-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 480,
+        "fields": {
+            "dispense": 4,
+            "drug": 5,
+            "encounter": 480,
+            "written_datetime": "2020-04-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 481,
+        "fields": {
+            "dispense": 2,
+            "drug": 3,
+            "encounter": 481,
+            "written_datetime": "2018-10-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 482,
+        "fields": {
+            "dispense": 3,
+            "drug": 10,
+            "encounter": 482,
+            "written_datetime": "2018-03-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 483,
+        "fields": {
+            "dispense": 2,
+            "drug": 8,
+            "encounter": 483,
+            "written_datetime": "2018-11-22",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 484,
+        "fields": {
+            "dispense": 0,
+            "drug": 4,
+            "encounter": 484,
+            "written_datetime": "2019-06-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 485,
+        "fields": {
+            "dispense": 5,
+            "drug": 14,
+            "encounter": 485,
+            "written_datetime": "2020-06-19",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 486,
+        "fields": {
+            "dispense": 1,
+            "drug": 11,
+            "encounter": 486,
+            "written_datetime": "2020-12-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 487,
+        "fields": {
+            "dispense": 1,
+            "drug": 4,
+            "encounter": 487,
+            "written_datetime": "2020-02-26",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 488,
+        "fields": {
+            "dispense": 3,
+            "drug": 1,
+            "encounter": 488,
+            "written_datetime": "2021-04-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 489,
+        "fields": {
+            "dispense": 4,
+            "drug": 13,
+            "encounter": 489,
+            "written_datetime": "2019-06-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 490,
+        "fields": {
+            "dispense": 1,
+            "drug": 14,
+            "encounter": 490,
+            "written_datetime": "2020-02-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 491,
+        "fields": {
+            "dispense": 1,
+            "drug": 6,
+            "encounter": 491,
+            "written_datetime": "2019-07-12",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 492,
+        "fields": {
+            "dispense": 1,
+            "drug": 8,
+            "encounter": 492,
+            "written_datetime": "2018-05-08",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 493,
+        "fields": {
+            "dispense": 1,
+            "drug": 14,
+            "encounter": 493,
+            "written_datetime": "2018-05-02",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 494,
+        "fields": {
+            "dispense": 3,
+            "drug": 8,
+            "encounter": 494,
+            "written_datetime": "2019-03-06",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 495,
+        "fields": {
+            "dispense": 3,
+            "drug": 15,
+            "encounter": 495,
+            "written_datetime": "2020-01-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 496,
+        "fields": {
+            "dispense": 5,
+            "drug": 5,
+            "encounter": 496,
+            "written_datetime": "2018-03-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 497,
+        "fields": {
+            "dispense": 0,
+            "drug": 7,
+            "encounter": 497,
+            "written_datetime": "2020-10-24",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 498,
+        "fields": {
+            "dispense": 5,
+            "drug": 11,
+            "encounter": 498,
+            "written_datetime": "2019-07-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 499,
+        "fields": {
+            "dispense": 5,
+            "drug": 5,
+            "encounter": 499,
+            "written_datetime": "2019-07-10",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 500,
+        "fields": {
+            "dispense": 1,
+            "drug": 14,
+            "encounter": 500,
+            "written_datetime": "2020-09-07",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 501,
+        "fields": {
+            "dispense": 0,
+            "drug": 3,
+            "encounter": 501,
+            "written_datetime": "2021-06-23",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 502,
+        "fields": {
+            "dispense": 5,
+            "drug": 14,
+            "encounter": 502,
+            "written_datetime": "2019-07-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 503,
+        "fields": {
+            "dispense": 0,
+            "drug": 14,
+            "encounter": 503,
+            "written_datetime": "2019-06-16",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 504,
+        "fields": {
+            "dispense": 3,
+            "drug": 2,
+            "encounter": 504,
+            "written_datetime": "2019-12-05",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 505,
+        "fields": {
+            "dispense": 2,
+            "drug": 6,
+            "encounter": 505,
+            "written_datetime": "2018-08-27",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 506,
+        "fields": {
+            "dispense": 5,
+            "drug": 5,
+            "encounter": 506,
+            "written_datetime": "2019-10-31",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 507,
+        "fields": {
+            "dispense": 3,
+            "drug": 11,
+            "encounter": 507,
+            "written_datetime": "2021-05-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 508,
+        "fields": {
+            "dispense": 2,
+            "drug": 3,
+            "encounter": 508,
+            "written_datetime": "2020-09-13",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 509,
+        "fields": {
+            "dispense": 2,
+            "drug": 14,
+            "encounter": 509,
+            "written_datetime": "2021-01-29",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 510,
+        "fields": {
+            "dispense": 5,
+            "drug": 3,
+            "encounter": 510,
+            "written_datetime": "2020-10-04",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 511,
+        "fields": {
+            "dispense": 2,
+            "drug": 11,
+            "encounter": 511,
+            "written_datetime": "2018-07-14",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 512,
+        "fields": {
+            "dispense": 1,
+            "drug": 5,
+            "encounter": 512,
+            "written_datetime": "2018-05-30",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 513,
+        "fields": {
+            "dispense": 4,
+            "drug": 9,
+            "encounter": 513,
+            "written_datetime": "2019-01-25",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 514,
+        "fields": {
+            "dispense": 5,
+            "drug": 14,
+            "encounter": 514,
+            "written_datetime": "2018-07-31",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 515,
+        "fields": {
+            "dispense": 1,
+            "drug": 11,
+            "encounter": 515,
+            "written_datetime": "2018-07-01",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 516,
+        "fields": {
+            "dispense": 5,
+            "drug": 3,
+            "encounter": 516,
+            "written_datetime": "2021-02-17",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 517,
+        "fields": {
+            "dispense": 2,
+            "drug": 6,
+            "encounter": 517,
+            "written_datetime": "2018-09-16",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    },
+    {
+        "model": "inventory.dispensehistory",
+        "pk": 518,
+        "fields": {
+            "dispense": 3,
+            "drug": 9,
+            "encounter": 518,
+            "written_datetime": "2020-09-09",
+            "last_modified": "2019-03-19",
+            "patient": 1,
+            "author": 1,
+            "author_type": 1
+        }
+    }
+]

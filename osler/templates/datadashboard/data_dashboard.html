@@ -281,16 +281,16 @@ $(document).ready(function(){
           <div class="row vertical-align horizontal-align">
               <span class="glyphicon glyphicon-user big-icon" ></span>
             <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge align-left" id="workups-count">#</div>
-              <div class="col-12 color-light">Total Workups</div>
+              <div class="col-12 color-primary text-xlarge align-left" id="unique-patient-count">#</div>
+              <div class="col-12 color-light">Unique Patients</div>
             </div>
             <span class="glyphicon glyphicon-chevron-down"></span>
           </div> 
         </button>
         <ul class="dropdown-menu dropdown-content">
           <li class="pt-1">
-            <strong><span class="ml-2" id="unique-patient-count"></span></strong>  
-            <span class="mr-1">&nbsp;Unique Patients</span>
+            <strong><span class="ml-2" id="workups-count"></span></strong>  
+            <span class="mr-1">&nbsp;Total Workups</span>
           </li>
           <li role="separator" class="divider"></li>
           <li>
@@ -367,7 +367,7 @@ $(document).ready(function(){
 
       <div class="panel panel-default panel-modern">
         <div class="panel-body">
-          <p class="color-primary text-xlarge">Demographics summary</p>
+          <p class="color-primary text-xlarge">Demographics Distributions</p>
           <div class="row equal">
             <div class="col-lg-8 col-md-6 col-sm-12 equal px-1">
               <div class="col-lg-12 panel-light equal px-3" id="age-chart"></div>
@@ -379,6 +379,10 @@ $(document).ready(function(){
             </div>
             <div class="col-lg-4 col-md-6 col-sm-12 equal px-1 ">
               <div class="col-lg-12 panel-light vertical-align equal px-3 height-25" id="ethnicity-chart">
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 equal px-1 ">
+              <div class="col-lg-12 panel-light vertical-align equal px-3 height-25" id="zipcode-chart">
               </div>
             </div>
 

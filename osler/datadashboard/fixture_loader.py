@@ -18,6 +18,11 @@ with open(path+"extra_demographics.json", "r") as d:
 with open(path+"extra_encounters.json", "r") as e:
     encounters = json.load(e)
 
+with open(path+"extra_dispense.json", "r") as i:
+    dispenses = json.load(i)
+
+with open(path+"extra_labs.json", "r") as l:
+    labs = json.load(l)
 
 names = ['Calvin Lawson', 'Perry Garcia', 'Gertrude Schneider', 'Forrest Cain', 'Margaret Dunn', 'Sadie Richards', 'Nora Leonard', 'Vicki Castro', 'Everett Kennedy', 'Ervin Padilla', 'Chad Boone', 'Kelly Lamb', 'Tara Martinez', 'Erick Cobb', 'Eunice Adkins', 'Julie Sims', 'Blanca Gonzales', 'Kristin Henry', 'Amelia Harper', 'Terrence Howard', 'Leonard Barnett', 'Winston Mckenzie', 'Armando Lindsey', 'Virginia Matthews', 'Phillip Saunders', 'Leigh Gilbert', 'Catherine Sanchez', 'Carol Weber', 'Brett Palmer', 'Paulette Bass', 'Leroy West', 'Howard Ryan', 'Rachael Swanson', 'Amos Ramsey', 'Sergio Vaughn', 'Pat Brady', 'Bernadette Cruz', 'Wayne Thomas', 'Tyler Love', 'Claude Soto', 'Jacquelyn Burton', 'Kenneth Zimmerman', 'Hubert Peterson', 'Virgil Morris', 'Jacqueline Miller', 'Rachel Hanson', 'Danielle Douglas', 'Billy Fleming', 'Enrique Vega',
          'Rosa Mccarthy', 'Alison Henderson', 'Jeremy Oliver', 'Melanie Marsh', 'Bertha Garza', 'Alexis Roberts', 'Andrew Park', 'Alicia Ortega', 'Monique Patterson', 'Delia Burns', 'Dewey Weaver', 'Marsha Walton', 'Willie Goodwin', 'Geoffrey Parsons', 'Salvador Morales', 'Susan Jones', 'Clay Neal', 'Craig Mullins', 'Brandi Banks', 'Meredith Gonzalez', 'Ruben Holland', 'Norma Barton', 'Adrian Ramos', 'Jackie Herrera', 'Henrietta Lawrence', 'Kimberly Perkins', 'Orville Franklin', 'Velma Gardner', 'Melinda Watts', 'Christina Mills', 'Heidi Maxwell', 'Gregory Pena', 'Melba Fox', 'Bill Robinson', 'Rudy Jennings', 'Rudolph Sandoval', 'Delbert Olson', 'Kate Lucas', 'Jamie Foster', 'Violet Maldonado', 'Maxine Powers', 'Bobbie Wise', 'Norman Ball', 'Gwendolyn Ellis', 'Ivan Grant', 'Agnes Pearson', 'Nettie Parks', 'Elijah Phelps', 'Kristy Mason', 'Owen Jensen', 'Kay Lee']
@@ -29,6 +34,12 @@ conditions = ["Hypertension", "Hypertension", "Hypertension", "Hypertension", "H
               "Back Pain", "Back Pain", "Back Pain", "Back Pain", "High Cholesterol", "High Cholesterol",
               "High Cholesterol", "High Cholesterol", "Diabetes", "Diabetes", "Heart Disease", "Arthritis",
               "Depression", "Cancer", "Asthma", "Obesity"]
+
+zipcodes = ['64030','64102','64109','64113','64053','64105']
+
+addresses = ['3151 Olive St.','3151 Oliverrrr st.', 'not olive st']
+
+booleans = [True, False, None]
 
 # num_encounters = 200
 num_patients = 100
@@ -60,6 +71,8 @@ def load_fixtures():
       else:
           f["gender"] = "Female"
       f["ethnicities"] = random.sample(ethnicities, random.randint(1, 3))
+      f["zip_code"] = random.choice(zipcodes)
+      f["address"] = random.choice(addresses)
       patient["fields"] = f
       patients.append(patient)
       num_workups = random.randint(1, wu_per_patient)
@@ -69,9 +82,9 @@ def load_fixtures():
       f = demographic["fields"].copy()
       f["patient"] = p  # link demographic to patient
       f["chronic_conditions"] = random.sample(conditions, random.randint(1, 3))
+      f["has_insurance"] = random.choice(booleans)
       demographic["fields"] = f
       demographics.append(demographic)
-      
 
       for w in range(num_workups):
           workup = workups[4].copy()
@@ -97,6 +110,28 @@ def load_fixtures():
           encounter["fields"] = e
           encounters.append(encounter)
 
+          #create drug dispense histories
+          dispense = dispenses[0].copy()
+          dispense["pk"] = pk
+          i = dispense["fields"].copy()
+          i["written_datetime"] = date_written
+          i["dispense"] = random.randint(0, 5)
+          i["drug"] = random.randint(1, 15)
+          i["encounter"] = pk
+          dispense["fields"] = i
+          dispenses.append(dispense)
+
+          #create labs
+          lab = labs[6].copy()
+          lab["pk"] = pk
+          l = lab["fields"].copy()
+          l["lab_time"] = date_written
+          l["lab_type"] = random.randint(1, 6)
+          l["encounter"] = pk
+          l["patient"] = p
+          lab["fields"] = l
+          labs.append(lab)
+
           pk += 1
 
 
@@ -113,3 +148,9 @@ with open(path+"extra_demographics.json", "w") as d:
 
 with open(path+"extra_encounters.json", "w") as e:
     json.dump(encounters, e, indent=4)
+
+with open(path+"extra_dispense.json", "w") as i:
+    json.dump(dispenses, i, indent=4)
+
+with open(path+"extra_labs.json", "w") as l:
+    json.dump(labs, l, indent=4)

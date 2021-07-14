@@ -54,6 +54,7 @@
         "pk": 1,
         "fields": {
             "patient": 2,
+            "has_insurance": false,
             "chronic_conditions": [
                 "Back Pain",
                 "Diabetes",
@@ -66,10 +67,10 @@
         "pk": 6,
         "fields": {
             "patient": 6,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Back Pain",
-                "Diabetes",
-                "Back Pain"
+                "Hypertension",
+                "High Cholesterol"
             ]
         }
     },
@@ -78,9 +79,8 @@
         "pk": 7,
         "fields": {
             "patient": 7,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Back Pain",
-                "Hypertension",
                 "Back Pain"
             ]
         }
@@ -90,8 +90,11 @@
         "pk": 8,
         "fields": {
             "patient": 8,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Back Pain"
+                "Hypertension",
+                "Back Pain",
+                "Heart Disease"
             ]
         }
     },
@@ -100,8 +103,9 @@
         "pk": 9,
         "fields": {
             "patient": 9,
+            "has_insurance": true,
             "chronic_conditions": [
-                "High Cholesterol"
+                "Hypertension"
             ]
         }
     },
@@ -110,9 +114,9 @@
         "pk": 10,
         "fields": {
             "patient": 10,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Diabetes",
-                "High Cholesterol"
+                "Hypertension"
             ]
         }
     },
@@ -121,10 +125,11 @@
         "pk": 11,
         "fields": {
             "patient": 11,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Asthma",
-                "Arthritis",
-                "High Cholesterol"
+                "High Cholesterol",
+                "High Cholesterol",
+                "Cancer"
             ]
         }
     },
@@ -133,7 +138,9 @@
         "pk": 12,
         "fields": {
             "patient": 12,
+            "has_insurance": false,
             "chronic_conditions": [
+                "Diabetes",
                 "Hypertension",
                 "High Cholesterol"
             ]
@@ -144,10 +151,9 @@
         "pk": 13,
         "fields": {
             "patient": 13,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Hypertension",
-                "Back Pain",
-                "Back Pain"
+                "Diabetes"
             ]
         }
     },
@@ -156,6 +162,44 @@
         "pk": 14,
         "fields": {
             "patient": 14,
+            "has_insurance": false,
+            "chronic_conditions": [
+                "Diabetes",
+                "Heart Disease"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 15,
+        "fields": {
+            "patient": 15,
+            "has_insurance": false,
+            "chronic_conditions": [
+                "Cancer",
+                "High Cholesterol"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 16,
+        "fields": {
+            "patient": 16,
+            "has_insurance": false,
+            "chronic_conditions": [
+                "Hypertension",
+                "Asthma",
+                "Cancer"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 17,
+        "fields": {
+            "patient": 17,
+            "has_insurance": null,
             "chronic_conditions": [
                 "Back Pain",
                 "Hypertension",
@@ -165,43 +209,14 @@
     },
     {
         "model": "demographics.demographics",
-        "pk": 15,
-        "fields": {
-            "patient": 15,
-            "chronic_conditions": [
-                "Heart Disease",
-                "Cancer"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 16,
-        "fields": {
-            "patient": 16,
-            "chronic_conditions": [
-                "High Cholesterol"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 17,
-        "fields": {
-            "patient": 17,
-            "chronic_conditions": [
-                "High Cholesterol",
-                "Cancer"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
         "pk": 18,
         "fields": {
             "patient": 18,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Hypertension"
+                "Hypertension",
+                "Diabetes",
+                "Arthritis"
             ]
         }
     },
@@ -210,10 +225,9 @@
         "pk": 19,
         "fields": {
             "patient": 19,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Hypertension",
-                "Hypertension",
-                "Hypertension"
+                "Asthma"
             ]
         }
     },
@@ -222,10 +236,10 @@
         "pk": 20,
         "fields": {
             "patient": 20,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Asthma",
-                "Heart Disease",
-                "High Cholesterol"
+                "Hypertension",
+                "Back Pain"
             ]
         }
     },
@@ -234,9 +248,11 @@
         "pk": 21,
         "fields": {
             "patient": 21,
+            "has_insurance": null,
             "chronic_conditions": [
+                "High Cholesterol",
                 "Heart Disease",
-                "Depression"
+                "High Cholesterol"
             ]
         }
     },
@@ -245,10 +261,11 @@
         "pk": 22,
         "fields": {
             "patient": 22,
+            "has_insurance": true,
             "chronic_conditions": [
+                "Obesity",
                 "Arthritis",
-                "Cancer",
-                "Diabetes"
+                "Hypertension"
             ]
         }
     },
@@ -257,6 +274,7 @@
         "pk": 23,
         "fields": {
             "patient": 23,
+            "has_insurance": true,
             "chronic_conditions": [
                 "Back Pain"
             ]
@@ -267,8 +285,10 @@
         "pk": 24,
         "fields": {
             "patient": 24,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Back Pain"
+                "Arthritis",
+                "High Cholesterol"
             ]
         }
     },
@@ -277,9 +297,9 @@
         "pk": 25,
         "fields": {
             "patient": 25,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Obesity",
-                "Back Pain"
+                "High Cholesterol"
             ]
         }
     },
@@ -288,8 +308,10 @@
         "pk": 26,
         "fields": {
             "patient": 26,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Back Pain"
+                "Back Pain",
+                "Hypertension"
             ]
         }
     },
@@ -298,8 +320,8 @@
         "pk": 27,
         "fields": {
             "patient": 27,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Asthma",
                 "High Cholesterol"
             ]
         }
@@ -309,10 +331,10 @@
         "pk": 28,
         "fields": {
             "patient": 28,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Obesity",
-                "Hypertension",
-                "Back Pain"
+                "High Cholesterol",
+                "Obesity"
             ]
         }
     },
@@ -321,9 +343,9 @@
         "pk": 29,
         "fields": {
             "patient": 29,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Back Pain",
-                "Diabetes"
+                "Heart Disease"
             ]
         }
     },
@@ -332,6 +354,7 @@
         "pk": 30,
         "fields": {
             "patient": 30,
+            "has_insurance": false,
             "chronic_conditions": [
                 "High Cholesterol"
             ]
@@ -342,8 +365,9 @@
         "pk": 31,
         "fields": {
             "patient": 31,
+            "has_insurance": true,
             "chronic_conditions": [
-                "High Cholesterol"
+                "Hypertension"
             ]
         }
     },
@@ -352,6 +376,7 @@
         "pk": 32,
         "fields": {
             "patient": 32,
+            "has_insurance": true,
             "chronic_conditions": [
                 "Back Pain"
             ]
@@ -362,8 +387,10 @@
         "pk": 33,
         "fields": {
             "patient": 33,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Heart Disease"
+                "Arthritis",
+                "Obesity"
             ]
         }
     },
@@ -372,8 +399,9 @@
         "pk": 34,
         "fields": {
             "patient": 34,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Back Pain"
+                "Heart Disease"
             ]
         }
     },
@@ -382,8 +410,11 @@
         "pk": 35,
         "fields": {
             "patient": 35,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Hypertension"
+                "Back Pain",
+                "Back Pain",
+                "Asthma"
             ]
         }
     },
@@ -392,9 +423,9 @@
         "pk": 36,
         "fields": {
             "patient": 36,
+            "has_insurance": false,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Heart Disease"
+                "Hypertension"
             ]
         }
     },
@@ -403,8 +434,8 @@
         "pk": 37,
         "fields": {
             "patient": 37,
+            "has_insurance": true,
             "chronic_conditions": [
-                "High Cholesterol",
                 "Hypertension"
             ]
         }
@@ -414,8 +445,9 @@
         "pk": 38,
         "fields": {
             "patient": 38,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Heart Disease"
+                "Back Pain"
             ]
         }
     },
@@ -424,9 +456,9 @@
         "pk": 39,
         "fields": {
             "patient": 39,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Diabetes",
-                "Hypertension"
+                "Back Pain"
             ]
         }
     },
@@ -435,9 +467,8 @@
         "pk": 40,
         "fields": {
             "patient": 40,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Back Pain",
-                "Hypertension",
                 "Back Pain"
             ]
         }
@@ -447,8 +478,9 @@
         "pk": 41,
         "fields": {
             "patient": 41,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Diabetes"
+                "Asthma"
             ]
         }
     },
@@ -457,8 +489,11 @@
         "pk": 42,
         "fields": {
             "patient": 42,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Diabetes"
+                "High Cholesterol",
+                "Back Pain",
+                "High Cholesterol"
             ]
         }
     },
@@ -467,7 +502,9 @@
         "pk": 43,
         "fields": {
             "patient": 43,
+            "has_insurance": null,
             "chronic_conditions": [
+                "Back Pain",
                 "Hypertension"
             ]
         }
@@ -477,8 +514,9 @@
         "pk": 44,
         "fields": {
             "patient": 44,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Hypertension"
+                "High Cholesterol"
             ]
         }
     },
@@ -487,9 +525,10 @@
         "pk": 45,
         "fields": {
             "patient": 45,
+            "has_insurance": true,
             "chronic_conditions": [
                 "Hypertension",
-                "Obesity"
+                "Diabetes"
             ]
         }
     },
@@ -498,10 +537,11 @@
         "pk": 46,
         "fields": {
             "patient": 46,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Hypertension",
-                "Diabetes",
-                "Depression"
+                "Cancer",
+                "Back Pain",
+                "Diabetes"
             ]
         }
     },
@@ -510,10 +550,9 @@
         "pk": 47,
         "fields": {
             "patient": 47,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Back Pain",
-                "Back Pain",
-                "Diabetes"
+                "High Cholesterol"
             ]
         }
     },
@@ -522,8 +561,10 @@
         "pk": 48,
         "fields": {
             "patient": 48,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Back Pain"
+                "Asthma",
+                "Hypertension"
             ]
         }
     },
@@ -532,10 +573,10 @@
         "pk": 49,
         "fields": {
             "patient": 49,
+            "has_insurance": true,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Back Pain",
-                "Hypertension"
+                "Obesity",
+                "High Cholesterol"
             ]
         }
     },
@@ -544,8 +585,9 @@
         "pk": 50,
         "fields": {
             "patient": 50,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Diabetes"
+                "Back Pain"
             ]
         }
     },
@@ -554,9 +596,9 @@
         "pk": 51,
         "fields": {
             "patient": 51,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Asthma",
-                "Hypertension"
+                "Diabetes"
             ]
         }
     },
@@ -565,9 +607,10 @@
         "pk": 52,
         "fields": {
             "patient": 52,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Cancer",
-                "Heart Disease"
+                "Heart Disease",
+                "Hypertension"
             ]
         }
     },
@@ -576,10 +619,9 @@
         "pk": 53,
         "fields": {
             "patient": 53,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Hypertension",
-                "Back Pain",
-                "High Cholesterol"
+                "Back Pain"
             ]
         }
     },
@@ -588,10 +630,11 @@
         "pk": 54,
         "fields": {
             "patient": 54,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Hypertension",
-                "Asthma",
-                "Arthritis"
+                "Cancer",
+                "Back Pain",
+                "Diabetes"
             ]
         }
     },
@@ -600,10 +643,9 @@
         "pk": 55,
         "fields": {
             "patient": 55,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Hypertension",
-                "Arthritis",
-                "Back Pain"
+                "Hypertension"
             ]
         }
     },
@@ -612,10 +654,11 @@
         "pk": 56,
         "fields": {
             "patient": 56,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Back Pain",
-                "High Cholesterol",
-                "Asthma"
+                "Diabetes",
+                "Hypertension",
+                "Back Pain"
             ]
         }
     },
@@ -624,9 +667,9 @@
         "pk": 57,
         "fields": {
             "patient": 57,
+            "has_insurance": null,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Arthritis"
+                "Obesity"
             ]
         }
     },
@@ -635,10 +678,9 @@
         "pk": 58,
         "fields": {
             "patient": 58,
+            "has_insurance": null,
             "chronic_conditions": [
-                "High Cholesterol",
-                "Hypertension",
-                "Depression"
+                "Arthritis"
             ]
         }
     },
@@ -647,8 +689,9 @@
         "pk": 59,
         "fields": {
             "patient": 59,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Back Pain"
+                "Cancer"
             ]
         }
     },
@@ -657,9 +700,10 @@
         "pk": 60,
         "fields": {
             "patient": 60,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Back Pain",
-                "High Cholesterol"
+                "Hypertension",
+                "Depression"
             ]
         }
     },
@@ -668,8 +712,8 @@
         "pk": 61,
         "fields": {
             "patient": 61,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Hypertension",
                 "High Cholesterol"
             ]
         }
@@ -679,8 +723,10 @@
         "pk": 62,
         "fields": {
             "patient": 62,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Back Pain"
+                "Back Pain",
+                "High Cholesterol"
             ]
         }
     },
@@ -689,8 +735,9 @@
         "pk": 63,
         "fields": {
             "patient": 63,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Asthma",
+                "Arthritis",
                 "Obesity"
             ]
         }
@@ -700,8 +747,10 @@
         "pk": 64,
         "fields": {
             "patient": 64,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Arthritis",
+                "High Cholesterol",
+                "Back Pain",
                 "High Cholesterol"
             ]
         }
@@ -711,10 +760,10 @@
         "pk": 65,
         "fields": {
             "patient": 65,
+            "has_insurance": null,
             "chronic_conditions": [
                 "High Cholesterol",
-                "Back Pain",
-                "Diabetes"
+                "Hypertension"
             ]
         }
     },
@@ -723,7 +772,10 @@
         "pk": 66,
         "fields": {
             "patient": 66,
+            "has_insurance": false,
             "chronic_conditions": [
+                "High Cholesterol",
+                "Cancer",
                 "Depression"
             ]
         }
@@ -733,8 +785,11 @@
         "pk": 67,
         "fields": {
             "patient": 67,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Asthma"
+                "Back Pain",
+                "Back Pain",
+                "Obesity"
             ]
         }
     },
@@ -743,10 +798,11 @@
         "pk": 68,
         "fields": {
             "patient": 68,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Hypertension",
                 "Back Pain",
-                "Arthritis"
+                "Obesity",
+                "Asthma"
             ]
         }
     },
@@ -755,8 +811,11 @@
         "pk": 69,
         "fields": {
             "patient": 69,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Heart Disease"
+                "Hypertension",
+                "High Cholesterol",
+                "Back Pain"
             ]
         }
     },
@@ -765,174 +824,7 @@
         "pk": 70,
         "fields": {
             "patient": 70,
-            "chronic_conditions": [
-                "Hypertension",
-                "Hypertension",
-                "Back Pain"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 71,
-        "fields": {
-            "patient": 71,
-            "chronic_conditions": [
-                "Arthritis",
-                "Obesity",
-                "Back Pain"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 72,
-        "fields": {
-            "patient": 72,
-            "chronic_conditions": [
-                "Hypertension",
-                "Hypertension",
-                "Diabetes"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 73,
-        "fields": {
-            "patient": 73,
-            "chronic_conditions": [
-                "Back Pain"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 74,
-        "fields": {
-            "patient": 74,
-            "chronic_conditions": [
-                "High Cholesterol"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 75,
-        "fields": {
-            "patient": 75,
-            "chronic_conditions": [
-                "Back Pain",
-                "High Cholesterol",
-                "Back Pain"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 76,
-        "fields": {
-            "patient": 76,
-            "chronic_conditions": [
-                "Back Pain",
-                "Back Pain",
-                "Cancer"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 77,
-        "fields": {
-            "patient": 77,
-            "chronic_conditions": [
-                "Diabetes",
-                "Hypertension",
-                "Back Pain"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 78,
-        "fields": {
-            "patient": 78,
-            "chronic_conditions": [
-                "Diabetes",
-                "High Cholesterol"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 79,
-        "fields": {
-            "patient": 79,
-            "chronic_conditions": [
-                "Asthma"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 80,
-        "fields": {
-            "patient": 80,
-            "chronic_conditions": [
-                "Back Pain",
-                "High Cholesterol"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 81,
-        "fields": {
-            "patient": 81,
-            "chronic_conditions": [
-                "Back Pain"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 82,
-        "fields": {
-            "patient": 82,
-            "chronic_conditions": [
-                "Heart Disease"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 83,
-        "fields": {
-            "patient": 83,
-            "chronic_conditions": [
-                "High Cholesterol",
-                "Back Pain",
-                "Depression"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 84,
-        "fields": {
-            "patient": 84,
-            "chronic_conditions": [
-                "Diabetes",
-                "High Cholesterol",
-                "Depression"
-            ]
-        }
-    },
-    {
-        "model": "demographics.demographics",
-        "pk": 85,
-        "fields": {
-            "patient": 85,
+            "has_insurance": false,
             "chronic_conditions": [
                 "Cancer",
                 "Hypertension"
@@ -941,11 +833,192 @@
     },
     {
         "model": "demographics.demographics",
+        "pk": 71,
+        "fields": {
+            "patient": 71,
+            "has_insurance": null,
+            "chronic_conditions": [
+                "Back Pain",
+                "Heart Disease",
+                "Cancer"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 72,
+        "fields": {
+            "patient": 72,
+            "has_insurance": true,
+            "chronic_conditions": [
+                "Depression",
+                "Arthritis",
+                "Hypertension"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 73,
+        "fields": {
+            "patient": 73,
+            "has_insurance": null,
+            "chronic_conditions": [
+                "Hypertension"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 74,
+        "fields": {
+            "patient": 74,
+            "has_insurance": null,
+            "chronic_conditions": [
+                "Cancer",
+                "Diabetes"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 75,
+        "fields": {
+            "patient": 75,
+            "has_insurance": true,
+            "chronic_conditions": [
+                "Cancer"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 76,
+        "fields": {
+            "patient": 76,
+            "has_insurance": false,
+            "chronic_conditions": [
+                "Hypertension",
+                "Arthritis",
+                "High Cholesterol"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 77,
+        "fields": {
+            "patient": 77,
+            "has_insurance": false,
+            "chronic_conditions": [
+                "Depression"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 78,
+        "fields": {
+            "patient": 78,
+            "has_insurance": true,
+            "chronic_conditions": [
+                "Back Pain"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 79,
+        "fields": {
+            "patient": 79,
+            "has_insurance": false,
+            "chronic_conditions": [
+                "Diabetes",
+                "High Cholesterol",
+                "Cancer"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 80,
+        "fields": {
+            "patient": 80,
+            "has_insurance": null,
+            "chronic_conditions": [
+                "Hypertension"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 81,
+        "fields": {
+            "patient": 81,
+            "has_insurance": true,
+            "chronic_conditions": [
+                "Obesity",
+                "Cancer"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 82,
+        "fields": {
+            "patient": 82,
+            "has_insurance": true,
+            "chronic_conditions": [
+                "Cancer"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 83,
+        "fields": {
+            "patient": 83,
+            "has_insurance": null,
+            "chronic_conditions": [
+                "Back Pain",
+                "Hypertension",
+                "High Cholesterol"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 84,
+        "fields": {
+            "patient": 84,
+            "has_insurance": null,
+            "chronic_conditions": [
+                "Diabetes",
+                "High Cholesterol",
+                "Back Pain"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
+        "pk": 85,
+        "fields": {
+            "patient": 85,
+            "has_insurance": false,
+            "chronic_conditions": [
+                "Back Pain"
+            ]
+        }
+    },
+    {
+        "model": "demographics.demographics",
         "pk": 86,
         "fields": {
             "patient": 86,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Hypertension",
+                "Cancer",
+                "Heart Disease",
                 "Back Pain"
             ]
         }
@@ -955,9 +1028,9 @@
         "pk": 87,
         "fields": {
             "patient": 87,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Heart Disease",
-                "Hypertension"
+                "Diabetes"
             ]
         }
     },
@@ -966,8 +1039,9 @@
         "pk": 88,
         "fields": {
             "patient": 88,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Heart Disease"
+                "Asthma"
             ]
         }
     },
@@ -976,7 +1050,9 @@
         "pk": 89,
         "fields": {
             "patient": 89,
+            "has_insurance": true,
             "chronic_conditions": [
+                "Depression",
                 "Obesity",
                 "High Cholesterol"
             ]
@@ -987,10 +1063,10 @@
         "pk": 90,
         "fields": {
             "patient": 90,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Back Pain",
                 "High Cholesterol",
-                "Cancer"
+                "High Cholesterol"
             ]
         }
     },
@@ -999,8 +1075,10 @@
         "pk": 91,
         "fields": {
             "patient": 91,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Hypertension"
+                "Cancer",
+                "Diabetes"
             ]
         }
     },
@@ -1009,9 +1087,8 @@
         "pk": 92,
         "fields": {
             "patient": 92,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Heart Disease",
-                "Cancer",
                 "Back Pain"
             ]
         }
@@ -1021,9 +1098,9 @@
         "pk": 93,
         "fields": {
             "patient": 93,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Hypertension",
-                "Asthma"
+                "Hypertension"
             ]
         }
     },
@@ -1032,8 +1109,10 @@
         "pk": 94,
         "fields": {
             "patient": 94,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Hypertension"
+                "Back Pain",
+                "Diabetes"
             ]
         }
     },
@@ -1042,9 +1121,10 @@
         "pk": 95,
         "fields": {
             "patient": 95,
+            "has_insurance": null,
             "chronic_conditions": [
-                "Hypertension",
-                "Diabetes"
+                "Cancer",
+                "Depression"
             ]
         }
     },
@@ -1053,9 +1133,9 @@
         "pk": 96,
         "fields": {
             "patient": 96,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Diabetes",
-                "Arthritis"
+                "Asthma"
             ]
         }
     },
@@ -1064,8 +1144,10 @@
         "pk": 97,
         "fields": {
             "patient": 97,
+            "has_insurance": false,
             "chronic_conditions": [
                 "Back Pain",
+                "Hypertension",
                 "Diabetes"
             ]
         }
@@ -1075,8 +1157,9 @@
         "pk": 98,
         "fields": {
             "patient": 98,
+            "has_insurance": false,
             "chronic_conditions": [
-                "Arthritis"
+                "Back Pain"
             ]
         }
     },
@@ -1085,8 +1168,11 @@
         "pk": 99,
         "fields": {
             "patient": 99,
+            "has_insurance": true,
             "chronic_conditions": [
-                "Back Pain"
+                "Back Pain",
+                "Diabetes",
+                "Hypertension"
             ]
         }
     }

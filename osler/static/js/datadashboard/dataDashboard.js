@@ -1,6 +1,8 @@
 //generate default date range and define global variables
 let jsondata = null,
   ptCount = null,
+  zipcodeColors = [],
+  ethnicityColors = [],
   clinicDates = [],
   selectedEnd = [],
   selectedStart = [],
@@ -34,7 +36,13 @@ window.addEventListener("load", (event) => {
     var responses = await fetchJsonData(urls)
     jsondata = responses[0]
     clinicDates = JSON.parse(responses[1].clinic_dates)
+    numZipcodes = JSON.parse(responses[1].num_zipcodes)
+    numEthnicities = JSON.parse(responses[1].num_ethnicities)
+    makeColorArray("zipcode", numZipcodes, "04009A");
+    makeColorArray("ethnicity", numEthnicities, "206A5D");
+    console.log(numZipcodes)
     dateRangePicker()
+    console.dir(jsondata)
     //load demographic data and generate charts  
     makeFilteredCharts("date");
     sortCommonConditions();
@@ -129,7 +137,7 @@ function displayPatientVisitStats(){
   //append unique patient count to DOM
   ptCount = Object.keys(filteredData).length
   ptPercent = percentage(ptCount, wuCount)
-  ptCountText = document.createTextNode(ptCount + " (" + ptPercent + "%)");
+  ptCountText = document.createTextNode(ptCount);
   ptCountNode = document.getElementById("unique-patient-count")
   $(ptCountNode).empty();
   ptCountNode.appendChild(ptCountText);
@@ -299,6 +307,7 @@ function makeFilteredCharts(filterChangeOrigin) {
     makeAgeChart(filteredData);
     makeGenderChart(filteredData);
     makeEthnicityChart(filteredData);
+    makeZipcodeChart(filteredData);
 
   }
 };
@@ -350,7 +359,7 @@ function makeAgeChart(filteredData) {
     options: {
       title: {
         display: true,
-        text: "Age Distribution"
+        text: "Age "
       },
       fullCornerRadius: false,
       cornerRadius: 15,
@@ -394,9 +403,9 @@ function makeAgeChart(filteredData) {
 function makeGenderChart(filteredData) {
   //pass in date filtered data and then within each function extract the demographic data
   var genderData = {
-    Male: 0,
-    Female: 0,
-    Other: 0,
+    "Male": 0,
+    "Female": 0,
+    "Other": 0,
   };
 
   Object.values(filteredData).map(function (e) {
@@ -410,7 +419,7 @@ function makeGenderChart(filteredData) {
   var genderChartNode = removeOldChart("gender-chart");
   genderChart = genderChartNode.getContext("2d");
   return (pieChart = new Chart(genderChart, {
-    type: "doughnut",
+    type: "pie",
     data: {
       labels: Object.keys(genderData),
       datasets: [
@@ -433,30 +442,23 @@ function makeGenderChart(filteredData) {
       },
       title: {
         display: true,
-        text: "Gender Distribution",
+        text: "Gender",
       },
     },
   }));
 };
 
 function makeEthnicityChart(filteredData) {
-  var ethnicityData = {
-    White: 0,
-    "Black or African American": 0,
-    "American Indian or Alaska Native": 0,
-    Asian: 0,
-    "Native Hawaiian or Other Pacific Islander": 0,
-    "Hispanic or Latino": 0,
-    Other: 0,
-  };
+  var ethnicityData = {}
 
   Object.values(filteredData).map(function (e) {
     e.ethnicities.forEach(function (ethnicity) {
-      for (var i = 0; i < Object.keys(ethnicityData).length; i++) {
-        if (ethnicity == Object.keys(ethnicityData)[i]) {
-          ethnicityData[Object.keys(ethnicityData)[i]]++;
-        }
+      if (!Object.keys(ethnicityData).includes(ethnicity)) {
+        ethnicityData[ethnicity] = 1;
       }
+      else{
+        ethnicityData[ethnicity] += 1;
+      }   
     });
   });
 
@@ -464,21 +466,13 @@ function makeEthnicityChart(filteredData) {
   ethnicityChart = ethnicityChartNode.getContext("2d");
   return (pieChart = new Chart(ethnicityChart, {
     responsive: "true",
-    type: "doughnut",
+    type: "pie",
     data: {
       labels: Object.keys(ethnicityData),
       datasets: [
         {
           label: "Genders",
-          backgroundColor: [
-            "#4875C7",
-            "#80ABFC",
-            "#68D7D4",
-            "#AFEAE8",
-            "#FF9594",
-            "#FFBCBC",
-            "#d6e4f8",
-          ],
+          backgroundColor: ethnicityColors,
           data: Object.values(ethnicityData),
         },
       ],
@@ -495,7 +489,101 @@ function makeEthnicityChart(filteredData) {
       },
       title: {
         display: true,
-        text: "Ethinicity Distribution",
+        text: "Ethinicity",
+      },
+    },
+  }));
+};
+
+function makeZipcodeChart(filteredData){
+  var zipcodeData = {}
+  Object.values(filteredData).map(function (e) {  
+    if(e.zip_code == null){
+      e.zip_code = "null"
+    }
+    if (!Object.keys(zipcodeData).includes(e.zip_code)) {
+      zipcodeData[e.zip_code] = 1;
+    } else {
+      zipcodeData[e.zip_code] += 1;
+    }
+  });
+
+  var zipcodeChartNode = removeOldChart("zipcode-chart");
+  zipcodeChart = zipcodeChartNode.getContext("2d");
+  return (pieChart = new Chart(zipcodeChart, {
+    responsive: "true",
+    type: "pie",
+    data: {
+      labels: Object.keys(zipcodeData),
+      datasets: [
+        {
+          label: "Zip Codes",
+          backgroundColor: zipcodeColors,
+          data: Object.values(zipcodeData),
+        },
+      ],
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+
+      legend: {
+        position: "bottom",
+        labels: {
+          usePointStyle: true,
+        },
+      },
+      title: {
+        display: true,
+        text: "Zip Code",
+      },
+    },
+  }));
+}
+
+function makeInsuranceChart(filteredData) {
+  //pass in date filtered data and then within each function extract the demographic data
+  var genderData = {
+    "Male": 0,
+    "Female": 0,
+    "Other": 0,
+  };
+
+  Object.values(filteredData).map(function (e) {
+    for (var i = 0; i < Object.keys(genderData).length; i++) {
+      if (e.gender == Object.keys(genderData)[i]) {
+        genderData[Object.keys(genderData)[i]]++;
+      }
+    }
+  });
+
+  var genderChartNode = removeOldChart("gender-chart");
+  genderChart = genderChartNode.getContext("2d");
+  return (pieChart = new Chart(genderChart, {
+    type: "pie",
+    data: {
+      labels: Object.keys(genderData),
+      datasets: [
+        {
+          label: "Genders",
+          backgroundColor: ["#80ABFC", "#FF9594", "#68D7D4"],
+          data: Object.values(genderData),
+        },
+      ],
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+
+      legend: {
+        position: "bottom",
+        labels: {
+          usePointStyle: true,
+        },
+      },
+      title: {
+        display: true,
+        text: "Gender",
       },
     },
   }));
@@ -567,7 +655,37 @@ function percentage(portion, whole){
   return ((portion/whole)*100).toFixed(1);
 }
 
+function makeColorArray(type,num,startingCol) {
+  var holderArr = []
+  console.log(num)
+  for (let i = 0; i < num; i++) {
+    holderArr.push(lightenColor(startingCol, (num*(2*i))));
+  }
+  if(type == "ethnicity"){
+    ethnicityColors = holderArr;
+  } 
+  else{
+    zipcodeColors = holderArr;
+  }
+  
+}
 
+function lightenColor (color, percent) {
+  var num = parseInt(color, 16),
+    amt = Math.round(2.55 * percent),
+    R = (num >> 16) + amt,
+    B = ((num >> 8) & 0x00ff) + amt,
+    G = (num & 0x0000ff) + amt;
+
+  return "#"+(
+    0x1000000 +
+    (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+    (B < 255 ? (B < 1 ? 0 : B) : 255) * 0x100 +
+    (G < 255 ? (G < 1 ? 0 : G) : 255)
+  )
+    .toString(16)
+    .slice(1);
+};
 // // **not yet functional** export currently displayed data to csv 
 // document.getElementById("export-data").addEventListener("click", function () {
 //   // https://docs.djangoproject.com/en/3.1/ref/csrf/ passing csrf tokens via fetch api
