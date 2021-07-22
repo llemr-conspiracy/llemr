@@ -40,8 +40,8 @@ window.addEventListener("load", (event) => {
     numEthnicities = JSON.parse(responses[1].num_ethnicities)
     makeColorArray("zipcode", numZipcodes, "04009A");
     makeColorArray("ethnicity", numEthnicities, "206A5D");
-    console.log(numZipcodes)
     dateRangePicker()
+    console.log(zipcodeColors);
     console.dir(jsondata)
     //load demographic data and generate charts  
     makeFilteredCharts("date");
@@ -308,6 +308,7 @@ function makeFilteredCharts(filterChangeOrigin) {
     makeGenderChart(filteredData);
     makeEthnicityChart(filteredData);
     makeZipcodeChart(filteredData);
+    makeInsuranceChart(filteredData);
 
   }
 };
@@ -499,7 +500,7 @@ function makeZipcodeChart(filteredData){
   var zipcodeData = {}
   Object.values(filteredData).map(function (e) {  
     if(e.zip_code == null){
-      e.zip_code = "null"
+      e.zip_code = "Homeless"
     }
     if (!Object.keys(zipcodeData).includes(e.zip_code)) {
       zipcodeData[e.zip_code] = 1;
@@ -510,7 +511,7 @@ function makeZipcodeChart(filteredData){
 
   var zipcodeChartNode = removeOldChart("zipcode-chart");
   zipcodeChart = zipcodeChartNode.getContext("2d");
-  return (pieChart = new Chart(zipcodeChart, {
+  pieChart = new Chart(zipcodeChart, {
     responsive: "true",
     type: "pie",
     data: {
@@ -529,6 +530,7 @@ function makeZipcodeChart(filteredData){
 
       legend: {
         position: "bottom",
+        align: "start",
         labels: {
           usePointStyle: true,
         },
@@ -538,36 +540,39 @@ function makeZipcodeChart(filteredData){
         text: "Zip Code",
       },
     },
-  }));
+  });
 }
 
 function makeInsuranceChart(filteredData) {
   //pass in date filtered data and then within each function extract the demographic data
-  var genderData = {
-    "Male": 0,
-    "Female": 0,
-    "Other": 0,
+  var insuranceData = {
+    "true": 0,
+    "false": 0,
+    "null": 0,
   };
 
   Object.values(filteredData).map(function (e) {
-    for (var i = 0; i < Object.keys(genderData).length; i++) {
-      if (e.gender == Object.keys(genderData)[i]) {
-        genderData[Object.keys(genderData)[i]]++;
+    for (var i = 0; i < Object.keys(insuranceData).length; i++) {
+      console.log(e.has_insurance + " " + Object.keys(insuranceData)[i])
+      if (String(e.has_insurance) == Object.keys(insuranceData)[i]) {
+        console.log("in")
+        insuranceData[Object.keys(insuranceData)[i]]++;
       }
     }
   });
+  console.log(insuranceData);
 
-  var genderChartNode = removeOldChart("gender-chart");
-  genderChart = genderChartNode.getContext("2d");
-  return (pieChart = new Chart(genderChart, {
+  var insuranceChartNode = removeOldChart("insurance-chart");
+  insuranceChart = insuranceChartNode.getContext("2d");
+  pieChart = new Chart(insuranceChart, {
     type: "pie",
     data: {
-      labels: Object.keys(genderData),
+      labels: ["Yes","No","Not Answered"],
       datasets: [
         {
-          label: "Genders",
+          label: "Insurance Status",
           backgroundColor: ["#80ABFC", "#FF9594", "#68D7D4"],
-          data: Object.values(genderData),
+          data: Object.values(insuranceData),
         },
       ],
     },
@@ -583,10 +588,10 @@ function makeInsuranceChart(filteredData) {
       },
       title: {
         display: true,
-        text: "Gender",
+        text: "Insurance",
       },
     },
-  }));
+  });
 };
 
 //
@@ -657,9 +662,8 @@ function percentage(portion, whole){
 
 function makeColorArray(type,num,startingCol) {
   var holderArr = []
-  console.log(num)
   for (let i = 0; i < num; i++) {
-    holderArr.push(lightenColor(startingCol, (num*(2*i))));
+    holderArr.push(lightenColor(startingCol, (100/num)*i));
   }
   if(type == "ethnicity"){
     ethnicityColors = holderArr;
@@ -686,23 +690,4 @@ function lightenColor (color, percent) {
     .toString(16)
     .slice(1);
 };
-// // **not yet functional** export currently displayed data to csv 
-// document.getElementById("export-data").addEventListener("click", function () {
-//   // https://docs.djangoproject.com/en/3.1/ref/csrf/ passing csrf tokens via fetch api
-//   const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-//   const request = new Request("export-csv/", {
-//     headers: { "X-CSRFToken": csrftoken, "Content-Type": "application/json" },
-//   });
-//   fetch(request, {
-//     method: "POST",
-//     mode: "same-origin",
-//     body: JSON.stringify(filteredData),
-//   })
-//     .then((response) => response.json())
-//     .then((data) => {
-//       console.log("Success:", data);
-//     })
-//     .catch((error) => {
-//       // this fetch throws an error but still works so I'm just not logging it
-//     });
-// });
+

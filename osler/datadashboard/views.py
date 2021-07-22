@@ -37,10 +37,13 @@ def query_demographics_model():
     raw_demographics = Demographics.objects.all()
     formatted_demographics = {}
     for demographic in raw_demographics:
+        demo_data = {}
         conditions = []
         for condition in list(demographic.chronic_conditions.all()):
                 conditions.append(getattr(condition, 'name'))
-        formatted_demographics[demographic.pk] = conditions
+        demo_data["conditions"] = conditions
+        demo_data["has_insurance"] = demographic.has_insurance
+        formatted_demographics[demographic.pk] = demo_data
     return formatted_demographics
 
 def extract_demographic_data(workups,demo):
@@ -48,14 +51,16 @@ def extract_demographic_data(workups,demo):
     '''
     dashboard_data = {}
     unique_patient_pk_list = []
+    print(demo)
     for wu in workups:
         demographics = {}
         if wu.patient.pk not in unique_patient_pk_list:
             unique_patient_pk_list.append(wu.patient.pk)
             if(wu.patient.pk in demo):
-                demographics['conditions'] = demo[wu.patient.pk]
+                demographics['conditions'] = demo[wu.patient.pk]['conditions']
             else:
                 demographics['conditions'] = []
+            demographics['has_insurance'] = demo[wu.patient.pk]['has_insurance']
             demographics['age'] = (wu.written_datetime.date() - wu.patient.date_of_birth).days // 365
             demographics['gender'] = wu.patient.gender.name
             if(wu.patient.address != homeless_address):
