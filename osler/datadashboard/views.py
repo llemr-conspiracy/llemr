@@ -5,6 +5,8 @@ from django.views.generic import TemplateView
 from django.http import JsonResponse
 from osler.core.models import Encounter
 from osler.demographics.models import Demographics
+from osler.inventory.models import DispenseHistory
+from osler.labs.models import Lab
 from osler.users.decorators import active_permission_required
 from osler.workup.models import Workup
 from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
@@ -32,7 +34,7 @@ def query_workups_model():
         select_related('patient').\
         select_related('patient__gender').\
         prefetch_related('patient__ethnicities')
-    
+
 def query_demographics_model():
     raw_demographics = Demographics.objects.all()
     formatted_demographics = {}
@@ -51,7 +53,6 @@ def extract_demographic_data(workups,demo):
     '''
     dashboard_data = {}
     unique_patient_pk_list = []
-    print(demo)
     for wu in workups:
         demographics = {}
         if wu.patient.pk not in unique_patient_pk_list:
@@ -88,9 +89,12 @@ def extract_demographic_data(workups,demo):
 def send_context_json(request):
     ''' Formats context data such as clinic dates for json '''
     context = {}
-    context["clinic_dates"] = json.dumps(list_clinic_dates())
     context["num_ethnicities"] = len(ethnicity_list)
     context["num_zipcodes"] = len(zip_code_list)
+    context["clinic_dates"] = json.dumps(list_clinic_dates())
+    context["drug_dispenses"] = query_drug_model()
+    context["labs_ordered"] = query_labs_model()
+    print(query_labs_model())
     return JsonResponse(context)
 
 def list_clinic_dates():
@@ -105,3 +109,32 @@ def list_clinic_dates():
           dates.append(date)
     dates.sort()
     return dates
+
+def query_drug_model():
+    '''Queries inventory and extracts dispense history models'''
+    dispense_list = {}
+    dispenses = DispenseHistory.objects.all()
+    for item in dispenses:
+        written_date = datetime.datetime.strftime(getattr(item, "written_datetime"), "%Y-%m-%d")
+        drug = getattr(item, "drug")
+        drug_name = getattr(drug, "name")
+        if(drug_name not in dispense_list):
+          dispense_list[drug_name] = [written_date]
+        else:
+          dispense_list[drug_name].append(written_date)
+    return dispense_list
+
+
+def query_labs_model():
+    '''Queries inventory and extracts dispense history models'''
+    labs_list = {}
+    labs = Lab.objects.all()
+    for item in labs:
+        written_date = datetime.datetime.strftime(getattr(item, "lab_time"), "%Y-%m-%d")
+        lab_type = getattr(item, "lab_type")
+        lab_type_name = getattr(lab_type, "name")
+        if(lab_type_name not in labs_list):
+          labs_list[lab_type_name] = [written_date]
+        else:
+          labs_list[lab_type_name].append(written_date)
+    return labs_list

@@ -38,8 +38,8 @@ window.addEventListener("load", (event) => {
     clinicDates = JSON.parse(responses[1].clinic_dates)
     numZipcodes = JSON.parse(responses[1].num_zipcodes)
     numEthnicities = JSON.parse(responses[1].num_ethnicities)
-    makeColorArray("zipcode", numZipcodes, "04009A");
-    makeColorArray("ethnicity", numEthnicities, "206A5D");
+    zipcodeColors = makeColorArray(numZipcodes, "04009A");
+    ethnicityColors = makeColorArray(numEthnicities, "206A5D");
     dateRangePicker()
     console.log(zipcodeColors);
     console.dir(jsondata)
@@ -553,14 +553,11 @@ function makeInsuranceChart(filteredData) {
 
   Object.values(filteredData).map(function (e) {
     for (var i = 0; i < Object.keys(insuranceData).length; i++) {
-      console.log(e.has_insurance + " " + Object.keys(insuranceData)[i])
       if (String(e.has_insurance) == Object.keys(insuranceData)[i]) {
-        console.log("in")
         insuranceData[Object.keys(insuranceData)[i]]++;
       }
     }
   });
-  console.log(insuranceData);
 
   var insuranceChartNode = removeOldChart("insurance-chart");
   insuranceChart = insuranceChartNode.getContext("2d");
@@ -579,7 +576,6 @@ function makeInsuranceChart(filteredData) {
     options: {
       maintainAspectRatio: false,
       responsive: true,
-
       legend: {
         position: "bottom",
         labels: {
@@ -588,7 +584,7 @@ function makeInsuranceChart(filteredData) {
       },
       title: {
         display: true,
-        text: "Insurance",
+        text: "Has Insurance",
       },
     },
   });
@@ -660,17 +656,12 @@ function percentage(portion, whole){
   return ((portion/whole)*100).toFixed(1);
 }
 
-function makeColorArray(type,num,startingCol) {
+function makeColorArray(num,startingCol) {
   var holderArr = []
   for (let i = 0; i < num; i++) {
     holderArr.push(lightenColor(startingCol, (100/num)*i));
   }
-  if(type == "ethnicity"){
-    ethnicityColors = holderArr;
-  } 
-  else{
-    zipcodeColors = holderArr;
-  }
+  return(holderArr)
   
 }
 
