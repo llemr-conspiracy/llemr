@@ -1,11 +1,17 @@
-Osler
+LLEMR
 =====
+
+**L**\LEMR is a **L**\ightweight **E**\lectronic **M**\edical **R**\ecord.
 
 A free, open-source EHR for free clinics.
 
 .. image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg
      :target: https://github.com/pydanny/cookiecutter-django/
      :alt: Built with Cookiecutter Django
+
+.. image:: https://img.shields.io/badge/read-the%20docs-blue.svg
+    :target: https://llemr.readthedocs.io/en/latest/
+    :alt: Read the Docs
 
 
 :License: GPLv3
