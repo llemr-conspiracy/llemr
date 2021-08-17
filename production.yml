@@ -16,7 +16,6 @@ services:
       - redis
     env_file:
       - ./.envs/.production/.django
-      - ./.envs/.production/.postgres
       - ./.envs/.production/.secrets
     command: /start
     # ports:

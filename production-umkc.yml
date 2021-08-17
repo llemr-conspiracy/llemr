@@ -24,7 +24,6 @@ services:
       - redis
     env_file:
       - ./.envs/.production/.django
-      - ./.envs/.production/.postgres
       - ./.envs/.production/.secrets
       - ./.envs/.production/.umkc
     command: /start
