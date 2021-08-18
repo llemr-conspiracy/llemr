@@ -7,6 +7,7 @@ from django.contrib import messages
 from osler.users.utils import get_active_role
 from osler.surveys.models import Survey, Question, Response, Answer
 from osler.core.models import Patient, Encounter
+from django.utils.safestring import mark_safe
 
 def create(request):
     '''create a new survey, and redirect to editing it'''
@@ -91,7 +92,13 @@ def fill(request, pid, id):
            }
 
     if not patient.get_status().is_active:
-        messages.add_message(request, messages.ERROR,
+        active_role = get_active_role(request)
+        can_activate = patient.group_can_activate(active_role)
+        if can_activate:
+            messages.add_message(request, messages.ERROR, mark_safe(
+                             'You are trying to survey an inactive patient. Please <a href=/core/patient/activate_detail/1>activate this patient</a> before continuing.'))
+        else:
+            messages.add_message(request, messages.ERROR, 
                              'You are trying to survey an inactive patient. Please activate this patient before continuing.')
         return redirect('surveys:incomplete', pid=pid)
     return render(request, 'surveys/fill.html', ctx)
