@@ -159,6 +159,9 @@ def submit(request, pid, id):
             answer = Answer(question=q, text=ans, response=response)
             answer.save()
 
-    messages.success(request, "Form Submitted Sucessfully.")
+    messages.success(request, "Survey Form Submitted Sucessfully.")
     # TODO: change redirect to individual response view
-    return redirect('surveys:incomplete', pid=pid)
+    if Survey.objects.incomplete(pid).exists():
+        return redirect('surveys:incomplete', pid=pid)
+    # No surveys left to fill, so just redirect to patient detail
+    return redirect('core:patient-detail',pk=pid)
