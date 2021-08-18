@@ -55,7 +55,7 @@ class ResponsesListView(generic.ListView):
 
 
 def incomplete(request, pid):
-    incomplete_surveys = Survey.get_incomplete_surveys(pid)
+    incomplete_surveys = Survey.objects.incomplete(pid)
     patient = Patient.objects.get(pk=pid)
     context = {'surveys': incomplete_surveys, 'patient': patient}
 

@@ -19,7 +19,7 @@ class SurveyTests(TestCase):
 
     def test_get_incomplete_survey_works_on_new_patient(self):
         patient = Patient.objects.get(pk=1)
-        self.assertIs(len(Survey.get_incomplete_surveys(patient.id)), 1)
+        self.assertIs(len(Survey.objects.incomplete(patient.id)), 1)
 
     def test_get_incomplete_survey_after_filing_survey(self):
         patient = Patient.objects.get(pk=1)
@@ -33,7 +33,7 @@ class SurveyTests(TestCase):
         response.author_role = self.attending.groups.first()
         response.save()
 
-        self.assertIs(len(Survey.get_incomplete_surveys(patient.id)), 0)
+        self.assertIs(len(Survey.objects.incomplete(patient.id)), 0)
 
     def test_surveying_inactive_patient(self):
         client = Client()

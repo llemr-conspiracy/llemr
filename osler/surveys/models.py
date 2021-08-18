@@ -4,26 +4,31 @@ from django.contrib.auth.models import Group
 from osler.core.models import Encounter
 
 
-class Survey(models.Model):
-    title = models.CharField(max_length=200)
-    description = models.TextField()
+class SurveyManager(models.Manager):
 
-    def __str__(self):
-        return self.title
-
-    def get_incomplete_surveys(pt_id):
+    def incomplete(self, pt_id):
         ''' Returns a list of all incompleted surveys for a given patient'''
-        all_surveys = Survey.objects.all()
-        if not Encounter.objects.filter(patient=pt_id).exists():
+        all_surveys = super().all()
+        encounters = Encounter.objects.filter(patient=pt_id)
+        if not encounters.exists():
             return all_surveys
 
-        encounters = Encounter.objects.filter(patient=pt_id)
         responses = Response.objects.filter(encounter__in=encounters)
 
         # TODO: get list of all surveys and match response survey
         completed_survey_ids = responses.values_list('survey', flat=True)
         completed_surveys = Survey.objects.filter(pk__in=completed_survey_ids)
-        return list(all_surveys.difference(completed_surveys))
+        return all_surveys.difference(completed_surveys)
+
+
+class Survey(models.Model):
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+
+    objects = SurveyManager()
+
+    def __str__(self):
+        return self.title
 
 
 class Question(models.Model):
