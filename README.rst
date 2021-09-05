@@ -32,6 +32,20 @@ For more info, have a look at the django-cookiecutter instructions for `running 
 
 .. _`running locally with Docker`: https://cookiecutter-django.readthedocs.io/en/latest/developing-locally-docker.html#getting-up-and-running-locally-with-docker
 
+Initial Setup
+^^^^^^^^^^^^^
+Before LLEMR is usable, you first need to add some basic data to the database.
+
+* To create necessary tables, run::
+
+    $ docker compose -f local.yml run --rm django python manage.py migrate
+    
+* To load basic data, run::
+
+    $ docker compose -f local.yml run --rm django python manage.py loaddata osler/fixtures/*
+
+* Now, follow the steps below to create a superuser account.
+
 Basic Commands
 --------------
 
@@ -40,9 +54,9 @@ Setting Up Your Users
 
 * To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
 
-* To create an **superuser account**, use this command::
+* To create a **superuser account**, use this command::
 
-    $ python manage.py createsuperuser
+    $ docker compose -f local.yml run --rm django python manage.py createsuperuser
 
 For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
 
