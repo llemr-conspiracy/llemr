@@ -253,7 +253,7 @@ msgid "alternate phone 4"
 msgstr "Alternative Telefonnumer 4"
 
 #: osler/core/models.py:229
-msgid "preferred cotact method"
+msgid "preferred contact method"
 msgstr "Bevorzugte Kontaktmethode"
 
 #: osler/core/models.py:231
