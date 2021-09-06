@@ -226,7 +226,7 @@ class Patient(Person):
     alternate_phone_4 = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone 4'))
 
     preferred_contact_method = models.ForeignKey(
-        ContactMethod, blank=True, null=True, on_delete=models.PROTECT, verbose_name=_('preferred cotact method'))
+        ContactMethod, blank=True, null=True, on_delete=models.PROTECT, verbose_name=_('preferred contact method'))
 
     email = models.EmailField(blank=True, null=True, verbose_name=_('email'))
 
