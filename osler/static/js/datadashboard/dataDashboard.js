@@ -1,13 +1,13 @@
 //generate default date range and define global variables
-let jsondata = null,
+let patientDataJson = null,
   ptCount = null,
   zipcodeColors = [],
   ethnicityColors = [],
   clinicDates = [],
   selectedEnd = [],
   selectedStart = [],
-  allConditions = [],
   selectedConditions = [],
+  isConditionSelected = false,
   commonConditions = {},
   dateRanges = {},
   defaultDateRange = "All Time"; //options include: "Current/Latest Clinic", "This Month", "This Year", "All Time"
@@ -34,17 +34,19 @@ async function fetchJsonData(urls) {
 window.addEventListener("load", (event) => {
   (async() => {
     var responses = await fetchJsonData(urls)
-    jsondata = responses[0]
+    patientDataJson = responses[0]
     clinicDates = JSON.parse(responses[1].clinic_dates)
     numZipcodes = JSON.parse(responses[1].num_zipcodes)
     numEthnicities = JSON.parse(responses[1].num_ethnicities)
+
     zipcodeColors = makeColorArray(numZipcodes, "04009A");
     ethnicityColors = makeColorArray(numEthnicities, "206A5D");
+    
     dateRangePicker()
-    console.log(zipcodeColors);
-    console.dir(jsondata)
+    console.log(zipcodeColors)
+    console.dir(patientDataJson)
     //load demographic data and generate charts  
-    makeFilteredCharts("date");
+    makeFilteredData("date");
     sortCommonConditions();
   
   })();
@@ -114,61 +116,12 @@ function dateRangePicker(){
     function (startDate, endDate) {
       selectedStart = startDate.format("YYYY-MM-DD");
       selectedEnd = endDate.format("YYYY-MM-DD");
-      makeFilteredCharts("condition");
+      makeFilteredData("date");
       sortCommonConditions();  
       
     }
   );
 };
-
-function displayQuickStats(filteredData){
-  displayPatientVisitStats();
-
-};
-
-function displayPatientVisitStats(){
-  //append total workups to DOM
-  wuCount = countWorkups(filteredData)
-  wuCountText = document.createTextNode(wuCount);
-  wuCountNode = document.getElementById("workups-count");
-  $(wuCountNode).empty();
-  wuCountNode.appendChild(wuCountText)
-
-  //append unique patient count to DOM
-  ptCount = Object.keys(filteredData).length
-  ptPercent = percentage(ptCount, wuCount)
-  ptCountText = document.createTextNode(ptCount);
-  ptCountNode = document.getElementById("unique-patient-count")
-  $(ptCountNode).empty();
-  ptCountNode.appendChild(ptCountText);
-
-  //sort patients by number of workups (visits)
-  var visits = {}
-  visits["1"] = 0
-  visits["2"] = 0
-  visits["3"] = 0
-  visits["more"] = 0
-
-  Object.values(filteredData).map(function (e) {
-    if(e.wu_dates.length > 3){
-        visits["more"] += 1
-    } 
-    else{
-      for (const visitNum in visits){
-        if(e.wu_dates.length == parseInt(visitNum)){
-          visits[visitNum] += 1
-        }
-      }
-    }
-  });
-
-  //append sorted workup number counts to DOM
-  for (const visitNum in visits){
-    percentVisits = percentage(visits[visitNum], ptCount)
-    countNode = document.getElementById(visitNum+"-workup-count")
-    countNode.innerHTML = visits[visitNum] + " (" + percentVisits + "%)"  
-  }
-}
 
 //dynamically create buttons to display data related to conditions 
 //only makes buttons for conditions represented in date range filtered data
@@ -185,9 +138,10 @@ function makeFilterByConditionButton(condition,index) {
 
   conditionSelectorButton.addEventListener("click", function(){
     selectedConditions = condition;
+    isConditionSelected = true;
     let span = document.createTextNode(condition);
     document.getElementById("display-condition").childNodes[0].replaceWith(span);
-    makeFilteredCharts("condition");
+    makeFilteredData("condition");
   });
 };
 
@@ -195,8 +149,8 @@ function makeFilterByConditionButton(condition,index) {
 document.getElementById("all-conditions-btn").addEventListener("click", function () {
   let span = document.createTextNode("Any Conditions");
   document.getElementById("display-condition").childNodes[0].replaceWith(span);
-  selectedConditions = allConditions;
-  makeFilteredCharts("condition");
+  isConditionSelected = false;
+  makeFilteredData("condition");
 });
 
 function sortCommonConditions(){
@@ -206,10 +160,10 @@ function sortCommonConditions(){
   commonConditions = {}
   //on first load, don't filter by condition
   if(Object.keys(commonConditions).length === 0){
-    filteredData = filterData(false)
+    filteredData = filterPatientData(false)
   }
   else{
-    filteredData = filterData(true)
+    filteredData = filterPatientData(true)
   }  
   if(Object.keys(filteredData).length != 0){
     Object.values(filteredData).map(function (e) {
@@ -234,10 +188,9 @@ function sortCommonConditions(){
       (condition) => (commonConditions[condition[0]] = condition[1])
     );
 
-    allConditions = Object.keys(commonConditions)
     // default display all conditions
     if(Object.keys(selectedConditions).length === 0){
-      selectedConditions = allConditions;
+      selectedConditions = Object.keys(commonConditions);
     }
     Object.keys(commonConditions).length >= 5 ? $("#see-more-container").show() : $("#see-more-container").hide();
     $("#condition-filter-btns").empty();
@@ -289,21 +242,24 @@ function displayCommonConditionsStats(commonConditions){
   }
 }
 
-function makeFilteredCharts(filterChangeOrigin) {
+function makeFilteredData(filterChangeOrigin) {
   var filteredData 
 
   //check if any data is selected if not - display error and open daterangepicker
   if (filterChangeOrigin == "date") {
-    filteredData = filterData(false);   
+    filteredData = filterPatientData(false);   
   } else if (filterChangeOrigin == "condition") {
-    filteredData = filterData(true);
+    filteredData = filterPatientData(true);
   }
 
+  //display error if no data to display
   if(Object.keys(filteredData).length == 0){  
     $("#flipFlop").modal();
   }
   else{
-    displayQuickStats(filteredData);
+    displayPatientVisitStats(filteredData);
+    displayLabsStats(filteredData);
+    
     makeAgeChart(filteredData);
     makeGenderChart(filteredData);
     makeEthnicityChart(filteredData);
@@ -312,6 +268,130 @@ function makeFilteredCharts(filterChangeOrigin) {
 
   }
 };
+
+function displayPatientVisitStats() {
+  //append total workups to DOM
+  wuCount = countWorkups(filteredData);
+  wuCountText = document.createTextNode(wuCount);
+  wuCountNode = document.getElementById("workups-count");
+  $(wuCountNode).empty();
+  wuCountNode.appendChild(wuCountText);
+
+  //append unique patient count to DOM
+  ptCount = Object.keys(filteredData).length;
+  ptPercent = percentage(ptCount, wuCount);
+  ptCountText = document.createTextNode(ptCount);
+  ptCountNode = document.getElementById("unique-patient-count");
+  $(ptCountNode).empty();
+  ptCountNode.appendChild(ptCountText);
+
+  //sort patients by number of workups (visits)
+  var visits = {};
+  visits["1"] = 0;
+  visits["2"] = 0;
+  visits["3"] = 0;
+  visits["more"] = 0;
+
+  Object.values(filteredData).map(function (e) {
+    if (e.wu_dates.length > 3) {
+      visits["more"] += 1;
+    } else {
+      for (const visitNum in visits) {
+        if (e.wu_dates.length == parseInt(visitNum)) {
+          visits[visitNum] += 1;
+        }
+      }
+    }
+  });
+
+  //append sorted workup number counts to DOM
+  for (const visitNum in visits) {
+    percentVisits = percentage(visits[visitNum], ptCount);
+    countNode = document.getElementById(visitNum + "-workup-count");
+    countNode.innerHTML = visits[visitNum] + " (" + percentVisits + "%)";
+  }
+}
+
+function displayLabsStats(filteredData) {
+  var labs_count = {};
+  var totalLabs = 0
+  for (const [key, value] of Object.entries(patientDataJson)) {
+    //check if lab was distributed to patient with the selected chronic condition if a condition is selected
+    if (isConditionSelected == true) {
+      console.log(selectedConditions);
+      if (value.conditions.includes(selectedConditions)) {
+        for (lab in value.labs) {
+          for (var i = 0; i < value.labs[lab].length; i++) {
+            if (
+              Date.parse(value.labs[lab][i]) >= Date.parse(selectedStart) &&
+              Date.parse(value.labs[lab][i]) <= Date.parse(selectedEnd)
+            ) {
+              totalLabs += 1;
+              
+              
+              if (!Object.keys(labs_count).includes(lab)) {
+                labs_count[lab] = 1;
+              } else {
+                labs_count[lab] += 1;
+              }
+            }
+          }
+        }
+      }
+    } else {
+      for (lab in value.labs) {
+        for (var i = 0; i < value.labs[lab].length; i++) {
+          if (
+            Date.parse(value.labs[lab][i]) >= Date.parse(selectedStart) &&
+            Date.parse(value.labs[lab][i]) <= Date.parse(selectedEnd)
+          ) {
+            totalLabs += 1
+            if (!Object.keys(labs_count).includes(lab)) {
+              labs_count[lab] = 1;
+            } else {
+              labs_count[lab] += 1;
+            }
+          }
+        }
+      }
+    }
+  }
+  console.log(labs_count);
+  console.log(totalLabs);
+
+  //append lab stats counts to DOM
+  var labsCountNode = document.getElementById("labs-count");
+  labsCountNode.innerHTML = String(totalLabs);
+  var counter = 1;
+  var dropdown = document.getElementById("labs-dropdown");
+  $(dropdown).empty();
+  for (const lab in labs_count) {
+    var li = document.createElement("li");
+    li.setAttribute("class", "pt-1");
+    dropdown.appendChild(li);
+
+    var spanNum = document.createElement("span");
+    spanNum.setAttribute("class", "ml-2");
+    spanNum.setAttribute("id", counter + "-lab-num");
+    li.appendChild(spanNum);
+
+    var spanName = document.createElement("span");
+
+    spanName.setAttribute("id", counter + "-lab-name");
+    li.appendChild(spanName);
+
+    var have = document.createElement("span");
+    have.innerHTML = "&nbsp;labs";
+    li.appendChild(have);
+
+    var conditionRankNode = document.getElementById(counter + "-lab-num");
+    conditionRankNode.innerHTML = "<b>" + `${labs_count[lab]} - ` + "</b>";
+    var conditionNameNode = document.getElementById(counter + "-lab-name");
+    conditionNameNode.innerHTML = "<b>" + `${lab}` + "</b>";
+
+    counter++;
+  }
+}
 
 function makeAgeChart(filteredData) {
   var sortedAges = [],
@@ -595,9 +675,9 @@ function makeInsuranceChart(filteredData) {
 //
 
 //filter all clinic data (jsondata) by selected condition and date range
-function filterData(filterByCondition){
+function filterPatientData(filterByCondition){
   filteredData = {};
-  for (const [key, value] of Object.entries(jsondata)) {    
+  for (const [key, value] of Object.entries(patientDataJson)) {    
     var filterOut = true;
     // check if condition matches selected condition
     if(filterByCondition){ 
@@ -625,7 +705,6 @@ function filterData(filterByCondition){
         }
       }); 
     }
-
     if (!filterOut) {
       filteredData[key] = value;
     }

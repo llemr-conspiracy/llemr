@@ -330,33 +330,37 @@ $(document).ready(function(){
       </div>
     </div>
     <div class="col-sm-3">
-      <div class="panel panel-default panel-modern">
-        <div class="panel-body">
-          <div class="row vertical-align">
-            <div class="col-xs-2 text-center">
-              <span class="glyphicon glyphicon-list-alt big-icon" aria-hidden="true"></span>
-            </div>
+      <div class="panel panel-default panel-modern dropdown horizontal-align">
+        <button class="panel-body btn btn-link btn-link-modern dropdown-toggle" id="____" type="button" data-toggle="dropdown">
+          <div class="row vertical-align horizontal-align">
+              <span class="glyphicon glyphicon-list-alt big-icon" ></span>
             <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge">#</div>
-              <div class="col-12 color-light">Labs ordered</div>
+              <div class="col-12 color-primary text-xlarge align-left" id="labs-count">#</div>
+              <div class="col-12 color-light">Labs Ordered</div>
             </div>
-          </div>
-        </div>
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </div> 
+        </button>
+        <ul class="dropdown-menu dropdown-content" id="labs-dropdown">
+          <!-- labs count li items appended here -->
+        </ul>
       </div>
     </div>
     <div class="col-sm-3">
-      <div class="panel panel-default panel-modern">
-        <div class="panel-body">
-          <div class="row vertical-align">
-            <div class="col-xs-2 text-center">
-              <span class="glyphicon glyphicon-pushpin big-icon" aria-hidden="true"></span>
-            </div>
+      <div class="panel panel-default panel-modern dropdown horizontal-align">
+        <button class="panel-body btn btn-link btn-link-modern dropdown-toggle" id="____" type="button" data-toggle="dropdown">
+          <div class="row vertical-align horizontal-align">
+              <span class="glyphicon glyphicon-pushpin big-icon" ></span>
             <div class="col-xs-10">
-              <div class="col-12 color-primary text-xlarge">#</div>
+              <div class="col-12 color-primary text-xlarge align-left" id="drugs-count">#</div>
               <div class="col-12 color-light">Drugs Dispensed</div>
             </div>
-          </div>
-        </div>
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </div> 
+        </button>
+        <ul class="dropdown-menu dropdown-content" id="drugs-dropdown">
+          <!-- drugs count li items appended here -->
+        </ul>
       </div>
     </div>
   </div>
