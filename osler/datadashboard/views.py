@@ -26,6 +26,7 @@ def send_patientdata_json(request):
     all_workups = query_workups_model()
     all_demographics = query_demographics_model()
     all_drugs_dispensed = query_drug_model()
+    print(all_drugs_dispensed)
     all_labs_ordered = query_labs_model()
     dashboard_data = format_patient_data(all_workups, all_demographics, all_drugs_dispensed, all_labs_ordered)
     return JsonResponse(dashboard_data)
@@ -52,18 +53,23 @@ def query_demographics_model():
 
 
 def query_drug_model():
-    '''Queries inventory and extracts dispense history models'''
-    dispense_list = {}
+    '''Queries inventory and extracts dispense history models organized by patient'''
+    drug_dispenses_by_pt = {}
     dispenses = DispenseHistory.objects.all()
     for item in dispenses:
         written_date = datetime.datetime.strftime(getattr(item, "written_datetime"), "%Y-%m-%d")
         drug = getattr(item, "drug")
         drug_name = getattr(drug, "name")
-        if(drug_name not in dispense_list):
-          dispense_list[drug_name] = [written_date]
+        drug_encounter = getattr(item, "encounter")
+        drug_patient = getattr(drug_encounter, "patient")
+        drug_patient_pk = getattr(drug_patient, "pk")      
+        if(drug_patient_pk not in drug_dispenses_by_pt):
+          drug_dispenses_by_pt[drug_patient_pk] = {}
+        if(drug_name not in drug_dispenses_by_pt[drug_patient_pk]):
+          drug_dispenses_by_pt[drug_patient_pk][drug_name] = [written_date]
         else:
-          dispense_list[drug_name].append(written_date)
-    return dispense_list
+          drug_dispenses_by_pt[drug_patient_pk][drug_name].append(written_date)
+    return drug_dispenses_by_pt
 
 
 def query_labs_model():
@@ -117,10 +123,15 @@ def format_patient_data(workups,demo,drugs,labs):
             patient_data['ethnicities'] = ethnicities
             patient_data['name'] = wu.patient.name()
             patient_data['wu_dates'] = [str(wu.written_datetime.date())]
+            if(pk in drugs):
+                patient_data['drugs'] = drugs[pk]
+            else:
+               patient_data['drugs'] = None
             if(pk in labs):
                 patient_data['labs'] = labs[pk]
             else:
                patient_data['labs'] = None
+
             dashboard_data[pk] = patient_data
         else:
             # adds repeat workups to date list to be used in js side date filtering

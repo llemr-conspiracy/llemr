@@ -259,6 +259,7 @@ function makeFilteredData(filterChangeOrigin) {
   else{
     displayPatientVisitStats(filteredData);
     displayLabsStats(filteredData);
+    displayDrugsStats(filteredData);
     
     makeAgeChart(filteredData);
     makeGenderChart(filteredData);
@@ -318,7 +319,6 @@ function displayLabsStats(filteredData) {
   for (const [key, value] of Object.entries(patientDataJson)) {
     //check if lab was distributed to patient with the selected chronic condition if a condition is selected
     if (isConditionSelected == true) {
-      console.log(selectedConditions);
       if (value.conditions.includes(selectedConditions)) {
         for (lab in value.labs) {
           for (var i = 0; i < value.labs[lab].length; i++) {
@@ -327,8 +327,6 @@ function displayLabsStats(filteredData) {
               Date.parse(value.labs[lab][i]) <= Date.parse(selectedEnd)
             ) {
               totalLabs += 1;
-              
-              
               if (!Object.keys(labs_count).includes(lab)) {
                 labs_count[lab] = 1;
               } else {
@@ -356,8 +354,6 @@ function displayLabsStats(filteredData) {
       }
     }
   }
-  console.log(labs_count);
-  console.log(totalLabs);
 
   //append lab stats counts to DOM
   var labsCountNode = document.getElementById("labs-count");
@@ -370,28 +366,98 @@ function displayLabsStats(filteredData) {
     li.setAttribute("class", "pt-1");
     dropdown.appendChild(li);
 
-    var spanNum = document.createElement("span");
-    spanNum.setAttribute("class", "ml-2");
-    spanNum.setAttribute("id", counter + "-lab-num");
-    li.appendChild(spanNum);
-
     var spanName = document.createElement("span");
-
+    spanName.setAttribute("class", "ml-1");
     spanName.setAttribute("id", counter + "-lab-name");
     li.appendChild(spanName);
 
-    var have = document.createElement("span");
-    have.innerHTML = "&nbsp;labs";
-    li.appendChild(have);
+    var spanNum = document.createElement("span");
+    spanNum.setAttribute("class", "mr-1");
+    spanNum.setAttribute("id", counter + "-lab-num");
+    li.appendChild(spanNum);
 
     var conditionRankNode = document.getElementById(counter + "-lab-num");
-    conditionRankNode.innerHTML = "<b>" + `${labs_count[lab]} - ` + "</b>";
+    conditionRankNode.innerHTML = "<b>" + `${labs_count[lab]}` + "</b>";
     var conditionNameNode = document.getElementById(counter + "-lab-name");
-    conditionNameNode.innerHTML = "<b>" + `${lab}` + "</b>";
+    conditionNameNode.innerHTML = "<b>" + `${lab}:` + "&nbsp;</b>";
 
     counter++;
   }
 }
+
+
+function displayDrugsStats(filteredData) {
+  var drugs_count = {};
+  var totalDrugs = 0;
+  for (const [key, value] of Object.entries(patientDataJson)) {
+    //check if drug was distributed to patient with the selected chronic condition if a condition is selected
+    if (isConditionSelected == true) {
+      if (value.conditions.includes(selectedConditions)) {
+        for (drug_dispense in value.drugs) {
+          for (var i = 0; i < value.drugs[drug_dispense].length; i++) {
+            if (
+              Date.parse(value.drugs[drug_dispense][i]) >= Date.parse(selectedStart) &&
+              Date.parse(value.drugs[drug_dispense][i]) <= Date.parse(selectedEnd)
+            ) {
+              totalDrugs += 1;
+              if (!Object.keys(drugs_count).includes(drug_dispense)) {
+                drugs_count[drug_dispense] = 1;
+              } else {
+                drugs_count[drug_dispense] += 1;
+              }
+            }
+          }
+        }
+      }
+    } else {
+      for (drug_dispense in value.drugs) {
+        for (var i = 0; i < value.drugs[drug_dispense].length; i++) {
+          if (
+            Date.parse(value.drugs[drug_dispense][i]) >= Date.parse(selectedStart) &&
+            Date.parse(value.drugs[drug_dispense][i]) <= Date.parse(selectedEnd)
+          ) {
+            totalDrugs += 1;
+            if (!Object.keys(drugs_count).includes(drug_dispense)) {
+              drugs_count[drug_dispense] = 1;
+            } else {
+              drugs_count[drug_dispense] += 1;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  //append drug stats counts to DOM
+  var drugsCountNode = document.getElementById("drugs-count");
+  drugsCountNode.innerHTML = String(totalDrugs);
+  var counter = 1;
+  var dropdown = document.getElementById("drugs-dropdown");
+  $(dropdown).empty();
+  for (const drug_dispense in drugs_count) {
+    var li = document.createElement("li");
+    li.setAttribute("class", "pt-1");
+    dropdown.appendChild(li);
+
+    var spanName = document.createElement("span");
+    spanName.setAttribute("class", "ml-1");
+    spanName.setAttribute("id", counter + "-drug-name");
+    li.appendChild(spanName);
+
+    var spanNum = document.createElement("span");
+    spanNum.setAttribute("class", "mr-1");
+    spanNum.setAttribute("id", counter + "-drug-num");
+    li.appendChild(spanNum);
+
+    var conditionRankNode = document.getElementById(counter + "-drug-num");
+    conditionRankNode.innerHTML = "<b>" + `${drugs_count[drug_dispense]}` + "</b>";
+    var conditionNameNode = document.getElementById(counter + "-drug-name");
+    conditionNameNode.innerHTML = "<b>" + `${drug_dispense}: ` + "&nbsp;</b>";
+
+    counter++;
+  }
+}
+
 
 function makeAgeChart(filteredData) {
   var sortedAges = [],
