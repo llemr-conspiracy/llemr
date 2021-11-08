@@ -10,11 +10,9 @@ from django.views.generic.edit import FormView, UpdateView
 from django.views.generic.list import ListView
 from django.urls import reverse
 from django.core.exceptions import ImproperlyConfigured
-from django.db.models import Prefetch
 from django.utils.http import url_has_allowed_host_and_scheme
-from django.utils.timezone import now
+from osler.users.decorators import active_permission_required
 
-from osler.workup import models as workupmodels
 from osler.referral.models import Referral, FollowupRequest, PatientContact
 from osler.vaccine.models import VaccineFollowup
 from osler.appointment.models import Appointment
@@ -226,7 +224,7 @@ class PatientCreate(FormView):
         
         group = get_active_role(self.request)
         if group_has_perm(group, 'core.activate_Patient'):
-            pt.toggle_active_status(self.request.user, get_active_role(self.request))
+            pt.toggle_active_status()
 
         return HttpResponseRedirect(reverse("demographics-create",
                                             args=(pt.id,)))
@@ -364,19 +362,13 @@ def patient_detail(request, pk):
 
     # Pass referral follow up set to page
     referral_followups = PatientContact.objects.filter(patient=pt)
-    #Pass vaccine follow up set to page
+    # Pass vaccine follow up set to page
     vaccine_followups = VaccineFollowup.objects.filter(patient=pt)
     total_followups = referral_followups.count() + len(pt.followup_set()) + vaccine_followups.count()
 
     appointments = Appointment.objects \
         .filter(patient=pt) \
         .order_by('clindate', 'clintime')
-    # d = collections.OrderedDict()
-    # for a in appointments:
-    #     if a.clindate in d:
-    #         d[a.clindate].append(a)
-    #     else:
-    #         d[a.clindate] = [a]
 
     future_date_appointments = appointments.filter(
         clindate__gte=datetime.date.today()).order_by('clindate', 'clintime')
@@ -410,6 +402,9 @@ def patient_detail(request, pk):
     can_case_manage = group_has_perm(active_role, 'core.case_manage_Patient')
     can_export_pdf = group_has_perm(active_role, 'workup.export_pdf_Workup')
 
+    pt_status = pt.get_status()
+    status_list = core_models.EncounterStatus.objects.filter(is_active=pt_status.is_active)
+
     context = {
         'zipped_ai_list': zipped_ai_list,
         'total_ais': total_ais,
@@ -423,7 +418,9 @@ def patient_detail(request, pk):
         'zipped_apt_list': zipped_apt_list,
         'can_activate': can_activate,
         'can_case_manage': can_case_manage,
-        'can_export_pdf': can_export_pdf
+        'can_export_pdf': can_export_pdf,
+        'status_list': status_list,
+        'pt_status': pt_status
     }
 
     return render(request,
@@ -436,19 +433,24 @@ def all_patients(request, title='All Patients', active=False):
     Query is written to minimize hits to the database; number of db hits can be
         see on the django debug toolbar.
     """
-    patient_list = core_models.Patient.objects.all()
-    if active:
-        #if a patient has two open encounters, they will appear twice because of 
-        #ordering by encounter, distinct() doesn't work
-        #I decided was ok because you should be inactivating encounters
-        patient_list = core_models.Patient.objects.filter(encounter__status__is_active=True)\
-            .order_by('encounter__order')
     
-    patient_list = patient_list \
-        .select_related('gender') \
-        .prefetch_related('case_managers') \
-        .prefetch_related('workup_set') \
-        .prefetch_related('actionitem_set')
+    patient_list = core_models.Patient.objects.all()
+
+    if active:
+        # no guarantee that last encounter in database is last encounter chronologically, so use python functions
+        # not ideal performance-wise, but should not be much worse than original query for patient list
+        active_pt_list = [pt for pt in patient_list if pt.get_status().is_active==True]
+        active_pt_list.sort(key=lambda pt: pt.last_encounter().order)
+        patient_list = active_pt_list
+
+    else:
+
+        patient_list = patient_list \
+            .select_related('gender') \
+            .prefetch_related('case_managers') \
+            .prefetch_related('workup_set') \
+            .prefetch_related('actionitem_set') \
+            .prefetch_related('encounter_set')
 
     # Don't know how to prefetch history
     # https://stackoverflow.com/questions/45713517/use-prefetch-related-in-django-simple-history
@@ -461,17 +463,11 @@ def all_patients(request, title='All Patients', active=False):
                     'title': title
                   })
     
-
+@active_permission_required('core.activate_Patient', raise_exception=True)
 def patient_activate_detail(request, pk, home=False):
     '''Toggle status to default active/inactive'''
     pt = get_object_or_404(core_models.Patient, pk=pk)
-    active_role = get_active_role(request)
-
-    can_activate = pt.group_can_activate(active_role)
-
-    if can_activate:
-        pt.toggle_active_status(request.user, active_role)
-
+    pt.toggle_active_status()
     if home:
         return HttpResponseRedirect(reverse("home"))
     else:
@@ -481,6 +477,16 @@ def patient_activate_detail(request, pk, home=False):
 def patient_activate_home(request, pk):
     '''Toggle active status then redirect to home'''
     return patient_activate_detail(request, pk, home=True)
+
+
+@active_permission_required('core.activate_Patient', raise_exception=True)
+def set_patient_status(request, pk):
+    '''Changes patient status'''
+    pt = get_object_or_404(core_models.Patient, pk=pk)
+    status_pk = request.POST.get('new_status')
+    status = get_object_or_404(core_models.EncounterStatus, pk=status_pk)
+    pt.set_status(status)
+    return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))
 
 
 def done_action_item(request, ai_id):

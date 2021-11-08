@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, indexes
 from django.utils.timezone import now
 from django.urls import reverse
 from django.core.validators import MinValueValidator
@@ -125,6 +125,7 @@ class Workup(Note, AttestationMixin):
             ('sign_Workup', "Can sign note")
             ]
         ordering = ['-encounter__clinic_day']
+        indexes = [models.Index(fields=['patient'])]
 
     attending = models.ForeignKey(
         settings.AUTH_USER_MODEL,

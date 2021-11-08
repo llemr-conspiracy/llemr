@@ -15,6 +15,19 @@
     <h2> <a href="{% url 'core:patient-update' pk=patient.id %}">{{ patient.last_name }}, {{ patient.first_name }} {{ patient.middle_name }}
       </a></h2>
     <p class="lead">{{ patient.age }} {% trans 'y/o' %} {{ patient.ethnicities.iterator | join:", " }} {{ patient.gender | lower }}</p>
+    {% if can_activate %}
+    <div class="form-group">
+    <a href="{% url 'core:patient-activate-detail' pk=patient.id %}">
+      <button type="submit" class="btn btn-warning">
+        {% if pt_status.is_active %}
+          {% trans 'Deactivate Patient' %}
+        {% else %}
+          {% trans 'Activate Patient' %}
+        {% endif %}
+      </button>
+    </a>
+    </div>
+    {% endif %}
     <p class="lead"><strong>{% trans 'Action Items' %}:</strong> {{ patient.actionitem_status }}</p>
     {% if settings.OSLER_DISPLAY_REFERRALS %}
       <p class="lead"><strong>{% trans 'FQHC Referral Status' %}:</strong> {{ referral_status }}</p>
@@ -23,10 +36,21 @@
     {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
       <p class="lead"><strong>{% trans 'Case Manager' %}:</strong> {{patient.case_managers.iterator | join:"; "}}
     {% endif %}
-      <p class="lead"> <strong>{% trans 'Status' %}:</strong> {{ patient.get_status.name }}
-        {% if can_activate %}
-          <a href="{% url 'core:patient-activate-detail' pk=patient.id %}"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a>
-        {% endif %}</p>
+      <p class="lead"> <strong>{% trans 'Status' %}:</strong> {{ pt_status.name }}
+      {% if can_activate and status_list.count > 1 %}
+        <div class="form-group">
+        <form method="post" class="form-inline" action="{% url 'core:set-patient-status' pk=patient.id %}">
+          {% csrf_token %}
+          <select class="form-control" id="new_status" name="new_status">
+            {% for status in status_list %}
+              <option value="{{ status.pk }}">{{ status.name }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="btn btn-primary">{% trans 'Change Status' %}</button>
+        </form>
+        </div>
+      {% endif %}
+      </p>
       {% if patient.pending_workup_set.exists %}
       {% with workup=patient.pending_workup_set.first %}
         <div class="alert alert-danger" role="alert">
