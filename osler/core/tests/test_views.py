@@ -494,7 +494,6 @@ class PatientStatusTest(TestCase):
         self.coordinator = build_user([user_factories.CaseManagerGroupFactory])
         log_in_user(self.client, self.coordinator)
 
-
     def test_activate_urls(self):
         pt = factories.PatientFactory()
 
@@ -503,6 +502,13 @@ class PatientStatusTest(TestCase):
 
         response = self.client.get(reverse('core:patient-activate-home', args=(pt.id,)))
         assert response.status_code == 302
+
+        pt.set_status(models.default_inactive_status())
+        response = self.client.post(reverse('core:set-patient-status', args=(pt.id,)),
+            data={'status': str(models.default_active_status())}
+        )
+        assert response.status_code == 302
+        assert pt.get_status() == models.default_active_status()
 
     def test_activate_perms(self):
         pt = factories.PatientFactory()

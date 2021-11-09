@@ -388,7 +388,6 @@ class Patient(Person):
         else:
             encounter = Encounter.objects.create(patient=self, clinic_day=now().date(), status=status)
 
-
     def toggle_active_status(self):
         ''' Will Activate or Inactivate the Patient'''
 
@@ -408,6 +407,9 @@ class Patient(Person):
             except MultipleObjectsReturned:
                 raise ValueError("Somehow there are multiple encounters for this patient and "
                     "clinic day. Please delete one in the admin panel or cry for help.")
+
+    def is_active(self):
+        return self.get_status().is_active
 
     def detail_url(self):
         return reverse('core:patient-detail', args=(self.pk,))
@@ -630,7 +632,6 @@ class Encounter(SortableMixin):
     Can reorder in admin panel for Active Patients page'''
     class Meta:
         ordering = ['order']
-        indexes = [models.Index(fields=['patient'])]
     
     order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
     patient = models.ForeignKey(Patient, on_delete=models.PROTECT)

@@ -402,8 +402,14 @@ def patient_detail(request, pk):
     can_case_manage = group_has_perm(active_role, 'core.case_manage_Patient')
     can_export_pdf = group_has_perm(active_role, 'workup.export_pdf_Workup')
 
-    pt_status = pt.get_status()
-    status_list = core_models.EncounterStatus.objects.filter(is_active=pt_status.is_active)
+    # only display set status form if there is more than one status to choose from
+    # and the user has activate_patient permission
+    set_status_form = None
+    display_set_status_form = False
+    if can_activate:
+        set_status_form = forms.SetStatusForm(pt=pt)
+        if set_status_form.fields['status'].queryset.count() > 1:
+            display_set_status_form = True
 
     context = {
         'zipped_ai_list': zipped_ai_list,
@@ -419,8 +425,8 @@ def patient_detail(request, pk):
         'can_activate': can_activate,
         'can_case_manage': can_case_manage,
         'can_export_pdf': can_export_pdf,
-        'status_list': status_list,
-        'pt_status': pt_status
+        'set_status_form': set_status_form,
+        'display_set_status_form': display_set_status_form
     }
 
     return render(request,
@@ -434,18 +440,14 @@ def all_patients(request, title='All Patients', active=False):
         see on the django debug toolbar.
     """
     
-    patient_list = core_models.Patient.objects.all()
-
     if active:
-        # no guarantee that last encounter in database is last encounter chronologically, so use python functions
-        # not ideal performance-wise, but should not be much worse than original query for patient list
-        active_pt_list = [pt for pt in patient_list if pt.get_status().is_active==True]
-        active_pt_list.sort(key=lambda pt: pt.last_encounter().order)
-        patient_list = active_pt_list
+        active_encounters = core_models.Encounter.objects.filter(status__is_active=True)
+        id_list = active_encounters.values_list('patient',flat=True)
+        patient_dict = core_models.Patient.objects.in_bulk(id_list)
+        patient_list = [patient_dict[id] for id in id_list]
 
     else:
-
-        patient_list = patient_list \
+        patient_list = core_models.Patient.objects.all() \
             .select_related('gender') \
             .prefetch_related('case_managers') \
             .prefetch_related('workup_set') \
@@ -483,7 +485,7 @@ def patient_activate_home(request, pk):
 def set_patient_status(request, pk):
     '''Changes patient status'''
     pt = get_object_or_404(core_models.Patient, pk=pk)
-    status_pk = request.POST.get('new_status')
+    status_pk = request.POST.get('status')
     status = get_object_or_404(core_models.EncounterStatus, pk=status_pk)
     pt.set_status(status)
     return HttpResponseRedirect(reverse("core:patient-detail", args=(pt.id,)))

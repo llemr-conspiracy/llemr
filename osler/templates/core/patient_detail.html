@@ -19,7 +19,7 @@
     <div class="form-group">
     <a href="{% url 'core:patient-activate-detail' pk=patient.id %}">
       <button type="submit" class="btn btn-warning">
-        {% if pt_status.is_active %}
+        {% if patient.is_active %}
           {% trans 'Deactivate Patient' %}
         {% else %}
           {% trans 'Activate Patient' %}
@@ -36,21 +36,11 @@
     {% if settings.OSLER_DISPLAY_CASE_MANAGERS %}
       <p class="lead"><strong>{% trans 'Case Manager' %}:</strong> {{patient.case_managers.iterator | join:"; "}}
     {% endif %}
-      <p class="lead"> <strong>{% trans 'Status' %}:</strong> {{ pt_status.name }}
-      {% if can_activate and status_list.count > 1 %}
-        <div class="form-group">
-        <form method="post" class="form-inline" action="{% url 'core:set-patient-status' pk=patient.id %}">
-          {% csrf_token %}
-          <select class="form-control" id="new_status" name="new_status">
-            {% for status in status_list %}
-              <option value="{{ status.pk }}">{{ status.name }}</option>
-            {% endfor %}
-          </select>
-          <button type="submit" class="btn btn-primary">{% trans 'Change Status' %}</button>
-        </form>
-        </div>
+      <p class="lead"> <strong>{% trans 'Status' %}:</strong> {{ patient.get_status }}</p>
+      {% if display_set_status_form %}
+        {% load crispy_forms_tags %}
+        {% crispy set_status_form %}
       {% endif %}
-      </p>
       {% if patient.pending_workup_set.exists %}
       {% with workup=patient.pending_workup_set.first %}
         <div class="alert alert-danger" role="alert">

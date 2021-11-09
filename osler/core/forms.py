@@ -1,18 +1,16 @@
 '''Forms for the Oser core components.'''
 
 from django.forms import (
-    Form, CharField, ModelForm, EmailField, CheckboxSelectMultiple,
+    Form, CharField, ModelForm, ModelChoiceField,
     ModelMultipleChoiceField, CheckboxInput, TextInput)
-from django.contrib.auth.forms import AuthenticationForm
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import Group, Permission
 
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Field, Layout, Row, Column
+from crispy_forms.layout import Submit, Field
 from crispy_forms.bootstrap import InlineCheckboxes
+from django.urls.base import reverse
 
 from osler.core import models
 from osler.users.models import User
@@ -168,3 +166,20 @@ class DocumentForm(ModelForm):
         super(DocumentForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.add_input(Submit('submit', 'Submit'))
+
+class SetStatusForm(Form):
+
+    status = ModelChoiceField(queryset=models.EncounterStatus.objects.none(), empty_label=None)
+    
+    def __init__(self, *args, **kwargs):
+        pt = kwargs.pop('pt')
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'id-set-status'
+        self.helper.form_class = 'form-inline'
+        self.helper.form_method = 'post'
+        self.helper.form_action = reverse('core:set-patient-status', args=(pt.id,))
+        self.helper.form_show_labels = False
+        self.helper.add_input(Submit('submit', 'Submit'))
+        status_qs = models.EncounterStatus.objects.filter(is_active=pt.is_active())
+        self.fields['status'].queryset = status_qs
