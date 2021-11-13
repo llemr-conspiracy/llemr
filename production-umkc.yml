@@ -32,6 +32,7 @@ services:
       - "5000:5000"
     extra_hosts:
       - "kc-med-oslerdb.kc.umkc.edu:192.168.0.2"
+      - "massmail.umsystem.edu:198.209.56.131"
 
   redis:
     image: redis:5.0
