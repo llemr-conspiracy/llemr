@@ -26,3 +26,7 @@ OSLER_DEFAULT_ADDRESS = "3151 Olive St"
 
 OSLER_ABOUT_NAME = "Help"
 OSLER_ABOUT_URL = "http://www.sojournerhealthclinic.com/?page_id=1755"
+
+# Default Encounter Status
+OSLER_DEFAULT_ACTIVE_STATUS = ('Present', True)
+OSLER_DEFAULT_INACTIVE_STATUS = ('Inactive', False)
