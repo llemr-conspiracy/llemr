@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 volumes:
   local_postgres_data: {}
@@ -16,7 +16,7 @@ services:
     volumes:
       - .:/app
     env_file:
-      - ./.envs/.local/.django
+      - ./.envs/.local/.stupoli
       - ./.envs/.local/.postgres
     command: /start
     networks:
@@ -27,7 +27,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: osler_production_postgres
+    image: osler_local_postgres
     container_name: postgres
     volumes:
       - local_postgres_data:/var/lib/postgresql/data
@@ -52,6 +52,12 @@ services:
       - django
     networks:
       - nginx_network
+
+  selenium:
+    image: selenium/standalone-chrome-debug:3.141
+    ports:
+      - 4444:4444   # Selenium
+      - 5900:5900   # VNC server
 
 networks:
   nginx_network:

@@ -1,23 +1,24 @@
-version: '3.8'
+version: "3"
 
 volumes:
-  local_postgres_data: {}
-  local_postgres_data_backups: {}
+  production_postgres_data: {}
+  production_postgres_data_backups: {}
 
 services:
   django:
     build:
       context: .
-      dockerfile: ./compose/local/django/Dockerfile
-    image: osler_local_django
+      dockerfile: ./compose/production/django/Dockerfile
+    image: osler_production_django
     container_name: django
+    ports:
+      - 5000:5000
     depends_on:
       - postgres
-    volumes:
-      - .:/app
+      - redis
     env_file:
-      - ./.envs/.local/.django
-      - ./.envs/.local/.postgres
+      - ./.envs/.production/.stupoli
+      - ./.envs/.production/.django
     command: /start
     networks:
       - nginx_network
@@ -30,10 +31,10 @@ services:
     image: osler_production_postgres
     container_name: postgres
     volumes:
-      - local_postgres_data:/var/lib/postgresql/data
-      - local_postgres_data_backups:/backups
+      - production_postgres_data:/var/lib/postgresql/data
+      - production_postgres_data_backups:/backups
     env_file:
-      - ./.envs/.local/.postgres
+      - ./.envs/.production/.postgres
     networks:
       - database_network
 
@@ -41,17 +42,20 @@ services:
     image: nginx:1.19
     container_name: nginx
     ports:
-      - 8000:8000
-    environment:
-      - NGINX_HOST=localhost
-      - NGINX_PORT=8000
-      - NGINX_REVERSE_PROXY=django:8000
+      - 80:80
+      - 443:443
+    env_file:
+      - ./.envs/.production/.nginx
     volumes:
-      - ./compose/local/nginx/templates:/etc/nginx/templates
+      - ./compose/production/nginx/templates:/etc/nginx/templates
+      - ./compose/production/nginx/certs:/etc/nginx/certs
     depends_on:
       - django
     networks:
       - nginx_network
+
+  redis:
+    image: redis:5.0
 
 networks:
   nginx_network:
