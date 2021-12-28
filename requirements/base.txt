@@ -31,7 +31,7 @@ httplib2==0.19.0
 idna==2.10
 PyPDF2==1.26.0
 pytz==2020.1
-reportlab==3.5.53
+reportlab==3.5.55
 requests==2.24.0
 six==1.15.0
 sqlparse==0.4.2
