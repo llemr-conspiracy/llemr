@@ -312,16 +312,16 @@ class LiveTestAllPatients(SeleniumLiveTestCase):
         pt_tbody = self.selenium.find_element_by_xpath(
             "//div[@class='container']/table/tbody")
         #PatientFactory makes a patient too 
-        pt1_attest_status = pt_tbody.find_element_by_xpath("//tr[6]/td[6]")
+        pt1_attest_status = pt_tbody.find_element_by_xpath("//tr[6]/td[7]")
         # attested note is marked as having been attested by the attending
-        # assert pt1_attest_status.text == str(self.users['attending'])
+        assert pt1_attest_status.text == str(self.users['attending'])
 
         # now a patient with no workup should have 'no note'
-        pt4_attest_status = pt_tbody.find_element_by_xpath("//tr[2]/td[6]")
+        pt4_attest_status = pt_tbody.find_element_by_xpath("//tr[2]/td[7]")
         assert pt4_attest_status.text == 'No Note'
 
         # now a patient with unattested workup should have 'unattested'
-        pt2_attest_status = pt_tbody.find_element_by_xpath("//tr[4]/td[6]")
+        pt2_attest_status = pt_tbody.find_element_by_xpath("//tr[4]/td[7]")
         assert pt2_attest_status.text == 'Unattested'
 
     def test_all_patients_correct_order(self):
