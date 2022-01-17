@@ -15,14 +15,9 @@ from osler.core.tests.test import SeleniumLiveTestCase
 from osler.workup import models as workup_models
 from osler.workup.tests.tests import wu_dict
 
-from osler.users.models import User
 import osler.users.tests.factories as user_factories
-import osler.core.tests.factories as core_factories
-
-import factory
 
 BASIC_FIXTURES = ['core', 'workup']
-
 
 class LiveTesting(SeleniumLiveTestCase):
     fixtures = BASIC_FIXTURES
@@ -33,14 +28,17 @@ class LiveTesting(SeleniumLiveTestCase):
         roles.
         '''
 
-        build_user(username='jrporter', password='password',
+        username = 'jrporter'
+        password = 'mb3YFSEnmc'
+
+        build_user(username=username, password=password,
             group_factories=[user_factories.CaseManagerGroupFactory,
             user_factories.VolunteerGroupFactory]
         )
 
         # any valid URL should redirect to login at this point.
         self.get_homepage()
-        self.submit_login('jrporter', 'password')
+        self.submit_login(username, password)
 
         # now we should have to choose a clinical role
         assert self.selenium.current_url == '%s%s%s' % (self.live_server_url,
@@ -99,8 +97,7 @@ class LiveTesting(SeleniumLiveTestCase):
             **ai_prototype
         )
 
-        self.selenium.get('%s%s' % (self.live_server_url,
-            reverse('core:patient-detail', args=(1,))))
+        self.get_url(reverse('core:patient-detail', args=(1,)))
 
         active_action_item_id = 'collapse8'
 
@@ -155,11 +152,9 @@ class LiveTesting(SeleniumLiveTestCase):
             # all the URLs have either one parameter or none. Try one
             # parameter first; if that fails, try with none.
             try:
-                self.selenium.get('%s%s' % (self.live_server_url,
-                                            reverse("%s%s" % ("core:", url.name), args=(1,))))
+                self.get_url(reverse("%s%s" % ("core:", url.name), args=(1,)))
             except NoReverseMatch:
-                self.selenium.get('%s%s' % (self.live_server_url,
-                                            reverse("%s%s" % ("core:", url.name))))
+                self.get_url(reverse("%s%s" % ("core:", url.name)))
 
             WebDriverWait(self.selenium, self.DEFAULT_WAIT_TIME).until(
                 EC.presence_of_element_located(
@@ -306,8 +301,7 @@ class LiveTestAllPatients(SeleniumLiveTestCase):
         self.submit_login(self.users['coordinator'].username,
                           self.password)
 
-        self.selenium.get(
-            '%s%s' % (self.live_server_url, reverse("core:all-patients")))
+        self.get_url(reverse("core:all-patients"))
 
         pt_tbody = self.selenium.find_element_by_xpath(
             "//div[@class='container']/table/tbody")
@@ -330,11 +324,9 @@ class LiveTestAllPatients(SeleniumLiveTestCase):
         self.submit_login(self.users['coordinator'].username,
             self.password)
 
-        self.selenium.get('%s%s' % (self.live_server_url,
-            reverse("core:all-patients")))
+        self.get_url(reverse("core:all-patients"))
 
-        self.selenium.get('%s%s' % (self.live_server_url,
-            reverse("core:all-patients")))
+        self.get_url(reverse("core:all-patients"))
 
         assert self.selenium.current_url == '%s%s' % (self.live_server_url,
             reverse('core:all-patients'))
@@ -381,7 +373,7 @@ class LiveTestAllPatients(SeleniumLiveTestCase):
             self.get_homepage()
             self.submit_login(self.users[provider_type].username,
                               self.password)
-            self.selenium.get('%s%s' % (self.live_server_url, reverse("home")))
+            self.get_url(reverse("home"))
 
             for tab_name in provider_tabs[provider_type]:
                 WebDriverWait(self.selenium, self.DEFAULT_WAIT_TIME).until(
@@ -414,8 +406,7 @@ class LiveTestAllPatients(SeleniumLiveTestCase):
         self.get_homepage()
         self.submit_login(self.users['coordinator'].username,
                           self.password)
-        self.selenium.get(
-            '%s%s' % (self.live_server_url, reverse("core:all-patients")))
+        self.get_url(reverse("core:all-patients"))
 
         # filter on the first patient's entire name
         filter_box = self.selenium.find_element_by_id(

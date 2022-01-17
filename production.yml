@@ -18,12 +18,11 @@ services:
       - ./.envs/.production/.django
       - ./.envs/.production/.secrets
     command: /start
-    # ports:
-    #   - 5000:5000
-    expose:
-      - 5000
     volumes:
       - production_static_files:/app/staticfiles
+    networks:
+      - nginx_network
+      - database_network
 
   postgres:
     build:
@@ -35,6 +34,8 @@ services:
       - production_postgres_data_backups:/backups
     env_file:
       - ./.envs/.production/.secrets
+    networks:
+      - database_network
 
   nginx:
     build: ./compose/production/nginx
@@ -45,6 +46,14 @@ services:
       - django
     volumes:
       - production_static_files:/app/static
+    networks:
+      - nginx_network
 
   redis:
     image: redis:5.0
+
+networks:
+  nginx_network:
+    driver: bridge
+  database_network:
+    driver: bridge
