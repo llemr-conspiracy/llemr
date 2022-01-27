@@ -7,8 +7,6 @@ from django.urls import reverse
 from django.core.management import call_command
 from django.utils.timezone import now
 
-
-
 from osler.core.tests.test_views import build_user, log_in_user
 from osler.core.models import Patient, Encounter, EncounterStatus
 

@@ -27,8 +27,6 @@ class GenderFactory(DjangoModelFactory):
     # Genders flip flop between "Male" and "Female" with each one generated
     name = factory.Sequence(lambda n: "Gender %03d" % n)
 
-
-#@mute_signals(post_save)
 class ProviderFactory(DjangoModelFactory):
     class Meta:
         model = models.Provider

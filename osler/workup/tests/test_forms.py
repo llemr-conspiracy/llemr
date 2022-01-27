@@ -89,9 +89,7 @@ class TestWorkupFormUnitAwareFields(TestCase):
         
         wu_data['weight_units'] = 'kg'
         wu_data['weight'] = 180
-        
 
-        
         form = WorkupForm(pt=self.pt,data=wu_data)
 
         self.assertTrue(form.is_valid(), msg=form.errors)
@@ -112,7 +110,6 @@ class TestWorkupFormUnitAwareFields(TestCase):
     def test_note_height_conversion(self):
 
         wu_data = model_to_dict(self.wu)
-        print(wu_data)
         # heights with cm should be the same
         wu_data['height_units'] = 'cm'
         wu_data['height'] = 180
@@ -230,8 +227,6 @@ class TestWorkupFormValidators(TestCase):
         del form_data['imaging_voucher_amount']
         form_data['got_voucher'] = True
         form_data['got_imaging_voucher'] = True
-
-        
 
         form = WorkupForm(pt=self.pt,data=form_data)
 
