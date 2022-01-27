@@ -269,15 +269,6 @@ class LiveTestAllPatients(SeleniumLiveTestCase):
             status = models.EncounterStatus.objects.first())
         wu_prototype3.patient = self.pt3
 
-
-        #original
-        #wu_prototype['encounter'] = models.Encounter.objects.create(
-           # patient=self.pt3,
-            #clinic_day=yesterday,
-           # status=models.EncounterStatus.objects.first())
-       # wu_prototype['patient'] = self.pt3
-        #workup_models.Workup.objects.create(**wu_prototype)
-
         # Give pt1 a signed workup five days ago.
         wu_prototype1.encounter = models.Encounter.objects.create(patient = self.pt1, clinic_day = earlier_this_week,
             status = models.EncounterStatus.objects.first())
