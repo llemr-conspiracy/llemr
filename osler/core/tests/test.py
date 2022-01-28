@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.test import override_settings
 from django.urls import reverse
 
 from selenium import webdriver
@@ -8,13 +9,13 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from django.utils.functional import classproperty
-
 import socket # access low-level network properties
 
+@override_settings(ALLOWED_HOSTS=["*"])
 class SeleniumLiveTestCase(StaticLiveServerTestCase):
 
     DEFAULT_WAIT_TIME = 10
+    host = '0.0.0.0'
 
     @classmethod
     def setUpClass(cls):
@@ -32,10 +33,6 @@ class SeleniumLiveTestCase(StaticLiveServerTestCase):
     def tearDownClass(cls):
         cls.selenium.quit()
         super().tearDownClass()
-
-    @classproperty
-    def live_server_url(cls):
-        return 'http://django:8000'
 
     def get_url(self, url):
         self.selenium.get('%s%s' % (self.live_server_url, url))
@@ -63,7 +60,7 @@ class SeleniumLiveTestCase(StaticLiveServerTestCase):
     def logout(self):
 
         self.get_url(reverse('account_logout'))
-        self.selenium.find_element_by_xpath('//button[@type="submit"]').click()
+        self.selenium.find_element(By.XPATH, '//button[@type="submit"]').click()
 
     def get_homepage(self):
         self.get_url('/')

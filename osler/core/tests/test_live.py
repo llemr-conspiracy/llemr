@@ -45,9 +45,11 @@ class LiveTesting(SeleniumLiveTestCase):
                                       reverse('core:choose-role'),
                                       '?next=%s' % reverse('dashboard-dispatch'))
 
-        self.selenium.find_element_by_xpath(
+        self.selenium.find_element(
+            By.XPATH,
             '//input[@name="radio-roles"]').click()
-        self.selenium.find_element_by_xpath(
+        self.selenium.find_element(
+            By.XPATH,
             '//button[@type="submit"]').click()
 
         WebDriverWait(self.selenium, self.DEFAULT_WAIT_TIME).until(
@@ -105,24 +107,24 @@ class LiveTesting(SeleniumLiveTestCase):
             EC.presence_of_element_located(
                 (By.ID, 'toggle-' + active_action_item_id)))
 
-        assert not (self.selenium.find_element_by_id(active_action_item_id)
-            .find_element_by_xpath('./ul/li')
+        assert not (self.selenium.find_element(By.ID, active_action_item_id)
+            .find_element(By.XPATH, './ul/li')
             .is_displayed())
 
-        assert len(self.selenium.find_element_by_id(active_action_item_id)
-            .find_elements_by_xpath('./ul/li')) == 2
+        assert len(self.selenium.find_element(By.ID, active_action_item_id)
+            .find_elements(By.XPATH, './ul/li')) == 2
 
-        self.selenium.find_element_by_id('toggle-' + active_action_item_id).click()
+        self.selenium.find_element(By.ID, 'toggle-' + active_action_item_id).click()
 
         WebDriverWait(self.selenium, 2).until(
             EC.presence_of_element_located(
                 (By.XPATH, '//div[@class="panel-collapse collapse in"]')))
 
-        assert len(self.selenium.find_element_by_id(active_action_item_id)
-            .find_elements_by_xpath('./ul/li')) == 2
+        assert len(self.selenium.find_element(By.ID, active_action_item_id)
+            .find_elements(By.XPATH, './ul/li')) == 2
 
-        assert (self.selenium.find_element_by_id(active_action_item_id)
-            .find_element_by_xpath('./ul/li')
+        assert (self.selenium.find_element(By.ID, active_action_item_id)
+            .find_element(By.XPATH, './ul/li')
             .is_displayed())
 
     def test_core_view_rendering(self):
@@ -144,7 +146,8 @@ class LiveTesting(SeleniumLiveTestCase):
 
             if url.name in ['choose-role', 'done-action-item',
                             'reset-action-item', 'document-detail',
-                            'document-update', 'update-action-item']:
+                            'document-update', 'update-action-item',
+                            'set-patient-status']:
                 # TODO: add test data for documents so document-detail and
                 # document-update can be tested as well.
                 continue
@@ -160,7 +163,8 @@ class LiveTesting(SeleniumLiveTestCase):
                 EC.presence_of_element_located(
                     (By.XPATH, '//div[@class="jumbotron"]')))
 
-            jumbotron_elements = self.selenium.find_elements_by_xpath(
+            jumbotron_elements = self.selenium.find_elements(
+                By.XPATH,
                 '//div[@class="jumbotron"]')
             self.assertNotEqual(
                 len(jumbotron_elements), 0,
@@ -303,19 +307,20 @@ class LiveTestAllPatients(SeleniumLiveTestCase):
 
         self.get_url(reverse("core:all-patients"))
 
-        pt_tbody = self.selenium.find_element_by_xpath(
+        pt_tbody = self.selenium.find_element(
+            By.XPATH,
             "//div[@class='container']/table/tbody")
         #PatientFactory makes a patient too 
-        pt1_attest_status = pt_tbody.find_element_by_xpath("//tr[6]/td[7]")
+        pt1_attest_status = pt_tbody.find_element(By.XPATH, "//tr[6]/td[7]")
         # attested note is marked as having been attested by the attending
         assert pt1_attest_status.text == str(self.users['attending'])
 
         # now a patient with no workup should have 'no note'
-        pt4_attest_status = pt_tbody.find_element_by_xpath("//tr[2]/td[7]")
+        pt4_attest_status = pt_tbody.find_element(By.XPATH, "//tr[2]/td[7]")
         assert pt4_attest_status.text == 'No Note'
 
         # now a patient with unattested workup should have 'unattested'
-        pt2_attest_status = pt_tbody.find_element_by_xpath("//tr[4]/td[7]")
+        pt2_attest_status = pt_tbody.find_element(By.XPATH, "//tr[4]/td[7]")
         assert pt2_attest_status.text == 'Unattested'
 
     def test_all_patients_correct_order(self):
@@ -335,11 +340,14 @@ class LiveTestAllPatients(SeleniumLiveTestCase):
 
         # test ordered by last name
         # this line does throw an error if the id-ed element does not exist
-        pt_tbody = self.selenium.find_element_by_xpath(
+        pt_tbody = self.selenium.find_element(
+            By.XPATH,
             "//div[@class='container']/table/tbody")
-        first_patient_name = pt_tbody.find_element_by_xpath(
+        first_patient_name = pt_tbody.find_element(
+            By.XPATH,
             "//tr[2]/td[1]").text
-        second_patient_name = pt_tbody.find_element_by_xpath(
+        second_patient_name = pt_tbody.find_element(
+            By.XPATH,
             "//tr[3]/td[1]").text
         assert first_patient_name <= second_patient_name
         assert first_patient_name == "Action, No I."
@@ -380,12 +388,13 @@ class LiveTestAllPatients(SeleniumLiveTestCase):
                     EC.presence_of_element_located((By.ID, tab_name)))
 
                 # examine each tab and get pk of expected and present patients.
-                tbody = self.selenium.find_element_by_xpath(
+                tbody = self.selenium.find_element(
+                    By.XPATH,
                     "//div[@id='%s']/table/tbody" % tab_name)
 
                 present_pt_names = [
                     t.get_attribute('text') for t in
-                    tbody.find_elements_by_xpath(".//tr[*]/td[1]/a")
+                    tbody.find_elements(By.XPATH, ".//tr[*]/td[1]/a")
                 ]
 
                 expected_pt_names = [p.name() for p in tab_patients[tab_name]]
@@ -409,17 +418,18 @@ class LiveTestAllPatients(SeleniumLiveTestCase):
         self.get_url(reverse("core:all-patients"))
 
         # filter on the first patient's entire name
-        filter_box = self.selenium.find_element_by_id(
+        filter_box = self.selenium.find_element(
+            By.ID,
             'all-patients-filter-input')
         filter_box.send_keys(self.pt1.first_name)
 
         def get_present_pt_names():
             """Grab all the present & displayed names from the table
             """
-            tbody = self.selenium.find_element_by_id('all-patients-table')
+            tbody = self.selenium.find_element(By.ID, 'all-patients-table')
             return [
                 t.get_attribute('text') for t in
-                tbody.find_elements_by_xpath(".//tr[*]/td[1]/a")
+                tbody.find_elements(By.XPATH, ".//tr[*]/td[1]/a")
                 if t.is_displayed()
             ]
 
