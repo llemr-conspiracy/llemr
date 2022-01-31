@@ -45,7 +45,7 @@ services:
     depends_on:
       - django
     volumes:
-      - production_static_files:/app/static
+      - production_static_files:/app/staticfiles
     networks:
       - nginx_network
 
