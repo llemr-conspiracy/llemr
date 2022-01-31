@@ -20,11 +20,9 @@ services:
       dockerfile: ./compose/production/django/Dockerfile
     image: osler_production_django
     depends_on:
-      # - postgres
       - redis
     env_file:
       - ./.envs/.production/.django
-      - ./.envs/.production/.postgres
       - ./.envs/.production/.secrets
       - ./.envs/.production/.umkc
     command: /start

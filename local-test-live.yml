@@ -15,16 +15,14 @@ services:
       - 8000:8000
     depends_on:
       - postgres
-      - selenium
     volumes:
       - .:/app
     env_file:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres
     command: /start
-    networks:
-      - selenium_network
-      - database_network
+    links:
+      - selenium
 
   postgres:
     build:
@@ -37,36 +35,10 @@ services:
       - local_postgres_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
-    networks:
-      - database_network
 
   selenium:
     container_name: selenium
-    image: selenium/standalone-chrome-debug:3.141
+    image: selenium/standalone-chrome:4.1.0
     ports:
       - 4444:4444   # Selenium
       - 5900:5900   # VNC server
-    networks:
-      - selenium_network
-
-  docs:
-    image: osler_local_docs
-    container_name: docs
-    build:
-      context: .
-      dockerfile: ./compose/local/docs/Dockerfile
-    env_file:
-      - ./.envs/.local/.django
-    volumes:
-      - ./docs:/docs:z
-      - ./config:/app/config:z
-      - ./osler:/app/osler:z
-    ports:
-      - "7000:7000"
-    command: /start-docs
-
-networks:
-  database_network:
-    driver: bridge
-  selenium_network:
-    driver: bridge
