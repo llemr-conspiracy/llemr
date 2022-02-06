@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import Q
 from django.utils.timezone import now
 from django.urls import reverse
 from django.core.validators import MinValueValidator
