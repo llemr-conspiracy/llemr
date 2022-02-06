@@ -10,6 +10,7 @@ from osler.labs.api.views import LabViewSet
 from osler.inventory.api.views import DrugViewSet
 from osler.workup.api.views import WorkupViewSet
 from osler.core.api.views import PatientViewSet
+from osler.surveys.api.views import SurveyViewSet, QuestionViewSet, ChoiceViewSet
 
 if settings.DEBUG:
     router = DefaultRouter()
@@ -24,6 +25,10 @@ router.register("demographics", DemographicsViewSet)
 router.register("referrals", ReferralViewSet)
 router.register("labs", LabViewSet)
 router.register("drugs", DrugViewSet)
+router.register("surveys", SurveyViewSet)
+router.register("questions", QuestionViewSet)
+router.register("choices", ChoiceViewSet)
 
 app_name = "api"
 urlpatterns = router.urls
+

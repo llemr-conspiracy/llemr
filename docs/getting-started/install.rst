@@ -7,25 +7,25 @@ Basic (Local) Installation
 
 #. Install Docker_ per the Docker instructions for your platform.
 
-#. Download the `latest release of Osler <https://github.com/oslerproject/osler/releases/latest>`_ either with git:
+#. Download the `latest release of LLEMR <https://github.com/llemr-conspiracy/llemr/releases/latest>`_ either with git:
 
 	.. code-block:: console
 
-		$ git clone https://github.com/oslerproject/osler.git
+		$ git clone https://github.com/llemr-conspiracy/llemr.git
 		$ git checkout v2.1.0
 
 	or as a zip:
 
 	.. code-block:: console
 
-		$ wget https://github.com/oslerproject/osler/archive/v2.1.0.tar.gz
+		$ wget https://github.com/llemr-conspiracy/llemr/archive/refs/tags/v2.1.0.tar.gz
 		$ tar -xvzf v2.1.0.tar.gz
 
 #. Build the docker containers (this could take a while):
 
     .. code-block:: console
 
-    	$ docker-compose -f local.yml build
+    	$ docker compose -f local.yml build
 
 #. Create a superuser for yourself:
 
@@ -33,7 +33,6 @@ Basic (Local) Installation
 
 		$ docker-compose -f local.yml run --rm django python manage.py createsuperuser
 		Starting postgres         ... done
-		Starting osler_selenium_1 ... done
 		Creating osler_django_run ... done
 		PostgreSQL is available
 		Username: osleruser
@@ -48,7 +47,7 @@ Basic (Local) Installation
 
 		$ docker-compose -f local.yml up
 		[...]
-		django      | Django version 3.1.2, using settings 'config.settings.local'
+		django      | Django version 3.2.10, using settings 'config.settings.local'
 		django      | Development server is running at http://0.0.0.0:8000/
 		django      | Using the Werkzeug debugger (http://werkzeug.pocoo.org/)
 		django      | Quit the server with CONTROL-C.
@@ -62,9 +61,9 @@ As above, except use a production Docker compose file for all `docker-compose` i
 
 .. code-block:: console
 
-	$ docker-compose -f production.yml build
-	$ docker-compose -f production.yml run --rm django python manage.py createsuperuser
-	$ docker-compose -f production.yml up
+	$ docker compose -f production.yml build
+	$ docker compose -f production.yml run --rm django python manage.py createsuperuser
+	$ docker compose -f production.yml up
 
 
 .. _Docker: https://docs.docker.com/get-docker/

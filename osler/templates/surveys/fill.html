@@ -1,0 +1,115 @@
+{% extends "core/base.html" %}
+{% load bootstrap4 %}
+
+{% block title %}
+Osler: Surveys
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+/*not sure how to compile project.scss so putting this here for now*/
+.required-star {
+  color: red;
+  font-size: large;
+}
+</style>
+
+<div class="container">
+  <div class="row">
+      <h2>{{ survey.title }}</h2>
+      <p>{{ survey.description }}</p>
+      {% if read_only%}
+          <a href="{% url 'surveys:responses' id=survey.id%}"><p>see responses</p></a>
+      {%elif patient%}
+        <p><em>filling for {{patient.name}}</em></p>
+      {% endif %}
+      <hr>
+  </div>
+  <div class="row">
+  {% if read_only%}
+    <form action="#" method='POST'>
+    <fieldset disabled>
+  {% else %}
+    <form action="{%  url 'surveys:submit' pid=patient.id id=survey.id %}" method='POST'>
+  {% endif %}
+    {% csrf_token %}
+    {% for question in survey.questions.all %}
+    <div class="form-group">
+      <label for="{{question.id}}">{{question.question}}
+        {% if question.required%}
+          <span class="required-star">*</span>
+        {% endif %}
+      </label>
+      {% if question.question_type == QuestionType.TEXT %}
+        <input type="{{ question.input_type }}" name="{{ question.id }}" class="form-control" placeholder="{{ question.required|yesno:'Required,Optional' }}" {{ question.required|yesno:'required,' }}>
+      {% elif question.question_type == QuestionType.TEXTAREA %}      
+        <textarea class="form-control" name="{{ question.id }}" rows="3"></textarea>
+      {% elif question.question_type == QuestionType.CHECKBOXES %}
+        {% for choice in question.choices.all %}
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" name="{{question.id}}" value="{{choice.text}}">
+            {{choice.text}}
+          </label>
+        </div>
+        {% endfor #choices %}
+        {% if question.allow_other %}
+          <div class="checkbox form-inline">
+            <label>
+              <input type="checkbox" name="{{question.id}}" value="Other: ">
+              Other:
+              <input type="text"  class='form-control other-text' placeholder="Please specify">
+            </label>
+          </div>
+        {% endif %}
+      {% elif question.question_type == QuestionType.RADIOS %}
+        {% for choice in question.choices.all %}
+        <div class="radio">
+          <label>
+            <input type="radio" name="{{question.id}}" value="{{choice.text}}">
+            {{choice.text}}
+          </label>
+        </div>
+        {% endfor #choices %}
+        {% if question.allow_other %}
+          <div class="radio form-inline">
+            <label>
+              <input type="radio" name="{{question.id}}" value="Other: ">
+              Other:
+              <input type="text"  class='form-control other-text' placeholder="Please specify">
+            </label>
+          </div>
+        {% endif %}
+      {% endif %}
+    </div>
+    {% endfor # questions %} 
+    {% if not read_only%}
+      <button type="submit" class="btn btn-primary">Submit</button>
+    {% endif %}
+  {% if read_only%}
+    </fieldset>
+  {% endif %}
+  </form>
+</div>
+
+<script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".other-text").forEach(other => {
+      other.addEventListener("input", (e) => {
+        //get the selection, whether its a checkbox or radio button
+        let selection = e.target.parentElement.getElementsByTagName('input')[0];
+        if (e.target.value.length > 0) {
+          //set the value of the other box to the value of the input
+          selection.checked = true;
+          selection.value = e.target.value;
+        } else {
+          selection.checked = false;
+        }
+      })
+    })
+  })
+</script>
+
+{% endblock %}

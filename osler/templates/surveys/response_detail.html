@@ -1,0 +1,42 @@
+{% extends "core/base.html" %}
+{% load bootstrap4 %}
+
+{% block title %}
+Osler: Survey Responses
+{% endblock %}
+
+{% block header %}
+
+<div class="container">
+	<h1>{{ response.survey.title }} - Response</h1>
+
+<p class="lead">for <em><a href="{% url 'core:patient-detail' pk=response.encounter.patient.id %}">{{ response.encounter.patient.name }}</a></em></p>
+  </a></p>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    {% for key, value in answer_dict.items %}
+    <div class="col-md-12">
+      <strong> {{key}} </strong>
+      <ul>
+        {% for ans in value %}
+          {% if value|length > 1 %} 
+            <li>{{ ans }}</li>
+          {% else %}
+            {{ans}}
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+    <div class="col-md-12">
+      <hr>
+      <p class='text-muted'>Filled on {{response.created_at}} by {{response.author}} ({{response.author_role}}) </p>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -37,6 +37,8 @@ USE_L10N = True
 USE_TZ = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
 LOCALE_PATHS = [str(ROOT_DIR / "locale")]
+# https://docs.djangoproject.com/en/dev/ref/settings/#default-auto-field
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # DATABASES
 # -----------------------------------------------------------------------------
@@ -89,6 +91,7 @@ LOCAL_APPS = [
     'osler.vaccine.apps.VaccineConfig',
     'osler.labs.apps.LabsConfig',
     'osler.inventory.apps.InventoryConfig',
+    'osler.surveys.apps.SurveysConfig',
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -377,9 +380,10 @@ OSLER_ATTENDANCE_URL = env(
     "OSLER_ATTENDANCE_URL",
     default="https://www.wustl.edu",
 )
+OSLER_ABOUT_URL = "https://github.com/oslerproject/osler"
 OSLER_GITHUB_URL = "https://github.com/oslerproject/osler"
 OSLER_ABOUT_URL = "https://github.com/oslerproject/osler"
 
-#Default Encounter Status 
+# Default Encounter Status
 OSLER_DEFAULT_ACTIVE_STATUS = ('Active', True)
 OSLER_DEFAULT_INACTIVE_STATUS = ('Inactive', False)

@@ -226,7 +226,7 @@ class Patient(Person):
     alternate_phone_4 = models.CharField(max_length=40, blank=True, null=True, verbose_name=_('alternate phone 4'))
 
     preferred_contact_method = models.ForeignKey(
-        ContactMethod, blank=True, null=True, on_delete=models.PROTECT, verbose_name=_('preferred cotact method'))
+        ContactMethod, blank=True, null=True, on_delete=models.PROTECT, verbose_name=_('preferred contact method'))
 
     email = models.EmailField(blank=True, null=True, verbose_name=_('email'))
 
@@ -375,11 +375,7 @@ class Patient(Person):
         return phones
 
     def last_encounter(self):
-        if Encounter.objects.filter(patient=self.pk).exists():
-            last_encounter = Encounter.objects.filter(patient=self.pk).order_by('clinic_day').last()
-            return last_encounter
-        else:
-            return None
+        return Encounter.objects.filter(patient=self.pk).order_by('clinic_day').last()
 
     def status(self):
         if self.last_encounter() is not None:
@@ -387,28 +383,39 @@ class Patient(Person):
         else:
             return default_inactive_status()
 
-    def toggle_active_status(self, user, group):
-        ''' Will Activate or Inactivate the Patient'''
-        user_has_group = user.groups.filter(pk=group.pk).exists()
-        if user_has_group and self.group_can_activate(group):
-            #active encounter then inactivate
-            if self.status().is_active:
-                encounter = self.last_encounter()
-                encounter.status = default_inactive_status()
-                encounter.save()
-            else:
-                #no active encounter today, get today's encounter and activate or make new active
-                try:
-                    encounter, created = Encounter.objects.get_or_create(patient=self, clinic_day=now().date(),
-                        defaults={'status': default_active_status()})
-                    if not encounter.status.is_active:
-                        encounter.status = default_active_status()
-                        encounter.save()
-                except MultipleObjectsReturned:
-                    raise ValueError("Somehow there are multiple encounters for this patient and "
-                        "clinc day. Please delete one in the admin panel or cry for help.")
+    def set_status(self, status):
+        '''Set patient status'''
+
+        encounter = self.last_encounter()
+        if encounter is not None:
+            encounter.status = status
+            encounter.save()
+        # if there is no previous encounter, then create a new one with the desired status
         else:
-            raise ValueError("Special permissions are required to change active status.")
+            encounter = Encounter.objects.create(patient=self, clinic_day=now().date(), status=status)
+
+    def toggle_active_status(self):
+        ''' Will Activate or Inactivate the Patient'''
+
+        # active encounter then inactivate
+        if self.status().is_active:
+            encounter = self.last_encounter()
+            encounter.status = default_inactive_status()
+            encounter.save()
+        else:
+            # no active encounter today, get today's encounter and activate or make new active
+            try:
+                encounter, created = Encounter.objects.get_or_create(patient=self, clinic_day=now().date(),
+                    defaults={'status': default_active_status()})
+                if not encounter.status.is_active:
+                    encounter.status = default_active_status()
+                    encounter.save()
+            except MultipleObjectsReturned:
+                raise ValueError("Somehow there are multiple encounters for this patient and "
+                    "clinic day. Please delete one in the admin panel or cry for help.")
+
+    def is_active(self):
+        return self.status().is_active
 
     def detail_url(self):
         return reverse('core:patient-detail', args=(self.pk,))
@@ -628,7 +635,7 @@ def default_inactive_status():
 class Encounter(SortableMixin):
     '''Encounter for a given patient on a given clinic day
     Holds all associated notes, labs, etc performed on that clinic day
-    Can reoder in admin panel for Active Patients page'''
+    Can reorder in admin panel for Active Patients page'''
     class Meta:
         ordering = ['order']
     
