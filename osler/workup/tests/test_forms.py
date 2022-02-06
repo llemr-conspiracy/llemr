@@ -13,14 +13,12 @@ from osler.core.models import Gender
 from osler.workup.models import DiagnosisType, Workup
 from osler.workup.forms import WorkupForm
 
-
 from osler.workup.tests.tests import note_dict
 from osler.workup.tests import factories as workup_factories
 
 from osler.core.tests.test_views import build_user
 import osler.users.tests.factories as user_factories
 import osler.core.tests.factories as core_factories
-
 
 from itertools import chain, combinations
 
@@ -43,11 +41,8 @@ class TestWorkupFormUnitAwareFields(TestCase):
     def setUp(self):
         DiagnosisType.objects.create(name='Cardiovascular')
 
-       
         wu = workup_factories.WorkupFactory()
-
         self.wu = wu
-
         self.pt = wu.patient
 
     def test_vitals_no_units_error(self):

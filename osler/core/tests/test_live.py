@@ -16,7 +16,6 @@ from osler.workup import models as workup_models
 
 from django.forms.models import model_to_dict
 
-
 import osler.workup.tests.factories as workup_factories
 
 from osler.users.models import User

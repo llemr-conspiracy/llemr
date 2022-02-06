@@ -131,8 +131,6 @@ class ViewsExistTest(TestCase):
     def test_workup_submit(self):
         """verify we can submit a valid workup as a signer and nonsigner"""
 
-        
-
         for role in user_factories.all_roles:
             pt = core_factories.PatientFactory()
             user = build_user([role])
@@ -150,7 +148,6 @@ class ViewsExistTest(TestCase):
             del wu_data['signer']
             del wu_data['signed_date']
             del wu_data['attending']
-            
 
             wu_data["temperature_units"] = "F"
             wu_data["height_units"] = "cm"

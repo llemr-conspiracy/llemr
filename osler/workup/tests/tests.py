@@ -112,10 +112,8 @@ class TestEmailForUnsignedNotes(TestCase):
         wu_unsigned = workup_factories.WorkupFactory(attending = self.user)
        
         call_command('unsigned_wu_notify')
-        print(mail.outbox[0].subject)
 
         assert len(mail.outbox) == 1
-        print(mail.outbox[0].subject)
 
         assert mail.outbox[0].subject == '[OSLER] 1 Unattested Notes'
         
