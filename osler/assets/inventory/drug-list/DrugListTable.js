@@ -70,8 +70,6 @@ function DrugListTable(props) {
               year: 'numeric', month: 'short', day: 'numeric'
             }
 
-            return<strong>test :)</strong>
-
             let today = new Date();
             if (dt <= Date().Now) {
               return <strong style="color: red;">dt.toLocaleString(options)</strong>
