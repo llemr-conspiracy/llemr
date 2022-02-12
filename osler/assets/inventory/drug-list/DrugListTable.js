@@ -74,7 +74,7 @@ function DrugListTable(props) {
             if (dt <= now) {
               return <strong style={{color: "red"}}>{dt.toLocaleString(options)}</strong>
             }
-            if (dt <= now.plus({ days: 30})) {
+            if (dt <= now.plus({ days: 60})) {
               return <strong style={{color: "gold"}}>{dt.toLocaleString(options)}</strong>
             }
             return dt.toLocaleString(options);
