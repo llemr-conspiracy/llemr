@@ -62,23 +62,21 @@ function DrugListTable(props) {
           Header: 'Lot Number',
           accessor: 'lot_number',
         },
-        { 
+        {
           Header: 'Expiration Date',
           accessor: (row) => {
             const dt = DateTime.fromISO(row.expiration_date);
+            const now = DateTime.now();
             const options = {
               year: 'numeric', month: 'short', day: 'numeric'
             }
-
-            let today = new Date();
-            if (dt <= Date().Now) {
-              return <strong style="color: red;">dt.toLocaleString(options)</strong>
+            
+            if (dt <= now) {
+              return <strong style={{color: "red"}}>{dt.toLocaleString(options)}</strong>
             }
-
-            /** put an if statement here to check if it is expired
-             *  and make the text red and bold if so
-             */
-
+            if (dt <= now.plus({ days: 30})) {
+              return <strong style={{color: "gold"}}>{dt.toLocaleString(options)}</strong>
+            }
             return dt.toLocaleString(options);
           },
           sortType: expirationDateComparator,
@@ -92,7 +90,7 @@ function DrugListTable(props) {
           accessor: (row) => {
             return (
               <Button variant="success" onClick={e => handleShow(e, row)}>
-                Dispense
+                <strong>Dispense</strong>
               </Button>
             );
           },
