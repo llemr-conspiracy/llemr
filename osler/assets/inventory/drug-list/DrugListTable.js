@@ -109,7 +109,7 @@ function DrugListTable(props) {
 
   useEffect(() => {
     const drugUrl = "/api/drugs";
-    const ptUrl = "/api/patients/?fields=name,age,gender,id";
+    const ptUrl = "/api/patients/?fields=name,age,gender,id&filter=active";
     Promise.all([
       axios.get(drugUrl), 
       axios.get(ptUrl),
