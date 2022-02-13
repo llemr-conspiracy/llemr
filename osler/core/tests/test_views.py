@@ -7,13 +7,8 @@ from django.urls import reverse
 from django.utils.timezone import now
 from django.core import mail
 from django.core.management import call_command
-from django.contrib.auth import get_user_model
-from django.conf import settings
 
 from osler.core import models
-from osler.followup.models import ContactResult
-from osler.referral.models import Referral, FollowupRequest, PatientContact
-from osler.referral.forms import PatientContactForm
 
 from osler.core.tests import factories
 from osler.users.tests import factories as user_factories
@@ -326,6 +321,57 @@ class IntakeTest(TestCase):
         # new patients should be marked as inactive
         assert not new_pt.status().is_active
 
+class AllPatientsTest(TestCase):
+    
+    fixtures = ['core']
+
+    def setUp(self):
+        user = build_user()
+        log_in_user(self.client, user)
+        self.pt1 = models.Patient.objects.first()
+        self.pt2 = factories.PatientFactory()
+        today = now().date()
+        self.e1 = factories.EncounterFactory(patient=self.pt1, clinic_day=today, status=models.default_active_status())
+        self.e2 = factories.EncounterFactory(patient=self.pt2, clinic_day=today, status=models.default_active_status())
+
+    def donttest_all_patients_list(self):
+        url = reverse('core:all-patients')
+        response = self.client.get(url)
+        pt_list = response.context['object_list']
+        assert self.pt1 in pt_list
+        assert self.pt2 in pt_list
+        assert pt_list.count() == 2
+
+    def donttest_active_patients_list(self):
+        url = reverse('dashboard-active')
+
+        self.e1.order = 2
+        self.e2.order = 1
+        self.e1.save()
+        self.e2.save()
+
+        # all patients should be active and returned in order of their active encounters
+        response = self.client.get(url)
+        pt_list = response.context['object_list']
+        assert len(pt_list) == 2
+        assert pt_list[0] == self.pt2
+        assert pt_list[1] == self.pt1
+
+        # the active status of a patient should be determined by their last encounter
+        yesterday = (now() - datetime.timedelta(days=1)).date()
+        e3 = factories.EncounterFactory(patient=self.pt2, clinic_day=yesterday, status=models.default_inactive_status())
+
+        response = self.client.get(url)
+        pt_list = response.context['object_list']
+        assert len(pt_list) == 2
+
+        # only active patients should be returned
+        self.pt1.set_status(models.default_inactive_status())
+
+        response = self.client.get(url)
+        pt_list = response.context['object_list']
+        assert len(pt_list) == 1
+        assert pt_list[0] == self.pt2
 
 class ActionItemTest(TestCase):
 
@@ -448,7 +494,6 @@ class PatientStatusTest(TestCase):
         self.coordinator = build_user([user_factories.CaseManagerGroupFactory])
         log_in_user(self.client, self.coordinator)
 
-
     def test_activate_urls(self):
         pt = factories.PatientFactory()
 
@@ -458,21 +503,25 @@ class PatientStatusTest(TestCase):
         response = self.client.get(reverse('core:patient-activate-home', args=(pt.id,)))
         assert response.status_code == 302
 
+        pt.set_status(models.default_inactive_status())
+        response = self.client.post(reverse('core:set-patient-status', args=(pt.id,)),
+            data={'status': str(models.default_active_status())}
+        )
+        assert response.status_code == 302
+        assert pt.status() == models.default_active_status()
+
     def test_activate_perms(self):
         pt = factories.PatientFactory()
         assert not pt.status().is_active
 
-        pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
+        response = self.client.get(reverse('core:patient-activate-home', args=(pt.id,)))
+        assert response.status_code == 302
         assert pt.status().is_active
 
         attending = build_user([user_factories.AttendingGroupFactory])
-        with self.assertRaises(ValueError):
-            pt.toggle_active_status(attending, attending.groups.first())
-        assert pt.status().is_active
-
-        volunteer = build_user([user_factories.VolunteerGroupFactory])
-        with self.assertRaises(ValueError):
-            pt.toggle_active_status(volunteer, volunteer.groups.first())
+        log_in_user(self.client,attending)
+        response = self.client.get(reverse('core:patient-activate-home', args=(pt.id,)))
+        assert response.status_code == 403
         assert pt.status().is_active
 
     def test_activate_encounter_logic(self):
@@ -480,18 +529,18 @@ class PatientStatusTest(TestCase):
         #new patient should have no encounters
         assert not models.Encounter.objects.filter(patient=pt).exists()
 
-        pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
+        pt.toggle_active_status()
         #now one encounter today that is active
         assert len(models.Encounter.objects.filter(patient=pt)) == 1
         encounter = models.Encounter.objects.get(patient=pt)
         assert encounter.clinic_day == now().date()
         assert encounter.status.is_active
         
-        pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
+        pt.toggle_active_status()
         #inactivates that encounter
         assert not models.Encounter.objects.get(patient=pt).status.is_active
 
-        pt.toggle_active_status(self.coordinator, self.coordinator.groups.first())
+        pt.toggle_active_status()
         #reactivates that encounter but doesn't make a new one
         assert models.Encounter.objects.get(patient=pt).status.is_active
         assert len(models.Encounter.objects.filter(patient=pt)) == 1

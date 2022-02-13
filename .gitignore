@@ -277,5 +277,6 @@ osler/media/
 .envs/*
 !.envs/.local/
 !.envs/.production/
-
+.envs/.production/.secrets
+compose/production/nginx/certs
 .vscode/*

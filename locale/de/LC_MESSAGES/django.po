@@ -253,7 +253,7 @@ msgid "alternate phone 4"
 msgstr "Alternative Telefonnumer 4"
 
 #: osler/core/models.py:229
-msgid "preferred cotact method"
+msgid "preferred contact method"
 msgstr "Bevorzugte Kontaktmethode"
 
 #: osler/core/models.py:231
@@ -508,12 +508,12 @@ msgstr "Transportmittel"
 #: osler/demographics/views.py:77
 #, python-format
 msgid "Clash in this field. Database entry is '%s'"
-msgstr "[Missing Translation]"
+msgstr "[Missing Translation] '%s'"
 
 #: osler/demographics/views.py:84
 #, python-format
 msgid "Clash in this field. You entered '%s'"
-msgstr "[Missing Translation]"
+msgstr "[Missing Translation] '%s'"
 
 #: osler/followup/apps.py:7 osler/followup/views.py:32
 #: osler/templates/core/patient_detail.html:81
@@ -2701,7 +2701,7 @@ msgstr "[Missing Translation]"
 #: osler/workup/models.py:83
 #, python-format
 msgid "%(title)s on at %(written)s by %(auth)s"
-msgstr "[Missing Translation]"
+msgstr "[Missing Translation] %(title)s %(written)s %(auth)s"
 
 #: osler/workup/models.py:135
 msgid "Which attending saw the patient?"

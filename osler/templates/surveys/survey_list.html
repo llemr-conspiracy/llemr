@@ -1,0 +1,50 @@
+{% extends "core/base.html" %}
+{% load bootstrap4 %}
+
+{% block title %}
+Osler: Surveys
+{% endblock %}
+
+{% block header %}
+<div class="container">
+	<h1>Surveys
+  <a class="btn btn-primary" style="margin-left: 2rem;" href="{% url 'surveys:create'%}" role="button">
+    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+    Create New
+  </a>
+  </h1>
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    {% if object_list %}
+      <table class="table" id="all-patients-table">
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Responses</th>
+            <th>Latest Response</th>
+        </td>
+      </tr>
+      {% for survey in object_list %}
+        <tr>
+          <td><a href="{% url 'surveys:view' id=survey.id %}">{{ survey.title }}</a></td>
+          <td>{{ survey.description }}</td>
+          <td>{{ survey.responses.count }}
+            {% if survey.responses.count > 0 %}
+              <a href="{% url 'surveys:responses' id=survey.id %}">(view)</a>
+            {% endif %}
+          </td>
+          <td>{{ survey.responses.latest.created_at }}</td>
+        </tr>
+      {% endfor %}
+      </table>
+     {% else %}
+      <p>No surveys have been created yet.</p>
+     {% endif %}
+  </div>
+</div>
+{% endblock %}

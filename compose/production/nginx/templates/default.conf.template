@@ -1,0 +1,37 @@
+# first we declare our upstream server, which is our Gunicorn application
+upstream django_server {
+    # docker will automatically resolve this to the correct address
+    # because we use the same name as the service: "django"
+    server  ${NGINX_REVERSE_PROXY};
+}
+
+# now we declare our main server
+server {
+    listen  ${NGINX_PORT};
+    server_name  ${NGINX_HOST};
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name ${NGINX_HOST};
+
+    ssl_certificate           /etc/nginx/certs/cert.crt;
+    ssl_certificate_key       /etc/nginx/certs/cert.key;
+
+    ssl_session_cache  builtin:1000  shared:SSL:10m;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4;
+    ssl_prefer_server_ciphers on;
+
+    location / {
+        # everything is passed to Gunicorn
+        proxy_pass http://django_server;
+        proxy_pass_request_headers on;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Port $server_port; 
+    }
+}
