@@ -142,9 +142,9 @@ function DrugListTable(props) {
                 <Modal.Body>
                     <Form.Group>
                       <Form.Label>
-                        How much <strong>{state.drug.name} {state.drug.dose} {state.drug.unit}</strong> would you like to dispense?
+                        How much <strong>{state.drug.name} {state.drug.dose} {state.drug.unit}</strong> would you like to dispense? (Current stock: <strong>{state.drug.stock}</strong>)
                       </Form.Label>
-                      <Form.Control type="number" min={1} max={state.drug.stock} placeholder={1} name="num" id="num"/>
+                      <Form.Control type="number" min={1} max={state.drug.stock} defaultValue={1} name="num" id="num"/>
                     </Form.Group>
                     <Form.Group>
                       <Form.Control type="hidden" name="pk" id="pk" value={state.drug.id} />

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import pdb
 
 from django.shortcuts import redirect
 from django.views.generic.edit import FormView, UpdateView
@@ -131,10 +132,11 @@ class DrugUpdate(UpdateView):
 def drug_dispense(request):
     pk = request.POST['pk']
     num = request.POST['num']
+
     patient_pk = request.POST['patient_pk']
     drug = models.Drug.objects.get(pk=pk)
     patient = Patient.objects.get(pk=patient_pk)
-    can_dispense = drug.can_dispense(int(num))
+    can_dispense = drug.can_dispense(int(num))    
 
     if can_dispense:
         models.DispenseHistory.objects.create(drug=drug,
