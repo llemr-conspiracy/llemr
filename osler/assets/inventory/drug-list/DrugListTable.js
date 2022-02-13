@@ -90,7 +90,7 @@ function DrugListTable(props) {
           accessor: (row) => {
             return (
               <Button variant="success" onClick={e => handleShow(e, row)}>
-                <strong>Dispense</strong>
+                Dispense
               </Button>
             );
           },
@@ -109,7 +109,7 @@ function DrugListTable(props) {
 
   useEffect(() => {
     const drugUrl = "/api/drugs";
-    const ptUrl = "/api/patients/?fields=name,age,gender,id&filter=active";
+    const ptUrl = "/api/patients/?fields=name,age,gender,id";
     Promise.all([
       axios.get(drugUrl), 
       axios.get(ptUrl),
