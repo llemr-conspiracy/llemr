@@ -40,7 +40,7 @@ function DrugListTable(props) {
       let cols = [
         {
           Header: 'Name',
-          accessor: 'name',
+          accessor: (row) => <a href={"drug/update/" + row.id}>{row.name}</a>,
           sortType: nameComparator,
         },
         {
@@ -142,7 +142,7 @@ function DrugListTable(props) {
                 <Modal.Body>
                     <Form.Group>
                       <Form.Label>
-                        How much <strong>{state.drug.name} {state.drug.dose} {state.drug.unit}</strong> would you like to dispense? (Current stock: <strong>{state.drug.stock}</strong>)
+                        How much <strong>{state.drug.dose} {state.drug.unit}</strong> would you like to dispense? (Current stock: <strong>{state.drug.stock}</strong>)
                       </Form.Label>
                       <Form.Control type="number" min={1} max={state.drug.stock} defaultValue={1} name="num" id="num"/>
                     </Form.Group>
