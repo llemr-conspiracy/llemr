@@ -75,38 +75,64 @@ class TestLiveInventory(SeleniumLiveTestCase):
         generates random inputs for the dispense form and makes sure no errors are caused
         creates a test drug and tests dispense form with random inputs, deletes test drug when test ends
         """
-        # just use a drug on the first page that was generated from the example_drugs fixture
-        testDrug = DrugFactory(name = "testDrug")
 
-        # generate random inputs for dispense form
+        # TODO 
+        # some tests should try to dispense more than the available stock 
+        # and make sure it is not allowed (should I make a separate test for this?)
+
+
+        # PROBLEM
+        # for some reason this test returns an IntegrityError every OTHER time it is run, why is this?
+        # (when it doesn't return an error, it gets to the breakpoint perfectly fine)
+
+        user = build_user(password='password',
+                       group_factories=[user_factories.AttendingGroupFactory])
+        self.get_homepage()
+        self.submit_login(user.username, 'password')
+        self.get_url(reverse('inventory:drug-list'))   # go to the inventory page
+
+        testDrug = inventory_models.Drug.objects.all()[0]
+
+        # generate random input for dispense form
         testDrugStock = testDrug.stock
         dispenseAmount = math.floor(random.random()*testDrugStock)
-
-        activePatients = models.Patient.objects.filter("active")   # I don't think this works
-        randomPatientIndex = math.floor(random.random()*len(activePatients))
 
         # TEST THE RANDOM INPUTS
         # click dispense form button
         self.selenium.find_element(
-            By.XPATH,
-            "/html[@class='no-js']/body/div[@id='root']/div[@class='container']/div/table[@id='drug-list-table']/tbody/tr[1]/td[8]/button[@class='btn btn-success']"
+            By.CSS_SELECTOR,
+            "body table button"
         ).click()
-        
+
         # enter amount to dispense
+        self.selenium.find_element(By.ID, "num").clear()
         self.selenium.find_element(By.ID, "num").send_keys(dispenseAmount)
 
-        # choose random patient from dropdown  (we want to pick the randomPatientIndexth entry in the dropdown list)
-        # do I need to to open the dropdown first?
+        # choose random patient from dropdown 
         patientDropdown = self.selenium.find_element(By.ID, "patient_pk")
         patientDropdown.click()
-        patientChoices = patientDropdown.self.selenium.find_element(By.NAME, "option")
-        patientChoices[randomPatientIndex].click()
+        breakpoint()
 
-        # click the dispense button (will the test automatically fail if a django error is caused?)
+        # TODO need to manually activate some patients so that the dropdown isn't empty
+
+        # TODO get a list of the choices in the dropdown
+        patientChoices = self.selenium.find_elements(
+            By.CSS_SELECTOR,
+            ""
+        )
+
+        # TODO choose a random patient choice
+
+
+        # TODO click the dispense button (test will automatically fail if a django error is caused bc these tests fail if a baskend error occurs)
         self.selenium.find_element(
-            By.XPATH,
-            "/html/body/div[5]/div/div/form/div[3]/button[2]"
+            By.CSS_SELECTOR,
+            "div.modal-content div button.btn-primary"
         ).click()
+
+        # TODO ensure that the updated stock is the correct amount
+
+
 
     """
     More test ideas:
