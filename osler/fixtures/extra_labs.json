@@ -1,0 +1,5194 @@
+[
+    {
+        "model": "labs.labtype",
+        "pk": 1,
+        "fields": {
+            "name": "BMP"
+        }
+    },
+    {
+        "model": "labs.labtype",
+        "pk": 2,
+        "fields": {
+            "name": "A1c"
+        }
+    },
+    {
+        "model": "labs.labtype",
+        "pk": 3,
+        "fields": {
+            "name": "CBC"
+        }
+    },
+    {
+        "model": "labs.labtype",
+        "pk": 4,
+        "fields": {
+            "name": "BMP"
+        }
+    },
+    {
+        "model": "labs.labtype",
+        "pk": 5,
+        "fields": {
+            "name": "ABG"
+        }
+    },
+    {
+        "model": "labs.labtype",
+        "pk": 6,
+        "fields": {
+            "name": "CMM"
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 1,
+        "fields": {
+            "patient": 1,
+            "lab_time": "2019-03-19",
+            "lab_type": 1,
+            "encounter": 1
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 5,
+        "fields": {
+            "patient": 6,
+            "lab_time": "2019-08-12",
+            "lab_type": 4,
+            "encounter": 5
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 6,
+        "fields": {
+            "patient": 6,
+            "lab_time": "2020-09-12",
+            "lab_type": 3,
+            "encounter": 6
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 7,
+        "fields": {
+            "patient": 6,
+            "lab_time": "2020-04-14",
+            "lab_type": 3,
+            "encounter": 7
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 8,
+        "fields": {
+            "patient": 6,
+            "lab_time": "2019-07-07",
+            "lab_type": 5,
+            "encounter": 8
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 9,
+        "fields": {
+            "patient": 6,
+            "lab_time": "2018-11-13",
+            "lab_type": 5,
+            "encounter": 9
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 10,
+        "fields": {
+            "patient": 6,
+            "lab_time": "2018-12-09",
+            "lab_type": 1,
+            "encounter": 10
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 11,
+        "fields": {
+            "patient": 6,
+            "lab_time": "2018-08-03",
+            "lab_type": 4,
+            "encounter": 11
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 12,
+        "fields": {
+            "patient": 7,
+            "lab_time": "2019-09-03",
+            "lab_type": 6,
+            "encounter": 12
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 13,
+        "fields": {
+            "patient": 7,
+            "lab_time": "2020-07-23",
+            "lab_type": 6,
+            "encounter": 13
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 14,
+        "fields": {
+            "patient": 7,
+            "lab_time": "2018-09-12",
+            "lab_type": 2,
+            "encounter": 14
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 15,
+        "fields": {
+            "patient": 7,
+            "lab_time": "2018-09-15",
+            "lab_type": 5,
+            "encounter": 15
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 16,
+        "fields": {
+            "patient": 7,
+            "lab_time": "2020-07-10",
+            "lab_type": 3,
+            "encounter": 16
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 17,
+        "fields": {
+            "patient": 7,
+            "lab_time": "2020-12-01",
+            "lab_type": 5,
+            "encounter": 17
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 18,
+        "fields": {
+            "patient": 7,
+            "lab_time": "2020-12-31",
+            "lab_type": 1,
+            "encounter": 18
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 19,
+        "fields": {
+            "patient": 7,
+            "lab_time": "2019-12-26",
+            "lab_type": 1,
+            "encounter": 19
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 20,
+        "fields": {
+            "patient": 8,
+            "lab_time": "2018-01-12",
+            "lab_type": 2,
+            "encounter": 20
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 21,
+        "fields": {
+            "patient": 8,
+            "lab_time": "2020-12-10",
+            "lab_type": 6,
+            "encounter": 21
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 22,
+        "fields": {
+            "patient": 8,
+            "lab_time": "2019-10-19",
+            "lab_type": 3,
+            "encounter": 22
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 23,
+        "fields": {
+            "patient": 8,
+            "lab_time": "2019-11-26",
+            "lab_type": 2,
+            "encounter": 23
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 24,
+        "fields": {
+            "patient": 8,
+            "lab_time": "2018-08-24",
+            "lab_type": 6,
+            "encounter": 24
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 25,
+        "fields": {
+            "patient": 8,
+            "lab_time": "2019-07-03",
+            "lab_type": 4,
+            "encounter": 25
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 26,
+        "fields": {
+            "patient": 9,
+            "lab_time": "2020-03-30",
+            "lab_type": 6,
+            "encounter": 26
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 27,
+        "fields": {
+            "patient": 9,
+            "lab_time": "2019-01-15",
+            "lab_type": 6,
+            "encounter": 27
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 28,
+        "fields": {
+            "patient": 9,
+            "lab_time": "2019-11-23",
+            "lab_type": 4,
+            "encounter": 28
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 29,
+        "fields": {
+            "patient": 9,
+            "lab_time": "2018-06-08",
+            "lab_type": 1,
+            "encounter": 29
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 30,
+        "fields": {
+            "patient": 9,
+            "lab_time": "2018-04-12",
+            "lab_type": 6,
+            "encounter": 30
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 31,
+        "fields": {
+            "patient": 9,
+            "lab_time": "2019-08-03",
+            "lab_type": 3,
+            "encounter": 31
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 32,
+        "fields": {
+            "patient": 9,
+            "lab_time": "2020-04-25",
+            "lab_type": 1,
+            "encounter": 32
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 33,
+        "fields": {
+            "patient": 9,
+            "lab_time": "2021-01-12",
+            "lab_type": 4,
+            "encounter": 33
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 34,
+        "fields": {
+            "patient": 10,
+            "lab_time": "2020-05-05",
+            "lab_type": 2,
+            "encounter": 34
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 35,
+        "fields": {
+            "patient": 10,
+            "lab_time": "2020-05-02",
+            "lab_type": 2,
+            "encounter": 35
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 36,
+        "fields": {
+            "patient": 10,
+            "lab_time": "2019-11-06",
+            "lab_type": 6,
+            "encounter": 36
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 37,
+        "fields": {
+            "patient": 10,
+            "lab_time": "2019-02-10",
+            "lab_type": 6,
+            "encounter": 37
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 38,
+        "fields": {
+            "patient": 10,
+            "lab_time": "2021-05-28",
+            "lab_type": 3,
+            "encounter": 38
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 39,
+        "fields": {
+            "patient": 10,
+            "lab_time": "2021-02-13",
+            "lab_type": 4,
+            "encounter": 39
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 40,
+        "fields": {
+            "patient": 11,
+            "lab_time": "2020-04-04",
+            "lab_type": 6,
+            "encounter": 40
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 41,
+        "fields": {
+            "patient": 11,
+            "lab_time": "2020-01-18",
+            "lab_type": 1,
+            "encounter": 41
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 42,
+        "fields": {
+            "patient": 11,
+            "lab_time": "2018-07-30",
+            "lab_type": 3,
+            "encounter": 42
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 43,
+        "fields": {
+            "patient": 11,
+            "lab_time": "2019-12-13",
+            "lab_type": 2,
+            "encounter": 43
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 44,
+        "fields": {
+            "patient": 11,
+            "lab_time": "2020-03-25",
+            "lab_type": 4,
+            "encounter": 44
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 45,
+        "fields": {
+            "patient": 11,
+            "lab_time": "2021-03-08",
+            "lab_type": 1,
+            "encounter": 45
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 46,
+        "fields": {
+            "patient": 11,
+            "lab_time": "2019-06-14",
+            "lab_type": 5,
+            "encounter": 46
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 47,
+        "fields": {
+            "patient": 12,
+            "lab_time": "2019-10-26",
+            "lab_type": 2,
+            "encounter": 47
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 48,
+        "fields": {
+            "patient": 12,
+            "lab_time": "2020-02-06",
+            "lab_type": 1,
+            "encounter": 48
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 49,
+        "fields": {
+            "patient": 12,
+            "lab_time": "2019-02-27",
+            "lab_type": 1,
+            "encounter": 49
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 50,
+        "fields": {
+            "patient": 12,
+            "lab_time": "2018-04-19",
+            "lab_type": 5,
+            "encounter": 50
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 51,
+        "fields": {
+            "patient": 12,
+            "lab_time": "2019-03-22",
+            "lab_type": 6,
+            "encounter": 51
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 52,
+        "fields": {
+            "patient": 13,
+            "lab_time": "2018-10-11",
+            "lab_type": 3,
+            "encounter": 52
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 53,
+        "fields": {
+            "patient": 13,
+            "lab_time": "2021-06-29",
+            "lab_type": 1,
+            "encounter": 53
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 54,
+        "fields": {
+            "patient": 13,
+            "lab_time": "2019-10-26",
+            "lab_type": 3,
+            "encounter": 54
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 55,
+        "fields": {
+            "patient": 13,
+            "lab_time": "2018-08-28",
+            "lab_type": 5,
+            "encounter": 55
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 56,
+        "fields": {
+            "patient": 13,
+            "lab_time": "2019-06-03",
+            "lab_type": 2,
+            "encounter": 56
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 57,
+        "fields": {
+            "patient": 13,
+            "lab_time": "2019-05-04",
+            "lab_type": 6,
+            "encounter": 57
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 58,
+        "fields": {
+            "patient": 13,
+            "lab_time": "2018-12-14",
+            "lab_type": 3,
+            "encounter": 58
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 59,
+        "fields": {
+            "patient": 14,
+            "lab_time": "2018-07-21",
+            "lab_type": 5,
+            "encounter": 59
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 60,
+        "fields": {
+            "patient": 14,
+            "lab_time": "2018-12-08",
+            "lab_type": 5,
+            "encounter": 60
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 61,
+        "fields": {
+            "patient": 14,
+            "lab_time": "2020-08-25",
+            "lab_type": 5,
+            "encounter": 61
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 62,
+        "fields": {
+            "patient": 15,
+            "lab_time": "2021-01-17",
+            "lab_type": 1,
+            "encounter": 62
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 63,
+        "fields": {
+            "patient": 15,
+            "lab_time": "2019-04-05",
+            "lab_type": 3,
+            "encounter": 63
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 64,
+        "fields": {
+            "patient": 15,
+            "lab_time": "2020-04-18",
+            "lab_type": 2,
+            "encounter": 64
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 65,
+        "fields": {
+            "patient": 15,
+            "lab_time": "2020-02-24",
+            "lab_type": 5,
+            "encounter": 65
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 66,
+        "fields": {
+            "patient": 15,
+            "lab_time": "2018-09-07",
+            "lab_type": 6,
+            "encounter": 66
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 67,
+        "fields": {
+            "patient": 15,
+            "lab_time": "2021-05-26",
+            "lab_type": 1,
+            "encounter": 67
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 68,
+        "fields": {
+            "patient": 15,
+            "lab_time": "2020-11-05",
+            "lab_type": 4,
+            "encounter": 68
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 69,
+        "fields": {
+            "patient": 16,
+            "lab_time": "2021-06-12",
+            "lab_type": 6,
+            "encounter": 69
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 70,
+        "fields": {
+            "patient": 16,
+            "lab_time": "2019-02-12",
+            "lab_type": 1,
+            "encounter": 70
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 71,
+        "fields": {
+            "patient": 16,
+            "lab_time": "2019-11-17",
+            "lab_type": 6,
+            "encounter": 71
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 72,
+        "fields": {
+            "patient": 16,
+            "lab_time": "2020-03-17",
+            "lab_type": 1,
+            "encounter": 72
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 73,
+        "fields": {
+            "patient": 16,
+            "lab_time": "2019-12-06",
+            "lab_type": 3,
+            "encounter": 73
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 74,
+        "fields": {
+            "patient": 16,
+            "lab_time": "2020-12-31",
+            "lab_type": 4,
+            "encounter": 74
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 75,
+        "fields": {
+            "patient": 17,
+            "lab_time": "2021-05-27",
+            "lab_type": 4,
+            "encounter": 75
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 76,
+        "fields": {
+            "patient": 17,
+            "lab_time": "2020-04-23",
+            "lab_type": 6,
+            "encounter": 76
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 77,
+        "fields": {
+            "patient": 17,
+            "lab_time": "2019-12-28",
+            "lab_type": 6,
+            "encounter": 77
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 78,
+        "fields": {
+            "patient": 17,
+            "lab_time": "2018-03-20",
+            "lab_type": 1,
+            "encounter": 78
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 79,
+        "fields": {
+            "patient": 18,
+            "lab_time": "2019-11-08",
+            "lab_type": 6,
+            "encounter": 79
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 80,
+        "fields": {
+            "patient": 18,
+            "lab_time": "2018-12-09",
+            "lab_type": 3,
+            "encounter": 80
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 81,
+        "fields": {
+            "patient": 19,
+            "lab_time": "2018-08-25",
+            "lab_type": 4,
+            "encounter": 81
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 82,
+        "fields": {
+            "patient": 19,
+            "lab_time": "2021-07-03",
+            "lab_type": 2,
+            "encounter": 82
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 83,
+        "fields": {
+            "patient": 19,
+            "lab_time": "2019-08-03",
+            "lab_type": 4,
+            "encounter": 83
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 84,
+        "fields": {
+            "patient": 19,
+            "lab_time": "2018-09-29",
+            "lab_type": 1,
+            "encounter": 84
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 85,
+        "fields": {
+            "patient": 19,
+            "lab_time": "2021-03-08",
+            "lab_type": 3,
+            "encounter": 85
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 86,
+        "fields": {
+            "patient": 19,
+            "lab_time": "2021-06-14",
+            "lab_type": 5,
+            "encounter": 86
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 87,
+        "fields": {
+            "patient": 19,
+            "lab_time": "2019-01-31",
+            "lab_type": 1,
+            "encounter": 87
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 88,
+        "fields": {
+            "patient": 19,
+            "lab_time": "2021-04-25",
+            "lab_type": 1,
+            "encounter": 88
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 89,
+        "fields": {
+            "patient": 20,
+            "lab_time": "2021-06-15",
+            "lab_type": 4,
+            "encounter": 89
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 90,
+        "fields": {
+            "patient": 20,
+            "lab_time": "2020-11-12",
+            "lab_type": 4,
+            "encounter": 90
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 91,
+        "fields": {
+            "patient": 20,
+            "lab_time": "2020-03-27",
+            "lab_type": 4,
+            "encounter": 91
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 92,
+        "fields": {
+            "patient": 21,
+            "lab_time": "2019-11-29",
+            "lab_type": 2,
+            "encounter": 92
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 93,
+        "fields": {
+            "patient": 21,
+            "lab_time": "2019-09-16",
+            "lab_type": 5,
+            "encounter": 93
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 94,
+        "fields": {
+            "patient": 22,
+            "lab_time": "2021-04-11",
+            "lab_type": 6,
+            "encounter": 94
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 95,
+        "fields": {
+            "patient": 22,
+            "lab_time": "2021-04-13",
+            "lab_type": 6,
+            "encounter": 95
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 96,
+        "fields": {
+            "patient": 22,
+            "lab_time": "2019-07-13",
+            "lab_type": 3,
+            "encounter": 96
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 97,
+        "fields": {
+            "patient": 22,
+            "lab_time": "2019-05-12",
+            "lab_type": 5,
+            "encounter": 97
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 98,
+        "fields": {
+            "patient": 22,
+            "lab_time": "2021-01-29",
+            "lab_type": 2,
+            "encounter": 98
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 99,
+        "fields": {
+            "patient": 22,
+            "lab_time": "2018-11-20",
+            "lab_type": 3,
+            "encounter": 99
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 100,
+        "fields": {
+            "patient": 22,
+            "lab_time": "2019-03-21",
+            "lab_type": 3,
+            "encounter": 100
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 101,
+        "fields": {
+            "patient": 22,
+            "lab_time": "2019-12-25",
+            "lab_type": 3,
+            "encounter": 101
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 102,
+        "fields": {
+            "patient": 22,
+            "lab_time": "2018-04-19",
+            "lab_type": 4,
+            "encounter": 102
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 103,
+        "fields": {
+            "patient": 23,
+            "lab_time": "2018-01-11",
+            "lab_type": 1,
+            "encounter": 103
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 104,
+        "fields": {
+            "patient": 23,
+            "lab_time": "2018-10-16",
+            "lab_type": 1,
+            "encounter": 104
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 105,
+        "fields": {
+            "patient": 23,
+            "lab_time": "2019-08-07",
+            "lab_type": 1,
+            "encounter": 105
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 106,
+        "fields": {
+            "patient": 23,
+            "lab_time": "2020-02-08",
+            "lab_type": 2,
+            "encounter": 106
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 107,
+        "fields": {
+            "patient": 23,
+            "lab_time": "2019-11-15",
+            "lab_type": 5,
+            "encounter": 107
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 108,
+        "fields": {
+            "patient": 23,
+            "lab_time": "2018-01-11",
+            "lab_type": 2,
+            "encounter": 108
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 109,
+        "fields": {
+            "patient": 23,
+            "lab_time": "2020-11-03",
+            "lab_type": 6,
+            "encounter": 109
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 110,
+        "fields": {
+            "patient": 24,
+            "lab_time": "2018-06-30",
+            "lab_type": 5,
+            "encounter": 110
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 111,
+        "fields": {
+            "patient": 24,
+            "lab_time": "2020-05-30",
+            "lab_type": 2,
+            "encounter": 111
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 112,
+        "fields": {
+            "patient": 24,
+            "lab_time": "2018-05-15",
+            "lab_type": 3,
+            "encounter": 112
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 113,
+        "fields": {
+            "patient": 24,
+            "lab_time": "2019-04-25",
+            "lab_type": 6,
+            "encounter": 113
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 114,
+        "fields": {
+            "patient": 25,
+            "lab_time": "2019-05-14",
+            "lab_type": 1,
+            "encounter": 114
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 115,
+        "fields": {
+            "patient": 25,
+            "lab_time": "2019-11-06",
+            "lab_type": 1,
+            "encounter": 115
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 116,
+        "fields": {
+            "patient": 25,
+            "lab_time": "2021-05-01",
+            "lab_type": 4,
+            "encounter": 116
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 117,
+        "fields": {
+            "patient": 25,
+            "lab_time": "2018-11-26",
+            "lab_type": 6,
+            "encounter": 117
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 118,
+        "fields": {
+            "patient": 25,
+            "lab_time": "2020-05-25",
+            "lab_type": 6,
+            "encounter": 118
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 119,
+        "fields": {
+            "patient": 25,
+            "lab_time": "2020-12-02",
+            "lab_type": 1,
+            "encounter": 119
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 120,
+        "fields": {
+            "patient": 26,
+            "lab_time": "2019-01-07",
+            "lab_type": 3,
+            "encounter": 120
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 121,
+        "fields": {
+            "patient": 26,
+            "lab_time": "2018-12-14",
+            "lab_type": 5,
+            "encounter": 121
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 122,
+        "fields": {
+            "patient": 27,
+            "lab_time": "2018-05-15",
+            "lab_type": 3,
+            "encounter": 122
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 123,
+        "fields": {
+            "patient": 28,
+            "lab_time": "2018-07-09",
+            "lab_type": 3,
+            "encounter": 123
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 124,
+        "fields": {
+            "patient": 28,
+            "lab_time": "2019-11-29",
+            "lab_type": 4,
+            "encounter": 124
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 125,
+        "fields": {
+            "patient": 28,
+            "lab_time": "2020-12-30",
+            "lab_type": 1,
+            "encounter": 125
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 126,
+        "fields": {
+            "patient": 29,
+            "lab_time": "2019-05-09",
+            "lab_type": 1,
+            "encounter": 126
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 127,
+        "fields": {
+            "patient": 29,
+            "lab_time": "2020-08-18",
+            "lab_type": 3,
+            "encounter": 127
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 128,
+        "fields": {
+            "patient": 29,
+            "lab_time": "2018-08-21",
+            "lab_type": 4,
+            "encounter": 128
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 129,
+        "fields": {
+            "patient": 29,
+            "lab_time": "2021-05-04",
+            "lab_type": 4,
+            "encounter": 129
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 130,
+        "fields": {
+            "patient": 29,
+            "lab_time": "2019-05-07",
+            "lab_type": 5,
+            "encounter": 130
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 131,
+        "fields": {
+            "patient": 29,
+            "lab_time": "2020-10-07",
+            "lab_type": 2,
+            "encounter": 131
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 132,
+        "fields": {
+            "patient": 29,
+            "lab_time": "2018-12-24",
+            "lab_type": 3,
+            "encounter": 132
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 133,
+        "fields": {
+            "patient": 29,
+            "lab_time": "2019-11-19",
+            "lab_type": 3,
+            "encounter": 133
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 134,
+        "fields": {
+            "patient": 30,
+            "lab_time": "2019-01-28",
+            "lab_type": 1,
+            "encounter": 134
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 135,
+        "fields": {
+            "patient": 30,
+            "lab_time": "2018-02-07",
+            "lab_type": 1,
+            "encounter": 135
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 136,
+        "fields": {
+            "patient": 30,
+            "lab_time": "2019-01-08",
+            "lab_type": 4,
+            "encounter": 136
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 137,
+        "fields": {
+            "patient": 30,
+            "lab_time": "2018-07-28",
+            "lab_type": 6,
+            "encounter": 137
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 138,
+        "fields": {
+            "patient": 30,
+            "lab_time": "2019-11-30",
+            "lab_type": 2,
+            "encounter": 138
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 139,
+        "fields": {
+            "patient": 30,
+            "lab_time": "2019-02-17",
+            "lab_type": 4,
+            "encounter": 139
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 140,
+        "fields": {
+            "patient": 30,
+            "lab_time": "2021-04-25",
+            "lab_type": 3,
+            "encounter": 140
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 141,
+        "fields": {
+            "patient": 30,
+            "lab_time": "2019-08-01",
+            "lab_type": 1,
+            "encounter": 141
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 142,
+        "fields": {
+            "patient": 31,
+            "lab_time": "2019-08-31",
+            "lab_type": 4,
+            "encounter": 142
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 143,
+        "fields": {
+            "patient": 31,
+            "lab_time": "2018-11-23",
+            "lab_type": 6,
+            "encounter": 143
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 144,
+        "fields": {
+            "patient": 31,
+            "lab_time": "2018-10-19",
+            "lab_type": 3,
+            "encounter": 144
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 145,
+        "fields": {
+            "patient": 31,
+            "lab_time": "2018-09-16",
+            "lab_type": 1,
+            "encounter": 145
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 146,
+        "fields": {
+            "patient": 31,
+            "lab_time": "2020-10-17",
+            "lab_type": 5,
+            "encounter": 146
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 147,
+        "fields": {
+            "patient": 31,
+            "lab_time": "2019-02-20",
+            "lab_type": 2,
+            "encounter": 147
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 148,
+        "fields": {
+            "patient": 31,
+            "lab_time": "2020-04-10",
+            "lab_type": 4,
+            "encounter": 148
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 149,
+        "fields": {
+            "patient": 31,
+            "lab_time": "2021-01-13",
+            "lab_type": 2,
+            "encounter": 149
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 150,
+        "fields": {
+            "patient": 31,
+            "lab_time": "2019-04-28",
+            "lab_type": 4,
+            "encounter": 150
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 151,
+        "fields": {
+            "patient": 32,
+            "lab_time": "2019-06-04",
+            "lab_type": 3,
+            "encounter": 151
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 152,
+        "fields": {
+            "patient": 32,
+            "lab_time": "2020-04-25",
+            "lab_type": 6,
+            "encounter": 152
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 153,
+        "fields": {
+            "patient": 32,
+            "lab_time": "2018-07-18",
+            "lab_type": 5,
+            "encounter": 153
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 154,
+        "fields": {
+            "patient": 32,
+            "lab_time": "2019-10-29",
+            "lab_type": 3,
+            "encounter": 154
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 155,
+        "fields": {
+            "patient": 32,
+            "lab_time": "2019-04-05",
+            "lab_type": 6,
+            "encounter": 155
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 156,
+        "fields": {
+            "patient": 32,
+            "lab_time": "2021-01-27",
+            "lab_type": 5,
+            "encounter": 156
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 157,
+        "fields": {
+            "patient": 32,
+            "lab_time": "2020-02-11",
+            "lab_type": 4,
+            "encounter": 157
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 158,
+        "fields": {
+            "patient": 32,
+            "lab_time": "2020-06-09",
+            "lab_type": 5,
+            "encounter": 158
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 159,
+        "fields": {
+            "patient": 32,
+            "lab_time": "2019-12-13",
+            "lab_type": 4,
+            "encounter": 159
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 160,
+        "fields": {
+            "patient": 33,
+            "lab_time": "2020-08-05",
+            "lab_type": 5,
+            "encounter": 160
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 161,
+        "fields": {
+            "patient": 33,
+            "lab_time": "2020-08-14",
+            "lab_type": 1,
+            "encounter": 161
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 162,
+        "fields": {
+            "patient": 33,
+            "lab_time": "2020-04-17",
+            "lab_type": 6,
+            "encounter": 162
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 163,
+        "fields": {
+            "patient": 33,
+            "lab_time": "2019-01-14",
+            "lab_type": 6,
+            "encounter": 163
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 164,
+        "fields": {
+            "patient": 33,
+            "lab_time": "2019-09-25",
+            "lab_type": 6,
+            "encounter": 164
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 165,
+        "fields": {
+            "patient": 33,
+            "lab_time": "2020-09-04",
+            "lab_type": 4,
+            "encounter": 165
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 166,
+        "fields": {
+            "patient": 33,
+            "lab_time": "2020-03-08",
+            "lab_type": 5,
+            "encounter": 166
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 167,
+        "fields": {
+            "patient": 33,
+            "lab_time": "2019-08-20",
+            "lab_type": 3,
+            "encounter": 167
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 168,
+        "fields": {
+            "patient": 33,
+            "lab_time": "2018-01-21",
+            "lab_type": 6,
+            "encounter": 168
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 169,
+        "fields": {
+            "patient": 33,
+            "lab_time": "2020-08-07",
+            "lab_type": 3,
+            "encounter": 169
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 170,
+        "fields": {
+            "patient": 34,
+            "lab_time": "2019-03-22",
+            "lab_type": 3,
+            "encounter": 170
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 171,
+        "fields": {
+            "patient": 34,
+            "lab_time": "2021-05-20",
+            "lab_type": 6,
+            "encounter": 171
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 172,
+        "fields": {
+            "patient": 34,
+            "lab_time": "2019-08-02",
+            "lab_type": 4,
+            "encounter": 172
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 173,
+        "fields": {
+            "patient": 34,
+            "lab_time": "2019-04-23",
+            "lab_type": 5,
+            "encounter": 173
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 174,
+        "fields": {
+            "patient": 35,
+            "lab_time": "2018-12-01",
+            "lab_type": 6,
+            "encounter": 174
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 175,
+        "fields": {
+            "patient": 36,
+            "lab_time": "2020-02-21",
+            "lab_type": 6,
+            "encounter": 175
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 176,
+        "fields": {
+            "patient": 36,
+            "lab_time": "2018-06-13",
+            "lab_type": 2,
+            "encounter": 176
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 177,
+        "fields": {
+            "patient": 36,
+            "lab_time": "2019-09-02",
+            "lab_type": 1,
+            "encounter": 177
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 178,
+        "fields": {
+            "patient": 36,
+            "lab_time": "2020-05-18",
+            "lab_type": 4,
+            "encounter": 178
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 179,
+        "fields": {
+            "patient": 36,
+            "lab_time": "2019-04-28",
+            "lab_type": 4,
+            "encounter": 179
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 180,
+        "fields": {
+            "patient": 36,
+            "lab_time": "2020-07-20",
+            "lab_type": 2,
+            "encounter": 180
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 181,
+        "fields": {
+            "patient": 36,
+            "lab_time": "2019-11-14",
+            "lab_type": 5,
+            "encounter": 181
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 182,
+        "fields": {
+            "patient": 36,
+            "lab_time": "2019-04-27",
+            "lab_type": 2,
+            "encounter": 182
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 183,
+        "fields": {
+            "patient": 36,
+            "lab_time": "2020-05-25",
+            "lab_type": 2,
+            "encounter": 183
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 184,
+        "fields": {
+            "patient": 36,
+            "lab_time": "2018-08-20",
+            "lab_type": 6,
+            "encounter": 184
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 185,
+        "fields": {
+            "patient": 37,
+            "lab_time": "2020-02-22",
+            "lab_type": 5,
+            "encounter": 185
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 186,
+        "fields": {
+            "patient": 37,
+            "lab_time": "2019-08-17",
+            "lab_type": 4,
+            "encounter": 186
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 187,
+        "fields": {
+            "patient": 37,
+            "lab_time": "2019-04-11",
+            "lab_type": 2,
+            "encounter": 187
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 188,
+        "fields": {
+            "patient": 37,
+            "lab_time": "2020-04-03",
+            "lab_type": 3,
+            "encounter": 188
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 189,
+        "fields": {
+            "patient": 37,
+            "lab_time": "2021-03-06",
+            "lab_type": 4,
+            "encounter": 189
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 190,
+        "fields": {
+            "patient": 37,
+            "lab_time": "2020-09-04",
+            "lab_type": 4,
+            "encounter": 190
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 191,
+        "fields": {
+            "patient": 38,
+            "lab_time": "2021-04-29",
+            "lab_type": 4,
+            "encounter": 191
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 192,
+        "fields": {
+            "patient": 38,
+            "lab_time": "2021-05-17",
+            "lab_type": 3,
+            "encounter": 192
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 193,
+        "fields": {
+            "patient": 38,
+            "lab_time": "2020-08-24",
+            "lab_type": 3,
+            "encounter": 193
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 194,
+        "fields": {
+            "patient": 39,
+            "lab_time": "2019-12-06",
+            "lab_type": 2,
+            "encounter": 194
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 195,
+        "fields": {
+            "patient": 39,
+            "lab_time": "2020-02-27",
+            "lab_type": 3,
+            "encounter": 195
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 196,
+        "fields": {
+            "patient": 39,
+            "lab_time": "2020-01-27",
+            "lab_type": 5,
+            "encounter": 196
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 197,
+        "fields": {
+            "patient": 40,
+            "lab_time": "2019-10-16",
+            "lab_type": 6,
+            "encounter": 197
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 198,
+        "fields": {
+            "patient": 40,
+            "lab_time": "2020-04-01",
+            "lab_type": 2,
+            "encounter": 198
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 199,
+        "fields": {
+            "patient": 40,
+            "lab_time": "2020-03-24",
+            "lab_type": 3,
+            "encounter": 199
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 200,
+        "fields": {
+            "patient": 40,
+            "lab_time": "2020-01-30",
+            "lab_type": 5,
+            "encounter": 200
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 201,
+        "fields": {
+            "patient": 40,
+            "lab_time": "2019-06-01",
+            "lab_type": 1,
+            "encounter": 201
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 202,
+        "fields": {
+            "patient": 40,
+            "lab_time": "2019-09-09",
+            "lab_type": 2,
+            "encounter": 202
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 203,
+        "fields": {
+            "patient": 40,
+            "lab_time": "2019-09-29",
+            "lab_type": 2,
+            "encounter": 203
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 204,
+        "fields": {
+            "patient": 40,
+            "lab_time": "2018-09-30",
+            "lab_type": 6,
+            "encounter": 204
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 205,
+        "fields": {
+            "patient": 41,
+            "lab_time": "2021-06-30",
+            "lab_type": 4,
+            "encounter": 205
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 206,
+        "fields": {
+            "patient": 41,
+            "lab_time": "2019-11-12",
+            "lab_type": 1,
+            "encounter": 206
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 207,
+        "fields": {
+            "patient": 41,
+            "lab_time": "2018-08-05",
+            "lab_type": 1,
+            "encounter": 207
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 208,
+        "fields": {
+            "patient": 41,
+            "lab_time": "2018-09-10",
+            "lab_type": 4,
+            "encounter": 208
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 209,
+        "fields": {
+            "patient": 41,
+            "lab_time": "2018-07-23",
+            "lab_type": 6,
+            "encounter": 209
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 210,
+        "fields": {
+            "patient": 41,
+            "lab_time": "2019-12-09",
+            "lab_type": 2,
+            "encounter": 210
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 211,
+        "fields": {
+            "patient": 42,
+            "lab_time": "2018-01-14",
+            "lab_type": 4,
+            "encounter": 211
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 212,
+        "fields": {
+            "patient": 42,
+            "lab_time": "2019-09-21",
+            "lab_type": 5,
+            "encounter": 212
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 213,
+        "fields": {
+            "patient": 42,
+            "lab_time": "2019-01-25",
+            "lab_type": 5,
+            "encounter": 213
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 214,
+        "fields": {
+            "patient": 42,
+            "lab_time": "2019-02-17",
+            "lab_type": 2,
+            "encounter": 214
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 215,
+        "fields": {
+            "patient": 42,
+            "lab_time": "2019-01-02",
+            "lab_type": 1,
+            "encounter": 215
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 216,
+        "fields": {
+            "patient": 42,
+            "lab_time": "2018-03-23",
+            "lab_type": 5,
+            "encounter": 216
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 217,
+        "fields": {
+            "patient": 43,
+            "lab_time": "2019-07-14",
+            "lab_type": 1,
+            "encounter": 217
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 218,
+        "fields": {
+            "patient": 43,
+            "lab_time": "2020-05-31",
+            "lab_type": 6,
+            "encounter": 218
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 219,
+        "fields": {
+            "patient": 43,
+            "lab_time": "2019-12-31",
+            "lab_type": 4,
+            "encounter": 219
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 220,
+        "fields": {
+            "patient": 43,
+            "lab_time": "2020-01-19",
+            "lab_type": 5,
+            "encounter": 220
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 221,
+        "fields": {
+            "patient": 43,
+            "lab_time": "2021-05-24",
+            "lab_type": 5,
+            "encounter": 221
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 222,
+        "fields": {
+            "patient": 43,
+            "lab_time": "2020-10-22",
+            "lab_type": 6,
+            "encounter": 222
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 223,
+        "fields": {
+            "patient": 43,
+            "lab_time": "2020-07-24",
+            "lab_type": 3,
+            "encounter": 223
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 224,
+        "fields": {
+            "patient": 43,
+            "lab_time": "2018-05-22",
+            "lab_type": 1,
+            "encounter": 224
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 225,
+        "fields": {
+            "patient": 43,
+            "lab_time": "2019-06-20",
+            "lab_type": 3,
+            "encounter": 225
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 226,
+        "fields": {
+            "patient": 44,
+            "lab_time": "2019-07-29",
+            "lab_type": 3,
+            "encounter": 226
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 227,
+        "fields": {
+            "patient": 44,
+            "lab_time": "2018-08-03",
+            "lab_type": 5,
+            "encounter": 227
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 228,
+        "fields": {
+            "patient": 44,
+            "lab_time": "2018-12-29",
+            "lab_type": 3,
+            "encounter": 228
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 229,
+        "fields": {
+            "patient": 44,
+            "lab_time": "2019-08-30",
+            "lab_type": 1,
+            "encounter": 229
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 230,
+        "fields": {
+            "patient": 44,
+            "lab_time": "2020-04-05",
+            "lab_type": 6,
+            "encounter": 230
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 231,
+        "fields": {
+            "patient": 44,
+            "lab_time": "2019-08-02",
+            "lab_type": 5,
+            "encounter": 231
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 232,
+        "fields": {
+            "patient": 44,
+            "lab_time": "2020-07-01",
+            "lab_type": 5,
+            "encounter": 232
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 233,
+        "fields": {
+            "patient": 44,
+            "lab_time": "2019-01-22",
+            "lab_type": 5,
+            "encounter": 233
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 234,
+        "fields": {
+            "patient": 44,
+            "lab_time": "2019-08-23",
+            "lab_type": 3,
+            "encounter": 234
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 235,
+        "fields": {
+            "patient": 45,
+            "lab_time": "2021-01-03",
+            "lab_type": 1,
+            "encounter": 235
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 236,
+        "fields": {
+            "patient": 45,
+            "lab_time": "2018-05-18",
+            "lab_type": 3,
+            "encounter": 236
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 237,
+        "fields": {
+            "patient": 45,
+            "lab_time": "2018-07-18",
+            "lab_type": 1,
+            "encounter": 237
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 238,
+        "fields": {
+            "patient": 45,
+            "lab_time": "2019-08-01",
+            "lab_type": 3,
+            "encounter": 238
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 239,
+        "fields": {
+            "patient": 45,
+            "lab_time": "2019-04-21",
+            "lab_type": 1,
+            "encounter": 239
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 240,
+        "fields": {
+            "patient": 45,
+            "lab_time": "2018-07-31",
+            "lab_type": 3,
+            "encounter": 240
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 241,
+        "fields": {
+            "patient": 45,
+            "lab_time": "2021-06-09",
+            "lab_type": 5,
+            "encounter": 241
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 242,
+        "fields": {
+            "patient": 46,
+            "lab_time": "2018-04-09",
+            "lab_type": 3,
+            "encounter": 242
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 243,
+        "fields": {
+            "patient": 46,
+            "lab_time": "2021-05-13",
+            "lab_type": 2,
+            "encounter": 243
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 244,
+        "fields": {
+            "patient": 46,
+            "lab_time": "2018-02-08",
+            "lab_type": 5,
+            "encounter": 244
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 245,
+        "fields": {
+            "patient": 46,
+            "lab_time": "2019-04-18",
+            "lab_type": 2,
+            "encounter": 245
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 246,
+        "fields": {
+            "patient": 46,
+            "lab_time": "2019-07-14",
+            "lab_type": 1,
+            "encounter": 246
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 247,
+        "fields": {
+            "patient": 47,
+            "lab_time": "2020-08-26",
+            "lab_type": 4,
+            "encounter": 247
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 248,
+        "fields": {
+            "patient": 47,
+            "lab_time": "2021-02-15",
+            "lab_type": 3,
+            "encounter": 248
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 249,
+        "fields": {
+            "patient": 47,
+            "lab_time": "2019-04-17",
+            "lab_type": 3,
+            "encounter": 249
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 250,
+        "fields": {
+            "patient": 47,
+            "lab_time": "2018-06-01",
+            "lab_type": 3,
+            "encounter": 250
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 251,
+        "fields": {
+            "patient": 47,
+            "lab_time": "2020-08-24",
+            "lab_type": 3,
+            "encounter": 251
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 252,
+        "fields": {
+            "patient": 47,
+            "lab_time": "2018-06-23",
+            "lab_type": 1,
+            "encounter": 252
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 253,
+        "fields": {
+            "patient": 48,
+            "lab_time": "2020-09-01",
+            "lab_type": 1,
+            "encounter": 253
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 254,
+        "fields": {
+            "patient": 48,
+            "lab_time": "2019-03-03",
+            "lab_type": 1,
+            "encounter": 254
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 255,
+        "fields": {
+            "patient": 48,
+            "lab_time": "2018-05-13",
+            "lab_type": 2,
+            "encounter": 255
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 256,
+        "fields": {
+            "patient": 48,
+            "lab_time": "2020-11-02",
+            "lab_type": 4,
+            "encounter": 256
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 257,
+        "fields": {
+            "patient": 48,
+            "lab_time": "2019-02-24",
+            "lab_type": 5,
+            "encounter": 257
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 258,
+        "fields": {
+            "patient": 48,
+            "lab_time": "2020-02-14",
+            "lab_type": 2,
+            "encounter": 258
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 259,
+        "fields": {
+            "patient": 48,
+            "lab_time": "2021-03-04",
+            "lab_type": 2,
+            "encounter": 259
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 260,
+        "fields": {
+            "patient": 49,
+            "lab_time": "2020-07-23",
+            "lab_type": 2,
+            "encounter": 260
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 261,
+        "fields": {
+            "patient": 49,
+            "lab_time": "2019-02-11",
+            "lab_type": 5,
+            "encounter": 261
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 262,
+        "fields": {
+            "patient": 49,
+            "lab_time": "2021-04-17",
+            "lab_type": 3,
+            "encounter": 262
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 263,
+        "fields": {
+            "patient": 49,
+            "lab_time": "2021-02-03",
+            "lab_type": 6,
+            "encounter": 263
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 264,
+        "fields": {
+            "patient": 49,
+            "lab_time": "2021-06-29",
+            "lab_type": 6,
+            "encounter": 264
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 265,
+        "fields": {
+            "patient": 50,
+            "lab_time": "2019-04-10",
+            "lab_type": 5,
+            "encounter": 265
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 266,
+        "fields": {
+            "patient": 50,
+            "lab_time": "2020-05-22",
+            "lab_type": 1,
+            "encounter": 266
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 267,
+        "fields": {
+            "patient": 50,
+            "lab_time": "2018-01-05",
+            "lab_type": 2,
+            "encounter": 267
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 268,
+        "fields": {
+            "patient": 50,
+            "lab_time": "2021-04-16",
+            "lab_type": 1,
+            "encounter": 268
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 269,
+        "fields": {
+            "patient": 50,
+            "lab_time": "2019-06-23",
+            "lab_type": 3,
+            "encounter": 269
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 270,
+        "fields": {
+            "patient": 50,
+            "lab_time": "2020-01-05",
+            "lab_type": 3,
+            "encounter": 270
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 271,
+        "fields": {
+            "patient": 51,
+            "lab_time": "2019-06-05",
+            "lab_type": 1,
+            "encounter": 271
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 272,
+        "fields": {
+            "patient": 52,
+            "lab_time": "2019-05-30",
+            "lab_type": 2,
+            "encounter": 272
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 273,
+        "fields": {
+            "patient": 52,
+            "lab_time": "2020-06-06",
+            "lab_type": 1,
+            "encounter": 273
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 274,
+        "fields": {
+            "patient": 52,
+            "lab_time": "2020-11-27",
+            "lab_type": 4,
+            "encounter": 274
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 275,
+        "fields": {
+            "patient": 52,
+            "lab_time": "2018-09-04",
+            "lab_type": 5,
+            "encounter": 275
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 276,
+        "fields": {
+            "patient": 52,
+            "lab_time": "2018-01-17",
+            "lab_type": 1,
+            "encounter": 276
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 277,
+        "fields": {
+            "patient": 52,
+            "lab_time": "2019-06-30",
+            "lab_type": 6,
+            "encounter": 277
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 278,
+        "fields": {
+            "patient": 52,
+            "lab_time": "2018-08-02",
+            "lab_type": 3,
+            "encounter": 278
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 279,
+        "fields": {
+            "patient": 52,
+            "lab_time": "2021-05-05",
+            "lab_type": 1,
+            "encounter": 279
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 280,
+        "fields": {
+            "patient": 53,
+            "lab_time": "2018-01-22",
+            "lab_type": 2,
+            "encounter": 280
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 281,
+        "fields": {
+            "patient": 53,
+            "lab_time": "2020-05-27",
+            "lab_type": 1,
+            "encounter": 281
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 282,
+        "fields": {
+            "patient": 53,
+            "lab_time": "2021-03-26",
+            "lab_type": 6,
+            "encounter": 282
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 283,
+        "fields": {
+            "patient": 54,
+            "lab_time": "2019-05-17",
+            "lab_type": 5,
+            "encounter": 283
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 284,
+        "fields": {
+            "patient": 54,
+            "lab_time": "2020-11-08",
+            "lab_type": 2,
+            "encounter": 284
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 285,
+        "fields": {
+            "patient": 54,
+            "lab_time": "2019-06-27",
+            "lab_type": 3,
+            "encounter": 285
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 286,
+        "fields": {
+            "patient": 54,
+            "lab_time": "2018-05-18",
+            "lab_type": 1,
+            "encounter": 286
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 287,
+        "fields": {
+            "patient": 54,
+            "lab_time": "2018-03-28",
+            "lab_type": 1,
+            "encounter": 287
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 288,
+        "fields": {
+            "patient": 54,
+            "lab_time": "2018-01-06",
+            "lab_type": 3,
+            "encounter": 288
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 289,
+        "fields": {
+            "patient": 54,
+            "lab_time": "2018-03-07",
+            "lab_type": 1,
+            "encounter": 289
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 290,
+        "fields": {
+            "patient": 54,
+            "lab_time": "2020-02-12",
+            "lab_type": 1,
+            "encounter": 290
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 291,
+        "fields": {
+            "patient": 54,
+            "lab_time": "2021-02-18",
+            "lab_type": 3,
+            "encounter": 291
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 292,
+        "fields": {
+            "patient": 55,
+            "lab_time": "2018-03-14",
+            "lab_type": 4,
+            "encounter": 292
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 293,
+        "fields": {
+            "patient": 55,
+            "lab_time": "2021-01-04",
+            "lab_type": 1,
+            "encounter": 293
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 294,
+        "fields": {
+            "patient": 55,
+            "lab_time": "2019-10-15",
+            "lab_type": 2,
+            "encounter": 294
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 295,
+        "fields": {
+            "patient": 55,
+            "lab_time": "2020-06-05",
+            "lab_type": 6,
+            "encounter": 295
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 296,
+        "fields": {
+            "patient": 55,
+            "lab_time": "2019-12-19",
+            "lab_type": 1,
+            "encounter": 296
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 297,
+        "fields": {
+            "patient": 56,
+            "lab_time": "2020-03-03",
+            "lab_type": 1,
+            "encounter": 297
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 298,
+        "fields": {
+            "patient": 56,
+            "lab_time": "2019-02-10",
+            "lab_type": 3,
+            "encounter": 298
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 299,
+        "fields": {
+            "patient": 56,
+            "lab_time": "2020-08-24",
+            "lab_type": 4,
+            "encounter": 299
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 300,
+        "fields": {
+            "patient": 56,
+            "lab_time": "2019-08-03",
+            "lab_type": 2,
+            "encounter": 300
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 301,
+        "fields": {
+            "patient": 56,
+            "lab_time": "2019-03-29",
+            "lab_type": 6,
+            "encounter": 301
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 302,
+        "fields": {
+            "patient": 56,
+            "lab_time": "2021-05-23",
+            "lab_type": 1,
+            "encounter": 302
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 303,
+        "fields": {
+            "patient": 56,
+            "lab_time": "2019-09-08",
+            "lab_type": 5,
+            "encounter": 303
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 304,
+        "fields": {
+            "patient": 56,
+            "lab_time": "2019-07-12",
+            "lab_type": 4,
+            "encounter": 304
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 305,
+        "fields": {
+            "patient": 57,
+            "lab_time": "2019-09-30",
+            "lab_type": 4,
+            "encounter": 305
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 306,
+        "fields": {
+            "patient": 58,
+            "lab_time": "2018-08-04",
+            "lab_type": 6,
+            "encounter": 306
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 307,
+        "fields": {
+            "patient": 59,
+            "lab_time": "2018-11-17",
+            "lab_type": 4,
+            "encounter": 307
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 308,
+        "fields": {
+            "patient": 59,
+            "lab_time": "2020-03-01",
+            "lab_type": 5,
+            "encounter": 308
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 309,
+        "fields": {
+            "patient": 59,
+            "lab_time": "2019-01-06",
+            "lab_type": 3,
+            "encounter": 309
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 310,
+        "fields": {
+            "patient": 59,
+            "lab_time": "2019-04-02",
+            "lab_type": 4,
+            "encounter": 310
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 311,
+        "fields": {
+            "patient": 59,
+            "lab_time": "2019-09-28",
+            "lab_type": 1,
+            "encounter": 311
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 312,
+        "fields": {
+            "patient": 60,
+            "lab_time": "2019-03-26",
+            "lab_type": 5,
+            "encounter": 312
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 313,
+        "fields": {
+            "patient": 60,
+            "lab_time": "2019-07-23",
+            "lab_type": 1,
+            "encounter": 313
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 314,
+        "fields": {
+            "patient": 60,
+            "lab_time": "2018-11-19",
+            "lab_type": 2,
+            "encounter": 314
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 315,
+        "fields": {
+            "patient": 61,
+            "lab_time": "2021-06-12",
+            "lab_type": 3,
+            "encounter": 315
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 316,
+        "fields": {
+            "patient": 61,
+            "lab_time": "2019-04-17",
+            "lab_type": 2,
+            "encounter": 316
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 317,
+        "fields": {
+            "patient": 61,
+            "lab_time": "2020-11-06",
+            "lab_type": 3,
+            "encounter": 317
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 318,
+        "fields": {
+            "patient": 61,
+            "lab_time": "2019-08-09",
+            "lab_type": 3,
+            "encounter": 318
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 319,
+        "fields": {
+            "patient": 62,
+            "lab_time": "2019-02-02",
+            "lab_type": 1,
+            "encounter": 319
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 320,
+        "fields": {
+            "patient": 63,
+            "lab_time": "2020-12-19",
+            "lab_type": 3,
+            "encounter": 320
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 321,
+        "fields": {
+            "patient": 64,
+            "lab_time": "2018-08-28",
+            "lab_type": 4,
+            "encounter": 321
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 322,
+        "fields": {
+            "patient": 64,
+            "lab_time": "2018-11-14",
+            "lab_type": 6,
+            "encounter": 322
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 323,
+        "fields": {
+            "patient": 64,
+            "lab_time": "2019-03-06",
+            "lab_type": 5,
+            "encounter": 323
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 324,
+        "fields": {
+            "patient": 64,
+            "lab_time": "2018-08-11",
+            "lab_type": 3,
+            "encounter": 324
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 325,
+        "fields": {
+            "patient": 64,
+            "lab_time": "2018-05-29",
+            "lab_type": 1,
+            "encounter": 325
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 326,
+        "fields": {
+            "patient": 64,
+            "lab_time": "2020-06-27",
+            "lab_type": 2,
+            "encounter": 326
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 327,
+        "fields": {
+            "patient": 64,
+            "lab_time": "2020-11-15",
+            "lab_type": 6,
+            "encounter": 327
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 328,
+        "fields": {
+            "patient": 64,
+            "lab_time": "2019-04-07",
+            "lab_type": 1,
+            "encounter": 328
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 329,
+        "fields": {
+            "patient": 64,
+            "lab_time": "2021-05-30",
+            "lab_type": 3,
+            "encounter": 329
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 330,
+        "fields": {
+            "patient": 64,
+            "lab_time": "2018-07-10",
+            "lab_type": 5,
+            "encounter": 330
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 331,
+        "fields": {
+            "patient": 65,
+            "lab_time": "2020-08-09",
+            "lab_type": 6,
+            "encounter": 331
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 332,
+        "fields": {
+            "patient": 65,
+            "lab_time": "2020-11-29",
+            "lab_type": 3,
+            "encounter": 332
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 333,
+        "fields": {
+            "patient": 65,
+            "lab_time": "2021-04-11",
+            "lab_type": 6,
+            "encounter": 333
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 334,
+        "fields": {
+            "patient": 66,
+            "lab_time": "2020-05-08",
+            "lab_type": 6,
+            "encounter": 334
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 335,
+        "fields": {
+            "patient": 66,
+            "lab_time": "2019-07-11",
+            "lab_type": 5,
+            "encounter": 335
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 336,
+        "fields": {
+            "patient": 66,
+            "lab_time": "2019-10-25",
+            "lab_type": 4,
+            "encounter": 336
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 337,
+        "fields": {
+            "patient": 67,
+            "lab_time": "2018-02-26",
+            "lab_type": 1,
+            "encounter": 337
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 338,
+        "fields": {
+            "patient": 67,
+            "lab_time": "2021-02-18",
+            "lab_type": 6,
+            "encounter": 338
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 339,
+        "fields": {
+            "patient": 68,
+            "lab_time": "2021-01-12",
+            "lab_type": 4,
+            "encounter": 339
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 340,
+        "fields": {
+            "patient": 68,
+            "lab_time": "2020-03-15",
+            "lab_type": 6,
+            "encounter": 340
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 341,
+        "fields": {
+            "patient": 68,
+            "lab_time": "2019-09-28",
+            "lab_type": 2,
+            "encounter": 341
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 342,
+        "fields": {
+            "patient": 68,
+            "lab_time": "2018-08-01",
+            "lab_type": 3,
+            "encounter": 342
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 343,
+        "fields": {
+            "patient": 68,
+            "lab_time": "2019-02-18",
+            "lab_type": 4,
+            "encounter": 343
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 344,
+        "fields": {
+            "patient": 68,
+            "lab_time": "2019-02-18",
+            "lab_type": 2,
+            "encounter": 344
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 345,
+        "fields": {
+            "patient": 68,
+            "lab_time": "2019-11-05",
+            "lab_type": 5,
+            "encounter": 345
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 346,
+        "fields": {
+            "patient": 68,
+            "lab_time": "2019-11-23",
+            "lab_type": 4,
+            "encounter": 346
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 347,
+        "fields": {
+            "patient": 68,
+            "lab_time": "2018-02-18",
+            "lab_type": 2,
+            "encounter": 347
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 348,
+        "fields": {
+            "patient": 69,
+            "lab_time": "2019-04-10",
+            "lab_type": 5,
+            "encounter": 348
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 349,
+        "fields": {
+            "patient": 70,
+            "lab_time": "2019-05-01",
+            "lab_type": 4,
+            "encounter": 349
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 350,
+        "fields": {
+            "patient": 70,
+            "lab_time": "2019-11-04",
+            "lab_type": 1,
+            "encounter": 350
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 351,
+        "fields": {
+            "patient": 71,
+            "lab_time": "2018-12-04",
+            "lab_type": 2,
+            "encounter": 351
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 352,
+        "fields": {
+            "patient": 71,
+            "lab_time": "2019-09-19",
+            "lab_type": 2,
+            "encounter": 352
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 353,
+        "fields": {
+            "patient": 71,
+            "lab_time": "2020-04-15",
+            "lab_type": 2,
+            "encounter": 353
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 354,
+        "fields": {
+            "patient": 71,
+            "lab_time": "2021-05-11",
+            "lab_type": 1,
+            "encounter": 354
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 355,
+        "fields": {
+            "patient": 72,
+            "lab_time": "2019-10-15",
+            "lab_type": 3,
+            "encounter": 355
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 356,
+        "fields": {
+            "patient": 72,
+            "lab_time": "2020-09-24",
+            "lab_type": 4,
+            "encounter": 356
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 357,
+        "fields": {
+            "patient": 72,
+            "lab_time": "2018-04-18",
+            "lab_type": 2,
+            "encounter": 357
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 358,
+        "fields": {
+            "patient": 72,
+            "lab_time": "2020-01-06",
+            "lab_type": 3,
+            "encounter": 358
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 359,
+        "fields": {
+            "patient": 73,
+            "lab_time": "2020-09-30",
+            "lab_type": 5,
+            "encounter": 359
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 360,
+        "fields": {
+            "patient": 74,
+            "lab_time": "2020-10-12",
+            "lab_type": 3,
+            "encounter": 360
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 361,
+        "fields": {
+            "patient": 74,
+            "lab_time": "2019-01-09",
+            "lab_type": 5,
+            "encounter": 361
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 362,
+        "fields": {
+            "patient": 74,
+            "lab_time": "2019-02-16",
+            "lab_type": 1,
+            "encounter": 362
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 363,
+        "fields": {
+            "patient": 74,
+            "lab_time": "2018-03-27",
+            "lab_type": 3,
+            "encounter": 363
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 364,
+        "fields": {
+            "patient": 74,
+            "lab_time": "2020-12-22",
+            "lab_type": 4,
+            "encounter": 364
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 365,
+        "fields": {
+            "patient": 74,
+            "lab_time": "2018-08-19",
+            "lab_type": 1,
+            "encounter": 365
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 366,
+        "fields": {
+            "patient": 74,
+            "lab_time": "2018-10-27",
+            "lab_type": 3,
+            "encounter": 366
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 367,
+        "fields": {
+            "patient": 75,
+            "lab_time": "2021-04-30",
+            "lab_type": 5,
+            "encounter": 367
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 368,
+        "fields": {
+            "patient": 75,
+            "lab_time": "2020-06-09",
+            "lab_type": 6,
+            "encounter": 368
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 369,
+        "fields": {
+            "patient": 75,
+            "lab_time": "2020-03-09",
+            "lab_type": 4,
+            "encounter": 369
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 370,
+        "fields": {
+            "patient": 75,
+            "lab_time": "2020-08-04",
+            "lab_type": 3,
+            "encounter": 370
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 371,
+        "fields": {
+            "patient": 75,
+            "lab_time": "2018-10-26",
+            "lab_type": 1,
+            "encounter": 371
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 372,
+        "fields": {
+            "patient": 75,
+            "lab_time": "2018-06-01",
+            "lab_type": 4,
+            "encounter": 372
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 373,
+        "fields": {
+            "patient": 75,
+            "lab_time": "2018-06-05",
+            "lab_type": 4,
+            "encounter": 373
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 374,
+        "fields": {
+            "patient": 75,
+            "lab_time": "2019-06-27",
+            "lab_type": 3,
+            "encounter": 374
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 375,
+        "fields": {
+            "patient": 75,
+            "lab_time": "2020-04-18",
+            "lab_type": 5,
+            "encounter": 375
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 376,
+        "fields": {
+            "patient": 76,
+            "lab_time": "2021-02-07",
+            "lab_type": 5,
+            "encounter": 376
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 377,
+        "fields": {
+            "patient": 76,
+            "lab_time": "2018-01-21",
+            "lab_type": 2,
+            "encounter": 377
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 378,
+        "fields": {
+            "patient": 76,
+            "lab_time": "2020-04-30",
+            "lab_type": 2,
+            "encounter": 378
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 379,
+        "fields": {
+            "patient": 77,
+            "lab_time": "2021-02-21",
+            "lab_type": 2,
+            "encounter": 379
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 380,
+        "fields": {
+            "patient": 77,
+            "lab_time": "2019-08-08",
+            "lab_type": 4,
+            "encounter": 380
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 381,
+        "fields": {
+            "patient": 77,
+            "lab_time": "2020-10-29",
+            "lab_type": 3,
+            "encounter": 381
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 382,
+        "fields": {
+            "patient": 77,
+            "lab_time": "2018-08-10",
+            "lab_type": 1,
+            "encounter": 382
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 383,
+        "fields": {
+            "patient": 77,
+            "lab_time": "2018-09-11",
+            "lab_type": 3,
+            "encounter": 383
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 384,
+        "fields": {
+            "patient": 78,
+            "lab_time": "2019-03-14",
+            "lab_type": 5,
+            "encounter": 384
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 385,
+        "fields": {
+            "patient": 78,
+            "lab_time": "2018-08-17",
+            "lab_type": 3,
+            "encounter": 385
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 386,
+        "fields": {
+            "patient": 78,
+            "lab_time": "2019-08-06",
+            "lab_type": 3,
+            "encounter": 386
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 387,
+        "fields": {
+            "patient": 79,
+            "lab_time": "2020-11-15",
+            "lab_type": 4,
+            "encounter": 387
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 388,
+        "fields": {
+            "patient": 79,
+            "lab_time": "2019-04-12",
+            "lab_type": 5,
+            "encounter": 388
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 389,
+        "fields": {
+            "patient": 79,
+            "lab_time": "2020-08-26",
+            "lab_type": 5,
+            "encounter": 389
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 390,
+        "fields": {
+            "patient": 79,
+            "lab_time": "2018-12-07",
+            "lab_type": 4,
+            "encounter": 390
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 391,
+        "fields": {
+            "patient": 79,
+            "lab_time": "2020-07-22",
+            "lab_type": 5,
+            "encounter": 391
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 392,
+        "fields": {
+            "patient": 80,
+            "lab_time": "2019-03-02",
+            "lab_type": 5,
+            "encounter": 392
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 393,
+        "fields": {
+            "patient": 80,
+            "lab_time": "2019-09-01",
+            "lab_type": 5,
+            "encounter": 393
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 394,
+        "fields": {
+            "patient": 80,
+            "lab_time": "2018-07-16",
+            "lab_type": 2,
+            "encounter": 394
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 395,
+        "fields": {
+            "patient": 81,
+            "lab_time": "2019-11-29",
+            "lab_type": 2,
+            "encounter": 395
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 396,
+        "fields": {
+            "patient": 81,
+            "lab_time": "2020-02-14",
+            "lab_type": 2,
+            "encounter": 396
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 397,
+        "fields": {
+            "patient": 81,
+            "lab_time": "2019-05-19",
+            "lab_type": 4,
+            "encounter": 397
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 398,
+        "fields": {
+            "patient": 81,
+            "lab_time": "2018-06-17",
+            "lab_type": 3,
+            "encounter": 398
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 399,
+        "fields": {
+            "patient": 81,
+            "lab_time": "2019-12-01",
+            "lab_type": 2,
+            "encounter": 399
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 400,
+        "fields": {
+            "patient": 81,
+            "lab_time": "2021-01-28",
+            "lab_type": 4,
+            "encounter": 400
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 401,
+        "fields": {
+            "patient": 81,
+            "lab_time": "2018-06-17",
+            "lab_type": 3,
+            "encounter": 401
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 402,
+        "fields": {
+            "patient": 81,
+            "lab_time": "2021-03-31",
+            "lab_type": 3,
+            "encounter": 402
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 403,
+        "fields": {
+            "patient": 81,
+            "lab_time": "2019-09-10",
+            "lab_type": 1,
+            "encounter": 403
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 404,
+        "fields": {
+            "patient": 81,
+            "lab_time": "2018-02-03",
+            "lab_type": 2,
+            "encounter": 404
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 405,
+        "fields": {
+            "patient": 82,
+            "lab_time": "2019-04-22",
+            "lab_type": 1,
+            "encounter": 405
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 406,
+        "fields": {
+            "patient": 82,
+            "lab_time": "2020-05-24",
+            "lab_type": 1,
+            "encounter": 406
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 407,
+        "fields": {
+            "patient": 82,
+            "lab_time": "2019-11-23",
+            "lab_type": 3,
+            "encounter": 407
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 408,
+        "fields": {
+            "patient": 82,
+            "lab_time": "2020-01-08",
+            "lab_type": 4,
+            "encounter": 408
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 409,
+        "fields": {
+            "patient": 82,
+            "lab_time": "2020-11-19",
+            "lab_type": 4,
+            "encounter": 409
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 410,
+        "fields": {
+            "patient": 82,
+            "lab_time": "2019-10-09",
+            "lab_type": 1,
+            "encounter": 410
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 411,
+        "fields": {
+            "patient": 82,
+            "lab_time": "2019-07-13",
+            "lab_type": 6,
+            "encounter": 411
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 412,
+        "fields": {
+            "patient": 82,
+            "lab_time": "2021-06-03",
+            "lab_type": 4,
+            "encounter": 412
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 413,
+        "fields": {
+            "patient": 82,
+            "lab_time": "2021-04-28",
+            "lab_type": 3,
+            "encounter": 413
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 414,
+        "fields": {
+            "patient": 82,
+            "lab_time": "2020-09-09",
+            "lab_type": 2,
+            "encounter": 414
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 415,
+        "fields": {
+            "patient": 83,
+            "lab_time": "2019-05-11",
+            "lab_type": 6,
+            "encounter": 415
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 416,
+        "fields": {
+            "patient": 83,
+            "lab_time": "2018-06-03",
+            "lab_type": 2,
+            "encounter": 416
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 417,
+        "fields": {
+            "patient": 83,
+            "lab_time": "2019-07-11",
+            "lab_type": 5,
+            "encounter": 417
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 418,
+        "fields": {
+            "patient": 83,
+            "lab_time": "2018-04-07",
+            "lab_type": 1,
+            "encounter": 418
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 419,
+        "fields": {
+            "patient": 83,
+            "lab_time": "2018-03-07",
+            "lab_type": 2,
+            "encounter": 419
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 420,
+        "fields": {
+            "patient": 83,
+            "lab_time": "2018-02-14",
+            "lab_type": 4,
+            "encounter": 420
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 421,
+        "fields": {
+            "patient": 83,
+            "lab_time": "2018-12-03",
+            "lab_type": 1,
+            "encounter": 421
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 422,
+        "fields": {
+            "patient": 83,
+            "lab_time": "2020-08-05",
+            "lab_type": 6,
+            "encounter": 422
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 423,
+        "fields": {
+            "patient": 83,
+            "lab_time": "2020-05-09",
+            "lab_type": 1,
+            "encounter": 423
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 424,
+        "fields": {
+            "patient": 84,
+            "lab_time": "2020-07-17",
+            "lab_type": 5,
+            "encounter": 424
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 425,
+        "fields": {
+            "patient": 84,
+            "lab_time": "2018-01-07",
+            "lab_type": 4,
+            "encounter": 425
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 426,
+        "fields": {
+            "patient": 84,
+            "lab_time": "2018-03-27",
+            "lab_type": 5,
+            "encounter": 426
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 427,
+        "fields": {
+            "patient": 84,
+            "lab_time": "2021-06-07",
+            "lab_type": 1,
+            "encounter": 427
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 428,
+        "fields": {
+            "patient": 85,
+            "lab_time": "2020-08-12",
+            "lab_type": 5,
+            "encounter": 428
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 429,
+        "fields": {
+            "patient": 85,
+            "lab_time": "2019-11-03",
+            "lab_type": 3,
+            "encounter": 429
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 430,
+        "fields": {
+            "patient": 85,
+            "lab_time": "2018-08-06",
+            "lab_type": 2,
+            "encounter": 430
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 431,
+        "fields": {
+            "patient": 85,
+            "lab_time": "2020-12-08",
+            "lab_type": 6,
+            "encounter": 431
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 432,
+        "fields": {
+            "patient": 85,
+            "lab_time": "2019-02-16",
+            "lab_type": 1,
+            "encounter": 432
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 433,
+        "fields": {
+            "patient": 85,
+            "lab_time": "2020-08-04",
+            "lab_type": 3,
+            "encounter": 433
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 434,
+        "fields": {
+            "patient": 85,
+            "lab_time": "2018-08-10",
+            "lab_type": 6,
+            "encounter": 434
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 435,
+        "fields": {
+            "patient": 85,
+            "lab_time": "2021-01-23",
+            "lab_type": 1,
+            "encounter": 435
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 436,
+        "fields": {
+            "patient": 85,
+            "lab_time": "2020-01-25",
+            "lab_type": 6,
+            "encounter": 436
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 437,
+        "fields": {
+            "patient": 85,
+            "lab_time": "2021-02-07",
+            "lab_type": 5,
+            "encounter": 437
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 438,
+        "fields": {
+            "patient": 86,
+            "lab_time": "2018-10-19",
+            "lab_type": 2,
+            "encounter": 438
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 439,
+        "fields": {
+            "patient": 86,
+            "lab_time": "2019-09-16",
+            "lab_type": 6,
+            "encounter": 439
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 440,
+        "fields": {
+            "patient": 86,
+            "lab_time": "2020-09-02",
+            "lab_type": 1,
+            "encounter": 440
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 441,
+        "fields": {
+            "patient": 86,
+            "lab_time": "2018-08-07",
+            "lab_type": 1,
+            "encounter": 441
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 442,
+        "fields": {
+            "patient": 86,
+            "lab_time": "2019-05-02",
+            "lab_type": 1,
+            "encounter": 442
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 443,
+        "fields": {
+            "patient": 86,
+            "lab_time": "2021-05-31",
+            "lab_type": 6,
+            "encounter": 443
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 444,
+        "fields": {
+            "patient": 86,
+            "lab_time": "2020-11-16",
+            "lab_type": 4,
+            "encounter": 444
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 445,
+        "fields": {
+            "patient": 86,
+            "lab_time": "2021-06-08",
+            "lab_type": 1,
+            "encounter": 445
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 446,
+        "fields": {
+            "patient": 86,
+            "lab_time": "2020-11-14",
+            "lab_type": 6,
+            "encounter": 446
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 447,
+        "fields": {
+            "patient": 86,
+            "lab_time": "2019-11-19",
+            "lab_type": 6,
+            "encounter": 447
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 448,
+        "fields": {
+            "patient": 87,
+            "lab_time": "2019-11-23",
+            "lab_type": 3,
+            "encounter": 448
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 449,
+        "fields": {
+            "patient": 87,
+            "lab_time": "2018-09-14",
+            "lab_type": 6,
+            "encounter": 449
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 450,
+        "fields": {
+            "patient": 87,
+            "lab_time": "2019-08-31",
+            "lab_type": 2,
+            "encounter": 450
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 451,
+        "fields": {
+            "patient": 87,
+            "lab_time": "2019-08-29",
+            "lab_type": 2,
+            "encounter": 451
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 452,
+        "fields": {
+            "patient": 87,
+            "lab_time": "2020-12-27",
+            "lab_type": 2,
+            "encounter": 452
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 453,
+        "fields": {
+            "patient": 88,
+            "lab_time": "2019-05-19",
+            "lab_type": 6,
+            "encounter": 453
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 454,
+        "fields": {
+            "patient": 88,
+            "lab_time": "2020-01-18",
+            "lab_type": 2,
+            "encounter": 454
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 455,
+        "fields": {
+            "patient": 88,
+            "lab_time": "2019-09-22",
+            "lab_type": 5,
+            "encounter": 455
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 456,
+        "fields": {
+            "patient": 88,
+            "lab_time": "2020-12-09",
+            "lab_type": 3,
+            "encounter": 456
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 457,
+        "fields": {
+            "patient": 88,
+            "lab_time": "2019-02-13",
+            "lab_type": 6,
+            "encounter": 457
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 458,
+        "fields": {
+            "patient": 88,
+            "lab_time": "2018-01-26",
+            "lab_type": 4,
+            "encounter": 458
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 459,
+        "fields": {
+            "patient": 88,
+            "lab_time": "2019-04-25",
+            "lab_type": 6,
+            "encounter": 459
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 460,
+        "fields": {
+            "patient": 88,
+            "lab_time": "2019-04-27",
+            "lab_type": 2,
+            "encounter": 460
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 461,
+        "fields": {
+            "patient": 88,
+            "lab_time": "2021-04-22",
+            "lab_type": 6,
+            "encounter": 461
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 462,
+        "fields": {
+            "patient": 88,
+            "lab_time": "2020-06-27",
+            "lab_type": 1,
+            "encounter": 462
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 463,
+        "fields": {
+            "patient": 89,
+            "lab_time": "2020-07-17",
+            "lab_type": 6,
+            "encounter": 463
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 464,
+        "fields": {
+            "patient": 89,
+            "lab_time": "2019-05-26",
+            "lab_type": 1,
+            "encounter": 464
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 465,
+        "fields": {
+            "patient": 90,
+            "lab_time": "2020-12-25",
+            "lab_type": 3,
+            "encounter": 465
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 466,
+        "fields": {
+            "patient": 90,
+            "lab_time": "2018-07-12",
+            "lab_type": 1,
+            "encounter": 466
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 467,
+        "fields": {
+            "patient": 90,
+            "lab_time": "2020-01-25",
+            "lab_type": 6,
+            "encounter": 467
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 468,
+        "fields": {
+            "patient": 90,
+            "lab_time": "2019-05-16",
+            "lab_type": 3,
+            "encounter": 468
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 469,
+        "fields": {
+            "patient": 90,
+            "lab_time": "2021-04-18",
+            "lab_type": 2,
+            "encounter": 469
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 470,
+        "fields": {
+            "patient": 90,
+            "lab_time": "2018-06-10",
+            "lab_type": 3,
+            "encounter": 470
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 471,
+        "fields": {
+            "patient": 91,
+            "lab_time": "2021-06-26",
+            "lab_type": 5,
+            "encounter": 471
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 472,
+        "fields": {
+            "patient": 92,
+            "lab_time": "2021-06-16",
+            "lab_type": 1,
+            "encounter": 472
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 473,
+        "fields": {
+            "patient": 92,
+            "lab_time": "2018-10-25",
+            "lab_type": 1,
+            "encounter": 473
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 474,
+        "fields": {
+            "patient": 93,
+            "lab_time": "2019-07-01",
+            "lab_type": 5,
+            "encounter": 474
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 475,
+        "fields": {
+            "patient": 93,
+            "lab_time": "2018-11-09",
+            "lab_type": 1,
+            "encounter": 475
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 476,
+        "fields": {
+            "patient": 94,
+            "lab_time": "2018-04-14",
+            "lab_type": 1,
+            "encounter": 476
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 477,
+        "fields": {
+            "patient": 94,
+            "lab_time": "2018-07-10",
+            "lab_type": 5,
+            "encounter": 477
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 478,
+        "fields": {
+            "patient": 94,
+            "lab_time": "2020-01-27",
+            "lab_type": 1,
+            "encounter": 478
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 479,
+        "fields": {
+            "patient": 94,
+            "lab_time": "2019-01-09",
+            "lab_type": 3,
+            "encounter": 479
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 480,
+        "fields": {
+            "patient": 94,
+            "lab_time": "2020-04-19",
+            "lab_type": 3,
+            "encounter": 480
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 481,
+        "fields": {
+            "patient": 95,
+            "lab_time": "2018-10-13",
+            "lab_type": 1,
+            "encounter": 481
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 482,
+        "fields": {
+            "patient": 95,
+            "lab_time": "2018-03-06",
+            "lab_type": 3,
+            "encounter": 482
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 483,
+        "fields": {
+            "patient": 95,
+            "lab_time": "2018-11-22",
+            "lab_type": 5,
+            "encounter": 483
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 484,
+        "fields": {
+            "patient": 95,
+            "lab_time": "2019-06-09",
+            "lab_type": 6,
+            "encounter": 484
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 485,
+        "fields": {
+            "patient": 95,
+            "lab_time": "2020-06-19",
+            "lab_type": 1,
+            "encounter": 485
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 486,
+        "fields": {
+            "patient": 95,
+            "lab_time": "2020-12-13",
+            "lab_type": 5,
+            "encounter": 486
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 487,
+        "fields": {
+            "patient": 95,
+            "lab_time": "2020-02-26",
+            "lab_type": 6,
+            "encounter": 487
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 488,
+        "fields": {
+            "patient": 95,
+            "lab_time": "2021-04-04",
+            "lab_type": 5,
+            "encounter": 488
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 489,
+        "fields": {
+            "patient": 95,
+            "lab_time": "2019-06-25",
+            "lab_type": 5,
+            "encounter": 489
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 490,
+        "fields": {
+            "patient": 95,
+            "lab_time": "2020-02-08",
+            "lab_type": 4,
+            "encounter": 490
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 491,
+        "fields": {
+            "patient": 96,
+            "lab_time": "2019-07-12",
+            "lab_type": 2,
+            "encounter": 491
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 492,
+        "fields": {
+            "patient": 96,
+            "lab_time": "2018-05-08",
+            "lab_type": 6,
+            "encounter": 492
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 493,
+        "fields": {
+            "patient": 96,
+            "lab_time": "2018-05-02",
+            "lab_type": 1,
+            "encounter": 493
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 494,
+        "fields": {
+            "patient": 96,
+            "lab_time": "2019-03-06",
+            "lab_type": 5,
+            "encounter": 494
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 495,
+        "fields": {
+            "patient": 96,
+            "lab_time": "2020-01-05",
+            "lab_type": 4,
+            "encounter": 495
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 496,
+        "fields": {
+            "patient": 96,
+            "lab_time": "2018-03-01",
+            "lab_type": 5,
+            "encounter": 496
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 497,
+        "fields": {
+            "patient": 96,
+            "lab_time": "2020-10-24",
+            "lab_type": 4,
+            "encounter": 497
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 498,
+        "fields": {
+            "patient": 96,
+            "lab_time": "2019-07-09",
+            "lab_type": 3,
+            "encounter": 498
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 499,
+        "fields": {
+            "patient": 97,
+            "lab_time": "2019-07-10",
+            "lab_type": 3,
+            "encounter": 499
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 500,
+        "fields": {
+            "patient": 97,
+            "lab_time": "2020-09-07",
+            "lab_type": 4,
+            "encounter": 500
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 501,
+        "fields": {
+            "patient": 97,
+            "lab_time": "2021-06-23",
+            "lab_type": 1,
+            "encounter": 501
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 502,
+        "fields": {
+            "patient": 97,
+            "lab_time": "2019-07-13",
+            "lab_type": 5,
+            "encounter": 502
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 503,
+        "fields": {
+            "patient": 97,
+            "lab_time": "2019-06-16",
+            "lab_type": 2,
+            "encounter": 503
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 504,
+        "fields": {
+            "patient": 97,
+            "lab_time": "2019-12-05",
+            "lab_type": 4,
+            "encounter": 504
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 505,
+        "fields": {
+            "patient": 98,
+            "lab_time": "2018-08-27",
+            "lab_type": 4,
+            "encounter": 505
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 506,
+        "fields": {
+            "patient": 98,
+            "lab_time": "2019-10-31",
+            "lab_type": 1,
+            "encounter": 506
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 507,
+        "fields": {
+            "patient": 98,
+            "lab_time": "2021-05-25",
+            "lab_type": 5,
+            "encounter": 507
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 508,
+        "fields": {
+            "patient": 98,
+            "lab_time": "2020-09-13",
+            "lab_type": 1,
+            "encounter": 508
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 509,
+        "fields": {
+            "patient": 98,
+            "lab_time": "2021-01-29",
+            "lab_type": 6,
+            "encounter": 509
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 510,
+        "fields": {
+            "patient": 98,
+            "lab_time": "2020-10-04",
+            "lab_type": 1,
+            "encounter": 510
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 511,
+        "fields": {
+            "patient": 99,
+            "lab_time": "2018-07-14",
+            "lab_type": 3,
+            "encounter": 511
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 512,
+        "fields": {
+            "patient": 99,
+            "lab_time": "2018-05-30",
+            "lab_type": 5,
+            "encounter": 512
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 513,
+        "fields": {
+            "patient": 99,
+            "lab_time": "2019-01-25",
+            "lab_type": 2,
+            "encounter": 513
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 514,
+        "fields": {
+            "patient": 99,
+            "lab_time": "2018-07-31",
+            "lab_type": 1,
+            "encounter": 514
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 515,
+        "fields": {
+            "patient": 99,
+            "lab_time": "2018-07-01",
+            "lab_type": 5,
+            "encounter": 515
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 516,
+        "fields": {
+            "patient": 99,
+            "lab_time": "2021-02-17",
+            "lab_type": 3,
+            "encounter": 516
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 517,
+        "fields": {
+            "patient": 99,
+            "lab_time": "2018-09-16",
+            "lab_type": 5,
+            "encounter": 517
+        }
+    },
+    {
+        "model": "labs.lab",
+        "pk": 518,
+        "fields": {
+            "patient": 99,
+            "lab_time": "2020-09-09",
+            "lab_type": 2,
+            "encounter": 518
+        }
+    }
+]

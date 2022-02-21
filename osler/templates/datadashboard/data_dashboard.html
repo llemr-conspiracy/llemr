@@ -1,0 +1,414 @@
+{% extends "core/base.html" %}
+
+{% load static i18n %}
+
+{% block title %}
+{% translate 'Clinic Data Dashboard' %}
+{% endblock %}
+
+{% block header %}
+<h3>{% translate 'Clinic Data Dashboard' %}</h3>
+{% endblock %}
+
+{% block content %}
+
+<style>
+  .jumbotron{
+    padding: 0 0 10px 0;
+    
+  }
+  .errorbar{
+    position: relative;
+    background-color: red;
+    width: 90%;
+    top: 12%;
+    
+  }
+  .dropdown-content{
+    white-space: nowrap;
+    max-height: 17rem; 
+    overflow: scroll;
+  }
+  .panel-modern {
+    background-color: #F1F3FB;
+    box-shadow: none;
+    border-width: none;
+    border-radius: 15px;
+    border-style: none;
+  }
+  .panel-light {
+    background-color: #ffffff;
+    box-shadow: none;
+    border-width: none;
+    border-radius: 15px;
+    border-style: none;
+  }
+
+  .btn-modern:focus {
+    box-shadow: none !important
+  }
+
+  .btn:active,
+  .btn:focus,
+  .btn.active,
+  .btn:active:focus,
+  .btn::after {
+    background-image: none;
+    outline: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .btn-modern {
+    background-color: #ffffff;
+    border-radius: 15px;
+  }
+
+  .dropdown-menu-modern {
+    border-radius: 15px;
+    border-color: #969DB5;
+    border-width: 2px;
+  }
+
+  .btn-link-modern {
+    color: #656d86;
+    text-decoration: none !important;
+  }
+
+  .btn-link-modern:hover {
+    color: #070a16
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .vertical-align {
+    display: flex;
+    align-items: center;
+  }
+
+  .horizontal-align {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .align-left {
+    display: flex;
+    justify-content: start;
+    flex-wrap: wrap;
+  }
+
+  .align-right {
+    display: flex;
+    justify-content: flex-end !important;
+    flex-wrap: wrap;
+  }
+
+  .space-between {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .margin-auto {
+    margin: 0 auto;
+    position: relative;
+    display: block;
+  }
+
+  .big-icon {
+    font-size: 3rem;
+    color: #969DB5
+  }
+
+  .small-icon {
+    font-size: 1.5rem;
+    color: #969DB5
+  }
+
+  .text-xlarge {
+    font-size: 1.9rem;
+    font-weight: 1000
+  }
+
+  .color-primary {
+    color: #111A3C
+  }
+
+  .color-light {
+    color: #969DB5;
+  }
+
+  .ml-1 {
+    margin-left: 1rem;
+  }
+  .ml-2 {
+    margin-left: 2rem;
+  }
+
+  .ml-3 {
+    margin-left: 3rem;
+  }
+
+  .mr-3 {
+    margin-right: 3rem;
+  }
+
+  .mr-1 {
+    margin-right: 1rem;
+  }
+
+  .mt-3 {
+    margin-top: 3rem
+  }
+
+  .mt-1 {
+    margin-top: .5rem
+  }
+
+  .mb-1 {
+    margin-bottom: .5rem
+  }
+
+  .mx-3 {
+    margin: 3rem
+  }
+
+  .px-3 {
+    padding: 3rem
+  }
+
+  .px-1 {
+    padding: 1rem
+  }
+
+  .pt-1 {
+    padding-top: 1rem
+  }
+
+  .height-25 {
+    min-height: 60vh !important;
+  }
+  .pointer{
+    cursor: pointer;
+  }
+
+  .control-input {
+    border-radius: 15px;
+    border: none !important;
+    background-color: #ffffff;
+  }
+
+  @media (min-width: 1200px) {
+    .equal {
+      display: flex;
+      display: -webkit-flex;
+      flex-wrap: wrap;
+    }
+  }
+
+  .right-menu {
+    display: inline-block;
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+    /* float:right; */
+  }
+</style>
+
+<script>
+$(document).ready(function(){
+  $('.dropdown-submenu a.prevent-prop').on("click", function(e){
+    $(this).next('ul').toggle();
+    e.stopPropagation();
+    e.preventDefault();
+  });
+});
+</script>
+
+<div class="container">
+  <!-- TODO get these script tags to instead be bundled by webpack -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+  <!-- Error modal -->
+  <div class="modal fade" id="flipFlop" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content alert alert-warning">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title" id="modalLabel">Error: no data selected</h4>
+        </div>
+        <div class="modal-body">
+          try selecting a different date range or condition to filter by
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row panel panel-body panel-default panel-modern vertical-align horizontal-align ">
+    <div class="align-right mr-1 text-xlarge">Displaying data from: </div>
+    <div class="mt-1 mb-1 mr-3 align-left">
+      <div class="control-input">
+        <span class="glyphicon glyphicon-calendar small-icon ml-1" aria-hidden="true"></span>
+        <input class="control-input pointer px-1 color-light" type="text" name="daterange" />
+      </div>
+    </div>    
+    <div class="align-left mr-1 text-xlarge">of patients presenting: </div>
+    <div class="dropdown">
+      <button class="vertical-align btn btn-modern dropdown-toggle" data-toggle="dropdown">
+        <span class="mt-1 mb-1 glyphicon glyphicon-tags small-icon mr-1"></span>
+        <span class="mr-1 mt-1 mb-1 color-light" id="display-condition">Any Conditions</span>
+        <span class="mt-1 mb-1 caret"></span>
+      </button> 
+      <ul class="dropdown-menu dropdown-content" aria-labelledby="dropdownMenu">
+        <li class="mt-1 ml-1"><span class="pointer" id="all-conditions-btn">Any Conditions</span></li>
+        <li role="separator" class="divider"></li>
+        <div id="condition-filter-btns"></div>
+      </ul>   
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="panel panel-default panel-modern dropdown horizontal-align">
+        <button class="panel-body btn btn-link btn-link-modern dropdown-toggle" id="____" type="button" data-toggle="dropdown">
+          <div class="row vertical-align horizontal-align">
+              <span class="glyphicon glyphicon-user big-icon" ></span>
+            <div class="col-xs-10">
+              <div class="col-12 color-primary text-xlarge align-left" id="unique-patient-count">#</div>
+              <div class="col-12 color-light">Unique Patients</div>
+            </div>
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </div> 
+        </button>
+        <ul class="dropdown-menu dropdown-content">
+          <li class="pt-1">
+            <strong><span class="ml-2" id="workups-count"></span></strong>  
+            <span class="mr-1">&nbsp;Total Workups</span>
+          </li>
+          <li role="separator" class="divider"></li>
+          <li>
+            <strong><span class="ml-2" id="1-workup-count"></span></strong>  
+            <span class="mr-1" >&nbsp;received <b>1</b> workup</span>
+          </li>
+          <li class="pt-1">
+            <strong><span class="ml-2" id="2-workup-count"></span></strong>  
+            <span class="mr-1">&nbsp;received <b>2</b> workups</span>
+          </li>
+          <li class="pt-1">
+            <strong><span class="ml-2" id="3-workup-count"></span></strong>  
+            <spa class="mr-1"n>&nbsp;received <b>3</b> workups</span>
+          </li>
+          <li class="pt-1">
+            <strong><span class="ml-2" id="more-workup-count"></span></strong>  
+            <span class="mr-1">&nbsp;received <b>4+</b> workups</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="panel panel-default panel-modern dropdown horizontal-align">
+        <button class="panel-body btn btn-link btn-link-modern dropdown-toggle" id="____" type="button" data-toggle="dropdown">
+          <div class="row vertical-align horizontal-align">
+              <span class="glyphicon glyphicon-heart big-icon" ></span>
+            <div class="col-xs-10">
+              <div class="col-12 color-primary text-xlarge align-left" id="conditions-count">#</div>
+              <div class="col-12 color-light">Chronic Conditions</div>
+            </div>
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </div> 
+        </button>
+        <ul class="dropdown-menu dropdown-content" id="conditions-dropdown">
+          <!-- condition count li items appended here -->
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="panel panel-default panel-modern dropdown horizontal-align">
+        <button class="panel-body btn btn-link btn-link-modern dropdown-toggle" id="____" type="button" data-toggle="dropdown">
+          <div class="row vertical-align horizontal-align">
+              <span class="glyphicon glyphicon-list-alt big-icon" ></span>
+            <div class="col-xs-10">
+              <div class="col-12 color-primary text-xlarge align-left" id="labs-count">#</div>
+              <div class="col-12 color-light">Labs Ordered</div>
+            </div>
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </div> 
+        </button>
+        <ul class="dropdown-menu dropdown-content" id="labs-dropdown">
+          <!-- labs count li items appended here -->
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="panel panel-default panel-modern dropdown horizontal-align">
+        <button class="panel-body btn btn-link btn-link-modern dropdown-toggle" id="____" type="button" data-toggle="dropdown">
+          <div class="row vertical-align horizontal-align">
+              <span class="glyphicon glyphicon-pushpin big-icon" ></span>
+            <div class="col-xs-10">
+              <div class="col-12 color-primary text-xlarge align-left" id="drugs-count">#</div>
+              <div class="col-12 color-light">Drugs Dispensed</div>
+            </div>
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </div> 
+        </button>
+        <ul class="dropdown-menu dropdown-content" id="drugs-dropdown">
+          <!-- drugs count li items appended here -->
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-lg-12">
+
+      <div class="panel panel-default panel-modern">
+        <div class="panel-body">
+          <p class="color-primary text-xlarge">Demographics Distributions</p>
+          <div class="row equal">
+            <div class="col-lg-8 col-md-6 col-sm-12 equal px-1">
+              <div class="col-lg-12 panel-light equal px-3" id="age-chart"></div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 col-sm-12 equal px-1">
+              <div class="col-lg-12 panel-light vertical-align equal px-3" id="gender-chart">
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 equal px-1 ">
+              <div class="col-lg-12 panel-light vertical-align equal px-3 height-25" id="ethnicity-chart">
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 equal px-1 ">
+              <div class="col-lg-12 panel-light vertical-align equal px-3 height-25" id="zipcode-chart">
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-6 col-sm-12 equal px-1 ">
+              <div class="col-lg-12 panel-light vertical-align equal px-3 height-25" id="insurance-chart">
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  {% endblock %} {% block pagination %}{% endblock %}
+
+  {% block extra_js %}
+  <!-- this script allows you to use chart.js (bundled through webpack) -->
+  <script type="text/javascript" charset="utf-8" src="{% static 'js/datadashboard/datadashboard-imports.bundle.js' %}"></script>
+
+  <script type="text/javascript" src="{% url 'datadashboard:javascript-catalog' %}"></script>
+
+  <script type="text/javascript" charset="utf-8" src="{% static 'js/datadashboard/datadashboard.js' %}">
+  </script>
+  {% endblock %}

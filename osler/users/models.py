@@ -12,6 +12,9 @@ class User(AbstractUser):
 
     class Meta:
         ordering = ["last_name",]
+        permissions = [
+            ('view_clinic_datadashboard', _("Can view clinic data dashboard"))
+        ]
 
     # more inclusive of name patterns around the world
     name = models.CharField("Preferred name", blank=True, max_length=255)
