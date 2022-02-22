@@ -404,8 +404,7 @@ $(document).ready(function(){
   {% endblock %} {% block pagination %}{% endblock %}
 
   {% block extra_js %}
-  <!-- this script allows you to use chart.js (bundled through webpack) -->
-  <script type="text/javascript" charset="utf-8" src="{% static 'js/datadashboard/datadashboard-imports.bundle.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js" integrity="sha512-QSkVNOCYLtj73J4hbmVoOV6KVZuMluZlioC+trLpewV8qMjsWqlIQvkn1KGX2StWvPMdWGBqim1xlC8krl1EKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script type="text/javascript" src="{% url 'datadashboard:javascript-catalog' %}"></script>
 

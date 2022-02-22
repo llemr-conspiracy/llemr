@@ -280,6 +280,3 @@ osler/media/
 .envs/.production/.secrets
 compose/production/nginx/certs
 .vscode/*
-
-# Webpack
-*.bundle.js
