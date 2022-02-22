@@ -1,0 +1,77 @@
+{% extends "core/base.html" %}
+{% load bootstrap3 %}
+
+{% block title %}
+Osler: Survey Responses
+{% endblock %}
+
+{% block header %}
+
+{% comment %}
+This view is used for the survey:responeses and surveys:all_responses views
+if the survey object exists, then this is survey:responses, otherwise its surveys:all_responses
+{% endcomment %}
+
+<div class="container">
+	<h1>
+    {% if not survey %}
+    Survey
+    {% endif %}
+    Responses 
+    {% if survey %}
+    to <a href="{% url 'surveys:view' id=survey.id %}"> {{survey}}</a>
+    {% endif %}
+  </h1>
+  {% if survey %}
+    <h3><a href="{% url 'surveys:all_responses' %}">All Survey Responses</a></h3>
+   {% endif %}
+  {% if patient %}
+   <p class="lead">for <em><a href="{% url 'core:patient-detail' pk=patient.id %}">{{ patient.name }}</a></em></p>
+   {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    {% if object_list %}
+    <table class="table" id="all-patients-table">
+      <tr>
+          <th>Date</th>
+          {% if not survey %}
+            <th>Survey</th>
+          {% endif %}
+          <th>Patient</th>
+          <th>Filled By</th>
+      </td>
+    </tr>
+    {% for response in object_list %}
+      <tr>
+        <td> <a href="{% url 'surveys:response' id=response.id%}">{{response.created_at}}</a></td>
+        {% if not survey %}
+        <td><a href="{% url 'surveys:view' id=response.survey.id %}">{{response.survey}}</a></td>
+        {% endif %}
+        <td>
+          <a href=" {% url 'core:patient-detail' pk=response.encounter.patient.id %}">
+            {{ response.encounter.patient.name }}
+          </a>
+          {% if not patient and not survey %}
+          <a href="?pt_id={{response.encounter.patient.id}}"<span class="label label-success">filter</span>
+
+          {%endif%}
+        </td>
+        <td>{{response.author}} ({{response.author_role}})</td>
+      </tr>
+    {% endfor %}
+    </table>
+    {% else %}
+      {% if patient %}
+        <p>No responses for {{patient.name}} have been submitted.</p>
+      {% else %}
+        <p>No responses have been submitted.</p>
+      {%endif%}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

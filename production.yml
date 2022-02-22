@@ -1,9 +1,9 @@
-version: '3'
+version: "3"
 
 volumes:
   production_postgres_data: {}
   production_postgres_data_backups: {}
-  production_traefik: {}
+  production_static_files: {}
 
 services:
   django:
@@ -16,8 +16,13 @@ services:
       - redis
     env_file:
       - ./.envs/.production/.django
-      - ./.envs/.production/.postgres
+      - ./.envs/.production/.secrets
     command: /start
+    volumes:
+      - production_static_files:/app/staticfiles
+    networks:
+      - nginx_network
+      - database_network
 
   postgres:
     build:
@@ -28,22 +33,27 @@ services:
       - production_postgres_data:/var/lib/postgresql/data
       - production_postgres_data_backups:/backups
     env_file:
-      - ./.envs/.production/.postgres
+      - ./.envs/.production/.secrets
+    networks:
+      - database_network
 
-  traefik:
-    build:
-      context: .
-      dockerfile: ./compose/production/traefik/Dockerfile
-    image: osler_production_traefik
+  nginx:
+    build: ./compose/production/nginx
+    ports:
+      - 80:80
+      - 443:443
     depends_on:
       - django
     volumes:
-      - production_traefik:/etc/traefik/acme
-    ports:
-      - "0.0.0.0:8084:80"
-      - "0.0.0.0:443:443"
+      - production_static_files:/app/staticfiles
+    networks:
+      - nginx_network
 
   redis:
     image: redis:5.0
 
-  
+networks:
+  nginx_network:
+    driver: bridge
+  database_network:
+    driver: bridge

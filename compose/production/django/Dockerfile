@@ -33,6 +33,9 @@ RUN chmod +x /start
 RUN chown django /start
 COPY --chown=django:django . /app
 
+RUN mkdir -p /app/staticfiles
+RUN chown django:django /app/staticfiles
+
 USER django
 
 WORKDIR /app

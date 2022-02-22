@@ -42,7 +42,7 @@ Before LLEMR is usable, you first need to add some basic data to the database.
     
 * To load basic data, run::
 
-    $ docker compose -f local.yml run --rm django python manage.py loaddata osler/fixtures/*
+    $ docker compose -f local.yml run --rm django python manage.py loaddata core workup groups inventory labs followup vaccine
 
 * Now, follow the steps below to create a superuser account.
 
@@ -60,21 +60,26 @@ Setting Up Your Users
 
 For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
 
-Running tests with py.test
+Running tests with pytest
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Once you have a working build of the docker containers::
 
-  $ docker-compose -f local.yml run --rm django coverage run -m pytest
+  $ docker compose -f local-test-live.yml run --rm django pytest
 
+The above command will create a Selenium container and run the entire test suite. If you don't want to create a Selenium container, you can instead run::
+
+  $ docker compose -f local.yml run --rm django pytest
+
+However, any live tests using Selenium will fail.
 
 Test coverage
 ^^^^^^^^^^^^^
 
 To run the tests, check your test coverage, and generate an HTML coverage report::
 
-    $ docker-compose -f local.yml run --rm django coverage run -m pytest
-    $ docker-compose -f local.yml run --rm django coverage html
+    $ docker compose -f local.yml run --rm django coverage run -m pytest
+    $ docker compose -f local.yml run --rm django coverage html
     $ open htmlcov/index.html
 
 Building Documentation
@@ -82,7 +87,7 @@ Building Documentation
 
 Documentation can be built with::
 
-	$ docker-compose -f local.yml up docs
+	$ docker compose -f docs.yml up
 
 Which serves documentation at `http://0.0.0.0:7000`
 

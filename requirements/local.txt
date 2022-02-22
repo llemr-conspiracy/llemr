@@ -2,7 +2,7 @@
 
 Werkzeug==1.0.1 # https://github.com/pallets/werkzeug
 ipdb==0.13.4  # https://github.com/gotcha/ipdb
-psycopg2==2.8.5 --no-binary psycopg2  # https://github.com/psycopg/psycopg2
+psycopg2==2.9.3 --no-binary psycopg2  # https://github.com/psycopg/psycopg2
 
 # Testing
 # ------------------------------------------------------------------------------
@@ -10,7 +10,7 @@ mypy==0.782  # https://github.com/python/mypy
 django-stubs==1.6.0  # https://github.com/typeddjango/django-stubs
 pytest==6.1.1  # https://github.com/pytest-dev/pytest
 pytest-sugar==0.9.4  # https://github.com/Frozenball/pytest-sugar
-selenium==3.141.0
+selenium==4.1.0 # https://github.com/SeleniumHQ/selenium/tree/trunk/py
 
 
 # Code quality
@@ -30,7 +30,7 @@ factory-boy==3.1.0  # https://github.com/FactoryBoy/factory_boy
 django-debug-toolbar==3.1.1  # https://github.com/jazzband/django-debug-toolbar
 django-extensions==3.0.9  # https://github.com/django-extensions/django-extensions
 django-coverage-plugin==1.8.0  # https://github.com/nedbat/django_coverage_plugin
-pytest-django==4.0.0  # https://github.com/pytest-dev/pytest-django
+pytest-django==4.5.2  # https://github.com/pytest-dev/pytest-django
 
 # Documentation
 # ------------------------------------------------------------------------------

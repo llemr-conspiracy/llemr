@@ -16,6 +16,7 @@ from osler.users.decorators import active_permission_required
 from osler.referral.models import Referral, FollowupRequest, PatientContact
 from osler.vaccine.models import VaccineFollowup
 from osler.appointment.models import Appointment
+from osler.surveys.models import Survey
 
 from osler.core import models as core_models
 from osler.core import forms
@@ -283,7 +284,6 @@ def choose_role(request):
     if request.POST:
         active_role_pk = request.POST[RADIO_CHOICE_KEY]
         request.session['active_role_pk'] = active_role_pk
-        print(active_role_pk)
         request.session['active_role_name'] = Group.objects.get(pk=active_role_pk).name
 
         return HttpResponseRedirect(redirect_to)
@@ -402,6 +402,11 @@ def patient_detail(request, pk):
     can_case_manage = group_has_perm(active_role, 'core.case_manage_Patient')
     can_export_pdf = group_has_perm(active_role, 'workup.export_pdf_Workup')
 
+    # list of incompleted surveys for patient
+    # FIXME: is the whole list needed?
+    has_incomplete_surveys = Survey.objects.incomplete(pt.pk).exists()
+    surveys_exist = Survey.objects.exists()
+    
     # only display set status form if there is more than one status to choose from
     # and the user has activate_patient permission
     set_status_form = None
@@ -425,6 +430,8 @@ def patient_detail(request, pk):
         'can_activate': can_activate,
         'can_case_manage': can_case_manage,
         'can_export_pdf': can_export_pdf,
+        'has_incomplete_surveys': has_incomplete_surveys,
+        'surveys_exist': surveys_exist,
         'set_status_form': set_status_form,
         'display_set_status_form': display_set_status_form
     }
