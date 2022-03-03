@@ -7,6 +7,7 @@ from django.utils.timezone import now
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
 from osler import inventory
 
@@ -16,6 +17,7 @@ from osler.core import models, urls
 from osler.core.tests.test_views import build_user
 from osler.core.tests.test import SeleniumLiveTestCase
 from osler.inventory.tests.factories import DrugFactory
+from osler.core.tests.factories import PatientFactory
 
 from osler.workup import models as workup_models
 from osler.workup.tests.tests import wu_dict
@@ -30,7 +32,7 @@ BASIC_FIXTURES = ['core', 'workup', 'inventory', 'drug_examples']
 class TestLiveInventory(SeleniumLiveTestCase):
     fixtures = BASIC_FIXTURES    # what is the point of this line of code?
 
-    def test_check_drugs_present(self):
+    def donttest_check_drugs_present(self):
         '''
         Test that all drugs in drug inventroy are rendered 
         in the table
@@ -68,12 +70,11 @@ class TestLiveInventory(SeleniumLiveTestCase):
         allDrugs = inventory_models.Drug.objects.all()
         allDrugNames = [drug.name for drug in allDrugs]
         assert collections.Counter(drugsInTable) == collections.Counter(allDrugNames)
-    
 
     def test_check_dispense_form_submission(self):
         """
         generates random inputs for the dispense form and makes sure no errors are caused
-        creates a test drug and tests dispense form with random inputs, deletes test drug when test ends
+        creates a test drug and tests dispense form with random inputs
         """
 
         # TODO 
@@ -90,14 +91,35 @@ class TestLiveInventory(SeleniumLiveTestCase):
         self.get_homepage()
         self.submit_login(user.username, 'password')
         self.get_url(reverse('inventory:drug-list'))   # go to the inventory page
-
         testDrug = inventory_models.Drug.objects.all()[0]
 
         # generate random input for dispense form
-        testDrugStock = testDrug.stock
-        dispenseAmount = math.floor(random.random()*testDrugStock)
+        initialStock = testDrug.stock
+        dispenseAmount = math.floor(random.random()*initialStock)
 
+        """
+        old
+
+        # need to manually activate some patients so that the dropdown isn't empty in the dispense form
+        # also have to add some patients bc this fixture only comes with one patient
+        patient1 = PatientFactory()
+        patient2 = PatientFactory()
+        models.Patient.objects.all()[0].toggle_active_status()
+        models.Patient.objects.all()[1].toggle_active_status()
+        models.Patient.objects.all()[2].toggle_active_status()
+
+        """
+
+        models.Patient.objects.all()[0].toggle_active_status()
+        for i in range(1,5):
+            patient = PatientFactory()
+        for i in range(1,5):
+            models.Patient.objects.all()[i].toggle_active_status()
+        
         # TEST THE RANDOM INPUTS
+
+        self.selenium.refresh()
+
         # click dispense form button
         self.selenium.find_element(
             By.CSS_SELECTOR,
@@ -111,32 +133,29 @@ class TestLiveInventory(SeleniumLiveTestCase):
         # choose random patient from dropdown 
         patientDropdown = self.selenium.find_element(By.ID, "patient_pk")
         patientDropdown.click()
-        breakpoint()
 
-        # TODO need to manually activate some patients so that the dropdown isn't empty
+        # choose a random patient choice and click it
+        randomPatientIndex = math.floor(random.random()*5) + 1    # (the values are 1-indexed)
+        selectPatientDropdown = Select(patientDropdown)
+        selectPatientDropdown.select_by_value(f"{randomPatientIndex}")
 
-        # TODO get a list of the choices in the dropdown
-        patientChoices = self.selenium.find_elements(
-            By.CSS_SELECTOR,
-            ""
-        )
+        # close patient dropdown
+        patientDropdown.click()
 
-        # TODO choose a random patient choice
-
-
-        # TODO click the dispense button (test will automatically fail if a django error is caused bc these tests fail if a baskend error occurs)
+        # TODO Just need to get this CSS Path right
         self.selenium.find_element(
-            By.CSS_SELECTOR,
-            "div.modal-content div button.btn-primary"
+            By.XPATH,
+            "/html[@class='no-js']/body[@class='modal-open']/div[@class='fade modal show']/div[@class='modal-dialog']/div[@class='modal-content']/form/div[@class='modal-footer']/button[@class='btn btn-primary']"
         ).click()
 
-        # TODO ensure that the updated stock is the correct amount
-
+        testDrugAfterDispense = inventory_models.Drug.objects.all()[0]
+        # ensure that the updated stock is the correct amount
+        assert initialStock-dispenseAmount == testDrugAfterDispense.stock
 
 
     """
     More test ideas:
-
+    Test dispensing more than possible stock
 
 
 

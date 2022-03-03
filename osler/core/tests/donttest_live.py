@@ -174,7 +174,7 @@ class LiveTesting(SeleniumLiveTestCase):
 
 class LiveTestAllPatients(SeleniumLiveTestCase):
     fixtures = BASIC_FIXTURES
-
+    
     def setUp(self):
         # build a user and log in
         self.password = 'password'
