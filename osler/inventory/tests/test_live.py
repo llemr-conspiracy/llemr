@@ -32,7 +32,7 @@ BASIC_FIXTURES = ['core', 'workup', 'inventory', 'drug_examples']
 class TestLiveInventory(SeleniumLiveTestCase):
     fixtures = BASIC_FIXTURES    # what is the point of this line of code?
 
-    def donttest_check_drugs_present(self):
+    def test_check_drugs_present(self):
         '''
         Test that all drugs in drug inventroy are rendered 
         in the table
@@ -86,6 +86,7 @@ class TestLiveInventory(SeleniumLiveTestCase):
         # for some reason this test returns an IntegrityError every OTHER time it is run, why is this?
         # (when it doesn't return an error, it gets to the breakpoint perfectly fine)
 
+        # generate user and login
         user = build_user(password='password',
                        group_factories=[user_factories.AttendingGroupFactory])
         self.get_homepage()
@@ -93,31 +94,14 @@ class TestLiveInventory(SeleniumLiveTestCase):
         self.get_url(reverse('inventory:drug-list'))   # go to the inventory page
         testDrug = inventory_models.Drug.objects.all()[0]
 
-        # generate random input for dispense form
+        # generate random input for dispense form and refresh so that active patients update 
         initialStock = testDrug.stock
         dispenseAmount = math.floor(random.random()*initialStock)
-
-        """
-        old
-
-        # need to manually activate some patients so that the dropdown isn't empty in the dispense form
-        # also have to add some patients bc this fixture only comes with one patient
         patient1 = PatientFactory()
         patient2 = PatientFactory()
         models.Patient.objects.all()[0].toggle_active_status()
         models.Patient.objects.all()[1].toggle_active_status()
         models.Patient.objects.all()[2].toggle_active_status()
-
-        """
-
-        models.Patient.objects.all()[0].toggle_active_status()
-        for i in range(1,5):
-            patient = PatientFactory()
-        for i in range(1,5):
-            models.Patient.objects.all()[i].toggle_active_status()
-        
-        # TEST THE RANDOM INPUTS
-
         self.selenium.refresh()
 
         # click dispense form button
@@ -130,27 +114,32 @@ class TestLiveInventory(SeleniumLiveTestCase):
         self.selenium.find_element(By.ID, "num").clear()
         self.selenium.find_element(By.ID, "num").send_keys(dispenseAmount)
 
-        # choose random patient from dropdown 
+        # open patient dropdown
         patientDropdown = self.selenium.find_element(By.ID, "patient_pk")
         patientDropdown.click()
 
         # choose a random patient choice and click it
-        randomPatientIndex = math.floor(random.random()*5) + 1    # (the values are 1-indexed)
+        randomPatientIndex = math.floor(random.random()*3) + 1    # (the values are 1-indexed)
         selectPatientDropdown = Select(patientDropdown)
         selectPatientDropdown.select_by_value(f"{randomPatientIndex}")
 
         # close patient dropdown
         patientDropdown.click()
 
-        # TODO Just need to get this CSS Path right
+        # submit dispense form
         self.selenium.find_element(
             By.XPATH,
             "/html[@class='no-js']/body[@class='modal-open']/div[@class='fade modal show']/div[@class='modal-dialog']/div[@class='modal-content']/form/div[@class='modal-footer']/button[@class='btn btn-primary']"
         ).click()
 
-        testDrugAfterDispense = inventory_models.Drug.objects.all()[0]
-        # ensure that the updated stock is the correct amount
-        assert initialStock-dispenseAmount == testDrugAfterDispense.stock
+        # ensure that the stock displayed on the website is equal to the correct amount
+        stockDisplayed = self.selenium.find_element(
+            By.CSS_SELECTOR,
+            "table.table td:nth-last-of-type(5) > strong"
+        ).text
+        stockDisplayed = int(stockDisplayed)
+
+        assert initialStock-dispenseAmount == stockDisplayed
 
 
     """
