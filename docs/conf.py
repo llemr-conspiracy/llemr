@@ -11,6 +11,7 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
 import os
+import datetime
 import sys
 import django
 
@@ -28,8 +29,8 @@ django.setup()
 
 # -- Project information -----------------------------------------------------
 
-project = "Osler"
-copyright = """2016, Justin R. Porter"""
+project = "LLEMR"
+copyright = """2016-%s, Justin R. Porter""" % datetime.datetime.now().year
 author = "Justin R. Porter"
 
 
