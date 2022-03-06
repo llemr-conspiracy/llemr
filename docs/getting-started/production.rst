@@ -13,13 +13,13 @@ Install Docker per the Docker instructions for your platform.
 
 Download the `latest release of LLEMR <https://github.com/llemr-conspiracy/llemr/releases/latest>`_
 
-https://github.com/llemr-conspiracy/llemr
 -----------------------------------------------------------------------------------------------------------------
-  Via git:
+  
+Via git:
 
 .. code-block:: console
 
-	$ git clone https://github.com/llemr-conspiracy/llemr.git
+  $ git clone https://github.com/llemr-conspiracy/llemr.git
   $ git checkout v2.2.0
 
 As a zip:
@@ -56,30 +56,36 @@ We use PostgresQL. The database container is named `postgres`. Here is an exampl
       networks:
         - database_network
 
-The key here is the `env_file` section, which sets some important environment variables. the file `./.envs/.production/.secrets` *does not exist*, and must be created. Create a file that looks something like:
-
+The key here is the `env_file` section, which sets some important environment variables. the file `./.envs/.production/.secrets` *does not exist*, and must be created. See the next section for more details.
 
 Create the :code:`.secrets` file:
 ----------------------------------
-	This file contains sensitive information about the LLEMR instance that would allow break confidentailty if exposed. As such, it must be created manually for each unique LLEMR instance. It should never be check into git, and is ignored by git by default. The file must be placed in :code:`osler/.envs/.production/.secrets`.
-	The file should contain database credentials and the django secret key. **Do not use the values below. They are only an example**
+This file contains sensitive information about the LLEMR instance that would allow break confidentailty if exposed. As such, it must be created manually for each unique LLEMR instance. It should never be check into git, and is ignored by git by default. The file must be placed in :code:`osler/.envs/.production/.secrets`.
+The file should contain database credentials and the Django secret key. **Do not use the values below. They are only an example**
 
-	.. code-block::
+.. code-block::
 
-		# PostgreSQL
-		# ------------------------------------------------------------------------------
-		POSTGRES_HOST=postgres
-		POSTGRES_PORT=5432
-		POSTGRES_DB=llemr
-		POSTGRES_USER=BnnIJhssshZrnURWgfjnnEXZRMzhNZCx
-		POSTGRES_PASSWORD=JzQ6eHA47iiEzURQo1xJ2VPeGpRY81edS1UpuQc82KP5bb7T8t6qR7ANFTRK5bxI
+  # PostgreSQL
+  # ------------------------------------------------------------------------------
+  POSTGRES_HOST=postgres
+  POSTGRES_PORT=5432
+  POSTGRES_DB=llemr
+  POSTGRES_USER=BnnIJhssshZrnURWgfjnnEXZRMzhNZCx
+  POSTGRES_PASSWORD=JzQ6eHA47iiEzURQo1xJ2VPeGpRY81edS1UpuQc82KP5bb7T8t6qR7ANFTRK5bxI
 
 
-		# Django
-		# ------------------------------------------------------------------------------
-		DJANGO_SECRET_KEY=PbQjPuCXmpX4dHJITSI2nSJy6lzivrHkyxIZJkAnowUsEzsWkucovzd75yz8BqVH
+  # Django
+  # ------------------------------------------------------------------------------
+  DJANGO_SECRET_KEY=PbQjPuCXmpX4dHJITSI2nSJy6lzivrHkyxIZJkAnowUsEzsWkucovzd75yz8BqVH
 
-  The django secret key can be generated with the command :code:`python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())'`, while you can use any preferred method to choose your postgres username and password.
+The Django secret key can be generated with the Python script
+
+.. code-block:: python
+
+  from django.core.management.utils import get_random_secret_key
+  print(get_random_secret_key())
+
+while you can use any preferred (and secure) method to choose your Postgres username and password.
 
 
 The Web App
@@ -152,7 +158,7 @@ Thus, it inherits the configurations listed in `config/settings/production.py`, 
 The Web Server
 --------------
 
-The web server we use is nginx. It's responsible for serving static files, terminating SSL, and passing data to gunicorn. The pertinent part of the docker compose file is here:
+The web server we use is nginx. It's responsible for serving static files, terminating SSL, and passing data to gunicorn. The pertinent part of the Docker compose file is here:
 
 .. code-block:: yaml
 
@@ -185,13 +191,14 @@ To generate certificates, run this from the root directory of LLEMR:
 
 	openssl req -x509 -sha256 -nodes -newkey rsa:2048 -days 365 -keyout ./compose/production/nginx/certs/cert.key -out ./compose/production/nginx/certs/cert.crt
 
-Build and run the docker containers 
+You may have to use :code:`chmod` in order to allow Docker to read the certificate files.
+
+Build and run the Docker containers 
 ------------------------------------
 This could take a while. Note: if you redo any previous steps, rerun this command with the :code:`--build` argument.
 
 .. code-block:: console
 
 	$ docker-compose -f production.yml up
-
 
 Check everything is working by visiting https://localhost:80 in your browser.
