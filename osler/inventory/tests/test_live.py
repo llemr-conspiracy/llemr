@@ -41,10 +41,11 @@ class TestLiveInventory(SeleniumLiveTestCase):
                        group_factories=[user_factories.AttendingGroupFactory])
         self.get_homepage()
         self.submit_login(user.username, 'password')
-        self.get_url(reverse('inventory:drug-list'))   # go to the inventory page
+        self.get_url(reverse('inventory:drug-list'))
 
         drugsInTable = []
         finished = False
+
         while not finished:
             # find all drug titles on current page and add them to drugsInTable
             drugTitlesOnPage = self.selenium.find_elements(
@@ -76,15 +77,6 @@ class TestLiveInventory(SeleniumLiveTestCase):
         generates random inputs for the dispense form and makes sure no errors are caused
         creates a test drug and tests dispense form with random inputs
         """
-
-        # TODO 
-        # some tests should try to dispense more than the available stock 
-        # and make sure it is not allowed (should I make a separate test for this?)
-
-
-        # PROBLEM
-        # for some reason this test returns an IntegrityError every OTHER time it is run, why is this?
-        # (when it doesn't return an error, it gets to the breakpoint perfectly fine)
 
         # generate user and login
         user = build_user(password='password',
@@ -140,15 +132,6 @@ class TestLiveInventory(SeleniumLiveTestCase):
         stockDisplayed = int(stockDisplayed)
 
         assert initialStock-dispenseAmount == stockDisplayed
-
-
-    """
-    More test ideas:
-    Test dispensing more than possible stock
-
-
-
-    """
 
 
 
