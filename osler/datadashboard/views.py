@@ -101,9 +101,9 @@ def format_patient_data(workups,demo,drugs,labs):
             unique_patient_pk_list.append(pk)
             if(pk in demo):
                 patient_data['conditions'] = demo[pk]['conditions']
+                patient_data['has_insurance'] = demo[pk]['has_insurance']
             else:
                 patient_data['conditions'] = []
-            patient_data['has_insurance'] = demo[pk]['has_insurance']
             patient_data['age'] = (wu.written_datetime.date() - wu.patient.date_of_birth).days // 365
             patient_data['gender'] = wu.patient.gender.name
             if(wu.patient.address != homeless_address):
