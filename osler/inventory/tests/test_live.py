@@ -1,40 +1,26 @@
-import datetime, collections, random, math
-from optparse import Option
+import collections, random, math
 
 from django.urls import reverse
-from django.utils.timezone import now
 
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
-from selenium.webdriver.support import expected_conditions as EC
-from osler import inventory
 
-from selenium.common.exceptions import WebDriverException
-
-from osler.core import models, urls
 from osler.core.tests.test_views import build_user
 from osler.core.tests.test import SeleniumLiveTestCase
-from osler.inventory.tests.factories import DrugFactory
 from osler.core.tests.factories import PatientFactory
-
-from osler.workup import models as workup_models
-from osler.workup.tests.tests import wu_dict
 
 from osler.inventory import models as inventory_models 
 
 import osler.users.tests.factories as user_factories
 
 BASIC_FIXTURES = ['core', 'workup', 'inventory', 'drug_examples']
-# I need to find out what my basic fixtures are supposed to be
 
 class TestLiveInventory(SeleniumLiveTestCase):
-    fixtures = BASIC_FIXTURES    # what is the point of this line of code?
+    fixtures = BASIC_FIXTURES   
 
     def test_check_drugs_present(self):
         '''
-        Test that all drugs in drug inventroy are rendered 
+        Test that all drugs in drug inventory are rendered 
         in the table
         '''
         user = build_user(password='password',
@@ -89,11 +75,12 @@ class TestLiveInventory(SeleniumLiveTestCase):
         # generate random input for dispense form and refresh so that active patients update 
         initialStock = testDrug.stock
         dispenseAmount = math.floor(random.random()*initialStock)
-        patient1 = PatientFactory()
-        patient2 = PatientFactory()
-        models.Patient.objects.all()[0].toggle_active_status()
-        models.Patient.objects.all()[1].toggle_active_status()
-        models.Patient.objects.all()[2].toggle_active_status()
+        pt1 = PatientFactory()
+        pt2 = PatientFactory()
+        pt3 = PatientFactory()
+        pt1.toggle_active_status()
+        pt2.toggle_active_status()
+        pt3.toggle_active_status()
         self.selenium.refresh()
 
         # click dispense form button
@@ -119,6 +106,7 @@ class TestLiveInventory(SeleniumLiveTestCase):
         patientDropdown.click()
 
         # submit dispense form
+        breakpoint()
         self.selenium.find_element(
             By.XPATH,
             "/html[@class='no-js']/body[@class='modal-open']/div[@class='fade modal show']/div[@class='modal-dialog']/div[@class='modal-content']/form/div[@class='modal-footer']/button[@class='btn btn-primary']"
