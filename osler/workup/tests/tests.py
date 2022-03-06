@@ -15,6 +15,7 @@ import osler.core.tests.factories as core_factories
 
 from osler.workup import validators
 from osler.workup import models
+from osler.workup.tests import factories as workup_factories
 
 import factory
 
@@ -30,9 +31,9 @@ def wu_dict(user=None, units=False, dx_category=False):
     status = core_factories.EncounterStatusFactory()
 
     e = Encounter.objects.create(
-        patient=pt,
-        clinic_day=now().date(),
-        status=status)
+       patient=pt,
+       clinic_day=now().date(),
+       status=status)
 
     wu = {'encounter': e,
           'chief_complaint': "SOB",
@@ -55,12 +56,12 @@ def wu_dict(user=None, units=False, dx_category=False):
           }
 
     if units:
-        wu['temperature_units'] = 'F'
-        wu['weight_units'] = 'lbs'
-        wu['height_units'] = 'in'
+       wu['temperature_units'] = 'F'
+       wu['weight_units'] = 'lbs'
+       wu['height_units'] = 'in'
 
     if dx_category:
-        wu['diagnosis_categories'] = [models.DiagnosisType.objects.first().pk]
+       wu['diagnosis_categories'] = [models.DiagnosisType.objects.first().pk]
 
     return wu
 
@@ -99,31 +100,27 @@ class TestEmailForUnsignedNotes(TestCase):
 
     def test_unsigned_email(self):
 
+
+
         pt = core_factories.PatientFactory()
+    
+        wu_signed = workup_factories.WorkupFactory(attending = self.user)
 
-        wu_data = wu_dict(user=self.user)
-        wu_data['attending'] = self.user
-
-        wu_signed = models.Workup.objects.create(**wu_data)
         wu_signed.sign(self.user, self.user.groups.first())
         wu_signed.save()
 
-        wu_unsigned = models.Workup.objects.create(**wu_data)
-
+        wu_unsigned = workup_factories.WorkupFactory(attending = self.user)
+       
         call_command('unsigned_wu_notify')
 
         assert len(mail.outbox) == 1
+
         assert mail.outbox[0].subject == '[OSLER] 1 Unattested Notes'
-        assert str(pt) in mail.outbox[0].body
+        
         assert self.user.last_name in mail.outbox[0].body
 
 
         # TODO make this universal
-
-        # self.assertIn(
-        #     'https://osler.wustl.edu/workup/%s/' % wu_unsigned.pk,
-        #     mail.outbox[0].body)
-
 
 class TestWorkupFieldValidators(TestCase):
     '''

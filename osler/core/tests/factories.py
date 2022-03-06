@@ -2,11 +2,11 @@ import datetime
 import os
 
 from django.conf import settings
-from django.db.models.signals import post_save
 from django.utils.timezone import now
 
 import factory
-from factory.django import DjangoModelFactory, mute_signals
+import factory.fuzzy
+from factory.django import DjangoModelFactory
 
 from osler.core import models
 from osler.users.tests import factories as user_factories
@@ -27,8 +27,6 @@ class GenderFactory(DjangoModelFactory):
     # Genders flip flop between "Male" and "Female" with each one generated
     name = factory.Sequence(lambda n: "Gender %03d" % n)
 
-
-@mute_signals(post_save)
 class ProviderFactory(DjangoModelFactory):
     class Meta:
         model = models.Provider
@@ -162,9 +160,6 @@ class ActionItemFactory(DjangoModelFactory):
     patient = factory.SubFactory(PatientFactory)
     instruction = factory.SubFactory(ActionInstructionFactory)
 
-    # really, this should automatically create a user and an author_type
-    # if those things aren't specified (maybe with a post_generation hook)
-    # but I can't figure out how to make that work. -JRP
 
 class EncounterFactory(DjangoModelFactory):
 
@@ -174,3 +169,16 @@ class EncounterFactory(DjangoModelFactory):
     patient = factory.SubFactory(PatientFactory)
     status = factory.SubFactory(EncounterStatusFactory)
     clinic_day = now().date()
+
+
+class NoteFactory(DjangoModelFactory):
+    class Meta:
+        model = models.Note
+    
+    author = factory.SubFactory(user_factories.VolunteerFactory)
+    author_type = factory.LazyAttribute(lambda o: o.author.groups.first())
+    
+    patient = factory.SubFactory(PatientFactory)
+
+    written_datetime = datetime.date(1990, 1, 1)
+    last_modified = datetime.date(1990,1,2)
