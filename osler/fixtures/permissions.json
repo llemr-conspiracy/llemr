@@ -1,0 +1,3122 @@
+[
+{
+  "model": "auth.permission",
+  "pk": 1,
+  "fields": {
+    "name": "Can add permission",
+    "content_type": 1,
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 2,
+  "fields": {
+    "name": "Can change permission",
+    "content_type": 1,
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 3,
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": 1,
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 4,
+  "fields": {
+    "name": "Can view permission",
+    "content_type": 1,
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 5,
+  "fields": {
+    "name": "Can add group",
+    "content_type": 2,
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 6,
+  "fields": {
+    "name": "Can change group",
+    "content_type": 2,
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 7,
+  "fields": {
+    "name": "Can delete group",
+    "content_type": 2,
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 8,
+  "fields": {
+    "name": "Can view group",
+    "content_type": 2,
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 9,
+  "fields": {
+    "name": "Can add content type",
+    "content_type": 3,
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 10,
+  "fields": {
+    "name": "Can change content type",
+    "content_type": 3,
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 11,
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": 3,
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 12,
+  "fields": {
+    "name": "Can view content type",
+    "content_type": 3,
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 13,
+  "fields": {
+    "name": "Can add session",
+    "content_type": 4,
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 14,
+  "fields": {
+    "name": "Can change session",
+    "content_type": 4,
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 15,
+  "fields": {
+    "name": "Can delete session",
+    "content_type": 4,
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 16,
+  "fields": {
+    "name": "Can view session",
+    "content_type": 4,
+    "codename": "view_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 17,
+  "fields": {
+    "name": "Can add site",
+    "content_type": 5,
+    "codename": "add_site"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 18,
+  "fields": {
+    "name": "Can change site",
+    "content_type": 5,
+    "codename": "change_site"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 19,
+  "fields": {
+    "name": "Can delete site",
+    "content_type": 5,
+    "codename": "delete_site"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 20,
+  "fields": {
+    "name": "Can view site",
+    "content_type": 5,
+    "codename": "view_site"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 21,
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": 6,
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 22,
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": 6,
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 23,
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": 6,
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 24,
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": 6,
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 25,
+  "fields": {
+    "name": "Can add email address",
+    "content_type": 7,
+    "codename": "add_emailaddress"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 26,
+  "fields": {
+    "name": "Can change email address",
+    "content_type": 7,
+    "codename": "change_emailaddress"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 27,
+  "fields": {
+    "name": "Can delete email address",
+    "content_type": 7,
+    "codename": "delete_emailaddress"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 28,
+  "fields": {
+    "name": "Can view email address",
+    "content_type": 7,
+    "codename": "view_emailaddress"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 29,
+  "fields": {
+    "name": "Can add email confirmation",
+    "content_type": 8,
+    "codename": "add_emailconfirmation"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 30,
+  "fields": {
+    "name": "Can change email confirmation",
+    "content_type": 8,
+    "codename": "change_emailconfirmation"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 31,
+  "fields": {
+    "name": "Can delete email confirmation",
+    "content_type": 8,
+    "codename": "delete_emailconfirmation"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 32,
+  "fields": {
+    "name": "Can view email confirmation",
+    "content_type": 8,
+    "codename": "view_emailconfirmation"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 33,
+  "fields": {
+    "name": "Can add social account",
+    "content_type": 9,
+    "codename": "add_socialaccount"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 34,
+  "fields": {
+    "name": "Can change social account",
+    "content_type": 9,
+    "codename": "change_socialaccount"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 35,
+  "fields": {
+    "name": "Can delete social account",
+    "content_type": 9,
+    "codename": "delete_socialaccount"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 36,
+  "fields": {
+    "name": "Can view social account",
+    "content_type": 9,
+    "codename": "view_socialaccount"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 37,
+  "fields": {
+    "name": "Can add social application",
+    "content_type": 10,
+    "codename": "add_socialapp"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 38,
+  "fields": {
+    "name": "Can change social application",
+    "content_type": 10,
+    "codename": "change_socialapp"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 39,
+  "fields": {
+    "name": "Can delete social application",
+    "content_type": 10,
+    "codename": "delete_socialapp"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 40,
+  "fields": {
+    "name": "Can view social application",
+    "content_type": 10,
+    "codename": "view_socialapp"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 41,
+  "fields": {
+    "name": "Can add social application token",
+    "content_type": 11,
+    "codename": "add_socialtoken"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 42,
+  "fields": {
+    "name": "Can change social application token",
+    "content_type": 11,
+    "codename": "change_socialtoken"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 43,
+  "fields": {
+    "name": "Can delete social application token",
+    "content_type": 11,
+    "codename": "delete_socialtoken"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 44,
+  "fields": {
+    "name": "Can view social application token",
+    "content_type": 11,
+    "codename": "view_socialtoken"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 45,
+  "fields": {
+    "name": "Can add Token",
+    "content_type": 12,
+    "codename": "add_token"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 46,
+  "fields": {
+    "name": "Can change Token",
+    "content_type": 12,
+    "codename": "change_token"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 47,
+  "fields": {
+    "name": "Can delete Token",
+    "content_type": 12,
+    "codename": "delete_token"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 48,
+  "fields": {
+    "name": "Can view Token",
+    "content_type": 12,
+    "codename": "view_token"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 49,
+  "fields": {
+    "name": "Can add token",
+    "content_type": 13,
+    "codename": "add_tokenproxy"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 50,
+  "fields": {
+    "name": "Can change token",
+    "content_type": 13,
+    "codename": "change_tokenproxy"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 51,
+  "fields": {
+    "name": "Can delete token",
+    "content_type": 13,
+    "codename": "delete_tokenproxy"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 52,
+  "fields": {
+    "name": "Can view token",
+    "content_type": 13,
+    "codename": "view_tokenproxy"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 53,
+  "fields": {
+    "name": "Can add user",
+    "content_type": 14,
+    "codename": "add_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 54,
+  "fields": {
+    "name": "Can change user",
+    "content_type": 14,
+    "codename": "change_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 55,
+  "fields": {
+    "name": "Can delete user",
+    "content_type": 14,
+    "codename": "delete_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 56,
+  "fields": {
+    "name": "Can view user",
+    "content_type": 14,
+    "codename": "view_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 57,
+  "fields": {
+    "name": "Can view clinic data dashboard",
+    "content_type": 14,
+    "codename": "view_clinic_datadashboard"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 58,
+  "fields": {
+    "name": "Can add historical user",
+    "content_type": 15,
+    "codename": "add_historicaluser"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 59,
+  "fields": {
+    "name": "Can change historical user",
+    "content_type": 15,
+    "codename": "change_historicaluser"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 60,
+  "fields": {
+    "name": "Can delete historical user",
+    "content_type": 15,
+    "codename": "delete_historicaluser"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 61,
+  "fields": {
+    "name": "Can view historical user",
+    "content_type": 15,
+    "codename": "view_historicaluser"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 62,
+  "fields": {
+    "name": "Can add action instruction",
+    "content_type": 16,
+    "codename": "add_actioninstruction"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 63,
+  "fields": {
+    "name": "Can change action instruction",
+    "content_type": 16,
+    "codename": "change_actioninstruction"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 64,
+  "fields": {
+    "name": "Can delete action instruction",
+    "content_type": 16,
+    "codename": "delete_actioninstruction"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 65,
+  "fields": {
+    "name": "Can view action instruction",
+    "content_type": 16,
+    "codename": "view_actioninstruction"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 66,
+  "fields": {
+    "name": "Can add action item",
+    "content_type": 17,
+    "codename": "add_actionitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 67,
+  "fields": {
+    "name": "Can change action item",
+    "content_type": 17,
+    "codename": "change_actionitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 68,
+  "fields": {
+    "name": "Can delete action item",
+    "content_type": 17,
+    "codename": "delete_actionitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 69,
+  "fields": {
+    "name": "Can view action item",
+    "content_type": 17,
+    "codename": "view_actionitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 70,
+  "fields": {
+    "name": "Can add contact method",
+    "content_type": 18,
+    "codename": "add_contactmethod"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 71,
+  "fields": {
+    "name": "Can change contact method",
+    "content_type": 18,
+    "codename": "change_contactmethod"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 72,
+  "fields": {
+    "name": "Can delete contact method",
+    "content_type": 18,
+    "codename": "delete_contactmethod"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 73,
+  "fields": {
+    "name": "Can view contact method",
+    "content_type": 18,
+    "codename": "view_contactmethod"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 74,
+  "fields": {
+    "name": "Can add document",
+    "content_type": 19,
+    "codename": "add_document"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 75,
+  "fields": {
+    "name": "Can change document",
+    "content_type": 19,
+    "codename": "change_document"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 76,
+  "fields": {
+    "name": "Can delete document",
+    "content_type": 19,
+    "codename": "delete_document"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 77,
+  "fields": {
+    "name": "Can view document",
+    "content_type": 19,
+    "codename": "view_document"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 78,
+  "fields": {
+    "name": "Can add document type",
+    "content_type": 20,
+    "codename": "add_documenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 79,
+  "fields": {
+    "name": "Can change document type",
+    "content_type": 20,
+    "codename": "change_documenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 80,
+  "fields": {
+    "name": "Can delete document type",
+    "content_type": 20,
+    "codename": "delete_documenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 81,
+  "fields": {
+    "name": "Can view document type",
+    "content_type": 20,
+    "codename": "view_documenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 82,
+  "fields": {
+    "name": "Can add ethnicity",
+    "content_type": 21,
+    "codename": "add_ethnicity"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 83,
+  "fields": {
+    "name": "Can change ethnicity",
+    "content_type": 21,
+    "codename": "change_ethnicity"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 84,
+  "fields": {
+    "name": "Can delete ethnicity",
+    "content_type": 21,
+    "codename": "delete_ethnicity"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 85,
+  "fields": {
+    "name": "Can view ethnicity",
+    "content_type": 21,
+    "codename": "view_ethnicity"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 86,
+  "fields": {
+    "name": "Can add gender",
+    "content_type": 22,
+    "codename": "add_gender"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 87,
+  "fields": {
+    "name": "Can change gender",
+    "content_type": 22,
+    "codename": "change_gender"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 88,
+  "fields": {
+    "name": "Can delete gender",
+    "content_type": 22,
+    "codename": "delete_gender"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 89,
+  "fields": {
+    "name": "Can view gender",
+    "content_type": 22,
+    "codename": "view_gender"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 90,
+  "fields": {
+    "name": "Can add historical action item",
+    "content_type": 23,
+    "codename": "add_historicalactionitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 91,
+  "fields": {
+    "name": "Can change historical action item",
+    "content_type": 23,
+    "codename": "change_historicalactionitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 92,
+  "fields": {
+    "name": "Can delete historical action item",
+    "content_type": 23,
+    "codename": "delete_historicalactionitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 93,
+  "fields": {
+    "name": "Can view historical action item",
+    "content_type": 23,
+    "codename": "view_historicalactionitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 94,
+  "fields": {
+    "name": "Can add historical document",
+    "content_type": 24,
+    "codename": "add_historicaldocument"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 95,
+  "fields": {
+    "name": "Can change historical document",
+    "content_type": 24,
+    "codename": "change_historicaldocument"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 96,
+  "fields": {
+    "name": "Can delete historical document",
+    "content_type": 24,
+    "codename": "delete_historicaldocument"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 97,
+  "fields": {
+    "name": "Can view historical document",
+    "content_type": 24,
+    "codename": "view_historicaldocument"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 98,
+  "fields": {
+    "name": "Can add historical patient",
+    "content_type": 25,
+    "codename": "add_historicalpatient"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 99,
+  "fields": {
+    "name": "Can change historical patient",
+    "content_type": 25,
+    "codename": "change_historicalpatient"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 100,
+  "fields": {
+    "name": "Can delete historical patient",
+    "content_type": 25,
+    "codename": "delete_historicalpatient"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 101,
+  "fields": {
+    "name": "Can view historical patient",
+    "content_type": 25,
+    "codename": "view_historicalpatient"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 102,
+  "fields": {
+    "name": "Can add language",
+    "content_type": 26,
+    "codename": "add_language"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 103,
+  "fields": {
+    "name": "Can change language",
+    "content_type": 26,
+    "codename": "change_language"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 104,
+  "fields": {
+    "name": "Can delete language",
+    "content_type": 26,
+    "codename": "delete_language"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 105,
+  "fields": {
+    "name": "Can view language",
+    "content_type": 26,
+    "codename": "view_language"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 106,
+  "fields": {
+    "name": "Can add outcome",
+    "content_type": 27,
+    "codename": "add_outcome"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 107,
+  "fields": {
+    "name": "Can change outcome",
+    "content_type": 27,
+    "codename": "change_outcome"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 108,
+  "fields": {
+    "name": "Can delete outcome",
+    "content_type": 27,
+    "codename": "delete_outcome"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 109,
+  "fields": {
+    "name": "Can view outcome",
+    "content_type": 27,
+    "codename": "view_outcome"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 110,
+  "fields": {
+    "name": "Can add patient",
+    "content_type": 28,
+    "codename": "add_patient"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 111,
+  "fields": {
+    "name": "Can change patient",
+    "content_type": 28,
+    "codename": "change_patient"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 112,
+  "fields": {
+    "name": "Can delete patient",
+    "content_type": 28,
+    "codename": "delete_patient"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 113,
+  "fields": {
+    "name": "Can view patient",
+    "content_type": 28,
+    "codename": "view_patient"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 114,
+  "fields": {
+    "name": "Can act as a case manager.",
+    "content_type": 28,
+    "codename": "case_manage_Patient"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 115,
+  "fields": {
+    "name": "Can in/activate patients",
+    "content_type": 28,
+    "codename": "activate_Patient"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 116,
+  "fields": {
+    "name": "Can add referral type",
+    "content_type": 29,
+    "codename": "add_referraltype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 117,
+  "fields": {
+    "name": "Can change referral type",
+    "content_type": 29,
+    "codename": "change_referraltype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 118,
+  "fields": {
+    "name": "Can delete referral type",
+    "content_type": 29,
+    "codename": "delete_referraltype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 119,
+  "fields": {
+    "name": "Can view referral type",
+    "content_type": 29,
+    "codename": "view_referraltype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 120,
+  "fields": {
+    "name": "Can add referral location",
+    "content_type": 30,
+    "codename": "add_referrallocation"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 121,
+  "fields": {
+    "name": "Can change referral location",
+    "content_type": 30,
+    "codename": "change_referrallocation"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 122,
+  "fields": {
+    "name": "Can delete referral location",
+    "content_type": 30,
+    "codename": "delete_referrallocation"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 123,
+  "fields": {
+    "name": "Can view referral location",
+    "content_type": 30,
+    "codename": "view_referrallocation"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 124,
+  "fields": {
+    "name": "Can add provider",
+    "content_type": 31,
+    "codename": "add_provider"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 125,
+  "fields": {
+    "name": "Can change provider",
+    "content_type": 31,
+    "codename": "change_provider"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 126,
+  "fields": {
+    "name": "Can delete provider",
+    "content_type": 31,
+    "codename": "delete_provider"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 127,
+  "fields": {
+    "name": "Can view provider",
+    "content_type": 31,
+    "codename": "view_provider"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 128,
+  "fields": {
+    "name": "Can add encounter status",
+    "content_type": 32,
+    "codename": "add_encounterstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 129,
+  "fields": {
+    "name": "Can change encounter status",
+    "content_type": 32,
+    "codename": "change_encounterstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 130,
+  "fields": {
+    "name": "Can delete encounter status",
+    "content_type": 32,
+    "codename": "delete_encounterstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 131,
+  "fields": {
+    "name": "Can view encounter status",
+    "content_type": 32,
+    "codename": "view_encounterstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 132,
+  "fields": {
+    "name": "Can add encounter",
+    "content_type": 33,
+    "codename": "add_encounter"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 133,
+  "fields": {
+    "name": "Can change encounter",
+    "content_type": 33,
+    "codename": "change_encounter"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 134,
+  "fields": {
+    "name": "Can delete encounter",
+    "content_type": 33,
+    "codename": "delete_encounter"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 135,
+  "fields": {
+    "name": "Can view encounter",
+    "content_type": 33,
+    "codename": "view_encounter"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 136,
+  "fields": {
+    "name": "Can add action item followup",
+    "content_type": 34,
+    "codename": "add_actionitemfollowup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 137,
+  "fields": {
+    "name": "Can change action item followup",
+    "content_type": 34,
+    "codename": "change_actionitemfollowup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 138,
+  "fields": {
+    "name": "Can delete action item followup",
+    "content_type": 34,
+    "codename": "delete_actionitemfollowup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 139,
+  "fields": {
+    "name": "Can view action item followup",
+    "content_type": 34,
+    "codename": "view_actionitemfollowup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 140,
+  "fields": {
+    "name": "Can add contact result",
+    "content_type": 35,
+    "codename": "add_contactresult"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 141,
+  "fields": {
+    "name": "Can change contact result",
+    "content_type": 35,
+    "codename": "change_contactresult"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 142,
+  "fields": {
+    "name": "Can delete contact result",
+    "content_type": 35,
+    "codename": "delete_contactresult"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 143,
+  "fields": {
+    "name": "Can view contact result",
+    "content_type": 35,
+    "codename": "view_contactresult"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 144,
+  "fields": {
+    "name": "Can add historical action item followup",
+    "content_type": 36,
+    "codename": "add_historicalactionitemfollowup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 145,
+  "fields": {
+    "name": "Can change historical action item followup",
+    "content_type": 36,
+    "codename": "change_historicalactionitemfollowup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 146,
+  "fields": {
+    "name": "Can delete historical action item followup",
+    "content_type": 36,
+    "codename": "delete_historicalactionitemfollowup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 147,
+  "fields": {
+    "name": "Can view historical action item followup",
+    "content_type": 36,
+    "codename": "view_historicalactionitemfollowup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 148,
+  "fields": {
+    "name": "Can add no apt reason",
+    "content_type": 37,
+    "codename": "add_noaptreason"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 149,
+  "fields": {
+    "name": "Can change no apt reason",
+    "content_type": 37,
+    "codename": "change_noaptreason"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 150,
+  "fields": {
+    "name": "Can delete no apt reason",
+    "content_type": 37,
+    "codename": "delete_noaptreason"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 151,
+  "fields": {
+    "name": "Can view no apt reason",
+    "content_type": 37,
+    "codename": "view_noaptreason"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 152,
+  "fields": {
+    "name": "Can add no show reason",
+    "content_type": 38,
+    "codename": "add_noshowreason"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 153,
+  "fields": {
+    "name": "Can change no show reason",
+    "content_type": 38,
+    "codename": "change_noshowreason"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 154,
+  "fields": {
+    "name": "Can delete no show reason",
+    "content_type": 38,
+    "codename": "delete_noshowreason"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 155,
+  "fields": {
+    "name": "Can view no show reason",
+    "content_type": 38,
+    "codename": "view_noshowreason"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 156,
+  "fields": {
+    "name": "Can add diagnosis type",
+    "content_type": 39,
+    "codename": "add_diagnosistype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 157,
+  "fields": {
+    "name": "Can change diagnosis type",
+    "content_type": 39,
+    "codename": "change_diagnosistype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 158,
+  "fields": {
+    "name": "Can delete diagnosis type",
+    "content_type": 39,
+    "codename": "delete_diagnosistype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 159,
+  "fields": {
+    "name": "Can view diagnosis type",
+    "content_type": 39,
+    "codename": "view_diagnosistype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 160,
+  "fields": {
+    "name": "Can add workup",
+    "content_type": 40,
+    "codename": "add_workup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 161,
+  "fields": {
+    "name": "Can change workup",
+    "content_type": 40,
+    "codename": "change_workup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 162,
+  "fields": {
+    "name": "Can delete workup",
+    "content_type": 40,
+    "codename": "delete_workup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 163,
+  "fields": {
+    "name": "Can view workup",
+    "content_type": 40,
+    "codename": "view_workup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 164,
+  "fields": {
+    "name": "Can export note PDF",
+    "content_type": 40,
+    "codename": "export_pdf_Workup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 165,
+  "fields": {
+    "name": "Can sign note",
+    "content_type": 40,
+    "codename": "sign_Workup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 166,
+  "fields": {
+    "name": "Can add historical workup",
+    "content_type": 41,
+    "codename": "add_historicalworkup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 167,
+  "fields": {
+    "name": "Can change historical workup",
+    "content_type": 41,
+    "codename": "change_historicalworkup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 168,
+  "fields": {
+    "name": "Can delete historical workup",
+    "content_type": 41,
+    "codename": "delete_historicalworkup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 169,
+  "fields": {
+    "name": "Can view historical workup",
+    "content_type": 41,
+    "codename": "view_historicalworkup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 170,
+  "fields": {
+    "name": "Can add addendum",
+    "content_type": 42,
+    "codename": "add_addendum"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 171,
+  "fields": {
+    "name": "Can change addendum",
+    "content_type": 42,
+    "codename": "change_addendum"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 172,
+  "fields": {
+    "name": "Can delete addendum",
+    "content_type": 42,
+    "codename": "delete_addendum"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 173,
+  "fields": {
+    "name": "Can view addendum",
+    "content_type": 42,
+    "codename": "view_addendum"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 174,
+  "fields": {
+    "name": "Can add attestable basic note",
+    "content_type": 43,
+    "codename": "add_attestablebasicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 175,
+  "fields": {
+    "name": "Can change attestable basic note",
+    "content_type": 43,
+    "codename": "change_attestablebasicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 176,
+  "fields": {
+    "name": "Can delete attestable basic note",
+    "content_type": 43,
+    "codename": "delete_attestablebasicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 177,
+  "fields": {
+    "name": "Can view attestable basic note",
+    "content_type": 43,
+    "codename": "view_attestablebasicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 178,
+  "fields": {
+    "name": "Can sign note",
+    "content_type": 43,
+    "codename": "sign_AttestableBasicNote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 179,
+  "fields": {
+    "name": "Can add basic note",
+    "content_type": 44,
+    "codename": "add_basicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 180,
+  "fields": {
+    "name": "Can change basic note",
+    "content_type": 44,
+    "codename": "change_basicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 181,
+  "fields": {
+    "name": "Can delete basic note",
+    "content_type": 44,
+    "codename": "delete_basicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 182,
+  "fields": {
+    "name": "Can view basic note",
+    "content_type": 44,
+    "codename": "view_basicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 183,
+  "fields": {
+    "name": "Can add historical basic note",
+    "content_type": 45,
+    "codename": "add_historicalbasicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 184,
+  "fields": {
+    "name": "Can change historical basic note",
+    "content_type": 45,
+    "codename": "change_historicalbasicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 185,
+  "fields": {
+    "name": "Can delete historical basic note",
+    "content_type": 45,
+    "codename": "delete_historicalbasicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 186,
+  "fields": {
+    "name": "Can view historical basic note",
+    "content_type": 45,
+    "codename": "view_historicalbasicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 187,
+  "fields": {
+    "name": "Can add historical attestable basic note",
+    "content_type": 46,
+    "codename": "add_historicalattestablebasicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 188,
+  "fields": {
+    "name": "Can change historical attestable basic note",
+    "content_type": 46,
+    "codename": "change_historicalattestablebasicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 189,
+  "fields": {
+    "name": "Can delete historical attestable basic note",
+    "content_type": 46,
+    "codename": "delete_historicalattestablebasicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 190,
+  "fields": {
+    "name": "Can view historical attestable basic note",
+    "content_type": 46,
+    "codename": "view_historicalattestablebasicnote"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 191,
+  "fields": {
+    "name": "Can add chronic condition",
+    "content_type": 47,
+    "codename": "add_chroniccondition"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 192,
+  "fields": {
+    "name": "Can change chronic condition",
+    "content_type": 47,
+    "codename": "change_chroniccondition"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 193,
+  "fields": {
+    "name": "Can delete chronic condition",
+    "content_type": 47,
+    "codename": "delete_chroniccondition"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 194,
+  "fields": {
+    "name": "Can view chronic condition",
+    "content_type": 47,
+    "codename": "view_chroniccondition"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 195,
+  "fields": {
+    "name": "Can add demographics",
+    "content_type": 48,
+    "codename": "add_demographics"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 196,
+  "fields": {
+    "name": "Can change demographics",
+    "content_type": 48,
+    "codename": "change_demographics"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 197,
+  "fields": {
+    "name": "Can delete demographics",
+    "content_type": 48,
+    "codename": "delete_demographics"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 198,
+  "fields": {
+    "name": "Can view demographics",
+    "content_type": 48,
+    "codename": "view_demographics"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 199,
+  "fields": {
+    "name": "Can add education level",
+    "content_type": 49,
+    "codename": "add_educationlevel"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 200,
+  "fields": {
+    "name": "Can change education level",
+    "content_type": 49,
+    "codename": "change_educationlevel"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 201,
+  "fields": {
+    "name": "Can delete education level",
+    "content_type": 49,
+    "codename": "delete_educationlevel"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 202,
+  "fields": {
+    "name": "Can view education level",
+    "content_type": 49,
+    "codename": "view_educationlevel"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 203,
+  "fields": {
+    "name": "Can add income range",
+    "content_type": 50,
+    "codename": "add_incomerange"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 204,
+  "fields": {
+    "name": "Can change income range",
+    "content_type": 50,
+    "codename": "change_incomerange"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 205,
+  "fields": {
+    "name": "Can delete income range",
+    "content_type": 50,
+    "codename": "delete_incomerange"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 206,
+  "fields": {
+    "name": "Can view income range",
+    "content_type": 50,
+    "codename": "view_incomerange"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 207,
+  "fields": {
+    "name": "Can add resource access",
+    "content_type": 51,
+    "codename": "add_resourceaccess"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 208,
+  "fields": {
+    "name": "Can change resource access",
+    "content_type": 51,
+    "codename": "change_resourceaccess"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 209,
+  "fields": {
+    "name": "Can delete resource access",
+    "content_type": 51,
+    "codename": "delete_resourceaccess"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 210,
+  "fields": {
+    "name": "Can view resource access",
+    "content_type": 51,
+    "codename": "view_resourceaccess"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 211,
+  "fields": {
+    "name": "Can add transportation option",
+    "content_type": 52,
+    "codename": "add_transportationoption"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 212,
+  "fields": {
+    "name": "Can change transportation option",
+    "content_type": 52,
+    "codename": "change_transportationoption"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 213,
+  "fields": {
+    "name": "Can delete transportation option",
+    "content_type": 52,
+    "codename": "delete_transportationoption"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 214,
+  "fields": {
+    "name": "Can view transportation option",
+    "content_type": 52,
+    "codename": "view_transportationoption"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 215,
+  "fields": {
+    "name": "Can add work status",
+    "content_type": 53,
+    "codename": "add_workstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 216,
+  "fields": {
+    "name": "Can change work status",
+    "content_type": 53,
+    "codename": "change_workstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 217,
+  "fields": {
+    "name": "Can delete work status",
+    "content_type": 53,
+    "codename": "delete_workstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 218,
+  "fields": {
+    "name": "Can view work status",
+    "content_type": 53,
+    "codename": "view_workstatus"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 219,
+  "fields": {
+    "name": "Can add historical demographics",
+    "content_type": 54,
+    "codename": "add_historicaldemographics"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 220,
+  "fields": {
+    "name": "Can change historical demographics",
+    "content_type": 54,
+    "codename": "change_historicaldemographics"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 221,
+  "fields": {
+    "name": "Can delete historical demographics",
+    "content_type": 54,
+    "codename": "delete_historicaldemographics"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 222,
+  "fields": {
+    "name": "Can view historical demographics",
+    "content_type": 54,
+    "codename": "view_historicaldemographics"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 223,
+  "fields": {
+    "name": "Can add appointment",
+    "content_type": 55,
+    "codename": "add_appointment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 224,
+  "fields": {
+    "name": "Can change appointment",
+    "content_type": 55,
+    "codename": "change_appointment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 225,
+  "fields": {
+    "name": "Can delete appointment",
+    "content_type": 55,
+    "codename": "delete_appointment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 226,
+  "fields": {
+    "name": "Can view appointment",
+    "content_type": 55,
+    "codename": "view_appointment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 227,
+  "fields": {
+    "name": "Can add historical appointment",
+    "content_type": 56,
+    "codename": "add_historicalappointment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 228,
+  "fields": {
+    "name": "Can change historical appointment",
+    "content_type": 56,
+    "codename": "change_historicalappointment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 229,
+  "fields": {
+    "name": "Can delete historical appointment",
+    "content_type": 56,
+    "codename": "delete_historicalappointment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 230,
+  "fields": {
+    "name": "Can view historical appointment",
+    "content_type": 56,
+    "codename": "view_historicalappointment"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 231,
+  "fields": {
+    "name": "Can add followup request",
+    "content_type": 57,
+    "codename": "add_followuprequest"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 232,
+  "fields": {
+    "name": "Can change followup request",
+    "content_type": 57,
+    "codename": "change_followuprequest"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 233,
+  "fields": {
+    "name": "Can delete followup request",
+    "content_type": 57,
+    "codename": "delete_followuprequest"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 234,
+  "fields": {
+    "name": "Can view followup request",
+    "content_type": 57,
+    "codename": "view_followuprequest"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 235,
+  "fields": {
+    "name": "Can add patient contact",
+    "content_type": 58,
+    "codename": "add_patientcontact"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 236,
+  "fields": {
+    "name": "Can change patient contact",
+    "content_type": 58,
+    "codename": "change_patientcontact"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 237,
+  "fields": {
+    "name": "Can delete patient contact",
+    "content_type": 58,
+    "codename": "delete_patientcontact"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 238,
+  "fields": {
+    "name": "Can view patient contact",
+    "content_type": 58,
+    "codename": "view_patientcontact"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 239,
+  "fields": {
+    "name": "Can add referral",
+    "content_type": 59,
+    "codename": "add_referral"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 240,
+  "fields": {
+    "name": "Can change referral",
+    "content_type": 59,
+    "codename": "change_referral"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 241,
+  "fields": {
+    "name": "Can delete referral",
+    "content_type": 59,
+    "codename": "delete_referral"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 242,
+  "fields": {
+    "name": "Can view referral",
+    "content_type": 59,
+    "codename": "view_referral"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 243,
+  "fields": {
+    "name": "Can add pageview record",
+    "content_type": 60,
+    "codename": "add_pageviewrecord"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 244,
+  "fields": {
+    "name": "Can change pageview record",
+    "content_type": 60,
+    "codename": "change_pageviewrecord"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 245,
+  "fields": {
+    "name": "Can delete pageview record",
+    "content_type": 60,
+    "codename": "delete_pageviewrecord"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 246,
+  "fields": {
+    "name": "Can view pageview record",
+    "content_type": 60,
+    "codename": "view_pageviewrecord"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 247,
+  "fields": {
+    "name": "Can add vaccine action item",
+    "content_type": 61,
+    "codename": "add_vaccineactionitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 248,
+  "fields": {
+    "name": "Can change vaccine action item",
+    "content_type": 61,
+    "codename": "change_vaccineactionitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 249,
+  "fields": {
+    "name": "Can delete vaccine action item",
+    "content_type": 61,
+    "codename": "delete_vaccineactionitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 250,
+  "fields": {
+    "name": "Can view vaccine action item",
+    "content_type": 61,
+    "codename": "view_vaccineactionitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 251,
+  "fields": {
+    "name": "Can add vaccine series type",
+    "content_type": 62,
+    "codename": "add_vaccineseriestype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 252,
+  "fields": {
+    "name": "Can change vaccine series type",
+    "content_type": 62,
+    "codename": "change_vaccineseriestype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 253,
+  "fields": {
+    "name": "Can delete vaccine series type",
+    "content_type": 62,
+    "codename": "delete_vaccineseriestype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 254,
+  "fields": {
+    "name": "Can view vaccine series type",
+    "content_type": 62,
+    "codename": "view_vaccineseriestype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 255,
+  "fields": {
+    "name": "Can add vaccine series",
+    "content_type": 63,
+    "codename": "add_vaccineseries"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 256,
+  "fields": {
+    "name": "Can change vaccine series",
+    "content_type": 63,
+    "codename": "change_vaccineseries"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 257,
+  "fields": {
+    "name": "Can delete vaccine series",
+    "content_type": 63,
+    "codename": "delete_vaccineseries"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 258,
+  "fields": {
+    "name": "Can view vaccine series",
+    "content_type": 63,
+    "codename": "view_vaccineseries"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 259,
+  "fields": {
+    "name": "Can add vaccine followup",
+    "content_type": 64,
+    "codename": "add_vaccinefollowup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 260,
+  "fields": {
+    "name": "Can change vaccine followup",
+    "content_type": 64,
+    "codename": "change_vaccinefollowup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 261,
+  "fields": {
+    "name": "Can delete vaccine followup",
+    "content_type": 64,
+    "codename": "delete_vaccinefollowup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 262,
+  "fields": {
+    "name": "Can view vaccine followup",
+    "content_type": 64,
+    "codename": "view_vaccinefollowup"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 263,
+  "fields": {
+    "name": "Can add vaccine dose type",
+    "content_type": 65,
+    "codename": "add_vaccinedosetype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 264,
+  "fields": {
+    "name": "Can change vaccine dose type",
+    "content_type": 65,
+    "codename": "change_vaccinedosetype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 265,
+  "fields": {
+    "name": "Can delete vaccine dose type",
+    "content_type": 65,
+    "codename": "delete_vaccinedosetype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 266,
+  "fields": {
+    "name": "Can view vaccine dose type",
+    "content_type": 65,
+    "codename": "view_vaccinedosetype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 267,
+  "fields": {
+    "name": "Can add vaccine dose",
+    "content_type": 66,
+    "codename": "add_vaccinedose"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 268,
+  "fields": {
+    "name": "Can change vaccine dose",
+    "content_type": 66,
+    "codename": "change_vaccinedose"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 269,
+  "fields": {
+    "name": "Can delete vaccine dose",
+    "content_type": 66,
+    "codename": "delete_vaccinedose"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 270,
+  "fields": {
+    "name": "Can view vaccine dose",
+    "content_type": 66,
+    "codename": "view_vaccinedose"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 271,
+  "fields": {
+    "name": "Can add discrete measurement type",
+    "content_type": 67,
+    "codename": "add_discretemeasurementtype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 272,
+  "fields": {
+    "name": "Can change discrete measurement type",
+    "content_type": 67,
+    "codename": "change_discretemeasurementtype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 273,
+  "fields": {
+    "name": "Can delete discrete measurement type",
+    "content_type": 67,
+    "codename": "delete_discretemeasurementtype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 274,
+  "fields": {
+    "name": "Can view discrete measurement type",
+    "content_type": 67,
+    "codename": "view_discretemeasurementtype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 275,
+  "fields": {
+    "name": "Can add lab type",
+    "content_type": 68,
+    "codename": "add_labtype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 276,
+  "fields": {
+    "name": "Can change lab type",
+    "content_type": 68,
+    "codename": "change_labtype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 277,
+  "fields": {
+    "name": "Can delete lab type",
+    "content_type": 68,
+    "codename": "delete_labtype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 278,
+  "fields": {
+    "name": "Can view lab type",
+    "content_type": 68,
+    "codename": "view_labtype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 279,
+  "fields": {
+    "name": "Can add lab",
+    "content_type": 69,
+    "codename": "add_lab"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 280,
+  "fields": {
+    "name": "Can change lab",
+    "content_type": 69,
+    "codename": "change_lab"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 281,
+  "fields": {
+    "name": "Can delete lab",
+    "content_type": 69,
+    "codename": "delete_lab"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 282,
+  "fields": {
+    "name": "Can view lab",
+    "content_type": 69,
+    "codename": "view_lab"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 283,
+  "fields": {
+    "name": "Can add discrete result type",
+    "content_type": 70,
+    "codename": "add_discreteresulttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 284,
+  "fields": {
+    "name": "Can change discrete result type",
+    "content_type": 70,
+    "codename": "change_discreteresulttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 285,
+  "fields": {
+    "name": "Can delete discrete result type",
+    "content_type": 70,
+    "codename": "delete_discreteresulttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 286,
+  "fields": {
+    "name": "Can view discrete result type",
+    "content_type": 70,
+    "codename": "view_discreteresulttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 287,
+  "fields": {
+    "name": "Can add discrete measurement",
+    "content_type": 71,
+    "codename": "add_discretemeasurement"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 288,
+  "fields": {
+    "name": "Can change discrete measurement",
+    "content_type": 71,
+    "codename": "change_discretemeasurement"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 289,
+  "fields": {
+    "name": "Can delete discrete measurement",
+    "content_type": 71,
+    "codename": "delete_discretemeasurement"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 290,
+  "fields": {
+    "name": "Can view discrete measurement",
+    "content_type": 71,
+    "codename": "view_discretemeasurement"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 291,
+  "fields": {
+    "name": "Can add continuous measurement type",
+    "content_type": 72,
+    "codename": "add_continuousmeasurementtype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 292,
+  "fields": {
+    "name": "Can change continuous measurement type",
+    "content_type": 72,
+    "codename": "change_continuousmeasurementtype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 293,
+  "fields": {
+    "name": "Can delete continuous measurement type",
+    "content_type": 72,
+    "codename": "delete_continuousmeasurementtype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 294,
+  "fields": {
+    "name": "Can view continuous measurement type",
+    "content_type": 72,
+    "codename": "view_continuousmeasurementtype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 295,
+  "fields": {
+    "name": "Can add continuous measurement",
+    "content_type": 73,
+    "codename": "add_continuousmeasurement"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 296,
+  "fields": {
+    "name": "Can change continuous measurement",
+    "content_type": 73,
+    "codename": "change_continuousmeasurement"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 297,
+  "fields": {
+    "name": "Can delete continuous measurement",
+    "content_type": 73,
+    "codename": "delete_continuousmeasurement"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 298,
+  "fields": {
+    "name": "Can view continuous measurement",
+    "content_type": 73,
+    "codename": "view_continuousmeasurement"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 299,
+  "fields": {
+    "name": "Can add drug category",
+    "content_type": 74,
+    "codename": "add_drugcategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 300,
+  "fields": {
+    "name": "Can change drug category",
+    "content_type": 74,
+    "codename": "change_drugcategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 301,
+  "fields": {
+    "name": "Can delete drug category",
+    "content_type": 74,
+    "codename": "delete_drugcategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 302,
+  "fields": {
+    "name": "Can view drug category",
+    "content_type": 74,
+    "codename": "view_drugcategory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 303,
+  "fields": {
+    "name": "Can add manufacturer",
+    "content_type": 75,
+    "codename": "add_manufacturer"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 304,
+  "fields": {
+    "name": "Can change manufacturer",
+    "content_type": 75,
+    "codename": "change_manufacturer"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 305,
+  "fields": {
+    "name": "Can delete manufacturer",
+    "content_type": 75,
+    "codename": "delete_manufacturer"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 306,
+  "fields": {
+    "name": "Can view manufacturer",
+    "content_type": 75,
+    "codename": "view_manufacturer"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 307,
+  "fields": {
+    "name": "Can add measuring unit",
+    "content_type": 76,
+    "codename": "add_measuringunit"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 308,
+  "fields": {
+    "name": "Can change measuring unit",
+    "content_type": 76,
+    "codename": "change_measuringunit"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 309,
+  "fields": {
+    "name": "Can delete measuring unit",
+    "content_type": 76,
+    "codename": "delete_measuringunit"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 310,
+  "fields": {
+    "name": "Can view measuring unit",
+    "content_type": 76,
+    "codename": "view_measuringunit"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 311,
+  "fields": {
+    "name": "Can add drug",
+    "content_type": 77,
+    "codename": "add_drug"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 312,
+  "fields": {
+    "name": "Can change drug",
+    "content_type": 77,
+    "codename": "change_drug"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 313,
+  "fields": {
+    "name": "Can delete drug",
+    "content_type": 77,
+    "codename": "delete_drug"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 314,
+  "fields": {
+    "name": "Can view drug",
+    "content_type": 77,
+    "codename": "view_drug"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 315,
+  "fields": {
+    "name": "Can export drug inventory",
+    "content_type": 77,
+    "codename": "export_csv"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 316,
+  "fields": {
+    "name": "Can add historical drug",
+    "content_type": 78,
+    "codename": "add_historicaldrug"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 317,
+  "fields": {
+    "name": "Can change historical drug",
+    "content_type": 78,
+    "codename": "change_historicaldrug"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 318,
+  "fields": {
+    "name": "Can delete historical drug",
+    "content_type": 78,
+    "codename": "delete_historicaldrug"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 319,
+  "fields": {
+    "name": "Can view historical drug",
+    "content_type": 78,
+    "codename": "view_historicaldrug"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 320,
+  "fields": {
+    "name": "Can add dispense history",
+    "content_type": 79,
+    "codename": "add_dispensehistory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 321,
+  "fields": {
+    "name": "Can change dispense history",
+    "content_type": 79,
+    "codename": "change_dispensehistory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 322,
+  "fields": {
+    "name": "Can delete dispense history",
+    "content_type": 79,
+    "codename": "delete_dispensehistory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 323,
+  "fields": {
+    "name": "Can view dispense history",
+    "content_type": 79,
+    "codename": "view_dispensehistory"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 324,
+  "fields": {
+    "name": "Can add survey",
+    "content_type": 80,
+    "codename": "add_survey"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 325,
+  "fields": {
+    "name": "Can change survey",
+    "content_type": 80,
+    "codename": "change_survey"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 326,
+  "fields": {
+    "name": "Can delete survey",
+    "content_type": 80,
+    "codename": "delete_survey"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 327,
+  "fields": {
+    "name": "Can view survey",
+    "content_type": 80,
+    "codename": "view_survey"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 328,
+  "fields": {
+    "name": "Can add response",
+    "content_type": 81,
+    "codename": "add_response"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 329,
+  "fields": {
+    "name": "Can change response",
+    "content_type": 81,
+    "codename": "change_response"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 330,
+  "fields": {
+    "name": "Can delete response",
+    "content_type": 81,
+    "codename": "delete_response"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 331,
+  "fields": {
+    "name": "Can view response",
+    "content_type": 81,
+    "codename": "view_response"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 332,
+  "fields": {
+    "name": "Can add question",
+    "content_type": 82,
+    "codename": "add_question"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 333,
+  "fields": {
+    "name": "Can change question",
+    "content_type": 82,
+    "codename": "change_question"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 334,
+  "fields": {
+    "name": "Can delete question",
+    "content_type": 82,
+    "codename": "delete_question"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 335,
+  "fields": {
+    "name": "Can view question",
+    "content_type": 82,
+    "codename": "view_question"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 336,
+  "fields": {
+    "name": "Can add choice",
+    "content_type": 83,
+    "codename": "add_choice"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 337,
+  "fields": {
+    "name": "Can change choice",
+    "content_type": 83,
+    "codename": "change_choice"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 338,
+  "fields": {
+    "name": "Can delete choice",
+    "content_type": 83,
+    "codename": "delete_choice"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 339,
+  "fields": {
+    "name": "Can view choice",
+    "content_type": 83,
+    "codename": "view_choice"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 340,
+  "fields": {
+    "name": "Can add answer",
+    "content_type": 84,
+    "codename": "add_answer"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 341,
+  "fields": {
+    "name": "Can change answer",
+    "content_type": 84,
+    "codename": "change_answer"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 342,
+  "fields": {
+    "name": "Can delete answer",
+    "content_type": 84,
+    "codename": "delete_answer"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 343,
+  "fields": {
+    "name": "Can view answer",
+    "content_type": 84,
+    "codename": "view_answer"
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 1,
+  "fields": {
+    "name": "Manager",
+    "permissions": [
+      115,
+      57
+    ]
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 2,
+  "fields": {
+    "name": "Attending",
+    "permissions": [
+      115,
+      178,
+      165
+    ]
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 3,
+  "fields": {
+    "name": "Volunteer",
+    "permissions": [
+      115
+    ]
+  }
+}
+]

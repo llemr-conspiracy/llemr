@@ -42,7 +42,7 @@ Before LLEMR is usable, you first need to add some basic data to the database.
     
 * To load basic data, run::
 
-    $ docker compose -f local.yml run --rm django python manage.py loaddata core workup groups inventory labs followup vaccine
+    $ docker compose -f local.yml run --rm django python manage.py loaddata core workup permissions inventory labs followup vaccine
 
 * Now, follow the steps below to create a superuser account.
 
