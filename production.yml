@@ -10,10 +10,12 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
-    image: osler_production_django
+    image: llemr_production_django
     depends_on:
       - postgres
       - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.demo
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.secrets
@@ -28,7 +30,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: osler_production_postgres
+    image: llemr_production_postgres
     volumes:
       - production_postgres_data:/var/lib/postgresql/data
       - production_postgres_data_backups:/backups
