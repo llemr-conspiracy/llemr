@@ -69,7 +69,7 @@ The file should contain database credentials and the Django secret key. **Do not
   # ------------------------------------------------------------------------------
   POSTGRES_HOST=postgres
   POSTGRES_PORT=5432
-  POSTGRES_DB=llemr
+  POSTGRES_DB=osler
   POSTGRES_USER=BnnIJhssshZrnURWgfjnnEXZRMzhNZCx
   POSTGRES_PASSWORD=JzQ6eHA47iiEzURQo1xJ2VPeGpRY81edS1UpuQc82KP5bb7T8t6qR7ANFTRK5bxI
 
