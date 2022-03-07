@@ -1,7 +1,7 @@
-Osler Django Settings
+LLEMR Django Settings
 =====================
 
-Default settings are loaded from ``config/setttings/production.py``. Available settings for Osler:
+Default settings are loaded from ``config/setttings/demo.py``. Available settings for LLEMR:
 
 OSLER_ABOUT_NAME
 ----------------
@@ -83,22 +83,22 @@ Name of the active state of patients. Takes the form of a tuple of `('name', Fal
 OSLER_DISPLAY_REFERRALS
 -----------------------
 
-Display referral app features. Default `True`.
+Display referral app features. Default `False`.
 
 OSLER_DISPLAY_APPOINTMENTS
 --------------------------
 
-Display appointment app features. Default `True`.
+Display appointment app features. Default `False`.
 
 OSLER_DISPLAY_CASE_MANAGERS
 ---------------------------
 
-Display case manager features. Default `True`.
+Display case manager features. Default `False`.
 
 OSLER_DISPLAY_ATTESTABLE_BASIC_NOTE
 -----------------------------------
 
-Display referral app features. Default `True`.
+Display referral app features. Default `False`.
 
 OSLER_DISPLAY_DIAGNOSIS
 -----------------------
@@ -108,32 +108,32 @@ Display diagnosis. Default `True`.
 OSLER_DISPLAY_VOUCHERS
 ----------------------
 
-Display field for vouchers in H&P style note. Default `True`.
+Display field for vouchers in H&P style note. Default `False`.
 
 OSLER_DISPLAY_WILL_RETURN
 -------------------------
 
-Display will return field in H&P style note. Default `True`.
+Display will return field in H&P style note. Default `False`.
 
 OSLER_DISPLAY_ATTENDANCE
 ------------------------
 
-Display field for vouchers in H&P style note. Default `True`.
+Display link for attendance. Default `False`.
 
 OSLER_DISPLAY_FOLLOWUP
 ----------------------
 
-Display followup app features. Default `True`.
+Display followup app features. Default `False`.
 
 OSLER_DISPLAY_VACCINE
 ---------------------
 
-Display vaccine app features. Default `True`.
+Display vaccine app features. Default `False`.
 
 OSLER_GITHUB_URL
 ----------------
 
-Link to the github page for this project. May be removed in future releases. Default `https://github.com/oslerproject/osler`.
+Link to the github page for this project. May be removed in future releases. Default ``.
 
 OSLER_MAX_APPOINTMENTS
 ----------------------

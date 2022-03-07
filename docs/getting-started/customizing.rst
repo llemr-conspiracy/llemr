@@ -1,10 +1,10 @@
-Customizing Osler
+Customizing LLEMR
 =================
 
 The Admin Panel
 ---------------
 
-The majority of customization of an Osler instance can be achieved by using the admin panel, found at `/admin`, availiable to any user with staff status. Common customizations include:
+The majority of customization of an LLEMR instance can be achieved by using the admin panel, found at `/admin`, availiable to any user with staff status. Common customizations include:
 
 * Almost every drop-down list can be customized on the admin panel
 * Add/change user groups (typically attendings, volunteers, etc.)
