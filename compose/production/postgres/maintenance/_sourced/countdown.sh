@@ -1,5 +1,4 @@
-#!/usr/bin/env bash
-
+#!/bin/bash
 
 countdown() {
     declare desc="A simple countdown. Source: https://superuser.com/a/611582"

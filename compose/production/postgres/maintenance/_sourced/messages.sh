@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 
 
 message_newline() {
