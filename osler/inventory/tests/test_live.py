@@ -120,20 +120,3 @@ class TestLiveInventory(SeleniumLiveTestCase):
         stockDisplayed = int(stockDisplayed)
 
         assert initialStock-dispenseAmount == stockDisplayed
-
-
-
-
-                    
-
-
-
-
-
-
-
-
-
-
-        
-
