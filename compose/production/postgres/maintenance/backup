@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 ### Create a database backup.
 ###
 ### Usage:
