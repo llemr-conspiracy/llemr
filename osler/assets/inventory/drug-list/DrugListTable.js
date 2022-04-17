@@ -27,6 +27,15 @@ function DrugListTable(props) {
   const categoryComparator = simpleComparator('category');
   const expirationDateComparator = simpleComparator('expiration_date');
   const stockComparator = simpleComparator('stock');
+
+  const manufacturerComparator = React.useMemo(() => (rowA,rowB,columnId,desc) => {
+    let cmp = compare(rowA.original.unit,rowB.original.unit);
+    if (cmp == 0) {
+      cmp = compare(rowA.original.manufacturer.toLowerCase(), rowB.original.manufacturer.toLowerCase());
+    }
+    return cmp;
+  });
+
   const doseComparator = React.useMemo(() => (rowA,rowB,columnId,desc) => {
     let cmp = compare(rowA.original.unit,rowB.original.unit);
     if (cmp == 0) {
@@ -84,6 +93,7 @@ function DrugListTable(props) {
         {
           Header: 'Manufacturer',
           accessor: 'manufacturer',
+          sortType: manufacturerComparator,
         },
         {
           Header: 'Dispense',
