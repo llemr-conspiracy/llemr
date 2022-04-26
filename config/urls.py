@@ -28,7 +28,7 @@ urlpatterns = [
     path('labs/', include('osler.labs.urls')),
     path('inventory/', include('osler.inventory.urls')),
     path('surveys/', include('osler.surveys.urls')),
-    # path('datadashboard/', include('osler.datadashboard.urls')),
+    path('datadashboard/', include('osler.datadashboard.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
