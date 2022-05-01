@@ -130,24 +130,27 @@ class DrugUpdate(UpdateView):
 
 
 def drug_dispense(request):
-    pk = request.POST['pk']
-    num = request.POST['num']
-    patient_pk = request.POST['patient_pk']
-    drug = models.Drug.objects.get(pk=pk)
-    patient = Patient.objects.get(pk=patient_pk)
-    can_dispense = drug.can_dispense(int(num))
+    if request.POST:
+        pk = request.POST['pk']
+        num = request.POST['num']
+        patient_pk = request.POST['patient_pk']
+        drug = models.Drug.objects.get(pk=pk)
+        patient = Patient.objects.get(pk=patient_pk)
+        can_dispense = drug.can_dispense(int(num))
 
-    if can_dispense:
-        models.DispenseHistory.objects.create(drug=drug,
-                                              dispense=num,
-                                              author=request.user,
-                                              author_type=get_active_role(request),
-                                              patient=patient,
-                                              encounter=patient.last_encounter())
-        drug.dispense(int(num))
+        if can_dispense:
+            models.DispenseHistory.objects.create(drug=drug,
+                                                dispense=num,
+                                                author=request.user,
+                                                author_type=get_active_role(request),
+                                                patient=patient,
+                                                encounter=patient.last_encounter())
+            drug.dispense(int(num))
+        else:
+            return HttpResponseNotFound('<h1>Cannot dispense more drugs than in stock!</h1>')
+        return redirect('inventory:drug-list')
     else:
-        return HttpResponseNotFound('<h1>Cannot dispense more drugs than in stock!</h1>')
-    return redirect('inventory:drug-list')
+        return redirect('inventory:drug-list')
 
 
 @active_permission_required('inventory.export_csv', raise_exception=True)
