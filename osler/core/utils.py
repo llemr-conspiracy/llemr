@@ -76,15 +76,6 @@ def return_duplicates(first_name_str, last_name_str):
         Q(last_name__in=last_name_var))
 
 
-def get_clindates(encounters):
-    '''For a qs of encounters, returns a list of unique clinic days'''
-    clindates = []
-    for encounter in encounters:
-        if encounter.clinic_day not in clindates:
-            clindates = clindates + [encounter.clinic_day]
-    return clindates
-
-
 def get_names_from_url_query_dict(request):
     """Get first_name and last_name from a request object in a dict.
     """
