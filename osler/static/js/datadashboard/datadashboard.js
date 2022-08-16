@@ -11,7 +11,7 @@ let patientDataJson = null,
   dateRanges = {},
   defaultDateRange = "All Time"; //options include: "Current/Latest Clinic", "This Month", "This Year", "All Time"
 
-// the urls we get json data from 
+// the urls we pass to fetchJsonData() to receive data from
 const urls = ["patientdata-json-datadashboard/","context-json-datadashboard/"]
 
 async function fetchJsonData(urls) {
@@ -164,6 +164,7 @@ function sortCommonConditions(){
   else{
     filteredData = filterPatientData(true)
   }  
+  // count the number of occurrences of each condition
   if(Object.keys(filteredData).length != 0){
     Object.values(filteredData).map(function (e) {
       conditionsList = e.conditions;
@@ -175,7 +176,7 @@ function sortCommonConditions(){
         }
       });
     });
-    // sort by most patients
+    // sort by most patients (ie sort by most common conditions)
     var sortable = [];
     for (var condition in commonConditionsPreSort) {
       sortable.push([condition, commonConditionsPreSort[condition]]);
@@ -202,6 +203,8 @@ function sortCommonConditions(){
   displayCommonConditionsStats(commonConditions)
 };
 
+
+// create dropdown menu that displays common conditions & their number of occurrences
 function displayCommonConditionsStats(commonConditions){
   //append chronic condtion number counts to DOM
   var conditionsCountNode = document.getElementById("conditions-count")
@@ -241,6 +244,7 @@ function displayCommonConditionsStats(commonConditions){
   }
 }
 
+// get the filtered data and pass it to functions that generate the page's display
 function makeFilteredData(filterChangeOrigin) {
   var filteredData 
 
@@ -268,6 +272,7 @@ function makeFilteredData(filterChangeOrigin) {
   }
 };
 
+// display stats on unique patients and their visits
 function displayPatientVisitStats() {
   //append total workups to DOM
   wuCount = countWorkups(filteredData);
@@ -311,6 +316,7 @@ function displayPatientVisitStats() {
   }
 }
 
+// compute and display stats on labs ordered 
 function displayLabsStats(filteredData) {
   var labs_count = {};
   var totalLabs = 0
@@ -383,7 +389,7 @@ function displayLabsStats(filteredData) {
   }
 }
 
-
+// compute and display stats on drugs dispensed to DOM
 function displayDrugsStats(filteredData) {
   var drugs_count = {};
   var totalDrugs = 0;
@@ -456,7 +462,7 @@ function displayDrugsStats(filteredData) {
   }
 }
 
-
+// generate ages bar chart
 function makeAgeChart(filteredData) {
   var sortedAges = [],
     ageRanges = [],
@@ -536,37 +542,6 @@ function makeAgeChart(filteredData) {
           },
         },
       },
-      // OLD---------
-      // scales: {
-      //   yAxes: [
-      //     {
-      //       gridLines: {
-      //         display: true,
-      //         borderDash: [5, 5],
-      //         lineWidth: 2,
-      //         drawBorder: false,
-      //         offsetGridLines: false,
-      //       },
-      //       ticks: {
-      //         beginAtZero: true,
-      //         maxTicksLimit: 5,
-      //       },
-      //       scaleLabel: {
-      //         display: false,
-      //       },
-      //     },
-      //   ],
-      //   xAxes: [
-      //     {
-      //       gridLines: {
-      //         display: false,
-      //       },
-      //       ticks: {
-      //         beginAtZero: true,
-      //       },
-      //     },
-      //   ],
-      // },
       legend: {
         display: false,
       },
@@ -574,6 +549,7 @@ function makeAgeChart(filteredData) {
   }));
 };
 
+// generate gender pie chart
 function makeGenderChart(filteredData) {
   //pass in date filtered data and then within each function extract the demographic data
   var genderData = {
@@ -624,6 +600,7 @@ function makeGenderChart(filteredData) {
   }));
 };
 
+// generate ethnicity pie chart
 function makeEthnicityChart(filteredData) {
   var ethnicityData = {}
 
@@ -673,6 +650,7 @@ function makeEthnicityChart(filteredData) {
   }));
 };
 
+// generate zipcode pie chart
 function makeZipcodeChart(filteredData){
   var zipcodeData = {}
   Object.values(filteredData).map(function (e) {  
@@ -722,6 +700,7 @@ function makeZipcodeChart(filteredData){
   });
 }
 
+// generate insurance status pie chart
 function makeInsuranceChart(filteredData) {
   //pass in date filtered data and then within each function extract the demographic data
   var insuranceData = {
