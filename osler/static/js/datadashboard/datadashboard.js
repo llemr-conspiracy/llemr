@@ -41,7 +41,7 @@ window.addEventListener("load", (event) => {
 
     zipcodeColors = makeColorArray(numZipcodes, "04009A");
     ethnicityColors = makeColorArray(numEthnicities, "206A5D");
-    
+
     dateRangePicker()
     console.log(zipcodeColors)
     console.dir(patientDataJson)
@@ -264,11 +264,13 @@ function makeFilteredData(filterChangeOrigin) {
     displayLabsStats(filteredData);
     displayDrugsStats(filteredData);
     
+    // these functions return chart objects, which are rendered into the DOM
     makeAgeChart(filteredData);
     makeGenderChart(filteredData);
     makeEthnicityChart(filteredData);
     makeZipcodeChart(filteredData);
     makeInsuranceChart(filteredData);
+    makeCommonConditionsChart(filteredData) // the second param is n, we display the top n most common conditions
   }
 };
 
@@ -513,6 +515,9 @@ function makeAgeChart(filteredData) {
           display: true,
           text: "Age "
         },
+        legend: {
+          display: false
+        },
       },
       fullCornerRadius: false,
       cornerRadius: 15,
@@ -542,12 +547,80 @@ function makeAgeChart(filteredData) {
           },
         },
       },
-      legend: {
-        display: false,
+    },
+  }));
+};
+
+// generate top n common conditions doughnut chart
+function makeCommonConditionsChart(filteredData) {
+  // debugging code ------------------------
+  // console.log(filteredData)
+  //filteredData[1]["conditions"] = ["lumps", "cough", "ugly"]
+  // filteredData[2]["conditions"] = ["lumps", "cough", "odorous"]
+  // debugging code ------------------------
+
+  // count the number of occurrences of each condition
+  let conditionsCount = {}
+  Object.values(filteredData).forEach(patient => {
+    let conditions = patient["conditions"]
+    conditions.forEach(condition => {
+      if (conditionsCount[condition]) {
+        conditionsCount[condition] += 1
+      }
+      else {
+        conditionsCount[condition] = 1
+      }
+    })
+  })
+
+  // if there are less than 10 different conditions, we just display all conditions
+  numConditions = Math.min(10, Object.keys(conditionsCount).length)
+
+  // get the most common conditions (we remove the max value up to 10 times)
+  let mostCommonConditions = {}
+  for (let i = 0; i < numConditions; i++) {
+    let curMax = Math.max(...Object.values(conditionsCount))
+    let curMaxCondition = getKeyByValue(conditionsCount, curMax)
+    delete conditionsCount[curMaxCondition]
+    mostCommonConditions[curMaxCondition] = curMax
+  }
+  console.log(mostCommonConditions)
+
+  // if we are showing less than ten conditions, we don't need ten colors
+  const COLORS = ["#80ABFC", "#FF9594", "#6837A4","#89ADDC", "#FDD594", "#6677D4","#80456C", "#531594", "#35F7D4","#8999FC"]
+  conditionColors = COLORS.slice(0,numConditions)
+
+  var commonConditionsChartNode = removeOldChart("common-conditions-chart");
+  commonConditionsChart = commonConditionsChartNode.getContext("2d");
+  return (doughnutChart = new Chart(commonConditionsChart, {
+    type: "doughnut",
+    data: {
+      labels: Object.keys(mostCommonConditions),
+      datasets: [{
+        label: "Occurrences",
+        backgroundColor: conditionColors,
+        data: Object.values(mostCommonConditions)
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: "Most Common Conditions",
+        },
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+          },
+        }
       },
     },
   }));
 };
+
 
 // generate gender pie chart
 function makeGenderChart(filteredData) {
@@ -583,17 +656,16 @@ function makeGenderChart(filteredData) {
     options: {
       maintainAspectRatio: false,
       responsive: true,
-
-      legend: {
-        position: "bottom",
-        labels: {
-          usePointStyle: true,
-        },
-      },
       plugins: {
         title: {
           display: true,
           text: "Gender",
+        },
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+          },
         },
       },
     },
@@ -633,17 +705,16 @@ function makeEthnicityChart(filteredData) {
     options: {
       maintainAspectRatio: false,
       responsive: true,
-
-      legend: {
-        position: "bottom",
-        labels: {
-          usePointStyle: true,
-        },
-      },
       plugins: {
         title: {
           display: true,
           text: "Ethinicity",
+        },
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+          },
         },
       }
     },
@@ -682,18 +753,17 @@ function makeZipcodeChart(filteredData){
     options: {
       maintainAspectRatio: false,
       responsive: true,
-
-      legend: {
-        position: "bottom",
-        align: "start",
-        labels: {
-          usePointStyle: true,
-        },
-      },
       plugins: {
         title: {
           display: true,
           text: "Zip Code",
+        },
+        legend: {
+          position: "bottom",
+          align: "start",
+          labels: {
+            usePointStyle: true,
+          },
         },
       },
     },
@@ -734,16 +804,16 @@ function makeInsuranceChart(filteredData) {
     options: {
       maintainAspectRatio: false,
       responsive: true,
-      legend: {
-        position: "bottom",
-        labels: {
-          usePointStyle: true,
-        },
-      },
       plugins: {
         title: {
           display: true,
           text: "Has Insurance",
+        },
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+          },
         },
       },
     },
@@ -793,8 +863,8 @@ function filterPatientData(filterByCondition){
   return filteredData;
 }
 
+// remove old chart, adds fresh canvas node, and returns the new fresh canvas node
 function removeOldChart(chartName){
-  // and add a fresh canvas node
   var ChartParent = document.getElementById(chartName);
   $(ChartParent).empty()
   var ChartNode = document.createElement("canvas");
@@ -846,3 +916,6 @@ function lightenColor (color, percent) {
     .slice(1);
 };
 
+function getKeyByValue(object, value) {
+  return Object.keys(object).find(key => object[key] === value);
+};
