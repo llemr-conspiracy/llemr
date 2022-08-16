@@ -270,7 +270,8 @@ function makeFilteredData(filterChangeOrigin) {
     makeEthnicityChart(filteredData);
     makeZipcodeChart(filteredData);
     makeInsuranceChart(filteredData);
-    makeCommonConditionsChart(filteredData) // the second param is n, we display the top n most common conditions
+    makeCommonConditionsChart(filteredData); // the second param is n, we display the top n most common conditions
+    makeCommonDrugsChart(filteredData)
   }
 };
 
@@ -620,6 +621,74 @@ function makeCommonConditionsChart(filteredData) {
     },
   }));
 };
+
+// generate chart displaying most common drugs
+function makeCommonDrugsChart(filteredData) {
+  // count the num of occurrances of each drug
+  let drugCounts = {}
+  Object.values(filteredData).forEach(patient => {
+    if (patient["drugs"] != null) { // we can skip next block if patient has no drugs
+      let drugs = Object.keys(patient["drugs"]) // drugs will be an array of names of all drugs this patient is on
+      drugs.forEach(drugName => {
+        if (drugCounts[drugName]) {
+          drugCounts[drugName] += 1
+        }
+        else {
+          drugCounts[drugName] = 1
+        }
+      })
+    } 
+  })
+
+  // if there are less than 10 different drugs, we just display all drugs
+  numDrugs = Math.min(10, Object.keys(drugCounts).length)
+
+  // get the most common drugs (we remove the max value up to 10 times)
+  let mostCommonDrugs = {}
+  for (let i = 0; i < numDrugs; i++) {
+    let curMax = Math.max(...Object.values(drugCounts))
+    let curMaxDrug = getKeyByValue(drugCounts, curMax)
+    delete drugCounts[curMaxDrug]
+    mostCommonDrugs[curMaxDrug] = curMax
+  }
+  console.log(mostCommonDrugs)
+
+  
+
+  // if we are showing less than ten drugs, we don't need ten colors
+  const COLORS = ["#80ABFC", "#FF9594", "#6837A4","#89ADDC", "#FDD594", "#6677D4","#80456C", "#531594", "#35F7D4","#8999FC"]
+  drugColors = COLORS.slice(0,numDrugs)
+
+  var commonDrugsChartNode = removeOldChart("common-drugs-chart");
+  commonDrugsChart = commonDrugsChartNode.getContext("2d");
+  return (doughnutChart = new Chart(commonDrugsChart, {
+    type: "doughnut",
+    data: {
+      labels: Object.keys(mostCommonDrugs),
+      datasets: [{
+        label: "Occurrences",
+        backgroundColor: drugColors,
+        data: Object.values(mostCommonDrugs)
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: "Most Common Drugs",
+        },
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+          },
+        }
+      },
+    },
+  }));
+}
 
 
 // generate gender pie chart
