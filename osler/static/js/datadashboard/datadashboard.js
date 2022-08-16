@@ -1,4 +1,3 @@
-//generate default date range and define global variables
 let patientDataJson = null,
   ptCount = null,
   zipcodeColors = [],
@@ -12,6 +11,7 @@ let patientDataJson = null,
   dateRanges = {},
   defaultDateRange = "All Time"; //options include: "Current/Latest Clinic", "This Month", "This Year", "All Time"
 
+// the urls we get json data from 
 const urls = ["patientdata-json-datadashboard/","context-json-datadashboard/"]
 
 async function fetchJsonData(urls) {
@@ -70,36 +70,36 @@ function dateRangePicker(){
   $('input[name="daterange"]').daterangepicker(
     {
       locale: {
-        format: gettext("MM/DD/YYYY"),
+        format: "MM/DD/YYYY",
         separator: " - ",
-        applyLabel: gettext("Apply"),
-        cancelLabel: gettext("Cancel"),
-        fromLabel: gettext("From"),
-        toLabel: gettext("To"),
-        customRangeLabel: gettext("Custom Range"),
-        weekLabel: gettext("W"),
+        applyLabel: "Apply",
+        cancelLabel: "Cancel",
+        fromLabel: "From",
+        toLabel: "To",
+        customRangeLabel: "Custom Range",
+        weekLabel: "W",
         daysOfWeek: [
-          gettext("Su"),
-          gettext("Mo"),
-          gettext("Tu"),
-          gettext("We"),
-          gettext("Th"),
-          gettext("Fr"),
-          gettext("Sa"),
+          "Su",
+          "Mo",
+          "Tu",
+          "We",
+          "Th",
+          "Fr",
+          "Sa",
         ],
         monthNames: [
-          gettext("January"),
-          gettext("February"),
-          gettext("March"),
-          gettext("April"),
-          gettext("May"),
-          gettext("June"),
-          gettext("July"),
-          gettext("August"),
-          gettext("September"),
-          gettext("October"),
-          gettext("November"),
-          gettext("December"),
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
         ],
         firstDay: 1,
       },
@@ -118,7 +118,6 @@ function dateRangePicker(){
       selectedEnd = endDate.format("YYYY-MM-DD");
       makeFilteredData("date");
       sortCommonConditions();  
-      
     }
   );
 };
@@ -266,7 +265,6 @@ function makeFilteredData(filterChangeOrigin) {
     makeEthnicityChart(filteredData);
     makeZipcodeChart(filteredData);
     makeInsuranceChart(filteredData);
-
   }
 };
 
@@ -504,9 +502,11 @@ function makeAgeChart(filteredData) {
       ],
     },
     options: {
-      title: {
-        display: true,
-        text: "Age "
+      plugins: {
+        title: {
+          display: true,
+          text: "Age "
+        },
       },
       fullCornerRadius: false,
       cornerRadius: 15,
@@ -587,9 +587,11 @@ function makeGenderChart(filteredData) {
           usePointStyle: true,
         },
       },
-      title: {
-        display: true,
-        text: "Gender",
+      plugins: {
+        title: {
+          display: true,
+          text: "Gender",
+        },
       },
     },
   }));
@@ -634,10 +636,12 @@ function makeEthnicityChart(filteredData) {
           usePointStyle: true,
         },
       },
-      title: {
-        display: true,
-        text: "Ethinicity",
-      },
+      plugins: {
+        title: {
+          display: true,
+          text: "Ethinicity",
+        },
+      }
     },
   }));
 };
@@ -681,9 +685,11 @@ function makeZipcodeChart(filteredData){
           usePointStyle: true,
         },
       },
-      title: {
-        display: true,
-        text: "Zip Code",
+      plugins: {
+        title: {
+          display: true,
+          text: "Zip Code",
+        },
       },
     },
   });
@@ -728,9 +734,11 @@ function makeInsuranceChart(filteredData) {
           usePointStyle: true,
         },
       },
-      title: {
-        display: true,
-        text: "Has Insurance",
+      plugins: {
+        title: {
+          display: true,
+          text: "Has Insurance",
+        },
       },
     },
   });
@@ -775,6 +783,7 @@ function filterPatientData(filterByCondition){
       filteredData[key] = value;
     }
   }
+  console.log(filteredData)
   return filteredData;
 }
 
@@ -788,6 +797,7 @@ function removeOldChart(chartName){
   return ChartNode
 };
 
+// gets total amount of workups across all patients
 function countWorkups(filteredData){
   wuCount = 0;
   for (const [key, value] of Object.entries(filteredData)) { 
@@ -801,6 +811,8 @@ function percentage(portion, whole){
   return ((portion/whole)*100).toFixed(1);
 }
 
+// generates an array of colors of size num
+// each color is a percent lighter than the starting color
 function makeColorArray(num,startingCol) {
   var holderArr = []
   for (let i = 0; i < num; i++) {
@@ -810,6 +822,7 @@ function makeColorArray(num,startingCol) {
   
 }
 
+// generates a color that is percent% lighter than the given color
 function lightenColor (color, percent) {
   var num = parseInt(color, 16),
     amt = Math.round(2.55 * percent),
