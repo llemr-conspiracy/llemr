@@ -511,35 +511,62 @@ function makeAgeChart(filteredData) {
       fullCornerRadius: false,
       cornerRadius: 15,
       scales: {
-        yAxes: [
-          {
-            gridLines: {
-              display: true,
-              borderDash: [5, 5],
-              lineWidth: 2,
-              drawBorder: false,
-              offsetGridLines: false,
-            },
-            ticks: {
-              beginAtZero: true,
-              maxTicksLimit: 5,
-            },
-            scaleLabel: {
-              display: false,
-            },
+        y: {
+          gridLines: {
+            display: true,
+            borderDash: [5, 5],
+            lineWidth: 2,
+            drawBorder: false,
+            offsetGridLines: false,
           },
-        ],
-        xAxes: [
-          {
-            gridLines: {
-              display: false,
-            },
-            ticks: {
-              beginAtZero: true,
-            },
+          ticks: {
+            beginAtZero: true,
+            maxTicksLimit: 5,
           },
-        ],
+          scaleLabel: {
+            display: false,
+          },
+        },
+        x: {
+          gridLines: {
+            display: false,
+          },
+          ticks: {
+            beginAtZero: true,
+          },
+        },
       },
+      // OLD---------
+      // scales: {
+      //   yAxes: [
+      //     {
+      //       gridLines: {
+      //         display: true,
+      //         borderDash: [5, 5],
+      //         lineWidth: 2,
+      //         drawBorder: false,
+      //         offsetGridLines: false,
+      //       },
+      //       ticks: {
+      //         beginAtZero: true,
+      //         maxTicksLimit: 5,
+      //       },
+      //       scaleLabel: {
+      //         display: false,
+      //       },
+      //     },
+      //   ],
+      //   xAxes: [
+      //     {
+      //       gridLines: {
+      //         display: false,
+      //       },
+      //       ticks: {
+      //         beginAtZero: true,
+      //       },
+      //     },
+      //   ],
+      // },
       legend: {
         display: false,
       },
