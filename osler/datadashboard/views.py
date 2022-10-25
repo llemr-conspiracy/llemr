@@ -25,6 +25,7 @@ def send_patientdata_json(request):
     all_demographics = query_demographics_model()
     all_drugs_dispensed = query_drug_model()
     all_labs_ordered = query_labs_model()
+
     dashboard_data = format_patient_data(all_workups, all_demographics, all_drugs_dispensed, all_labs_ordered)
     return JsonResponse(dashboard_data)
 
@@ -36,7 +37,7 @@ def query_workups_model():
         prefetch_related('patient__ethnicities')
 
 def query_demographics_model():
-    """ Reformats all Demographic data for json"""
+    """ Reformats all Demographic data for json by processing into a python dictoinary"""
     raw_demographics = Demographics.objects.all()
     formatted_demographics = {}
     for demographic in raw_demographics:
@@ -57,6 +58,7 @@ def query_drug_model():
     '''Queries inventory and extracts dispense history models organized by patient'''
     drug_dispenses_by_pt = {}
     dispenses = DispenseHistory.objects.all()
+
     for item in dispenses:
         written_date = datetime.datetime.strftime(getattr(item, "written_datetime"), "%Y-%m-%d")
         drug = getattr(item, "drug")
@@ -65,9 +67,11 @@ def query_drug_model():
         drug_patient = getattr(drug_encounter, "patient")
         drug_patient_pk = getattr(drug_patient, "pk")      
 
+        # check if the patient at hand is already in drug_dispenses_by_pt and initialize a dictionary for them if not
         if(drug_patient_pk not in drug_dispenses_by_pt):
           drug_dispenses_by_pt[drug_patient_pk] = {}
         
+        # if this is the first instance of the drug being dispensed, make a new list contianing its dispense date, else add it to already existing list
         if(drug_name not in drug_dispenses_by_pt[drug_patient_pk]):
           drug_dispenses_by_pt[drug_patient_pk][drug_name] = [written_date]
         else:
@@ -156,7 +160,6 @@ def gather_data_for_patient(wu, demo, drugs, labs, pk):
     return patient_data
 
 
-# (remove this comment) format_patient_data(all_workups, all_demographics, all_drugs_dispensed, all_labs_ordered)
 def format_patient_data(workups,demo,drugs,labs):
     '''takes in queryed workups then extracts and formats related demographic data into json friendly formating
     '''
@@ -164,12 +167,13 @@ def format_patient_data(workups,demo,drugs,labs):
     unique_patient_pk_list = []
     for wu in workups:
         pk = wu.patient.pk
+        # check if we haven't seen current patient before. If so, add patient primary keys to list of unique primary keys and gather data
         if pk not in unique_patient_pk_list:
             unique_patient_pk_list.append(pk)
             patient_data = gather_data_for_patient(wu, demo, drugs, labs, pk)
             dashboard_data[pk] = patient_data
-        else:   
-            # adds repeat workups to date list to be used in js side date filtering
+        else: 
+            # if we have seen current patient already, adds repeat workups to date list to be used in js side date filtering
             existing_wu_dates = dashboard_data.get(pk)['wu_dates']
             existing_wu_dates.append(str(wu.encounter.clinic_day))
 
@@ -190,6 +194,7 @@ def list_clinic_dates():
     '''
     raw_encounters = Encounter.objects.all()
     dates = []
+    # turn each encounter date into a date string and append to the list of dates
     for encounter in raw_encounters:
         date = datetime.datetime.strftime(getattr(encounter, "clinic_day"), "%Y-%m-%d")
         if date not in dates:
