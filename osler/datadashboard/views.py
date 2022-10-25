@@ -145,6 +145,7 @@ def gather_data_for_patient(wu, demo, drugs, labs, pk):
     if(pk in demo):
         patient_data['conditions'] = demo[pk]['conditions']
         patient_data['has_insurance'] = demo[pk]['has_insurance']
+        patient_data['income_range'] = demo[pk]['income_range']
     else:
         patient_data['conditions'] = []
 
