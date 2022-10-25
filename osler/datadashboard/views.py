@@ -47,7 +47,10 @@ def query_demographics_model():
                 conditions.append(getattr(condition, 'name'))
         demo_data["conditions"] = conditions
         demo_data["has_insurance"] = demographic.has_insurance
-        demo_data["income_range"] = demographic.annual_income.name
+
+        # need to check if an annual income has been specified, skip over this if not
+        if demographic.annual_income is not None:
+            demo_data["income_range"] = demographic.annual_income.name
         formatted_demographics[demographic.pk] = demo_data
     
     # formatted_demographics maps the primary key of each demographic to its data
@@ -145,7 +148,8 @@ def gather_data_for_patient(wu, demo, drugs, labs, pk):
     if(pk in demo):
         patient_data['conditions'] = demo[pk]['conditions']
         patient_data['has_insurance'] = demo[pk]['has_insurance']
-        patient_data['income_range'] = demo[pk]['income_range']
+        if 'income_range' in demo[pk].keys():
+            patient_data['income_range'] = demo[pk]['income_range']
     else:
         patient_data['conditions'] = []
 
