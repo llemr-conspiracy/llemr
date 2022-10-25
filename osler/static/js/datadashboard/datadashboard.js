@@ -22,7 +22,6 @@ async function fetchJsonData(urls) {
           fetch(url).then(
             (response) => response.json()
           )));
-    console.log('data:', data)
     return (data)
 
   } catch (error) {
@@ -556,12 +555,6 @@ function makeAgeChart(filteredData) {
 
 // generate top n common conditions doughnut chart
 function makeCommonConditionsChart(filteredData) {
-  // debugging code ------------------------
-  // console.log(filteredData)
-  // filteredData[1]["conditions"] = ["lumps", "cough", "ugly"]
-  // filteredData[2]["conditions"] = ["lumps", "cough", "odorous"]
-  // debugging code ------------------------
-
   // count the number of occurrences of each condition
   let conditionsCount = {}
   Object.values(filteredData).forEach(patient => {
@@ -587,7 +580,6 @@ function makeCommonConditionsChart(filteredData) {
     delete conditionsCount[curMaxCondition]
     mostCommonConditions[curMaxCondition] = curMax
   }
-  console.log(mostCommonConditions)
 
   // if we are showing less than ten conditions, we don't need ten colors
   const COLORS = ["#80ABFC", "#FF9594", "#6837A4","#89ADDC", "#FDD594", "#6677D4","#80456C", "#531594", "#35F7D4","#8999FC"]
@@ -653,9 +645,6 @@ function makeCommonDrugsChart(filteredData) {
     delete drugCounts[curMaxDrug]
     mostCommonDrugs[curMaxDrug] = curMax
   }
-  console.log(mostCommonDrugs)
-
-  
 
   // if we are showing less than ten drugs, we don't need ten colors
   const COLORS = ["#80ABFC", "#FF9594", "#6837A4","#89ADDC", "#FDD594", "#6677D4","#80456C", "#531594", "#35F7D4","#8999FC"]
@@ -708,7 +697,6 @@ function makeCommonIncomeRangesChart(filteredData) {
       }
     }
   })
-  console.log('incomeRangeCounts: ', incomeRangeCounts)
 
   // if there are more than 10 different income ranges, we just display all income ranges
   numIncomeRanges = Math.min(10, Object.keys(incomeRangeCounts).length)
@@ -721,7 +709,6 @@ function makeCommonIncomeRangesChart(filteredData) {
     delete incomeRangeCounts[curMaxIncomeRange]
     mostCommonRanges[curMaxIncomeRange] = curMax
   }
-  console.log('mostCommonRanges: ', mostCommonRanges)
 
   // if we are showing less than ten income ranges, we don't need ten colors
   const COLORS = ["#80ABFC", "#FF9594", "#6837A4","#89ADDC", "#FDD594", "#6677D4","#80456C", "#531594", "#35F7D4","#8999FC"]
@@ -997,7 +984,7 @@ function filterPatientData(filterByCondition){
       filteredData[key] = value;
     }
   }
-  console.log("filteredData: ", filteredData)
+  
   return filteredData;
 }
 
