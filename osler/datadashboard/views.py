@@ -47,6 +47,7 @@ def query_demographics_model():
                 conditions.append(getattr(condition, 'name'))
         demo_data["conditions"] = conditions
         demo_data["has_insurance"] = demographic.has_insurance
+        demo_data["income_range"] = demographic.annual_income.name
         formatted_demographics[demographic.pk] = demo_data
     
     # formatted_demographics maps the primary key of each demographic to its data
