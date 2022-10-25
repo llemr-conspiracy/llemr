@@ -22,6 +22,7 @@ async function fetchJsonData(urls) {
           fetch(url).then(
             (response) => response.json()
           )));
+    console.log('data:', data)
     return (data)
 
   } catch (error) {
@@ -270,8 +271,9 @@ function makeFilteredData(filterChangeOrigin) {
     makeEthnicityChart(filteredData);
     makeZipcodeChart(filteredData);
     makeInsuranceChart(filteredData);
-    makeCommonConditionsChart(filteredData); // the second param is n, we display the top n most common conditions
+    makeCommonConditionsChart(filteredData);
     makeCommonDrugsChart(filteredData)
+    makeCommonIncomeRangesChart(filteredData);
   }
 };
 
@@ -556,7 +558,7 @@ function makeAgeChart(filteredData) {
 function makeCommonConditionsChart(filteredData) {
   // debugging code ------------------------
   // console.log(filteredData)
-  //filteredData[1]["conditions"] = ["lumps", "cough", "ugly"]
+  // filteredData[1]["conditions"] = ["lumps", "cough", "ugly"]
   // filteredData[2]["conditions"] = ["lumps", "cough", "odorous"]
   // debugging code ------------------------
 
@@ -640,7 +642,7 @@ function makeCommonDrugsChart(filteredData) {
     } 
   })
 
-  // if there are less than 10 different drugs, we just display all drugs
+  // if there are more than 10 different drugs, we just display all drugs
   numDrugs = Math.min(10, Object.keys(drugCounts).length)
 
   // get the most common drugs (we remove the max value up to 10 times)
@@ -677,7 +679,74 @@ function makeCommonDrugsChart(filteredData) {
       plugins: {
         title: {
           display: true,
-          text: "Most Common Drugs",
+          text: "Most Common Drugs used by Patients",
+        },
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+          },
+        }
+      },
+    },
+  }));
+}
+
+
+function makeCommonIncomeRangesChart(filteredData) {
+  // count the number of occurrances of each income range
+  let incomeRangeCounts = {}  // object mapping each unique income range to the amount of times it occurs
+  Object.values(filteredData).forEach(patient => {
+    // check if the patient has specified an income range, if not skip
+    if ('income_range' in patient) {
+      let incomeRange = patient['income_range']
+      if (incomeRangeCounts[incomeRange]) {
+        incomeRangeCounts[incomeRange] += 1
+      }
+      else {
+        incomeRangeCounts[incomeRange] = 1
+      }
+    }
+  })
+  console.log('incomeRangeCounts: ', incomeRangeCounts)
+
+  // if there are more than 10 different income ranges, we just display all income ranges
+  numIncomeRanges = Math.min(10, Object.keys(incomeRangeCounts).length)
+  
+  // get the most common income ranges (we remove the max value up to 10 times)
+  let mostCommonRanges = {}
+  for (let i = 0; i < numIncomeRanges; i++) {
+    let curMax = Math.max(...Object.values(incomeRangeCounts))
+    let curMaxIncomeRange = getKeyByValue(incomeRangeCounts, curMax)
+    delete incomeRangeCounts[curMaxIncomeRange]
+    mostCommonRanges[curMaxIncomeRange] = curMax
+  }
+  console.log('mostCommonRanges: ', mostCommonRanges)
+
+  // if we are showing less than ten income ranges, we don't need ten colors
+  const COLORS = ["#80ABFC", "#FF9594", "#6837A4","#89ADDC", "#FDD594", "#6677D4","#80456C", "#531594", "#35F7D4","#8999FC"]
+  incomeRangeColors = COLORS.slice(0,numIncomeRanges)
+
+  // generate the chart
+  var commonIncomeRangesChartNode = removeOldChart("common-income-ranges-chart");
+  commonIncomeRangesChart = commonIncomeRangesChartNode.getContext("2d");
+  return (doughnutChart = new Chart(commonIncomeRangesChart, {
+    type: "doughnut",
+    data: {
+      labels: Object.keys(mostCommonRanges),
+      datasets: [{
+        label: "Occurrences",
+        backgroundColor: incomeRangeColors,
+        data: Object.values(mostCommonRanges)
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: "Most Common Patient Income Ranges",
         },
         legend: {
           position: "bottom",
@@ -928,7 +997,7 @@ function filterPatientData(filterByCondition){
       filteredData[key] = value;
     }
   }
-  console.log(filteredData)
+  console.log("filteredData: ", filteredData)
   return filteredData;
 }
 
