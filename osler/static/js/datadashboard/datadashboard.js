@@ -1,4 +1,3 @@
-//generate default date range and define global variables
 let patientDataJson = null,
   ptCount = null,
   zipcodeColors = [],
@@ -12,6 +11,7 @@ let patientDataJson = null,
   dateRanges = {},
   defaultDateRange = "All Time"; //options include: "Current/Latest Clinic", "This Month", "This Year", "All Time"
 
+// the urls we pass to fetchJsonData() to receive data from
 const urls = ["patientdata-json-datadashboard/","context-json-datadashboard/"]
 
 async function fetchJsonData(urls) {
@@ -41,7 +41,7 @@ window.addEventListener("load", (event) => {
 
     zipcodeColors = makeColorArray(numZipcodes, "04009A");
     ethnicityColors = makeColorArray(numEthnicities, "206A5D");
-    
+
     dateRangePicker()
     console.log(zipcodeColors)
     console.dir(patientDataJson)
@@ -70,36 +70,36 @@ function dateRangePicker(){
   $('input[name="daterange"]').daterangepicker(
     {
       locale: {
-        format: gettext("MM/DD/YYYY"),
+        format: "MM/DD/YYYY",
         separator: " - ",
-        applyLabel: gettext("Apply"),
-        cancelLabel: gettext("Cancel"),
-        fromLabel: gettext("From"),
-        toLabel: gettext("To"),
-        customRangeLabel: gettext("Custom Range"),
-        weekLabel: gettext("W"),
+        applyLabel: "Apply",
+        cancelLabel: "Cancel",
+        fromLabel: "From",
+        toLabel: "To",
+        customRangeLabel: "Custom Range",
+        weekLabel: "W",
         daysOfWeek: [
-          gettext("Su"),
-          gettext("Mo"),
-          gettext("Tu"),
-          gettext("We"),
-          gettext("Th"),
-          gettext("Fr"),
-          gettext("Sa"),
+          "Su",
+          "Mo",
+          "Tu",
+          "We",
+          "Th",
+          "Fr",
+          "Sa",
         ],
         monthNames: [
-          gettext("January"),
-          gettext("February"),
-          gettext("March"),
-          gettext("April"),
-          gettext("May"),
-          gettext("June"),
-          gettext("July"),
-          gettext("August"),
-          gettext("September"),
-          gettext("October"),
-          gettext("November"),
-          gettext("December"),
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
         ],
         firstDay: 1,
       },
@@ -118,7 +118,6 @@ function dateRangePicker(){
       selectedEnd = endDate.format("YYYY-MM-DD");
       makeFilteredData("date");
       sortCommonConditions();  
-      
     }
   );
 };
@@ -165,6 +164,7 @@ function sortCommonConditions(){
   else{
     filteredData = filterPatientData(true)
   }  
+  // count the number of occurrences of each condition
   if(Object.keys(filteredData).length != 0){
     Object.values(filteredData).map(function (e) {
       conditionsList = e.conditions;
@@ -176,7 +176,7 @@ function sortCommonConditions(){
         }
       });
     });
-    // sort by most patients
+    // sort by most patients (ie sort by most common conditions)
     var sortable = [];
     for (var condition in commonConditionsPreSort) {
       sortable.push([condition, commonConditionsPreSort[condition]]);
@@ -203,6 +203,8 @@ function sortCommonConditions(){
   displayCommonConditionsStats(commonConditions)
 };
 
+
+// create dropdown menu that displays common conditions & their number of occurrences
 function displayCommonConditionsStats(commonConditions){
   //append chronic condtion number counts to DOM
   var conditionsCountNode = document.getElementById("conditions-count")
@@ -242,6 +244,7 @@ function displayCommonConditionsStats(commonConditions){
   }
 }
 
+// get the filtered data and pass it to functions that generate the page's display
 function makeFilteredData(filterChangeOrigin) {
   var filteredData 
 
@@ -261,15 +264,19 @@ function makeFilteredData(filterChangeOrigin) {
     displayLabsStats(filteredData);
     displayDrugsStats(filteredData);
     
+    // these functions return chart objects, which are rendered into the DOM
     makeAgeChart(filteredData);
     makeGenderChart(filteredData);
     makeEthnicityChart(filteredData);
     makeZipcodeChart(filteredData);
     makeInsuranceChart(filteredData);
-
+    makeCommonConditionsChart(filteredData);
+    makeCommonDrugsChart(filteredData)
+    makeCommonIncomeRangesChart(filteredData);
   }
 };
 
+// display stats on unique patients and their visits
 function displayPatientVisitStats() {
   //append total workups to DOM
   wuCount = countWorkups(filteredData);
@@ -313,6 +320,7 @@ function displayPatientVisitStats() {
   }
 }
 
+// compute and display stats on labs ordered 
 function displayLabsStats(filteredData) {
   var labs_count = {};
   var totalLabs = 0
@@ -385,7 +393,7 @@ function displayLabsStats(filteredData) {
   }
 }
 
-
+// compute and display stats on drugs dispensed to DOM
 function displayDrugsStats(filteredData) {
   var drugs_count = {};
   var totalDrugs = 0;
@@ -458,7 +466,7 @@ function displayDrugsStats(filteredData) {
   }
 }
 
-
+// generate ages bar chart
 function makeAgeChart(filteredData) {
   var sortedAges = [],
     ageRanges = [],
@@ -504,49 +512,242 @@ function makeAgeChart(filteredData) {
       ],
     },
     options: {
-      title: {
-        display: true,
-        text: "Age "
+      plugins: {
+        title: {
+          display: true,
+          text: "Age "
+        },
+        legend: {
+          display: false
+        },
       },
       fullCornerRadius: false,
       cornerRadius: 15,
       scales: {
-        yAxes: [
-          {
-            gridLines: {
-              display: true,
-              borderDash: [5, 5],
-              lineWidth: 2,
-              drawBorder: false,
-              offsetGridLines: false,
-            },
-            ticks: {
-              beginAtZero: true,
-              maxTicksLimit: 5,
-            },
-            scaleLabel: {
-              display: false,
-            },
+        y: {
+          gridLines: {
+            display: true,
+            borderDash: [5, 5],
+            lineWidth: 2,
+            drawBorder: false,
+            offsetGridLines: false,
           },
-        ],
-        xAxes: [
-          {
-            gridLines: {
-              display: false,
-            },
-            ticks: {
-              beginAtZero: true,
-            },
+          ticks: {
+            beginAtZero: true,
+            maxTicksLimit: 5,
           },
-        ],
-      },
-      legend: {
-        display: false,
+          scaleLabel: {
+            display: false,
+          },
+        },
+        x: {
+          gridLines: {
+            display: false,
+          },
+          ticks: {
+            beginAtZero: true,
+          },
+        },
       },
     },
   }));
 };
 
+// generate top n common conditions doughnut chart
+function makeCommonConditionsChart(filteredData) {
+  // count the number of occurrences of each condition
+  let conditionsCount = {}
+  Object.values(filteredData).forEach(patient => {
+    let conditions = patient["conditions"]
+    conditions.forEach(condition => {
+      if (conditionsCount[condition]) {
+        conditionsCount[condition] += 1
+      }
+      else {
+        conditionsCount[condition] = 1
+      }
+    })
+  })
+
+  // if there are less than 10 different conditions, we just display all conditions
+  numConditions = Math.min(10, Object.keys(conditionsCount).length)
+
+  // get the most common conditions (we remove the max value up to 10 times)
+  let mostCommonConditions = {}
+  for (let i = 0; i < numConditions; i++) {
+    let curMax = Math.max(...Object.values(conditionsCount))
+    let curMaxCondition = getKeyByValue(conditionsCount, curMax)
+    delete conditionsCount[curMaxCondition]
+    mostCommonConditions[curMaxCondition] = curMax
+  }
+
+  // if we are showing less than ten conditions, we don't need ten colors
+  const COLORS = ["#80ABFC", "#FF9594", "#6837A4","#89ADDC", "#FDD594", "#6677D4","#80456C", "#531594", "#35F7D4","#8999FC"]
+  conditionColors = COLORS.slice(0,numConditions)
+
+  var commonConditionsChartNode = removeOldChart("common-conditions-chart");
+  commonConditionsChart = commonConditionsChartNode.getContext("2d");
+  return (doughnutChart = new Chart(commonConditionsChart, {
+    type: "doughnut",
+    data: {
+      labels: Object.keys(mostCommonConditions),
+      datasets: [{
+        label: "Occurrences",
+        backgroundColor: conditionColors,
+        data: Object.values(mostCommonConditions)
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: "Most Common Conditions",
+        },
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+          },
+        }
+      },
+    },
+  }));
+};
+
+// generate chart displaying most common drugs
+function makeCommonDrugsChart(filteredData) {
+  // count the num of occurrances of each drug
+  let drugCounts = {}
+  Object.values(filteredData).forEach(patient => {
+    if (patient["drugs"] != null) { // we can skip next block if patient has no drugs
+      let drugs = Object.keys(patient["drugs"]) // drugs will be an array of names of all drugs this patient is on
+      drugs.forEach(drugName => {
+        if (drugCounts[drugName]) {
+          drugCounts[drugName] += 1
+        }
+        else {
+          drugCounts[drugName] = 1
+        }
+      })
+    } 
+  })
+
+  // if there are more than 10 different drugs, we just display all drugs
+  numDrugs = Math.min(10, Object.keys(drugCounts).length)
+
+  // get the most common drugs (we remove the max value up to 10 times)
+  let mostCommonDrugs = {}
+  for (let i = 0; i < numDrugs; i++) {
+    let curMax = Math.max(...Object.values(drugCounts))
+    let curMaxDrug = getKeyByValue(drugCounts, curMax)
+    delete drugCounts[curMaxDrug]
+    mostCommonDrugs[curMaxDrug] = curMax
+  }
+
+  // if we are showing less than ten drugs, we don't need ten colors
+  const COLORS = ["#80ABFC", "#FF9594", "#6837A4","#89ADDC", "#FDD594", "#6677D4","#80456C", "#531594", "#35F7D4","#8999FC"]
+  drugColors = COLORS.slice(0,numDrugs)
+
+  var commonDrugsChartNode = removeOldChart("common-drugs-chart");
+  commonDrugsChart = commonDrugsChartNode.getContext("2d");
+  return (doughnutChart = new Chart(commonDrugsChart, {
+    type: "doughnut",
+    data: {
+      labels: Object.keys(mostCommonDrugs),
+      datasets: [{
+        label: "Occurrences",
+        backgroundColor: drugColors,
+        data: Object.values(mostCommonDrugs)
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: "Most Common Drugs used by Patients",
+        },
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+          },
+        }
+      },
+    },
+  }));
+}
+
+
+function makeCommonIncomeRangesChart(filteredData) {
+  // count the number of occurrances of each income range
+  let incomeRangeCounts = {}  // object mapping each unique income range to the amount of times it occurs
+  Object.values(filteredData).forEach(patient => {
+    // check if the patient has specified an income range, if not skip
+    if ('income_range' in patient) {
+      let incomeRange = patient['income_range']
+      if (incomeRangeCounts[incomeRange]) {
+        incomeRangeCounts[incomeRange] += 1
+      }
+      else {
+        incomeRangeCounts[incomeRange] = 1
+      }
+    }
+  })
+
+  // if there are more than 10 different income ranges, we just display all income ranges
+  numIncomeRanges = Math.min(10, Object.keys(incomeRangeCounts).length)
+  
+  // get the most common income ranges (we remove the max value up to 10 times)
+  let mostCommonRanges = {}
+  for (let i = 0; i < numIncomeRanges; i++) {
+    let curMax = Math.max(...Object.values(incomeRangeCounts))
+    let curMaxIncomeRange = getKeyByValue(incomeRangeCounts, curMax)
+    delete incomeRangeCounts[curMaxIncomeRange]
+    mostCommonRanges[curMaxIncomeRange] = curMax
+  }
+
+  // if we are showing less than ten income ranges, we don't need ten colors
+  const COLORS = ["#80ABFC", "#FF9594", "#6837A4","#89ADDC", "#FDD594", "#6677D4","#80456C", "#531594", "#35F7D4","#8999FC"]
+  incomeRangeColors = COLORS.slice(0,numIncomeRanges)
+
+  // generate the chart
+  var commonIncomeRangesChartNode = removeOldChart("common-income-ranges-chart");
+  commonIncomeRangesChart = commonIncomeRangesChartNode.getContext("2d");
+  return (doughnutChart = new Chart(commonIncomeRangesChart, {
+    type: "doughnut",
+    data: {
+      labels: Object.keys(mostCommonRanges),
+      datasets: [{
+        label: "Occurrences",
+        backgroundColor: incomeRangeColors,
+        data: Object.values(mostCommonRanges)
+      }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: "Most Common Patient Income Ranges",
+        },
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+          },
+        }
+      },
+    },
+  }));
+}
+
+
+// generate gender pie chart
 function makeGenderChart(filteredData) {
   //pass in date filtered data and then within each function extract the demographic data
   var genderData = {
@@ -580,21 +781,23 @@ function makeGenderChart(filteredData) {
     options: {
       maintainAspectRatio: false,
       responsive: true,
-
-      legend: {
-        position: "bottom",
-        labels: {
-          usePointStyle: true,
+      plugins: {
+        title: {
+          display: true,
+          text: "Gender",
         },
-      },
-      title: {
-        display: true,
-        text: "Gender",
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+          },
+        },
       },
     },
   }));
 };
 
+// generate ethnicity pie chart
 function makeEthnicityChart(filteredData) {
   var ethnicityData = {}
 
@@ -627,21 +830,23 @@ function makeEthnicityChart(filteredData) {
     options: {
       maintainAspectRatio: false,
       responsive: true,
-
-      legend: {
-        position: "bottom",
-        labels: {
-          usePointStyle: true,
+      plugins: {
+        title: {
+          display: true,
+          text: "Ethinicity",
         },
-      },
-      title: {
-        display: true,
-        text: "Ethinicity",
-      },
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+          },
+        },
+      }
     },
   }));
 };
 
+// generate zipcode pie chart
 function makeZipcodeChart(filteredData){
   var zipcodeData = {}
   Object.values(filteredData).map(function (e) {  
@@ -673,22 +878,24 @@ function makeZipcodeChart(filteredData){
     options: {
       maintainAspectRatio: false,
       responsive: true,
-
-      legend: {
-        position: "bottom",
-        align: "start",
-        labels: {
-          usePointStyle: true,
+      plugins: {
+        title: {
+          display: true,
+          text: "Zip Code",
         },
-      },
-      title: {
-        display: true,
-        text: "Zip Code",
+        legend: {
+          position: "bottom",
+          align: "start",
+          labels: {
+            usePointStyle: true,
+          },
+        },
       },
     },
   });
 }
 
+// generate insurance status pie chart
 function makeInsuranceChart(filteredData) {
   //pass in date filtered data and then within each function extract the demographic data
   var insuranceData = {
@@ -722,15 +929,17 @@ function makeInsuranceChart(filteredData) {
     options: {
       maintainAspectRatio: false,
       responsive: true,
-      legend: {
-        position: "bottom",
-        labels: {
-          usePointStyle: true,
+      plugins: {
+        title: {
+          display: true,
+          text: "Has Insurance",
         },
-      },
-      title: {
-        display: true,
-        text: "Has Insurance",
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+          },
+        },
       },
     },
   });
@@ -775,11 +984,12 @@ function filterPatientData(filterByCondition){
       filteredData[key] = value;
     }
   }
+  
   return filteredData;
 }
 
+// remove old chart, adds fresh canvas node, and returns the new fresh canvas node
 function removeOldChart(chartName){
-  // and add a fresh canvas node
   var ChartParent = document.getElementById(chartName);
   $(ChartParent).empty()
   var ChartNode = document.createElement("canvas");
@@ -788,6 +998,7 @@ function removeOldChart(chartName){
   return ChartNode
 };
 
+// gets total amount of workups across all patients
 function countWorkups(filteredData){
   wuCount = 0;
   for (const [key, value] of Object.entries(filteredData)) { 
@@ -801,6 +1012,8 @@ function percentage(portion, whole){
   return ((portion/whole)*100).toFixed(1);
 }
 
+// generates an array of colors of size num
+// each color is a percent lighter than the starting color
 function makeColorArray(num,startingCol) {
   var holderArr = []
   for (let i = 0; i < num; i++) {
@@ -810,6 +1023,7 @@ function makeColorArray(num,startingCol) {
   
 }
 
+// generates a color that is percent% lighter than the given color
 function lightenColor (color, percent) {
   var num = parseInt(color, 16),
     amt = Math.round(2.55 * percent),
@@ -827,3 +1041,6 @@ function lightenColor (color, percent) {
     .slice(1);
 };
 
+function getKeyByValue(object, value) {
+  return Object.keys(object).find(key => object[key] === value);
+};
