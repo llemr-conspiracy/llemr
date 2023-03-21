@@ -180,8 +180,12 @@ class Workup(Note, AttestationMixin):
         verbose_name=_("Temperature"))
 
     # represented internally as inches
-    height = models.PositiveSmallIntegerField(verbose_name=_("Height"),
+    height_inches = models.PositiveSmallIntegerField(verbose_name=_("Height in Inches"),
         blank=True, null=True)
+    # represented internally as inches
+    height_feet = models.PositiveSmallIntegerField(verbose_name=_("Height in Feet"),
+        blank=True, null=True)
+
     # represented internally as kg
     weight = models.DecimalField(verbose_name=_("Weight"),
         max_digits=5, decimal_places=1,
