@@ -149,12 +149,6 @@ class Workup(Note, AttestationMixin):
     diagnosis_categories = models.ManyToManyField(DiagnosisType, verbose_name=_("Diagnosis Categories"), blank=True)
 
     hpi = models.TextField(verbose_name=_("HPI"), blank=True)
-    pmh = models.TextField(verbose_name=_("PMH"), blank=True)
-    psh = models.TextField(verbose_name=_("PSH"), blank=True)
-    meds=models.TextField(verbose_name=_("Medications"), blank=True)
-    allergies = models.TextField(blank=True)
-    fam_hx=models.TextField(verbose_name=_("Family History"), blank=True)
-    soc_hx=models.TextField(verbose_name=_("Social History"), blank=True)
     ros=models.TextField(verbose_name=_("ROS"), blank=True)
 
     # represented internally in per min

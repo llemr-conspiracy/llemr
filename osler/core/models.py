@@ -49,6 +49,25 @@ class ContactMethod(models.Model):
         return self.name
 
 
+class Medication(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    dosage = models.CharField(max_length=50)
+    side_effects = models.TextField()
+    started_taking = models.DateTimeField()
+    currently_taking = models.BooleanField(default = True)
+    
+    def __str__(self):
+        return self.name
+    
+
+class Allergy(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+    
+
 class ReferralType(models.Model):
     """The different kind of care availiable at a referral center."""
 
@@ -166,6 +185,7 @@ class Provider(Person):
 
 class Patient(Person):
 
+#Todo: Add long term aspects, like social history, fam history, diagnoses, allergies
     class Meta:
         permissions = [
             ('case_manage_Patient', _("Can act as a case manager.")),
@@ -202,6 +222,15 @@ class Patient(Person):
         default=True, verbose_name=_('patient comfortable with english'))
 
     ethnicities = models.ManyToManyField(Ethnicity, verbose_name=_('ethnicities'))
+
+    # The following fields have been moved over from workup to be stored long term.
+    pmh = models.TextField(verbose_name=_("PMH"), blank=True)
+    psh = models.TextField(verbose_name=_("PSH"), blank=True)
+    meds=models.ManyToManyField(Medication)
+    allergies = models.ManyToManyField(Allergy) 
+    fam_hx=models.TextField(verbose_name=_("Family History"), blank=True) #long term
+    soc_hx=models.TextField(verbose_name=_("Social History"), blank=True)
+
 
     # Alternative phone numbers have up to 4 fields and each one is associated
     # with the person that owns phone
