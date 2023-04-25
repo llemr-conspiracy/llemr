@@ -1,5 +1,6 @@
 {% extends "core/base.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}
 {% trans 'Drug Inventory'%}
@@ -39,92 +40,16 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="form-group">
-        <label for="drug-list-filter-input"  class="sr-only" >{% trans 'Filter'%}</label>
-        <div class="input-group">
-            <div class="input-group-addon"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
-            <input type="text" id="drug-list-filter-input" placeholder="Filter by drug name or lot number" class="form-control" onkeyup="filterDrugListTable()">
-        </div>
-    </div>
-    <table class="table" id="drug-list-table">
-        <tr>
-          <th>{% trans 'Name'%}</th>
-          <th>{% trans 'Dose'%}</th>
-          <th>{% trans 'Category'%}</th>
-          <th>{% trans 'Stock'%}</th>
-          <th>{% trans 'Lot Number'%}</th>
-          <th>{% trans 'Expiration Date'%}</th>
-          <th>{% trans 'Manufacturer'%}</th>
-          <th></th>
-        </tr>
-        {% for drug in object_list %}
-            <tr>
-                <td><a href="{% url 'inventory:drug-update' pk=drug.id %}">{{ drug.name }}</a></td>
-                <td>{{ drug.dose }} {{ drug.unit }}</td>
-                <td><b>{{ drug.category }}</b></td>
-                <td><b>{{ drug.stock }}</b></td>
-                <td>{{ drug.lot_number }}</td>
-                <td>{% if drug.expired %}
-                  <b style="color:red;">{{ drug.expiration_date }}</b>
-                  {% elif drug.pre_expire %}
-                  <b style="color:gold;">{{ drug.expiration_date }}</b>
-                  {% else %}
-                  {{ drug.expiration_date }}
-                  {% endif %}
-                </td>
-                <td>{{ drug.manufacturer }}</td>
-
-                <td>
-                    <a href="#" class="btn btn-success a-btn-slide-text btn-xs" data-toggle="modal" data-target="#dispenseModal{{ drug.id }}">
-                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                        <span><strong>{% trans 'Dispense'%}</strong></span>
-                    </a>
-                    <div class="modal fade" id="dispenseModal{{ drug.id }}" tabindex="-1" role="dialog" aria-labelledby="dispenseModal{{ drug.id }}Label" aria-hidden="true">
-                    <form action="{% url 'inventory:drug-dispense' %}" method="post">
-                      {% csrf_token %}
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h2 class="modal-title" id="dispenseModal{{ drug.id }}Label">{% trans 'Dispense Drug'%}</h2>
-                          </div>
-                          <div class="modal-body">
-                            {% trans 'How many' %} <b>{{ drug.name }} {% if drug.unit %}{{ drug.dose }}{% endif %} {% if drug.unit %}{{ drug.unit }}{% endif %}</b> {% trans 'would you like to dispense'%}?
-                            <div class="form-group">
-                              <input type="number" class="form-control" placeholder="1" name="num" id="num" min="1" max="{{ drug.stock }}" required>
-                            </div>
-                            <input type="hidden" name="pk" id="pk" value="{{ drug.id }}">
-                            {%blocktrans%}For which patient would you like to dispense <b>{{ drug.name }}</b>?{%endblocktrans%}
-                            <div class="form-group">
-                              <select class="form-control" name="patient_pk" id="patient_pk">
-                                <option disabled selected value> -- {% trans 'select patient'%} -- </option>
-                                {% for patient in patients %}
-                                  <option value="{{ patient.pk }}">
-                                    {{ patient.name }}  {{ patient.age }}/{{ patient.gender }}</span></option>
-                                {% endfor %}
-                              </select>
-                            </div>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">{% trans 'Cancel'%}</button>
-                            <button type="submit" class="btn btn-primary">{% trans 'Dispense Drug'%}</button>
-                          </div>
-                        </div>
-                      </div>
-                    </form>
-                    </div>
-                </td>
-
-
-            </tr>
-        {% endfor %}
-    </table>
-</div>
-
-
+<div id="root"></div>
 {% endblock %}
 
 {% block extra_js %}
+
+<script src="{% static 'js/drug_list.bundle.js' %}"></script>
+<script>
+  drug_list.render({});
+</script>
+
 <script>
 // {# adapted from "https://www.w3schools.com/howto/howto_js_filter_table.asp" #}
 function filterDrugListTable() {

@@ -21,7 +21,7 @@ coverage==5.3  # https://github.com/nedbat/coveragepy
 black==19.10b0  # https://github.com/ambv/black
 pylint-django==2.3.0  # https://github.com/PyCQA/pylint-django
 pre-commit==2.7.1  # https://github.com/pre-commit/pre-commit
-codecov==2.1.10
+codecov==2.1.13
 
 # Django
 # ------------------------------------------------------------------------------
@@ -31,6 +31,7 @@ django-debug-toolbar==3.2.4  # https://github.com/jazzband/django-debug-toolbar
 django-extensions==3.0.9  # https://github.com/django-extensions/django-extensions
 django-coverage-plugin==1.8.0  # https://github.com/nedbat/django_coverage_plugin
 pytest-django==4.5.2  # https://github.com/pytest-dev/pytest-django
+# django-bootstrap4==21.2  # https://github.com/zostera/django-bootstrap4
 
 # Documentation
 # ------------------------------------------------------------------------------

@@ -132,6 +132,7 @@ class DrugUpdate(UpdateView):
 def drug_dispense(request):
     pk = request.POST['pk']
     num = request.POST['num']
+
     patient_pk = request.POST['patient_pk']
     drug = models.Drug.objects.get(pk=pk)
     patient = Patient.objects.get(pk=patient_pk)

@@ -27,7 +27,7 @@ class LiveTesting(SeleniumLiveTestCase):
         Test the login sequence for one clinical role and mulitiple clinical
         roles.
         '''
-
+        
         username = 'jrporter'
         password = 'mb3YFSEnmc'
 
@@ -79,7 +79,7 @@ class LiveTesting(SeleniumLiveTestCase):
                        group_factories=[user_factories.AttendingGroupFactory])
         self.get_homepage()
         self.submit_login(user.username, 'password')
-
+        
         ai_prototype = {
             'instruction': models.ActionInstruction.objects.first(),
             'comments': "",
@@ -174,7 +174,7 @@ class LiveTesting(SeleniumLiveTestCase):
 
 class LiveTestAllPatients(SeleniumLiveTestCase):
     fixtures = BASIC_FIXTURES
-
+    
     def setUp(self):
         # build a user and log in
         self.password = 'password'

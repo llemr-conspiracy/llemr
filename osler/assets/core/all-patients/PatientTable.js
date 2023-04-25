@@ -3,7 +3,7 @@ import axios from 'axios';
 import TableManager from './TableManager';
 import Container from 'react-bootstrap/Container';
 import globalFilter from './globalFilter';
-
+import { DateTime } from 'luxon'
 
 function PatientTable(props) {
 
@@ -29,12 +29,11 @@ function PatientTable(props) {
             if (wu == null) {
               return 'Intake';
             }
-            const date = new Date(wu.written_datetime);
+            const dt = DateTime.fromISO(wu.written_datetime);
             const options = {
               year: 'numeric', month: 'short', day: 'numeric'
             }
-            // should default to current locale
-            const dateString = date.toLocaleDateString(undefined, options);
+            const dateString = dt.toLocaleString(options);
             const infoString = wu.is_pending ? "Pending from" : "Seen";
             return (
               <div>
@@ -98,7 +97,7 @@ function PatientTable(props) {
             columns={columns} 
             data={data}
             globalFilter={globalFilter}
-            id='all-patients-table' 
+            id='all-patients-table'
           />
         )}
     </Container>
